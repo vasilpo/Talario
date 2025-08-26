@@ -1,0 +1,45 @@
+// Bootstrap styles
+//
+// Modals
+// --------------------------------------------------
+
+// Background
+.modal-backdrop {
+    background-color: var(--cs-text-color);
+}
+
+// Base modal
+.modal {
+    background-color: var(--cs-content-background);
+    border-color: var(--cs-shadow30-color);
+    box-shadow: 0 3px 7px var(--cs-shadow30-color);
+}
+.modal-header {
+    border-bottom-color: var(--cs-hr-border);
+}
+
+// Footer (for actions)
+.modal-footer {
+    background-color: var(--cs-form-actions-background);
+    border-top: 1px solid var(--cs-dropdown-divider-top);
+    box-shadow: inset 0 1px 0 var(--cs-text-inverse-color);
+}
+
+
+
+// Custom styles
+
+// Modal dialog styles
+.modal {
+    width: auto;
+    .modal-body {
+        max-height: none;
+    }
+    .modal-footer-empty {
+        padding: 0px;
+    }
+    .modal-buttons {
+        position: absolute;
+        padding: 14px 15px 15px;
+    }
+}

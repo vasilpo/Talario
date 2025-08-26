@@ -1,0 +1,131 @@
+// Based on jQuery UI ThemeRoller
+// Example:
+// color: #333333/*{fcContent}*/; -> --cs-jqueryui-fc-content: var(--cs-text-color);
+// Source:
+// https://github.com/jquery/jquery-ui-themeroller/blob/main/test/fixtures/jquery-ui-1.13.2/base/theme.css
+
+:root {
+    // Font
+    --cs-jqueryui-ff-default: var(--cs-base-font-family);
+    --cs-jqueryui-fs-default: var(--cs-base-font-size);
+    --cs-jqueryui-fw-default: normal;
+
+    // Base
+    --cs-jqueryui-corner-radius: var(--cs-base-border-radius);
+
+    // Header
+    --cs-jqueryui-bg-color-header: var(--cs-content-background);
+    --cs-jqueryui-bg-img-url-header: ~"";
+    --cs-jqueryui-bg-header-x-pos: ~"";
+    --cs-jqueryui-bg-header-y-pos: ~"";
+    --cs-jqueryui-bg-header-repeat: ~"";
+    --cs-jqueryui-bg-texture-header: flat; // not used
+    --cs-jqueryui-bg-img-opacity-header: 35; // not used
+    --cs-jqueryui-border-color-header: var(--cs-dropdown-border);
+    --cs-jqueryui-fc-header: var(--cs-text-color);
+    --cs-jqueryui-icon-color-header: var(--cs-text-color); // not used
+
+    // Content
+    --cs-jqueryui-bg-color-content: var(--cs-content-background);
+    --cs-jqueryui-bg-img-url-content: ~"";
+    --cs-jqueryui-bg-content-x-pos: ~"";
+    --cs-jqueryui-bg-content-y-pos: ~"";
+    --cs-jqueryui-bg-content-repeat: ~"";
+    --cs-jqueryui-bg-texture-content: flat; // not used
+    --cs-jqueryui-bg-img-opacity-content: 100; // not used
+    --cs-jqueryui-border-color-content: var(--cs-dropdown-border);
+    --cs-jqueryui-fc-content: var(--cs-text-color);
+    --cs-jqueryui-icon-color-content: var(--cs-text-color); // not used
+
+    // Default
+    --cs-jqueryui-bg-color-default: var(--cs-input-disabled-background);
+    --cs-jqueryui-bg-img-url-default: ~"";
+    --cs-jqueryui-bg-default-x-pos: ~"";
+    --cs-jqueryui-bg-default-y-pos: ~"";
+    --cs-jqueryui-bg-default-repeat: ~"";
+    --cs-jqueryui-bg-texture-default: flat; // not used
+    --cs-jqueryui-bg-img-opacity-default: 100; // not used
+    --cs-jqueryui-border-color-default: var(--cs-btn-border);
+    --cs-jqueryui-fc-default: var(--cs-text-color);
+    --cs-jqueryui-icon-color-default: var(--cs-text-color); // not used
+
+    // Hover
+    --cs-jqueryui-bg-color-hover: var(--cs-btn-background-highlight);
+    --cs-jqueryui-bg-img-url-hover: ~"";
+    --cs-jqueryui-bg-hover-x-pos: ~"";
+    --cs-jqueryui-bg-hover-y-pos: ~"";
+    --cs-jqueryui-bg-hover-repeat: ~"";
+    --cs-jqueryui-bg-texture-hover: flat; // not used
+    --cs-jqueryui-bg-img-opacity-hover: 100; // not used
+    --cs-jqueryui-border-color-hover: var(--cs-btn-border);
+    --cs-jqueryui-fc-hover: var(--cs-text-color);
+    --cs-jqueryui-icon-color-hover: var(--cs-text-color); // not used
+
+    // Active
+    --cs-jqueryui-bg-color-active: var(--cs-btn-primary-background);
+    --cs-jqueryui-bg-img-url-active: ~"";
+    --cs-jqueryui-bg-active-x-pos: ~"";
+    --cs-jqueryui-bg-active-y-pos: ~"";
+    --cs-jqueryui-bg-active-repeat: ~"";
+    --cs-jqueryui-bg-texture-active: flat; // not used
+    --cs-jqueryui-bg-img-opacity-active: 65; // not used
+    --cs-jqueryui-border-color-active: var(--cs-btn-primary-background-highlight);
+    --cs-jqueryui-fc-active: var(--cs-text-inverse-color);
+    --cs-jqueryui-icon-color-active: var(--cs-input-background); // not used
+
+    // Highlight
+    --cs-jqueryui-bg-color-highlight: var(--cs-warning-background);
+    --cs-jqueryui-bg-img-url-highlight: ~"";
+    --cs-jqueryui-bg-highlight-x-pos: ~"";
+    --cs-jqueryui-bg-highlight-y-pos: ~"";
+    --cs-jqueryui-bg-highlight-repeat: ~"";
+    --cs-jqueryui-bg-texture-highlight: flat; // not used
+    --cs-jqueryui-bg-img-opacity-highlight: 75; // not used
+    --cs-jqueryui-border-color-highlight: var(--cs-warning-border);
+    --cs-jqueryui-fc-highlight: var(--cs-warning-text);
+    --cs-jqueryui-icon-color-highlight: var(--cs-warning-text); // not used
+
+    // Error
+    --cs-jqueryui-bg-color-error: var(--cs-error-background);
+    --cs-jqueryui-bg-img-url-error: ~"";
+    --cs-jqueryui-bg-error-x-pos: ~"";
+    --cs-jqueryui-bg-error-y-pos: ~"";
+    --cs-jqueryui-bg-error-repeat: ~"";
+    --cs-jqueryui-bg-texture-error: flat; // not used
+    --cs-jqueryui-bg-img-opacity-error: 18; // not used
+    --cs-jqueryui-border-color-error: var(--cs-error-border);
+    --cs-jqueryui-fc-error: var(--cs-error-text);
+    --cs-jqueryui-icon-color-error: var(--cs-error-text); // not used
+
+    // Icons
+    --cs-jqueryui-icons-content: url("../../media/images/lib/ui/ui-icons_222222_256x240.png");
+    --cs-jqueryui-icons-header: url("../../media/images/lib/ui/ui-icons_222222_256x240.png");
+    --cs-jqueryui-icons-content-dark: url("../../media/images/lib/ui/ui-icons_888888_256x240.png");
+    --cs-jqueryui-icons-header-dark: url("../../media/images/lib/ui/ui-icons_888888_256x240.png");
+    --cs-jqueryui-icons-hover: ~"";
+    --cs-jqueryui-icons-active: ~"";
+    --cs-jqueryui-icons-highlight: ~"";
+    --cs-jqueryui-icons-error: ~"";
+    --cs-jqueryui-icons-default: ~"";
+
+    // Overlay
+    --cs-jqueryui-bg-color-overlay: var(--cs-text-color);
+    --cs-jqueryui-bg-img-url-overlay: ~"";
+    --cs-jqueryui-bg-overlay-x-pos: ~"";
+    --cs-jqueryui-bg-overlay-y-pos: ~"";
+    --cs-jqueryui-bg-overlay-repeat: ~"";
+    --cs-jqueryui-bg-texture-overlay: flat; // not used
+    --cs-jqueryui-bg-img-opacity-overlay: 0; // not used
+    --cs-jqueryui-opacity-overlay: 30;
+    --cs-jqueryui-opacity-filter-overlay: ~"";
+
+    // Shadow
+    --cs-jqueryui-bg-color-shadow: var(--cs-shadow30-color);
+    --cs-jqueryui-bg-texture-shadow: flat; // not used
+    --cs-jqueryui-bg-img-opacity-shadow: 0; // not used
+    --cs-jqueryui-opacity-shadow: 30; // not used
+    --cs-jqueryui-thickness-shadow: 5px;
+    --cs-jqueryui-offset-top-shadow: 0px;
+    --cs-jqueryui-offset-left-shadow: 0px;
+    --cs-jqueryui-corner-radius-shadow: 8px; // not used
+}

@@ -1,0 +1,1 @@
+{include file="addons/ab__stickers/views/ab__stickers/components/ab__stikers_pictograms.tpl" details_page=$details_page product=$product block=$block position="position_1" tmpl=$tmpl}

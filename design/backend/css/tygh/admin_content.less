@@ -1,0 +1,75 @@
+// 1. Admin content
+.admin-content {
+    height: 100%;
+    position: relative;
+}
+
+// 2. Admin content wrap
+.admin-content-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    margin: 0 auto;
+    padding-top: var(--top-bar-height);
+}
+
+.admin-content-wrap--scroll-header {
+    padding-top: 0;
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    .admin-content-wrap {
+        padding-left: var(--main-menu-width);
+    }
+}
+
+// 3. Admin content wrapper
+.admin-content-wrapper {
+    --cs-admin-content-wrapper-padding: 0px;
+
+    display: flex;
+    gap: 16px;
+    padding-left: var(--cs-admin-content-wrapper-padding);
+    padding-right: var(--cs-admin-content-wrapper-padding);
+    height: 100%;
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    .admin-content-wrapper {
+        --cs-admin-content-wrapper-padding: 16px;
+    }
+}
+
+// 4. Page content
+.page-content {
+    flex-grow: 1;
+    width: 100%;
+    min-width: 0;
+}
+
+// 5. Content wrap
+.content-wrap {
+    --cs-admin-content-wrap-shadow: none;
+    --cs-admin-content-wrap-radius: 0px;
+
+    position: relative;
+    margin: 0 auto;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    background: var(--cs-content-background);
+    border-radius: var(--cs-admin-content-wrap-radius);
+    box-shadow: var(--cs-admin-content-wrap-shadow);
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    .content-wrap {
+        --cs-admin-content-wrap-shadow: 0 0 0 1px var(--cs-table-border) inset;
+        --cs-admin-content-wrap-radius: var(--cs-base-border-radius);
+    }
+}

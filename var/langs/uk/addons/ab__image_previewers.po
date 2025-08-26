@@ -1,0 +1,91 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
+
+msgctxt "Addons::name::ab__image_previewers"
+msgid "AB: Advanced image previewers"
+msgstr "AB: Розширені переглядачі зображень"
+
+msgctxt "Addons::description::ab__image_previewers"
+msgid "Adds new image previewers"
+msgstr "Додає нові переглядачі зображень"
+
+msgctxt "Languages::ab__image_previewers"
+msgid "AB: Advanced image previewers"
+msgstr "AB: Розширені переглядачі зображень"
+
+msgctxt "Languages::ab__image_previewers.added_by_addon"
+msgid "Functionality is added by add-on \"AB: Advanced image previewers\""
+msgstr "Функціонал доданий модулем \"AB: Розширені переглядачі зображень\""
+
+msgctxt "SettingsOptions::ab__image_previewers::ps_display_price"
+msgid "Display price"
+msgstr "Відображати ціну"
+
+msgctxt "SettingsOptions::ab__image_previewers::ps_display_add_to_cart"
+msgid "Display \"Add to cart\" button"
+msgstr "Відображати кнопку \"Купити\""
+
+msgctxt "SettingsOptions::ab__image_previewers::ps_display_navigation_dots"
+msgid "Display navigation dots"
+msgstr "Відображати навігаційні точки"
+
+msgctxt "SettingsTooltips::ab__image_previewers::ps_display_navigation_dots"
+msgid "If dots increase screen size, counter of images will be displayed instead"
+msgstr "Якщо точки не поміщаються на один екран, буде відображатися лічильник зображень"
+
+msgctxt "SettingsOptions::ab__image_previewers::ps_display_fullscreen"
+msgid "Display \"Full screen\" button"
+msgstr "Відображати кнопку \"На весь екран\""
+
+msgctxt "SettingsTooltips::ab__image_previewers::ps_display_fullscreen"
+msgid "It is displayed on devices with touch control (basically, PC and Laptops)"
+msgstr "Відображається на пристроях без сенсорного керування (в основному ПК і ноутбуки)"
+
+msgctxt "SettingsOptions::ab__image_previewers::ps_display_zoom"
+msgid "Display button of enlarged image"
+msgstr "Відображати кнопку збільшення"
+
+msgctxt "SettingsTooltips::ab__image_previewers::ps_display_zoom"
+msgid "If an image can be enlarged"
+msgstr "Якщо зображення можна збільшити"
+
+msgctxt "SettingsOptions::ab__image_previewers::ps_close_with_gesture"
+msgid "Close with gesture"
+msgstr "Закрити жестом"
+
+msgctxt "SettingsTooltips::ab__image_previewers::ps_close_with_gesture"
+msgid "Close image previewer with swipe up/down or pinch image that is not enlarged (e.g., IPhone gallery)"
+msgstr "Закриває переглядача зображень свайпом вниз/вгору або щипком по незбільшеному зображенню (як галерея на IPhone)"
+
+msgctxt "Languages::ab__image_previewers.settings"
+msgid "General settings"
+msgstr "Загальні налаштування"
+
+msgctxt "Languages::ab__photoswipe"
+msgid "AB: PhotoSwipe"
+msgstr "AB: PhotoSwipe"
+
+msgctxt "Languages::ab__image_previewers.default_previewer_changed"
+msgid "Image previewer by default was changed on [previewer]"
+msgstr "Переглядач зображень за замовчуванням змінено на [previewer]"
+
+msgctxt "Languages::ab__image_previewers.autoinstall.photoswipe"
+msgid "AB: PhotoSwipe was set as previewer by default"
+msgstr "AB: PhotoSwipe установлений як переглядач за замовчуванням"
+
+msgctxt "Languages::ab__image_previewers.help"
+msgid "Help"
+msgstr "Довідка"
+
+msgctxt "Languages::ab__image_previewers.help.docs"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__image_previewers.doc'>documentation</a>."
+msgstr "Ознайомитись з <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__image_previewers.doc''>документацією</a>."
+
+msgctxt "Languages::privilege_groups.ab__image_previewers"
+msgid "AB: Advanced image previewers"
+msgstr "AB: Розширені переглядачі зображень"
+
+#. Alexbranding. Do not modify this file manually!

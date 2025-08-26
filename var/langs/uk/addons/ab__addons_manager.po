@@ -1,0 +1,495 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
+
+msgctxt "Addons::name::ab__addons_manager"
+msgid "AB: Add-ons Manager by AlexBranding team"
+msgstr "AB: Менеджер модулів"
+
+msgctxt "Addons::description::ab__addons_manager"
+msgid "Manage add-ons by AlexBranding team. Install and check for updates, get to know our new products. To use add-ons by AlexBranding team, this add-on should always be turned on."
+msgstr "Керування модулями від AlexBranding. Установка і перевірка оновлень модулів, а також можете ознайомитись з новинками від AlexBranding."
+
+msgctxt "Languages::ab__addons_manager"
+msgid "AB: Add-ons Manager"
+msgstr "AB: Менеджер модулів"
+
+msgctxt "Languages::ab__addons"
+msgid "AB: Add-ons"
+msgstr "AB: Модулі"
+
+msgctxt "Languages::ab__am.addons"
+msgid "AB: List of available sets/add-ons"
+msgstr "AB: Список доступних пакетів/модулів"
+
+msgctxt "Languages::ab__am.our_store"
+msgid "AlexBranding's store"
+msgstr "Магазин AlexBranding"
+
+msgctxt "Languages::ab__am.msg.error_code"
+msgid "Error Code"
+msgstr "Помилка коду ліцензії модуля"
+
+msgctxt "Languages::ab__am.msg.addon_is_already_installed"
+msgid "You have already installed the add-on <b>[name]</b> the latest version <b>[version]</b>"
+msgstr "У Вас вже встановлено модуль <b>[name]</b> останньої версії <b>[version]</b>!"
+
+msgctxt "Languages::ab__am.msg.addon_is_already_installed_upd"
+msgid "You have already installed the add-on <b>[name]</b> the latest version <b>[version]</b>, you can perform the add-on update to version <b>[version_last]</b>"
+msgstr "У Вас вже встановлено модуль <b>[name]</b> останньої версії <b>[version]</b>, Ви можете здійснити оновлення модуля до версії <b>[version_last]</b>"
+
+msgctxt "Languages::ab__am.msg.no_permissions"
+msgid "No write permission"
+msgstr "Немає прав на перезапис наступних об'єктів"
+
+msgctxt "Languages::ab__am.msg.update_am"
+msgid "To install and/or update our add-ons, you should update AB: Add-ons Manager to the latest version <b>v[ver]</b>!"
+msgstr "Для установки і/або оновлення модулів необхідно оновити АВ: Менеджер модулів до останньої версії <b>v[ver]</b>!"
+
+msgctxt "Languages::ab__am.addon.action.install_addon"
+msgid "New version <code>v[ver]</code> is available for you"
+msgstr "Вам доступна версія <code>v[ver]</code>"
+
+msgctxt "Languages::ab__am.addon.action.install_addon.button.value"
+msgid "Install v[ver]"
+msgstr "Встановити v[ver]"
+
+msgctxt "Languages::ab__am.addon.action.install_addon.button.tooltip"
+msgid "By clicking on this button, the v[ver] of add-on '[name]' will be automatically downloaded and installed to bypass the standard installation of CS-Cart. You also have the possibility to install the add-on in a standard way by downloading the version of the add-on, compatible with your store on the page My Profile → Orders page on the <a href='https://cs-cart.alexbranding.com/en/orders/'>cs-cart.alexbranding.com </a>"
+msgstr "При натисканні на цю кнопку модуль '[name]' v[ver] буде автоматично завантажено і встановлено в обхід стандартній установці CS-Cart. Також у Вас є можливість встановити модуль стандартним способом, завантаживши сумісну з Вашим магазином версію модуля на сторінці Мій Профіль → Замовлення на сайті <a href='https://cs-cart.alexbranding.com/ru/orders/'>cs-cart.alexbranding.com</a>"
+
+msgctxt "Languages::ab__am.addon.action.update_addon"
+msgid "Update <code>v[ver]</code> is available for you"
+msgstr "Вам доступне оновлення <code>v[ver]</code>"
+
+msgctxt "Languages::ab__am.addon.action.update_addon.button.value"
+msgid "Update to v[ver]"
+msgstr "Оновити до v[ver]"
+
+msgctxt "Languages::ab__am.addon.action.update_addon.button.tooltip"
+msgid "If the update is not available through the CS-Cart Upgrade Center, uninstall the add-on on the page <b> Add-ons → Manage Add-ons</b> and '[name]' v[ver] will be available for installation on this page"
+msgstr "Якщо оновлення недоступне через Центр оновлень CS-Cart, видаліть модуль на сторінці <b>Модулі → Керування модулями </b> і '[name]' v[ver] стане доступною для установки на цій сторінці"
+
+msgctxt "Languages::ab__am.addon.action.not_tested_yet"
+msgid "The installed version <code>v[ver]</code> has not yet passed testing for your version of the store <b>[cscart]</b>"
+msgstr "Установлена версія <code>v[ver]</code> ще не пройшла тестування для Вашої версії магазину <b>[cscart]</b>"
+
+msgctxt "Languages::ab__am.addon.action.wait_new_version"
+msgid "The latest version <code>v[ver]</code> is compatible with <b>[cscart]</b> according to your subscription"
+msgstr "Встановлена остання версія <code>v[ver]</code> сумісна з <b>[cscart]</b> в межах Вашої підписки"
+
+msgctxt "Languages::ab__am.addon.action.unavailable_addon"
+msgid "The add-on is not available for you (either due to incompatibility with your version of the CS-Cart <b>[cscart]</b> or your subscription for updates has expired)"
+msgstr "Модуль Вам недоступний (або через несумісність з Вашою версією магазину <b>[cscart]</b>, або у Вас закінчилась підписка)"
+
+msgctxt "Languages::ab__am.addon.action.require_update"
+msgid "To install the add-on or updates, please, update <b>AB: Add-ons Manager</b> to the actual version <code>v[ver]<code>"
+msgstr "Для установки модуля або установки оновлень, будь ласка, оновіть <b>AB: Менеджер модулів</b> до актуальної версії <code>v[ver]</code>"
+
+msgctxt "Languages::ab__am.addon.subscription.exp"
+msgid "Your subscription for updates has expired <b>[date]</b>. To access the current add-on versions, you must buy a subscription."
+msgstr "Ваша підписка закінчилась <b>[date]</b>. Для отримання доступу до актуальних версій модулів необхідно купити підписку"
+
+msgctxt "Languages::ab__am.addon.subscription.exp.button.value"
+msgid "Buy subscription"
+msgstr "Купити підписку"
+
+msgctxt "Languages::ab__am.addon.subscription.exp.button.tooltip"
+msgid "Buy subscription to get access to the current add-on versions"
+msgstr "Купити підписку для отримання доступу до актуальних версій модулів"
+
+msgctxt "Languages::ab__am.addon.subscription.ok"
+msgid "Your subscription is active until <b>[date]</b>"
+msgstr "Ваша підписка активна до <b>[date]</b>."
+
+msgctxt "Languages::ab__am.addon.subscription.ok.button.value"
+msgid "Renew subscription"
+msgstr "Продовжити підписку"
+
+msgctxt "Languages::ab__am.addon.subscription.ok.button.tooltip"
+msgid "Renew subscription to get access to the current add-on versions"
+msgstr "Продовжити підписку для отримання доступу до актуальних версій модулів"
+
+msgctxt "Languages::ab__am.install.update"
+msgid "The update process"
+msgstr "Процес оновлення модуля"
+
+msgctxt "Languages::ab__am.install.install"
+msgid "The installation process"
+msgstr "Процес установки модуля"
+
+msgctxt "Languages::ab__am.install.downloading"
+msgid "[name] – <b>downloading</b>"
+msgstr "[name] – <b>завантаження</b>"
+
+msgctxt "Languages::ab__am.install.checking"
+msgid "[name] – <b>checking</b>"
+msgstr "[name] – <b>перевірка</b>"
+
+msgctxt "Languages::ab__am.install.installing"
+msgid "[name] – <b>installing</b>"
+msgstr "[name] – <b>установка</b>"
+
+msgctxt "Languages::ab__am.install.clearing_cache"
+msgid "Clearing cache"
+msgstr "Очистити кеш"
+
+msgctxt "Languages::ab__am.addon.status.a"
+msgid "Add-on status – Active"
+msgstr "Статус модуля – Увімкнений"
+
+msgctxt "Languages::ab__am.addon.status.d"
+msgid "Add-on status – Inactive"
+msgstr "Статус модуля – Вимкнений"
+
+msgctxt "Languages::ab__am.addon.status.n"
+msgid "Add-on status – Not installed yet"
+msgstr "Статус модуля – Ще не встановлений"
+
+msgctxt "Languages::ab__am.menu.available_updates"
+msgid "Updates available"
+msgstr "Доступні оновлення"
+
+msgctxt "Languages::ab__am.menu.available_update"
+msgid "Update available"
+msgstr "Доступне оновлення"
+
+msgctxt "Languages::ab__am.menu.new_version"
+msgid "v[ver]"
+msgstr "v[ver]"
+
+msgctxt "Languages::ab__am.menu.number_of_updates"
+msgid "Number of updates"
+msgstr "Кількість оновлень"
+
+msgctxt "Languages::ab__am.menu.number_of_notifications"
+msgid "Number of notifications"
+msgstr "Кількість повідомлень"
+
+msgctxt "Languages::ab__am.filter"
+msgid "Filter ([active] from [total])"
+msgstr "Фільтр ([active] з [total])"
+
+msgctxt "Languages::ab__am.order"
+msgid "(Order #[order_id])"
+msgstr "(Замовлення №[order_id])"
+
+msgctxt "Languages::ab__am.no_data"
+msgid "To use AlexBranding add-ons and/or sets, your domain <b>[domain]</b> must be licensed.<br>In the case of absence of the domain <b>[domain]</b> in the list of licensed domains, all AlexBranding solutions will be automatically turned off. <br>Contact <b>info@alexbranding.com</b> for problem solving."
+msgstr "Для застосування модулів і/або пакетів AlexBranding Ваш домен <b>[domain]</b> має бути ліцензований. <Br>У випадку відсутності домену <b>[domain]</b> в списку ліцензованих доменів – усі рішення AlexBranding будуть автоматично вимкнені. <br>Зверніться на пошту <b>info@alexbranding.com</b> для вирішення проблем."
+
+msgctxt "Languages::ab__am.no_data.notification"
+msgid "Due to the fact, that your domain [domain] is not included in the list of licensed, some AlexBranding add-ons have been automatically turned off. <a href='[link]'>More info</a>."
+msgstr "Модуль <b>[name]</b> не пройшов валідацію ліцензії, тому був автоматично <b>Вимкнений</b>. Зверніться на пошту <b>info@alexbranding.com</b> для вирішення проблем."
+
+msgctxt "Languages::ab__am.note"
+msgid "More info"
+msgstr "Докладніше"
+
+msgctxt "Languages::ab__am.go_to_all_stores"
+msgid "AB: Add-ons are available only in the <a href='[link]'>All stores</a> mode."
+msgstr "AB: Модуль доступний лише в режимі <a href='[link]'>Усі магазини</a>."
+
+msgctxt "Languages::ab__am.addons_sets.notes"
+msgid "<h4>Basic concepts</h4> <p><u>The installed version</u> is the version of the add-on, that is currently installed on your store.</p> <p><u>The available version</u> is the latest version of the add-on, that is available for you to install and/or update within the prepaid subscription for updates. For example, for the add-on there are versions v2.0 from February 15, 2019 and v2.1 from March 2, 2019 and your subscription to the add-on updates ended on March 1, 2019, then the latest available version for you will be version v2.0 from 15 February 2019. To receive version v2.1 of March 2, 2019, it is necessary to renew the subscription period.</p> <p><u>The actual version</u> is the latest version of the add-on at the moment. We recommend you always update to the actual version, which contains fixed bugs and new useful functionality.</p> <p><u>The add-on is not available for your store</u> – it is possible, the version of your CS-Cart does not correspond to the minimum acceptable version for the add-on. For example, the YoupiTheme is available only for CS-Cart 4.7.x and more.</p> <br> <h4>Installation process</h4> <p>The installation of the add-on has never been so simple as it is now. After purchasing AlexBranding add-ons and installing <b>AB: Add-ons Manager</b> you can install the latest version of the add-on in one click, without any visits to the personal cabinet in the store, order search, downloading of archives, etc.</p> <br> <h4>Upgrade process</h4> <p>Add-ons updating goes via CS-Cart <b>Upgrade Center</b>. If there is no update available in the CS-Cart Upgrade Center, the update is performed by Deinstallation the old version of the add-on and Installing the new version</p> <br> <h4>Cache</h4> <p>After installing and/or updating, you must reset CS-Cart cache. See CS-Cart <a target='_blank' href='https://docs.cs-cart.com/4.7.x/developer_guide/getting_started/cache_clearing.html'>documentation</a> for more details.</p>"
+msgstr "<h4>Основні поняття</h4>"
+"<p><u>Установлена версія</u> – це версія модуля, яка у цей момент установлена на Вашому сайті.</p>"
+"<p><u>Доступна Вам версія</u> – це найостанніша версія модуля, яка Вам доступна для установки і/або оновлення в межах заздалегідь оплаченої підписки на оновлення. Наприклад, для модуля існують версії: v2.0.0 від 15 лютого 2019р. і v2.1.0 від 2 березня 2019р. І Ваша підписка на модуль завершилась 1 березня 2019р., тоді останньою доступною версією для Вас буде версія v2.0.0 від 15 лютого 2019р. Для отримання версії v2.1.0 від 2 березня 2019р. Вам необхідно купити підписку.</p>"
+"<p><u>Актуальна версія </u> – це найостанніша версія модулю, яка є на цю хвилину. Радимо завжди оновлювати до актуальної версії, яка містить виправлені помилки і новий корисний функціонал. </p>"
+"<p><u>Модуль недоступний для Вашого магазину</u> – це можливо, коли версія Вашого CS-Cart не відповідає мінімально допустимій версії для модуля або у Вас завершився період підписки. Наприклад, тема Unitheme2 доступна тільки для CS-Cart 4.10.x і більше.</p>"
+"<br>"
+"<h4>Процес установки</h4>"
+"<p>Установка модуля ще ніколи не була настільки простою як зараз. Після покупки рішень AlexBranding і установки <b>AB: Менеджера модулів</b> Ви за одне натискання зможете встановити доступну версію модуля, без будь-яких відвідувань оформленого замовлення, пошуку замовлення, завантаження архівів і таке інше.</p>"
+"<br>"
+"<h4>Процес оновлення</h4>"
+"<p>Оновлення модулів відбувається за допомогою <b>Центру оновлень CS-Cart</b>. У випадку відсутності доступного оновлення в Центрі оновлень CS-Cart, оновлення відбувається шляхом Видалення старої версії модуля і Установки нової версії.</p>"
+"</p>"
+"<br>"
+"<h4>Кеш</h4>"
+"<p>Після установки і/або оновлення необхідно скинути кеш CS-Cart. Докладніше дивіться <a target='_blank' href='https://www.cs-cart.ru/docs/4.7.x/developer_guide/addons/tutorials/addon_creation/cache.html'>документацію</a> CS-Cart.</p>"
+
+msgctxt "Languages::ab__am.notifications"
+msgid "List of notifications from AlexBranding"
+msgstr "Список повідомлень AlexBranding"
+
+msgctxt "Languages::ab__am.notifications.notes"
+msgid "In this section you will find information about our news and promotions. Regularly we will inform you about the releases of our new solutions, discounts or closed promotions, available only for you."
+msgstr "В цьому розділі буде наведена інформація про наші новинки і акції."
+" Регулярно ми будемо сповіщати Вас про вихід нових рішень, знижки або закритих промоакціях, доступних лише Вам."
+
+msgctxt "Languages::ab__am.available_addons"
+msgid "List of available AB: Add-ons"
+msgstr "Список доступних АВ: Модулів"
+
+msgctxt "Languages::ab__am.addon.table_head.addon"
+msgid "Add-on name"
+msgstr "Назва модулю"
+
+msgctxt "Languages::ab__am.addon.table_head.versions"
+msgid "Versions"
+msgstr "Версії"
+
+msgctxt "Languages::ab__am.addon.table_head.versions.tooltip"
+msgid "List of variants: Installed, Available and Actual"
+msgstr "Можливі варіанти: Установлена, Доступна Вам и Актуальна версії модулю"
+
+msgctxt "Languages::ab__am.addon.versions.installed"
+msgid "Installed"
+msgstr "Установлена"
+
+msgctxt "Languages::ab__am.addon.versions.available"
+msgid "Available"
+msgstr "Доступна Вам"
+
+msgctxt "Languages::ab__am.addon.versions.final"
+msgid "Actual"
+msgstr "Актуальна"
+
+msgctxt "Languages::ab__am.addon.table_head.actions"
+msgid "Actions"
+msgstr "Дії"
+
+msgctxt "Languages::ab__am.addon.table_head.subscription"
+msgid "Subscription"
+msgstr "Керування підпискою"
+
+msgctxt "Languages::ab__am.addon.table_head.note"
+msgid "Note"
+msgstr "Примітка"
+
+msgctxt "Languages::ab__am.addon.new_version_is_available"
+msgid "v[ver] from [date]"
+msgstr "v[ver] від [date]"
+
+msgctxt "Languages::ab__am.addon.new_version_is_available.tooltip"
+msgid "New version v[ver] is available from [date]"
+msgstr "Доступна нова версія v[ver] від [date]"
+
+msgctxt "Languages::ab__am.addon.changelog"
+msgid "List of changes"
+msgstr "Список змін"
+
+msgctxt "Languages::ab__am.addon.doc"
+msgid "Documentation"
+msgstr "Документація"
+
+msgctxt "Languages::ab__am.addon.version_info"
+msgid "<b>Release date</b>: [date]<br> <b>Compatibility</b>:<br> CS-Cart: [ultimate]<br> Multivendor: [multivendor]"
+msgstr "<b>Дата релізу</b>: [date]<br>"
+"<b>Сумісність</b>:<br>"
+"CS-Cart: [ultimate]<br>"
+"Multivendor: [multivendor]"
+
+msgctxt "Languages::ab__am.submit.install.text"
+msgid "Install version v[ver]"
+msgstr "Встановити v[ver]"
+
+msgctxt "Languages::ab__am.submit.update.text"
+msgid "Update to version v[ver]"
+msgstr "Оновити до v[ver]"
+
+msgctxt "Languages::ab__am.submit.update.tooltip"
+msgid ""
+msgstr "Якщо оновлення модулю недоступні через Центр оновлень CS-Cart, Вам необхідно Видалити модуль."
+
+msgctxt "Languages::ab__am.submit.tooltip"
+msgid "Keep in mind that before installing/updating all files of this add-on will be deleted, including your changes in this add-on. If you have any files - be sure to save them. [update_info]"
+msgstr "Майте на увазі, що перед установкою будуть видалені усі файли цього модулю. В тому числі, будуть видалені і внесені Вами зміни в цей модуль, якщо вони є – обов'язково збережіть їх. [update_info]"
+
+msgctxt "Languages::ab__am.submit.tooltip.update_info"
+msgid "Be sure to remember add-on settings to restore them after the update if they are"
+msgstr "Обов'язково запам'ятайте налаштування модуля для їх відновлення після оновлення, якщо вони є"
+
+msgctxt "Languages::ab__am.addon.settings"
+msgid "Add-on settings"
+msgstr "Налаштування модулю"
+
+msgctxt "Languages::ab__am.addon.subscription_updates"
+msgid "Updates are available until [date]"
+msgstr "Оновлення доступні до [date]"
+
+msgctxt "Languages::ab__am.addon.button_buy_updates.text"
+msgid "Renew your subscription to the add-on"
+msgstr "Продовжити підписку"
+
+msgctxt "Languages::ab__am.addon.button_buy_updates.tooltip"
+msgid "Renew the subscription to get the latest updates"
+msgstr "Продовжіть підписку для отримання актуальних версій модуля"
+
+msgctxt "Languages::ab__am.addon.msg.available_version_is_installed"
+msgid "The latest available version of the add-on is installed"
+msgstr "Установлена остання доступна версія модуля"
+
+msgctxt "Languages::ab__am.addon.subscription.expired"
+msgid "Subscription expired on [date]. Renew subscription to get actual add-on versions"
+msgstr "Підписка закінчилась [date]. Продовжіть підписку для отримання актуальних версій модуля"
+
+msgctxt "Languages::ab__am.addon.subscription.active"
+msgid "Subscription is active until [date]"
+msgstr "Підписка активна до [date]"
+
+msgctxt "Languages::ab__am.addon.msg.final_version_is_installed"
+msgid "The Actual version of the add-on is installed"
+msgstr "Установлена фінальна версія модуля"
+
+msgctxt "Languages::ab__am.addon.msg.not_available"
+msgid "The add-on is not available for your store!"
+msgstr "Модуль недоступний для Вашої версії магазину!"
+
+msgctxt "Languages::ab__am.addon.msg.expired_subscription"
+msgid "Only v[ver] is available to your store. Renew the subscription to get the actual version of the add-on"
+msgstr "Вам доступна лише версія v[ver]. Продовжіть підписку для отримання актуальної версії модуля"
+
+msgctxt "Languages::ab__am.addon.button_download_am.text"
+msgid "Download"
+msgstr "Завантажити"
+
+msgctxt "Languages::ab__am.addon.button_download_am.note"
+msgid "<p>AB: Add-ons manager is necessary for the proper operation of our solutions. It organizes your add-ons and groups them by sets. Unobtrusively notifying you about new available updates of the add-on, and gives the opportunity to update them in one click. Also, you can easily extend the subscription to our solutions and get the most current version of the add-on. We constantly update add-ons to make them as useful to you, as possible. <p>Please note, that in order to install and/or update the add-ons, you must have the latest version of AB: Add-ons Manager v[ver]. You will be informed about the release of the new version of the add-on and a link will be provided for downloading add-on archive.</p> <hr> <p></b>How to update AB: Add-ons Manager to v[ver]?</b></p> <ol> <li>When a notification appears about the availability of the new version of AB: Add-ons Manager, download the archive;</li> <li>Close the storefront. (To do this go to Settings → General → Close storefront - set the checkbox and click on the [Save] button, close for just 2 minutes);</li> <li>Delete AB: Add-ons Manager (To do this, go to Add-ons → Manage Add-ons → AB: Add-ons Manager: Delete);</li> <li>Install archive of AB: Add-ons Manager from step 1 (To do this, on the Add-ons → Manage add-ons → button [+]: select the previously downloaded archive from step 1);</li> <li>Clear the cache (Go to the menu item Administration → Storage → Clear Cache);</li> <li>Open the storefront. (To do this, go to Settings → General → Close storefront - uncheck the checkbox and click the [Save] button);</li> </ol>"
+msgstr "<p>AB: Менеджер модулів потрібен для правильної роботи наших рішень. "
+"Він упорядковує Ваші модулі і групує їх по пакетам. "
+"Ненав'язливо сповіщаючи Вам про нові доступні оновлення модуля і дає можливість оновити їх одним натисканням. "
+"Також Ви легко можете продовжити підписку на наші рішення і отримати найактуальнішу версію модуля. Ми постійно оновлюємо модулі, щоб зробити їх максимально корисними для Вас. </p>"
+"<p>Зверніть увагу, для установки і/або оновлення модулів необхідно, щоб у Вас була актуальна версія AB: Менеджера модулів версії v[ver]. Ви будете проінформовані про вихід нової версії модуля і буде зазначене посилання для завантаження архіву модуля.</p>"
+"<hr>"
+"<p><b>Як оновити AB: Менеджер модулів до версії v[ver]?</b></p> "
+"<ol>"
+"<li>При появі сповіщення про доступність нової версії АВ: Менеджер модулів завантажте архів;</li>"
+"<li>Закрийте вітрину магазину. (Для цього перейдіть до Налаштувань → Загальні → Закрити вітрину - установіть чекбокс і натисніть кнопку [Зберегти], зачиняємо лише на 2 хвилини);</li>"
+"<li>Видаліть AB: Менеджер модулів (Для цього перейдіть в Модулі → Керування модулями → AB: Менеджер модулів → Видалити);</li>"
+"<li>Встановіть архів АВ: Менеджер модулів з п.1 (Для цього перейдіть в Модулі → Керування модулями → кнопка [+] → оберіть раніше завантажений архів з п.1);</li>"
+"<li>Очистіть кеш сайту (Для цього перейдіть в пункт меню Адміністрування → Сховище даних → Очистити кеш);</li>"
+"<li>Відкрийте вітрину магазину. (Для цього перейдіть до Налаштувань → Загальні → Закрити вітрину - скиньте чекбокс і натисніть кнопку [Зберегти]);</li>"
+"</ol>"
+
+msgctxt "Languages::ab__am.addon.update_instruction"
+msgid "Procedure of updating"
+msgstr "Процедура оновлення"
+
+msgctxt "Languages::ab__am.tools.change_licenses"
+msgid "Replace add-on licenses (code)"
+msgstr "Замінити ліцензії модулів (code)"
+
+msgctxt "Languages::ab__am.tools.change_licenses.btn"
+msgid "Replace"
+msgstr "Замінити"
+
+msgctxt "Languages::ab__am.tools.fix_licenses"
+msgid "Fix add-on licenses (version, code, build)"
+msgstr "Виправити ліцензії модулів (version, code, build)"
+
+msgctxt "Languages::ab__am.tools.fix_licenses.btn"
+msgid "Fix"
+msgstr "Виправити"
+
+msgctxt "Languages::ab__am.tools.fix_licenses.done"
+msgid "Fixed!"
+msgstr "Виправлено!"
+
+msgctxt "Languages::ab__am.tools.fix_licenses.empty"
+msgid "No fixing required!"
+msgstr "Виправлення не потрібне!"
+
+msgctxt "Languages::ab__am.available_sets"
+msgid "List of available AB: Sets"
+msgstr "Список доступних АВ: Пакетів"
+
+msgctxt "Languages::ab__am.set.set"
+msgid "Set name"
+msgstr "Назва пакету"
+
+msgctxt "Languages::ab__am.set.available_updates"
+msgid "New versions are available: [n]"
+msgstr "Доступні нові версії: [n]"
+
+msgctxt "Languages::ab__am.set.subscription_updates"
+msgid "Updates are available until [date]"
+msgstr "Оновлення доступні до [date]"
+
+msgctxt "Languages::ab__am.set.button_buy_updates.text"
+msgid "Renew your subscription to the set"
+msgstr "Продовжити підписку"
+
+msgctxt "Languages::ab__am.set.button_buy_updates.tooltip"
+msgid "Update subscription expired [date]. Renew the subscription for the latest updates"
+msgstr "Підписка на оновлення закінчилась [date]. Продовжіть підписку для отримання останніх оновлень"
+
+msgctxt "Languages::privilege_sections.ab__addons"
+msgid "AB: Add-ons"
+msgstr "AB: Модулі"
+
+msgctxt "Languages::privilege_groups.ab__addons_manager"
+msgid "AB: Add-ons Manager"
+msgstr "AB: Менеджер модулів"
+
+msgctxt "Languages::ab__am.subscription"
+msgid "Subscribe to our channels to be the first<br>to know about new releases and promotions!"
+msgstr "Підпишіться на наші канали, щоб<br>першими дізнаватися про нові релізи та акції!"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.youtube.href"
+msgid "https://www.youtube.com/channel/UCTkiV2DqPqQaLOyWZzBFjaA"
+msgstr "https://www.youtube.com/channel/UC5GC44y5KKLpKB4fw82iItg"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.youtube.title"
+msgid "Youtube"
+msgstr "Youtube"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.telegram.href"
+msgid "https://t.me/alexbranding_en"
+msgstr "https://t.me/alexbranding"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.telegram.title"
+msgid "Telegram"
+msgstr "Telegram"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.facebook.href"
+msgid "https://fb.me/AlexBrandingEn"
+msgstr "https://fb.me/AlexBrandingCom/"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.facebook.title"
+msgid "Facebook"
+msgstr "Facebook"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.twitter.href"
+msgid "https://twitter.com/alexbranding_en"
+msgstr "https://twitter.com/AlexbrandingR"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.twitter.title"
+msgid "Twitter"
+msgstr "Twitter"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.instagram.href"
+msgid "https://www.instagram.com/alexbrandingteam/"
+msgstr "https://www.instagram.com/alexbrandingteam/"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.instagram.title"
+msgid "Instagram"
+msgstr "Instagram"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.whatsapp.href"
+msgid "https://chat.whatsapp.com/GzW9eZjXH6YL2b0d9gitvk"
+msgstr "https://chat.whatsapp.com/HwYSITC8Qq32mnUYA659q0"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.whatsapp.title"
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.email.href"
+msgid "https://cs-cart.alexbranding.com/en/subscription-en.html"
+msgstr "https://cs-cart.alexbranding.com/ru/subscription.html"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.email.title"
+msgid "Email"
+msgstr "Email"
+
+msgctxt "SettingsOptions::ab__addons_manager::show_subscription"
+msgid "Show Alexbranding news channels"
+msgstr "Показувати інформаційні канали Alexbranding"
+
+msgctxt "SettingsTooltips::ab__addons_manager::show_subscription"
+msgid "On the page \"AB: List of available sets/add-ons\" in the AB-menu will be displayed links to our news channels"
+msgstr "На сторінці \"AB: Список доступних пакетів/модулів\" в AB-меню будуть відображатись посилання на наші інформаційні канали"
+
+#. Alexbranding. Do not modify this file manually!

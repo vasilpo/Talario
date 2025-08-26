@@ -1,0 +1,465 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+
+.vendor-store {
+	.ty-mainbox-body {
+		.ty-vendor-communication__post-write {
+			display: none;
+		}
+	}
+	.ty-mainbox-title__right {
+		color: var(--color-font-lighten);
+	}
+	@media (max-width: 768px) {
+		.container-fluid-row > .row-fluid {
+			display: flex;
+			flex-direction: column-reverse;
+		}
+		.ty-dropdown-box.ut2-filters {
+		    margin-top: 0;
+		    margin-bottom: 20px;
+		}	
+		.top-sticky-panel__filters .ty-dropdown-box.ut2-filters {
+    		margin-bottom: 0;
+		}
+	}
+}
+
+.ty-companies {
+	padding: var(--gap-s) 0;
+	border-bottom: 0;
+	border-top: 1px solid @base;
+	
+	&__info {
+		line-height: 145%;
+		
+		a.ty-company-title {
+			line-height: normal;
+			font-size: 18px;
+			padding: 0;
+			margin-bottom: var(--gap-sm);
+			.ajx-link();
+		}
+		a:not(.ty-company-title) {
+			text-decoration: underline;
+		}
+	}
+	&__img {
+		display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    width: 200px;
+	}
+	.ty-company-image {
+		max-height: 100px;
+		width: auto;
+	}
+}
+
+.ty-company-detail {
+
+	&__info-list {
+		line-height: 145%;
+	}
+
+	&__info-title {
+		padding-bottom: var(--gap-sm);
+	}
+
+	.ty-mainbox-title:empty {
+		margin: 0;
+	}
+
+	&__logo {
+		margin-top: 0;
+		margin-right: var(--gap-l);
+		margin-bottom: var(--gap-s);
+		margin-left: 0;
+		width: auto;
+		height: auto;
+		border: 0;
+		
+		img {
+    		width: auto;
+			max-width: 300px;
+			max-height: 200px;
+		}
+	}
+}
+
+.vendor-info-blocks {
+	border: 1px solid @base;
+	padding: var(--gap-s) !important;
+	margin-bottom: var(--gap-s);
+	border-radius: var(--border-radius-box);
+}
+.ty-logo-container-vendor {
+	margin-bottom: var(--gap-sm);
+	
+	&__image {
+		max-height: 100px;
+		width: auto;		
+	}
+}
+
+.ty-vendor-information {
+    margin-top: var(--gap-sm);
+
+    .ut2-vendor-name a {
+	    display: inline-block;
+	    font-size: 18px;
+	    margin-bottom: var(--gap-xxs);
+		border-bottom: 1px solid;
+    }
+	.vendor_communication-btn {
+		margin-top: var(--gap-xs);
+		
+		.ty-vendor-communication__post-write {
+			display: flex;
+			align-items: center;
+			gap: var(--gap-xxs);
+
+			.ut2-icon {
+				position: relative;
+			    font-size: 20px;
+				top: 2px;
+			}
+		}
+	}
+	h1, h2, h3, h4, h5, h6 {
+		font-size: @body_font_size;
+		margin-bottom: 0;
+	}
+}
+
+.ut2-vendor-block {
+	display: flex;
+    padding: var(--gap-sm);
+    border: 1px solid @base;
+	border-radius: var(--border-radius-box);
+    
+	&__logo {
+		min-width: 50px;
+		margin-right: var(--gap-sm);
+		
+		.ty-no-image {
+			display: none;
+		}
+	}
+	&__content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 80%;
+        gap: var(--gap-xs);
+	}
+	&__name {
+		display: block;
+		font-size: 14px;
+		
+		label {
+			display: inline;
+			padding-right: 5px;
+			font-weight: bold;
+		}
+		a {
+			.ajx-link();
+		}
+	}
+	&__info {
+		color: var(--color-font-lighten);
+		min-width: 100%;
+		
+		+ .ut2-vendor-block__contacts {
+    		width: 100%;
+		}
+	}
+	&__contacts {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--gap-xs);
+	}
+	&__phone {
+		display: flex;
+		align-items: center;
+	    white-space: nowrap;
+		color: var(--color-font-lighten);
+		gap: var(--gap-xxs);
+		
+		i {
+			font-size: 20px;
+		}
+	}
+}
+
+.ty-sellers-list {
+    overflow-y: hidden;
+    overflow-x: auto;
+    
+    .ty-control-group {
+        margin: 0;
+    }
+
+    &__content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        > div {
+            min-width: 100px;
+            flex: 1 0 auto;
+            
+            &:not(.ty-sellers-list__controls) {
+                max-width: calc(~'33.3333% - 'var(--gap-s));
+            }
+        }
+    }
+	&__image {
+		width: 150px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		
+		img {
+    		width: auto;
+			max-height: 60px;	
+		}
+	}
+	&__controls {
+		margin: 0;
+	}
+	&__price {
+    	margin: 0;
+		margin-right: var(--gap-s);
+    	display: flex;
+        flex-wrap: wrap;
+	}
+	&__price-link {
+		display: flex;
+		align-items: center;
+		margin: 0;
+	}
+	&__buttons {
+    	display: flex;
+    	flex-wrap: nowrap;
+    	flex: 0 0 auto;
+
+		.ty-btn {
+			margin-bottom: 0;
+		
+    		&.ut2-add-to-wish {
+        		margin-left: var(--gap-xs);
+        		flex-wrap: wrap;
+    			padding: 0 7px;
+    			
+    			span {
+    				color: var(--color-font-lighten);
+    			}
+    			
+    			&:hover span {
+        			color: @links;
+    			}
+    		}
+		}
+		.ty-qty-out-of-stock {
+			padding: 0 var(--gap-sm) 0 0;
+			position: relative;
+			top: -5px;
+		}
+	}
+	.ty-company-title {
+        display: inline;	
+	}
+	.stock-wrap {
+    	margin-right: var(--gap-s);
+	}
+
+	@media (max-width: 950px) {
+    	&__content > div {
+        	&.ty-sellers-list__image {
+                max-width: 100px;
+            }
+    	}
+	}
+	@media (min-width: 768px) {
+    	&__item {
+    		padding: var(--gap-sm) 0;
+    	}
+    	&__content {
+            align-items: center;
+            
+            > div {
+               min-width: 100px; 
+            }
+    	}
+	}
+	@media (max-width: 767px) {
+    	&__content > div {
+            margin: 0;
+            min-width: inherit;
+    		display: flex;
+    		align-items: center;
+            
+            &:not(:last-child) {
+                padding-right: var(--gap-s);
+            }
+    	}
+    	&__controls {
+    		margin: var(--gap-xs) 0 0;
+    		min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--gap-xs);
+    	}
+    	&__price {
+        	flex: 1 0 auto;
+    	}
+	}
+	@media (max-width: 576px) {
+    	&__price {
+        	justify-content: space-between;
+    	}
+    	&__buttons {
+        	min-width: inherit;
+    	}
+    	&__controls {
+    		margin-top: var(--gap-xs);
+    		
+    		.ty-btn {
+        		padding: 0;
+        		margin-right: 0;
+
+        		bdi {
+            		display: none;
+    		    }
+    		}
+    	}
+	}
+}
+
+.ty-grid-vendors {
+	.ty-company-image-wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		
+		.ty-company-image {
+			object-fit: contain;
+			max-height: 100px;
+		}
+	}
+	.grid-list__rating {
+		display: flex;
+		justify-content: center;
+		margin-top: var(--gap-xs);
+		
+		.ty-stars {
+		    margin-bottom: 0;
+		}
+		.ty-discussion__review-quantity {
+			color: @links;
+		}
+	}
+	.ty-discussion__review-quantity {
+		line-height: 18px;
+		color: var(--color-font-lighten);
+	}
+}
+
+
+.ut2-vendors-location {
+	position: relative;
+
+	.ut2-filters {
+		background: var(--fill-gray);
+		padding: 0;
+
+		.ty-product-filters__search {
+		    padding: 0;
+
+			.ty-vendors-locations-use-my-location {
+				font-size: 16px;
+				color: @primary_button;
+				right: 10px;
+				top: 50%;
+				margin-top: -8px;
+			}
+		}
+	}
+	.ty-product-filters__tools {
+        padding: 0 !important;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        
+        @media (max-width: 767px) {
+            position: inherit;
+        }
+	}
+}
+
+.vendor-categories {
+
+    .ut2-menu__inbox {
+        margin: calc(var(--gap-s) * -1);
+    
+        .ty-menu__items {
+            padding: 0;
+        }
+    }
+	.ut2-h__menu .ty-menu__item {
+		.ty-menu__item-link.childs > span:after {
+			color: @menu_links;
+		}
+		&:hover .ty-menu__item-link.childs > span:after {
+			color: contrast(@abt__ut2_containers_header_use_color_menu_on_hover, @font, @menu_links);
+		}
+	}
+}
+
+@media (max-width: 767px) {
+    .top-sticky-panel__filters div[class*="span"] > div {
+        width: calc(~'50% - 'var(--gap-xs));
+        
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+    .ut2-filters .ty-dropdown-box__title a, .ut2-categories .ty-dropdown-box__title a {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        overflow: hidden;  
+    }
+}
+
+.ab-checkout-vendor {
+    font-size: 12px;
+    margin-top: 5px;
+    color: var(--color-font-lighten);
+
+    b {
+        color: @checkout_selected_control_border;
+        margin-left: 3px;
+    }
+}

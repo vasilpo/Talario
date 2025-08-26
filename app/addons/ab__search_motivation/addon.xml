@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+<id>ab__search_motivation</id>
+<version>1.11.0</version>
+<priority>2016</priority>
+<position>0</position>
+<status>active</status>
+<default_language>en</default_language>
+<ab>
+<hash>dbd786163b98932ac4debdf01ea3e7e1646019e4, 2020-12-03 15:15:04</hash>
+<compatibility>
+<dependencies>
+<ab__addons_manager><min>2.3.5</min></ab__addons_manager>
+</dependencies>
+</compatibility>
+</ab>
+<authors>
+<author>
+<name>AlexBranding</name>
+<email>info@alexbranding.com</email>
+<url>https://alexbranding.com</url>
+</author>
+</authors>
+<supplier>AlexBranding</supplier>
+<supplier_link>https://cs-cart.alexbranding.com</supplier_link>
+<supplier_page>ab__am.addons</supplier_page>
+<compatibility>
+<dependencies>ab__addons_manager</dependencies>
+<core_version>
+<min>4.9.3</min>
+</core_version>
+<core_edition>ULTIMATE,MULTIVENDOR</core_edition>
+<!-- Minimal/Maximal PHP version. Min or Max parameter can be optional -->
+</compatibility>
+<settings edition_type="ROOT,VENDOR,STOREFRONT" layout="separate">
+<sections>
+<section id="settings">
+<items>
+<item id="show_on_homepage">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="show_on_category_page">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="show_on_product_page">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="show_on_cart_page">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="show_on_checkout_page">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="add_default">
+<type>checkbox</type>
+<default_value>N</default_value>
+</item>
+<item id="shuffle">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="delay">
+<type>selectbox</type>
+<default_value>0</default_value>
+<variants>
+<item id="0">0</item>
+<item id="1">1</item>
+<item id="2">2</item>
+<item id="3">3</item>
+<item id="4">4</item>
+<item id="5">5</item>
+<item id="6">6</item>
+<item id="7">7</item>
+<item id="8">8</item>
+<item id="9">9</item>
+<item id="10">10</item>
+</variants>
+</item>
+<item id="code"><type>hidden</type><default_value>ABA-09P90KyMLedoYJWjxjfpL</default_value></item>
+<item id="build"><type>hidden</type><default_value>741</default_value></item>
+</items>
+</section>
+</sections>
+</settings>
+<queries>
+<item for="install">
+CREATE TABLE IF NOT EXISTS `?:ab__search_motivation` (
+`category_id` mediumint(8) unsigned NOT NULL default 0,
+`company_id` int(11) unsigned NOT NULL default 0,
+`lang_code` char(2) NOT NULL,
+`search_phrases` mediumtext NOT NULL default '',
+PRIMARY KEY (`category_id`, `company_id`, `lang_code`)
+) ENGINE=MyISAM DEFAULT CHARSET=UTF8;
+</item>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('ab__sm_manage_data', 'Y', 'ab__addons', 'ab__search_motivation', 'N')</item>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('ab__sm_view_data', 'Y', 'ab__addons', 'ab__search_motivation', 'Y')</item>
+<item for="uninstall">DELETE FROM ?:privileges WHERE section_id = 'ab__search_motivation' OR group_id = 'ab__search_motivation'</item>
+</queries>
+</addon>

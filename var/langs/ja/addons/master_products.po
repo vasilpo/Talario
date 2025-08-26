@@ -1,0 +1,182 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Japanese\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /release-4.18.3/addons/master_products.po\n"
+"X-Crowdin-File-ID: 9346\n"
+"PO-Revision-Date: 2024-10-07 13:31\n"
+
+msgctxt "Addons::name::master_products"
+msgid "Common Products for Vendors"
+msgstr "相乗り出品"
+
+msgctxt "Addons::description::master_products"
+msgid "Allows you to create a single product base: vendors choose which of the existing products they sell."
+msgstr "モール管理者が指定した商品について、価格や在庫数を指定するだけで各ストアが販売できる機能を追加します"
+
+msgctxt "SettingsSections::master_products::general"
+msgid "General"
+msgstr "基本設定"
+
+msgctxt "SettingsOptions::master_products::allow_vendors_to_create_products"
+msgid "Allow vendors to create products"
+msgstr "各ストアによる商品追加を許可"
+
+msgctxt "SettingsTooltips::master_products::allow_vendors_to_create_products"
+msgid "If you don't allow it, vendors will only be able to sell the products that you added to the marketplace."
+msgstr "許可しない場合、ストアは運営者がモールに登録した商品のみ販売することができます"
+
+msgctxt "SettingsOptions::master_products::allow_buy_default_common_product"
+msgid "Buy a default common product"
+msgstr "最安値の商品を購入"
+
+msgctxt "SettingsTooltips::master_products::allow_buy_default_common_product"
+msgid "The \"Add to cart\" button will appear next to the product (not just its offers) and select the best offer available."
+msgstr "「カートに追加」ボタンが商品の直下にも表示され、最安値の商品をカートに追加します。"
+
+msgctxt "Languages::master_products.actions.master_products"
+msgid "Common products"
+msgstr "各ストアが販売可能な商品"
+
+msgctxt "Languages::master_products.actions.products_add"
+msgid "Create new product"
+msgstr "商品の追加"
+
+msgctxt "Languages::master_products.vendor_products_tab_name"
+msgid "Sellers of this product"
+msgstr "この商品の販売者"
+
+msgctxt "Languages::master_products.vendor_products_filling"
+msgid "Sellers of this product"
+msgstr "この商品の販売者"
+
+msgctxt "Languages::master_products.vendor_products_block_name"
+msgid "Sellers of a product"
+msgstr "この商品の販売者"
+
+msgctxt "Languages::master_products.products_that_vendors_can_sell"
+msgid "Products that vendors can sell"
+msgstr "各ストアが販売可能な商品"
+
+msgctxt "Languages::master_products.products_being_sold"
+msgid "Products being sold"
+msgstr "販売中の商品"
+
+msgctxt "Languages::master_products.all_products"
+msgid "All products"
+msgstr "すべての商品"
+
+msgctxt "Languages::master_products.add_product_from_catalog"
+msgid "Add product from catalog"
+msgstr "販売可能な商品から追加"
+
+msgctxt "Languages::master_products.create_new_product"
+msgid "Create new product"
+msgstr "商品の追加"
+
+msgctxt "Languages::master_products.sell_this"
+msgid "Sell this"
+msgstr "販売する"
+
+msgctxt "Languages::master_products.for_sale"
+msgid "For sale"
+msgstr "販売中"
+
+msgctxt "Languages::master_products.sell_selected"
+msgid "Sell selected"
+msgstr "選択したものを販売する"
+
+msgctxt "Languages::master_products.products_were_added_to_your_products"
+msgid "[n] product was added to your products|[n] products were added to your products"
+msgstr "[n]個の商品が追加されました"
+
+msgctxt "Languages::master_products.master_product"
+msgid "Common product"
+msgstr "相乗り出品可能商品"
+
+msgctxt "Languages::master_products.all_vendors_master_product"
+msgid "All vendors (common product)"
+msgstr "全てのストア（相乗り出品対象商品）"
+
+msgctxt "Languages::master_products.exported_products"
+msgid "Products to export"
+msgstr "エクスポートする商品"
+
+msgctxt "Languages::master_products.price_from"
+msgid "From [formatted_price]"
+msgstr "[formatted_price] から"
+
+msgctxt "Languages::master_products.product_type.offer"
+msgid "Vendor offer"
+msgstr "出品者オファー"
+
+msgctxt "Languages::master_products.view_product_offers"
+msgid "See all offers"
+msgstr "すべてのオファーを見る"
+
+msgctxt "Languages::master_products.product_type.offer_variation"
+msgid "Vendor variation offer"
+msgstr "出品者バリエーションオファー"
+
+msgctxt "Languages::master_products.resave_after_show_out_of_stock_products_changed"
+msgid "You've changed the <b>Show out of stock products</b> setting. Please export <a href=\"[url]\">all your catalog items</a> (use \"Export found products\" in the gear button) and reimport them. This will ensure that the displayed price of common products will always remain correct until you change the setting again."
+msgstr "<b>在庫切れ商品を表示</b>する設定を変更しました。<a href=\"[url]\">すべてのカタログアイテム</a>をエクスポートして（歯車ボタンの[見つかった商品をエクスポート]を使用）、再インポートしてください。 これにより、設定を再度変更するまで、一般的な商品の表示価格が常に正しいままになります。"
+
+msgctxt "Languages::master_products.save_up_to"
+msgid "Save up to"
+msgstr "最大割引"
+
+msgctxt "Languages::master_products.buy_together_info_message_for_admin"
+msgid "Only vendors can add product combinations. To add a combination for a common product, first log in as one of the vendors that sell it."
+msgstr "モール管理者は相乗り出品対象商品のコンビネーションを登録することはできません。ストア管理者としてログインした後に登録してください。"
+
+msgctxt "Languages::master_products.buy_together_info_message_for_vendor"
+msgid "To add a combination for a common product, <a class=\"cm-post\" href=\"[href]\">start selling it</a> first."
+msgstr "相乗り出品対象商品のコンビネーション登録には、まず <a class=\"cm-post\" href=\"[href]\">相乗り出品してください</a>"
+
+msgctxt "Languages::master_products.changing_owner_is_not_available"
+msgid "Couldn't change the owner of the product because some vendors still sell it. Please delete <a href=\"[vendors_offers_link]\" target=\"_blank\">vendors' offers</a> before changing the owner of this product."
+msgstr "一部のストアがまだ販売しているため、商品のストアを変更できませんでした。この商品のストアを変更する前に<a href=\"[vendors_offers_link]\" target=\"_blank\">販売中のストア</a>を削除してください。"
+
+msgctxt "Languages::master_products.product_bundles_info"
+msgid "Only vendors can add product bundles. To add a bundle for a common product, first log in as one of the vendors that sell it."
+msgstr "バンドル販売はストアだけが追加できます。相乗り出品対象商品のバンドル販売を追加するには、まずその商品を販売しているストアでログインしてください。"
+
+msgctxt "Languages::master_products.and_other_offers"
+msgid "and other offers"
+msgstr "他のストアの商品"
+
+msgctxt "Languages::master_products.include_offers_from_multiple_sellers"
+msgid "To add the required number of items to cart, we had to include offers from multiple sellers. Some of them may come at different prices."
+msgstr "必要な数の商品をカートに入れるには、複数のストアからの商品を選択する必要があります。"
+
+msgctxt "Languages::master_products.api_not_master_product"
+msgid "Product was found but it is not common product. Please specify common product ID."
+msgstr "商品は見つかりましたが、相乗り出品対象商品ではありません。相乗り出品対象商品の商品IDを指定してください。"
+
+msgctxt "Languages::master_products.api_not_vendor_product"
+msgid "Product was found but it is not vendor's product. Please specify vendor's product ID."
+msgstr "商品は見つかりましたが、ストアの商品ではありません。ストアの商品IDを指定してください。"
+
+msgctxt "Languages::master_products.api_master_product_must_be_specified"
+msgid "Common product ID must be specified for vendor's products search."
+msgstr "ストアの商品検索には、相乗り出品対象商品の商品IDを指定する必要があります。"
+
+msgctxt "Languages::master_products.not_include_offers_from_multiple_sellers"
+msgid "The best offer is already in your cart. But you can individually add <a href=\"[url]\">offers from other sellers</a>."
+msgstr "商品がすでにカートに入っていますが、<a href=\"[url]\">他のストアの商品を</a>を追加することもできます。"
+
+msgctxt "Languages::master_products.recalculate_master_products_stocks.notification.success"
+msgid "The quantities of common products have been recalculated successfully."
+msgstr "「相乗り出品対象商品」の数量が再計算されました。"
+
+msgctxt "Languages::master_products.recalculate_master_products_stocks.notification.no_master_products_found"
+msgid "Couldn't find common products with quantities depending on warehouses. It means that the quantities of common products should be correct already."
+msgstr "該当の「相乗り出品対象商品」が見つかりませんでした。"
+

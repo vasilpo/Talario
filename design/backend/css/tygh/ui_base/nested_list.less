@@ -1,0 +1,112 @@
+// nested list
+.nested-list {
+    position: relative;
+    width: 100%;
+    bottom: 110px;
+    overflow: auto;
+    top: 10px !important;
+
+    ul {
+        margin: 0px;
+    }
+    li {
+        list-style-type: none;
+        a {
+            display: block;
+            padding: 3px 15px 3px 0px;
+            white-space: nowrap;
+            &:hover {
+                text-decoration: none;
+            }
+            [class^="icon-"], [class*=" icon-"] {
+                opacity: 0.3;
+            }
+        }
+        &>ul {
+            padding-left: 15px;
+        }
+    }
+    li.active > a {
+        position: relative;
+        padding: 3px 15px 3px 0px;
+        color: var(--cs-main-color);
+        .item {
+            position: relative;
+            z-index: 20;
+            display: block;
+            margin-top: 2px;
+        }
+        .overlay {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--cs-dropdown-link-background-active);
+            box-shadow: inset 1px 0 0 var(--cs-shadow2-color), inset -1px 0 0 var(--cs-shadow2-color), inset 0 1px 0 var(--cs-shadow2-color), inset 0 -1px 0 var(--cs-shadow2-color);
+        }
+    }
+}
+.nested-list.nested-list-folders a {
+    color: var(--cs-text-color);
+    font-weight: bold;
+}
+
+.te-template-image img {
+    max-width: 960px;
+}
+
+.nested-tree {
+    margin: 0px -14px;
+    padding-left: 16px;
+    min-width: 210px;
+    overflow-x: hidden;
+    ul {
+        display: table;
+        width: 100%;
+        margin: 0px;
+        li {
+            margin: 0px;
+            list-style-type: none;
+
+            strong.row-status {
+                color: var(--cs-text-muted-color);
+                cursor: default;
+            }
+
+            a {
+                padding-left: 16px;
+                &:hover {
+                    text-decoration: none;
+                }
+                display: inline-block;
+                padding: 3px 15px 3px 0px;
+                color: var(--cs-text-color);
+                font-weight: bold;
+                white-space: normal;
+            }
+
+            .link {
+                white-space: nowrap;
+
+                span {
+                    vertical-align: top;
+                    margin-top: 6px;
+                }
+            }
+        }
+        .active {
+            .link {
+                padding-left: 16px;
+            }
+            margin-left: -16px;
+            background: var(--cs-dropdown-link-background-active);
+            box-shadow: inset 1px 0 0 var(--cs-shadow2-color), inset -1px 0 0 var(--cs-shadow2-color), inset 0 1px 0 var(--cs-shadow2-color), inset 0 -1px 0 var(--cs-shadow2-color);
+            padding-left: 16px;
+            a {
+                color: var(--cs-main-color);
+            }
+        }
+    }
+}

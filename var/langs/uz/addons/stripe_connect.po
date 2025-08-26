@@ -1,0 +1,354 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /release-4.18.3/addons/stripe_connect.po\n"
+"X-Crowdin-File-ID: 9428\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::stripe_connect"
+msgid "Stripe Connect payments"
+msgstr "Stripe Connect to'lovlari"
+
+msgctxt "Addons::description::stripe_connect"
+msgid "A Stripe solution for marketplaces. Lets you accept payments through Stripe and other means, and automatically splits the money between all sellers involved."
+msgstr ""
+
+msgctxt "SettingsSections::stripe_connect::general"
+msgid "General"
+msgstr "Umumiy"
+
+msgctxt "SettingsOptions::stripe_connect::collect_payouts"
+msgid "Commission includes"
+msgstr "Komissiya o'z ichiga oladi"
+
+msgctxt "SettingsVariants::stripe_connect::collect_payouts::N"
+msgid "Order commission"
+msgstr "Buyurtma komissiyasi"
+
+msgctxt "SettingsVariants::stripe_connect::collect_payouts::Y"
+msgid "[Deprecated] Order commission and unpaid payouts"
+msgstr ""
+
+msgctxt "Languages::stripe_connect.stripe_connect"
+msgid "Stripe Connect"
+msgstr "Stripe Connect"
+
+msgctxt "Languages::stripe_connect.stripe_connect_short"
+msgid "Stripe"
+msgstr "Stripe"
+
+msgctxt "Languages::stripe_connect.redirect_uri_admin"
+msgid "Redirect URI for administrator"
+msgstr "Administrator uchun URI-ni qayta yo'naltirish"
+
+msgctxt "Languages::stripe_connect.redirect_uris.description"
+msgid "Copy and paste this address into your Stripe Connect app settings"
+msgstr "Ushbu manzildan nusxa oling va Stripe Connect ilova sozlamalariga joylashtiring"
+
+msgctxt "Languages::stripe_connect.redirect_uri_vendor"
+msgid "Redirect URI for vendor"
+msgstr "Sotuvchi uchun URI-ni qayta yo'naltirish"
+
+msgctxt "Languages::stripe_connect.client_id"
+msgid "Client ID"
+msgstr "Mijoz identifikatori"
+
+msgctxt "Languages::stripe_connect.publishable_key"
+msgid "Publishable key"
+msgstr "Nashr qilinadigan kalit"
+
+msgctxt "Languages::stripe_connect.secret_key"
+msgid "Secret key"
+msgstr "Maxfiy kalit"
+
+msgctxt "Languages::stripe_connect.connect_with_stripe_standard"
+msgid "Connect with Stripe Standard"
+msgstr "Stripe Standard bilan ulaning"
+
+msgctxt "Languages::stripe_connect.disconnect"
+msgid "Disconnect account"
+msgstr "Hisobni uzish"
+
+msgctxt "Languages::stripe_connect.stripe_account"
+msgid "Stripe account"
+msgstr "Stripe hisobi"
+
+msgctxt "Languages::stripe_connect.connected"
+msgid "Connected"
+msgstr "Ulangan"
+
+msgctxt "Languages::stripe_connect.not_connected"
+msgid "Not connected"
+msgstr "Ulanmagan"
+
+msgctxt "Languages::stripe_connect.account_connected"
+msgid "Your Stripe account has been successfully connected to the store"
+msgstr "Stripe hisobingiz doʻkonga muvaffaqiyatli ulandi"
+
+msgctxt "Languages::stripe_connect.account_disconnected"
+msgid "Your Stripe account has been successfully disconnected from the store"
+msgstr "Stripe hisobingiz do‘kondan muvaffaqiyatli uzildi"
+
+msgctxt "Languages::stripe_connect.withdrawal_for_the_order"
+msgid "Withdrawal for the order #[order_id]"
+msgstr "Buyurtmani yechib olish #[order_id]"
+
+msgctxt "Languages::stripe_connect.refund_id"
+msgid "Refund transaction ID"
+msgstr "Pulni qaytarish tranzaksiya identifikatori"
+
+msgctxt "Languages::stripe_connect.rma.perform_refund"
+msgid "Give a refund via Stripe Connect"
+msgstr "Stripe Connect orqali pulni qaytarib bering"
+
+msgctxt "Languages::ttc_stripe_connect.rma.perform_refund"
+msgid "A refund will be made once an administrator changes the return request status"
+msgstr "Administrator qaytarish soʻrovi holatini oʻzgartirgandan soʻng toʻlov qaytariladi"
+
+msgctxt "Languages::stripe_connect.rma.refund_performed"
+msgid "The refund has been made via Stripe Connect"
+msgstr "Pulni qaytarish Stripe Connect orqali amalga oshirildi"
+
+msgctxt "Languages::stripe_connect.token"
+msgid "Credit card token"
+msgstr "Kredit karta tokeni"
+
+msgctxt "Languages::stripe_connect.own_account_cant_be_used_for_vendor"
+msgid "Your own Stripe account can't be used to connect a vendor to the store"
+msgstr "Sotuvchini doʻkonga ulash uchun shaxsiy Stripe hisobingizdan foydalanib boʻlmaydi"
+
+msgctxt "Languages::stripe_connect.rma.order_status_on_refund"
+msgid "Order status on refund"
+msgstr "To'lovni qaytarish bo'yicha buyurtma holati"
+
+msgctxt "Languages::ttc_stripe_connect.rma.order_status_on_refund"
+msgid "Determines whether or not to change the order status after a refund was performed via the RMA add-on."
+msgstr "RMA qo'shimchasi orqali to'lovni qaytarish amalga oshirilgandan keyin buyurtma holatini o'zgartirish yoki o'zgartirmaslikni aniqlaydi."
+
+msgctxt "Languages::stripe_connect.do_not_change"
+msgid "Do not change"
+msgstr "O'zgartirmang"
+
+msgctxt "Languages::stripe_connect.set_status_to"
+msgid "Set to:"
+msgstr "Sozlash:"
+
+msgctxt "Languages::stripe_connect.charge_id"
+msgid "Charge ID"
+msgstr "Zaryad identifikatori"
+
+msgctxt "Languages::stripe_connect.transfer_id"
+msgid "Transfer ID"
+msgstr "Transfer identifikatori"
+
+msgctxt "Languages::stripe_connect.payment_id"
+msgid "Payment ID"
+msgstr "Toʻlov identifikatori"
+
+msgctxt "Languages::stripe_connect.webhook_event_id"
+msgid "Webhook event ID"
+msgstr ""
+
+msgctxt "Languages::stripe_connect.enable_3d_secure"
+msgid "Enable 3-D Secure"
+msgstr "3-D Secure funksiyasini yoqing"
+
+msgctxt "Languages::stripe_connect.enable_3d_secure.description"
+msgid "<p>When 3-D Secure is <b>disabled</b>, money will go straight to the connected Stripe accounts of vendors. Commissions and payouts will be taken from vendors as <a href=\"https://stripe.com/docs/connect/direct-charges#collecting-fees\" target=\"_blank\">application fees</a>.</p><p>When 3-D Secure is <b>enabled</b>, money will first go to the marketplace owner's Stripe account. Then it will be automatically distributed between the connected Stripe accounts via transfers. Transfers require that the marketplace owner and vendors have their accounts in the same region: either all in Europe, or all in the U.S. If a vendor's account is in a different region from the marketplace owner's, the money won't be transferred to that vendor automatically.</p>"
+msgstr "<p>3-D Secure <b>o'chirilgan</b>da, pul to'g'ridan-to'g'ri provayderlarning bog'langan Stripe hisoblariga tushadi. Komissiyalar va toʻlovlar sotuvchilardan <a href=\"https://stripe.com/docs/connect/direct-charges#collecting-fees\" target=\"_blank\">ariza toʻlovlari</a> sifatida olinadi.</p ><p>3-D Secure <b>yoqilganda</b> pul birinchi navbatda bozor egasining Stripe hisobiga tushadi. Keyin u o'tkazmalar orqali ulangan Stripe hisoblari o'rtasida avtomatik ravishda taqsimlanadi. O‘tkazmalar bozor egasi va sotuvchilarning o‘z hisoblari bir hududda bo‘lishini talab qiladi: hammasi Yevropada yoki hammasi AQShda. Agar sotuvchining hisobi bozor egasinikidan boshqa mintaqada bo‘lsa, pul o‘sha sotuvchiga o‘tkazilmaydi. avtomatik.</p>"
+
+msgctxt "Languages::stripe_connect.gift_certificate_used"
+msgid "A gift certificate was used in this order. [product] doesn't know which of the vendors should get the money, and how much. Please transfer money from this order to each vendor manually."
+msgstr "Ushbu tartibda sovg'a sertifikati ishlatilgan. [product] sotuvchilardan qaysi biri va qancha pul olishi kerakligini bilmaydi. Iltimos, ushbu buyurtmadan pulni har bir sotuvchiga qo'lda o'tkazing."
+
+msgctxt "Languages::stripe_connect.payment_intent_error"
+msgid "An error occurred when creating a PaymentIntent with the payment #[payment_id]: [error]"
+msgstr "Toʻlov #[payment_id] bilan PaymentIntent yaratishda xatolik yuz berdi: [error]"
+
+msgctxt "Languages::log_type_stripe_connect"
+msgid "Stripe Connect"
+msgstr "Stripe Connect"
+
+msgctxt "Languages::log_action_sc_failure"
+msgid "Error"
+msgstr "Xato"
+
+msgctxt "Languages::log_action_sc_warning"
+msgid "Warning"
+msgstr "Ogohlantirish"
+
+msgctxt "Languages::log_action_sc_info"
+msgid "Info"
+msgstr "Ma'lumot"
+
+msgctxt "Languages::stripe_connect.log_context"
+msgid "Context"
+msgstr "Kontekst"
+
+msgctxt "Languages::stripe_connect.unexpected_payment_intent_status"
+msgid "Unexpected status \"[status]\" of PaymentIntent"
+msgstr "PaymentIntentning kutilmagan holati \"[status]\""
+
+msgctxt "Languages::stripe_connect.transfer_creating_error"
+msgid "An error occurred during the creation of a Stripe transfer: [error]"
+msgstr "Stripe uzatishni yaratishda xatolik yuz berdi: [error]"
+
+msgctxt "Languages::stripe_connect.charge_creating_error"
+msgid "An error occurred during the creation of a Stripe charge: [error]"
+msgstr "Stripe zaryadini yaratishda xatolik yuz berdi: [error]"
+
+msgctxt "Languages::stripe_connect.customer_creating_error"
+msgid "An error occurred during the creation of a Stripe customer: [error]"
+msgstr "Stripe mijozini yaratishda xatolik yuz berdi: [error]"
+
+msgctxt "Languages::stripe_connect.customer_sharing_error"
+msgid "An error occurred during the share of a Stripe customer: [error]"
+msgstr "Stripe mijozini ulashishda xatolik yuz berdi: [error]"
+
+msgctxt "Languages::stripe_connect.stripe_processor_params_missing"
+msgid "Stripe processor params missing"
+msgstr "Stripe protsessor parametrlari etishmayapti"
+
+msgctxt "Languages::stripe_connect.account_was_deauthorized"
+msgid "Account of company \"[company]\" (company ID = [company_id]) was deauthorized"
+msgstr "\"[company]\" kompaniyasining hisobi (kompaniya ID = [company_id]) avtorizatsiyadan chiqarildi"
+
+msgctxt "Languages::stripe_connect.on"
+msgid "On"
+msgstr "Yoqilgan"
+
+msgctxt "Languages::stripe_connect.delay_transfer_of_funds"
+msgid "Delay transfer of funds"
+msgstr "Pul mablag'larini o'tkazishni kechiktirish"
+
+msgctxt "Languages::stripe_connect.transfer_funds_to_vendors"
+msgid "Transfer funds to vendors"
+msgstr "Pul mablag'larini sotuvchilarga o'tkazing"
+
+msgctxt "Languages::stripe_connect.automatic_transfer"
+msgid "Automatic transfer"
+msgstr "Avtomatik uzatish"
+
+msgctxt "Languages::stripe_connect.trigger_transfer_funds.description"
+msgid "Only works when 3-D Secure is enabled. Allows you to check the orders first, instead of sending money to all vendors immediately. Transfer money to each vendor manually from the order page, or schedule automatic periodic transfers to all vendors with a cron command."
+msgstr "Faqat 3-D Secure yoqilganda ishlaydi. Barcha sotuvchilarga zudlik bilan pul jo'natish o'rniga, birinchi navbatda buyurtmalarni tekshirish imkonini beradi. Buyurtma sahifasidan har bir sotuvchiga pulni qo'lda o'tkazing yoki cron buyrug'i bilan barcha sotuvchilarga avtomatik davriy pul o'tkazmalarini rejalashtiring."
+
+msgctxt "Languages::stripe_connect.cron_text"
+msgid "The command below automatically transfers funds to vendors for all orders that are older than 14 days. Add it to cron to make sure that vendors get paid regularly. You can change the value of \"--days\" from 14 to any number."
+msgstr "Quyidagi buyruq 14 kundan ortiq bo'lgan barcha buyurtmalar uchun pul mablag'larini avtomatik ravishda sotuvchilarga o'tkazadi. Sotuvchilar muntazam ravishda maosh olishlariga ishonch hosil qilish uchun uni cron-ga qo'shing. Siz \"--kun\" qiymatini 14 dan istalgan raqamga o'zgartirishingiz mumkin."
+
+msgctxt "Languages::stripe_connect.delay_transfer_of_funds_to_vendors"
+msgid "Delay transfer of funds to vendors"
+msgstr "Pul mablag'larini sotuvchilarga o'tkazishni kechiktirish"
+
+msgctxt "Languages::stripe_connect.redirect_uris"
+msgid "Redirect URIs"
+msgstr "URI-larni qayta yo'naltirish"
+
+msgctxt "Languages::stripe_connect.funds_were_transferred_to_vendor"
+msgid "Funds were transferred to vendor."
+msgstr "Mablag'lar sotuvchiga o'tkazildi."
+
+msgctxt "Languages::stripe_connect.funds_transferred_successfully"
+msgid "Funds have been transferred successfully."
+msgstr "Mablag'lar muvaffaqiyatli o'tkazildi."
+
+msgctxt "Languages::stripe_connect.transfer_funds_error"
+msgid "Couldn't transfer funds to vendor. Please try again later or contact the payment processor."
+msgstr "Sotuvchiga pul o‘tkazib bo‘lmadi. Keyinroq qayta urinib ko‘ring yoki to‘lov protsessoriga murojaat qiling."
+
+msgctxt "Languages::stripe_connect.reason_with_error_text"
+msgid "Reason (as provided by the payment processor): [error_text]"
+msgstr "Sababi (to'lov protsessori tomonidan taqdim etilganidek): [error_text]"
+
+msgctxt "Languages::stripe_connect.allow_express_accounts"
+msgid "Allow Express accounts"
+msgstr "Ekspress hisoblarga ruxsat bering"
+
+msgctxt "Languages::stripe_connect.allow_express_accounts.description"
+msgid "Express accounts are much easier to register, and they have a simpler Stripe dashboard. But when you use Express accounts, your marketplace bears more responsibility, and there are platform fees involved. For more information, check Stripe Connect <a href=\"https://stripe.com/connect/pricing\" target=\"_blank\">pricing</a> and <a href=\"https://stripe.com/docs/connect/express-accounts\" target=\"_blank\">documentation on Express accounts</a>."
+msgstr "Ekspress hisoblarni ro'yxatdan o'tkazish ancha oson va ular oddiyroq Stripe boshqaruv paneliga ega. Ammo Express hisoblaridan foydalanganingizda, sizning bozoringiz ko'proq mas'uliyatni o'z zimmasiga oladi va platforma uchun to'lovlar mavjud. Qo'shimcha ma'lumot olish uchun Stripe Connect <a href=\"https://stripe.com/connect/pricing\" target=\"_blank\">narxlash</a> va <a href=\"https://stripe.com/docs\" ni tekshiring. /connect/express-accounts\" target=\"_blank\">ekspress hisoblar bo'yicha hujjatlar</a>."
+
+msgctxt "Languages::stripe_connect.connect_stripe_express_account"
+msgid "Connect a Stripe Express account"
+msgstr "Stripe Express hisobini ulang"
+
+msgctxt "Languages::stripe_connect.connect_stripe_standard_account"
+msgid "I already have a Stripe Standard account"
+msgstr "Menda allaqachon Stripe Standard hisobim bor"
+
+msgctxt "Languages::stripe_connect.express_dashboard"
+msgid "Stripe Dashboard"
+msgstr "Stripe boshqaruv paneli"
+
+msgctxt "Languages::stripe_connect.continue_express_registration"
+msgid "Continue Express registration"
+msgstr "Tez ro'yxatdan o'tishni davom eting"
+
+msgctxt "Languages::stripe_connect.registration_is_not_complete"
+msgid "Stripe still requires some data from you before you can accept payments. Please continue the registration and fill in the remaining fields. If you've entered all the information (even the fields that aren't required) and still see this message, check this page in a day or two. If that doesn't help, please contact marketplace administration."
+msgstr "Toʻlovlarni qabul qilishdan oldin Stripe sizdan baʼzi maʼlumotlarni talab qiladi. Roʻyxatdan oʻtishni davom ettiring va qolgan maydonlarni toʻldiring. Agar siz barcha ma'lumotlarni kiritgan bo'lsangiz (hatto shart bo'lmagan maydonlarni ham) va bu xabarni ko'rsangiz, bir yoki ikki kundan keyin ushbu sahifani tekshiring. Agar bu yordam bermasa, bozor ma'muriyatiga murojaat qiling."
+
+msgctxt "Languages::stripe_connect.registration_is_not_complete_linked"
+msgid "Stripe still requires some data from you before you can accept payments. Please <a href=\"[url]\">continue the registration and fill in the remaining fields</a>. If you've entered all the information (even the fields that aren't required) and still see this message, check this page in a day or two. If that doesn't help, please contact marketplace administration."
+msgstr "Toʻlovlarni qabul qilishdan oldin Stripe sizdan baʼzi maʼlumotlarni talab qiladi. Iltimos, <a href=\"[url]\">ro‘yxatdan o‘tishni davom ettiring va qolgan maydonlarni to‘ldiring</a>. Agar siz barcha ma'lumotlarni kiritgan bo'lsangiz (hatto shart bo'lmagan maydonlarni ham) va bu xabarni ko'rsangiz, bir yoki ikki kundan keyin ushbu sahifani tekshiring. Agar bu yordam bermasa, bozor ma'muriyatiga murojaat qiling."
+
+msgctxt "Languages::stripe_connect.account_was_rejected_and_unlinked"
+msgid "Account <b>[account_id]</b> was rejected and unlinked from the marketplace."
+msgstr "<b>[account_id]</b> hisobi rad etildi va bozordan uzildi."
+
+msgctxt "Languages::stripe_connect.check_accounts_cron"
+msgid "The command below checks the statuses of the Express accounts that your vendors create. For example, if you reject a vendor's account on the Stripe end, that's how Multi-Vendor will know about it. Add this command to cron and run it once a day for smoother checkout experience."
+msgstr "Quyidagi buyruq sizning sotuvchilaringiz yaratgan Express hisoblarining holatini tekshiradi. Misol uchun, agar siz Stripe oxirida sotuvchining hisobini rad qilsangiz, Multi-Vendor bu haqda shunday bilib oladi. Ushbu buyruqni cron-ga qo'shing va to'g'ridan-to'g'ri hisob-kitob qilish uchun uni kuniga bir marta ishlating."
+
+msgctxt "Languages::stripe_connect.check_accounts"
+msgid "Check accounts"
+msgstr "Hisoblarni tekshirish"
+
+msgctxt "Languages::stripe_connect.stripe_cookie_title"
+msgid "Stripe"
+msgstr "Stripe"
+
+msgctxt "Languages::stripe_connect.stripe_cookie_description"
+msgid "Stripe is a payment provider. It allows us to accept payments, if you choose a payment method powered by Stripe. Here is <a href=\"https://stripe.com/privacy\" target=\"_blank\">Stripe privacy policy</a>."
+msgstr "Stripe - to'lov provayderi. Agar siz Stripe tomonidan quvvatlangan toʻlov usulini tanlasangiz, u bizga toʻlovlarni qabul qilish imkonini beradi. Mana <a href=\"https://stripe.com/privacy\" target=\"_blank\">Stripe maxfiylik siyosati</a>."
+
+msgctxt "Languages::stripe_connect.create_stripe_standard_account"
+msgid "Create Stripe Standard account"
+msgstr "Stripe Standard hisobini yarating"
+
+msgctxt "Languages::stripe_connect.refunded_via_stripe"
+msgid "Money refunded via Stripe"
+msgstr ""
+
+msgctxt "Languages::stripe_connect.stripe_checkout"
+msgid "Stripe Checkout"
+msgstr "Stripe Checkout"
+
+msgctxt "Languages::stripe_connect.stripe_checkout.description"
+msgid "Take customers to the Stripe Checkout page to complete the payment. We recommend it because that page offers many more payment options than CS-Cart checkout page. You can see those payment options <a href=\"https://dashboard.stripe.com/settings/payment_methods\" target=\"_blank\">on your Stripe Dashboard</a>. Only works when 3-D Secure is <b>enabled</b>."
+msgstr "Toʻlovni yakunlash uchun mijozlarni Stripe Checkout sahifasiga olib boring. Biz buni tavsiya qilamiz, chunki bu sahifa CS-Cart to'lov sahifasidan ko'ra ko'proq to'lov imkoniyatlarini taklif qiladi. Siz ushbu toʻlov imkoniyatlarini <a href=\"https://dashboard.stripe.com/settings/payment_methods\" target=\"_blank\">Stripe boshqaruv panelida</a> koʻrishingiz mumkin. Faqat 3-D Secure <b>yoqilgan</b>da ishlaydi."
+
+msgctxt "Languages::stripe_connect.payment_intent_id"
+msgid "Payment intent ID"
+msgstr "Toʻlov maqsadi identifikatori"
+
+msgctxt "Languages::stripe_connect.session_checkout_error"
+msgid "There is no supported payment method in Stripe Checkout for the specified parameters."
+msgstr "Belgilangan parametrlar uchun Stripe Checkout-da qo'llab-quvvatlanadigan to'lov usuli mavjud emas."
+
+msgctxt "Languages::stripe_connect.order_not_found"
+msgid "Order not found."
+msgstr "Buyurtma topilmadi."
+
+msgctxt "Languages::stripe_connect.stripe_commission_included"
+msgid "Stripe commission included: [fee]"
+msgstr ""
+

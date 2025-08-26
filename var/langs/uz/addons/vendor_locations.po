@@ -1,0 +1,238 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_locations.po\n"
+"X-Crowdin-File-ID: 9446\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::vendor_locations"
+msgid "Vendor locations [Beta]"
+msgstr "Sotuvchi manzillari [Beta]"
+
+msgctxt "Addons::description::vendor_locations"
+msgid "Allows vendors to specify their addresses, so that customers can see distance to vendors and filter products and vendors by their locations."
+msgstr "Sotuvchilarga o'z manzillarini ko'rsatishga imkon beradi, shunda mijozlar sotuvchilarga masofani ko'rishlari va mahsulotlar va sotuvchilarni joylashuvi bo'yicha filtrlashlari mumkin."
+
+msgctxt "SettingsSections::vendor_locations::general"
+msgid "General"
+msgstr "Umumiy"
+
+msgctxt "SettingsSections::vendor_locations::google"
+msgid "Google"
+msgstr "Google"
+
+msgctxt "SettingsSections::vendor_locations::yandex"
+msgid "Yandex"
+msgstr "Yandex"
+
+msgctxt "SettingsOptions::vendor_locations::provider"
+msgid "Provider"
+msgstr "Provayder"
+
+msgctxt "SettingsTooltips::vendor_locations::provider"
+msgid "Different map providers store info about locations differently. If you select another map provider, your vendors may have to set their location again."
+msgstr "Turli xil xarita provayderlari joylar haqidagi ma'lumotlarni turlicha saqlaydi. Agar siz boshqa xarita provayderini tanlasangiz, sotuvchilaringiz oʻz joylashuvini yana oʻrnatishi kerak boʻlishi mumkin."
+
+msgctxt "SettingsVariants::vendor_locations::provider::google"
+msgid "Google"
+msgstr "Google"
+
+msgctxt "SettingsVariants::vendor_locations::provider::yandex"
+msgid "Yandex"
+msgstr "Yandex"
+
+msgctxt "SettingsOptions::vendor_locations::yandex_api_key"
+msgid "API key"
+msgstr "API kaliti"
+
+msgctxt "SettingsTooltips::vendor_locations::yandex_api_key"
+msgid "Get the API key and Geosuggest API key here: <a href=\"https://developer.tech.yandex.ru/\" target=\"_blank\">https://developer.tech.yandex.ru</a>"
+msgstr ""
+
+msgctxt "SettingsOptions::vendor_locations::yandex_suggest_api_key"
+msgid "Geosuggest API key"
+msgstr ""
+
+msgctxt "SettingsOptions::vendor_locations::yandex_commercial"
+msgid "I use the paid version of the API"
+msgstr "Men API ning pullik versiyasidan foydalanaman"
+
+msgctxt "SettingsOptions::vendor_locations::google_api_key"
+msgid "API key"
+msgstr "API kaliti"
+
+msgctxt "SettingsTooltips::vendor_locations::google_api_key"
+msgid "Get the API key by following the instructions here: https://developers.google.com/maps/documentation/javascript/get-api-key"
+msgstr "Bu yerdagi ko‘rsatmalarga rioya qilib API kalitini oling: https://developers.google.com/maps/documentation/javascript/get-api-key"
+
+msgctxt "SettingsOptions::vendor_locations::start_search_radius"
+msgid "Default radius in distance filter"
+msgstr "Masofa filtridagi standart radius"
+
+msgctxt "SettingsTooltips::vendor_locations::start_search_radius"
+msgid "You can manually add a product filter that allows customers to search for products within a certain distance if they enter their location. This setting determines the default search radius for that filter. If you don't create a filter, products will be shown regardless of distance, and this setting won't have any effect."
+msgstr "Mijozlarga o'z manzilini kiritgan taqdirda ma'lum masofadagi mahsulotlarni qidirishga imkon beruvchi mahsulot filtrini qo'lda qo'shishingiz mumkin. Ushbu sozlama ushbu filtr uchun standart qidiruv radiusini belgilaydi. Agar siz filtr yaratmasangiz, mahsulotlar masofadan qat'iy nazar ko'rsatiladi va bu sozlama hech qanday ta'sir qilmaydi."
+
+msgctxt "SettingsOptions::vendor_locations::max_search_radius"
+msgid "Maximum radius in distance filter"
+msgstr "Masofa filtridagi maksimal radius"
+
+msgctxt "SettingsTooltips::vendor_locations::max_search_radius"
+msgid "You can manually add a product filter that allows customers to search for products within a certain distance if they enter their location. This setting determines the maximum search radius possible for that filter. If you don't create a filter, products will be shown regardless of distance, and this setting won't have any effect."
+msgstr "Mijozlarga o'z manzilini kiritgan taqdirda ma'lum masofadagi mahsulotlarni qidirishga imkon beruvchi mahsulot filtrini qo'lda qo'shishingiz mumkin. Ushbu sozlama ushbu filtr uchun mumkin bo'lgan maksimal qidiruv radiusini belgilaydi. Agar siz filtr yaratmasangiz, mahsulotlar masofadan qat'iy nazar ko'rsatiladi va bu sozlama hech qanday ta'sir qilmaydi."
+
+msgctxt "SettingsOptions::vendor_locations::distance_unit"
+msgid "Distance measurement unit"
+msgstr "Masofani o'lchash birligi"
+
+msgctxt "SettingsVariants::vendor_locations::distance_unit::km"
+msgid "km"
+msgstr "km"
+
+msgctxt "SettingsVariants::vendor_locations::distance_unit::miles"
+msgid "mi"
+msgstr "mi"
+
+msgctxt "SettingsOptions::vendor_locations::filter_by"
+msgid "Vendors shown by default"
+msgstr "Sukut bo'yicha ko'rsatilgan sotuvchilar"
+
+msgctxt "SettingsTooltips::vendor_locations::filter_by"
+msgid "Determines what vendors are shown on the vendor list page (and on the map displayed on that page) by default."
+msgstr "Sukut bo'yicha sotuvchilar ro'yxati sahifasida (va ushbu sahifada ko'rsatilgan xaritada) qaysi sotuvchilar ko'rsatilishini aniqlaydi."
+
+msgctxt "SettingsVariants::vendor_locations::filter_by::none"
+msgid "All"
+msgstr "Hammasi"
+
+msgctxt "SettingsVariants::vendor_locations::filter_by::city"
+msgid "From customer's city"
+msgstr "Mijozning shahridan"
+
+msgctxt "SettingsVariants::vendor_locations::filter_by::country"
+msgid "From customer's country"
+msgstr "Mijozning mamlakatidan"
+
+msgctxt "Languages::vendor_locations.location"
+msgid "Location"
+msgstr "Manzil"
+
+msgctxt "Languages::tt_addons_vendor_locations_hooks_companies_shipping_address_post_vendor_locations.location"
+msgid "The address that will be used to determine the position on Google Maps."
+msgstr "Google Xaritalardagi joylashuvni aniqlash uchun foydalaniladigan manzil."
+
+msgctxt "Languages::block_location_selector"
+msgid "Customer's location"
+msgstr "Mijozning joylashuvi"
+
+msgctxt "Languages::block_location_selector_description"
+msgid "Enter address to search by location"
+msgstr "Joy bo'yicha qidirish uchun manzilni kiriting"
+
+msgctxt "Languages::vendor_locations.search_vendors_by_address"
+msgid "Search vendors"
+msgstr "Sotuvchilarni qidiring"
+
+msgctxt "Languages::block_search_vendors"
+msgid "Vendors by location"
+msgstr "Joylashuv bo'yicha sotuvchilar"
+
+msgctxt "Languages::block_search_vendors_description"
+msgid "Search for vendors in a specific location"
+msgstr "Muayyan joyda sotuvchilarni qidiring"
+
+msgctxt "Languages::block_closest_vendors"
+msgid "Closest vendors"
+msgstr "Eng yaqin sotuvchilar"
+
+msgctxt "Languages::block_closest_vendors_description"
+msgid "Vendors from customer's city"
+msgstr "Mijozning shahridan sotuvchilar"
+
+msgctxt "Languages::block_vendors_map"
+msgid "Vendor map"
+msgstr "Sotuvchi xaritasi"
+
+msgctxt "Languages::block_vendors_map_description"
+msgid "A map of all vendors"
+msgstr "Barcha sotuvchilar xaritasi"
+
+msgctxt "Languages::vendor_location.search_vendors_geolocation"
+msgid "Search for vendors"
+msgstr "Sotuvchilarni qidiring"
+
+msgctxt "Languages::vendor_locations.block_template_location_selector"
+msgid "Location selector"
+msgstr "Joylashuv selektori"
+
+msgctxt "Languages::vendor_locations.filter_by_city"
+msgid "Vendor's city"
+msgstr "Sotuvchining shahar"
+
+msgctxt "Languages::vendor_locations.filter_by_distance"
+msgid "Distance to vendor"
+msgstr "Sotuvchiga masofa"
+
+msgctxt "Languages::vendor_locations.customer_geolocation"
+msgid "Your location"
+msgstr "Sizning joylashuvingiz"
+
+msgctxt "Languages::vendor_locations.select_city"
+msgid "Select a city"
+msgstr "Shaharingizni tanlang"
+
+msgctxt "Languages::vendor_locations.selected_city"
+msgid "Selected city"
+msgstr "Shaharingizni tanlang"
+
+msgctxt "Languages::vendor_locations.not_your_city"
+msgid "Not your city?"
+msgstr "Sizning shahringiz emasmi?"
+
+msgctxt "Languages::vendor_locations.search_city"
+msgid "Search for a city"
+msgstr "Shahar qidiring"
+
+msgctxt "Languages::vendor_locations.search_nearby"
+msgid "Search nearby"
+msgstr "Yaqin-atrofdan qidiring"
+
+msgctxt "Languages::vendor_locations.nearby"
+msgid "Nearby"
+msgstr "Yaqin-atrofda"
+
+msgctxt "Languages::vendor_locations.vendors_map"
+msgid "Vendors map"
+msgstr "Sotuvchilar xaritasi"
+
+msgctxt "Languages::vendor_locations.closest_vendors"
+msgid "Closest vendors"
+msgstr "Eng yaqin sotuvchilar"
+
+msgctxt "Languages::vendor_locations.google_maps_cookie_title"
+msgid "Google Maps"
+msgstr "Google xaritalari"
+
+msgctxt "Languages::vendor_locations.google_maps_cookie_description"
+msgid "Google Maps is a service that allows us to show the maps and various locations on those maps, or automatically determine your location. Here is <a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google privacy policy;</a> we also recommend Google's concise and comprehensive <a href=\"https://support.google.com/maps/answer/10400210\" target=\"_blank\">note on privacy</a>."
+msgstr "Google Xaritalar bu xaritalarda xaritalar va turli joylarni ko‘rsatish yoki joylashuvingizni avtomatik aniqlash imkonini beruvchi xizmatdir. Mana <a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google maxfiylik siyosati;</a> biz Google-ning qisqa va keng qamrovli <a href=\"https://support\" ni ham tavsiya qilamiz. .google.com/maps/answer/10400210\" target=\"_blank\">maxfiylik haqida eslatma</a>."
+
+msgctxt "Languages::vendor_locations.enter_location"
+msgid "Enter location"
+msgstr "Joyni kiriting"
+
+msgctxt "Languages::vendor_locations.confirm_location"
+msgid "Confirm location"
+msgstr "Joylashuvni tasdiqlang"
+
+msgctxt "Languages::vendor_locations.chosen_location"
+msgid "Chosen location"
+msgstr "Tanlangan joy"
+

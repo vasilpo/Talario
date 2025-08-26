@@ -1,0 +1,378 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_data_premoderation.po\n"
+"X-Crowdin-File-ID: 9442\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::vendor_data_premoderation"
+msgid "Vendor data premoderation"
+msgstr "Sotuvchi ma'lumotlarini oldindan moderatsiya qilish"
+
+msgctxt "Addons::description::vendor_data_premoderation"
+msgid "Lets you pre-moderate vendors activity"
+msgstr "Sotuvchilar faoliyatini oldindan mo''tadil qilish imkonini beradi"
+
+msgctxt "Languages::vendor_data_premoderation.actions.vendors_on_moderation"
+msgid "Vendors on moderation"
+msgstr ""
+
+msgctxt "Languages::vendor_data_premoderation.actions.require_approval"
+msgid "Products on moderation"
+msgstr ""
+
+msgctxt "Languages::vendor_data_premoderation.actions.require_vendor_action"
+msgid "Disapproved products"
+msgstr ""
+
+msgctxt "Languages::vendor_data_premoderation.notification_for_deleted_statuses"
+msgid "Vendor Data Premoderation add-on has been disabled. Products with  the \"Requires approval\" or \"Disapproved\" statuses no longer have any status. These products won't appear to customers until you or your vendors set some other status for them. If you activate the add-on again, the statusless products will get their statuses back. If you uninstall the add-on, all products will get a correct status automatically."
+msgstr "Vendor Data Premoderation qo‘shimchasi o‘chirib qo‘yilgan. “Tasdiqlashni talab qiladi” yoki “Tasdiqlanmagan” maqomiga ega mahsulotlar endi hech qanday maqomga ega emas. Siz yoki sotuvchilaringiz ularga boshqa maqom o‘rnatmaguningizcha, bu mahsulotlar mijozlarga ko‘rinmaydi. Agar siz plaginni yana faollashtirsangiz, statussiz mahsulotlar o'z statuslarini qaytarib oladi. Agar siz qo'shimchani o'chirib tashlasangiz, barcha mahsulotlar avtomatik ravishda to'g'ri holatga ega bo'ladi."
+
+msgctxt "Languages::vendor_data_premoderation"
+msgid "Vendor data premoderation"
+msgstr "Sotuvchi ma'lumotlarini oldindan moderatsiya qilish"
+
+msgctxt "Languages::product_approval"
+msgid "Product approval"
+msgstr "Mahsulotni tasdiqlash"
+
+msgctxt "Languages::notify_vendor_by_email"
+msgid "Notify vendor by e-mail"
+msgstr "Sotuvchiga elektron pochta orqali xabar bering"
+
+msgctxt "Languages::product_approval_status_approved"
+msgid "Your product [product] has been approved by the store administration and added to the product catalog. Now shoppers can order this product in the store."
+msgstr "Sizning mahsulotingiz [mahsulotingiz] do'kon ma'muriyati tomonidan tasdiqlangan va mahsulot katalogiga qo'shilgan. Endi xaridorlar ushbu mahsulotni do'konda buyurtma qilishlari mumkin."
+
+msgctxt "Languages::product_approval_status_disapproved"
+msgid "Your product [product] has been disapproved by the store administration"
+msgstr "Mahsulotingiz [product] doʻkon maʼmuriyati tomonidan maʼqullanmagan"
+
+msgctxt "Languages::products_approval_status_approved"
+msgid "Thank you for submitting new products. The following products have been approved by the store administration and added to the product catalog"
+msgstr "Yangi mahsulotlarni yuborganingiz uchun tashakkur. Quyidagi mahsulotlar do'kon ma'muriyati tomonidan tasdiqlangan va mahsulot katalogiga kiritilgan"
+
+msgctxt "Languages::text_shoppers_can_order_products"
+msgid "Now shoppers can order these products in the store."
+msgstr "Endi xaridorlar ushbu mahsulotlarga do‘konda buyurtma berishlari mumkin."
+
+msgctxt "Languages::products_approval_status_disapproved"
+msgid "Thank you for submitting new products. The following products have been disapproved by the store administration"
+msgstr "Yangi mahsulotlarni yuborganingiz uchun tashakkur. Quyidagi mahsulotlar do‘kon ma’muriyati tomonidan ma’qullanmagan"
+
+msgctxt "Languages::approve_selected"
+msgid "Approve selected"
+msgstr "Tanlanganni tasdiqlash"
+
+msgctxt "Languages::disapprove_selected"
+msgid "Disapprove selected"
+msgstr "Tanlanganni rad etish"
+
+msgctxt "Languages::pre_moderation"
+msgid "Require approval for new products"
+msgstr "Yangi mahsulotlar uchun ruxsat talab qiling"
+
+msgctxt "Languages::pre_moderation_edit"
+msgid "Require approval for updated products"
+msgstr "Yangilangan mahsulotlar uchun ruxsat talab qiling"
+
+msgctxt "Languages::pre_moderation_edit_vendors"
+msgid "Require approval for vendor profile changes"
+msgstr "Sotuvchi profilini o'zgartirish uchun ruxsat talab qiling"
+
+msgctxt "Languages::text_not_approved_products"
+msgid "You have products that require your approval. Please <a href=\"[link]\">follow this link</a> to review these products."
+msgstr "Sizning roziligingizni talab qiladigan mahsulotlaringiz bor. Iltimos, ushbu mahsulotlarni koʻrib chiqish uchun <a href=\"[link]\">ushbu havolaga oʻting</a>."
+
+msgctxt "Languages::products_approval_status_changed"
+msgid "Your product(s) have been [status]"
+msgstr "Mahsulot(lar)ingiz [status] boʻlgan"
+
+msgctxt "Languages::approval"
+msgid "Approval"
+msgstr "Tasdiqlash"
+
+msgctxt "Languages::text_vendor_profile_changes_notice"
+msgid "Are you sure that you want to update the profile? Information about your company will not be available in the customer area until the administrator approves it."
+msgstr "Profilni yangilamoqchi ekanligingizga ishonchingiz komilmi? Sizning kompaniyangiz haqidagi ma'lumotlar administrator tomonidan tasdiqlanmaguncha mijozlar hududida mavjud bo'lmaydi."
+
+msgctxt "Languages::privileges.manage_product_premoderation"
+msgid "Can manage"
+msgstr "Boshqara oladi"
+
+msgctxt "Languages::privilege_groups.product_premoderation"
+msgid "Product approval"
+msgstr "Mahsulotni tasdiqlash"
+
+msgctxt "SettingsSections::vendor_data_premoderation::vendors"
+msgid "Vendor account"
+msgstr "Sotuvchi hisobi"
+
+msgctxt "SettingsSections::vendor_data_premoderation::products"
+msgid "Vendor products"
+msgstr "Sotuvchi mahsulotlar"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::products_prior_approval"
+msgid "Approval of newly-created products"
+msgstr "Yangi yaratilgan mahsulotlarni tasdiqlash"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::products_updates_approval"
+msgid "Approval of product info updates"
+msgstr "Mahsulot ma'lumotlari yangilanishini tasdiqlash"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::vendor_profile_updates_approval"
+msgid "Approval of vendor profile updates"
+msgstr "Sotuvchi profili yangilanishlarini tasdiqlash"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::product_approval_notifications"
+msgid "Notify vendors about product moderation results"
+msgstr "Mahsulot moderatsiyasi natijalari haqida sotuvchilarni xabardor qiling"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::product_premoderation_fields"
+msgid "Require approval for updates of"
+msgstr "Yangilanishlar uchun ruxsat talab qiling"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendor_profile_updates_approval::none"
+msgid "Isn't required"
+msgstr "Majburiy emas"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendor_profile_updates_approval::custom"
+msgid "Required for some vendors"
+msgstr "Required for some vendors\n"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendor_profile_updates_approval::all"
+msgid "Required for all vendors"
+msgstr "Barcha sotuvchilar uchun talab qilinadi"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_prior_approval::none"
+msgid "Isn't required"
+msgstr "Majburiy emas"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_prior_approval::custom"
+msgid "Required for some vendors"
+msgstr "Ba'zi sotuvchilar uchun talab qilinadi"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_prior_approval::all"
+msgid "Required for all vendors"
+msgstr "Barcha sotuvchilar uchun talab qilinadi"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_updates_approval::none"
+msgid "Isn't required"
+msgstr "Majburiy emas"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_updates_approval::custom"
+msgid "Required for some vendors"
+msgstr "Ba'zi sotuvchilar uchun talab qilinadi"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_updates_approval::all"
+msgid "Required for all vendors"
+msgstr "Barcha sotuvchilar uchun talab qilinadi"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::none"
+msgid "Don't notify"
+msgstr "Xabar bermang"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::email"
+msgid "Send e-mail"
+msgstr "Elektron pochta jo'natish"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::notifications_center"
+msgid "Display a notification in the Notifications center"
+msgstr "Bildirishnomalar markazida bildirishnomani ko'rsatish"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::email_notifications_center"
+msgid "Send e-mail and display a notification in the Notifications center"
+msgstr "E-mail yuboring va Bildirishnomalar markazida bildirishnomani ko'rsating"
+
+msgctxt "Languages::email_template.vendor_data_premoderation_notification"
+msgid "Vendor premoderation"
+msgstr "Sotuvchining premoderatsiyasi"
+
+msgctxt "Languages::vendor_data_premoderation.exclude_disapproved_products"
+msgid "Exclude disapproved products"
+msgstr "Tasdiqlanmagan mahsulotlarni chiqarib tashlang"
+
+msgctxt "Languages::vendor_data_premoderation.product_status.requires_approval"
+msgid "Requires approval"
+msgstr "Tasdiqlashni talab qiladi"
+
+msgctxt "Languages::vendor_data_premoderation.product_status.disapproved"
+msgid "Disapproved"
+msgstr "Ma'qullanmagan"
+
+msgctxt "Languages::vendor_data_premoderation.require_approval"
+msgid "Products on moderation"
+msgstr "Mahsulotlar moderatsiyada"
+
+msgctxt "Languages::vendor_data_premoderation.vendors_require_approval"
+msgid "Vendors on moderation"
+msgstr ""
+
+msgctxt "Languages::vendor_data_premoderation.require_vendor_action"
+msgid "Disapproved products"
+msgstr "Tasdiqlanmagan mahsulotlar"
+
+msgctxt "Languages::vendor_data_premoderation.disapproved"
+msgid "Disapproved"
+msgstr "Ma'qullanmagan"
+
+msgctxt "Languages::vendor_data_premoderation.approve_product_btn"
+msgid "Approve product"
+msgstr "Mahsulotni tasdiqlash"
+
+msgctxt "Languages::vendor_data_premoderation.approve_product"
+msgid "Approve \"[product]\""
+msgstr "“[product]”ni tasdiqlash"
+
+msgctxt "Languages::vendor_data_premoderation.disapprove_product_btn"
+msgid "Disapprove product"
+msgstr "Mahsulotni rad qilish"
+
+msgctxt "Languages::vendor_data_premoderation.disapprove_product"
+msgid "Disapprove \"[product]\""
+msgstr "“[product]”ni rad qilish"
+
+msgctxt "Languages::vendor_data_premoderation.disapprove_products"
+msgid "Disapprove products"
+msgstr "Tasdiqlanmagan mahsulotlar"
+
+msgctxt "Languages::vendor_data_premoderation.disapproval_reason"
+msgid "Disapproval reason"
+msgstr "Rad etish sababi"
+
+msgctxt "Languages::vendor_data_premoderation.enter_disapproval_reason"
+msgid "Enter the reason for disapproval and save the changes."
+msgstr "Rad etish sababini kiriting va o'zgarishlarni saqlang."
+
+msgctxt "Languages::vendor_data_premoderation.notification.products_require_approval.title"
+msgid "You have [n] product that requires your approval|You have [n] products that require your approval"
+msgstr "Tasdiqlashni talab qiladigan [n] mahsulotingiz bor|Sizda [n] ta mahsulotingiz bor"
+
+msgctxt "Languages::vendor_data_premoderation.notification.products_require_approval.message"
+msgid "This product is pending for your approval since [since]. Click here to view this product.|These products are pending for your approval since [since]. Click here to view these products."
+msgstr "Bu mahsulot [since] sizning tasdiqlashingizni kutmoqda. Ushbu mahsulotni ko'rish uchun shu yerni bosing.|Bu mahsulotlar [since] sizning tasdiqlashingizni kutmoqda. Ushbu mahsulotlarni ko'rish uchun shu yerni bosing."
+
+msgctxt "Languages::vendor_data_premoderation.notification.approved.title"
+msgid "Your product has been approved|Your products have been approved"
+msgstr "Mahsulotingiz tasdiqlandi|Mahsulotlaringiz tasdiqlandi"
+
+msgctxt "Languages::vendor_data_premoderation.notification.approved.message"
+msgid "\"[product]\" has been approved by the store administration and added to the product catalog. Click here to view this product.|[n] products have been approved by the store administration and added to the product catalog. Click here to view these products."
+msgstr "\"[product]\" do'kon ma'muriyati tomonidan tasdiqlangan va mahsulot katalogiga qo'shilgan. Ushbu mahsulotni ko'rish uchun shu yerni bosing.|[n] mahsulot do'kon ma'muriyati tomonidan tasdiqlangan va mahsulot katalogiga qo'shilgan. Ushbu mahsulotlarni ko'rish uchun shu yerni bosing."
+
+msgctxt "Languages::vendor_data_premoderation.notification.disapproved.title"
+msgid "Your product has been disapproved|Your products have been disapproved"
+msgstr "Mahsulotingiz ma'qullanmagan|Mahsulotlaringiz ma'qullanmagan"
+
+msgctxt "Languages::vendor_data_premoderation.notification.disapproved.message"
+msgid "\"[product]\" has been disapproved by the store administration. Click here to view this product.|[n] products have been disapproved by the store administration. Click here to view these products."
+msgstr "“[product]” do‘kon ma’muriyati tomonidan ma’qullanmagan. Ushbu mahsulotni ko'rish uchun shu yerni bosing.|[n] mahsulot do'kon ma'muriyati tomonidan ma'qullanmagan. Ushbu mahsulotlarni ko'rish uchun shu yerni bosing."
+
+msgctxt "Languages::vendor_data_premoderation.products_sent_to_premoderation"
+msgid "Your changes have been saved. Before your product is added to the product catalog, it must be approved by the store administration. Follow <a href=\"[product_approval_url]\">this link</a> to view products that require approval.|Your changes have been saved. Before your products are added to the product catalog, they must be approved by the store administration. Follow <a href=\"[product_approval_url]\">this link</a> to view products that require approval."
+msgstr "Oʻzgartirishlaringiz saqlandi. Mahsulotingiz mahsulot katalogiga qo'shilishidan oldin u do'kon ma'muriyati tomonidan tasdiqlanishi kerak. Tasdiqlashni talab qiladigan mahsulotlarni koʻrish uchun <a href=\"[product_approval_url]\">ushbu havolaga</a> kiring.|Oʻzgartirishlaringiz saqlandi. Mahsulotlaringiz mahsulot katalogiga qo'shilishidan oldin ular do'kon ma'muriyati tomonidan tasdiqlanishi kerak. Tasdiqlashni talab qiladigan mahsulotlarni ko‘rish uchun <a href=\"[product_approval_url]\">ushbu havolaga</a> o‘ting."
+
+msgctxt "Languages::vendor_data_premoderation.event.product_status.approved.name"
+msgid "Vendor data premoderation: your product was approved"
+msgstr "Sotuvchi maʼlumotlarini oldindan moderatsiya qilish: mahsulotingiz maʼqullandi"
+
+msgctxt "Languages::vendor_data_premoderation.event.product_status.disapproved.name"
+msgid "Vendor data premoderation: your product was disapproved"
+msgstr "Sotuvchi maʼlumotlarini oldindan moderatsiya qilish: mahsulotingiz maʼqullanmadi"
+
+msgctxt "Languages::vendor_data_premoderation.approval_info_text"
+msgid "If approval is required only for some vendors, you'll be able to set what vendors need moderation on the Add-ons tab of the vendor editing page."
+msgstr "Tasdiqlash faqat ayrim sotuvchilar uchun talab etilsa, sotuvchini tahrirlash sahifasining Qo‘shimchalar ilovasida sotuvchilarga moderatsiya zarurligini belgilashingiz mumkin."
+
+msgctxt "Languages::internal_template.vendor_data_premoderation_product_approved"
+msgid "Vendor data premoderation: your product was approved"
+msgstr "Sotuvchi maʼlumotlarini oldindan moderatsiya qilish: mahsulotingiz maʼqullandi"
+
+msgctxt "Languages::internal_template.vendor_data_premoderation_product_disapproved"
+msgid "Vendor data premoderation: your product was disapproved"
+msgstr "Sotuvchi maʼlumotlarini oldindan moderatsiya qilish: mahsulotingiz maʼqullanmadi"
+
+msgctxt "Languages::vendor_data_premoderation.approval_required_before_changing_owner"
+msgid "Your approval is required before you can change the owner. Click <a href=\"[url]\" target=\"_blank\">here</a> to view the products that have not been moderated yet."
+msgstr ""
+
+msgctxt "Languages::vendor_data_premoderation.moderation"
+msgid "Moderation"
+msgstr "Moderatsiya"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::vendors_prior_approval"
+msgid "Approval of newly-created vendors"
+msgstr "Yangi tashkil etilgan sotuvchilarni tasdiqlash"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendors_prior_approval::none"
+msgid "Isn't required"
+msgstr "Majburiy emas"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendors_prior_approval::all"
+msgid "Required for all vendors"
+msgstr "Barcha sotuvchilar uchun talab qilinadi"
+
+msgctxt "Languages::vendor_data_premoderation.preventing_registration_info_text"
+msgid "If you want to prevent vendor registration altogether, please check <a href=\"[url]\" target=\"_blank\">Settings → Vendors</a>."
+msgstr "Agar sotuvchini roʻyxatdan oʻtkazishni butunlay oldini olishni istasangiz, iltimos, <a href=\"[url]\" target=\"_blank\">Sozlamalar → Sotuvchilar</a>-ni tekshiring."
+
+msgctxt "Languages::vendor_data_premoderation.prior_to_date"
+msgid "Prior to [date]"
+msgstr "[date] dan oldin"
+
+msgctxt "Languages::vendor_data_premoderation.deleted"
+msgid "Deleted"
+msgstr "Oʻchirildi"
+
+msgctxt "Languages::vendor_data_premoderation.added"
+msgid "Added"
+msgstr "Qo'shildi"
+
+msgctxt "Languages::vendor_data_premoderation.event.added_product.name"
+msgid "Vendor data premoderation: number of products on moderation"
+msgstr "Sotuvchi ma'lumotlarini premoderatsiya qilish: moderatsiyadagi mahsulotlar soni"
+
+msgctxt "Languages::vendor_data_premoderation.added_product.title"
+msgid "[n] product awaits your approval|[n] products await your approval"
+msgstr "[n] mahsulot tasdiqlashingizni kutmoqda|[n] mahsulot tasdiqlashingizni kutmoqda"
+
+msgctxt "Languages::vendor_data_premoderation.added_product.message"
+msgid "[n] product awaits your approval.<br>This product is awaiting approval since [since_at].|[n] products await your approval.<br>The earliest of these products awaiting approval since [since_at]."
+msgstr "[n] mahsulot tasdiqlashingizni kutmoqda.<br>Ushbu mahsulot [since_at]dan beri tasdiqlashni kutmoqda.|[n] ta mahsulot tasdiqlashingizni kutmoqda.<br>Ushbu mahsulotlarning eng birinchisi [since_at]]dan beri tasdiqlashni kutmoqda."
+
+msgctxt "Languages::vendor_data_premoderation.added_product.action"
+msgid "<a href=\"[url]\" target=\"_blank\">View pending products</a>"
+msgstr "<a href=\"[url]\" target=\"_blank\">Kutilayotgan mahsulotlarni ko‘rish</a>"
+
+msgctxt "Languages::email_template.vendor_data_premoderation_added_product"
+msgid "Vendor data premoderation: products awaiting moderation"
+msgstr "Sotuvchi ma'lumotlarini oldindan moderatsiya qilish: moderatsiyani kutayotgan mahsulotlar"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.analytics_card.on_moderation"
+msgid "On moderation"
+msgstr "Moderatsiyada"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.analytics_card.disapproved"
+msgid "Disapproved"
+msgstr "Ma'qullanmagan"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.todo.products_disapproved"
+msgid "<strong>[n] product</strong> requires editing.|<strong>[n] products</strong> require editing."
+msgstr "<strong>[n] mahsulot</strong> tahrirlashni talab qiladi.|<strong>[n] ta mahsulot</strong> tahrirlashni talab qiladi."
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.todo.pending_vendors"
+msgid "<strong>[n] vendor</strong> (and their products) is hidden until you review them.|<strong>[n] vendors</strong> (and their products) are hidden until you review them."
+msgstr "<strong>[n] sotuvchi</strong> (va ularning mahsulotlari) siz ularni ko‘rib chiqmaguningizcha berkitiladi.|<strong>[n] sotuvchi</strong> (va ularning mahsulotlari) ularni ko‘rib chiqmaguningizcha berkitiladi."
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.todo.products_require_approval"
+msgid "<strong>[n] product</strong> requires your approval.|<strong>[n] products</strong> require your approval."
+msgstr "<strong>[n] ta mahsulot</strong> sizning ruxsatingizni talab qiladi.|<strong>[n] ta mahsulot</strong> sizning ruxsatingizni talab qiladi."
+

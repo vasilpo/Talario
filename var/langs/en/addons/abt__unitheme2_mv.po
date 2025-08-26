@@ -1,0 +1,185 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::abt__unitheme2_mv"
+msgid "AB: UniTheme2 (Multi-Vendor)"
+msgstr "AB: UniTheme2 (Multi-Vendor)"
+
+msgctxt "Addons::description::abt__unitheme2_mv"
+msgid "Addon adds AB: UniTheme2 files for support of Multi-Vendor edition"
+msgstr "Addon adds AB: UniTheme2 files for support of Multi-Vendor edition"
+
+msgctxt "Languages::abt__unitheme2_mv"
+msgid "AB: UniTheme2 (Multi-Vendor)"
+msgstr "AB: UniTheme2 (Multi-Vendor)"
+
+msgctxt "Languages::abt__ut2.settings.vendor"
+msgid "Vendor"
+msgstr "Vendor"
+
+msgctxt "Languages::abt__ut2.settings.vendor_description"
+msgid "Block with vendor information on the vendor's page"
+msgstr "Block with vendor information on the vendor's page"
+
+msgctxt "Languages::abt__ut2.settings.vendor.truncate_short_description"
+msgid "Number of characters for vendor description"
+msgstr "Number of characters for vendor description"
+
+msgctxt "Languages::abt__ut2.settings.vendor.truncate_short_description.tooltip"
+msgid "Allows you to limit the output of vendor short description, specify the number of displayed characters. To disable output, use the value \"0\""
+msgstr "Allows you to limit the output of vendor short description, specify the number of displayed characters. To disable output, use the value \"0\""
+
+msgctxt "Languages::abt__ut2.settings.vendor.show_ask_question_link"
+msgid "Display \"Ask a question\" link"
+msgstr "Display \"Ask a question\" link"
+
+msgctxt "Languages::abt__ut2.settings.vendor.show_ask_question_link.tooltip"
+msgid "Allows customers to communicate with the vendor using chat. Depends on \"Ask seller a question\" addon"
+msgstr "Allows customers to communicate with the vendor using chat. Depends on \"Ask seller a question\" addon"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor_group"
+msgid "Block with vendor information"
+msgstr "Block with vendor information"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor_group_description"
+msgid "Settings for block with vendor information on the product page"
+msgstr "Settings for block with vendor information on the product page"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_name_as_link"
+msgid "Use vendor name as a link on a vendor page"
+msgstr "Use vendor name as a link on a vendor page"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_name_as_link.tooltip"
+msgid "Allows use vendor name as a link to the page of this vendor"
+msgstr "Allows use vendor name as a link to the page of this vendor"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_logo"
+msgid "Show vendor logo"
+msgstr "Show vendor logo"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_logo.tooltip"
+msgid "Displays the vendor's logo"
+msgstr "Displays the vendor's logo"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.truncate_short_description"
+msgid "Number of characters for vendor description"
+msgstr "Number of characters for vendor description"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.truncate_short_description.tooltip"
+msgid "Allows you to limit the output of a vendor description, specify the number of displayed characters. To disable output, use the value \"0\""
+msgstr "Allows you to limit the output of a vendor description, specify the number of displayed characters. To disable output, use the value \"0\""
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_phone"
+msgid "Show vendor phone number"
+msgstr "Show vendor phone number"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_phone.tooltip"
+msgid "Allows you to display the phone number of the vendor"
+msgstr "Allows you to display the phone number of the vendor"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_ask_question_link"
+msgid "Show \"Ask a question\" link"
+msgstr "Show \"Ask a question\" link"
+
+msgctxt "Languages::abt__ut2.settings.products.vendor.show_ask_question_link.tooltip"
+msgid "Allows customers to communicate with the vendor using chat. Depends on \"Ask seller a question\" addon"
+msgstr "Allows customers to communicate with the vendor using chat. Depends on \"Ask seller a question\" addon"
+
+msgctxt "Languages::abt__ut2.sort_by_company_asc"
+msgid "Sort by alphabetical: A to Z"
+msgstr "Sort by alphabetical: A to Z"
+
+msgctxt "Languages::abt__ut2.sort_by_company_desc"
+msgid "Sort by alphabetical: Z to A"
+msgstr "Sort by alphabetical: Z to A"
+
+msgctxt "Languages::abt__ut2.sort_by_rating_asc"
+msgid "Sort by rating: Low to High"
+msgstr "Sort by rating: Low to High"
+
+msgctxt "Languages::abt__ut2.sort_by_rating_desc"
+msgid "Sort by rating"
+msgstr "Sort by rating"
+
+msgctxt "Languages::abt__ut2.sort_by_absolute_vendor_rating_asc"
+msgid "Sort by Vendor rating: Low to High"
+msgstr "Sort by Vendor rating: Low to High"
+
+msgctxt "Languages::abt__ut2.sort_by_absolute_vendor_rating_desc"
+msgid "Sort by Vendor rating"
+msgstr "Sort by Vendor rating"
+
+msgctxt "Languages::abt__ut2_mv.vendor_settings_tab"
+msgid "Vendor settings on vendor page"
+msgstr "Vendor settings on vendor page"
+
+msgctxt "Languages::abt__ut2_mv.product_page_vendor_settings"
+msgid "Vendor settings on product page"
+msgstr "Vendor settings on product page"
+
+msgctxt "Languages::block_abt__ut2_mv_vendor_subcategories_menu"
+msgid "AB: Vendor categories"
+msgstr "AB: Vendor categories"
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.title"
+msgid "AB: UniTheme2 (Multi-Vendor) was successfully updated to v[ver]!"
+msgstr "AB: UniTheme2 (Multi-Vendor) was successfully updated to v[ver]!"
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.text"
+msgid "The detailed list of changes for <b>v[ver]</b> version look in documentation for the theme in the section <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/abt__unitheme2_mv.doc#p-1276\">List of releases</a>."
+msgstr "The detailed list of changes for <b>v[ver]</b> version look in documentation for the theme in the section <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/abt__unitheme2_mv.doc#p-1276\">List of releases</a>."
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.4.10.2.b.new_layouts.title"
+msgid "We recommend to update the used layout!"
+msgstr "We recommend to update the used layout!"
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.4.10.2.b.new_layouts.text"
+msgid "Use the following <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/abt__unitheme2.doc#p-142\">instruction</a> to update the used layout."
+msgstr "Use the following <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/abt__unitheme2.doc#p-142\">instruction</a> to update the used layout."
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.recommend_to_update_layouts.title"
+msgid "We recommend to update the used layout!"
+msgstr "We recommend to update the used layout!"
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.recommend_to_update_layouts.text"
+msgid "Use the following <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/abt__unitheme2.doc#p-142\">instruction</a> to update the used layout."
+msgstr "Use the following <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/abt__unitheme2.doc#p-142\">instruction</a> to update the used layout."
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.4.11.2.a.new_settings.title"
+msgid "Added new settings"
+msgstr "Added new settings"
+
+msgctxt "Languages::abt__ut2_mv.upgrade_notifications.4.11.2.a.new_settings.text"
+msgid "<h3>Block with information about the vendor on the product page</h3> <p>To edit this settings go to: Admin panel → AB: Addons → AB: UniTheme2 → Theme settings, go to Product tab and find section Block with vendor information:</p> <ul> <li>Use vendor name as a link on a vendor page;</li> <li>Show vendor logo;</li> <li>Number of characters for vendor description;</li> <li>Show vendor phone number;</li> <li>Show \"Ask a question\" link.</li> </ul> <h3>Block with information about the vendor on the vendor's page</h3> <p>To edit this settings go to: Admin panel → AB: Addons → AB: UniTheme2 → Theme settings, go to Vendor tab:</p> <ul> <li>Number of characters for vendor description;</li> <li>Display \"Ask a question\" link.</li> </ul>"
+msgstr "<h3>Block with information about the vendor on the product page</h3>"
+"<p>To edit this settings go to: Admin panel → AB: Addons → AB: UniTheme2 → Theme settings, go to Product tab and find section Block with vendor information:</p>"
+"<ul>"
+"<li>Use vendor name as a link on a vendor page;</li>"
+"<li>Show vendor logo;</li>"
+"<li>Number of characters for vendor description;</li>"
+"<li>Show vendor phone number;</li>"
+"<li>Show \"Ask a question\" link.</li>"
+"</ul>"
+"<h3>Block with information about the vendor on the vendor's page</h3>"
+"<p>To edit this settings go to: Admin panel → AB: Addons → AB: UniTheme2 → Theme settings, go to Vendor tab:</p>"
+"<ul>"
+"<li>Number of characters for vendor description;</li>"
+"<li>Display \"Ask a question\" link.</li>"
+"</ul>"
+
+msgctxt "Languages::abt__ut2_mv.autoinstall.add_layouts"
+msgid "Added layouts for Multi-Vendor"
+msgstr "Added layouts for Multi-Vendor"
+
+msgctxt "Languages::abt__ut2_mv.help"
+msgid "Help"
+msgstr "Help"
+
+msgctxt "Languages::abt__ut2_mv.help.doc"
+msgid "Read <a target='_blank' href='https://cs-cart.alexbranding.com/en/abt__unitheme2_mv.doc'>the documentation</a>."
+msgstr "Read <a target='_blank' href='https://cs-cart.alexbranding.com/en/abt__unitheme2_mv.doc'>the documentation</a>."
+
+#. Alexbranding. Do not modify this file manually!

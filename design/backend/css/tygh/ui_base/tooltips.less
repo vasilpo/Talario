@@ -1,0 +1,96 @@
+// Tooltip
+.icon-question-sign {
+    color: var(--cs-text-muted-color) !important;
+}
+.tooltip, .tooltip.top, .tooltip.right {
+    display: none;
+    max-width: 200px;
+    z-index: 10000;
+    margin: 0px;
+    padding: 9px;
+    background: var(--cs-shadow80-color);
+    color: var(--cs-text-inverse-color);
+    text-align: left;
+    font-weight: normal;
+    word-wrap: break-word;
+    opacity: 1;
+    filter: alpha(opacity=100);
+    border-radius: var(--cs-base-border-radius);
+}
+.tooltip p {
+    color: var(--cs-text-inverse-color);
+}
+.tooltip-arrow {
+    position: absolute;
+    top: -10px;
+    right: 3px;
+    display: block;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 0 0 10px 10px;
+    border-color: transparent transparent var(--cs-shadow80-color) transparent;
+}
+
+.tooltip.arrow-top .tooltip-arrow {
+    top: auto;
+    left: auto;
+    bottom: -10px;
+    right: 3px;
+    border-width: 0 10px 10px 0;
+    border-color: transparent var(--cs-shadow80-color) transparent transparent;
+}
+
+.arrow-top.right .tooltip-arrow {
+    left: 3px;
+    right: auto;
+    border-width: 10px 10px 0 0;
+    border-color: var(--cs-shadow80-color) transparent transparent transparent;
+}
+.arrow-down.right .tooltip-arrow {
+    right: auto;
+    top: -4px;
+    left: 3px;
+    border-width: 10px 0 0 10px;
+    border-color: transparent transparent transparent var(--cs-shadow80-color);
+}
+.arrow-down.top .tooltip-arrow {
+    top: auto;
+    left: auto;
+    right: 3px;
+    bottom: -10px;
+    border-width: 0 10px 10px 0;
+    border-color: transparent var(--cs-shadow80-color) transparent transparent;
+}
+.arrow-down.top.right .tooltip-arrow {
+    top: auto;
+    right: auto;
+    left: 8px;
+    bottom: -10px;
+    border-width: 10px 10px 0 0;
+    border-color: var(--cs-shadow80-color) transparent transparent transparent;
+}
+
+.cs-tooltip__icon {
+    transform: scale(0.8);
+}
+
+@media (max-width: 950px) {
+    html.touchevents {
+        .tooltip, .cs-icon--type-question-sign {
+            visibility: hidden !important;
+            display: none !important;
+        
+            top: -9999px !important;
+            left: -9999px !important;
+        }
+    }
+
+    .tooltip, .cs-icon--type-question-sign {
+        visibility: hidden !important;
+        display: none !important;
+    
+        top: -9999px !important;
+        left: -9999px !important;
+    }
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+  <id>tinkoff_multiparty</id>
+  <version>1.0</version>
+  <default_language>en</default_language>
+  <priority>1000</priority>
+  <status>active</status>
+  <compatibility>
+    <core_edition>MULTIVENDOR</core_edition>
+    <dependencies>rus_taxes,vendor_plans</dependencies>
+    <conflicts>direct_payments</conflicts>
+  </compatibility>
+
+  <queries>
+    <item for="install">ALTER TABLE ?:companies ADD tinkoff_multiparty_shopcode VARCHAR(20) NOT NULL DEFAULT ''</item>
+    <item for="install">ALTER TABLE ?:companies ADD tinkoff_multiparty_code VARCHAR(40) NOT NULL DEFAULT ''</item>
+    <item for="install">ALTER TABLE ?:companies ADD tinkoff_multiparty_shop_data text</item>
+    <item for="uninstall">ALTER TABLE ?:companies DROP COLUMN tinkoff_multiparty_shopcode</item>
+    <item for="uninstall">ALTER TABLE ?:companies DROP COLUMN tinkoff_multiparty_code</item>
+    <item for="uninstall">ALTER TABLE ?:companies DROP COLUMN tinkoff_multiparty_shop_data</item>
+  </queries>
+
+  <installer>\Tygh\Addons\TinkoffMultiparty\Installer</installer>
+  <bootstrap>\Tygh\Addons\TinkoffMultiparty\Bootstrap</bootstrap>
+
+  <autoload>
+    <psr4 prefix="Tygh\Addons\TinkoffMultiparty\">src</psr4>
+  </autoload>
+</addon>

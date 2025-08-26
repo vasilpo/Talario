@@ -1,0 +1,154 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+@vg-lighten-color-font: lighten(@font, 35%);
+@abt__ut2_addons_ab__video_gallery_block_bg: #666;
+@pd: 20px;
+
+.owl-item {
+    .ab__vg-image_gallery_video {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        min-height: 100%;
+    }
+}
+
+.ab__vg-image_gallery_video:not(.ab__clear_image),
+.ab__vg-videos .ab__vg-video_thumb {
+    &:before {
+        content: "";
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 2;
+        opacity: 0.9;
+
+        .transition(filter 150ms linear);
+
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimizeQuality;
+    }
+
+    &.ab-video-icon {
+        &:before {
+            background: url('/images/addons/ab__video_gallery/video-icon.png') no-repeat center;
+            background-size: 50px;
+        }
+    }
+
+    &.ab-youtube-icon {
+        &:before {
+            background: url('/images/addons/ab__video_gallery/youtube-icon.png') no-repeat center;
+            background-size: 50px;
+        }
+    }
+
+    &:hover {
+        &:before {
+            opacity: 1;
+        }
+    }
+
+    &:has(iframe), &:has(video) {
+        &:before {
+            display: none !important;
+        }
+    }
+}
+
+.ab__vg-videos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(max(220px, calc(~'100% / 4 - 15px')), 1fr));
+    grid-auto-rows: 1fr;
+    gap: 15px;
+
+    @media (max-width: 576px) {
+        grid-template-columns: repeat(auto-fill, minmax(max(calc(~'50% - 15px'), calc(~'100% / 2 - 15px')), 1fr));
+    }
+
+    &.ab-vg-videos-wrapper {
+        padding: 20px;
+        background: @abt__ut2_addons_ab__video_gallery_block_bg;
+
+        @media (max-width: 1023px) {
+            margin: 0 calc(var(--gap-s) * -1) var(--gap-s);
+            width: calc(~'100% + 40px');
+        }
+
+        a:not([href="javascript:void(0)"]) {
+            color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @links, @vg-lighten-color-font);
+
+            &:hover {
+                color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @links, white);
+            }
+        }
+
+        .ab__vg-video_title p {
+            color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @links, white);
+        }
+
+        .ab__vg-video_description p {
+            color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, fade(@font, 65%), @vg-lighten-color-font);
+        }
+    }
+
+    .ab__vg-video_thumb {
+        position: relative;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        aspect-ratio: 960 / 540;
+    }
+
+    .ab__vg-video[class*="column"], .ab__vg-video {
+        width: 100%;
+        margin: 0;
+        padding-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .ab-vg-video-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .ab__vg-video_title p {
+        padding: 0;
+        font-size: @body_font_size + 1;
+        line-height: normal;
+        max-height: none;
+
+        strong {
+            font-weight: bold;
+        }
+    }
+
+    a:not([href="javascript:void(0)"]) {
+        text-decoration: underline;
+    }
+
+    .ab__vg-video_description p {
+        font-size: @body_font_size - 1;
+        color: fade(@font, 65%);
+    }
+}

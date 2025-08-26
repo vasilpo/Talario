@@ -1,0 +1,17 @@
+html {
+    color-scheme: dark;
+
+    --cs-content-background:                        #000;
+    --cs-text-color:                                #e3e3e3;
+    --cs-placeholder-text:                          #606366;
+    --cs-input-disabled-background:                 #2c2d30;
+    --cs-input-border:                              #8f9499;
+    --cs-main-color:                                #8dcffb;
+    --cs-success-text:                              #a4de88;
+    --cs-error-text-opacity-50:                     rgba(253, 202, 220, 0.5);
+
+    --tinymce-content-selection-bg:                 #bfe6ff;
+    --tinymce-content-boundary-bg:                  #2276d2;
+
+    --tinymce-content-link:                         #8dcffb;
+}

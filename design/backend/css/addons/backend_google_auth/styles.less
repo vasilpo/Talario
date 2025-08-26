@@ -1,0 +1,95 @@
+:root {
+    --cs-backend-google-auth-login-btn: #4285f4;
+    --cs-backend-google-auth-login-btn-hover: rgba(66, 133, 244, .3);
+    --cs-backend-google-auth-login-btn-active: #3367d6;
+}
+
+#content_groupbackend_google_auth #addon_option_backend_google_auth_backend_google_auth_client_id {
+    width: 520px;
+}
+
+.login-btn {
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    box-shadow: 0 2px 4px 0 var(--cs-shadow25-color);
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
+    transition: background-color .218s, border-color .218s, box-shadow .218s;
+    -webkit-user-select: none;
+    -webkit-appearance: none;
+    background-color: var(--cs-content-background);
+    background-image: none;
+    color: var(--cs-text-color);
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    padding: 0;
+    width: 240px;
+}
+
+.login-btn:hover {
+    box-shadow: 0 0 3px 3px var(--cs-backend-google-auth-login-btn-hover);
+}
+
+.login-btn-blue {
+    background-color: var(--cs-backend-google-auth-login-btn);
+    border: none;
+    color: var(--cs-text-inverse-color);
+}
+
+.login-btn-blue:hover {
+    background-color: var(--cs-backend-google-auth-login-btn);
+}
+
+.login-btn-blue:active {
+    background-color: var(--cs-backend-google-auth-login-btn-active);
+}
+
+.login-btn--icon {
+    float: left;
+    padding: 15px;
+    line-height: 10px;
+}
+
+.login-btn-blue .login-btn--icon {
+    background-color: var(--cs-content-background);
+    border-radius: 1px
+}
+
+.login-btn--svg {
+    display: block
+}
+
+.login-btn--contents {
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: .21px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: top;
+    line-height: 48px;
+    color: var(--cs-text-inverse-color);
+}
+
+.login-btn-blue .login-btn--contents {
+    color: #fff;
+}
+
+.login-btn--content-wrapper {
+    height: 100%;
+    width: 100%
+}
+
+.login-btn-blue .login-btn--content-wrapper {
+    border: 1px solid transparent
+}
+
+.login-notice {
+    text-align: center;
+    margin-bottom: 20px;
+}

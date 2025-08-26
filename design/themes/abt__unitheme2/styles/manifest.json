@@ -1,0 +1,30 @@
+{
+	"default_style": "Malachite",
+	"default": {
+		"Black": true,
+		"Blue": true,
+		"Brick": true,
+		"Cobalt": true,
+		"Dark_Blue": true,
+		"Dark_Navy": true,
+		"Default": true,
+		"Fiolent": true,
+		"Flame": true,
+		"Gray": true,
+		"Green": true,
+		"Indigo": true,
+		"Ink": true,
+		"Lime_dark": true,
+		"Malachite": true,
+		"Malachite_dark": true,
+		"Mint": true,
+		"Orange": true,
+		"Orange_dark": true,
+		"Original": true,
+		"Powder": true,
+		"Purple": true,
+		"Purple_dark": true,
+		"Velvet": true,
+		"White": true
+	}
+}

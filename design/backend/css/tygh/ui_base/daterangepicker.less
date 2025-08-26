@@ -1,0 +1,114 @@
+// Date range picker styles override
+.daterangepicker.daterangepicker {
+    background-color: var(--cs-dropdown-background);
+    border-color: var(--cs-dropdown-border);
+}
+
+.daterangepicker.daterangepicker:before {
+    border-bottom-color: var(--cs-popover-arrow-outer-color);
+}
+
+.daterangepicker.daterangepicker:after {
+    border-bottom-color: var(--cs-popover-arrow-color);
+}
+
+.daterangepicker.daterangepicker.drop-up:before {
+    border-top-color: var(--cs-popover-arrow-outer-color);
+}
+
+.daterangepicker.daterangepicker.drop-up:after {
+    border-top-color: var(--cs-popover-arrow-color);
+}
+
+.daterangepicker.daterangepicker .calendar-table .next span, .daterangepicker.daterangepicker .calendar-table .prev span {
+    border-right-color: var(--cs-text-color);
+    border-bottom-color: var(--cs-text-color);
+}
+
+.daterangepicker.daterangepicker .calendar-table {
+    border-color: var(--cs-dropdown-background);
+    background-color: var(--cs-dropdown-background);
+}
+
+.daterangepicker.daterangepicker td.available:hover, .daterangepicker.daterangepicker th.available:hover {
+    background-color: var(--cs-dropdown-link-background-hover);
+}
+
+.daterangepicker.daterangepicker td.week, .daterangepicker.daterangepicker th.week {
+    color: var(--cs-text-muted-color);
+}
+
+.daterangepicker.daterangepicker td.off, .daterangepicker.daterangepicker td.off.in-range, .daterangepicker.daterangepicker td.off.start-date, .daterangepicker.daterangepicker td.off.end-date {
+    background-color: var(--cs-dropdown-background);
+    color: var(--cs-text-muted-color);
+}
+
+.daterangepicker.daterangepicker td.in-range {
+    background-color: var(--cs-dropdown-link-background-active);
+    color: var(--cs-text-color);
+}
+
+.daterangepicker.daterangepicker td.active, .daterangepicker.daterangepicker td.active:hover {
+    background-color: var(--cs-main-color);
+    color: var(--cs-text-inverse-color);
+}
+
+.daterangepicker.daterangepicker td.disabled, .daterangepicker.daterangepicker option.disabled {
+    color: var(--cs-text-muted-color);
+}
+
+.daterangepicker.daterangepicker select.hourselect, .daterangepicker.daterangepicker select.minuteselect, .daterangepicker.daterangepicker select.secondselect, .daterangepicker.daterangepicker select.ampmselect {
+    background: var(--cs-dropdown-link-background-active);
+    border-color: var(--cs-dropdown-link-background-active);
+}
+
+.daterangepicker.daterangepicker .calendar-time select.disabled {
+    color: var(--cs-text-muted-color);
+}
+
+.daterangepicker.daterangepicker .drp-buttons {
+    border-top-color: var(--cs-dropdown-divider-top);
+}
+
+.daterangepicker.daterangepicker.show-ranges.single.rtl .drp-calendar.left {
+    border-right-color: var(--cs-dropdown-border);
+}
+
+.daterangepicker.daterangepicker.show-ranges.single.ltr .drp-calendar.left {
+    border-left-color: var(--cs-dropdown-border);
+}
+
+.daterangepicker.daterangepicker.show-ranges.rtl .drp-calendar.right {
+    border-right-color: var(--cs-dropdown-border);
+}
+
+.daterangepicker.daterangepicker.show-ranges.ltr .drp-calendar.left {
+    border-left-color: var(--cs-dropdown-border);
+}
+
+.daterangepicker.daterangepicker .ranges li:hover {
+    background-color: var(--cs-dropdown-link-background-hover);
+}
+
+.daterangepicker.daterangepicker .ranges li.active {
+    background-color: var(--cs-main-color);
+    color: var(--cs-text-inverse-color);
+}
+
+
+
+// CS-Cart date range picker styles
+.daterangepicker.daterangepicker .drp-calendar {
+    max-width: none;
+}
+
+@media (max-width: 563px) {
+    .daterangepicker .drp-buttons .drp-selected.drp-selected,
+    .daterangepicker .drp-buttons .btn.btn {
+        display: block;
+        margin-left: 0;
+        margin-bottom: 10px;
+        width: 100%;
+        text-align: center;
+    }
+}

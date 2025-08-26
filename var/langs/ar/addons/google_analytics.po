@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Arabic\n"
+"Language: ar_SA\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ar\n"
+"X-Crowdin-File: /release-4.18.3/addons/google_analytics.po\n"
+"X-Crowdin-File-ID: 9328\n"
+"PO-Revision-Date: 2024-10-02 13:28\n"
+
+msgctxt "Addons::name::google_analytics"
+msgid "Google Analytics"
+msgstr "تحليلات جوجل"
+
+msgctxt "Addons::description::google_analytics"
+msgid "Integrates a Google Analytics service with the store"
+msgstr "يدمج خدمة غوغل تحليلات مع مخزن"
+
+msgctxt "SettingsSections::google_analytics::general"
+msgid "General"
+msgstr "توليد"
+
+msgctxt "SettingsOptions::google_analytics::tracking_code"
+msgid "Google Analytics account number"
+msgstr "رقم حساب جوجل تحليلات"
+
+msgctxt "SettingsOptions::google_analytics::track_ecommerce"
+msgid "Track e-commerce transactions"
+msgstr "تتبع المعاملات التجارية الإلكترونية"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_title"
+msgid "Google Analytics"
+msgstr "تحليلات Google"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_description"
+msgid "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+msgstr "Google Analytics هي خدمة توفر لنا تحليلات مواقع الويب: عدد الزوار الفريدين، والصفحات الأكثر والأقل شهرة، وما إلى ذلك. إليك <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">بيان Google Analytics حول الخصوصية</a>."
+
+msgctxt "Languages::google_analytics.google_ads_cookies_title"
+msgid "Google Ads"
+msgstr "إعلانات Google"
+
+msgctxt "Languages::google_analytics.google_ads_cookies_description"
+msgid "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."
+msgstr "إعلانات Google عبارة عن خدمة تتيح لنا تقديم عروض مخصصة لك. يسمح لنا هذا الإذن بتعيين ملفات تعريف الارتباط وإرسال بعض بياناتك المتعلقة بالإعلان إلى Google. إليك <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">كيفية تعامل Google مع البيانات المتعلقة بالإعلانات</a>."
+

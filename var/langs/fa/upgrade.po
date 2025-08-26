@@ -1,0 +1,30 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Persian\n"
+"Language: fa_IR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: fa\n"
+"X-Crowdin-File: /release-4.18.3/upgrade.po\n"
+"X-Crowdin-File-ID: 9474\n"
+"PO-Revision-Date: 2024-10-02 13:30\n"
+
+msgctxt "Languages::upgrade_notification.stripe_connect.collecting_vendor_debt_deprecated.title"
+msgid "Collecting vendor debt as part of commission is now deprecated"
+msgstr ""
+
+msgctxt "Languages::upgrade_notification.stripe_connect.collecting_vendor_debt_deprecated.message"
+msgid "Your Stripe Connect integration is currently configured to collect not only order commission, but also past debts of sellers to your marketplace. This functionality is now deprecated and will be removed in version 4.19.1. Our Stripe integration will only collect what the seller owes the marketplace from this particular transaction.</br>To ensure that sellers pay their past debts to your marketplace, your marketplace already has the \"Vendor-to-admin payments\" add-on. It is more transparent and can limit the functionality of debtor accounts to encourage them to pay up."
+msgstr ""
+
+msgctxt "Languages::upgrade_notification.fedex_shipping_new_api.title"
+msgid "FedEx integration updated; old integration remains, but marked as deprecated"
+msgstr ""
+
+msgctxt "Languages::upgrade_notification.fedex_shipping_new_api.message"
+msgid "You're currently using the old integration that is deprecated by FedEx and might stop working eventually. That's why you'll see \"FedEx (Deprecated)\" in the settings of your existing shipping methods. CS-Cart now comes with a new FedEx integration—called simply \"FedEx\"—that uses the current API. To switch to the up-to-date integration, add a new shipping method that uses the new \"FedEx\" for rate calculation. Once you <a href=\"https://developer.fedex.com/api/en-us/get-started.html\" target=\"_blank\">acquire the credentials</a> and make sure that the new shipping method works, you can disable the shipping methods that use \"FedEx (Deprecated)\".</br></br><a class=\"btn btn-primary\" target=\"_blank\" href=\"[url]\">Go to shipping methods</a>"
+msgstr ""
+

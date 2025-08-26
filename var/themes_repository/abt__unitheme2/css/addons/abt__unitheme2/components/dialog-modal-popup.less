@@ -1,0 +1,1775 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+/*##############################################################################
+   [[[[[ BEGIN ]]]]] UI Dialog / modal window
+##############################################################################*/
+/* NOTICE:
+-> "border-radius" controlled through ".ut2_rounding_" mixins.
+-> "background" + "border-radius" + "box-shadow" given to main wrapper "::before" to avoid fuzzy/blurred bug in Chrome/Edge.
+-> unique open states: "html.dialog-is-open", "html.notif-dialog-is-open", "html.select-variation-dialog-is-open".
+-> mutual open state: "html.modal-is-open".
+-> every opened dialog can have 2-4 states: ".js--dialog-state-_opened", ".js--dialog-state-_active", ".js--dialog-state-_ancestor", ".js--dialog-state-_parent".
+ * */
+
+@var--dialog-modal__title-_line-height: calc(~'var(--font-size-big) + 2px'); // 26px
+@var--dialog-modal__viewport-v-spcing: 40px;
+@var--dialog-modal__header-_height: 50px;
+@var--dialog-modal__footer-_height: calc(~'var(--height-button) + var(--gap-sm) * 2'); // 70px
+@var--dialog-modal__footer-_height-_mobile: calc(~'var(--height-button) + 40px'); // 80px
+@var--dialog-modal__animation-_duration: 400ms;
+@var--dialog-modal__animation-_delay: 100ms;
+@var--dialog-modal-_right-panel__animation-_delay: 200ms;
+@var--dialog-modal__animation-_timing-function: cubic-bezier(.4,0,.2,1);
+
+.animation_dialog_mobile() {
+    animation: show_dialog_mobile @var--dialog-modal__animation-_duration @var--dialog-modal__animation-_timing-function @var--dialog-modal__animation-_delay forwards;
+}
+.animation_dialog_right_panel() {
+    animation: show_dialog_right_panel @var--dialog-modal__animation-_duration @var--dialog-modal__animation-_timing-function @var--dialog-modal-_right-panel__animation-_delay forwards;
+}
+
+@keyframes show_dialog_mobile {
+    0% {
+        transform: translate3d(0, 100%, 0);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes show_dialog_right_panel {
+    0% {
+        transform: translate3d(calc(var(--flow-direction-factor-inline) * 100%), 0, 0);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] overlaying/z-index
+==============================================================================*/
+.ui-widget-overlay {
+    background: black; // remove excessive image from parent theme
+    //z-index: @big-z - 1 !important; // untune mega-menu
+    opacity: 0.6;
+    touch-action: none;
+
+    .ut2-sw & // main top level container
+    {
+        display: none;
+    }
+}
+
+// @big-z: 10000;
+.ui-dialog.ui-widget {
+    z-index: @big-z !important;
+}
+
+html.select-variation-dialog-is-open {
+    #tygh_main_container {
+        z-index: initial; // fix visibility over "About Vendor" dialog
+    }
+
+    .notification-content-extended.js--dialog-state-_active + .ui-widget-overlay {
+        z-index: @big-z + 3 !important;
+    }
+}
+.select-variation-dialog {
+    z-index: @big-z + 3; // always above .ui-dialog
+}
+
+.ui-dialog.ui-widget ~ .ui-dialog,
+.ui-dialog.ui-widget ~ .ui-widget-overlay {
+    z-index: @big-z + 2 !important;
+}
+
+.ui-widget-overlay:has(+ .notification-content-extended),
+.notification-content-extended {
+    z-index: @big-z + 4 !important; // always on top
+}
+
+html.modal-is-open :is(.ui-dialog.ui-widget, .notification-content-extended).js--dialog-state-_active + .ui-widget-overlay {
+    z-index: @big-z - 1 !important; // fix broken/shifted overlay position
+}
+
+.notification-container-dialog {
+    z-index: 1510; // legacy
+}
+
+// display city/location autocomplete dropdown for city input (from module vendor_location) on top of dialog (ticket id:X3T-8GP-TTDA, #:18644)
+// increase/higher precedence
+body .pac-container {
+    border-radius: var(--border-radius);
+    z-index: @big-z + 1;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] strange/weird dialog code location
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// fix for overlay placement in private/incognito mode
+.notification-container:not(:has(.ui-widget-overlay)) {
+    z-index: @big-z + 5; // above any dialog-modal
+}
+
+// in product card
+.ut2-pb.ty-product-block:has(.ui-dialog.js--dialog-state-_opened) {
+    z-index: @z-index + 4; // above sticky header. value of 6 is enough
+}
+
+// in product sticky sidebar
+:is(.ut2-pb__right-wrapper, .ut2-pb__right, .litecheckout__ab_sticky-block):has(.ui-dialog.js--dialog-state-_opened) {
+    @media (min-width: 768px) {
+        z-index: @z-index + 4;
+    }
+}
+
+// in product information (tabs)
+// non-mobile
+.ut2-pb__tabs-wrapper:has(.ui-dialog.js--dialog-state-_opened) {
+    z-index: @z-index + 4; // sufficient  above 1) sticky sidebar; 2) tabs/more butoons and product/banner frame elsewhere. value of 4 is enough
+}
+.ut2-pb__tabs-wrapper, // non-mobile
+.ut2-pb__tabs // mobile
+{
+    .ty-product-feature-group:has(.ui-dialog.js--dialog-state-_opened),
+    .ty-product-feature:has(.ui-dialog.js--dialog-state-_opened) {
+        z-index: @z-index + 4; // above 1) sibling tabs content; 2) sibling product features; 3) tabs/more butoons and product/banner frame elsewhere; 4) bottom sticky panel. value of 5 is enough
+    }
+
+    .ty-product-feature__label:has(.ui-dialog.js--dialog-state-_opened) {
+        z-index: @z-index + 4; // above feature values. value of 2 is enough
+    }
+}
+/* [[ END ]] strange/weird dialog code location
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[[ END ]]]] overlaying/z-index
+==============================================================================*/
+
+
+
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] dialog-modal main wrapper
+==============================================================================*/
+.ui-dialog.ui-widget,
+.notification-content-extended {
+    font-family: @body_font; // reset ui lib style
+    color: @font; // reset ui lib style
+    background: initial !important; // reset ui lib style & given to "::before"
+    border-radius: initial !important; // reset ui lib style & given to "::before"
+    box-shadow: initial; // reset ui lib style & given to "::before"
+    border: 0 none !important; // reset ui lib style
+    padding: initial !important;
+    margin: initial !important;
+    overflow: initial !important; // should be "visible" to avoid bugs
+    min-height: initial;
+    position: fixed !important;
+    top: initial !important;
+    right: initial !important;
+    bottom: initial !important;
+    left: initial !important;
+
+    // dialog-modal "border-radius" + "background" + "box-shadow"
+    &::before {
+        content: '';
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+        background: @general_bg_color;
+        position: absolute;
+        z-index: -1;
+        inline-size: 100%;
+        block-size: 100%;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        inset-block-end: 0;
+        inset-inline-start: 0;
+    }
+}
+
+// exists only on mobile
+.select-variation-dialog {
+    display: block;
+    inline-size: 100%;
+    position: fixed;
+    inset-block-start: initial;
+    inset-inline: 0;
+    inset-block-end: 0;
+    transform: translate3d(0, 100%, 0);
+
+    html.select-variation-dialog-is-open & {
+        .animation_dialog_mobile();
+
+        &::before {
+            pointer-events: auto;
+            opacity: 1;
+        }
+    }
+
+    // muting page overlay
+    &::before {
+        content: "";
+        background-color: rgba(0, 0, 0, .5);
+        touch-action: none;
+
+        inline-size: 100%;
+        block-size: 200vh;
+        position: absolute;
+        z-index: -2;
+        inset-inline: 0;
+        inset-block-end: 0;
+
+        pointer-events: none;
+        transition: opacity @var--dialog-modal__animation-_duration @var--dialog-modal__animation-_timing-function;
+        opacity: 0;
+    }
+
+    // background
+    &::after {
+        content: "";
+        background: @general_bg_color;
+        inline-size: 100%;
+        block-size: 100%;
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+    }
+}
+
+.ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])),
+.notification-content-extended {
+    min-inline-size: 600px;
+    width: initial !important; // reset Responsive-theme 640px val for .notification-content-extended and ui-dialog scripted val
+    max-width: initial; // reset Responsive-theme 930px val for .ui-dialog
+    //max-block-size: 100vh; // 1) originally fails ui-dialog script calculation (object-container/ui-dialog height and footer pos). 2) given to content wrapper
+    height: initial !important;
+
+    inset-block-start: 50% !important;
+    inset-inline-start: 50% !important;
+    transform: translate3d(calc(~'var(--flow-direction-factor-inline) * -50%'), -50%, 0);
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        min-inline-size: initial;
+        width: 100% !important;
+        inline-size: 100% !important;
+
+        inset-inline-start: 0 !important;
+        inset-inline-end: 0 !important;
+        inset-block-end: 0 !important;
+    }
+
+    &::before {
+        border-radius: var(--border-radius-box);
+
+        @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+            border-radius: initial;
+        }
+    }
+}
+
+.ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])) {
+    max-inline-size: min(930px, 80vw);
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        max-inline-size: initial;
+        inset-block-start: initial !important;
+        display: block !important;
+
+        opacity: 1 !important;
+        transform: translate3d(0, 100%, 0);
+    }
+}
+html.dialog-is-open .ui-dialog.ui-widget:not(.abt__ut2_right-panel) {
+    &.js--dialog-state-_ancestor { // prevent animation overlapping
+        @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+            transform: translate3d(0, 0, 0) !important;
+        }
+    }
+
+    &:not([class*=previewer]):not(:where([style*="display: none"], [style*="display:none"])) {
+        @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+            .animation_dialog_mobile();
+        }
+    }
+}
+
+.notification-content-extended {
+    max-inline-size: min(640px, 50vw);
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        max-inline-size: initial;
+        inset-block-start: initial !important;
+        display: block !important;
+
+        transition: none;
+        transform: translate3d(0, 100%, 0);
+    }
+}
+html.notif-dialog-is-open .notification-content-extended:not(:where([style*="display: none"], [style*="display:none"])) {
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        .animation_dialog_mobile();
+    }
+}
+
+
+// "About Vendor" right sliding panel
+.ui-dialog.ui-widget.abt__ut2_right-panel {
+    width: min(500px, 100vw) !important;
+    height: 100vh !important;
+
+    inset-inline-start: initial !important;
+    inset-inline-end: 0 !important;
+    inset-block-start: 0 !important;
+    inset-block-end: 0 !important;
+
+    display: block !important;
+
+    transform: translate3d(calc(var(--flow-direction-factor-inline) * 100%), 0, 0);
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        width: 100% !important;
+        //inset-inline-start: 0 !important;
+        opacity: 1 !important;
+    }
+}
+html.dialog-is-open .ui-dialog.ui-widget.abt__ut2_right-panel.ui-widget-content {
+    &.js--dialog-state-_ancestor { // prevent animation overlapping
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    &:not(:where([style*="display: none"], [style*="display:none"])) {
+        .animation_dialog_right_panel();
+    }
+}
+
+
+// full viewport photo viewer
+.ui-dialog.ui-widget.ui-widget-content[class*=previewer] // increase precedence
+{
+    width: 100% !important;
+    max-width: unset !important;
+    height: 100dvh !important;
+    max-height: unset !important;
+
+    inset-inline-start: 0 !important;
+    inset-inline-end: 0 !important;
+    inset-block-start: 0 !important;
+    inset-block-end: 0 !important;
+
+    &::before {
+        box-shadow: none;
+    }
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        display: block !important;
+        opacity: 1 !important;
+    }
+}
+/* [[[[ END ]]]] dialog-modal main wrapper
+==============================================================================*/
+
+
+
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] dialog-modal mid/content wrappers
+==============================================================================*/
+.ui-dialog.ui-widget .ui-dialog-content,
+.notification-content-extended .notification-body-extended {
+    color: @font; // reset UI-lib & Responsive-theme declar
+    outline: 0 none;
+    box-shadow: initial; // given to main wrapper "::before"
+    background: initial; // given to main wrapper "::before"
+    border-radius: initial !important; // given to main wrapper "::before"
+    overflow: initial;
+    position: initial;
+
+    border: 0 none !important;
+    padding: initial !important;
+    margin: initial !important;
+    width: initial !important;
+    height: initial !important;
+    min-height: initial !important;
+    max-height: initial !important;
+
+    display: block !important;
+}
+
+// crop bottom scrollbar corner (only desktop)
+body.desktop-screen .ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content,
+body.desktop-screen .notification-content-extended .notification-body-extended {
+    @media (min-width: 768px) {
+        border-end-end-radius: var(--border-radius-box) !important;
+        border-end-start-radius: var(--border-radius-box) !important;
+        overflow: hidden;
+    }
+}
+
+.ui-dialog.ui-widget .ui-dialog-content > .object-container,
+.notification-content-extended .ty-product-notification__body,
+.select-variation-dialog #ut2_select_variation_wrapper_svw // exists only on mobile
+{
+    box-sizing: border-box;
+    background: initial; // given to main wrapper pseudo-element
+
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: @base10 transparent;
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    padding: var(--gap-s);
+    width: unset;
+    max-width: initial;
+    max-inline-size: initial;
+    min-inline-size: initial;
+    min-height: initial;
+    max-height: unset;
+}
+
+.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container,
+.notification-content-extended .ty-product-notification__body {
+    height: unset !important; // reset harmful script fixed height, which in some cases is calculated incorrectly and cause useless scroll-bar
+    max-height: calc(~'100vh - @{var--dialog-modal__header-_height} - @{var--dialog-modal__viewport-v-spcing} * 2') !important;
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        max-height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+    }
+}
+.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content.ab__vg_video_popup > .object-container {
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+    }
+}
+.select-variation-dialog #ut2_select_variation_wrapper_svw // exists only on mobile
+{
+    max-height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+}
+.ui-dialog.ui-widget.abt__ut2_right-panel.ui-widget-content .ui-dialog-content > .object-container {
+    height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+    padding-block-start: initial;
+}
+.ui-dialog.ui-widget.ui-widget-content[class*=previewer] .ui-dialog-content > .object-container {
+    height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+}
+
+// fallback for :has()
+.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container,
+.notification-content-extended .ty-product-notification__body {
+    padding-block-end: calc(~'@{var--dialog-modal__footer-_height} + var(--gap-sm)');
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile} + var(--gap-sm)');
+    }
+}
+// fallback for :has()
+.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container:has(:not(.buttons-container)),
+.notification-content-extended:has(:not(.ty-product-notification__buttons)) .ty-product-notification__body {
+    padding-block-end: var(--gap-s);
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        padding-block-end: var(--gap-s);
+    }
+}
+// main rule with :has()
+.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container:has(.buttons-container:not(.object-container .hidden .buttons-container, .hidden.buttons-container)),
+.notification-content-extended:has(.ty-product-notification__buttons:not(.ty-product-notification__body .hidden .ty-product-notification__buttons, .hidden.ty-product-notification__buttons)) .ty-product-notification__body {
+    padding-block-end: calc(~'@{var--dialog-modal__footer-_height} + var(--gap-sm)'); // + footer spacing
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile} + var(--gap-sm)');
+    }
+}
+
+.ui-dialog.ui-widget .ui-dialog-content[id*=geo_maps_location] > .object-container {
+    padding-inline: initial !important;
+    padding-block-start: initial !important;
+    padding-block-end: calc(~'@{var--dialog-modal__footer-_height}') !important; // NO footer spacing
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile}') !important;
+    }
+}
+.ui-dialog.ui-widget .ui-dialog-content.pickup__offices-wrapper > .object-container { // exists only on mobile
+    padding-inline: initial !important;
+    padding-block-start: initial !important;
+    padding-block-end: var(--gap-s) !important;
+}
+.select-variation-dialog #ut2_select_variation_wrapper_svw // exists only on mobile
+{
+    padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile} + var(--gap-sm)');
+}
+
+/* [[[[ END ]]]] dialog-modal mid/content wrappers
+==============================================================================*/
+
+
+
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] dialog-modal footer/buttons-container
+==============================================================================*/
+.ui-dialog.ui-widget .buttons-container,
+.notification-content-extended .ty-product-notification__buttons {
+    text-align: start;
+    background: var(--fill-gray);
+    border-top: 0 none; // reset/clear parent-theme unfit value
+    border-radius: 0 0 var(--border-radius-box) var(--border-radius-box);
+
+    width: initial !important;
+    height: @var--dialog-modal__footer-_height;
+    max-width: initial;
+    padding: var(--gap-sm) var(--gap-s);
+    margin: initial;
+
+    position: absolute !important; // originally fails ui-dialog script calculation (object-container/ui-dialog height and footer pos)
+    z-index: 2;
+    inset-block-start: initial !important;
+    bottom: 0 !important; // fix incorrect script value in certain cases
+    inset-block-end: 0 !important;
+    inset-inline: 0 !important;
+
+    display: flex;
+    order: 1;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-xs);
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        border-radius: initial;
+        height: @var--dialog-modal__footer-_height-_mobile;
+    }
+
+    &::after,
+    &::before {
+        content: none;
+    }
+
+    .ty-float-left,
+    .ty-float-right {
+        float: initial;
+    }
+
+    & > div {
+        margin: initial;
+        display: block;
+    }
+
+    .ty-btn {
+        @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+            width: auto;
+        }
+    }
+
+    /* legacy
+    & > .ty-btn {
+        display: flex;
+        width: auto;
+        margin: 0;
+    }*/
+}
+
+// legacy
+.notification-content-extended .ty-product-notification__buttons {
+    .ty-btn__secondary {
+        @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+            background: transparent;
+            color: @font;
+            box-shadow: inset 0 0 0 2px @secondary_button;
+
+            &:hover {
+                box-shadow: inset 0 0 0 2px fade(@secondary_button, 80%);
+            }
+        }
+    }
+}
+
+// legacy
+.ui-dialog.ui-widget {
+    //.buttons-container.picker,
+    .buttons-container
+    {
+        @media (min-width: 768px) {
+            .ty-btn__tertiary {
+                background: @general_bg_color;
+            }
+        }
+    }
+
+    /*.buttons-container.picker > div {
+        margin: 0 var(--gap-s);
+        width: 100%;
+    }*/
+
+    /*.ty-section__body .buttons-container {
+        box-sizing: content-box;
+        border-radius: initial;
+    }*/
+}
+/* [[[[ END ]]]] dialog-modal footer/buttons-container
+==============================================================================*/
+
+
+
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] dialog-modal header/title-bar
+==============================================================================*/
+.ui-dialog.ui-widget {
+    .ui-dialog-titlebar {
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
+
+    .ui-dialog-titlebar {
+        font-weight: normal;
+        overflow: hidden;
+    }
+
+    .ui-dialog-title {
+        float: none;
+
+        padding: initial;
+        margin: initial;
+        width: 100% !important;
+        display: block;
+    }
+}
+
+// text/font styling
+.ui-dialog.ui-widget .ui-dialog-title,
+.notification-content-extended h1 {
+    font-family: @headings_font;
+    font-size: calc(~'var(--font-size-big) - 2px'); // 22px
+    line-height: @var--dialog-modal__title-_line-height;
+    font-weight: @headings_font_weight;
+    color: @font;
+    text-align: start;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.ui-dialog.ui-widget .ui-dialog-titlebar,
+.notification-content-extended h1 {
+    .uppercase() when (@abt__ut2_general_use_titles_uppercase = true) {
+        text-transform: uppercase;
+    }
+    .uppercase();
+
+    border-radius: unset;
+    background: var(--fill-white);
+    float: initial;
+
+    position: relative;
+    //z-index: 1;
+
+    border: 0 none;
+    border-block-end: 1px solid var(--color-base5);
+    padding: initial;
+    padding-inline: var(--gap-s) @var--dialog-modal__header-_height;
+    padding-block-start: calc(~'var(--gap-xs) + 3px');
+    padding-block-end: var(--gap-xs);
+    margin: initial;
+
+    width: initial;
+    height: @var--dialog-modal__header-_height;
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        padding-inline-end: @var--dialog-modal__header-_height - 10;
+    }
+}
+
+.ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-titlebar,
+body .notification-content-extended h1 // increase precedence
+{
+    border-radius: var(--border-radius-box) var(--border-radius-box) 0 0;
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        border-radius: initial;
+    }
+}
+/* [[[[ END ]]]] dialog-modal header/title-bar
+==============================================================================*/
+
+
+
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] impact on other elements
+==============================================================================*/
+html.dialog-is-open {
+    .ty-tabs__content > div {
+        z-index: 2;
+
+        .ui-dialog.ui-widget {
+            z-index: @z-index*10 !important;
+        }
+    }
+}
+/* [[[[ END ]]]] impact on other elements
+==============================================================================*/
+
+/* [[[[[ END ]]]]] UI Dialog / modal window
+##############################################################################*/
+
+
+
+
+
+
+
+/*##############################################################################
+   [[[[[ BEGIN ]]]]] Notification / Alert
+##############################################################################*/
+.notification-container-dialog,
+.notification-container {
+    min-width: initial;
+    min-inline-size: 290px;
+    max-width: initial;
+
+    width: initial;
+    top: initial;
+    right: initial;
+    bottom: initial;
+    left: initial;
+    inset-inline-end: var(--gap-s);
+}
+
+.notification-container-dialog {
+    max-inline-size: calc(~'100% - var(--gap-s) * 2');
+    position: absolute;
+    inset-block-start: 40px;
+}
+
+.notification-container {
+    position: fixed;
+    inset-block-start: 0;
+
+    body.desktop-screen & {
+        max-inline-size: calc(~'40% - var(--gap-s) * 2');
+
+        @media (max-width: 1200px) {
+            max-inline-size: calc(~'60% - var(--gap-s) * 2');
+        }
+        @media (max-width: 767px) {
+            max-inline-size: calc(~'100% - var(--gap-s) * 2');
+        }
+    }
+    body.tablet-screen & {
+        @media (orientation: portrait) {
+            max-inline-size: calc(~'60% - var(--gap-s) * 2');
+        }
+        @media (orientation: landscape) {
+            max-inline-size: calc(~'40% - var(--gap-s) * 2');
+        }
+    }
+    body.mobile-screen & {
+        max-inline-size: calc(~'100% - var(--gap-s) * 2');
+    }
+}
+
+.notification-content {
+    font-size: var(--font-size-normal);
+    line-height: calc(~'var(--font-size-normal) + 6px');
+
+    opacity: initial;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 20%);
+    border-radius: var(--border-radius-box);
+    position: relative;
+    z-index: 1;
+
+    min-block-size: calc(~'var(--gap-m) + var(--gap-xxs) * 2');
+    padding: initial;
+    padding-block: var(--gap-xs);
+    padding-inline: var(--gap-xs) calc(~'var(--gap-xs) * 5');
+    margin: initial;
+    margin-block: var(--gap-sm);
+    margin-inline: initial;
+    border: 0 none;
+    border-style: solid;
+    border-inline-width: 4px 0;
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        margin-block: var(--gap-sm);
+    }
+
+    & > strong:first-of-type {
+        text-transform: uppercase;
+        margin: unset;
+        display: block;
+    }
+
+    button.close {
+        float: none;
+        font-size: 0;
+        line-height: 0;
+        color: @font;
+
+        border-radius: 100%;
+        background: fade(white, 50%);
+
+        inline-size: var(--gap-m);
+        block-size: var(--gap-m);
+        top: unset;
+        right: unset;
+        bottom: unset;
+        left: unset;
+        inset-block-start: var(--gap-xxs);
+        inset-inline-end: var(--gap-xs);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        transition: all 150ms ease;
+        opacity: 0.85;
+
+        &:before {
+            content: "\e92e";
+            font-family: uni2-icons;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        &:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        &:active {
+            transform: rotate(90deg) scale(0.9);
+        }
+    }
+
+    &.alert-success {
+        border-color: #4caf50;
+        background: contrast(@content_bg, #e3f6cb, #28702b);
+    }
+
+    &.alert-warning {
+        border-color: #ff9800;
+        background: contrast(@content_bg, #fff4c6, #c77800);
+    }
+
+    &.alert-error {
+        border-color: #f44336;
+        background: contrast(@content_bg, #ffdfdf, #b43227);
+    }
+
+    &.alert-success,
+    &.alert-warning,
+    &.alert-error {
+        color: @font;
+
+        a {
+            color: @font;
+            text-decoration: underline;
+        }
+    }
+}
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] content/stuffing element
+==============================================================================*/
+/*.js-ins--notif-content-_sku-copied {
+    text-transform: lowercase;
+}*/
+/* [[[[ END ]]]] content/stuffing element
+==============================================================================*/
+
+/* [[[[[ END ]]]]] Notification / Alert
+##############################################################################*/
+
+
+
+
+
+
+
+/*##############################################################################
+   [[[[[ BEGIN ]]]]] misc global elements
+##############################################################################*/
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] close-cross button
+==============================================================================*/
+span.close,
+.notification-content-extended h1 .cm-notification-close,
+.ui-icon-closethick,
+.ut2-btn-close i {
+    color: var(--color-font-lighten) !important;
+
+    display: inline-flex;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+    opacity: initial !important;
+
+    &:hover {
+        color: @font !important;
+        transform: scale(0.9);
+        opacity: initial !important;
+    }
+
+    &::before {
+        content: '\e92e'!important;
+        display: block !important;
+        font-size: 28px !important;
+        font-family: uni2-icons, sans-serif !important;
+        font-style: normal !important;
+        font-weight: normal !important;
+        font-variant: normal !important;
+        text-transform: none !important;
+        line-height: 1 !important;
+    }
+}
+
+.ui-dialog.ui-widget .ui-dialog-titlebar-close,
+.notification-content-extended h1 [class*=close],
+.ut2_select_variation__title .ut2-btn-close {
+    float: initial;
+    width: @var--dialog-modal__header-_height - 1;
+    height: @var--dialog-modal__header-_height - 1;
+    position: absolute;
+    top: initial;
+    right: initial;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        width: @var--dialog-modal__header-_height - 10;
+    }
+}
+
+.ui-dialog.ui-widget .ui-dialog-titlebar-close {
+    -webkit-appearance: none;
+    font-size: 0;
+    text-indent: initial;
+    margin: initial;
+
+    &:hover {
+        opacity: initial;
+    }
+
+    .ui-icon-closethick {
+        width: 100%;
+        height: 100%;
+        margin: initial;
+        position: initial;
+        overflow: initial;
+    }
+}
+
+.ut2_select_variation__title .ut2-btn-close {
+    .ut2-icon-baseline-close {
+        block-size: 100%;
+        inline-size: 100%;
+    }
+}
+/* [[[[ END ]]]] close-cross button
+==============================================================================*/
+
+/* [[[[[ END ]]]]] misc global elements
+##############################################################################*/
+
+
+
+
+
+/*##############################################################################
+   [[[[ BEGIN ]]]] dialog-modal misc content/stuffing
+##############################################################################*/
+.ui-dialog.ui-widget .ui-dialog-content {
+    .ty-product-review-new-product-review {
+        inline-size: var(--ty-product-review-popup-width, 560px);
+        min-width: initial;
+        max-width: initial;
+
+        @media (min-width: 768px) and (max-width: 1680px) and (hover:none) {
+            body.tablet-screen & {
+                max-inline-size: 560px;
+            }
+        }
+        @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+            inline-size: initial;
+        }
+    }
+
+    // fix extra empty space at the bottom of UI-dealog
+    .ty-quick-view__wrapper .ab-sticker__tooltip {
+        top: -200vh;
+    }
+
+    select {
+        height: var(--height-button);
+    }
+
+    button {
+        font-family: @body_font;
+    }
+
+    .ty-search-form {
+        &.ty-section {
+            margin: 0;
+        }
+        &.ty-section__body {
+            padding: var(--gap-s);
+        }
+
+        .ty-input-text {
+            margin-bottom: var(--gap-xs);
+        }
+
+        .ty-control-group {
+            @media (min-width: 768px) {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                flex-wrap: wrap;
+                width: 100%;
+
+                .ty-input-text {
+                    .xcalc(7px);
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        .ty-control-group__title {
+            @media (min-width: 768px) {
+                width: 140px;
+            }
+        }
+
+        .ty-control-group__label {
+            @media (min-width: 768px) {
+                min-width: inherit;
+            }
+        }
+    }
+    /*.ty-search-form__buttons-container.buttons-container {
+        border-radius: 0 0 0 0;
+        margin-left: -20px;
+        margin-right: -20px;
+    }*/
+
+    .ui-button-icon-only,
+    .ui-button-icons-only {
+        .ui-button-text,
+        .ui-button-text {
+            padding: 0;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+.ui-dialog.ui-widget.ui-widget-content.abt__ut2_right-panel // increase precedence
+{
+    .container-fluid-row > .row-fluid {
+        padding: 0;
+    }
+}
+
+.notification-content-extended .ty-product-notification__body {
+    pre { // PHP error log in dialog
+        background: contrast(@font, @content_bg, @base) !important;
+    }
+}
+
+.ty-owl-previewer .ty-owl-previewer__container // increase precedence
+{
+    .owl-controls:not(.owl-controls-outside) .owl-buttons {
+        max-width: unset;
+
+        div.owl-prev {
+            width: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+
+            &:before {
+                font-size: 18px;
+                content: "\f101";
+                font-family: 'uni2-icons', sans-serif;
+            }
+        }
+
+        div.owl-next {
+            width: 20px;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+
+            &:before {
+                font-size: 18px;
+                content: "\f10d";
+                font-family: 'uni2-icons', sans-serif;
+            }
+        }
+    }
+}
+
+// Iframe in popup
+[class*="popup"] .object-container iframe {
+    width: 100%;
+    min-height: 400px;
+
+    @media (min-width: 768px) {
+        border-radius: 0 0 var(--border-radius-box) var(--border-radius-box);
+        min-height: 522px;
+    }
+}
+
+// Notification
+.ty-product-notification__amount {
+    color: var(--color-font-lighten);
+}
+
+
+
+.ty-product-notification__subtotal {
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        font-weight: normal;
+
+        bdi {
+            var(--font-size-large);
+            font-family: @price_font;
+            margin-top: 5px;
+            display: block;
+        }
+    }
+}
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] product added to cart/wishlist/comparison
+==============================================================================*/
+.ty-product-notification__item {
+    margin-bottom: var(--gap-s);
+    display: flex;
+    align-items: flex-start;
+    column-gap: var(--gap-s);
+
+    @media (max-width: 767px) {
+        display: block;
+    }
+
+    &:last-child {
+        margin-bottom: var(--gap-xxs);
+    }
+}
+
+.ty-product-notification__image {
+    float: initial;
+    margin: initial;
+    padding: initial;
+    min-width: initial;
+    flex-shrink: 0;
+
+
+    @media (max-width: 767px) {
+        margin-inline: auto;
+        display: block;
+    }
+}
+
+.ty-product-notification__content {
+    overflow: initial;
+    flex-grow: 1;
+
+    .ut2-product-notification__head {
+        display: flex;
+        justify-content: space-between;
+        column-gap: var(--gap-s);
+        row-gap: var(--gap-xs);
+
+        @media (max-width: 767px) {
+            margin-block-start: var(--gap-xs);
+        }
+
+        @media (max-width: 360px) {
+            overflow-x: hidden;
+            flex-wrap: wrap;
+        }
+    }
+
+    .ut2-product-notification__head__title {
+        word-break: break-all; // prevent pushing next item out of container (container overflow) due to long non-wrapping text
+        flex: 1;
+
+        @media (max-width: 360px) {
+            word-break: initial;
+            max-inline-size: 100%; // prevent stretching item out of container due to long non-wrapping text
+        }
+    }
+
+    .ty-product-notification__product-name {
+        float: none;
+        margin: initial;
+        max-width: initial;
+        display: initial;
+    }
+
+    .ty-product-notification__price {
+        float: none;
+        margin: initial;
+        flex-shrink: 0;
+    }
+
+    .ty-product-options__info {
+        margin: initial;
+        margin-block-start: var(--gap-xs);
+        padding: initial;
+        max-height: initial;
+        width: initial;
+        overflow: initial;
+        display: table;
+
+        &::before,
+        &::after {
+            content: initial;
+        }
+    }
+
+    .ty-product-options__title {
+        padding: initial;
+    }
+
+    .ty-product-options {
+        display: table-row;
+
+        &::before,
+        &::after {
+            content: initial;
+        }
+    }
+
+    // cell
+    .ty-product-options-name,
+    .ty-product-options-content {
+        float: initial;
+        width: initial;
+        padding: initial;
+        padding-block-start: var(--gap-xs);
+        display: table-cell;
+    }
+}
+/* [[[ END ]]] product added to cart/wishlist/comparison
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] select product variation/option
+==============================================================================*/
+#ut2_select_variation_wrapper_svw {
+    min-inline-size: min(600px, 100%);
+    max-width: 700px;
+    padding-block-end: var(--gap-xs);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .ut2_extra-link {
+        display: flex;
+        align-items: center;
+        margin-top: var(--gap-s);
+        color: @font;
+        font-size: var(--font-size-normal);
+
+        span {
+            text-decoration: underline;
+            color: @links;
+        }
+
+        i {
+            font-size: var(--font-size-small);
+            margin: 2px 0 0 2px;
+            color: @links;
+
+            html[dir="rtl"] & {
+                transform: scaleX(-1);
+            }
+        }
+    }
+
+    select {
+        cursor: pointer;
+    }
+}
+
+.ut2_select_variation__product {
+    display: flex;
+    margin-block-end: var(--gap-s);
+
+    .product_icon_lnk {
+        margin-right: var(--gap-xs);
+        flex-shrink: 0;
+
+        *[class*="list-image"] {
+            display: block;
+        }
+        img {
+            width: auto;
+        }
+    }
+}
+.ut2_select_variation__product-title {
+    display: flex;
+    flex-flow: column;
+    gap: var(--gap-xxs);
+
+    .product-title {
+        flex: 1;
+        max-width: 600px;
+        padding-inline-end: var(--gap-l);
+        color: @font;
+
+        .ut2_line_clamp(3);
+    }
+}
+
+// exists only on mobile
+.ut2_select_variation__title {
+    .uppercase() when (@abt__ut2_general_use_titles_uppercase = true) {
+        text-transform: uppercase;
+    }
+    .uppercase();
+
+    font-family: @headings_font;
+    font-size: calc(~'var(--font-size-big) - 2px'); // 22px
+    line-height: @var--dialog-modal__title-_line-height;
+    font-weight: @headings_font_weight;
+    color: @font;
+    text-align: start;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    height: @var--dialog-modal__header-_height;
+    background: @general_bg_color;
+    border-block-end: 1px solid @base5;
+    padding-block-start: calc(~'var(--gap-xs) + 3px');
+    padding-block-end: var(--gap-xs);
+    padding-inline-start: var(--gap-s);
+    padding-inline-end: @var--dialog-modal__header-_height - 10;
+    margin: initial;
+}
+
+.ut2_select_variation__price {
+
+    .ui-dialog.ui-widget .buttons-container > & {
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .ty-strike, .ty-strike .ty-list-price {
+        color: var(--color-font-lighten);
+    }
+    .ty-strike span[id*="price"]:after {
+        border-color: var(--color-font-lighten);
+    }
+}
+
+.ut2_select_variation__option {
+    position: relative;
+
+    .ty-product-options {
+        @media (min-width: 768px) {
+            column-count: 2;
+            column-gap: var(--gap-s);
+        }
+        .ty-control-group {
+            break-inside: avoid-column;
+            margin-inline: 1px;
+
+            &::before,
+            &::after {
+                content: initial;
+            }
+        }
+    }
+
+    .ty-control-group__label {
+        margin-right: initial;
+        display: block;
+    }
+    .ty-product-options__image--wrapper .ty-product-options__image {
+        max-width: 50px;
+    }
+    .ty-product-options select {
+        @media (max-width: 576px) {
+            width: calc(~'100vw - 55px');
+        }
+    }
+}
+.ut2_select_variation__buttons {
+    bottom: var(--gap-s);
+    margin: 0 calc(var(--gap-s) * -1);
+    border-radius: 0;
+
+    > div:first-child {
+        flex: 1;
+    }
+    > div:not(:last-child) {
+        .ty-qty .ty-value-changer, .quantity .ty-value-changer {
+            background: @content_bg;
+            height: var(--height-button);
+            min-height: var(--height-button);
+        }
+        .ty-qty .ty-control-group__label {
+            display: none;
+        }
+        .ty-qty {
+            margin-bottom: 0;
+        }
+    }
+    .ty-control-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        margin-bottom: initial;
+    }
+    .ty-control-group__label {
+        display: none;
+    }
+    .stock-wrap {
+        padding-right: var(--gap);
+    }
+
+    // exists only on mobile
+    .select-variation-dialog & {
+        background: var(--fill-gray);
+        width: initial !important;
+        height: @var--dialog-modal__footer-_height-_mobile;
+        padding: var(--gap-sm) var(--gap-s);
+        margin: initial;
+        position: absolute;
+        z-index: 2;
+        inset-block-start: initial;
+        inset-block-end: 0;
+        inset-inline: 0 !important;
+        display: flex;
+        align-content: center;
+        align-items: center;
+
+        > div {
+            margin-right: 0;
+
+            .ty-qty .ty-value-changer a[class*="changer"], .quantity .ty-value-changer a[class*="changer"], .touch input.ty-value-changer__input {
+                height: var(--min-height-button);
+            }
+        }
+    }
+}
+.ty-control-group__label {
+    width: auto;
+}
+
+/* [[[ END ]]] select product variation/option
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] add products as gift to gift certificate (ui-dialog content)
+==============================================================================*/
+.ui-dialog-content#content_free_products {
+    // stretch contents as much as possible
+    .ty-search-form,
+    form[name=add_products] {
+        inline-size: 100vw;
+        max-inline-size: 100%;
+    }
+
+    .ty-search-form {
+        margin-block-end: var(--gap-sm);
+
+        .ty-section__title {
+            border-start-start-radius: var(--border-radius-box);
+            border-start-end-radius: var(--border-radius-box);
+
+            &:not(.open) {
+                border-end-end-radius: var(--border-radius-box);
+                border-end-start-radius: var(--border-radius-box);
+            }
+
+            .ty-section__arrow {
+                position: relative;
+                inset-block-start: 2px;
+            }
+        }
+
+        .ty-section__body {
+            border-end-end-radius: var(--border-radius-box);
+            border-end-start-radius: var(--border-radius-box);
+        }
+    }
+
+    .ty-search-form__buttons-container {
+        border-end-end-radius: var(--border-radius-box);
+        border-end-start-radius: var(--border-radius-box);
+        position: initial !important;
+        margin-block-end: calc(~'var(--gap-xs) * -1');
+        margin-inline: calc(~'var(--gap-sm) * -1');
+        height: initial ;
+        justify-content: initial;
+
+        .ty-btn__secondary {
+            margin-inline-end: calc(~'var(--gap-xs) * -1');
+        }
+    }
+
+    .ty-sort-container {
+        display: block;
+        margin-block-start: var(--gap-sm);
+    }
+
+    .ty-pagination-container {
+        margin-block-end: var(--gap-s);
+    }
+
+    input.ty-product-list__bulk {
+        margin-inline-end: initial;
+
+        @media (max-width: 576px) {
+            float: initial;
+            inset-block-start: initial;
+            display: block;
+            margin-inline: auto;
+            margin-block-end: var(--gap-xs);
+        }
+    }
+
+    .ut2-pl__info {
+        border-right: 0 none;
+        margin-right: initial;
+    }
+
+    .ty-buttons-container__add-or-close {
+        font-size: 0; // clean space character
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row-reverse;
+        column-gap: var(--gap-xs);
+
+        @media (max-width: 576px) {
+            column-gap: var(--gap-xxs);
+        }
+
+        @media (max-width: 428px) {
+            column-gap: 2px;
+        }
+
+        .ty-close-text {
+            margin-inline-end: auto;
+
+            @media (max-width: 767px) {
+                padding-top: initial;
+            }
+        }
+
+        .ty-btn {
+            font-size: var(--button-font-size);
+
+            @media (max-width: 767px) {
+                display: flex;
+            }
+
+            @media (max-width: 576px) {
+                font-size: var(--font-size-normal);
+
+                body.mobile-screen & {
+                    font-size: var(--font-size-small);
+                }
+            }
+
+            @media (max-width: 428px) {
+                padding-left: var(--gap-xs);
+                padding-right: var(--gap-xs);
+            }
+
+            @media (max-width: 350px) {
+                font-size: 13px !important;
+            }
+
+            &.ty-btn__secondary {
+                @media (max-width: 350px) {
+                    padding-left: var(--gap-xxs);
+                    padding-right: var(--gap-xxs);
+                }
+            }
+
+            // reset/clear legacy value
+            + .ty-btn {
+                margin-left: initial;
+            }
+        }
+    }
+}
+/* [[[ END ]]] add products as gift to gift certificate (ui-dialog content)
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] quick view gift certificate (ui-dialog content)
+==============================================================================*/
+.ui-dialog-content[id^=gift_cert_quick_view] {
+    .ty-quick-view__wrapper {
+        width: 100vw;
+        max-width: 100%;
+        display: flex;
+        column-gap: var(--gap-m);
+
+        @media (max-width: 767px) {
+            display: block;
+        }
+    }
+
+    .ty-product-block__img-wrapper {
+        float: initial;
+        position: initial;
+        margin-right: initial;
+        padding: initial;
+        max-width: initial;
+        flex-shrink: 0;
+
+        @media (max-width: 767px) {
+            margin-block-end: var(--gap-sm);
+        }
+
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
+
+    .ty-product-block__img {
+        margin-right: initial;
+
+        .ty-mtb-xs {
+            margin-top: var(--gap-xs);
+        }
+    }
+
+    .ty-product-block__left {
+        padding: initial;
+        max-width: calc(~'100% - 150px - var(--gap-m)');
+        overflow: initial;
+        flex-grow: 1;
+
+        @media (max-width: 767px) {
+            max-width: initial;
+        }
+    }
+
+    .ut2-table-carrier {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: @base10 transparent;
+    }
+
+    .ty-table {
+        inline-size: 100%;
+
+        tbody tr:first-child:has(th) {
+            @media (max-width: 767px) {
+                display: none;
+            }
+        }
+
+        .ty-table__responsive-content {
+            @media (max-width: 767px) {
+                width: auto;
+                overflow: hidden;
+            }
+        }
+    }
+
+    .ty-product-block__button {
+        text-align: end;
+
+        .ty-btn {
+            margin: initial;
+        }
+    }
+}
+/* [[[ END ]]] quick view gift certificate (ui-dialog content)
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] pick-up points in dialog placement/location context and mobile view
+==============================================================================*/
+// increase/higher precedence
+.litecheckout .b--pay-ship__unit__details__in .litecheckout__item.pickup.ty-checkout-select-store__map-full-div .ui-dialog-content.pickup__offices-wrapper {
+    float: initial;
+    background: var(--fill-gray);
+    border-end-end-radius: var(--border-radius-box) !important;
+    border-end-start-radius: var(--border-radius-box) !important;
+    overflow: clip;
+
+    > .object-container {
+        scroll-snap-type: block proximity;
+        scroll-padding-block-start: 81px; // search bar height
+    }
+
+    .pickup__search {
+        padding: var(--gap-s);
+        position: sticky;
+        top: 0;
+    }
+
+    .pickup__offices--list {
+        overflow: initial;
+        display: contents;
+    }
+
+    .ty-sdek-store__label {
+        padding-inline-start: var(--gap-s);
+        padding-inline-end: var(--gap-s);
+    }
+}
+/* [[[ END ]]] pick-up points in dialog placement/location context and mobile view
+==============================================================================*/
+
+/* [[[[ END ]]]] dialog-modal misc content/stuffing
+##############################################################################*/

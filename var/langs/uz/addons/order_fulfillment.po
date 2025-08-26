@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /release-4.18.3/addons/order_fulfillment.po\n"
+"X-Crowdin-File-ID: 9362\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::order_fulfillment"
+msgid "Order fulfillment by marketplace"
+msgstr "Buyurtmani bozor bo'yicha bajarish"
+
+msgctxt "Addons::description::order_fulfillment"
+msgid "Allows you to offer vendor plans where the marketplace handles shipping for vendors and retains the shipping fees."
+msgstr "Bozor sotuvchilar uchun yuk tashish bilan shug'ullanadigan va etkazib berish to'lovlarini saqlab qoladigan sotuvchi rejalarini taklif qilish imkonini beradi."
+
+msgctxt "Languages::order_fulfillment.shipping_type"
+msgid "Shipping type"
+msgstr "Yuk tashish turi"
+
+msgctxt "Languages::order_fulfillment.fulfillment_tooltip"
+msgid "Handle shipping for vendors as part of this vendor plan. If the marketplace handles shipping for multiple vendors, then the customer will only have to select one shipping method for all those vendors at checkout. Shipping costs will also go to the marketplace. <ul><li>Vendors who have fulfillment by marketplace as part of their vendor plan use ONLY the shipping methods that belong to the marketplace.</li><li>Vendors who don't have fulfillment by marketplace use ONLY the shipping methods that belong to them specifically.</li></ul>"
+msgstr "Ushbu sotuvchi rejasining bir qismi sifatida sotuvchilar uchun etkazib berishni boshqaring. Agar bozor bir nechta sotuvchilar uchun yuk tashish bilan shug'ullansa, mijoz kassada barcha sotuvchilar uchun faqat bitta etkazib berish usulini tanlashi kerak bo'ladi. Yuk tashish xarajatlari ham bozorga tushadi. <ul><li>Sotuvchi rejasining bir qismi sifatida bozor boʻyicha toʻlovni amalga oshirgan sotuvchilar FAQAT bozorga tegishli yetkazib berish usullaridan foydalanadilar.</li><li>Bozorda toʻlovi boʻlmagan sotuvchilar FAQAT yetkazib berish usullaridan foydalanadilar. maxsus ularga tegishli.</li></ul>"
+
+msgctxt "Languages::order_fulfillment.marketplace_shippings_available"
+msgid "The shipping methods owned by the marketplace will now be available to the vendors whose vendor plans include fulfillment by the marketplace."
+msgstr "Bozorga tegishli bo'lgan yuk tashish usullari endi sotuvchi rejalari bozor tomonidan bajarilishini o'z ichiga olgan sotuvchilar uchun mavjud bo'ladi."
+
+msgctxt "Languages::order_fulfillment.vendor_shipping_settings_active"
+msgid "The shipping methods owned by the marketplace will now be available depending on the settings of each vendor. The fees for those shipping methods will go to vendors, not to the marketplace."
+msgstr "Bozorga tegishli yuk tashish usullari endi har bir sotuvchining sozlamalariga qarab mavjud bo'ladi. Ushbu yuk tashish usullari uchun to'lovlar bozorga emas, sotuvchilarga tushadi."
+
+msgctxt "Languages::order_fulfillment.company_moved_to_fulfillment"
+msgid "Vendor [name] moved to a plan with order fulfillment by marketplace. The vendor will now use the shipping methods provided by the marketplace instead of their own."
+msgstr "Sotuvchi [ism] bozor bo'yicha buyurtma bajarilishi bilan rejaga o'tdi. Sotuvchi endi o'zining o'rniga bozor tomonidan taqdim etilgan yuk tashish usullaridan foydalanadi."
+
+msgctxt "Languages::order_fulfillment.you_moved_to_fulfillment"
+msgid "You have moved to a plan with order fulfillment by marketplace. From now on, the marketplace shipping methods will be offered to your customers."
+msgstr "Siz buyurtmani bozor bo'yicha bajaradigan rejaga o'tdingiz. Bundan buyon mijozlaringizga bozorda etkazib berish usullari taklif etiladi."
+
+msgctxt "Languages::order_fulfillment.company_moved_from_fulfillment"
+msgid "Vendor [name] moved to a plan without order fulfillment by marketplace. The vendor now has to offer his own shipping methods."
+msgstr "Sotuvchi [name] bozor tomonidan buyurtma bajarilmasdan rejaga o'tdi. Endi sotuvchi o'zining yuk tashish usullarini taklif qilishi kerak."
+
+msgctxt "Languages::order_fulfillment.you_moved_from_fulfillment"
+msgid "You have moved to a plan without order fulfillment by marketplace. Please make sure to set up your own shipping methods."
+msgstr "Siz bozorda buyurtma bajarilmagan rejaga o'tdingiz. Iltimos, o'zingizning yuk tashish usullarini o'rnatganingizga ishonch hosil qiling."
+
+msgctxt "Languages::order_fulfillment.fulfillment_by_marketplace"
+msgid "Fulfillment by marketplace"
+msgstr "Bozor bo'yicha bajarish"
+

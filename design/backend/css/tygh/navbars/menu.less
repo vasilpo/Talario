@@ -1,0 +1,153 @@
+@import "../../config.less";
+
+// Menu sidebar variables
+@menuSidebarBg: none;
+@menuSidebarColor: var(--cs-content-background);
+
+:root {
+    --cs-menu-sidebar-bg: @menuSidebarBg;
+    --cs-menu-sidebar-color: @menuSidebarColor;
+}
+
+// Menu sidebar styles
+.cs-main-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: var(--bp-bottom-panel-height);
+    padding-top: var(--top-bar-height);
+    width: var(--main-menu-width);
+    z-index: var(--cs-zindex-fixed-navbar);
+    background-color: var(--cs-menu-sidebar-color);
+    background-image: var(--cs-menu-sidebar-bg);
+}
+
+.cs-main-menu__outer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.cs-main-menu__primary--block-manager {
+    padding-top: 32px;
+}
+
+.cs-main-menu__inner {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding-top: 8px;
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    html:not(.bp-panel-active) .cs-main-menu__outer {
+        margin-bottom: ~"calc(5px + 40px + (var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 58px;
+    }
+}
+
+@media (min-width: 1340px) {
+    html:not(.bp-panel-active) .cs-main-menu__outer {
+        margin-bottom: ~"calc(24px + 56px + (var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 93px;
+    }
+}
+
+.cs-main-menu__primary {
+    flex-grow: 1;
+    padding-bottom: ~"calc((var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 13px;
+}
+
+.cs-main-menu__secondary {
+    bottom: 0;
+    position: sticky;
+    padding-top: ~"calc(var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 13px;
+    padding-bottom: ~"calc(var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 13px;
+    max-height: ~"calc(100vh / 2)";
+    overflow: auto;
+    z-index: 1;
+    background: var(--cs-content-background);
+}
+
+// Mobile main menu
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    .noscrolling {
+        overflow-y: hidden;
+    }
+    .cs-main-menu {
+        left: -200%; // FIXME: remove this
+        margin: 0;
+        padding-top: 10px;
+        z-index: 100500;
+        transition: .3s left;
+        transition-timing-function: ease-in-out;
+        width: 80vw;
+        box-shadow: 2px 0px 11px 0px var(--cs-shadow50-color);
+    }
+    .cs-main-menu.open {
+        left: 0;
+    }
+    .cs-main-menu__secondary {
+        position: static;
+    }
+    .cs-main-menu + .cs-main-menu__backdrop {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--cs-shadow60-color);
+        z-index: var(--cs-zindex-modal-backdrop);
+        transition: all 1s;
+    }
+    .cs-main-menu.open + .cs-main-menu__backdrop {
+        display: block;
+    }
+}
+
+.cs-main-menu__header-mobile {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+// Main menu scroll bar
+// Web standards scroll bar styles
+.cs-main-menu__outer:not(:hover) {
+    scrollbar-width: none;
+}
+
+.cs-main-menu__outer {
+    scrollbar-color: var(--cs-input-border) var(--cs-content-background);
+    scrollbar-width: thin;
+}
+
+// WebKit and chromium-based browsers scroll bar styles
+.cs-main-menu__outer:not(:hover)::-webkit-scrollbar {
+    width: 0;
+}
+
+.cs-main-menu__outer::-webkit-scrollbar {
+    width: 16px;
+}
+
+.cs-main-menu__outer::-webkit-scrollbar-track {
+    box-shadow: inset 0px 0 0px 3px var(--cs-content-background);
+    border: solid 3px var(--cs-content-background);
+    background-color: transparent;
+}
+
+.cs-main-menu__outer:hover::-webkit-scrollbar-track {
+    background-color: var(--cs-body-background);
+}
+
+.cs-main-menu__outer::-webkit-scrollbar-thumb {
+    border-radius: 99px;
+    box-shadow: inset 0px 0px 0px 5px var(--cs-content-background);
+    background-color: transparent;
+}
+
+.cs-main-menu__outer:hover::-webkit-scrollbar-thumb {
+    background-color: var(--cs-input-border);
+}

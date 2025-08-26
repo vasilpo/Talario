@@ -1,0 +1,151 @@
+html, body, #main_column {
+    min-height: 100%;
+    height: 100%;
+}
+
+html {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+:root.cs-dark-theme {
+    color-scheme: dark;
+}
+
+:root.cs-dark-theme iframe {
+    color-scheme: normal;
+}
+
+body {
+    min-width: 300px !important;
+    color: var(--cs-text-color);
+    background-color: var(--cs-body-background);
+}
+
+:focus {
+    outline: none;
+}
+
+*, :after, :before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.preload * {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -ms-transition: none !important;
+    -o-transition: none !important;
+}
+
+.main-wrap {
+    width: 100%;
+    max-width: 3000px;
+    min-width: 300px;
+    margin: 0 auto;
+    display: table;
+    table-layout: fixed;
+    position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+a {
+    background-image: none;
+}
+
+a,
+a:hover {
+    cursor: pointer;
+}
+
+.a-pseudo,
+.a-pseudo:hover {
+    margin-right: 15px;
+    border-bottom: 1px dotted;
+    color: var(--cs-text-muted-color);
+    text-decoration: none !important;
+}
+
+// Comet
+#comet_control {
+    width: 560px !important;
+}
+
+// Ajax loading
+.ajax-content-more {
+    text-align: center;
+}
+.ajax-content-more span {
+    --ajax-loader-small: url('../media/images/ajax_loader_small.gif');
+    padding-right: 20px;
+    background: no-repeat var(--ajax-loader-small) center right;
+}
+
+.cs-dark-theme .ajax-content-more span {
+    --ajax-loader-small: url('../media/images/ajax_loader_small_dark.gif');
+}
+
+// No items available
+.no-items {
+    background: var(--cs-form-actions-background);
+    border-radius: var(--cs-base-border-radius);
+    text-align: center;
+    padding: 40px 0;
+    border: 1px solid var(--cs-input-border);
+    color: var(--cs-text-muted-color);
+}
+
+// Store selector
+.store-selector {
+    margin-top: 5px;
+
+    .btn-group {
+        vertical-align: baseline;
+    }
+}
+
+// Commercial
+.commercial-promotion-text {
+    margin-left: 5px;
+}
+
+// Languages
+.lang-name {
+    overflow: hidden;
+    word-break: break-all;
+}
+
+.well {
+    box-shadow: inset 0 1px 1px var(--cs-shadow5-color);
+    blockquote {
+      border-color: var(--cs-shadow15-color);
+    }
+}
+
+// Type
+.description {
+    word-break: break-all;
+    word-break: break-word;
+    margin-top: 5px;
+}
+
+.controls .description {
+    margin-top: 5px;
+}
+
+a[class*="--text-wrap"], li > a[class*="--text-wrap"], span[class*="--text-wrap"] {
+    white-space: normal;
+    display: -webkit-inline-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    padding-bottom: 4px;
+}
+
+li > a[class*="--text-wrap"],
+li > span[class*="--text-wrap"] {
+    display: -webkit-box;
+}

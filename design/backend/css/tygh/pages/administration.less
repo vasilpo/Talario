@@ -1,0 +1,116 @@
+.administration-page {
+    --administration-page-icon-size: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.administration-page__block {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding: 16px;
+    border-radius: var(--cs-border-radius-large);
+}
+
+.administration-page__block:hover,
+.administration-page__block:focus {
+    text-decoration: none;
+}
+
+.administration-page__block-icon-wrapper {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    width: ~"calc(var(--administration-page-icon-size) * 2)";
+    height: ~"calc(var(--administration-page-icon-size) * 2)";
+    background: var(--cs-btn-background-highlight);
+    border-radius: var(--cs-base-border-radius);
+    color: var(--cs-text-color);
+}
+
+.administration-page__block-icon-wrapper:hover,
+.administration-page__block-icon-wrapper:focus {
+    color: var(--cs-text-color);
+    text-decoration: none;
+}
+
+.administration-page__block-icon-wrapper:hover,
+.administration-page__block-icon-wrapper:focus {
+    text-decoration: none;
+}
+
+.administration-page__block:hover .administration-page__block-icon-wrapper,
+.administration-page__block:focus .administration-page__block-icon-wrapper {
+    background: var(--cs-btn-border);
+}
+
+.administration-page__block:hover .administration-page__block-icon-wrapper--no-icon,
+.administration-page__block:focus .administration-page__block-icon-wrapper--no-icon {
+    opacity: 0.7;
+}
+
+.administration-page__block-icon {
+    width: var(--administration-page-icon-size);
+    height: var(--administration-page-icon-size);
+    font-size: var(--administration-page-icon-size);
+    line-height: var(--administration-page-icon-size);
+}
+
+.administration-page__block-icon-wrapper .addons-addon-icon__wrapper {
+    width: ~"calc(var(--administration-page-icon-size) * 2)";
+    height: ~"calc(var(--administration-page-icon-size) * 2)";
+    border-radius: var(--cs-base-border-radius);
+}
+
+.administration-page__block-icon-wrapper .addons-addon-icon__image--label {
+    font-size: 15px;
+}
+
+.administration-page__block-description {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    word-break: break-all;
+    word-break: break-word;
+}
+
+.administration-page__block-description-main {
+    display: flex;
+    flex-direction: column;
+    color: var(--cs-text-color);
+}
+
+.administration-page__block-description-main:hover {
+    color: var(--cs-text-color);
+}
+
+.administration-page__block-description-main:hover,
+.administration-page__block-description-main:focus {
+    text-decoration: none;
+}
+
+.administration-page_subitems-item {
+    font-size: var(--cs-font-size-small);
+    color: var(--cs-text-muted-color);
+}
+
+.administration-page_subitems-item:hover {
+    color: var(--cs-text-color);
+}
+
+.administration-page__block:hover .administration-page_subitems-item:not(:hover) {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.administration-page_subitems-item:not(:first-child):before {
+    content: ',';
+    display: inline-block;
+    padding-right: 4px;
+}

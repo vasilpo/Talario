@@ -1,0 +1,343 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::ab__category_banners"
+msgid "AB: Banners for categories"
+msgstr "AB: Banners for categories"
+
+msgctxt "Addons::description::ab__category_banners"
+msgid "Add-on allows to add banners among products of categories"
+msgstr "Add-on allows to add banners among products of categories"
+
+msgctxt "Languages::ab__category_banners"
+msgid "AB: Banners for categories"
+msgstr "AB: Banners for categories"
+
+msgctxt "Languages::ab__cb.banner_position"
+msgid "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+msgstr "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+
+msgctxt "SettingsOptions::ab__category_banners::item_nth"
+msgid "Position by default"
+msgstr "Position by default"
+
+msgctxt "SettingsTooltips::ab__category_banners::item_nth"
+msgid "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+msgstr "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+
+msgctxt "SettingsOptions::ab__category_banners::decrease_items_per_page"
+msgid "Remove last product"
+msgstr "Remove last product"
+
+msgctxt "SettingsTooltips::ab__category_banners::decrease_items_per_page"
+msgid "Removes the last product from a displaying in the grid to save its structure"
+msgstr "Removes the last product from a displaying in the grid to save its structure"
+
+msgctxt "SettingsOptions::ab__category_banners::cron_key"
+msgid "Cron key"
+msgstr "Cron key"
+
+msgctxt "SettingsTooltips::ab__category_banners::cron_key"
+msgid "For automatic updating, existence of a key necessarily. Length should be from 10 to 20 characters (only latin letters and digits)"
+msgstr "For automatic updating, existence of a key necessarily. Length should be from 10 to 20 characters (only latin letters and digits)"
+
+msgctxt "Languages::ab__cb.cat_banner"
+msgid "banner for category"
+msgstr "banner for category"
+
+msgctxt "Languages::ab__cb.datatime"
+msgid "date/time"
+msgstr "date/time"
+
+msgctxt "Languages::ab__cb.set_from_and_to"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::ab__category_banners.add"
+msgid "Add banner for category"
+msgstr "Add banner for category"
+
+msgctxt "Languages::ab__category_banners.adding"
+msgid "Adding banner for category"
+msgstr "Adding banner for category"
+
+msgctxt "Languages::ab__category_banners.editing"
+msgid "Editing banner for category"
+msgstr "Editing banner for category"
+
+msgctxt "Languages::ab__cb.form.include_subcategories"
+msgid "Show in subcategories"
+msgstr "Show in subcategories"
+
+msgctxt "Languages::ab__cb.form.url"
+msgid "Link"
+msgstr "Link"
+
+msgctxt "Languages::ab__cb.form.position"
+msgid "Position"
+msgstr "Position"
+
+msgctxt "Languages::ab__cb.form.target_blank"
+msgid "Open banner link in a new window"
+msgstr "Open banner link in a new window"
+
+msgctxt "Languages::ab__cb.form.nofollow"
+msgid "Add attribute rel=\"nofollow\""
+msgstr "Add attribute rel=\"nofollow\""
+
+msgctxt "Languages::ab__cb.form.from_date"
+msgid "Active from date/time"
+msgstr "Active from date/time"
+
+msgctxt "Languages::ab__cb.form.to_date"
+msgid "Active to date/time"
+msgstr "Active to date/time"
+
+msgctxt "Languages::ab__cb.form.monday"
+msgid "Monday"
+msgstr "Monday"
+
+msgctxt "Languages::ab__cb.form.tuesday"
+msgid "Tuesday"
+msgstr "Tuesday"
+
+msgctxt "Languages::ab__cb.form.wednesday"
+msgid "Wednesday"
+msgstr "Wednesday"
+
+msgctxt "Languages::ab__cb.form.thursday"
+msgid "Thursday"
+msgstr "Thursday"
+
+msgctxt "Languages::ab__cb.form.friday"
+msgid "Friday"
+msgstr "Friday"
+
+msgctxt "Languages::ab__cb.form.saturday"
+msgid "Saturday"
+msgstr "Saturday"
+
+msgctxt "Languages::ab__cb.form.sunday"
+msgid "Sunday"
+msgstr "Sunday"
+
+msgctxt "Languages::ab__cb.form.content_general"
+msgid "General"
+msgstr "General"
+
+msgctxt "Languages::ab__cb.form.content_link"
+msgid "Link"
+msgstr "Link"
+
+msgctxt "Languages::ab__cb.form.content_schedule"
+msgid "Schedule"
+msgstr "Schedule"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_image"
+msgid "The image is output \"as is\", without cutting"
+msgstr "The image is output \"as is\", without cutting"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.url"
+msgid "The link format with the indication of the controller is recommended (for example, products.view?product_id=12121)"
+msgstr "The link format with the indication of the controller is recommended (for example, products.view?product_id=12121)"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.nofollow"
+msgid "It's recommended to use for external link (to another site) or link to non-indexing pages"
+msgstr "It's recommended to use for external link (to another site) or link to non-indexing pages"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.position"
+msgid "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+msgstr "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.monday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.tuesday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.wednesday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.thursday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.friday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.saturday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.sunday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Set the time of action of banner 'from' and 'to'.<br/>"
+"If start time didn't set, then it is equal 00:00<br/>"
+"If end time didn't set, then it is equal 23:59<br/>"
+"If both values didn't set then banner will be displayed from 00:00 to 23:59"
+
+msgctxt "Languages::ab__cb.errors.cron_key"
+msgid "<p>Warning! The value <code>[value]</code> of the setting <code>Cron key</code> doesn't meet the safety requirements</p>"
+msgstr "<p>Warning! The value <code>[value]</code> of the setting <code>Cron key</code> doesn't meet the safety requirements</p>"
+
+msgctxt "Languages::ab__cb.cron_links"
+msgid "<p>For an automatic switching off of expired banners - use one of these links:<b/r><br/><code>[cron_cmd]</code><br/>or<br/><code>[cron_url]</code></p>"
+msgstr "<p>For an automatic switching off of expired banners - use one of these links:<b/r><br/><code>[cron_cmd]</code><br/>or<br/><code>[cron_url]</code></p>"
+
+msgctxt "Languages::ab__category_banners.manage"
+msgid "Banners management"
+msgstr "Banners management"
+
+msgctxt "Languages::ab__cb.help.cron.title"
+msgid "Automatic switching off of expired banners"
+msgstr "Automatic switching off of expired banners"
+
+msgctxt "Languages::ab__cb.form.m_turn_on"
+msgid "Switch on selected"
+msgstr "Switch on selected"
+
+msgctxt "Languages::ab__cb.form.m_turn_off"
+msgid "Switch off selected"
+msgstr "Switch off selected"
+
+msgctxt "Languages::ab__cb.form.grid_image"
+msgid "Images for an output as a grid"
+msgstr "Images for an output as a grid"
+
+msgctxt "Languages::ab__cb.form.list_image"
+msgid "Images for an output as a list without options"
+msgstr "Images for an output as a list without options"
+
+msgctxt "Languages::ab__cb.form.short_list_image"
+msgid "Images for an output as a compact list"
+msgstr "Images for an output as a compact list"
+
+msgctxt "Languages::ab__cb.settings"
+msgid "General settings"
+msgstr "General settings"
+
+msgctxt "Languages::ab__cb.validator.wrong_time_format"
+msgid "Time shall be in a format hh:mm"
+msgstr "Time shall be in a format hh:mm"
+
+msgctxt "Languages::ab__category_banners.help"
+msgid "Help"
+msgstr "Help"
+
+msgctxt "Languages::ab__cb.help.doc"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__category_banners.doc'>documentation</a>."
+msgstr "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__category_banners.doc'>documentation</a>."
+
+msgctxt "Languages::privilege_groups.ab__category_banners"
+msgid "AB: Banners for categories"
+msgstr "AB: Banners for categories"
+
+msgctxt "Languages::privileges.ab__cb_manage_banners"
+msgid "AB: Manage banners for categories"
+msgstr "AB: Manage banners for categories"
+
+msgctxt "Languages::privileges.ab__cb_view_banners"
+msgid "AB: View banners for categories"
+msgstr "AB: View banners for categories"
+
+msgctxt "Languages::ab__category_banners.demodata"
+msgid "Demo data"
+msgstr "Demo data"
+
+msgctxt "Languages::ab__cb.demodata_description"
+msgid "Demo data can be downloaded on this page"
+msgstr "Demo data can be downloaded on this page"
+
+msgctxt "Languages::ab__cb.demodata.table.description"
+msgid "Demo data"
+msgstr "Demo data"
+
+msgctxt "Languages::ab__cb.demodata.table.action"
+msgid "Action"
+msgstr "Action"
+
+msgctxt "Languages::ab__cb.demodata.table.add_banners"
+msgid "Add banners"
+msgstr "Add banners"
+
+msgctxt "Languages::ab__category_banners.export"
+msgid "Data export"
+msgstr "Data export"
+
+msgctxt "Languages::ab__cb.export_description"
+msgid "Add-on data can be exported on this page"
+msgstr "Add-on data can be exported on this page"
+
+msgctxt "Languages::ab__cb.export.table.description"
+msgid "Data export"
+msgstr "Data export"
+
+msgctxt "Languages::ab__cb.export.table.data"
+msgid "Data for export"
+msgstr "Data for export"
+
+msgctxt "Languages::ab__cb.export.table.action"
+msgid "Action"
+msgstr "Action"
+
+msgctxt "Languages::ab__cb.export.actions.banners"
+msgid "Banners export"
+msgstr "Banners export"
+
+msgctxt "Languages::ab__cb.export.actions.banners.placeholder"
+msgid "Banners ID"
+msgstr "Banners ID"
+
+msgctxt "Languages::ab__cb.autoinstall.no_demodata"
+msgid "File with demo data is missing"
+msgstr "File with demo data is missing"
+
+msgctxt "Languages::ab__cb.autoinstall.no_category"
+msgid "Available category not found"
+msgstr "Available category not found"
+
+msgctxt "Languages::ab__cb.autoinstall.banners_not_created"
+msgid "Failed to create demo category banners"
+msgstr "Failed to create demo category banners"
+
+msgctxt "Languages::ab__cb.autoinstall.banners_created"
+msgid "Demo category banners [banners] is created successfully"
+msgstr "Demo category banners [banners] is created successfully"
+
+msgctxt "Languages::ab__cb.upgrade_notifications.2.0.0.title"
+msgid "Multiple banners output"
+msgstr "Multiple banners output"
+
+msgctxt "Languages::ab__cb.upgrade_notifications.2.0.0.text"
+msgid "Banners behavier has been changed. The output of several banners at the same time is allowed. They will be displayed in random order at the specified positions. Check the settings and change the position of the banners if necessary."
+msgstr "Banners behavier has been changed. The output of several banners at the same time is allowed. They will be displayed in random order at the specified positions. Check the settings and change the position of the banners if necessary."
+
+#. Alexbranding. Do not modify this file manually!

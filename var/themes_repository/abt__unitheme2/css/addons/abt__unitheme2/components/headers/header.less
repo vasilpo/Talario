@@ -1,0 +1,2937 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+/*==============================================================================
+   [[[ BEGIN ]]] common decoration/styling
+==============================================================================*/
+@var_ut2-header-_z-index: 5;
+@var_ut2-header__search_-2nd_row_mode-_breakpoint: 1140px;
+@var_ut2-header-_animation-_timing-function: ease-out;
+@var_ut2-header__side-contacts-_animation-_timing-function: cubic-bezier(.4, 0, .2, 1);
+
+@var_ut2-header__advanced-2nd-row-_delimiter-_color: contrast(@menu, rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.2));
+
+@var_ut2-header__1st-row__common-button-_color: contrast(@header_bg, contrast(@font, @general_bg_color, @font), contrast(@general_bg_color, @general_bg_color, @font));
+
+.mxn_ut2-header__1st-row__common-button-_hover-open-bg-color() when (@header_bg = @general_bg_color) {
+    background: contrast(@header_bg, @fill-gray-box, darken(@header_bg, 7%));
+}
+.mxn_ut2-header__1st-row__common-button-_hover-open-bg-color() when not (@header_bg = @general_bg_color) {
+    background: darken(@header_bg, 5%);
+}
+.mxn_ut2-header__1st-row__common-button-_hover-open-bg-color() when (@header_bg = black) {
+    background: lighten(@header_bg, 10%);
+}
+
+.mxn_ut2-header__1st-row__common-button-_round(@round: initial) when (@abt__ut2_general_use_rounding = do_not_use) {
+    border-radius: @round;
+}
+.mxn_ut2-header__1st-row__common-button-_round(@round: 8px) when (@abt__ut2_general_use_rounding = little) {
+    border-radius: @round;
+}
+.mxn_ut2-header__1st-row__common-button-_round(@round: calc(~'var(--ut2-header__common-button-_min-size) / 2')) when (@abt__ut2_general_use_rounding = full) {
+    border-radius: @round;
+}
+
+.mxn_ut2-header__advanced-2nd-row__btn-head-_regular-icon-color() {
+    .ut2-regular-icon-color() when (iscolor(@abt__ut2_containers_header_use_color_icons)) {
+        color: @abt__ut2_containers_header_use_color_icons;
+    }
+    .ut2-regular-icon-color() when (iscolor(@abt__ut2_containers_header_use_color_icons)) and (@abt__ut2_containers_header_use_color_icons = @menu) {
+        color: contrast(@menu, @abt__ut2_containers_header_use_color_icons, @general_bg_color);
+    }
+    .ut2-regular-icon-color() when not (iscolor(@abt__ut2_containers_header_use_color_icons)) {
+        color: contrast(@menu, @menu_links, @general_bg_color);
+    }
+    .ut2-regular-icon-color();
+}
+
+.mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-icon-color() {
+    .ut2-hover-open-icon-color() when (iscolor(@abt__ut2_containers_header_use_color_icons)) and (@abt__ut2_containers_header_use_color_icons = @menu) {
+        color: @abt__ut2_containers_header_use_color_icons;
+    }
+    .ut2-hover-open-icon-color() when (iscolor(@abt__ut2_containers_header_use_color_elements_on_hover)) and (@abt__ut2_containers_header_use_color_elements_on_hover = @general_bg_color) {
+        color: contrast(@abt__ut2_containers_header_use_color_elements_on_hover, @font, @general_bg_color);
+    }
+    .ut2-hover-open-icon-color();
+}
+
+.mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-bg-color() {
+    .ut2-bg-color() when not (iscolor(@abt__ut2_containers_header_use_color_elements_on_hover)) {
+        background: rgba(0,0,0,0.2);
+    }
+    .ut2-bg-color() when (iscolor(@abt__ut2_containers_header_use_color_elements_on_hover)) {
+        background: @abt__ut2_containers_header_use_color_elements_on_hover;
+    }
+    .ut2-bg-color();
+}
+
+.mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-text-color() {
+    .ut2-text-color() when (iscolor(@abt__ut2_containers_header_use_color_elements_on_hover)) {
+        color: contrast(@abt__ut2_containers_header_use_color_elements_on_hover, contrast(@font, @general_bg_color, @font), contrast(@general_bg_color, @general_bg_color, @font));
+    }
+    .ut2-text-color();
+}
+/* [[[ END ]]] common decoration/styling
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] common misc decomposed elements
+==============================================================================*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] counter disk :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ty-minicart-count,
+.count {
+    font-family: @body_font; // override inherited unfit/inapt value for overwrite for proper text centering
+    font-size: 12px;
+    line-height: 18px;
+    color: white;
+    font-weight: bold;
+    background: @decorative;
+    border-radius: 9px;
+    box-shadow: 0 0 0 1px @header_bg, 0 1px 3px darken(@header_bg, 20%);
+    isolation: isolate;
+
+    padding-inline: 4px;
+    block-size: 18px;
+    min-inline-size: 18px;
+    position: absolute;
+    inset-block-end: 50%;
+    inset-inline-start: 50%;
+    margin-block-end: 2px;
+    margin-inline-start: 2px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .container-fluid-row.top-menu-grid & {
+        .color_picker() when not (@menu = @decorative) {
+            box-shadow: 0 1px 3px darken(@menu, 20%);
+        }
+        .color_picker();
+    }
+}
+
+.ut2-top-cart-content .ty-dropdown-box__title[id] [class*="ut2-icon"] {
+    &.empty {
+        .ty-minicart-count {
+            display: none;
+        }
+    }
+}
+
+.abt__ut2_general_show_animation_for_not_empty_cart() when (@abt__ut2_containers_header_use_animation_for_not_empty_cart = true) {
+    .ut2-top-cart-content .ty-dropdown-box__title:not(.open):not(.__cart-page) .filled > .ty-minicart-count::before {
+        @media (min-width: 1024px) {
+            content: "";
+            background: @decorative;
+            box-shadow: 0 0 30px 8px @decorative;
+            border-radius: 50%;
+            animation: brk-pulse-paused 1.5s ease-out infinite;
+
+            inline-size: 100%;
+            block-size: 100%;
+            position: absolute;
+            z-index: -1;
+        }
+    }
+}
+.abt__ut2_general_show_animation_for_not_empty_cart();
+/* [[ END ]] counter disk :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] block main-wrapper :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__common-block__main-wrapper-_general() {
+    block-size: 100%; // necessary for proper positioning & calculation metrics
+    display: flex;
+    align-items: center;
+}
+
+.top-logo:not([class*=span]),
+.ut2-search, // Light layouts only
+.tygh-header .top-search:not([class*=span]), // Advanced layouts only
+.search-grid .ty-search-block, // .search-grid only comes in sections
+.top-search .ty-search-block, // .top-search can be section or not
+.ut2-top-compared-products,
+.ut2-top-wishlist-count,
+.ut2-pn,
+.ut2-top-my-account,
+.ut2-top-cart-content,
+.tygh-header .top-languages:not(.ut2-sw-w *),
+.tygh-header .top-currencies:not(.ut2-sw-w *),
+.tygh-header .ab__ut2--languages_mode_dropdown:not(.ut2-sw-w *),
+.tygh-header .ab__ut2--currencies_mode_dropdown:not(.ut2-sw-w *),
+.tygh-header .ab__ut2--languages_mode_dropdown:not(.ut2-sw-w *) .ty-select-wrapper, // offset parent for dropdown popup
+.tygh-header .ab__ut2--currencies_mode_dropdown:not(.ut2-sw-w *) .ty-select-wrapper, // offset parent for dropdown popup
+.tygh-header .ty-dropdown-box,
+.top-header-menu .ty-text-links-wrapper
+{
+    .mxn_ut2-header__common-block__main-wrapper-_general();
+}
+/* [[ END ]] block main-wrapper :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] any row button :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__common-button-_general() {
+    line-height: 1;
+    user-select: none;
+    cursor: pointer;
+    transition: all 150ms;
+
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    > span,
+    > a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--gap-xxs);
+    }
+}
+
+.ut2-sp-n,
+.tygh-header .ut2-btn-search, // heritage of mv module
+.js_ut2-search__opener,
+.js_ut2-search__closeer,
+.ut2-top-compared-products a,
+.ut2-top-wishlist-count a,
+.ut2-pn__wrap,
+.tygh-header .ab__ut2--select-block__head:not(.ut2-sw-w *), // increase/higher precedence
+.tygh-header .ty-dropdown-box__title[id]
+{
+    .mxn_ut2-header__common-button-_general();
+}
+/* [[ END ]] any row button :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] 1st row button :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__1st-row__common-button-_general() {
+    font-size: var(--font-size-normal);
+    color: @var_ut2-header__1st-row__common-button-_color;
+    .mxn_ut2-header__1st-row__common-button-_round();
+    block-size: var(--ut2-header__common-button-_min-size);
+    min-inline-size: var(--ut2-header__common-button-_min-size);
+
+    &:hover,
+    &.open {
+        color: @var_ut2-header__1st-row__common-button-_color;
+        .mxn_ut2-header__1st-row__common-button-_hover-open-bg-color();
+
+        > a {
+            color: @var_ut2-header__1st-row__common-button-_color;
+        }
+    }
+
+    > a {
+        color: @var_ut2-header__1st-row__common-button-_color;
+    }
+}
+
+.tygh-header .container-fluid-row:not(.top-menu-grid) {
+    .ut2-sp-n,
+    .ut2-btn-search, // heritage of mv module
+    .js_ut2-search__opener,
+    .js_ut2-search__closeer,
+    .ut2-top-compared-products a,
+    .ut2-top-wishlist-count a,
+    .ut2-pn__wrap,
+    .ty-select-wrapper .ab__ut2--select-block__head:not(.ut2-sw-w *),
+    .ty-dropdown-box__title[id]
+    {
+        .mxn_ut2-header__1st-row__common-button-_general();
+    }
+}
+/* [[ END ]] 1st row button :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] 2nd row button :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__2nd-row__common-button-_general() {
+    .ut2-uppercase() when (@abt__ut2_general_use_titles_uppercase = true) {
+        font-size: var(--font-size-normal);
+        text-transform: uppercase;
+    }
+    .ut2-uppercase() when not (@abt__ut2_general_use_titles_uppercase = true) {
+        font-size: var(--font-size-medium);
+    }
+    .ut2-uppercase();
+    font-weight: bold;
+    color: @menu_links;
+    block-size: 100%;
+    min-inline-size: var(--ut2-header__2nd-row-_height-_1);
+
+    &:hover,
+    &.open {
+        .mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-bg-color();
+        .mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-text-color();
+
+        > a {
+            .mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-text-color();
+        }
+
+        [class*=ut2-icon] {
+            .mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-icon-color();
+        }
+
+        > span::after,
+        > a::after {
+            .mxn_ut2-header__advanced-2nd-row__btn-head-_hover-open-icon-color();
+        }
+    }
+
+    > a {
+        .ut2-uppercase() when (@abt__ut2_general_use_titles_uppercase = true) {
+            font-size: var(--font-size-normal);
+            text-transform: uppercase;
+        }
+        .ut2-uppercase() when not (@abt__ut2_general_use_titles_uppercase = true) {
+            font-size: var(--font-size-medium);
+        }
+        .ut2-uppercase();
+        font-weight: bold;
+        color: @menu_links;
+    }
+}
+
+.tygh-header .container-fluid-row.top-menu-grid {
+    .ut2-sp-n,
+    .ut2-top-compared-products a,
+    .ut2-top-wishlist-count a,
+    .ut2-pn__wrap,
+    .ty-select-wrapper .ab__ut2--select-block__head:not(.ut2-sw-w *),
+    .ty-dropdown-box__title[id]
+    {
+        .mxn_ut2-header__2nd-row__common-button-_general();
+    }
+}
+/* [[ END ]] 2nd row button :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] button icon :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__common-button__icon-_general() {
+    font-size: var(--ut2-header__common-button__icon-_size);
+    transition: all 150ms;
+    position: relative; // might be offset parent for counter
+    flex-shrink: 0;
+}
+
+.ut2-sp-n,
+.tygh-header .ut2-btn-search, // heritage of mv module
+.js_ut2-search__opener,
+.js_ut2-search__closeer,
+.ut2-top-compared-products,
+.ut2-top-wishlist-count,
+.ut2-pn__wrap,
+.tygh-header .ty-dropdown-box__title[id]
+{
+    [class*=ut2-icon] {
+        .mxn_ut2-header__common-button__icon-_general();
+    }
+}
+
+.tygh-header .container-fluid-row.top-menu-grid {
+    .ut2-sp-n,
+    .ut2-top-compared-products,
+    .ut2-top-wishlist-count,
+    .ut2-pn__wrap,
+    .ty-dropdown-box__title[id] {
+        [class*=ut2-icon] {
+            .mxn_ut2-header__advanced-2nd-row__btn-head-_regular-icon-color();
+        }
+    }
+}
+
+
+/* [[ END ]] button icon :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] dropdown btn-head corner-arrow :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__common-dropdown__btn-head__corner-arrow() {
+    &.open {
+        > span::after,
+        > a::after {
+            content: "\e904";
+        }
+    }
+
+    > span::after,
+    > a::after {
+        .ut2-icon();
+        content: "\e908";
+        font-size: 16px;
+        opacity: .6;
+        margin-inline-start: calc(var(--gap-xxs) * -1);
+        flex-shrink: 0;
+    }
+}
+
+.ut2-pn__wrap {
+    .mxn_ut2-header__common-dropdown__btn-head__corner-arrow();
+}
+
+.tygh-header .container-fluid-row:not(.top-menu-grid) {
+    .ut2-pn__wrap,
+    .ty-dropdown-box__title[id],
+    .ty-select-block__a:not(.ut2-sw-w *) {
+        > span::after,
+        > a::after {
+            margin-inline-end: -4px;
+        }
+    }
+}
+
+.tygh-header .container-fluid-row.top-menu-grid {
+    .ut2-pn__wrap,
+    .ty-dropdown-box__title[id],
+    .ty-select-block__a:not(.ut2-sw-w *) {
+        > span::after,
+        > a::after {
+            .mxn_ut2-header__advanced-2nd-row__btn-head-_regular-icon-color();
+            transform: translateX(2px);
+        }
+    }
+}
+/* [[ END ]] dropdown btn-head corner-arrow :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] compactize button function :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__common-button_-general-compactify-fn(@row-number, @dropdown-flag:false) {
+    border: 0 none;
+    padding-inline: initial;
+
+    .row-dependent-style() when (isnumber(@row-number)) and (@row-number = 1) {
+        inline-size: var(--ut2-header__common-button-_min-size);
+    }
+    .row-dependent-style() when (isnumber(@row-number)) and (@row-number = 2) {
+        inline-size: var(--ut2-header__2nd-row-_height-_1);
+    }
+    .row-dependent-style();
+
+    [class*=ut2-icon] + span {
+        display: none;
+    }
+
+    .dropdown-specific-style() when (@dropdown-flag) {
+        &::before,
+        &::after {
+            inset-inline: 0;
+        }
+
+        > span::after,
+        > a::after {
+            content: initial;
+        }
+    }
+    .dropdown-specific-style();
+}
+/* [[ END ]] compactize button function :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] dropdown popup corner-arrow :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__common-dropdown__popup-corner-arrow-to-btn-head() {
+    &.open {
+        &::before,
+        &::after {
+            animation: fade_in 150ms forwards @var_ut2-header-_animation-_timing-function;
+            animation-delay: 150ms;
+        }
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        inline-size: 0;
+        block-size: 0;
+        position: absolute;
+        z-index: initial;
+        top: initial;
+        right: initial;
+        bottom: initial;
+        left: initial;
+        inset-block-start: 100%;
+        inset-inline: 0;
+        margin-inline: auto; // centering by default
+        border-inline: 11px solid transparent;
+        opacity: 0;
+        pointer-events: none;
+    }
+    &::before {
+        border-block-end: 11px solid contrast(@general_bg_color, rgba(0, 0, 0, 0.15), @base5);
+        margin-block-start: calc(~'(var(--ut2-header-height) - var(--ut2-header__common-button-_min-size)) / 2 - 11px');
+    }
+    &::after {
+        border-block-end: 11px solid var(--fill-white);
+        margin-block-start: calc(~'(var(--ut2-header-height) - var(--ut2-header__common-button-_min-size)) / 2 - 10px');
+    }
+}
+
+.tygh-header .container-fluid-row:not(.top-menu-grid) {
+    .ut2-pn__wrap {
+        .mxn_ut2-header__common-dropdown__popup-corner-arrow-to-btn-head();
+        &::before,
+        &::after {
+            inset-inline-start: initial;
+            inset-inline-end: 5px; // horizontally center with btn-head brace-arrow
+        }
+    }
+
+    .ty-dropdown-box__title[id] {
+        .mxn_ut2-header__common-dropdown__popup-corner-arrow-to-btn-head();
+    }
+}
+
+.header-grid .container-fluid-row.top-menu-grid {
+    .ty-dropdown-box__title[id],
+    .ut2-pn__wrap {
+        @media (max-width: 767px) {
+            .mxn_ut2-header__common-dropdown__popup-corner-arrow-to-btn-head();
+            &::before,
+            &::after {
+                inset-block-start: initial;
+                margin-block-start: initial;
+
+                .mxn_adjust-corner-arrow-bg-color() when (iscolor(@abt__ut2_containers_header_use_color_elements_on_hover)) and (@abt__ut2_containers_header_use_color_elements_on_hover = @general_bg_color) {
+                    content: initial !important;
+                }
+                .mxn_adjust-corner-arrow-bg-color();
+            }
+            &::before {
+                inset-block-end: 0;
+            }
+            &::after {
+                inset-block-end: -1px;
+            }
+        }
+    }
+}
+
+.tygh-header {
+    .ab__ut2--select-block__head:not(.ut2-sw-w *) {
+        .mxn_ut2-header__common-dropdown__popup-corner-arrow-to-btn-head();
+        &::before,
+        &::after {
+            inset-inline-start: initial;
+            inset-inline-end: 5px; // horizontally center with btn-head brace-arrow
+        }
+    }
+}
+/* [[ END ]] dropdown popup corner-arrow :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] dropdown popup corner-arrow :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.mxn_ut2-header__bottom-shadow() {
+    &::after {
+        content: "";
+        inline-size: 100%;
+        block-size: 7px;
+        position: absolute;
+        inset-block-start: 100%;
+        inset-inline: 0;
+        background-image: linear-gradient(to bottom, #0000001a 0%, fade(@content_bg, 0%) 100%);
+    }
+}
+
+/* [[ END ]] dropdown popup corner-arrow :: common misc decomposed elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[ END ]]] common misc decomposed elements
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] header entire wrappers & surroundings
+==============================================================================*/
+.tygh-header {
+    inline-size: 100%; // for sticking
+    position: relative;
+    z-index: @var_ut2-header-_z-index;
+
+    /*// unexplainably
+    body.fly-menu & {
+        z-index: @var_ut2-header-_z-index - 1;
+    }*/
+
+    .container-fluid {
+        padding: initial; // override parent-theme unfit declaration
+        margin: initial;
+
+        &.default-header {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                padding-block-end: var(--ut2-header__2nd-row-_height-_1);
+            }
+        }
+    }
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] sticky state :: header entire wrappers & surroundings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ut2-header-allows-h-menu-stuck-top-sentinel {
+    inline-size: 100%;
+    block-size: calc(~'var(--top-panel-height) + var(--menu-height)');
+    position: absolute;
+    z-index: @var_ut2-header-_z-index;
+    inset-block-start: 0;
+    inset-inline: 0;
+    visibility: hidden;
+}
+
+html.sticky-fc-panel .top-sticky-panel__filters {
+    height: var(--sticky-top-panel-height);
+    padding-block: 7px;
+    position: sticky;
+    inset-block-start: 0;
+}
+
+.ut2-pb__sticky-add-to-cart.position-top {
+    background: @general_bg_color;
+    inline-size: 100%;
+    position: fixed;
+    z-index: @var_ut2-header-_z-index - 1; // should be less than header
+    inset-block-start: 0;
+    inset-inline: 0;
+    visibility: hidden;
+    opacity: 0; // for crisper and cleaner toggling effect
+}
+
+html.sticky-top-panel {
+    &.sticky-fc-panel {
+        .top-sticky-panel__filters {
+            margin-bottom: var(--gap-xs);
+            inset-block-start: var(--header-height);
+        }
+
+        .advanced_header + .tygh-content .top-sticky-panel__filters {
+            inset-block-start: var(--menu-height);
+        }
+
+        .default_header + .tygh-content .top-sticky-panel__filters {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                inset-block-start: calc(~'var(--header-height) + var(--ut2-header__2nd-row-_height-_1)');
+            }
+        }
+    }
+
+    &.js_sticky-buy-panel-_top {
+        .ut2-pb__sticky-add-to-cart.position-top {
+            inset-block-start: var(--header-height);
+        }
+
+        .advanced_header ~ .ut2-sticky-panel__wrap .ut2-pb__sticky-add-to-cart.position-top {
+            inset-block-start: var(--menu-height);
+        }
+
+        .default_header ~ .ut2-sticky-panel__wrap .ut2-pb__sticky-add-to-cart.position-top {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                inset-block-start: calc(~'var(--header-height) + var(--ut2-header__2nd-row-_height-_1)');
+            }
+        }
+    }
+
+    .tygh-header {
+        position: sticky;
+
+        &.advanced_header {
+            inset-block-start: calc(~'var(--header-height) * -1');
+        }
+
+        &:not(.advanced_header):not(.checkout_header) {
+            inset-block-start: 0;
+        }
+    }
+}
+
+body.sticky-fc-panel {
+    .top-sticky-panel__filters {
+        background: @general_bg_color;
+        border-block-start-color: @general_bg_color;
+        z-index: @var_ut2-header-_z-index - 1; // should be less than header
+    }
+}
+
+body.sticky-add-to-cart .ut2-pb__sticky-add-to-cart.position-top {
+    visibility: visible;
+    opacity: 1; // for crisper and cleaner toggling effect
+
+    @media (max-width: 767px) {
+        html.modal-is-open & {
+            visibility: hidden !important;
+        }
+    }
+}
+html.js_sticky-buy-panel-_top body:not(.fixed-header):not(.js_whole-header-out-of-viewport) .ut2-pb__sticky-add-to-cart.position-top {
+    box-shadow: rgba(0,0,0,0.1) 0 -2px 5px, rgba(0,0,0,0.05) 0 -7px 7px;
+    inset-block-start: initial !important;
+    inset-block-end: 0 !important;
+
+    &::after {
+        content: initial !important;
+    }
+}
+
+body.fixed-header {
+    .tygh-header {
+        &.default_header {
+            .container-fluid-row.top-menu-grid {
+                display: none;
+            }
+
+            + .tygh-content {
+                @media (min-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint + 1) {
+                    margin-block-start: var(--menu-height);
+                }
+            }
+        }
+
+        &.light_header.v2 {
+            .container-fluid-row.top-menu-grid {
+                display: none;
+            }
+
+            + .tygh-content {
+                padding-block-start: var(--menu-height);
+            }
+        }
+    }
+}
+
+/* [ BEGIN ] sticky columns in product page (legacy crude/raw code) */
+body.fixed-header {
+    .ut2_products_sticky_columns() when (@abt__ut2_products_sticky_columns = true) {
+        @media (min-width: 768px) and (max-width: 1023px) {
+            &:not(.mobile-screen) .default_header + .tygh-content {
+                .ut2-pb__img-wrapper, .ut2-pb__right {
+                    top: calc(~'(var(--header-height, 0px) * 2) + var(--gap-s)');
+                }
+            }
+        }
+    }
+    .ut2_products_sticky_columns();
+}
+/* [ END ] sticky columns in product page (legacy crude/raw code) */
+
+/* [[ END ]] sticky state :: header entire wrappers & surroundings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[ END ]]] header entire wrappers & surroundings
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] header row/container/section
+==============================================================================*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] common/general :: header row/container/section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.tygh-header,
+.tygh-header .container,
+.tygh-header .container-fluid,
+.tygh-header .container-fluid-row,
+.tygh-header .row-fluid,
+.tygh-header [class*=span]
+{
+    &::before,
+    &::after {
+        content: initial;
+    }
+}
+
+.tygh-header {
+    .container-fluid-row {
+        max-width: initial;
+        min-width: initial;
+        padding: initial;
+        margin: initial;
+    }
+
+    .container-fluid-row:not(.top-menu-grid) {
+        > .row-fluid {
+            position: relative; // offset parent for: 1) search bar in 2nd-row mode in 0..1023 in Default; 2) v-menu dropdown
+
+            @media (max-width: 1023px) {
+                padding-left: var(--gap-xxs);
+                padding-right: var(--gap-xxs);
+            }
+        }
+
+        .row-fluid,
+        [class*=span],
+        [class*=span] > [class*=ty-float],
+        [class*=span] > [class*=hidden-] {
+            block-size: var(--ut2-header-height);
+        }
+
+        .row-fluid {
+            column-gap: var(--gap-s);
+
+            @media (max-width: 450px) {
+                column-gap: var(--gap-xxs);
+            }
+        }
+
+        [class*=span],
+        [class*=span] > [class*=ty-float],
+        [class*=span] > [class*=hidden-] {
+            column-gap: var(--gap-xs);
+
+            @media (max-width: 450px) {
+                column-gap: var(--gap-xxs);
+            }
+        }
+    }
+
+    .container-fluid-row.top-menu-grid {
+        background: @menu;
+        padding-top: initial; // reset/clear parent-theme unfit declaration
+
+        > .row-fluid {
+            @media (max-width: 1023px) {
+                padding-left: var(--gap-xxs);
+                padding-right: var(--gap-xxs);
+            }
+        }
+    }
+
+    .advanced-header {
+        .container-fluid-row.top-menu-grid {
+            > .row-fluid {
+                position: relative; // offset parent for v-menu dropdown
+            }
+
+            .row-fluid,
+            [class*=span],
+            [class*=span] > [class*=ty-float],
+            [class*=span] > [class*=hidden-] {
+                block-size: var(--ut2-header__2nd-row-_height-_1);
+            }
+        }
+    }
+
+    .light-header,
+    .default-header {
+        .container-fluid-row.top-menu-grid {
+            position: relative; // offset parent for h-menu dropdown
+
+            .row-fluid,
+            [class*=span],
+            [class*=span] > [class*=ty-float],
+            [class*=span] > [class*=hidden-] {
+                block-size: var(--ut2-header__2nd-row-_height-_2);
+            }
+        }
+    }
+
+    .row-fluid {
+        width: initial; // reset/clear parent-theme grid style
+        inline-size: 100%; // nested row (flex item) should stretch to full width & should not overfill parent-wrapper (WARNING: horizontal menu slider script requires clear limited width of menu)
+        max-inline-size: var(--fluid-container-_max-width_-calc);
+        margin-inline: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        [class*=span] {
+            float: initial; // reset/clear parent-theme grid style
+            margin-left: initial; // reset/clear parent-theme grid style
+            width: initial; // reset/clear parent-theme grid style
+            display: flex;
+            align-items: center;
+
+            &.span16,
+            &.top-header-menu,
+            &.top-left-grid,
+            &.search-grid,
+            &.top-search {
+                flex-grow: 1;
+            }
+            &.top-phones,
+            &.top-buttons,
+            &.menu-grid,
+            &.account-cart-grid {
+                flex-shrink: 0;
+            }
+            &.top-logo-grid,
+            &.top-logo {
+                flex-shrink: 0;
+
+                @media (max-width: 899px) {
+                    flex-shrink: 1;
+                }
+            }
+
+            &.span16 {
+                inline-size: 100%; // WARNING: horizontal menu slider script requires clear limited width of menu
+
+                > [class*=ty-float],
+                > [class*=hidden-] {
+                    inline-size: 100%;
+                }
+            }
+
+            &.top-logo-grid {
+                padding-top: initial; // reset/clear parent-theme unfit value
+            }
+
+            > [class*=ty-float],
+            > [class*=hidden-] { // [class*=hidden] breaks normal fly-menu switching
+                display: flex;
+                align-items: center;
+            }
+        }
+    }
+}
+/* [[ END ]] common/general :: header row/container/section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] line up sections :: header row/container/section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.header-grid,
+.litecheckout__header {
+    html.sticky-top-panel & {
+        .mxn_ut2-header__bottom-shadow();
+    }
+}
+
+.advanced-header,
+.light-header.v2,
+.default-header {
+    html:not(.sticky-top-panel) & {
+        .mxn_line-up-rows() when (@menu = @content_bg) {
+            border-block-end: 1px solid @base5;
+        }
+        .mxn_line-up-rows();
+    }
+}
+
+.light-header:not(.v2):not(.floating-header .v3),
+.litecheckout__header {
+    html:not(.sticky-top-panel) & {
+        .mxn_line-up-rows() when (@header_bg = @content_bg) {
+            border-block-end: 1px solid @base5;
+        }
+        .mxn_line-up-rows();
+    }
+}
+
+.advanced-header .container-fluid-row:not(.top-menu-grid) {
+    .mxn_line-up-rows() when (@header_bg = @menu) {
+        border-block-end: 1px solid contrast(@header_bg, @base, rgba(255, 255, 255, .2));
+    }
+    .mxn_line-up-rows();
+}
+
+/*.light-header,
+.default-header {
+    .container-fluid-row.top-menu-grid {
+        .mxn_line-up-rows() when (@header_bg = @menu) {
+            border-block-start: 1px solid contrast(@header_bg, @base, rgba(255, 255, 255, .2));
+        }
+        .mxn_line-up-rows();
+    }
+}*/
+
+.default-header .ty-search-block {
+    @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+        .mxn_line-up-rows() when (@header_bg = @menu) {
+            border-block-start: 1px solid contrast(@header_bg, @base, rgba(255, 255, 255, .2));
+        }
+        .mxn_line-up-rows();
+    }
+}
+
+body.sticky-fc-panel {
+    &.fixed-header {
+        .header-grid::after {
+            content: initial !important;
+        }
+
+        .tygh-header:not(.advanced_header) + .tygh-content .top-sticky-panel__filters {
+            .mxn_line-up-rows() when (@general_bg_color = @header_bg) {
+                border-block-start-color: @base;
+            }
+            .mxn_line-up-rows();
+        }
+
+        .tygh-header.advanced_header + .tygh-content .top-sticky-panel__filters {
+            .mxn_line-up-rows() when (@general_bg_color = @menu) {
+                border-block-start-color: @base;
+            }
+            .mxn_line-up-rows();
+        }
+
+        .tygh-header.default_header + .tygh-content .top-sticky-panel__filters {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                .mxn_line-up-rows() when (@general_bg_color = @menu) {
+                    border-block-start-color: @base;
+                }
+                .mxn_line-up-rows() when not (@general_bg_color = @menu) {
+                    border-block-start-color: @general_bg_color; // override main rule .tygh-header:not(.advanced_header)
+                }
+                .mxn_line-up-rows();
+            }
+        }
+    }
+
+    .top-sticky-panel__filters {
+        .mxn_ut2-header__bottom-shadow();
+    }
+}
+
+body.sticky-add-to-cart {
+    &.fixed-header {
+        html.js_sticky-buy-panel-_top & {
+            .header-grid::after {
+                content: initial !important;
+            }
+        }
+
+        .tygh-header:not(.advanced_header) ~ .ut2-sticky-panel__wrap .ut2-pb__sticky-add-to-cart.position-top {
+            .mxn_line-up-rows() when (@general_bg_color = @header_bg) {
+                border-block-start: 1px solid @base;
+            }
+            .mxn_line-up-rows();
+        }
+
+        .tygh-header.advanced_header ~ .ut2-sticky-panel__wrap .ut2-pb__sticky-add-to-cart.position-top {
+            .mxn_line-up-rows() when (@general_bg_color = @menu) {
+                border-block-start: 1px solid @base;
+            }
+            .mxn_line-up-rows();
+        }
+
+        .tygh-header.default_header ~ .ut2-sticky-panel__wrap .ut2-pb__sticky-add-to-cart.position-top {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                .mxn_line-up-rows() when (@general_bg_color = @menu) {
+                    border-block-start: 1px solid @base;
+                }
+                .mxn_line-up-rows();
+            }
+        }
+    }
+
+    .ut2-pb__sticky-add-to-cart.position-top {
+        .mxn_ut2-header__bottom-shadow();
+    }
+}
+/* [[ END ]] line up sections :: header row/container/section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] specific layout :: header row/container/section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.advanced-header {
+    .container-fluid-row:not(.top-menu-grid) {
+        [class*=span] {
+            &.top-header-menu {
+                > [class*=ty-float],
+                > [class*=hidden-] {
+                    &:has(.ty-text-links-wrapper) {
+                        flex-grow: 1;
+                    }
+                }
+
+                > [class*=hidden-]:has(.ty-text-links-wrapper) {
+                    @media (max-width: 899px) {
+                        display: none !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .container-fluid-row.top-menu-grid {
+        .ut2-sp-n,
+        .ut2-pn__wrap,
+        .ut2-top-compared-products a,
+        .ut2-top-wishlist-count a,
+        .ty-dropdown-box__title[id] {
+            @media (max-width: 767px) {
+                min-inline-size: var(--ut2-header__common-button-_min-size) !important;
+                inline-size: var(--ut2-header__common-button-_min-size) !important;
+            }
+        }
+
+        div:has(+ div .ty-dropdown-box__title[id].open),
+        div:has(+ div .ut2-pn__wrap.open),
+        div:has(+ div :hover) {
+            .ty-minicart-count,
+            .count {
+                z-index: 1001;
+            }
+        }
+
+        [class*=span] {
+            > div:not(.row-fluid) {
+                .header_delimiters() when (@abt__ut2_containers_header_add_delimiters = true) {
+                    border-inline-end: 1px solid @var_ut2-header__advanced-2nd-row-_delimiter-_color;
+
+                    @media (max-width: 767px) {
+                        border-inline-end: 0 none;
+                    }
+                }
+                .header_delimiters();
+            }
+        }
+
+        .top-left-grid [class*=span]:first-child > div:not(.row-fluid):first-child {
+            .header_delimiters() when (@abt__ut2_containers_header_add_delimiters = true) {
+                border-inline-start: 1px solid @var_ut2-header__advanced-2nd-row-_delimiter-_color;
+
+                @media (max-width: 767px) {
+                    border-inline-start: 0 none;
+                }
+            }
+            .header_delimiters();
+        }
+    }
+}
+
+.default-header {
+    .container-fluid-row:not(.top-menu-grid) {
+        [class*=span] {
+            &.top-logo-grid {
+                @media (max-width: 1250px) {
+                    margin-inline-start: calc(~'var(--ut2-header__common-button-_min-size) + var(--gap-xs)'); // leave space for absolute burger btn
+
+                    .top-logo {
+                        #tygh_main_container & {
+                            margin-inline-start: initial; // reset/clean common/general value
+                        }
+                    }
+                }
+                @media (max-width: 450px) {
+                    margin-inline-start: calc(~'var(--ut2-header__common-button-_min-size) + var(--gap-xxs)');
+                }
+            }
+        }
+    }
+
+    .container-fluid-row.top-menu-grid {
+        @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+            display: none;
+        }
+    }
+}
+
+.light-header {
+    .container-fluid-row:not(.top-menu-grid) {
+        .top-menu-grid {
+            padding-top: initial; // reset/clear parent-theme unfit declaration
+        }
+
+        [class*=span] {
+            &.top-logo {
+                @media (max-width: 576px) {
+                    margin-inline-end: auto;
+                }
+            }
+
+            &.top-search {
+                @media (max-width: 576px) {
+                    flex-grow: initial;
+                }
+            }
+
+            &.top-buttons {
+                > div:has(.ut2-top-compared-products),
+                > div:has(.ut2-top-wishlist-count) {
+                    @media (max-width: 834px) {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}
+/* [[ END ]] specific layout :: header row/container/section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[ END ]]] header row/container/section
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] adjustment blocks/components to edge location/placement or specific section
+==============================================================================*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] logo section (minimize btn-heads)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.tygh-header .container-fluid {
+    .top-logo[class*=span],
+    .top-logo-grid[class*=span] {
+        .ut2-sp-n {
+            .mxn_ut2-header__common-button_-general-compactify-fn(1);
+        }
+
+        .top-menu-grid-vetrtical.ty-dropdown-box {
+            .ty-dropdown-box__title[id] {
+                .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+            }
+        }
+
+        .ut2-pn__wrap {
+            .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+        }
+    }
+
+    .ut2-languages,
+    .ut2-currencies {
+        .ab__ut2--select-block__head__text__name {
+            display: none;
+        }
+
+        .ab__ut2--select-block__head__text__code {
+            display: block;
+        }
+
+        .ab__ut2--select-block__head__text__code,
+        .ab__ut2--select-block__head__text__symbol {
+            ins {
+                display: none;
+            }
+        }
+    }
+}
+
+.container-fluid.header-grid:not(.light-header) {
+    .top-logo[class*=span],
+    .top-logo-grid[class*=span] {
+        .ut2-top-my-account,
+        .ut2-top-cart-content {
+            margin-inline: initial; // clear gap in hidden caption (only icon) state
+
+            .ty-dropdown-box__title[id] {
+                .mxn_ut2-header__1st-row__common-button-_round();
+                block-size: var(--ut2-header__common-button-_min-size);
+
+                &.open,
+                &:hover {
+                    .mxn_ut2-header__1st-row__common-button-_hover-open-bg-color();
+                }
+            }
+        }
+    }
+}
+/* [[ END ]] logo section (minimize btn-heads)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] first section in 1st row
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.litecheckout__header [class*=span]:first-child {
+    > .ty-logo-container:first-child {
+        margin-inline-start: var(--gap-xs);
+    }
+}
+
+.header-grid .container-fluid-row:not(.top-menu-grid) [class*=span]:not(.top-menu-grid):first-child {
+    > .top-logo:first-child,
+    > div:first-child > .top-logo:first-child {
+        margin-inline-start: var(--gap-xs);
+    }
+
+    .ty-dropdown-box__content:not(.top-menu-grid-vetrtical .ty-dropdown-box__content) {
+        @media (min-width: 768px) {
+            inset-inline-end: initial;
+            inset-inline-start: calc(~'var(--gap-xs) * -1');
+        }
+    }
+
+    > div:first-child .ty-dropdown-box__content:not(.top-menu-grid-vetrtical .ty-dropdown-box__content) {
+        @media (max-width: 1023px) and (min-width: 768px) {
+            inset-inline-start: 0;
+        }
+    }
+
+    .top-menu-grid-vetrtical.ty-dropdown-box.compact .ty-dropdown-box__content {
+        @media (min-width: 1024px) {
+            inset-inline-start: calc(~'var(--gap-xs) * -1');
+        }
+    }
+
+    > .top-menu-grid-vetrtical.ty-dropdown-box:not(.compact):first-child,
+    > div:first-child > .top-menu-grid-vetrtical.ty-dropdown-box:not(.compact):first-child {
+        .ty-dropdown-box__content {
+            @media (min-width: 1024px) {
+                margin-inline-start: calc(~'var(--gap-xxs) * -1');
+            }
+        }
+    }
+}
+/* [[ END ]] first section in 1st row
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] last section in 1st row
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.header-grid .container-fluid-row:not(.top-menu-grid) [class*=span]:not(.top-menu-grid):last-child {
+    > div:last-child .ty-dropdown-box__content:not(.top-menu-grid-vetrtical .ty-dropdown-box__content) {
+        @media (max-width: 1023px) and (min-width: 768px) {
+            inset-inline-end: 0;
+        }
+    }
+
+    > .top-menu-grid-vetrtical.ty-dropdown-box:not(.compact):last-child,
+    > div:last-child > .top-menu-grid-vetrtical.ty-dropdown-box:not(.compact):last-child {
+        .ty-dropdown-box__content {
+            @media (min-width: 1024px) {
+                margin-inline-start: calc(~'var(--gap-xxs)');
+            }
+        }
+    }
+}
+/* [[ END ]] last section in 1st row
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] first section in 2nd row (advanced layout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.advanced-header .container-fluid-row.top-menu-grid .top-left-grid [class*=span]:first-child {
+    > .top-search:not([class*=span]):first-child,
+    > div:first-child > .top-search:not([class*=span]) {
+        padding-inline-start: var(--gap-xs);
+    }
+
+    .ty-dropdown-box__content:not(.top-menu-grid-vetrtical .ty-dropdown-box__content) {
+        inset-inline-end: initial;
+        inset-inline-start: 0;
+    }
+}
+/* [[ END ]] first section in 2nd row (advanced layout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] last section in 2nd row (advanced layout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.advanced-header .container-fluid-row.top-menu-grid {
+    .account-cart-grid,
+    .top-left-grid:last-child [class*=span]:last-child {
+        > .top-search:not([class*=span]):last-child,
+        > div:last-child > .top-search:not([class*=span]) {
+            padding-inline-end: var(--gap-xs);
+        }
+    }
+}
+/* [[ END ]] last section in 2nd row (advanced layout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[ END ]]] adjustment blocks/components to edge location/placement or specific section
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] specific header block/component
+==============================================================================*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] burger menu toggler :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ut2-sp-n {
+    .header-grid .container-fluid-row:not(.top-menu-grid) & {
+        border: 1px solid contrast(@header_bg, @base5, rgba(255,255,255,0.2));
+        column-gap: 8px;
+
+        @media (max-width: 899px) {
+            border: 0 none;
+        }
+
+        &:hover,
+        &.open {
+            border-color: contrast(@header_bg, @base10, rgba(255,255,255,0.4));
+        }
+
+        &:not(.ut2-sw-title) {
+            inline-size: var(--ut2-header__common-button-_min-size);
+        }
+        &.ut2-sw-title {
+            padding-inline: var(--gap-xs);
+        }
+    }
+
+    .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+        &:not(.ut2-sw-title) {
+            inline-size: var(--ut2-header__2nd-row-_height-_1);
+        }
+        &.ut2-sw-title {
+            padding-inline: var(--gap-xs);
+
+            @media (max-width: 1100px) {
+                .mxn_ut2-header__common-button_-general-compactify-fn(2);
+            }
+        }
+    }
+
+    .header-grid.default-header .container-fluid-row:not(.top-menu-grid) & {
+        @media (max-width: 1250px) {
+            border: 0 none;
+            position: absolute;
+            inset-block: 0;
+            margin-block: auto;
+            inset-inline-start: calc(~'var(--fluidContainerPadding) / 2');
+        }
+        @media (max-width: 1023px) {
+            inset-inline-start: var(--gap-xxs);
+        }
+
+        &.ut2-sw-title {
+            @media (max-width: 1250px) {
+                .mxn_ut2-header__common-button_-general-compactify-fn(1);
+            }
+        }
+    }
+
+    [class*=ut2-icon] + span {
+        padding-block: 3px;
+
+        .header-grid .container-fluid-row:not(.top-menu-grid) & {
+            .ut2_line_clamp(2);
+            word-break: initial;
+            max-inline-size: 90px;
+            margin-inline-end: var(--gap-xxs);
+        }
+
+        .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: clip;
+            max-inline-size: 110px;
+        }
+    }
+}
+/* [[ END ]] burger menu toggler :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] logo :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.tygh-header {
+    .ty-logo-container {
+        text-align: initial;
+        margin: initial;
+        position: initial;
+
+        max-block-size: 100%;
+        min-inline-size: 125px; // 320 - 5*2(row paddings) - 40*4(four buttons) - 5*4(four gaps) - 5(extra spacing in default)
+        max-inline-size: 200px;
+        overflow: clip;
+
+        @media (max-width: 899px) {
+            max-inline-size: 150px;
+        }
+
+        a {
+            display: block;
+        }
+    }
+
+    .ty-logo-container__image {
+        max-height: calc(~'var(--ut2-header-height) - var(--gap-xs)');
+        width: auto;
+    }
+}
+/* [[ END ]] logo :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] search :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.ut2-search {
+    flex-grow: 1;
+
+    .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+        @media (max-width: 576px) {
+            inline-size: var(--ut2-header__common-button-_min-size); // bug fix for iOS when flex container collapses after search is closed
+            flex-grow: initial;
+        }
+    }
+}
+
+/*.js_ut2-search__opener {
+    inline-size: var(--ut2-header__common-button-_min-size);
+    display: none;
+
+    .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+        @media (max-width: 576px) {
+            display: flex;
+        }
+    }
+
+    [class*=ut2-icon] {
+        font-size: calc(~'var(--ut2-header__common-button__icon-_size) - 4px');
+    }
+}*/
+
+/*.js_ut2-search__closeer {
+    inline-size: var(--ut2-header__common-button-_min-size);
+    margin-inline-end: calc(var(--gap-xs) * -1);
+    order: 1;
+    display: none;
+
+    .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+        @media (max-width: 576px) {
+            display: flex;
+        }
+    }
+}*/
+
+.search-grid,
+.top-search {
+    .ut2-btn-search {
+        background: initial !important; // reset/clean obscure bg on mobile device
+        inline-size: var(--ut2-header__common-button-_min-size);
+        display: none;
+
+        .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+            @media (max-width: 576px) {
+                display: flex;
+
+                &.hidden {
+                    position: absolute;
+                    z-index: 2; // above search bar
+                    inset-inline-end: var(--gap-xxs);
+                    inset-block: 0;
+                    margin-block: auto;
+
+                    .ut2-icon-search {
+                        display: none;
+                    }
+
+                    .ut2-icon-baseline-close {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        .ut2-icon-search {
+            font-size: calc(~'var(--ut2-header__common-button__icon-_size) - 4px');
+
+            &::after {
+                content: '\e921';
+                display: none;
+            }
+        }
+    }
+}
+
+.ut2-sw-w .ut2-sw {
+    .ty-search-block {
+        background: unset;
+
+        input.ty-search-block__input {
+            background: var(--fill-gray);
+            border: 1px solid contrast(@general_bg_color, @base5, lighten(@general_bg_color, 17%));
+
+            &:hover,
+            &:focus,
+            &:active {
+                background: var(--fill-white);
+                border-color: @links;
+                box-shadow: 0 0 0 2px fade(@links, 10%);
+            }
+        }
+    }
+
+    .ut2-rb:first-child,
+    .ut2-sp-f:first-child + .ut2-rb {
+        .ty-search-block {
+            margin-inline-end: calc(~'40px + var(--gap-xxs) - var(--gap-s)');
+        }
+    }
+}
+
+.top-search:not([class*=span]) {
+    .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+        padding-inline: var(--gap-s);
+        flex-grow: 1;
+
+        @media (max-width: 767px) {
+            padding-inline: var(--gap-xs);
+        }
+
+        @media (max-width: 450px) {
+            padding-inline: var(--gap-xxs);
+        }
+    }
+}
+
+.search-grid,
+.top-search {
+    .ty-search-block {
+        position: initial; // reset/clear parent-theme unfit declaration
+        flex-grow: 1;
+
+        .header-grid.default-header .container-fluid-row:not(.top-menu-grid) & {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                background: @menu;
+                height: var(--ut2-header__2nd-row-_height-_1);
+                padding-inline: var(--gap-s);
+                position: absolute;
+                inset-block-start: 100%;
+                inset-inline: 0;
+            }
+        }
+
+        .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+            @media (max-width: 576px) {
+                background-color: @header_bg;
+                padding-inline: var(--gap-s);
+                position: absolute;
+                z-index: 1; // above other elements in row
+                inset: 0;
+                display: none;
+
+                &.view {
+                    display: flex;
+
+                    + div {
+                        margin-inline-start: var(--ut2-header__common-button-_min-size);
+                    }
+
+                    form {
+                        margin-inline-end: calc(~'var(--ut2-header__common-button-_min-size) - var(--gap-s) + var(--gap-xxs) * 2');
+                    }
+                }
+            }
+        }
+
+        form {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        input.ty-search-block__input {
+            font-size: var(--font-size-normal);
+            line-height: var(--ut2-header__common-button-_min-size);
+            color: @font;
+            text-overflow: ellipsis;
+
+            .ut2_round(@round: 0) when (@abt__ut2_general_use_rounding = do_not_use) {
+                border-radius: @round;
+            }
+            .ut2_round(@round: 8px) when (@abt__ut2_general_use_rounding = little) {
+                border-radius: @round;
+            }
+            .ut2_round(@round: calc(~'var(--ut2-header__common-button-_min-size) / 2')) when (@abt__ut2_general_use_rounding = full) {
+                border-radius: @round;
+                padding-inline-start: var(--gap-sm) !important;
+            }
+            .ut2_round();
+
+            border: 0 none;
+            height: var(--ut2-header__common-button-_min-size);
+            min-height: var(--ut2-header__common-button-_min-size);
+            width: initial;
+            inline-size: 100%;
+            min-inline-size: 230px;
+            padding: initial;
+            padding-inline-start: var(--gap-xs);
+            padding-inline-end: calc(~'var(--min-height-button) + var(--gap-xxs) * 2');
+
+            &.cm-hint { // empty field indicator
+                color: var(--color-font-lighten);
+            }
+            &::placeholder {
+                color: var(--color-font-lighten);
+            }
+
+            .header-grid .container-fluid-row:not(.top-menu-grid) & {
+                .bg_color() when (@header_bg = @general_bg_color) {
+                    background: contrast(@header_bg, @fill-gray-box, @general_bg_color);
+                    box-shadow: inset 0 0 0 1px contrast(@header_bg, darken(@fill-gray-box, 1%), transparent);
+                }
+                .bg_color() when not (@header_bg = #ffffff) {
+                    background: @general_bg_color;
+                }
+                .bg_color();
+
+                &:hover,
+                &:focus,
+                &:active {
+                    background: contrast(@header_bg, @general_bg_color, @fill-gray-box);
+                    box-shadow: inset 0 0 0 1px contrast(@header_bg, @base5, transparent), 0 0 5px darken(@header_bg, 15%);
+                }
+            }
+
+            .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+                .bg_color() when (@menu = @general_bg_color) {
+                    background: contrast(@menu, @fill-gray-box, @general_bg_color);
+                    box-shadow: 0 0 0 1px darken(@fill-gray-box, 2%);
+
+                    &:hover,
+                    &:focus,
+                    &:active {
+                        background: @general_bg_color;
+                        box-shadow: 0 0 0 1px contrast(@menu, @base5, transparent), 0 0 5px darken(@menu, 15%);
+                    }
+                }
+                .bg_color() when not (@menu = @general_bg_color) {
+                    background: @general_bg_color;
+                    box-shadow: 0 0 0 1px contrast(@menu, rgba(0,0,0,0.05), transparent);
+
+                    &:hover,
+                    &:focus,
+                    &:active {
+                        background: @general_bg_color;
+                        box-shadow: 0 0 0 1px contrast(@menu, rgba(0,0,0,0.1), transparent), 0 0 5px darken(@menu, 15%);
+                    }
+                }
+                .bg_color();
+
+                @media (max-width: 540px) {
+                    min-inline-size: 143px; // 320 - 17(scrollbar) - 15*2(row paddings) - 3*44(three buttons) - 20(search spacing) + 22(edge negative spacing)
+                }
+            }
+
+            .header-grid.default-header .container-fluid-row:not(.top-menu-grid) & {
+                @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                    .bg_color() when (@menu = @general_bg_color) {
+                        background: contrast(@menu, @fill-gray-box, @general_bg_color);
+                        box-shadow: inset 0 0 1px @base5;
+
+                        &:hover,
+                        &:focus,
+                        &:active {
+                            box-shadow: inset 0 0 0 1px contrast(@menu, @base5, transparent), 0 0 5px darken(@menu, 15%);
+                        }
+                    }
+                    .bg_color() when not (@menu = @general_bg_color) {
+                        background: @general_bg_color;
+                        box-shadow: 0 0 5px contrast(@menu, rgba(0,0,0,0.1), rgba(255,255,255,0.1));
+                    }
+                    .bg_color();
+
+                    height: var(--min-height-button);
+                    min-height: var(--min-height-button);
+                }
+            }
+        }
+    }
+}
+
+button.ty-search-magnifier {
+    top: 0;
+    right: 0;
+    width: var(--height-button);
+    height: var(--height-button);
+    color: var(--color-font-lighten);
+    font-size: 120%;
+    line-height: 0.7;
+
+    .search-grid > .ty-search-block &,
+    .top-search > .ut2-search & {
+        background: contrast(@header_bg, white, @base);
+    }
+    .ut2-sw-w & {
+        background: @base;
+    }
+
+    .search-grid &,
+    .top-search & {
+        font-size: 18px;
+        color: @font;
+        outline: none;
+
+        .ut2_round(@round: 0) when (@abt__ut2_general_use_rounding = do_not_use) {
+            border-radius: @round;
+        }
+        .ut2_round(@round: 6px) when (@abt__ut2_general_use_rounding = little) {
+            border-radius: @round;
+        }
+        .ut2_round(@round: 50%) when (@abt__ut2_general_use_rounding = full) {
+            border-radius: @round;
+        }
+        .ut2_round();
+
+        border: 0 none;
+        padding: initial;
+        width: var(--min-height-button);
+        height: var(--min-height-button);
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin-block: auto;
+        right: 2px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        transition: all 150ms;
+
+        &:hover {
+            color: var(--color-main);
+        }
+
+        .header-grid.default-header .container-fluid-row:not(.top-menu-grid) & {
+            @media (max-width: @var_ut2-header__search_-2nd_row_mode-_breakpoint) {
+                right: 0;
+            }
+        }
+    }
+}
+/* [[ END ]] search :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] compare & wishlist :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.top-buttons-grid { // abolish excess wrapper
+    display: contents;
+}
+
+.ut2-top-compared-products,
+.ut2-top-wishlist-count {
+    flex-shrink: 0;
+
+    a {
+        position: relative; // offset parent for counter
+
+        .header-grid .container-fluid-row:not(.top-menu-grid) & {
+            inline-size: var(--ut2-header__common-button-_min-size);
+        }
+
+        .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+            inline-size: var(--ut2-header__2nd-row-_height-_1);
+        }
+
+        .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+            @media (max-width: 834px) {
+                display: none;
+            }
+        }
+    }
+}
+/* [[ END ]] compare & wishlist :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] contacts :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ut2-pn {
+    position: relative; // offset parent for dropdown
+    flex-shrink: 0;
+
+    @media (max-width: 767px) {
+        position: initial;
+    }
+}
+
+.ut2-pn__wrap {
+    padding-inline: var(--gap-xs);
+    position: relative; // to position corner-arrow
+
+    &.open {
+        z-index: 1000 !important; // above dropdown, similar to .ty-dropdown-box__title
+    }
+
+    .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+        @media (max-width: 1100px) {
+            .mxn_ut2-header__common-button_-general-compactify-fn(2, true);
+        }
+    }
+
+    .header-grid.advanced-header .container-fluid-row:not(.top-menu-grid) &,
+    .litecheckout__header & {
+        @media (max-width: 420px) {
+            .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+        }
+    }
+
+    .header-grid.default-header .container-fluid-row:not(.top-menu-grid) & {
+        @media (max-width: 640px) {
+            .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+        }
+    }
+
+    .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+        @media (max-width: 1090px) {
+            .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+        }
+    }
+}
+
+.ut2-pn__icon {
+    &::before {
+        content: "\e974";
+    }
+}
+
+.ut2-pn__title {
+    font-size: var(--font-size-medium);
+    font-weight: bold;
+    padding-block: 3px;
+}
+
+.ut2-pn__title,
+.ut2-pn__title bdo {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: clip;
+    max-inline-size: 160px;
+    display: block;
+}
+
+.ut2-pn__contacts { // dropdown wrapper
+    display: contents;
+}
+
+
+/* [ BEGIN ] legacy crude/raw code */
+.ut2-pn__items-full.ty-dropdown-box__content {
+    .ut2-btn-close {
+        display: block;
+        position: absolute !important;
+        top: var(--gap-xs);
+        right: var(--gap-xs);
+    }
+
+    &[onclick] {
+        .ut2-btn-close {
+            display: none;
+        }
+
+        & + .ut2-pn__wrap {
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+    }
+
+    hr {
+        width: 100%;
+    }
+
+    small {
+        display: block;
+        padding-top: 5px;
+        color: contrast(@content_bg, @lighten-font, rgba(255, 255, 255, 0.9));
+
+        ~ * {
+            padding-top: 5px;
+            display: block;
+        }
+    }
+}
+/* [ END ] legacy crude/raw code */
+
+
+/* [ BEGIN ] contacts dropdown-box stuffing (legacy crude/raw code) */
+.ut2-pn__items {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(~'100dvh - 103px');
+    min-width: 300px;
+    padding: var(--gap-s);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+
+    @media (max-width: 576px) {
+        padding: var(--gap-sm);
+    }
+
+    .fixed-header.sticky-panel .tygh-header & {
+        max-height: calc(~'100dvh - 130px');
+    }
+
+    a {
+        display: block;
+        white-space: nowrap;
+        color: @font;
+        max-width: 230px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        &[href^="tel:"] {
+            font-size: var(--font-size-large);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        &:hover {
+            color: @links;
+        }
+    }
+
+    > p:first-child {
+        padding-top: 0;
+    }
+
+    .ut2-pn__call_request {
+        margin: var(--gap-xs) 0;
+
+        a {
+            .ut2-btn-primary();
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--height-button);
+            line-height: 1;
+            font-size: var(--font-size-normal);
+            font-weight: normal;
+            margin: 0;
+            width: 100%;
+            padding-left: var(--gap-sm);
+            padding-right: var(--gap-sm);
+
+            .ut2_round(@round: 8px) when (@abt__ut2_general_use_rounding = little) {
+                border-radius: @round;
+            }
+            .ut2_round(@round: var(--height-button)) when (@abt__ut2_general_use_rounding = full) {
+                border-radius: @round;
+            }
+            .ut2_round();
+
+            &:hover {
+                .ut2-btn-primary-hover();
+            }
+        }
+    }
+
+    .ut2-social-links {
+        margin: var(--gap-xxs) 0 var(--gap-xs);
+        justify-content: flex-start;
+
+        a {
+            width: 30px;
+            height: 30px;
+
+            i::before {
+                font-size: 100%;
+            }
+        }
+    }
+}
+/* [ END ] contacts dropdown-box stuffing (legacy crude/raw code) */
+
+
+/* [ BEGIN ] contacts in right sliding pane (legacy crude/raw code) */
+.tygh-header .ut2-pn.ut2-right-panel {
+    position: inherit;
+
+    .ut2-pn__expand_icon {
+        display: none;
+    }
+
+    .ut2-btn-close {
+        position: fixed;
+        right: var(--gap-sm);
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 100%;
+        transition: all .1s linear;
+
+        > i:not(:hover) {
+            color: @font;
+        }
+    }
+
+    .ut2-pn__contacts .ut2-pn__items-full {
+        position: fixed;
+        left: auto;
+        right: -100%;
+        top: 0;
+        bottom: 0;
+        height: 100dvh;
+        max-width: 360px;
+        border-radius: 0;
+        animation: none;
+        transition: .4s @var_ut2-header__side-contacts-_animation-_timing-function;
+
+        @media (max-width: 577px) {
+            width: 100%;
+            max-width: none;
+        }
+
+        .ut2-pn__items {
+            max-height: 100%;
+            display: block;
+
+            &::after { // extra space after content
+                content: '';
+                display: block;
+                clear: both;
+                inline-size: 100%;
+                block-size: var(--gap-sm);
+            }
+
+            p:empty {
+                display: none;
+            }
+        }
+    }
+
+    .cm-combination.open + .ut2-pn__contacts {
+        .ut2-pn__items-full {
+            right: 0;
+            box-shadow: 0 0 4px -1px rgba(0, 0, 0, 0.2), 0 0 5px 0 rgba(0, 0, 0, 0.14), 0 0 10px 0 rgba(0, 0, 0, 0.12);
+            z-index: @big-z;
+        }
+
+        .ui-widget-overlay {
+            display: block;
+            transition: .4s @var_ut2-header__side-contacts-_animation-_timing-function;
+            z-index: 1000;
+        }
+    }
+}
+/* [ END ] contacts in right sliding pane (legacy crude/raw code) */
+
+/* [[ END ]] contacts :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] account & cart :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ut2-top-my-account,
+.ut2-top-cart-content {
+    float: initial; // reset/clear
+    flex-shrink: 0;
+
+    .header-grid.advanced-header .container-fluid-row:not(.top-menu-grid) &,
+    .header-grid.default-header .container-fluid-row:not(.top-menu-grid) & {
+        margin-inline: var(--gap-xs);
+
+        @media (max-width: 899px) {
+            margin-inline: initial;
+        }
+    }
+
+    .ty-dropdown-box__title[id] {
+        .header-grid .container-fluid-row:not(.top-menu-grid) & {
+            .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+        }
+
+        .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+            @media (max-width: 1100px) {
+                .mxn_ut2-header__common-button_-general-compactify-fn(2, true);
+            }
+        }
+
+        .header-grid:not(.light-header) .container-fluid-row:not(.top-menu-grid) & {
+            border-radius: initial;
+            block-size: initial;
+            inline-size: initial;
+            padding-inline: initial;
+            position: static;
+
+            &::before,
+            &::after {
+                inset-block-start: initial;
+                inset-block-end: 0;
+                margin-block-start: initial;
+                z-index: 1000; // above dropdown (instead of .ty-dropdown-box__title)
+            }
+            &::before {
+                margin-block-end: 1px;
+            }
+
+            &.open,
+            &:hover {
+                background: initial;
+            }
+
+            @media (max-width: 899px) {
+                .mxn_ut2-header__1st-row__common-button-_round();
+                block-size: var(--ut2-header__common-button-_min-size);
+                inline-size: var(--ut2-header__common-button-_min-size);
+                position: relative;
+
+                &::before,
+                &::after {
+                    inset-block-start: 100%;
+                    inset-block-end: initial;
+                    z-index: initial;
+                }
+                &::before {
+                    margin-block-start: calc(~'(var(--ut2-header-height) - var(--ut2-header__common-button-_min-size)) / 2 - 11px');
+                    margin-block-end: initial;
+                }
+                &::after {
+                    margin-block-start: calc(~'(var(--ut2-header-height) - var(--ut2-header__common-button-_min-size)) / 2 - 10px');
+                }
+
+                &.open,
+                &:hover {
+                    .mxn_ut2-header__1st-row__common-button-_hover-open-bg-color();
+                }
+
+                [class*="ut2-icon"] + span {
+                    display: none !important; // increase/higher precedence
+                }
+            }
+
+            > a {
+                flex-shrink: 0;
+                align-items: initial;
+                justify-content: initial;
+                gap: initial;
+                flex-direction: column;
+            }
+
+            [class*="ut2-icon"] + span {
+                display: block;
+            }
+        }
+
+        [class*="ut2-icon"] + span {
+            .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: clip;
+                max-inline-size: 110px;
+            }
+
+            .header-grid:not(.light-header) .container-fluid-row:not(.top-menu-grid) & {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: clip;
+                max-inline-size: 90px;
+            }
+        }
+    }
+}
+
+
+/* [ BEGIN ] account dropdown-box stuffing (legacy crude/raw code) */
+.ty-account-info  {
+    padding: var(--gap-xs) 0;
+}
+.ty-dropdown-box__content .ty-account-info__orders {
+    padding: var(--gap-sm) var(--gap-s) 0;
+    margin-top: 0;
+    background: var(--fill-gray);
+
+    .captcha.ty-control-group {
+        margin-top: var(--gap-s);
+        margin-bottom: 0;
+    }
+    &-txt, .ty-captcha__label {
+        color: var(--color-font-lighten);
+    }
+    input.cm-hint {
+        color: var(--color-font-lighten);
+        border-color: @base20;
+    }
+}
+.ty-account-info__buttons:not(.hidden) {
+    padding: var(--gap-s);
+    background: var(--fill-gray);
+}
+.ty-account-info__a {
+    color: @font;
+}
+.ty-account-info__name {
+    color: var(--color-font-lighten);
+    font-weight: bold;
+
+    &:hover {
+        background: none;
+        color: var(--color-font-lighten);
+    }
+}
+/* [ END ] account dropdown-box stuffing (legacy crude/raw code) */
+
+/* [[ END ]] account & cart :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] languages + currencies blocks in dropdown mode for header location/placement :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.tygh-header {
+    .top-languages:not(.ut2-sw-w *),
+    .top-currencies:not(.ut2-sw-w *) {
+        flex-shrink: 0;
+
+        + .top-languages,
+        + .top-currencies {
+            margin-inline-start: calc(~'var(--gap-xs) * -1');
+        }
+    }
+
+    .ab__ut2--languages_mode_dropdown:not(.ut2-sw-w *),
+    .ab__ut2--currencies_mode_dropdown:not(.ut2-sw-w *) {
+        flex-shrink: 0;
+
+        + .ab__ut2--languages_mode_dropdown,
+        + .ab__ut2--currencies_mode_dropdown {
+            margin-inline-start: calc(~'var(--gap-xs) * -1');
+        }
+
+        &::before,
+        &::after {
+            content: initial;
+        }
+
+        .ab__ut2--select-block__head {
+            position: relative;
+            border: 0 none;
+            padding: 0 var(--gap-xs);
+        }
+
+        .ab__ut2--select-block__popup {
+            z-index: 999 !important; // above h-menu dropdown. WARNING: z-index > 999 for dropdown may cause closing failure when outside click
+            right: initial;
+            inset-inline-end: calc(~'var(--gap-xs) * -1'); // basic position. shift right for better corner-arrow position
+
+            min-width: calc(~'100% + var(--gap-xs) * 2');
+            max-width: @fluidContainerMinWidth;
+
+            animation: dialog_is_open 150ms @var_ut2-header-_animation-_timing-function;
+
+            &::before,
+            &::after {
+                content: initial;
+            }
+        }
+
+        .ty-select-block__list {
+            padding: var(--gap-xs);
+            max-block-size: calc(~'100dvh - (var(--ut2-top-panel-height) + 1 + var(--ut2-header-height)) - var(--gap-m)'); // var(--gap-m) = spacing to window bottom edge
+        }
+
+        .ty-select-block__list-a {
+            color: contrast(@general_bg_color, @font, white);
+            border-radius: var(--border-radius-box); // similar to account dropdown
+            padding: 7px var(--gap-xs);
+
+            &.is-active {
+                color: contrast(@general_bg_color, @lighten-font, rgba(255, 255, 255, 0.75));
+            }
+        }
+    }
+}
+/* [[ END ]] languages + currencies blocks in dropdown mode for header location/placement :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] dropdown-box common/general for v-menu & account & cart :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.tygh-header {
+    .ty-dropdown-box {
+        flex-shrink: 0;
+
+        @media (max-width: 767px) {
+            position: initial;
+        }
+    }
+
+    .ty-dropdown-box__title[id] {
+        border: 0 none;
+        padding: initial;
+        padding-inline: var(--gap-xs);
+        position: relative;
+        gap: initial;
+
+        &.open {
+            z-index: 1000 !important; // above dropdown
+        }
+
+        [class*="ut2-icon"] + span {
+            padding-block: 3px;
+            display: initial; // reset/clear legacy unfit declaration for truncation by ellipsis
+        }
+    }
+
+    .ty-dropdown-box__content { // inherited state: min-width:340px; position:absolute; top:100%; right:0; margin-top:0; border:0; background:@general_bg_color;
+        z-index: 999 !important; // above h-menu dropdown. WARNING: z-index > 999 for dropdown may cause closing failure when outside click
+        right: initial;
+        inset-inline-end: 0;
+
+        min-width: 320px; // override parent-theme unfit value
+        max-inline-size: 100vw;
+        overflow: clip; // to round corners & shadow
+        animation: dialog_is_open 150ms @var_ut2-header-_animation-_timing-function;
+
+        @media (max-width: 767px) {
+            inline-size: 100% !important;
+            inset-inline: 0 !important;
+        }
+
+        &::before,
+        &::after {
+            content: initial !important;
+        }
+
+        .buttons-container {
+            .ty-btn {
+                padding-left: var(--gap-sm);
+                padding-right: var(--gap-sm);
+            }
+        }
+    }
+
+    /* [ BEGIN ] specific row context adjustment */
+    .container-fluid-row:not(.top-menu-grid) {
+        .ty-dropdown-box__title[id] {
+            [class*="ut2-icon"] {
+                color: @var_ut2-header__1st-row__common-button-_color; // override legacy unfit/inapt value for open state
+            }
+        }
+
+        .ty-dropdown-box__content {
+            inset-inline-end: calc(~'var(--gap-xs) * -1'); // basic position. shift right for better corner-arrow position in hidden caption (only icon) state
+
+            @media (max-width: 1023px) { // no top rounding
+                border-start-start-radius: initial;
+                border-start-end-radius: initial;
+            }
+        }
+    }
+
+    .container-fluid-row.top-menu-grid {
+        .ty-dropdown-box__content {
+            border-start-start-radius: initial;
+            border-top-right-radius: initial;
+        }
+    }
+    /* [ END ] specific row context adjustment */
+}
+/* [[ END ]] dropdown-box common/general for v-menu & account & cart :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] vetrtical menu dropdown-box :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.top-menu-grid-vetrtical .ty-dropdown-box__title[id] {
+    [class*=ut2-icon] {
+        font-size: calc(~'var(--ut2-header__common-button__icon-_size) - 2px');
+
+        &::before {
+            content: "\e976";
+        }
+    }
+}
+
+.top-menu-grid-vetrtical.ty-dropdown-box { // increase precedence
+    position: initial;
+
+    .header-grid.light-header .container-fluid-row:not(.top-menu-grid) .top-search & {
+        @media (max-width: 767px) {
+            block-size: initial;
+            position: absolute;
+            left: -200vw;
+            top: -200vh;
+        }
+    }
+
+    &.compact {
+        position: relative; // dropdown relative to toggle button
+
+        @media (max-width: 1023px) {
+            position: initial;
+        }
+
+        .ty-dropdown-box__content {
+            @media (min-width: 1024px) {
+                inline-size: var(--menu-v-top-level-_width_-basic);
+                inset-inline-start: 0;
+                inset-inline-end: initial; // reset/clear common/general value
+
+                @media (hover: hover) {
+                    &:has(.ut2-menu__item:not(.item-1st-no-drop):hover) {
+                        inline-size: calc(~'var(--menu-v-top-level-_width_-basic) * 3') !important;
+                    }
+                }
+            }
+
+            .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+                @media (max-width: 1250px) {
+                    inset-inline-start: calc(~'(var(--menu-v-top-level-_width_-basic) - var(--ut2-header__common-button-_min-size)) / -2');
+
+                    /*&:has(.ut2-menu__item:not(.item-1st-no-drop):hover) {
+                        inset-inline-start: calc(~'(var(--menu-v-top-level-_width_-basic) - var(--ut2-header__common-button-_min-size)) / -2 - 20px');
+                    }*/
+                }
+            }
+        }
+    }
+
+    .ty-dropdown-box__title[id] {
+        &.open {
+            @media (min-width: 768px) {
+                z-index: 1001 !important; // above h-menu dropdown and v-menu dropdown
+
+                [class*=ut2-icon] {
+                    &::before {
+                        content: "\e92e";
+                    }
+                }
+
+                ~ .ui-widget-overlay {
+                    display: block;
+                }
+            }
+
+            @media (max-width: 767px) {
+                z-index: initial !important; // below dropdown (reset/clear parent-theme unfit declaration)
+            }
+        }
+
+        .header-grid .container-fluid-row:not(.top-menu-grid) & {
+            .primary_button_color1() when not (iscolor(@primary_button_color)) {
+                color: contrast(@primary_button, @font, white);
+
+                [class*=ut2-icon] { // override legacy global unfit value
+                    color: contrast(@primary_button, @font, white);
+                }
+            }
+            .primary_button_color1() when (iscolor(@primary_button_color)) {
+                color: @primary_button_color;
+
+                [class*=ut2-icon] { // override legacy global unfit value
+                    color: @primary_button_color;
+                }
+            }
+            .primary_button_color1();
+
+            background: @primary_button;
+
+            &:hover {
+                .ut2-btn-primary-hover();
+                padding-bottom: initial;
+                box-shadow: initial;
+            }
+        }
+
+        .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+            @media (max-width: 767px) {
+                .mxn_ut2-header__common-button_-general-compactify-fn(2, true);
+            }
+        }
+
+        .header-grid.light-header .container-fluid-row:not(.top-menu-grid) & {
+            @media (max-width: 1250px) {
+                .mxn_ut2-header__common-button_-general-compactify-fn(1, true);
+            }
+        }
+
+        [class*="ut2-icon"] + span {
+            .header-grid .container-fluid-row:not(.top-menu-grid) & {
+                .ut2_line_clamp(2);
+                word-break: initial;
+                max-inline-size: 170px;
+            }
+
+            .header-grid.advanced-header .container-fluid-row.top-menu-grid & {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: clip;
+                max-inline-size: 200px;
+            }
+        }
+    }
+
+    .ty-dropdown-box__content {
+        z-index: 1000 !important; // above h-menu dropdown
+        min-width: var(--menu-v-top-level-_width_-basic); // override parent-theme unfit declaration, width in compact view mode
+        inline-size: calc(~'100% - var(--fluidContainerPadding)');
+        inset-inline-start: calc(~'var(--fluidContainerPadding) / 2');
+        inset-inline-end: initial !important; // reset/clear common/general value
+
+        @media (max-width: 1023px) {
+            inline-size: 100% !important;
+            inset-inline: 0 !important;
+        }
+
+        @media (min-width: 768px) {
+            body.mobile-screen & {
+                border-bottom-right-radius: initial;
+                border-bottom-left-radius: initial;
+            }
+        }
+
+        @media (max-width: 767px) {
+            border-radius: initial;
+            block-size: 100dvh;
+            position: fixed;
+            top: 0 !important;
+
+            * {
+                transition: initial;
+            }
+        }
+
+        > .ty-dropdown-box__title {
+            @media (min-width: 768px) {
+                display: none !important;
+            }
+        }
+    }
+
+    .ui-widget-overlay {
+        width: 100vw;
+        height: 100vh;
+        z-index: 999 !important; // above h-menu dropdown
+    }
+}
+/* [[ END ]] vetrtical menu dropdown-box :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] header links (top-header-menu) :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.top-header-menu {
+    .ty-text-links-wrapper {
+        border: 0 none;
+        padding-inline: var(--gap-xs);
+        flex-grow: 1;
+
+        @media (max-width: 899px) {
+            display: none;
+        }
+    }
+
+    .ty-float-right .ty-text-links {
+        justify-content: flex-end;
+    }
+    .ty-float-left .ty-text-links {
+        justify-content: flex-start;
+    }
+
+    .ty-text-links {
+        line-height: 18px;
+        margin: initial;
+        max-height: 46px; // 2 lines: 18*2 + 10
+        overflow: clip;
+
+        flex-grow: 1;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--gap-xs) 25px;
+
+        ul,
+        ol {
+            display: none !important;
+        }
+    }
+
+    .ty-text-links__item {
+        margin: initial;
+        padding: initial;
+        position: initial;
+
+        &.ty-text-links__active,
+        &.active {
+            .ty-text-links__a {
+                font-weight: bold;
+                color: contrast(@header_bg, darken(@links, 8%), white);
+            }
+        }
+    }
+
+    .ty-text-links__a {
+        .text_color() {
+            color: contrast(@header_bg, @links, rgba(255, 255, 255, 0.75));
+
+            &:hover {
+                color: contrast(@header_bg, darken(@links, 8%), white);
+            }
+        }
+        .text_color();
+    }
+
+    .ty-text-links-btn {
+        display: none;
+    }
+}
+/* [[ END ]] header links (top-header-menu) :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] legacy unknown/inexplicit code :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ty-login {
+    margin-top: 0;
+    min-height: 260px;
+
+    .buttons-container {
+        flex-direction: row;
+    }
+}
+.ty-login-popup {
+    @media (min-width: 415px) {
+        min-width: 345px;
+    }
+    @media (max-width: 899px) {
+        max-width: 100%;
+    }
+}
+.ty-login-info__title,
+.ty-login-info h4 {
+    color: @font;
+}
+.ty-login-info__txt {
+    color: var(--color-font-lighten);
+}
+@media (max-width: 767px) {
+    .auth-information-grid {
+        margin-top: 0;
+        padding-bottom: var(--gap-l);
+    }
+    .ty-login-info {
+        margin-top: 0;
+    }
+}
+
+.ty-account {
+    margin-top: var(--gap-xs);
+
+    .ty-newsletters,
+    .ty-gdpr-agreement {
+        margin-bottom: var(--gap-sm);
+        line-height: 1.4;
+    }
+    .buttons-container {
+        margin-top: var(--gap-s);
+    }
+}
+.ty-account-benefits {
+    @media (max-width: 767px) {
+        margin: 0 0 var(--gap-l);
+    }
+    h4 {
+        padding-bottom: 0;
+        font-size: var(--font-size-large);
+    }
+}
+/* [[ END ]] legacy unknown/inexplicit code :: specific header block/component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[ END ]]] specific header block/component
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] Light v3 layout design
+==============================================================================*/
+body.floating-header {
+    &:not(.fixed-header) .tygh-header {
+        background-color: initial;
+        background-image: initial;
+
+        .header-grid:after {
+            display: none;
+        }
+    }
+    &:not(.fixed-header) #tygh_main_container { // increase precedence
+        .tygh-top-panel,
+        .tygh-top-panel > div,
+        .header-grid,
+        .top-menu-grid {
+            background: initial;
+            transition: initial;
+        }
+
+        .header-grid {
+            box-shadow: initial;
+
+            .ut2-sp-n,
+            .ut2-btn-search, // heritage of mv module
+            .js_ut2-search__opener,
+            .ut2-pn__wrap,
+            .ut2-top-compared-products a,
+            .ut2-top-wishlist-count a,
+            .ty-dropdown-box:not(.top-menu-grid-vetrtical) .ty-dropdown-box__title[id],
+            .ab__ut2--languages_mode_dropdown .ab__ut2--select-block__head,
+            .ab__ut2--currencies_mode_dropdown .ab__ut2--select-block__head {
+                &:not(.open) {
+                    &:hover {
+                        background: rgba(0, 0, 0, 0.1);
+                        backdrop-filter: blur(3px);
+                        -webkit-backdrop-filter: blur(3px);
+                    }
+                }
+            }
+
+            .ut2-pn,
+            .ty-dropdown-box:not(.top-menu-grid-vetrtical) {
+                .ty-dropdown-box__content {
+                    @media (max-width: 1023px) and (min-width: 768px) {
+                        border-start-start-radius: var(--border-radius-box);
+                        border-start-end-radius: var(--border-radius-box);
+                    }
+                }
+            }
+
+            .ty-search-block {
+                @media (max-width: 576px) {
+                    background: rgba(0, 0, 0, .1);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                }
+            }
+
+            .ut2_header_elements_brightness() when (@abt__ut2_containers_header_elements_brightness = light) {
+                .ty-search-block input.ty-search-block__input {
+                    background: white;
+                    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 0 5px rgba(0, 0, 0, 0.1);
+                }
+            }
+            .ut2_header_elements_brightness();
+
+            .ty-minicart-count,
+            .count {
+                box-shadow: initial;
+            }
+        }
+
+        .ut2-menu.ut2-h__menu .ut2-menu__submenu {
+            border: 0 none;
+        }
+
+        .tygh-top-panel {
+            a.ty-geo-maps__geolocation__opener:hover,
+            a.ty-geo-maps__geolocation__opener.open,
+            .ty-text-links-btn:hover,
+            .ty-text-links-btn.open,
+            li.ty-text-links__item:not(.ty-text-links__item--inline):not(.ty-text-links__item--submenu) a.ty-text-links__a:hover,
+            li.ty-text-links__item:not(.ty-text-links__item--inline):not(.ty-text-links__item--submenu) a.ty-text-links__a.open,
+            li.ty-text-links__item--inline a.ty-text-links__a--inline:hover,
+            li.ty-text-links__item--inline a.ty-text-links__a--inline.open,
+            a.ty-select-block__a:hover,
+            a.ty-select-block__a.open,
+            a.ty-languages__item:hover,
+            a.ty-languages__item.open,
+            a.ty-currencies__item:hover,
+            a.ty-currencies__item.open {
+                background: initial;
+            }
+        }
+    }
+
+    &.fixed-header #tygh_main_container { // hide header mask if page is scrolled
+        &::before {
+            animation: fade_out .2s forwards cubic-bezier(.4, 0, .2, 1);
+        }
+    }
+
+    #tygh_main_container {
+        .ut2_header_mask() when (@abt__ut2_containers_header_add_header_mask = true) {
+            &::before {
+                content: '';
+                background: linear-gradient(0deg, fade(@header_bg, 0%) 0%, fade(@header_bg, 60%), fade(@header_bg, 80%));
+                position: absolute;
+                z-index: 1;
+                inline-size: 100%;
+                block-size: calc(~'var(--ut2-top-panel-height, 0px) +  var(--ut2-header-height, 0px) + var(--ut2-header__2nd-row-_height-_2)');
+            }
+        }
+        .ut2_header_mask();
+    }
+
+    .homepage-banners {
+        margin-top: calc(~'(var(--ut2-top-panel-height, 1px) +  var(--ut2-header-height, 1px) + var(--ut2-header-menu-height, 1px)) * -1') !important;
+    }
+    .tygh-header:has(.second-header-grid) + .tygh-content .homepage-banners {
+        margin-top: calc(~'(var(--ut2-top-panel-height, 1px) +  var(--ut2-header-height, 1px) + 52px) * -1') !important;
+    }
+
+    .ut2_header_elements_brightness() when (@abt__ut2_containers_header_elements_brightness = dark) {
+        .tygh-top-panel .top-grid {
+            border-color: rgba(255, 255, 255, .2);
+            position: relative;
+            z-index: @big-z + 4;
+        }
+
+        .second-header-grid {
+            border-top: 1px solid rgba(255, 255, 255, .2);
+        }
+    }
+    .ut2_header_elements_brightness() when (@abt__ut2_containers_header_elements_brightness = light) {
+        .tygh-top-panel .top-grid {
+            border-color: rgba(0, 0, 0, .1);
+            position: relative;
+            z-index: @big-z + 4;
+        }
+
+        .second-header-grid {
+            border-top: 1px solid rgba(0, 0, 0, .1);
+        }
+    }
+    .ut2_header_elements_brightness();
+}
+/* [[[ END ]]] Light v3 layout design
+==============================================================================*/

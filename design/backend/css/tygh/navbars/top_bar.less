@@ -1,0 +1,97 @@
+.top-bar {
+    position: fixed;
+    z-index: ~"calc(var(--cs-zindex-fixed-navbar) + 1)"; // z-index: 1031;
+}
+
+.top-bar--scroll-header {
+    position: relative;
+}
+
+.top-bar__inner {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr minmax(auto, 580px) 1fr;
+    gap: 8px;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: var(--top-bar-height);
+    padding-left: 16px;
+    padding-right: 16px;
+    z-index: var(--cs-zindex-fixed-navbar);
+    background: var(--cs-content-background);
+    box-shadow: 0 1px 1px var(--cs-table-border);
+}
+
+.top-bar__inner--scroll-header {
+    position: static;
+}
+
+.top-bar__inner--disabled {
+    background: var(--cs-warning-background); // topPanelMenuBackgroundDisabled
+}
+
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    .top-bar__inner--one-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+.top-bar__left,
+.top-bar__right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+}
+
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    .top-bar__left--mobile-hidden,
+    .top-bar__right--mobile-hidden {
+        display: none;
+    }
+}
+
+.top-bar__right {
+    justify-content: flex-end;
+}
+
+.top-bar__btn-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.top-bar__btn {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 11px 0;
+    background: transparent;
+    border: 0;
+    line-height: var(--cs-base-line-height);
+    color: var(--cs-text-color);
+}
+
+.top-bar__btn-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+    min-width: 34px;
+    min-height: 34px;
+    position: relative;
+    white-space: nowrap;
+    border-radius: 99px;
+}
+
+.top-bar__btn:not(.top-bar__btn--not-hover):hover .top-bar__btn-inner {
+    background: var(--cs-body-background);
+}
+
+.top-bar__btn-wrapper.btn-group.open > .dropdown-menu {
+    top: 100%;
+}

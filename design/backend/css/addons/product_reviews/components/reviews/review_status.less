@@ -1,0 +1,39 @@
+/*
+    addons/product_reviews/views/product_reviews/components/reviews/review_status.tpl
+*/
+
+.cs-product-reviews-reviews-review-status__btn .caret {
+    border-top-color: var(--cs-placeholder-text);
+}
+
+.cs-product-reviews-reviews-review-status__btn.status-dropdown-a {
+    color: var(--cs-success-text);
+    background: var(--cs-success-background);
+    border: 0;
+
+    &:hover,
+    &:focus {
+        color: var(--cs-success-text);
+        background: var(--cs-success-border);
+    }
+}
+
+.cm-popup-box .dropdown-toggle.cs-product-reviews-reviews-review-status__btn.status-dropdown-d,
+.cs-product-reviews-reviews-review-status__btn.status-dropdown-d {
+    color: var(--cs-error-text);
+    background: var(--cs-error-background);
+    border: 0;
+
+    &:hover,
+    &:focus {
+        color: var(--cs-error-text);
+        background: var(--cs-error-border);
+    }
+}
+
+// Not approved (d) product review status
+.view-status--type-product-reviews.view-status-d.view-status-d:before,
+.status-dropdown--type-product-reviews.status-dropdown-d.status-dropdown-d:before,
+.status-link--type-product-reviews.status-link-d.status-link-d:before {
+    color: var(--cs-btn-danger-background);
+}

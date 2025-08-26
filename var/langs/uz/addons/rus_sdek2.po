@@ -1,0 +1,269 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+
+msgctxt "Addons::name::rus_sdek2"
+msgid "CDEK"
+msgstr "CDEK"
+
+msgctxt "Addons::description::rus_sdek2"
+msgid "Integration with CDEK shipping service"
+msgstr "Integration with CDEK shipping service"
+
+msgctxt "Languages::rus_sdek2.header_shipping_office"
+msgid "Shipping service office:"
+msgstr "Shipping service office:"
+
+msgctxt "Languages::rus_sdek2.get_city_data"
+msgid "Get city ID"
+msgstr "Get city ID"
+
+msgctxt "Languages::rus_sdek2.get_city_data.tooltip"
+msgid "A request to get the city ID will be sent to CDEK"
+msgstr "A request to get the city ID will be sent to CDEK"
+
+msgctxt "Languages::rus_sdek2.city_id.tooltip"
+msgid "Technical info necessary for the shipping cost calculator. To get the ID, enter the city name in the City from field and click the Get city ID link. Save the received settings. Id city can be found in the cities of the register on the site CDEK."
+msgstr "Technical info necessary for the shipping cost calculator. To get the ID, enter the city name in the City from field and click the Get city ID link. Save the received settings. Id city can be found in the cities of the register on the site CDEK."
+
+msgctxt "Languages::rus_sdek2.authlogin"
+msgid "Access login to calculations server"
+msgstr "Access login to calculations server"
+
+msgctxt "Languages::rus_sdek2.authpassword"
+msgid "Password login to calculations server"
+msgstr "Password login to calculations server"
+
+msgctxt "Languages::rus_sdek2.test_mode"
+msgid "Test mode"
+msgstr "Test mode"
+
+msgctxt "Languages::rus_sdek2.dateexecute"
+msgid "The number of days in which the order is planned to be shipped"
+msgstr "The number of days in which the order is planned to be shipped"
+
+msgctxt "Languages::rus_sdek2.sendercityid"
+msgid "Sender city name. Start entering the city name, then select the needed one from the options suggested"
+msgstr "Sender city name. Start entering the city name, then select the needed one from the options suggested"
+
+msgctxt "Languages::rus_sdek2.sendercitypostcode"
+msgid "Zip code of the sender city. (Not required if the sender city is selected)"
+msgstr "Zip code of the sender city. (Not required if the sender city is selected)"
+
+msgctxt "Languages::rus_sdek2.tariffid"
+msgid "Selecting available plans. The higher a plan is in the list, the higher its priority is"
+msgstr "Selecting available plans. The higher a plan is in the list, the higher its priority is"
+
+msgctxt "Languages::rus_sdek2.city_id"
+msgid "City ID"
+msgstr "City ID"
+
+msgctxt "Languages::rus_sdek2.account_password_error"
+msgid "Enter the account name and the password in the settings of the shipping method that uses CDEK"
+msgstr "Enter the account name and the password in the settings of the shipping method that uses CDEK"
+
+msgctxt "Languages::rus_sdek2.update_status"
+msgid "Update status"
+msgstr "Update status"
+
+msgctxt "Languages::rus_sdek2.lang_city"
+msgid "Package location"
+msgstr "Package location"
+
+msgctxt "Languages::rus_sdek2.carrier_sdek"
+msgid "CDEK"
+msgstr "CDEK"
+
+msgctxt "Languages::rus_sdek2.error_calculate"
+msgid "Error calculate"
+msgstr "Error calculate"
+
+msgctxt "Languages::rus_sdek2.label_cities_update"
+msgid "Update cities"
+msgstr "Update cities"
+
+msgctxt "Languages::rus_sdek2.cities_update"
+msgid "Update"
+msgstr "Update"
+
+msgctxt "Languages::rus_sdek2.cities_update.tooltip"
+msgid "Update the data of existing cities and add new ones from cities_sdek.csv. We advise doing that every time when you upgrade CS-Cart."
+msgstr "Update the data of existing cities and add new ones from cities_sdek.csv. We advise doing that every time when you upgrade CS-Cart."
+
+msgctxt "Languages::rus_sdek2.city_select_error"
+msgid "CDEK: We can not determine the desired city. Contact your administrator"
+msgstr "CDEK: We can not determine the desired city. Contact your administrator"
+
+msgctxt "Languages::rus_sdek2.admin_city_select_error"
+msgid "CDEK: Couldn't determine the desired city. Usually it is caused by multiple cities bearing the same name. Please change the name of one of those cities via the Cities add-on"
+msgstr "CDEK: Couldn't determine the desired city. Usually it is caused by multiple cities bearing the same name. Please change the name of one of those cities via the Cities add-on"
+
+msgctxt "Languages::rus_sdek2.admin_city_not_served"
+msgid "CDEK: This city is not supported or is entered incorrectly."
+msgstr "CDEK: This city is not supported or is entered incorrectly."
+
+msgctxt "Languages::rus_sdek2.shipping_status"
+msgid "Delivery status"
+msgstr "Delivery status"
+
+msgctxt "Languages::rus_sdek2.shipping_form"
+msgid "Create a shipment"
+msgstr "Create a shipment"
+
+msgctxt "Languages::rus_sdek2.add_shipment"
+msgid "Place a shipment"
+msgstr "Place a shipment"
+
+msgctxt "Languages::rus_sdek2.call_customer"
+msgid "Call an addressee"
+msgstr "Call an addressee"
+
+msgctxt "Languages::rus_sdek2.call_courier"
+msgid "Arrange for a courier"
+msgstr "Arrange for a courier"
+
+msgctxt "Languages::rus_sdek2.number_package"
+msgid "Package ID"
+msgstr "Package ID"
+
+msgctxt "Languages::rus_sdek2.number_package.tooltip"
+msgid "The identifier or barcode of the package. This parameter must be unique for each shipment within an order; it is used by SDEK specialists to manage cargo."
+msgstr "The identifier or barcode of the package. This parameter must be unique for each shipment within an order; it is used by SDEK specialists to manage cargo."
+
+msgctxt "Languages::rus_sdek2.use_product_price"
+msgid "Include the price of the product"
+msgstr "Include the price of the product"
+
+msgctxt "Languages::rus_sdek2.use_imposed"
+msgid "Include COD"
+msgstr "Include COD"
+
+msgctxt "Languages::rus_sdek2.cash_delivery"
+msgid "Cash on Delivery"
+msgstr "Cash on Delivery"
+
+msgctxt "Languages::rus_sdek2.recipient_cost"
+msgid "Additional delivery cost"
+msgstr "Additional delivery cost"
+
+msgctxt "Languages::rus_sdek2.schedule_data"
+msgid "Delivery date"
+msgstr "Delivery date"
+
+msgctxt "Languages::rus_sdek2.schedule_period"
+msgid "Delivery time"
+msgstr "Delivery time"
+
+msgctxt "Languages::rus_sdek2.date_courier"
+msgid "Delivery date"
+msgstr "Delivery date"
+
+msgctxt "Languages::rus_sdek2.time_courier"
+msgid "Courier waiting time"
+msgstr "Courier waiting time"
+
+msgctxt "Languages::rus_sdek2.time_lunch_courier"
+msgid "Lunch hour"
+msgstr "Lunch hour"
+
+msgctxt "Languages::rus_sdek2.time_lunch_period"
+msgid "Lunch hour from [lunch_time_from] to [lunch_time_to]"
+msgstr "Lunch hour from [lunch_time_from] to [lunch_time_to]"
+
+msgctxt "Languages::rus_sdek2.time_work_period"
+msgid "From [time_from] to [time_to]"
+msgstr "From [time_from] to [time_to]"
+
+msgctxt "Languages::rus_sdek2.receipt_order"
+msgid "Receipt"
+msgstr "Receipt"
+
+msgctxt "Languages::rus_sdek2.not_complete"
+msgid "Not created/Failed"
+msgstr "Not created/Failed"
+
+msgctxt "Languages::rus_sdek2.location"
+msgid "Delivery location"
+msgstr "Delivery location"
+
+msgctxt "Languages::rus_sdek2.delivery_orders"
+msgid "CDEK delivery orders"
+msgstr "CDEK delivery orders"
+
+msgctxt "Languages::rus_sdek2.sdek_status_global_update"
+msgid "Global update"
+msgstr "Global update"
+
+msgctxt "Languages::rus_sdek2.text_update_status"
+msgid "Orders statuses has been changed"
+msgstr "Orders statuses has been changed"
+
+msgctxt "Languages::rus_sdek2.shipment_status_updated"
+msgid "Shipment status updated"
+msgstr "Shipment status updated"
+
+msgctxt "Languages::rus_sdek2.shipment_create_success"
+msgid "Shipment created successfully"
+msgstr "Shipment created successfully"
+
+msgctxt "Languages::rus_sdek2.delivery_status"
+msgid "Delivery status"
+msgstr "Delivery status"
+
+msgctxt "Languages::rus_sdek2.sdek_status_update_selected"
+msgid "Update selected"
+msgstr "Update selected"
+
+msgctxt "Languages::rus_sdek2.sdek_delivery_order"
+msgid "Order ID"
+msgstr "Order ID"
+
+msgctxt "Languages::rus_sdek2.status"
+msgid "CDEK Status"
+msgstr "CDEK Status"
+
+msgctxt "Languages::rus_sdek2.zipcode_sdek"
+msgid "CDEK Zipcode"
+msgstr "CDEK Zipcode"
+
+msgctxt "Languages::rus_sdek2.use_product_price.tooltip"
+msgid "Tick this checkbox to include product price in the sum that the customer pays on delivery. If you tick this checkbox and \"Include COD\", then the sum that the customer pays on delivery will include both the product price and the price from the \"Cash on Delivery\" field."
+msgstr "Tick this checkbox to include product price in the sum that the customer pays on delivery. If you tick this checkbox and \"Include COD\", then the sum that the customer pays on delivery will include both the product price and the price from the \"Cash on Delivery\" field."
+
+msgctxt "Languages::rus_sdek2.use_imposed.tooltip"
+msgid "Tick this checkbox, and the customer will have to pay the sum specified in \"Cash on Delivery\". Otherwise that sum will be ignored."
+msgstr "Tick this checkbox, and the customer will have to pay the sum specified in \"Cash on Delivery\". Otherwise that sum will be ignored."
+
+msgctxt "Languages::rus_sdek2.empty_receipt_print_response"
+msgid "An empty response has been returned by CDEK when requesting the shipment receipt."
+msgstr "An empty response has been returned by CDEK when requesting the shipment receipt."
+
+msgctxt "Languages::rus_sdek2.no_postamat_available"
+msgid "No postamat available at selected city for specified product."
+msgstr "No postamat available at selected city for specified product."
+
+msgctxt "Languages::rus_sdek2.request_error"
+msgid "Request error"
+msgstr "Request error"
+
+msgctxt "Languages::rus_sdek2.uuid_not_found"
+msgid "Request error. No entity UUID found"
+msgstr "Request error. No entity UUID found"
+
+msgctxt "Languages::rus_sdek2.entity_not_found"
+msgid "Request error. Entity not found"
+msgstr "Request error. Entity not found"
+
+msgctxt "Languages::rus_sdek2.cdek_number_not_found"
+msgid "Request error. No order tracking number found"
+msgstr "Request error. No order tracking number found"
+
+msgctxt "Languages::rus_sdek2.order_uuid_not_found_by_tracking_number"
+msgid "No order UUID found by tracking number"
+msgstr "No order UUID found by tracking number"
+
+msgctxt "Languages::rus_sdek2.empty_response_body"
+msgid "Request error. Empty body"
+msgstr "Request error. Empty body"

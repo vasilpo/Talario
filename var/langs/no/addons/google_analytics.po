@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Norwegian\n"
+"Language: no_NO\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: no\n"
+"X-Crowdin-File: /release-4.18.3/addons/google_analytics.po\n"
+"X-Crowdin-File-ID: 9328\n"
+"PO-Revision-Date: 2024-10-02 13:30\n"
+
+msgctxt "Addons::name::google_analytics"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Addons::description::google_analytics"
+msgid "Integrates a Google Analytics service with the store"
+msgstr "Integrerer en Google Analytics-tjeneste med nettbutikken"
+
+msgctxt "SettingsSections::google_analytics::general"
+msgid "General"
+msgstr "Generelt"
+
+msgctxt "SettingsOptions::google_analytics::tracking_code"
+msgid "Google Analytics account number"
+msgstr "Google Analytics kontonummer"
+
+msgctxt "SettingsOptions::google_analytics::track_ecommerce"
+msgid "Track e-commerce transactions"
+msgstr "Spor e-handelstransaksjoner"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_title"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_description"
+msgid "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+msgstr "Google Analytics er en tjeneste som gir oss nettstedsanalyse: antall unike besøkende, de mest og minst populære sidene osv. Her er <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics-erklæring om personvern</a>."
+
+msgctxt "Languages::google_analytics.google_ads_cookies_title"
+msgid "Google Ads"
+msgstr "Google Ads"
+
+msgctxt "Languages::google_analytics.google_ads_cookies_description"
+msgid "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."
+msgstr "Google Ads er en tjeneste som lar oss gi deg personlig tilpassede tilbud. Denne tillatelsen lar oss sette informasjonskapsler og sende noen av dataene dine knyttet til annonsering til Google. Her er <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">hvordan Google håndterer annonserelaterte data</a>."
+

@@ -1,0 +1,1 @@
+<input type="hidden" name="sticker_data[conditions][discount]" value="Y">

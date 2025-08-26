@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /release-4.18.3/addons/google_analytics.po\n"
+"X-Crowdin-File-ID: 9328\n"
+"PO-Revision-Date: 2024-10-02 13:30\n"
+
+msgctxt "Addons::name::google_analytics"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Addons::description::google_analytics"
+msgid "Integrates a Google Analytics service with the store"
+msgstr "Integracja sklepu z systemem Google Analytics"
+
+msgctxt "SettingsSections::google_analytics::general"
+msgid "General"
+msgstr "Ogólne"
+
+msgctxt "SettingsOptions::google_analytics::tracking_code"
+msgid "Google Analytics account number"
+msgstr "Numer konta Google Analytics"
+
+msgctxt "SettingsOptions::google_analytics::track_ecommerce"
+msgid "Track e-commerce transactions"
+msgstr "Śledź transakcje e-commerce"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_title"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_description"
+msgid "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+msgstr "Google Analytics to usługa, która zapewnia analitykę witryny: liczbę unikalnych użytkowników, najpopularniejsze i najmniej popularne strony itp. Oto <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Oświadczenie Google Analytics dotyczące prywatności</a>."
+
+msgctxt "Languages::google_analytics.google_ads_cookies_title"
+msgid "Google Ads"
+msgstr "Google Ads"
+
+msgctxt "Languages::google_analytics.google_ads_cookies_description"
+msgid "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."
+msgstr "Google Ads to usługa, która pozwala nam przygotować dla Ciebie spersonalizowane oferty. Zezwolenie to pozwala nam ustawiać pliki cookie i przesyłać do Google część Twoich danych związanych z reklamami. Oto <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">jak Google postępuje z danymi związanymi z reklamami</a>."
+

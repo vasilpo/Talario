@@ -1,0 +1,44 @@
+// design/backend/templates/views/index/components/todo_section/todo_section.tpl
+
+.todo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: var(--dashboard-full-column-width);
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.todo-section__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.todo-section__column {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    word-break: break-word;
+    border: 1px solid var(--cs-dashboard-border-color);
+    border-radius: var(--cs-base-border-radius);
+    background: var(--cs-form-actions-background);
+    overflow: hidden;
+}
+
+.todo-section__column--e {
+    border-color: var(--cs-error-border);
+}
+
+.todo-section__column--w {
+    border-color: var(--cs-warning-border);
+}
+
+.todo-section__column--s {
+    border-color: var(--cs-success-border);
+}
+
+.todo-section__column--i {
+    border-color: var(--cs-info-border);
+}

@@ -1,0 +1,30 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /release-4.18.3/upgrade.po\n"
+"X-Crowdin-File-ID: 9474\n"
+"PO-Revision-Date: 2024-10-03 12:42\n"
+
+msgctxt "Languages::upgrade_notification.stripe_connect.collecting_vendor_debt_deprecated.title"
+msgid "Collecting vendor debt as part of commission is now deprecated"
+msgstr "Сбор прошлых долгов продавцов одновременно с комиссией помечен как устаревшая функциональность"
+
+msgctxt "Languages::upgrade_notification.stripe_connect.collecting_vendor_debt_deprecated.message"
+msgid "Your Stripe Connect integration is currently configured to collect not only order commission, but also past debts of sellers to your marketplace. This functionality is now deprecated and will be removed in version 4.19.1. Our Stripe integration will only collect what the seller owes the marketplace from this particular transaction.</br>To ensure that sellers pay their past debts to your marketplace, your marketplace already has the \"Vendor-to-admin payments\" add-on. It is more transparent and can limit the functionality of debtor accounts to encourage them to pay up."
+msgstr "Сейчас ваша интеграция со Stripe Connect настроента так, чтобы собирать не только комиссию с заказов, но и прошлые долги продавцов маркетплейсу. Эта функциональность помечена как устаревшая и будет убрана в версии 4.19.1. Теперь интеграция со Stripe будет брать с продавцов в пользу маркетплейса то, что продавец должен по текущему заказу.</br>Чтобы продавцы платили прошлые долги, в вашем маркетплейсе уже есть модуль \"Оплата от продавцов администратору\". Он работает прозрачнее и позволяет ограничить возможности учётных записей неплательщиков, чтобы они закрыли долг."
+
+msgctxt "Languages::upgrade_notification.fedex_shipping_new_api.title"
+msgid "FedEx integration updated; old integration remains, but marked as deprecated"
+msgstr "Обновлена интеграция с FedEx; старая интеграция осталась, но помечена как устаревшая"
+
+msgctxt "Languages::upgrade_notification.fedex_shipping_new_api.message"
+msgid "You're currently using the old integration that is deprecated by FedEx and might stop working eventually. That's why you'll see \"FedEx (Deprecated)\" in the settings of your existing shipping methods. CS-Cart now comes with a new FedEx integration—called simply \"FedEx\"—that uses the current API. To switch to the up-to-date integration, add a new shipping method that uses the new \"FedEx\" for rate calculation. Once you <a href=\"https://developer.fedex.com/api/en-us/get-started.html\" target=\"_blank\">acquire the credentials</a> and make sure that the new shipping method works, you can disable the shipping methods that use \"FedEx (Deprecated)\".</br></br><a class=\"btn btn-primary\" target=\"_blank\" href=\"[url]\">Go to shipping methods</a>"
+msgstr "Сейчас вы используете старую интеграцию, которую FedEx не рекомендует и которая может в будущем перестать работать. В настройках способов доставки старая интеграция выглядит как \"FedEx (Старая версия)\". Теперь в CS-Cart есть новая интеграция — называется просто \"FedEx\" — которая использует актуальный API. Чтобы перейти на актуальную интеграцию, создайте новый способ доставки, в котором для расчёта тарифа используется FedEx. Когда вы <a href=\"https://developer.fedex.com/api/en-us/get-started.html\" target=\"_blank\">получите реквизиты</a> и убедитесь, что способ доставки работает, то можете отключить старый способ доставки.</br></br><a class=\"btn btn-primary\" target=\"_blank\" href=\"[url]\">К способам доставки</a> "
+

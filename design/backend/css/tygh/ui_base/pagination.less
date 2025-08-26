@@ -1,0 +1,126 @@
+// Bootstrap styles
+.pagination ul {
+    box-shadow: 0 1px 2px var(--cs-shadow5-color);
+}
+.pagination ul > li > a,
+.pagination ul > li > span {
+  padding: 5px 12px;
+}
+.pagination ul > .active > a,
+.pagination ul > .active > span {
+    color: var(--cs-placeholder-text);
+}
+.pagination ul > .disabled > span,
+.pagination ul > .disabled > a,
+.pagination ul > .disabled > a:hover,
+.pagination ul > .disabled > a:focus {
+    color: var(--cs-placeholder-text);
+}
+
+// Custom styles
+
+//pagination
+.pagination-wrap {
+
+    display: flex;
+    flex-wrap: wrap; 
+    position: relative;
+
+    .pagination-total-items {
+        font-size: var(--cs-base-font-size);
+    }
+    .pagination {
+        margin: 6px 0px 9px 0px;
+
+        ul > li > a {
+            padding-right: 18px;
+            padding-left: 18px;
+        }
+        .disabled {
+            a {
+                text-decoration: none;
+            }
+        }
+        &.pagination-start ul > li:last-child > a {
+            .border-right-radius(0);
+        }
+        &.pagination-end ul > li:first-child > a {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+    .pagination-dropdown {
+        margin: 6px 0px 9px 0px;
+
+        .btn-group {
+            box-shadow: 0 1px 2px var(--cs-shadow5-color);
+            background-color: var(--cs-pagination-background);
+            min-width: 90px;
+
+            .dropdown-toggle {
+                width: 100%;
+                border-radius: 0;
+                border-left: 0;
+                border-right: 0;
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+            }
+            &:hover,
+            &:focus,
+            &.open {
+                background-color: var(--cs-pagination-active-background);
+            }
+        }
+        &-btn {
+            display: block;
+            padding: 3px 20px;
+            opacity: 0.5;
+            white-space: nowrap;
+        }
+        &-total {
+            display: none;
+
+            & + .divider {
+                display: none;
+            }
+        }
+
+    }
+}
+// Fix .btn-group must open at all width on mobile devices
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    .btn-group.open.pagination__btn-group .dropdown-menu {
+        right: 0;
+    }
+    .btn-group.open.pagination__btn-group .dropdown-menu.dropdown-menu {
+        left: 0;
+    }
+}
+.pagination-wrap .pagination ul > li:not(.disabled) > a {
+    color: var(--cs-text-color);
+}
+.pagination-selector {
+    border-color:var(--cs-pagination-border);
+}
+.paginate-top .dropdown-menu {
+    --cs-button-height: ~"2 * (5px + 1px) + var(--cs-base-line-height)";
+    transform: ~"translateY(calc(-100% - 2 * 2px - var(--cs-button-height)))";
+}
+.pagination__extra {
+    margin: 6px 0 9px auto;
+    padding-left: 5px;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .pagination__extra {
+        margin: 10px 0 0 auto;
+    }
+}
+
+@media (min-width: 769px) {
+    .pagination__extra {
+        width: auto;
+    }
+}

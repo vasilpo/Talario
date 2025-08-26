@@ -1,0 +1,354 @@
+// Convert Less variables to CSS custom properties (CSS variables)
+// Example: @textColor -> --cs-text-color
+
+:root {
+    // Bootstrap variables
+
+    //
+    // Variables
+    // --------------------------------------------------
+
+
+    // Global values
+    // --------------------------------------------------
+
+
+    // Grays
+    // -------------------------
+    --cs-black: @black;
+    --cs-gray-darker: @grayDarker;
+    --cs-gray-dark: @grayDark;
+    --cs-gray: @gray;
+    --cs-gray-light: @grayLight;
+    --cs-gray-lighter: @grayLighter;
+    --cs-white: @white;
+
+
+    // Accent colors
+    // -------------------------
+    --cs-blue: @blue;
+    --cs-blue-dark: @blueDark;
+    --cs-green: @green;
+    --cs-red: @red;
+    --cs-yellow: @yellow;
+    --cs-orange: @orange;
+    --cs-pink: @pink;
+    --cs-purple: @purple;
+
+
+    // Scaffolding
+    // -------------------------
+    --cs-body-background: @bodyBackground;
+    --cs-text-color: @textColor;
+
+
+    // Links
+    // -------------------------
+    --cs-link-color: @linkColor;
+    --cs-link-color-hover: @linkColorHover;
+
+
+    // Typography
+    // -------------------------
+    --cs-sans-font-family: @sansFontFamily;
+    --cs-serif-font-family: @serifFontFamily;
+    --cs-mono-font-family: @monoFontFamily;
+
+    --cs-base-font-size: @baseFontSize;
+    --cs-base-font-family: @baseFontFamily;
+    --cs-base-line-height: @baseLineHeight;
+    --cs-alt-font-family: @altFontFamily;
+
+    --cs-headings-font-family: @headingsFontFamily;
+    --cs-headings-font-weight: @headingsFontWeight;
+    --cs-headings-color: @headingsColor;
+
+
+    // Component sizing
+    // -------------------------
+    // Based on 14px font-size and 20px line-height
+
+    --cs-font-size-large: @fontSizeLarge;
+    --cs-font-size-small: @fontSizeSmall;
+    --cs-font-size-mini: @fontSizeMini;
+
+    --cs-padding-large: @paddingLarge;
+    --cs-padding-small: @paddingSmall;
+    --cs-padding-mini: @paddingMini;
+
+    --cs-base-border-radius: @baseBorderRadius;
+    --cs-border-radius-large: @borderRadiusLarge;
+    --cs-border-radius-small: @borderRadiusSmall;
+
+
+    // Tables
+    // -------------------------
+    --cs-table-background: @tableBackground;
+    --cs-table-background-accent: @tableBackgroundAccent;
+    --cs-table-background-hover: @tableBackgroundHover;
+    --cs-table-border: @tableBorder;
+
+    // Buttons
+    // -------------------------
+    --cs-btn-background: @btnBackground;
+    --cs-btn-background-highlight: @btnBackgroundHighlight;
+    --cs-btn-border: @btnBorder;
+
+    --cs-btn-primary-background: @btnPrimaryBackground;
+    --cs-btn-primary-background-highlight: @btnPrimaryBackgroundHighlight;
+
+    --cs-btn-info-background: @btnInfoBackground;
+    --cs-btn-info-background-highlight: @btnInfoBackgroundHighlight;
+
+    --cs-btn-success-background: @btnSuccessBackground;
+    --cs-btn-success-background-highlight: @btnSuccessBackgroundHighlight;
+
+    --cs-btn-warning-background: @btnWarningBackground;
+    --cs-btn-warning-background-highlight: @btnWarningBackgroundHighlight;
+
+    --cs-btn-danger-background: @btnDangerBackground;
+    --cs-btn-danger-background-highlight: @btnDangerBackgroundHighlight;
+
+    --cs-btn-inverse-background: @btnInverseBackground;
+    --cs-btn-inverse-background-highlight: @btnInverseBackgroundHighlight;
+
+
+    // Forms
+    // -------------------------
+    --cs-input-background: @inputBackground;
+    --cs-input-border: @inputBorder;
+    --cs-input-border-radius: @inputBorderRadius;
+    --cs-input-disabled-background: @inputDisabledBackground;
+    --cs-form-actions-background: @formActionsBackground;
+    --cs-input-height: @inputHeight;
+
+
+    // Dropdowns
+    // -------------------------
+    --cs-dropdown-background: @dropdownBackground;
+    --cs-dropdown-border: @dropdownBorder;
+    --cs-dropdown-divider-top: @dropdownDividerTop;
+    --cs-dropdown-divider-bottom: @dropdownDividerBottom;
+
+    --cs-dropdown-link-color: @dropdownLinkColor;
+    --cs-dropdown-link-color-hover: @dropdownLinkColorHover;
+    --cs-dropdown-link-color-active: @dropdownLinkColorActive;
+
+    --cs-dropdown-link-background-active: @dropdownLinkBackgroundActive;
+    --cs-dropdown-link-background-hover: @dropdownLinkBackgroundHover;
+
+
+
+    // COMPONENT VARIABLES
+    // --------------------------------------------------
+
+
+    // Z-index master list
+    // -------------------------
+    // Used for a bird's eye view of components dependent on the z-axis
+    // Try to avoid customizing these :)
+    --cs-zindex-dropdown: @zindexDropdown;
+    --cs-zindex-popover: @zindexPopover;
+    --cs-zindex-tooltip: @zindexTooltip;
+    --cs-zindex-fixed-navbar: @zindexFixedNavbar;
+    --cs-zindex-modal-backdrop: @zindexModalBackdrop;
+    --cs-zindex-modal: @zindexModal;
+
+
+    // Sprite icons path
+    // -------------------------
+    --cs-icon-sprite-path: @iconSpritePath;
+    --cs-icon-white-sprite-path: @iconWhiteSpritePath;
+
+
+    // Input placeholder text color
+    // -------------------------
+    --cs-placeholder-text: @placeholderText;
+
+
+    // Hr border color
+    // -------------------------
+    --cs-hr-border: @hrBorder;
+
+
+    // Horizontal forms & lists
+    // -------------------------
+    --cs-horizontal-component-offset: @horizontalComponentOffset;
+
+
+    // Wells
+    // -------------------------
+    --cs-well-background: @wellBackground;
+
+
+    // Navbar
+    // -------------------------
+    --cs-navbar-collapse-width: @navbarCollapseWidth;
+    --cs-navbar-collapse-desktop-width: @navbarCollapseDesktopWidth;
+
+    --cs-navbar-height: @navbarHeight;
+    --cs-navbar-background-highlight: @navbarBackgroundHighlight;
+    --cs-navbar-background: @navbarBackground;
+    --cs-navbar-border: @navbarBorder;
+
+    --cs-navbar-text: @navbarText;
+    --cs-navbar-link-color: @navbarLinkColor;
+    --cs-navbar-link-color-hover: @navbarLinkColorHover;
+    --cs-navbar-link-color-active: @navbarLinkColorActive;
+    --cs-navbar-link-background-hover: @navbarLinkBackgroundHover;
+    --cs-navbar-link-background-active: @navbarLinkBackgroundActive;
+
+    --cs-navbar-brand-color: @navbarBrandColor;
+
+    // Inverted navbar
+    --cs-navbar-inverse-background: @navbarInverseBackground;
+    --cs-navbar-inverse-background-highlight: @navbarInverseBackgroundHighlight;
+    --cs-navbar-inverse-border: @navbarInverseBorder;
+
+    --cs-navbar-inverse-text: @navbarInverseText;
+    --cs-navbar-inverse-link-color: @navbarInverseLinkColor;
+    --cs-navbar-inverse-link-color-hover: @navbarInverseLinkColorHover;
+    --cs-navbar-inverse-link-color-active: @navbarInverseLinkColorActive;
+    --cs-navbar-inverse-link-background-hover: @navbarInverseLinkBackgroundHover;
+    --cs-navbar-inverse-link-background-active: @navbarInverseLinkBackgroundActive;
+
+    --cs-navbar-inverse-search-background: @navbarInverseSearchBackground;
+    --cs-navbar-inverse-search-background-focus: @navbarInverseSearchBackgroundFocus;
+    --cs-navbar-inverse-search-border: @navbarInverseSearchBorder;
+    --cs-navbar-inverse-search-placeholder-color: @navbarInverseSearchPlaceholderColor;
+
+    --cs-navbar-inverse-brand-color: @navbarInverseBrandColor;
+
+
+    // Pagination
+    // -------------------------
+    --cs-pagination-background: @paginationBackground;
+    --cs-pagination-border: @paginationBorder;
+    --cs-pagination-active-background: @paginationActiveBackground;
+
+
+    // Hero unit
+    // -------------------------
+    --cs-hero-unit-background: @heroUnitBackground;
+    --cs-hero-unit-heading-color: @heroUnitHeadingColor;
+    --cs-hero-unit-lead-color: @heroUnitLeadColor;
+
+
+    // Form states and alerts
+    // -------------------------
+    --cs-warning-text: @warningText;
+    --cs-warning-background: @warningBackground;
+    --cs-warning-border: @warningBorder;
+
+    --cs-error-text: @errorText;
+    --cs-error-background: @errorBackground;
+    --cs-error-border: @errorBorder;
+
+    --cs-success-text: @successText;
+    --cs-success-background: @successBackground;
+    --cs-success-border: @successBorder;
+
+    --cs-info-text: @infoText;
+    --cs-info-background: @infoBackground;
+    --cs-info-border: @infoBorder;
+
+
+    // Tooltips and popovers
+    // -------------------------
+    --cs-tooltip-color: @tooltipColor;
+    --cs-tooltip-background: @tooltipBackground;
+    --cs-tooltip-arrow-width: @tooltipArrowWidth;
+    --cs-tooltip-arrow-color: @tooltipArrowColor;
+
+    --cs-popover-background: @popoverBackground;
+    --cs-popover-arrow-width: @popoverArrowWidth;
+    --cs-popover-arrow-color: @popoverArrowColor;
+    --cs-popover-title-background: @popoverTitleBackground;
+
+    // Special enhancement for popovers
+    --cs-popover-arrow-outer-width: @popoverArrowOuterWidth;
+    --cs-popover-arrow-outer-color: @popoverArrowOuterColor;
+
+
+
+    // GRID
+    // --------------------------------------------------
+
+
+    // Default 940px grid
+    // -------------------------
+    --cs-grid-columns: @gridColumns;
+    --cs-grid-column-width: @gridColumnWidth;
+    --cs-grid-gutter-width: @gridGutterWidth;
+    --cs-grid-row-width: @gridRowWidth;
+
+    // 1200px min
+    --cs-grid-column-width1200: @gridColumnWidth1200;
+    --cs-grid-gutter-width1200: @gridGutterWidth1200;
+    --cs-grid-row-width1200: @gridRowWidth1200;
+
+    // 768px-979px
+    --cs-grid-column-width768: @gridColumnWidth768;
+    --cs-grid-gutter-width768: @gridGutterWidth768;
+    --cs-grid-row-width768: @gridRowWidth768;
+
+
+    // Fluid grid
+    // -------------------------
+    --cs-fluid-grid-column-width: @fluidGridColumnWidth;
+    --cs-fluid-grid-gutter-width: @fluidGridGutterWidth;
+
+    // 1200px min
+    --cs-fluid-grid-column-width1200: @fluidGridColumnWidth1200;
+    --cs-fluid-grid-gutter-width1200: @fluidGridGutterWidth1200;
+
+    // 768px-979px
+    --cs-fluid-grid-column-width768: @fluidGridColumnWidth768;
+    --cs-fluid-grid-gutter-width768: @fluidGridGutterWidth768;
+
+
+
+    // SIZES
+    --cs-dropdown-item-padding: @dropdownItemPadding;
+    --cs-icon-size: @iconSize;
+
+    // COLORS
+    --cs-theme-style: @themeStyle;
+    --cs-main-color: @mainColor;
+    --cs-text-muted-color: @textMutedColor;
+    --cs-text-inverse-color: @textInverseColor;
+    --cs-content-background: @contentBackground;
+    --cs-shadow2-color: @shadow2Color;
+    --cs-shadow5-color: @shadow5Color;
+    --cs-shadow7-color: @shadow7Color;
+    --cs-shadow10-color: @shadow10Color;
+    --cs-shadow15-color: @shadow15Color;
+    --cs-shadow20-color: @shadow20Color;
+    --cs-shadow25-color: @shadow25Color;
+    --cs-shadow30-color: @shadow30Color;
+    --cs-shadow50-color: @shadow50Color;
+    --cs-shadow60-color: @shadow60Color;
+    --cs-shadow80-color: @shadow80Color;
+    --cs-inverse-shadow0-color: @inverseShadow0Color;
+    --cs-inverse-shadow10-color: @inverseShadow10Color;
+    --cs-inverse-shadow12-color: @inverseShadow12Color;
+    --cs-inverse-shadow15-color: @inverseShadow15Color;
+    --cs-inverse-shadow20-color: @inverseShadow20Color;
+    --cs-inverse-shadow50-color: @inverseShadow50Color;
+    --cs-inverse-shadow75-color: @inverseShadow75Color;
+    --cs-btn-border-more: @btnBorderMore;
+    --cs-btn-primary-border-more: @btnPrimaryBorderMore;
+    --cs-btn-warning-border-more: @btnWarningBorderMore;
+    --cs-btn-danger-border-more: @btnDangerBorderMore;
+    --cs-btn-success-border-more: @btnSuccessBorderMore;
+    --cs-btn-info-border-more: @btnInfoBorderMore;
+    --cs-btn-inverse-border-more: @btnInverseBorderMore;
+
+    --cs-text-muted-color-more: @textMutedColorMore;
+
+    // MEDIA QUERIES BREAKPOINTS
+    --cs-large-desktop-breakpoint: @LargeDesktopBreakpoint;
+    --cs-desktop-breakpoint: @DesktopBreakpoint;
+    --cs-tablet-breakpoint: @TabletBreakpoint;
+    --cs-phone-breakpoint: @PhoneBreakpoint;
+}

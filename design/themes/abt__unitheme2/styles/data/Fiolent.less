@@ -1,0 +1,206 @@
+// Fiolent.less
+
+// Custom code
+.advanced-header {
+	.top-menu-grid .ty-dropdown-box__title.open i:before {
+	    color: @decorative;
+	}
+}
+
+// Remove this code to change the color of the icons in the menu
+.ut2-h__menu .ut2-menu__item {
+	.lm_bg_color() when (lightness(@menu) < 70%) {
+		.item-icon img.ut2-mwi-icon {
+			filter: invert(1) brightness(3);
+		}
+	}
+	.lm_bg_color() when (lightness(@abt__ut2_containers_header_use_color_menu_on_hover) < 70%) {
+		&:hover .item-icon img.ut2-mwi-icon {
+			filter: invert(1) brightness(3);
+		}
+	}
+	.lm_bg_color() when (lightness(@abt__ut2_containers_header_use_color_menu_on_hover) > 70%) {
+		&:hover .item-icon img.ut2-mwi-icon {
+			filter: invert(0);
+		}
+	}
+	.lm_bg_color();
+}
+
+// ======================================================= ##Variables
+
+@rounded_corners: true;
+@links: #4651a7;
+@menu_links: #ffffff;
+@menu: #4651a7;
+@base: #e4e4e4;
+@font: #1e1e1e;
+
+@primary_button: #f25529;
+@primary_button_color: #ffffff;
+//@primary_button_hover
+
+@secondary_button: #4651a7;
+//@secondary_button_color
+//@secondary_button_hover
+
+@tertiary_button: #f0f0f0;
+//@tertiary_button_color
+@tertiary_button_hover: #f6f6f6;
+
+@sidebar: #f6f6f6;
+@price: #1e1e1e;
+@discount_label: #f25529;
+@in_stock: #009c72;
+@out_of_stock: #848484;
+@top_panel_links: #848484;
+@top_panel_text: #848484;
+@footer_text: #1e1e1e;
+@decorative: #f25529;
+
+@general_bg_color: #ffffff;
+@general_bg_image: #ffffff;
+@general_bg_repeat: repeat;
+@general_bg_scroll: scroll;
+
+@top_panel_bg: #ffffff;
+@top_panel_bg_full: true;
+@top_panel_bg_transparent: false;
+@top_panel_bg_grad_stop: #ffffff;
+
+@header_bg: #ffffff;
+@header_bg_full: true;
+@header_bg_transparent: false;
+@header_bg_grad_stop: #ffffff;
+
+@content_bg: #ffffff;
+@content_bg_full: false;
+@content_bg_transparent: true;
+
+@footer_bg: #ffffff;
+@footer_bg_full: true;
+@footer_bg_transparent: false;
+@footer_bg_grad_stop: #ffffff;
+
+@body_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@body_font_size: 14px;
+@body_font_style: normal;
+@body_font_weight: normal;
+@headings_font: 'MuseoSansBlack','Helvetica Neue','Arial',-apple-system,sans-serif;
+@headings_font_size: 24px;
+@headings_font_decoration: none;
+@headings_font_style: normal;
+@headings_font_weight: normal;
+@links_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@links_font_size: 14px;
+@links_font_decoration: none;
+@links_font_style: normal;
+@links_font_weight: normal;
+@price_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@price_font_size: 18px;
+@price_font_decoration: none;
+@price_font_style: normal;
+@price_font_weight: bold;
+@buttons_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@buttons_font_size: 14px;
+@buttons_font_decoration: none;
+@buttons_font_style: normal;
+@buttons_font_weight: normal;
+
+// Only this style ------------------------------------
+
+@default_bt_color: #1e1e1e;
+@main_color: #4651a7;
+@grid_list_title_color: #434343;
+@abt__ut2_general_sticky_panel_background_color: #ffffff;
+@abt__ut2_general_sticky_panel_icon_color: #4651a7;
+@abt__ut2_containers_header_elements_brightness: light;
+@abt__ut2_containers_top_panel_height: 33px;
+@abt__ut2_containers_header_height: 70px;
+@abt__ut2_containers_header_hz_menu_height: 46px;
+@abt__ut2_containers_header_add_header_mask: true;
+
+// Mix color
+@mix-lighten-font: 40%;
+@mix-lighten-max-font: 60%;
+@mix-discount_label_lighten: 40%;
+
+// Fill
+@fill-color-box: #4651a7;
+@title-color-box: #ffffff;
+@fill-gray-box: #f5f5f7;
+
+// General
+@abt__ut2_general_use_rounding: full;
+@abt__ut2_general_use_rounding_blocks: full;
+@abt__ut2_general_use_titles_uppercase: false;
+@abt__ut2_general_style_tabs: type1;
+@abt__ut2_general_stars_rating_color: #f25529;
+@abt__ut2_general_browser_interface_bg: #ffffff;
+@abt__ut2_general_buttons_use_icon_cart: type3;
+
+@abt__ut2_general_labels_style: as_circle;
+@abt__ut2_general_labels_use_outline: false;
+@abt__ut2_general_labels_use_shadow: false;
+@abt__ut2_general_labels_use_text_shadow: false;
+
+@abt__ut2_general_buttons_style: use_background;
+@abt__ut2_general_buttons_use_text_uppercase: false;
+@abt__ut2_general_buttons_use_shadow: false;
+@abt__ut2_general_buttons_use_gradient: false;
+
+// Containers
+@abt__ut2_containers_header_add_delimiters: true;
+@abt__ut2_containers_header_use_color_menu_on_hover: #3e4895;
+@abt__ut2_containers_header_use_color_elements_on_hover: #3e4895;
+@abt__ut2_containers_header_use_color_icons: #c6c9e0;
+@abt__ut2_containers_header_use_animation_for_not_empty_cart: false;
+
+// Product list
+@abt__ut2_product_list_show_grid_border: solid_with_margins;
+@abt__ut2_product_list_mask_images_gallery: true;
+@abt__ut2_product_list_use_elements_alignment: use;
+@abt__ut2_product_list_extend_grid_item_on_hover: true;
+@abt__ut2_product_list_grid-list_product_name_font_weight: normal;
+
+// Products
+@abt__ut2_products_mask_images_gallery: false;
+@abt__ut2_products_bordered_images_gallery: false;
+@abt__ut2_products_sticky_columns: false;
+
+// Checkout
+@checkout_link: #4651a7;
+@checkout_input_border: #e1e1e1;
+@checkout_selected_input_border: #4651a7;
+@checkout_step_title: #4853a2;
+@checkout_input_text: #1e1e1e;
+@checkout_input_label: #bcbcbc;
+@checkout_control_border: #e1e1e1;
+@checkout_selected_control_border: #4651a7;
+@checkout_control_background: #ffffff;
+@checkout_selected_control_background: #eef1f7;
+@checkout_control_title: #4651a7;
+@checkout_control_description: #848484;
+@checkout_control_label: #848484;
+@checkout_terms_background: #feeee9;
+
+// Video Gallery
+@abt__ut2_addons_ab__video_gallery_block_bg: #1e1e1e;
+
+// Deal of the day
+@abt__ut2_addons_ab__deal_of_the_day_block_background: #ffffff;
+@abt__ut2_addons_ab__deal_of_the_day_block_fonts_color: #1e1e1e;
+@abt__ut2_addons_ab__deal_of_the_day_bright_color_promotion_title: true;
+@abt__ut2_addons_ab__deal_of_the_day_bordered_block: false;
+@abt__ut2_addons_ab__deal_of_the_day_shadow_block: true;
+@abt__ut2_addons_ab__deal_of_the_day_rounded_corners_blocks: true;
+
+// Vendor colors
+@abt__ut2_vendor_vendor_info_background: #f6f6f6;
+@abt__ut2_vendor_vendor_info_font_main: #1e1e1e;
+@abt__ut2_vendor_vendor_info_font_additional: #848484;
+@abt__ut2_vendor_vendor_info_links: #4651a7;
+@abt__ut2_vendor_vendor_menu_background: #4651a7;
+@abt__ut2_vendor_vendor_menu_active_background: #3e4895;
+@abt__ut2_vendor_vendor_menu_item: #ffffff;
+@abt__ut2_vendor_vendor_menu_item_active: #ffffff;

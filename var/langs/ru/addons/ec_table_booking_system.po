@@ -1,0 +1,513 @@
+msgid ""
+msgstr "Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russia\n"
+"Language: ru_Russia"
+
+msgctxt "LanguageName"
+msgid "Localized language name"
+msgstr "Russia"
+
+msgctxt "Addons::name::ec_table_booking_system"
+msgid "Ecarter : Booking System"
+msgstr "Экартер: Система бронирования"
+
+msgctxt "Addons::description::ec_table_booking_system"
+msgid "This Add-on allows admin to create booking"
+msgstr "Это дополнение позволяет администратору создавать бронирования."
+
+msgctxt "Languages::table_booking_and_reservation"
+msgid "Booking System"
+msgstr "Система бронирования"
+
+msgctxt "Languages::ec_table_booking_system.no_booking_info_please_choose_booking"
+msgid "No booking info please choose booking"
+msgstr "Нет информации о бронировании, пожалуйста, выберите бронирование"
+
+msgctxt "Languages::ec_table_booking_system.please_choose_booking_manually"
+msgid "Please choose booking manually"
+msgstr "Пожалуйста, выберите бронирование вручную"
+
+msgctxt "Languages::ec_table_booking_system.booking_info"
+msgid "Booking info"
+msgstr "Информация о бронировании"
+
+msgctxt "Languages::ec_table_booking_system.booking_date"
+msgid "Booking date"
+msgstr "Дата бронирования"
+
+msgctxt "Languages::ec_table_booking_system.booking_slot"
+msgid "Booking slot"
+msgstr "Место для бронирования"
+
+msgctxt "Languages::ec_table_booking_system.booking_slots"
+msgid "Booking slot"
+msgstr "Место для бронирования"
+
+msgctxt "Languages::ec_table_booking_system.start_time"
+msgid "Start time"
+msgstr "Время начала"
+
+msgctxt "Languages::ec_table_booking_system.end_time"
+msgid "End time"
+msgstr "Время окончания"
+
+msgctxt "Languages::ec_table_booking_system.book_time"
+msgid "Book time"
+msgstr "Забронировать время"
+
+msgctxt "Languages::ec_table_booking_system.break_time"
+msgid "Break time"
+msgstr "Перерыв"
+
+msgctxt "Languages::ec_table_booking_system.status"
+msgid "Status"
+msgstr "Положение дел"
+
+msgctxt "Languages::ec_table_booking_system.days"
+msgid "Days"
+msgstr "Дни"
+
+msgctxt "Languages::ec_table_booking_system.ec_table_booking"
+msgid "Booking system"
+msgstr "Система бронирования"
+
+msgctxt "Languages::ec_table_booking_system.choose_booking"
+msgid "Select Booking"
+msgstr "Выберите бронирование"
+
+msgctxt "Languages::ec_table_booking_system.sunday_timing"
+msgid "Sunday timing"
+msgstr "время воскресенья"
+
+msgctxt "Languages::ec_table_booking_system.monday_timing"
+msgid "Monday timing"
+msgstr "время понедельника"
+
+msgctxt "Languages::ec_table_booking_system.tuesday_timing"
+msgid "Tuesday timing"
+msgstr "время вторника"
+
+msgctxt "Languages::ec_table_booking_system.wednesday_timing"
+msgid "Wednesday timing"
+msgstr "время среды"
+
+msgctxt "Languages::ec_table_booking_system.thursday_timing"
+msgid "Thursday timing"
+msgstr "время четверга"
+
+msgctxt "Languages::ec_table_booking_system.friday_timing"
+msgid "Friday timing"
+msgstr "время пятницы"
+
+msgctxt "Languages::ec_table_booking_system.saturday_timing"
+msgid "Saturday timing"
+msgstr "субботнее время"
+
+msgctxt "Languages::ec_table_booking_system.start_day"
+msgid "Start day"
+msgstr "Начало дня"
+
+msgctxt "Languages::ec_table_booking_system.end_day"
+msgid "End day"
+msgstr "Конец дня"
+
+msgctxt "Languages::ec_table_booking_system.week_lang"
+msgid "Week lang"
+msgstr "Язык недели"
+
+msgctxt "Languages::ec_table_booking_system.ec_selectslot_qty_header"
+msgid "Booking slots : "
+msgstr "Места для бронирования:"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_slot"
+msgid "Select Slot"
+msgstr "Выберите слот"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_qty"
+msgid "Qty"
+msgstr "Кол-во"
+
+msgctxt "Languages::ec_table_booking_system.booking_type"
+msgid "Booking type"
+msgstr "Тип бронирования"
+
+msgctxt "Languages::ec_table_booking_system.date_from"
+msgid "Date from"
+msgstr "Дата, с"
+
+msgctxt "Languages::ec_table_booking_system.date_to"
+msgid "Date to"
+msgstr "Дата"
+
+msgctxt "Languages::ec_table_booking_system.start_date"
+msgid "Start date"
+msgstr "Дата начала"
+
+msgctxt "Languages::ec_table_booking_system.end_date"
+msgid "End date"
+msgstr "Дата окончания"
+
+msgctxt "Languages::ec_table_booking_system.booked_orders"
+msgid "Booked orders"
+msgstr "Забронированные заказы"
+
+msgctxt "Languages::ec_table_booking_system.amount"
+msgid "Amount"
+msgstr "Количество"
+
+msgctxt "Languages::ec_table_booking_system.ec_booking_system.time_to_from"
+msgid "Time to from"
+msgstr "Время от"
+
+msgctxt "Languages::ec_table_booking_system.add_booking"
+msgid "Add booking"
+msgstr "Добавить бронирование"
+
+msgctxt "Languages::ec_table_booking_system.select_booking"
+msgid "Select booking"
+msgstr "Выберите бронирование"
+
+msgctxt "Languages::ec_table_booking_system.booking_status"
+msgid "Booking status"
+msgstr "Статус бронирования"
+
+msgctxt "Languages::ec_table_booking_system.please_set_booking_time_numeric_only"
+msgid "Please set booking time in numeric only"
+msgstr "Пожалуйста, укажите время бронирования только в цифрах."
+
+msgctxt "Languages::ec_table_booking_system.please_set_break_time_numeric_only"
+msgid "Please set break time in numeric only"
+msgstr "Пожалуйста, укажите время перерыва только в цифрах."
+
+msgctxt "Languages::ec_table_booking_system.same_product_exist_in_different_order_first_cancel_previous_order"
+msgid "Same product exist in different order first cancel previous order"
+msgstr "Один и тот же товар существует в другом порядке: сначала отмените предыдущий заказ."
+
+msgctxt "Languages::ec_table_booking_system.booking_already_reserved_or_expired"
+msgid "Please pick valid slot"
+msgstr "Пожалуйста, выберите действительный слот"
+
+msgctxt "Languages::ec_table_booking_system.note"
+msgid "Note"
+msgstr "Примечание"
+
+msgctxt "Languages::ec_table_booking_system.note_details"
+msgid "Please update the "Booking Slots" everytime you update the Book time,Break time,Start time,End time"
+msgstr "Пожалуйста, обновляйте «Слоты бронирования» каждый раз, когда вы обновляете время бронирования, время перерыва, время начала, время окончания."
+
+msgctxt "Languages::ec_table_booking_system.hide_quantity_selector"
+msgid "Restrict buyer to single quantity selection"
+msgstr "Ограничить покупателя выбором одного количества"
+
+msgctxt "Languages::ec_table_booking_system.product_booking_info_updated"
+msgid "Product booking info updated"
+msgstr "Информация о бронировании продукта обновлена."
+
+msgctxt "Languages::ec_table_booking_system.customer_name"
+msgid "Customer Name"
+msgstr "Имя Клиента"
+
+msgctxt "Languages::ec_table_booking_system.cannot_by_compare"
+msgid "You cannot add to cart the booking product in comparison list, Please go to Product detail page"
+msgstr "Вы не можете добавить в корзину продукт для бронирования в списке сравнения. Перейдите на страницу сведений о продукте."
+
+msgctxt "Languages::ec_table_booking_system.time_clashes"
+msgid "Please provide different time for same days as time is clashing"
+msgstr "Пожалуйста, укажите другое время для тех же дней, так как время не совпадает."
+
+msgctxt "Languages::ec_table_booking_system.cannot_edit_booked_order"
+msgid "You cannot edit booked order"
+msgstr "Вы не можете редактировать забронированный заказ"
+
+msgctxt "SettingsOptions::ec_table_booking_system::decline_status"
+msgid "Booking Decline Order Status"
+msgstr "Статус заказа на отклонение бронирования"
+
+msgctxt "SettingsTooltips::ec_table_booking_system::decline_status"
+msgid "Select the order status on which you want to decline the booking."
+msgstr "Выберите статус заказа, при котором вы хотите отклонить бронирование."
+
+msgctxt "Languages::ec_table_booking_system.booking_product_not_allowed_in_cart_from_admin"
+msgid "Booking product not allowed to be added to cart from backend."
+msgstr "Товар для бронирования не может быть добавлен в корзину из серверной части."
+
+msgctxt "Languages::ec_table_booking_system.booking_already_placed_just"
+msgid "This booking has just been placed. Please try another booking."
+msgstr "Это бронирование только что было размещено. Пожалуйста, попробуйте другое бронирование."
+
+msgctxt "Languages::ec_table_booking_system.cannot_copy_booked_order"
+msgid "You cannot copy Booked Order !"
+msgstr "Вы не можете скопировать забронированный заказ!"
+
+msgctxt "Languages::ec_table_booking_system.please_set_booking_time_by_slot"
+msgid "Please select Book time according to slot timing !"
+msgstr "Пожалуйста, выберите время бронирования в соответствии со временем слота!"
+
+msgctxt "Languages::ec_table_booking_system.booking_amount"
+msgid "Availability"
+msgstr "Доступность"
+
+msgctxt "Languages::ec_table_booking_system.booking_slots"
+msgid "Booking Slots"
+msgstr "Бронирование слотов"
+
+msgctxt "Languages::ec_table_booking_system.saved_slots"
+msgid "The slots are saved successfully"
+msgstr "Слоты успешно сохранены"
+
+msgctxt "Languages::ec_table_booking_system.booking_table_amount"
+msgid "Qty"
+msgstr "Кол-во"
+
+msgctxt "Languages::ec_table_booking_system.saved_amount"
+msgid "Amount saved"
+msgstr "Сэкономленная сумма"
+
+msgctxt "Languages::ec_table_booking_system.ec_table_booking_type"
+msgid "Booking products"
+msgstr "Бронирование продуктов"
+
+msgctxt "Languages::ec_table_booking_system.date_to"
+msgid "Date to"
+msgstr "Дата"
+
+msgctxt "Languages::ec_table_booking_system.start_date"
+msgid "Start date"
+msgstr "Дата начала"
+
+msgctxt "Languages::ec_table_booking_system.no_items"
+msgid "No-Items"
+msgstr "Нет товаров"
+
+msgctxt "Languages::ec_table_booking_system.booked"
+msgid "Booked"
+msgstr "Забронировано"
+
+msgctxt "Languages::ec_table_booking_system.cancelled"
+msgid "Cancelled"
+msgstr "Отменено"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_slot"
+msgid "Select Slot"
+msgstr "Выберите слот"
+
+msgctxt "Languages::ec_table_booking_system.ec_selectslot_qty_header"
+msgid "Booking slots : "
+msgstr "Места для бронирования : "
+
+msgctxt "Languages::ec_table_booking_system.time_to_from"
+msgid "Time to from"
+msgstr "Время от"
+
+msgctxt "Languages::ec_table_booking_system.order"
+msgid "Order Id"
+msgstr "Номер заказа"
+
+msgctxt "Languages::ec_table_booking_system.email"
+msgid "Email"
+msgstr "Электронная почта"
+
+msgctxt "Languages::ec_table_booking_system.date"
+msgid "Date"
+msgstr "Дата"
+
+msgctxt "Languages::ec_table_booking_system.booing_company"
+msgid "Booking System"
+msgstr "Система бронирования"
+
+msgctxt "Languages::ec_table_booking.block_date"
+msgid "Blocked date"
+msgstr "Дата блокировки"
+
+msgctxt "Languages::ec_table_booking_type"
+msgid "Blocked Type"
+msgstr "Заблокированный тип"
+
+msgctxt "Languages::ec_table_booking.select_date"
+msgid "Select date"
+msgstr "Выберите дату"
+
+msgctxt "Languages::ec_table_booking.select_start_date"
+msgid "Start date"
+msgstr "Дата начала"
+
+msgctxt "Languages::ec_table_booking.select_end_date"
+msgid "End date"
+msgstr "Дата окончания"
+
+msgctxt "Languages::ec_table_booking.slots_info"
+msgid "Number of dates"
+msgstr "Количество дат"
+
+msgctxt "Languages::ec_table_booking.choose_date_range"
+msgid "0 dates"
+msgstr "0 дат"
+
+msgctxt "Languages::ec_table_booking.rental_booking"
+msgid "Rental booking"
+msgstr "Бронирование аренды"
+
+msgctxt "Languages::ec_table_booking.table_booking"
+msgid "Table booking"
+msgstr "Бронирование столиков"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_booking"
+msgid "Select Booking"
+msgstr "Выберите бронирование"
+
+msgctxt "Languages::ec_table_booking_system.dates_already_booked"
+msgid "Some dates already booked : [dates]. Please choose different dates."
+msgstr "Некоторые даты уже забронированы: [даты]. Пожалуйста, выберите другие даты."
+
+msgctxt "Languages::ec_table_booking_system.error_occurred"
+msgid "Booking data not found during booking process. Please try again."
+msgstr "Данные бронирования не найдены в процессе бронирования. Пожалуйста, попробуйте еще раз."
+
+msgctxt "Languages::privileges.view_ec_table_booking_system"
+msgid "Booking System"
+msgstr "Система бронирования"
+
+msgctxt "Languages::privilege_groups.ec_table_booking_system"
+msgid "Booking System"
+msgstr "Booking System"
+
+msgctxt "Languages::ec_table_booking.offer_booking_plan"
+msgid "Booking Functionality"
+msgstr "Функциональность бронирования"
+
+msgctxt "Languages::vendor_plans.offer_booking_system"
+msgid "Offer Booking"
+msgstr "Предложение Бронирование"
+
+msgctxt "Languages::ec_table_booking.hourly"
+msgid "Hourly"
+msgstr "Ежечасно"
+
+msgctxt "Languages::ec_table_booking.hourly_and_daily"
+msgid "Hourly and Daily"
+msgstr "Часовой и Ежедневный"
+
+msgctxt "Languages::ec_table_booking.daily"
+msgid "Daily"
+msgstr "Ежедневно"
+
+msgctxt "Languages::ec_table_booking.price"
+msgid "Seasonal Price"
+msgstr "Сезонная цена"
+
+msgctxt "Languages::start_day"
+msgid "Date"
+msgstr "Дата"
+
+msgctxt "Languages::booking_reservation_amount"
+msgid "Amount"
+msgstr "Количество"
+
+msgctxt "Languages::ec_table_booking_system.minimum_booking_time"
+msgid "Minimum booking Time"
+msgstr "Минимальное время бронирования"
+
+msgctxt "Languages::ec_table_booking.days"
+msgid "Days"
+msgstr "Дни"
+
+msgctxt "Languages::ec_booking.color_unavailable"
+msgid "Unavailable dates"
+msgstr "Недоступные даты"
+
+msgctxt "Languages::ec_booking.color_free"
+msgid "Free dates"
+msgstr "Свободные даты"
+
+msgctxt "Languages::ec_booking.color_reserved"
+msgid "Reserved dates"
+msgstr "Зарезервированные даты"
+
+msgctxt "Languages::ec_booking.options"
+msgid "Options"
+msgstr "Параметры"
+
+msgctxt "Languages::ec_table_booking_system.please_select_dates"
+msgid "Please select date range"
+msgstr "Пожалуйста, выберите диапазон дат"
+
+msgctxt "Languages::ec_booking_quantity"
+msgid "Availability"
+msgstr "Доступность"
+
+msgctxt "Languages::ec_booking.apply_all"
+msgid "Apply All"
+msgstr "Применить все"
+
+msgctxt "Languages::ec_booking.time_format"
+msgid "Time format"
+msgstr "Применить все"
+
+msgctxt "Languages::ec_booking.delete_status"
+msgid "Booking decline status"
+msgstr "Статус отклонения бронирования"
+
+msgctxt "Languages::ec_booking.week_start"
+msgid "Select start of the week"
+msgstr "Выберите начало недели"
+
+msgctxt "Languages::ec_booking_12_hour_format"
+msgid "12 hours"
+msgstr "12 часов"
+
+msgctxt "Languages::ec_booking_24_hour_format"
+msgid "24 hours"
+msgstr "12 часов"
+
+msgctxt "Languages::ec_booking_sunday"
+msgid "Sunday"
+msgstr "Воскресенье"
+
+msgctxt "Languages::ec_booking_monday"
+msgid "Monday"
+msgstr "Понедельник"
+
+msgctxt "Languages::ec_date_range_filter"
+msgid "Booking Date Filter"
+msgstr "Фильтр даты бронирования"
+
+msgctxt "Languages::ec_booking.approve_status"
+msgid "Select Status from decline to approve"
+msgstr "Выберите «Статус» от «Отклонить», чтобы утвердить."
+
+msgctxt "Languages::ec_booking.search_booking_product"
+msgid "Booking Product"
+msgstr "Бронирование продукта"
+
+msgctxt "Languages::ec_table_booking_system.product_update_sucessfullly"
+msgid "Booking data are updated successfully in the selected product"
+msgstr "Данные бронирования успешно обновлены в выбранном продукте."
+
+msgctxt "Languages::ec_table_booking_system.default_ec_table_booking"
+msgid "Default booking setting"
+msgstr "Настройки бронирования по умолчанию"
+
+msgctxt "Languages::ec_table_booking_system.show_price_on_each_date"
+msgid "Show Price on every date"
+msgstr "Показать цену на каждую дату"
+
+msgctxt "Languages::ec_table_booking_system.please_add_date_properly"
+msgid "You have to select both start and end date"
+msgstr "Вам необходимо выбрать дату начала и окончания."
+
+msgctxt "Languages::ec_table_booking_system.update_product"
+msgid "Select Product"
+msgstr "Выберите продукт"
+
+msgctxt "Languages::ec_table_booking_system.number_of_days"
+msgid "Number of days"
+msgstr "Количество дней"
+
+msgctxt "Languages::ec_table_booking_system.percentage"
+msgid "Percentage(Discount)"
+msgstr "Процент(скидка)"
+
+msgctxt "Languages::ec_table_booking_system.minimum_booking_time"
+msgid "Minimum booking time"
+msgstr "Минимальное время бронирования"

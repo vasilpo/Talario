@@ -1,0 +1,75 @@
+// design/backend/templates/views/index/components/analytics_section/analytics_card/analytics_card.tpl
+
+.analytics-card {
+    border: 1px solid var(--cs-dashboard-border-color);
+    border-radius: var(--cs-base-border-radius);
+    padding: 16px;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+.analytics-card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.analytics-card__preheader {
+    color: var(--cs-text-muted-color);
+}
+
+.analytics-card__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.analytics-card__title {
+    margin: 0;
+    font-size: var(--cs-font-size-large);
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.analytics-card__title-button {
+    margin-left: auto;
+    text-align: right;
+}
+
+.analytics-card__numbers {
+    display: flex;
+    justify-content: space-between;
+    font-size: ~"calc(var(--cs-base-font-size) * 1.75)";
+}
+
+.analytics-card__number {
+    font-weight: bold;
+}
+
+.analytics-card__number-dynamics--positive {
+    color: var(--cs-success-text);
+}
+
+.analytics-card__number-dynamics--positive:before {
+    content: '↑';
+}
+
+.analytics-card__number-dynamics--negative {
+    color: var(--cs-error-text);
+}
+
+.analytics-card__number-dynamics--negative:before {
+    content: '↓';
+}
+
+.analytics-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.analytics-card__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}

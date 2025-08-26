@@ -1,0 +1,495 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::ab__addons_manager"
+msgid "AB: Add-ons Manager by AlexBranding team"
+msgstr "AB: Add-ons Manager by AlexBranding team"
+
+msgctxt "Addons::description::ab__addons_manager"
+msgid "Manage add-ons by AlexBranding team. Install and check for updates, get to know our new products. To use add-ons by AlexBranding team, this add-on should always be turned on."
+msgstr "Manage add-ons by AlexBranding team. Install and check for updates, get to know our new products. To use add-ons by AlexBranding team, this add-on should always be turned on."
+
+msgctxt "Languages::ab__addons_manager"
+msgid "AB: Add-ons Manager"
+msgstr "AB: Add-ons Manager"
+
+msgctxt "Languages::ab__addons"
+msgid "AB: Add-ons"
+msgstr "AB: Add-ons"
+
+msgctxt "Languages::ab__am.addons"
+msgid "AB: List of available sets/add-ons"
+msgstr "AB: List of available sets/add-ons"
+
+msgctxt "Languages::ab__am.our_store"
+msgid "AlexBranding's store"
+msgstr "AlexBranding's store"
+
+msgctxt "Languages::ab__am.msg.error_code"
+msgid "Error Code"
+msgstr "Error Code"
+
+msgctxt "Languages::ab__am.msg.addon_is_already_installed"
+msgid "You have already installed the add-on <b>[name]</b> the latest version <b>[version]</b>"
+msgstr "You have already installed the add-on <b>[name]</b> the latest version <b>[version]</b>"
+
+msgctxt "Languages::ab__am.msg.addon_is_already_installed_upd"
+msgid "You have already installed the add-on <b>[name]</b> the latest version <b>[version]</b>, you can perform the add-on update to version <b>[version_last]</b>"
+msgstr "You have already installed the add-on <b>[name]</b> the latest version <b>[version]</b>, you can perform the add-on update to version <b>[version_last]</b>"
+
+msgctxt "Languages::ab__am.msg.no_permissions"
+msgid "No write permission"
+msgstr "No write permission"
+
+msgctxt "Languages::ab__am.msg.update_am"
+msgid "To install and/or update our add-ons, you should update AB: Add-ons Manager to the latest version <b>v[ver]</b>!"
+msgstr "To install and/or update our add-ons, you should update AB: Add-ons Manager to the latest version <b>v[ver]</b>!"
+
+msgctxt "Languages::ab__am.addon.action.install_addon"
+msgid "New version <code>v[ver]</code> is available for you"
+msgstr "New version <code>v[ver]</code> is available for you"
+
+msgctxt "Languages::ab__am.addon.action.install_addon.button.value"
+msgid "Install v[ver]"
+msgstr "Install v[ver]"
+
+msgctxt "Languages::ab__am.addon.action.install_addon.button.tooltip"
+msgid "By clicking on this button, the v[ver] of add-on '[name]' will be automatically downloaded and installed to bypass the standard installation of CS-Cart. You also have the possibility to install the add-on in a standard way by downloading the version of the add-on, compatible with your store on the page My Profile → Orders page on the <a href='https://cs-cart.alexbranding.com/en/orders/'>cs-cart.alexbranding.com </a>"
+msgstr "By clicking on this button, the v[ver] of add-on '[name]' will be automatically downloaded and installed to bypass the standard installation of CS-Cart. You also have the possibility to install the add-on in a standard way by downloading the version of the add-on, compatible with your store on the page My Profile → Orders page on the <a href='https://cs-cart.alexbranding.com/en/orders/'>cs-cart.alexbranding.com </a>"
+
+msgctxt "Languages::ab__am.addon.action.update_addon"
+msgid "Update <code>v[ver]</code> is available for you"
+msgstr "Update <code>v[ver]</code> is available for you"
+
+msgctxt "Languages::ab__am.addon.action.update_addon.button.value"
+msgid "Update to v[ver]"
+msgstr "Update to v[ver]"
+
+msgctxt "Languages::ab__am.addon.action.update_addon.button.tooltip"
+msgid "If the update is not available through the CS-Cart Upgrade Center, uninstall the add-on on the page <b> Add-ons → Manage Add-ons</b> and '[name]' v[ver] will be available for installation on this page"
+msgstr "If the update is not available through the CS-Cart Upgrade Center, uninstall the add-on on the page <b> Add-ons → Manage Add-ons</b> and '[name]' v[ver] will be available for installation on this page"
+
+msgctxt "Languages::ab__am.addon.action.not_tested_yet"
+msgid "The installed version <code>v[ver]</code> has not yet passed testing for your version of the store <b>[cscart]</b>"
+msgstr "The installed version <code>v[ver]</code> has not yet passed testing for your version of the store <b>[cscart]</b>"
+
+msgctxt "Languages::ab__am.addon.action.wait_new_version"
+msgid "The latest version <code>v[ver]</code> is compatible with <b>[cscart]</b> according to your subscription"
+msgstr "The latest version <code>v[ver]</code> is compatible with <b>[cscart]</b> according to your subscription"
+
+msgctxt "Languages::ab__am.addon.action.unavailable_addon"
+msgid "The add-on is not available for you (either due to incompatibility with your version of the CS-Cart <b>[cscart]</b> or your subscription for updates has expired)"
+msgstr "The add-on is not available for you (either due to incompatibility with your version of the CS-Cart <b>[cscart]</b> or your subscription for updates has expired)"
+
+msgctxt "Languages::ab__am.addon.action.require_update"
+msgid "To install the add-on or updates, please, update <b>AB: Add-ons Manager</b> to the actual version <code>v[ver]<code>"
+msgstr "To install the add-on or updates, please, update <b>AB: Add-ons Manager</b> to the actual version <code>v[ver]<code>"
+
+msgctxt "Languages::ab__am.addon.subscription.exp"
+msgid "Your subscription for updates has expired <b>[date]</b>. To access the current add-on versions, you must buy a subscription."
+msgstr "Your subscription for updates has expired <b>[date]</b>. To access the current add-on versions, you must buy a subscription."
+
+msgctxt "Languages::ab__am.addon.subscription.exp.button.value"
+msgid "Buy subscription"
+msgstr "Buy subscription"
+
+msgctxt "Languages::ab__am.addon.subscription.exp.button.tooltip"
+msgid "Buy subscription to get access to the current add-on versions"
+msgstr "Buy subscription to get access to the current add-on versions"
+
+msgctxt "Languages::ab__am.addon.subscription.ok"
+msgid "Your subscription is active until <b>[date]</b>"
+msgstr "Your subscription is active until <b>[date]</b>"
+
+msgctxt "Languages::ab__am.addon.subscription.ok.button.value"
+msgid "Renew subscription"
+msgstr "Renew subscription"
+
+msgctxt "Languages::ab__am.addon.subscription.ok.button.tooltip"
+msgid "Renew subscription to get access to the current add-on versions"
+msgstr "Renew subscription to get access to the current add-on versions"
+
+msgctxt "Languages::ab__am.install.update"
+msgid "The update process"
+msgstr "The update process"
+
+msgctxt "Languages::ab__am.install.install"
+msgid "The installation process"
+msgstr "The installation process"
+
+msgctxt "Languages::ab__am.install.downloading"
+msgid "[name] – <b>downloading</b>"
+msgstr "[name] – <b>downloading</b>"
+
+msgctxt "Languages::ab__am.install.checking"
+msgid "[name] – <b>checking</b>"
+msgstr "[name] – <b>checking</b>"
+
+msgctxt "Languages::ab__am.install.installing"
+msgid "[name] – <b>installing</b>"
+msgstr "[name] – <b>installing</b>"
+
+msgctxt "Languages::ab__am.install.clearing_cache"
+msgid "Clearing cache"
+msgstr "Clearing cache"
+
+msgctxt "Languages::ab__am.addon.status.a"
+msgid "Add-on status – Active"
+msgstr "Add-on status – Active"
+
+msgctxt "Languages::ab__am.addon.status.d"
+msgid "Add-on status – Inactive"
+msgstr "Add-on status – Inactive"
+
+msgctxt "Languages::ab__am.addon.status.n"
+msgid "Add-on status – Not installed yet"
+msgstr "Add-on status – Not installed yet"
+
+msgctxt "Languages::ab__am.menu.available_updates"
+msgid "Updates available"
+msgstr "Updates available"
+
+msgctxt "Languages::ab__am.menu.available_update"
+msgid "Update available"
+msgstr "Update available"
+
+msgctxt "Languages::ab__am.menu.new_version"
+msgid "v[ver]"
+msgstr "v[ver]"
+
+msgctxt "Languages::ab__am.menu.number_of_updates"
+msgid "Number of updates"
+msgstr "Number of updates"
+
+msgctxt "Languages::ab__am.menu.number_of_notifications"
+msgid "Number of notifications"
+msgstr "Number of notifications"
+
+msgctxt "Languages::ab__am.filter"
+msgid "Filter ([active] from [total])"
+msgstr "Filter ([active] from [total])"
+
+msgctxt "Languages::ab__am.order"
+msgid "(Order #[order_id])"
+msgstr "(Order #[order_id])"
+
+msgctxt "Languages::ab__am.no_data"
+msgid "To use AlexBranding add-ons and/or sets, your domain <b>[domain]</b> must be licensed.<br>In the case of absence of the domain <b>[domain]</b> in the list of licensed domains, all AlexBranding solutions will be automatically turned off. <br>Contact <b>info@alexbranding.com</b> for problem solving."
+msgstr "To use AlexBranding add-ons and/or sets, your domain <b>[domain]</b> must be licensed.<br>In the case of absence of the domain <b>[domain]</b> in the list of licensed domains, all AlexBranding solutions will be automatically turned off. <br>Contact <b>info@alexbranding.com</b> for problem solving."
+
+msgctxt "Languages::ab__am.no_data.notification"
+msgid "Due to the fact, that your domain [domain] is not included in the list of licensed, some AlexBranding add-ons have been automatically turned off. <a href='[link]'>More info</a>."
+msgstr "Due to the fact, that your domain [domain] is not included in the list of licensed, some AlexBranding add-ons have been automatically turned off. <a href='[link]'>More info</a>."
+
+msgctxt "Languages::ab__am.note"
+msgid "More info"
+msgstr "More info"
+
+msgctxt "Languages::ab__am.go_to_all_stores"
+msgid "AB: Add-ons are available only in the <a href='[link]'>All stores</a> mode."
+msgstr "AB: Add-ons are available only in the <a href='[link]'>All stores</a> mode."
+
+msgctxt "Languages::ab__am.addons_sets.notes"
+msgid "<h4>Basic concepts</h4> <p><u>The installed version</u> is the version of the add-on, that is currently installed on your store.</p> <p><u>The available version</u> is the latest version of the add-on, that is available for you to install and/or update within the prepaid subscription for updates. For example, for the add-on there are versions v2.0 from February 15, 2019 and v2.1 from March 2, 2019 and your subscription to the add-on updates ended on March 1, 2019, then the latest available version for you will be version v2.0 from 15 February 2019. To receive version v2.1 of March 2, 2019, it is necessary to renew the subscription period.</p> <p><u>The actual version</u> is the latest version of the add-on at the moment. We recommend you always update to the actual version, which contains fixed bugs and new useful functionality.</p> <p><u>The add-on is not available for your store</u> – it is possible, the version of your CS-Cart does not correspond to the minimum acceptable version for the add-on. For example, the YoupiTheme is available only for CS-Cart 4.7.x and more.</p> <br> <h4>Installation process</h4> <p>The installation of the add-on has never been so simple as it is now. After purchasing AlexBranding add-ons and installing <b>AB: Add-ons Manager</b> you can install the latest version of the add-on in one click, without any visits to the personal cabinet in the store, order search, downloading of archives, etc.</p> <br> <h4>Upgrade process</h4> <p>Add-ons updating goes via CS-Cart <b>Upgrade Center</b>. If there is no update available in the CS-Cart Upgrade Center, the update is performed by Deinstallation the old version of the add-on and Installing the new version</p> <br> <h4>Cache</h4> <p>After installing and/or updating, you must reset CS-Cart cache. See CS-Cart <a target='_blank' href='https://docs.cs-cart.com/4.7.x/developer_guide/getting_started/cache_clearing.html'>documentation</a> for more details.</p>"
+msgstr "<h4>Basic concepts</h4>"
+"<p><u>The installed version</u> is the version of the add-on, that is currently installed on your store.</p>"
+"<p><u>The available version</u> is the latest version of the add-on, that is available for you to install and/or update within the prepaid subscription for updates. For example, for the add-on there are versions v2.0 from February 15, 2019 and v2.1 from March 2, 2019 and your subscription to the add-on updates ended on March 1, 2019, then the latest available version for you will be version v2.0 from 15 February 2019. To receive version v2.1 of March 2, 2019, it is necessary to renew the subscription period.</p>"
+"<p><u>The actual version</u> is the latest version of the add-on at the moment. We recommend you always update to the actual version, which contains fixed bugs and new useful functionality.</p>"
+"<p><u>The add-on is not available for your store</u> – it is possible, the version of your CS-Cart does not correspond to the minimum acceptable version for the add-on. For example, the YoupiTheme is available only for CS-Cart 4.7.x and more.</p>"
+"<br>"
+"<h4>Installation process</h4>"
+"<p>The installation of the add-on has never been so simple as it is now. After purchasing AlexBranding add-ons and installing <b>AB: Add-ons Manager</b> you can install the latest version of the add-on in one click, without any visits to the personal cabinet in the store, order search, downloading of archives, etc.</p>"
+"<br>"
+"<h4>Upgrade process</h4>"
+"<p>Add-ons updating goes via CS-Cart <b>Upgrade Center</b>. If there is no update available in the CS-Cart Upgrade Center, the update is performed by Deinstallation the old version of the add-on and Installing the new version</p>"
+"<br>"
+"<h4>Cache</h4>"
+"<p>After installing and/or updating, you must reset CS-Cart cache. See CS-Cart <a target='_blank' href='https://docs.cs-cart.com/4.7.x/developer_guide/getting_started/cache_clearing.html'>documentation</a> for more details.</p>"
+
+msgctxt "Languages::ab__am.notifications"
+msgid "List of notifications from AlexBranding"
+msgstr "List of notifications from AlexBranding"
+
+msgctxt "Languages::ab__am.notifications.notes"
+msgid "In this section you will find information about our news and promotions. Regularly we will inform you about the releases of our new solutions, discounts or closed promotions, available only for you."
+msgstr "In this section you will find information about our news and promotions. "
+"Regularly we will inform you about the releases of our new solutions, discounts or closed promotions, available only for you."
+
+msgctxt "Languages::ab__am.available_addons"
+msgid "List of available AB: Add-ons"
+msgstr "List of available AB: Add-ons"
+
+msgctxt "Languages::ab__am.addon.table_head.addon"
+msgid "Add-on name"
+msgstr "Add-on name"
+
+msgctxt "Languages::ab__am.addon.table_head.versions"
+msgid "Versions"
+msgstr "Versions"
+
+msgctxt "Languages::ab__am.addon.table_head.versions.tooltip"
+msgid "List of variants: Installed, Available and Actual"
+msgstr "List of variants: Installed, Available and Actual"
+
+msgctxt "Languages::ab__am.addon.versions.installed"
+msgid "Installed"
+msgstr "Installed"
+
+msgctxt "Languages::ab__am.addon.versions.available"
+msgid "Available"
+msgstr "Available"
+
+msgctxt "Languages::ab__am.addon.versions.final"
+msgid "Actual"
+msgstr "Actual"
+
+msgctxt "Languages::ab__am.addon.table_head.actions"
+msgid "Actions"
+msgstr "Actions"
+
+msgctxt "Languages::ab__am.addon.table_head.subscription"
+msgid "Subscription"
+msgstr "Subscription"
+
+msgctxt "Languages::ab__am.addon.table_head.note"
+msgid "Note"
+msgstr "Note"
+
+msgctxt "Languages::ab__am.addon.new_version_is_available"
+msgid "v[ver] from [date]"
+msgstr "v[ver] from [date]"
+
+msgctxt "Languages::ab__am.addon.new_version_is_available.tooltip"
+msgid "New version v[ver] is available from [date]"
+msgstr "New version v[ver] is available from [date]"
+
+msgctxt "Languages::ab__am.addon.changelog"
+msgid "List of changes"
+msgstr "List of changes"
+
+msgctxt "Languages::ab__am.addon.doc"
+msgid "Documentation"
+msgstr "Documentation"
+
+msgctxt "Languages::ab__am.addon.version_info"
+msgid "<b>Release date</b>: [date]<br> <b>Compatibility</b>:<br> CS-Cart: [ultimate]<br> Multivendor: [multivendor]"
+msgstr "<b>Release date</b>: [date]<br>"
+"<b>Compatibility</b>:<br>"
+"CS-Cart: [ultimate]<br>"
+"Multivendor: [multivendor]"
+
+msgctxt "Languages::ab__am.submit.install.text"
+msgid "Install version v[ver]"
+msgstr "Install version v[ver]"
+
+msgctxt "Languages::ab__am.submit.update.text"
+msgid "Update to version v[ver]"
+msgstr "Update to version v[ver]"
+
+msgctxt "Languages::ab__am.submit.update.tooltip"
+msgid ""
+msgstr ""
+
+msgctxt "Languages::ab__am.submit.tooltip"
+msgid "Keep in mind that before installing/updating all files of this add-on will be deleted, including your changes in this add-on. If you have any files - be sure to save them. [update_info]"
+msgstr "Keep in mind that before installing/updating all files of this add-on will be deleted, "
+"including your changes in this add-on. If you have any files - be sure to save them. [update_info]"
+
+msgctxt "Languages::ab__am.submit.tooltip.update_info"
+msgid "Be sure to remember add-on settings to restore them after the update if they are"
+msgstr "Be sure to remember add-on settings to restore them after the update if they are"
+
+msgctxt "Languages::ab__am.addon.settings"
+msgid "Add-on settings"
+msgstr "Add-on settings"
+
+msgctxt "Languages::ab__am.addon.subscription_updates"
+msgid "Updates are available until [date]"
+msgstr "Updates are available until [date]"
+
+msgctxt "Languages::ab__am.addon.button_buy_updates.text"
+msgid "Renew your subscription to the add-on"
+msgstr "Renew your subscription to the add-on"
+
+msgctxt "Languages::ab__am.addon.button_buy_updates.tooltip"
+msgid "Renew the subscription to get the latest updates"
+msgstr "Renew the subscription to get the latest updates"
+
+msgctxt "Languages::ab__am.addon.msg.available_version_is_installed"
+msgid "The latest available version of the add-on is installed"
+msgstr "The latest available version of the add-on is installed"
+
+msgctxt "Languages::ab__am.addon.subscription.expired"
+msgid "Subscription expired on [date]. Renew subscription to get actual add-on versions"
+msgstr "Subscription expired on [date]. Renew subscription to get actual add-on versions"
+
+msgctxt "Languages::ab__am.addon.subscription.active"
+msgid "Subscription is active until [date]"
+msgstr "Subscription is active until [date]"
+
+msgctxt "Languages::ab__am.addon.msg.final_version_is_installed"
+msgid "The Actual version of the add-on is installed"
+msgstr "The Actual version of the add-on is installed"
+
+msgctxt "Languages::ab__am.addon.msg.not_available"
+msgid "The add-on is not available for your store!"
+msgstr "The add-on is not available for your store!"
+
+msgctxt "Languages::ab__am.addon.msg.expired_subscription"
+msgid "Only v[ver] is available to your store. Renew the subscription to get the actual version of the add-on"
+msgstr "Only v[ver] is available to your store. Renew the subscription to get the actual version of the add-on"
+
+msgctxt "Languages::ab__am.addon.button_download_am.text"
+msgid "Download"
+msgstr "Download"
+
+msgctxt "Languages::ab__am.addon.button_download_am.note"
+msgid "<p>AB: Add-ons manager is necessary for the proper operation of our solutions. It organizes your add-ons and groups them by sets. Unobtrusively notifying you about new available updates of the add-on, and gives the opportunity to update them in one click. Also, you can easily extend the subscription to our solutions and get the most current version of the add-on. We constantly update add-ons to make them as useful to you, as possible. <p>Please note, that in order to install and/or update the add-ons, you must have the latest version of AB: Add-ons Manager v[ver]. You will be informed about the release of the new version of the add-on and a link will be provided for downloading add-on archive.</p> <hr> <p></b>How to update AB: Add-ons Manager to v[ver]?</b></p> <ol> <li>When a notification appears about the availability of the new version of AB: Add-ons Manager, download the archive;</li> <li>Close the storefront. (To do this go to Settings → General → Close storefront - set the checkbox and click on the [Save] button, close for just 2 minutes);</li> <li>Delete AB: Add-ons Manager (To do this, go to Add-ons → Manage Add-ons → AB: Add-ons Manager: Delete);</li> <li>Install archive of AB: Add-ons Manager from step 1 (To do this, on the Add-ons → Manage add-ons → button [+]: select the previously downloaded archive from step 1);</li> <li>Clear the cache (Go to the menu item Administration → Storage → Clear Cache);</li> <li>Open the storefront. (To do this, go to Settings → General → Close storefront - uncheck the checkbox and click the [Save] button);</li> </ol>"
+msgstr "<p>AB: Add-ons manager is necessary for the proper operation of our solutions."
+"It organizes your add-ons and groups them by sets. "
+"Unobtrusively notifying you about new available updates of the add-on, and gives the opportunity to update them in one click."
+"Also, you can easily extend the subscription to our solutions and get the most current version of the add-on. We constantly update add-ons to make them as useful to you, as possible."
+"<p>Please note, that in order to install and/or update the add-ons, you must have the latest version of AB: Add-ons Manager v[ver]. You will be informed about the release of the new version of the add-on and a link will be provided for downloading add-on archive.</p>"
+"<hr>"
+"<p></b>How to update AB: Add-ons Manager to v[ver]?</b></p>"
+"<ol>"
+"<li>When a notification appears about the availability of the new version of AB: Add-ons Manager, download the archive;</li>"
+"<li>Close the storefront. (To do this go to Settings → General → Close storefront - set the checkbox and click on the [Save] button, close for just 2 minutes);</li>"
+"<li>Delete AB: Add-ons Manager (To do this, go to Add-ons → Manage Add-ons → AB: Add-ons Manager: Delete);</li>"
+"<li>Install archive of AB: Add-ons Manager from step 1 (To do this, on the Add-ons → Manage add-ons → button [+]: select the previously downloaded archive from step 1);</li>"
+"<li>Clear the cache (Go to the menu item Administration → Storage → Clear Cache);</li>"
+"<li>Open the storefront. (To do this, go to Settings → General → Close storefront - uncheck the checkbox and click the [Save] button);</li>"
+"</ol>"
+
+msgctxt "Languages::ab__am.addon.update_instruction"
+msgid "Procedure of updating"
+msgstr "Procedure of updating"
+
+msgctxt "Languages::ab__am.tools.change_licenses"
+msgid "Replace add-on licenses (code)"
+msgstr "Replace add-on licenses (code)"
+
+msgctxt "Languages::ab__am.tools.change_licenses.btn"
+msgid "Replace"
+msgstr "Replace"
+
+msgctxt "Languages::ab__am.tools.fix_licenses"
+msgid "Fix add-on licenses (version, code, build)"
+msgstr "Fix add-on licenses (version, code, build)"
+
+msgctxt "Languages::ab__am.tools.fix_licenses.btn"
+msgid "Fix"
+msgstr "Fix"
+
+msgctxt "Languages::ab__am.tools.fix_licenses.done"
+msgid "Fixed!"
+msgstr "Fixed!"
+
+msgctxt "Languages::ab__am.tools.fix_licenses.empty"
+msgid "No fixing required!"
+msgstr "No fixing required!"
+
+msgctxt "Languages::ab__am.available_sets"
+msgid "List of available AB: Sets"
+msgstr "List of available AB: Sets"
+
+msgctxt "Languages::ab__am.set.set"
+msgid "Set name"
+msgstr "Set name"
+
+msgctxt "Languages::ab__am.set.available_updates"
+msgid "New versions are available: [n]"
+msgstr "New versions are available: [n]"
+
+msgctxt "Languages::ab__am.set.subscription_updates"
+msgid "Updates are available until [date]"
+msgstr "Updates are available until [date]"
+
+msgctxt "Languages::ab__am.set.button_buy_updates.text"
+msgid "Renew your subscription to the set"
+msgstr "Renew your subscription to the set"
+
+msgctxt "Languages::ab__am.set.button_buy_updates.tooltip"
+msgid "Update subscription expired [date]. Renew the subscription for the latest updates"
+msgstr "Update subscription expired [date]. Renew the subscription for the latest updates"
+
+msgctxt "Languages::privilege_sections.ab__addons"
+msgid "AB: Add-ons"
+msgstr "AB: Add-ons"
+
+msgctxt "Languages::privilege_groups.ab__addons_manager"
+msgid "AB: Add-ons Manager"
+msgstr "AB: Add-ons Manager"
+
+msgctxt "Languages::ab__am.subscription"
+msgid "Subscribe to our channels to be the first<br>to know about new releases and promotions!"
+msgstr "Subscribe to our channels to be the first<br>to know about new releases and promotions!"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.youtube.href"
+msgid "https://www.youtube.com/channel/UCTkiV2DqPqQaLOyWZzBFjaA"
+msgstr "https://www.youtube.com/channel/UCTkiV2DqPqQaLOyWZzBFjaA"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.youtube.title"
+msgid "Youtube"
+msgstr "Youtube"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.telegram.href"
+msgid "https://t.me/alexbranding_en"
+msgstr "https://t.me/alexbranding_en"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.telegram.title"
+msgid "Telegram"
+msgstr "Telegram"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.facebook.href"
+msgid "https://fb.me/AlexBrandingEn"
+msgstr "https://fb.me/AlexBrandingEn"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.facebook.title"
+msgid "Facebook"
+msgstr "Facebook"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.twitter.href"
+msgid "https://twitter.com/alexbranding_en"
+msgstr "https://twitter.com/alexbranding_en"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.twitter.title"
+msgid "Twitter"
+msgstr "Twitter"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.instagram.href"
+msgid "https://www.instagram.com/alexbrandingteam/"
+msgstr "https://www.instagram.com/alexbrandingteam/"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.instagram.title"
+msgid "Instagram"
+msgstr "Instagram"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.whatsapp.href"
+msgid "https://chat.whatsapp.com/GzW9eZjXH6YL2b0d9gitvk"
+msgstr "https://chat.whatsapp.com/GzW9eZjXH6YL2b0d9gitvk"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.whatsapp.title"
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.email.href"
+msgid "https://cs-cart.alexbranding.com/en/subscription-en.html"
+msgstr "https://cs-cart.alexbranding.com/en/subscription-en.html"
+
+msgctxt "Languages::ab__am.subscription.channels.variant.email.title"
+msgid "Email"
+msgstr "Email"
+
+msgctxt "SettingsOptions::ab__addons_manager::show_subscription"
+msgid "Show Alexbranding news channels"
+msgstr "Show Alexbranding news channels"
+
+msgctxt "SettingsTooltips::ab__addons_manager::show_subscription"
+msgid "On the page \"AB: List of available sets/add-ons\" in the AB-menu will be displayed links to our news channels"
+msgstr "On the page \"AB: List of available sets/add-ons\" in the AB-menu will be displayed links to our news channels"
+
+#. Alexbranding. Do not modify this file manually!

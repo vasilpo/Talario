@@ -1,0 +1,235 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::ab__hide_product_description"
+msgid "AB: Hide the part of the content up to a certain height"
+msgstr "AB: Скрыть часть контента до определенной высоты"
+
+msgctxt "Addons::description::ab__hide_product_description"
+msgid "Allows you to hide part of the content in the description of categories, brands, product tabs, as well as for blocks with the specified css selector"
+msgstr "Позволяет скрывать часть контента в описании категорий, брендов, вкладок товара, а также для блоков с указанным css-селектором"
+
+msgctxt "Languages::ab__hide_product_description"
+msgid "AB: Hide the part of the content up to a certain height"
+msgstr "AB: Скрыть часть контента до определенной высоты"
+
+msgctxt "SettingsOptions::ab__hide_product_description::max_height"
+msgid "Maximum height of the display, px"
+msgstr "Максимальная высота отображения, px"
+
+msgctxt "SettingsTooltips::ab__hide_product_description::max_height"
+msgid "Maximum height of the content block. If the size of the block exceeds the specified value - the remained content will be hidden. Link name is a language variable - <code> ab__hpd.more </code> and <code> ab__hpd.less </code>"
+msgstr "Максимальная высота блока контента. Если размер блока будет превышать указанное значение - оставшийся контент будет скрыт. Название ссылки является языковой переменной - <code>ab__hpd.more</code> и <code>ab__hpd.less</code>"
+
+msgctxt "SettingsOptions::ab__hide_product_description::hide_in_product"
+msgid "Hide the text on the chosen product tabs"
+msgstr "Скрывать текст на выбранных вкладках товара"
+
+msgctxt "SettingsTooltips::ab__hide_product_description::hide_in_product"
+msgid "For additional settings go to \"Design - Product tabs\""
+msgstr "Дополнительные настройки на странице \"Дизайн → Вкладки товара\""
+
+msgctxt "SettingsOptions::ab__hide_product_description::hide_in_category"
+msgid "Hide Description for the category"
+msgstr "Скрывать Описание для категории"
+
+msgctxt "SettingsOptions::ab__hide_product_description::hide_in_brand"
+msgid "Hide Description for the feature/brand"
+msgstr "Скрывать Описание для характеристики/бренда"
+
+msgctxt "SettingsOptions::ab__hide_product_description::align"
+msgid "Align an element to the"
+msgstr "Выровнять элемент по"
+
+msgctxt "SettingsOptions::ab__hide_product_description::appearance"
+msgid "Appearance options"
+msgstr "Варианты внешнего вида"
+
+msgctxt "SettingsOptions::ab__hide_product_description::selectors"
+msgid "List of CSS selectors"
+msgstr "Список CSS-селекторов"
+
+msgctxt "SettingsTooltips::ab__hide_product_description::selectors"
+msgid "Specify through a comma CSS selectors to which the mechanism of hiding the content will be used. For example, <code>.span9, .row-fluid</code>"
+msgstr "Укажите через запятую CSS-селекторы, к которым будет применен механизм скрытия контента. Например, <code>.span9, .row-fluid</code>"
+
+msgctxt "SettingsOptions::ab__hide_product_description::custom_class"
+msgid "Custom CSS-class"
+msgstr "Пользовательский CSS-класс"
+
+msgctxt "SettingsTooltips::ab__hide_product_description::custom_class"
+msgid "Specify the list of classes through space"
+msgstr "Укажите список классов через пробел"
+
+msgctxt "SettingsOptions::ab__hide_product_description::show_button_after_action"
+msgid "Display the button of hiding content"
+msgstr "Отображать кнопку скрытия контента"
+
+msgctxt "SettingsTooltips::ab__hide_product_description::show_button_after_action"
+msgid "If control is active, then the button of hiding content will be displayed after you opened content"
+msgstr "Если настройка активна, то кнопка скрытия контента будет отображатся, после того как Bы раскрыли контент"
+
+msgctxt "SettingsOptions::ab__hide_product_description::transition"
+msgid "Animation performance time"
+msgstr "Время выполнения анимации"
+
+msgctxt "Languages::ab__smc.product_tabs.tab_description"
+msgid "\"AB: Hide the part of the content up to a certain height\" add-on settings"
+msgstr "Настройки модуля \"AB: Скрыть часть контента до определенной высоты\""
+
+msgctxt "Languages::ab__smc.product_tabs.hide_content"
+msgid "Hide the content"
+msgstr "Скрыть контент"
+
+msgctxt "Languages::ab__smc"
+msgid "AB: Hide the part of the content up to a certain height"
+msgstr "AB: Скрыть часть контента до определенной высоты"
+
+msgctxt "Languages::ab__smc.more"
+msgid "More"
+msgstr "Больше"
+
+msgctxt "Languages::ab__smc.less"
+msgid "Less"
+msgstr "Меньше"
+
+msgctxt "Languages::ab__smc.product_tabs.hide_content.more"
+msgid "Button text for showing more content"
+msgstr "Текст кнопки для показа контента"
+
+msgctxt "Languages::ab__smc.product_tabs.hide_content.less"
+msgid "Button text for hiding content"
+msgstr "Текст кнопки для скрытия контента"
+
+msgctxt "Languages::ab__smc.product_tabs.override"
+msgid "Redefine height for the tab"
+msgstr "Переопределить высоту для вкладки"
+
+msgctxt "Languages::ab__smc.product_tabs.override.tooltip"
+msgid "The value of the height of content will undertake from settings of the tab"
+msgstr "Значение высоты контента будет браться из настроек вкладки"
+
+msgctxt "Languages::ab__smc.product_tabs.height"
+msgid "Displaying height, px"
+msgstr "Высота отображения, px"
+
+msgctxt "Languages::ab__smc.product_tabs.height.tooltip"
+msgid "The value will set own height of the content display in px"
+msgstr "Значение задаст собственную высоту показа контента в px"
+
+msgctxt "Languages::ab__smc.settings"
+msgid "General settings"
+msgstr "Общие настройки"
+
+msgctxt "Languages::ab__smc.settings.align.left"
+msgid "left"
+msgstr "левому краю"
+
+msgctxt "Languages::ab__smc.settings.align.right"
+msgid "right"
+msgstr "правому краю"
+
+msgctxt "Languages::ab__smc.settings.align.center"
+msgid "center"
+msgstr "центру"
+
+msgctxt "Languages::ab__smc.settings.appearance.text"
+msgid "Text"
+msgstr "Текст"
+
+msgctxt "Languages::ab__smc.settings.appearance.text2"
+msgid "Text 2"
+msgstr "Текст 2"
+
+msgctxt "Languages::ab__smc.settings.appearance.button"
+msgid "Button"
+msgstr "Кнопка"
+
+msgctxt "Languages::ab__smc.settings.transition.10"
+msgid "No animation"
+msgstr "Без анимации"
+
+msgctxt "Languages::ab__smc.settings.transition.100"
+msgid "0,1 sec"
+msgstr "0,1 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.200"
+msgid "0,2 sec"
+msgstr "0,2 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.300"
+msgid "0,3 sec"
+msgstr "0,3 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.400"
+msgid "0,4 sec"
+msgstr "0,4 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.500"
+msgid "0,5 sec"
+msgstr "0,5 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.600"
+msgid "0,6 sec"
+msgstr "0,6 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.700"
+msgid "0,7 sec"
+msgstr "0,7 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.800"
+msgid "0,8 sec"
+msgstr "0,8 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.900"
+msgid "0,9 sec"
+msgstr "0,9 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.1000"
+msgid "1 sec"
+msgstr "1 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.1100"
+msgid "1,1 sec"
+msgstr "1,1 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.1200"
+msgid "1,2 sec"
+msgstr "1,2 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.1300"
+msgid "1,3 sec"
+msgstr "1,3 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.1400"
+msgid "1,4 sec"
+msgstr "1,4 сек"
+
+msgctxt "Languages::ab__smc.settings.transition.1500"
+msgid "1,5 sec"
+msgstr "1,5 сек"
+
+msgctxt "Languages::ab__smc.help"
+msgid "Help"
+msgstr "Справка"
+
+msgctxt "Languages::ab__smc.help.doc"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__hide_product_description.doc'>documentation</a>."
+msgstr "Ознакомиться с <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__hide_product_description.doc'>документацией</a>."
+
+msgctxt "Languages::privilege_groups.ab__hide_product_description"
+msgid "AB: Hide the part of the content up to a certain height"
+msgstr "AB: Скрыть часть контента до определенной высоты"
+
+msgctxt "Languages::privileges.ab__hpd.view"
+msgid "View help"
+msgstr "Просмотр справки"
+
+msgctxt "Languages::privileges.ab__hpd.manage"
+msgid "Manage data"
+msgstr "Управление данными"
+
+#. Alexbranding. Do not modify this file manually!

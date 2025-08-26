@@ -1,0 +1,306 @@
+@import "../../config.less";
+/* ==========================================================================
+Vendor communication
+========================================================================== */
+
+// Main wrapper
+#content_view_thread {
+    height: 100%;
+}
+
+// Fix: Tabs are not 100% high.
+.vendor_communication__view-thread-wrapper {
+    min-height: 1020px;
+}
+
+.vendor_communication__view-thread-wrapper:not(.hidden) {
+    display: flex;
+}
+
+.vendor_communication__view-thread {
+    display: flex;
+    min-height: 100%;
+}
+
+// Message writing form
+.add_message_form {
+    margin: 0;
+
+    & &--wrapper {
+        padding: 20px 20px 35px 20px;
+
+        .controls {
+            margin-left: 80px;
+        }
+    }
+
+    & &--textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    & &--refresh-btn.btn {
+        padding: 4px 10px;
+    }
+}
+
+// Tickets
+.messages {
+    margin-top: auto;
+    padding-bottom: 260px;
+}
+.message-title {
+    max-width: 300px;
+    overflow: hidden;
+    white-space: nowrap;
+
+    a {
+        display: block;
+    }
+}
+.no-link {
+    color: var(--cs-text-color);
+    
+    &:hover, &:focus {
+        cursor: auto;
+        color: var(--cs-text-color);
+        text-decoration: none;
+    }
+}
+.vendor-communication__message {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    word-break: break-word;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+// Chat
+.vendor-communication-post {
+    position: relative;
+    margin-top: 3px;
+    padding: 12px 15px 17px;
+    border: 1px solid var(--cs-input-border);
+    border-radius: 4px;
+    background-color: var(--cs-form-actions-background);
+
+    &__content {
+        margin-bottom: 10px;
+        text-align: center;
+        position: relative;
+    }
+    &__img {
+        float: right;
+        width: 55px;
+        height: 55px;
+    }
+    &__info {
+        overflow: hidden;
+        padding-right: 25px;
+    }
+    &__author {
+        font-weight: bold;
+        text-align: right;
+        margin-top: 15px;
+    }
+    &__date {
+        color: var(--cs-text-muted-color);
+    }
+    &__message {
+        word-break: break-all;
+        word-break: break-word;
+        word-wrap: break-word;
+        text-align: left;
+    }
+}
+
+.vendor-communication-post__img-content {
+    display: flex;
+    border-radius: 50%;
+    border: 1px solid var(--cs-input-border);
+    width: 60px;
+    height: 60px;
+    color: var(--cs-text-muted-color);
+    background-color: var(--cs-form-actions-background);
+    overflow: hidden;
+}
+
+.vendor-communication-post__img-icon {
+    transform: scale(1.25);
+}
+
+// New thread from
+.vendor-communication-add-message__title {
+    width:auto !important;
+}
+
+.control-group .control-label.cm-required.vendor-communication-add-message__title-2.hidden {
+    display: none;
+}
+
+// Customer post
+.vendor-communication-post__customer {
+
+    .vendor-communication-post {
+        background-color: var(--cs-content-background);
+
+        &__author {
+            text-align: left;
+        }
+    }
+    .icon-caret {
+        left: 14px;
+        right: auto;
+        transform: scaleX(-1);
+        
+        &-inner {
+            border-right-color: var(--cs-text-inverse-color);
+        }
+    }
+}
+
+.vendor-communication-logo__image {
+    border-radius: 50%;
+    border: 1px solid var(--cs-input-border);
+}
+
+// New message
+.btn.btn-icon-link {
+    text-decoration: none;
+    padding-left: 0;
+    padding-right: 0;
+
+    .cs-icon {
+        color: inherit;
+        opacity: 1;
+    }
+}
+.btn-send {
+    justify-content: center;
+    min-width: 80px;
+}
+.post-object {
+    margin-left: 50px;
+    margin-right: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 500px;
+    height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.additional {
+    &-info {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    &-text {
+        color: var(--cs-text-muted-color);
+    }
+}
+.animation-rotate {
+    
+    .cs-icon {
+        transition-property: transform;
+    }
+    &:focus .cs-icon {
+        transform: rotate(180deg);
+        transition-duration: 0.5s;
+    }
+}
+
+.vendor-communication-object-data {
+    .post-object {
+        margin-left: 20px;
+    }
+}
+
+.vendor-communication-thread {
+    .select2-search__field {
+        margin-left: 5px;
+        padding-right: 0px;
+    }
+}
+// Fixed bottom
+.admin-content-wrap {
+
+    .fixed-bottom {
+        display: inline-block;
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        color: var(--cs-text-color);
+        background: var(--cs-form-actions-background);
+
+        border-top: 1px solid var(--cs-input-border);
+
+        &-wrapper {
+            width: 100%;
+            display: inline-block;
+        }
+    }
+}
+
+// New message label
+.status {
+
+    &-label {
+        min-width: 10px;
+    }
+    &-new {
+        
+        &__label {
+            display: inline-block;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            background: var(--cs-main-color);
+        }
+        &__text {
+            font-weight: bold;
+            -webkit-font-smoothing: antialiased;
+        }
+    }
+}
+
+// Caret
+.icon-caret {
+    position: absolute;
+    bottom: -16px;
+    right: 14px;
+    overflow: hidden;
+    width: 16px;
+    height: 16px;
+
+    &-outer,
+    &-inner {
+        position: absolute;
+        left: 0;
+        width:0;
+        height:0;
+        border-bottom: 16px solid transparent;
+        border-right: 16px solid var(--cs-input-border);
+    }
+    &-inner {
+        left: 1px;
+        border-width: 14px;
+        border-right-color: var(--cs-form-actions-background);
+    }
+}
+
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    .message-title {
+        max-width: unset !important;
+    }
+}
+
+/* ==========================================================================
+/Vendor communication
+========================================================================== */

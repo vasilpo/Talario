@@ -1,0 +1,353 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::ab__fast_navigation"
+msgid "AB: Fast navigation"
+msgstr "AB: Быстрая навигация"
+
+msgctxt "Addons::description::ab__fast_navigation"
+msgid "Add-on allows to add fast navigation block on the store pages"
+msgstr "Модуль позволяет добавлять блок быстрой навигации по страницам магазина"
+
+msgctxt "Languages::ab__fast_navigation"
+msgid "AB: Fast navigation"
+msgstr "AB: Быстрая навигация"
+
+msgctxt "SettingsOptions::ab__fast_navigation::load_by_ajax"
+msgid "Use Ajax to download the second level elements"
+msgstr "Использовать Ajax для загрузки элементов второго уровня"
+
+msgctxt "SettingsTooltips::ab__fast_navigation::load_by_ajax"
+msgid "When setting is used the second level elements of \"Two-level navigation\" will be displayed after page downloading"
+msgstr "При использовании настройки элементы второго уровня \"Двухуровневой навигации\" будут отображены после загрузки страницы"
+
+msgctxt "SettingsOptions::ab__fast_navigation::add_watermarks"
+msgid "Add watermarks for images in fast navigation"
+msgstr "Добавить водяные знаки для изображений в быстрой навигации"
+
+msgctxt "SettingsTooltips::ab__fast_navigation::add_watermarks"
+msgid "Note: \"Watermarks\" add-on must be installed and enabled"
+msgstr "Обратите внимание, что модуль \"Водяные знаки\" должен быть установлен и включен"
+
+msgctxt "Languages::block_ab__fast_navigation"
+msgid "AB: Fast navigation"
+msgstr "AB: Быстрая навигация"
+
+msgctxt "Languages::block_ab__fast_navigation_description"
+msgid "Block with fast navigation"
+msgstr "Блок с быстрой навигацией"
+
+msgctxt "Languages::block_ab__fast_navigation_categories"
+msgid "AB: Fast navigation by categories"
+msgstr "AB: Быстрая навигация по категориям"
+
+msgctxt "Languages::block_ab__fast_navigation_categories_description"
+msgid "Fast navigation block by subcategories"
+msgstr "Блок быстрой навигации по подкатегориям"
+
+msgctxt "Languages::ab__fn_one_level"
+msgid "Single-level navigation"
+msgstr "Одноуровневая навигация"
+
+msgctxt "Languages::ab__fn_two_level"
+msgid "Two-level navigation"
+msgstr "Двухуровневая навигация"
+
+msgctxt "Languages::ab__fn_display_type"
+msgid "Display type"
+msgstr "Тип отображения"
+
+msgctxt "Languages::ab__fn_number_of_columns"
+msgid "Number of columns in the list"
+msgstr "Количество колонок в списке"
+
+msgctxt "Languages::ab__fn_number_of_columns.tooltip"
+msgid "Number of columns for screens"
+msgstr "Количество колонок для экранов"
+
+msgctxt "Languages::ab__fn_number_of_columns_desktop"
+msgid "Number of columns in the list (Desktop)"
+msgstr "Количество колонок в списке (Десктоп)"
+
+msgctxt "Languages::ab__fn_number_of_columns_desktop.tooltip"
+msgid "Number of columns for screens > 1230px"
+msgstr "Количество колонок для экранов > 1230px"
+
+msgctxt "Languages::ab__fn_number_of_columns_desktop_small"
+msgid "Number of columns in the list (Notebook)"
+msgstr "Количество колонок в списке (Ноутбук)"
+
+msgctxt "Languages::ab__fn_number_of_columns_desktop_small.tooltip"
+msgid "Number of columns for screens 992px - 1229px"
+msgstr "Количество колонок для экранов 992px - 1229px"
+
+msgctxt "Languages::ab__fn_number_of_columns_tablet"
+msgid "Number of columns in the list (Tablet)"
+msgstr "Количество колонок в списке (Планшет)"
+
+msgctxt "Languages::ab__fn_number_of_columns_tablet.tooltip"
+msgid "Number of columns for screens 768px - 991px"
+msgstr "Количество колонок для экранов 768px - 991px"
+
+msgctxt "Languages::ab__fn_number_of_columns_tablet_small"
+msgid "Number of columns in the list (Phablet)"
+msgstr "Количество колонок в списке (Фаблет)"
+
+msgctxt "Languages::ab__fn_number_of_columns_tablet_small.tooltip"
+msgid "Number of columns for screens 576px - 767px"
+msgstr "Количество колонок для экранов 576px - 767px"
+
+msgctxt "Languages::ab__fn_number_of_columns_mobile"
+msgid "Number of columns in the list (Phone)"
+msgstr "Количество колонок в списке (Смартфон)"
+
+msgctxt "Languages::ab__fn_number_of_columns_mobile.tooltip"
+msgid "Number of columns for screens < 575px"
+msgstr "Количество колонок для экранов < 575px"
+
+msgctxt "Languages::ab__fn_init_second_level_scroll"
+msgid "Enable scroller for the second level"
+msgstr "Включить скроллер для второго уровня"
+
+msgctxt "Languages::ab__fn_add_link"
+msgid "Add a link on \"All from the section\""
+msgstr "Добавить ссылку на \"Всё из раздела\""
+
+msgctxt "Languages::ab__fn_add_link.tooltip"
+msgid "The link will have the URL of the parent element"
+msgstr "Ссылка будет иметь URL родительского элемента"
+
+msgctxt "Languages::ab__fn_icon_width"
+msgid "Icon width, px"
+msgstr "Ширина иконки, px"
+
+msgctxt "Languages::ab__fn_grid"
+msgid "Grid"
+msgstr "Сетка"
+
+msgctxt "Languages::ab__fn_scroller"
+msgid "Scroller"
+msgstr "Скроллер"
+
+msgctxt "Languages::ab__fn_show_common_btn"
+msgid "Show \"General link\" button"
+msgstr "Показать кнопку \"Общая ссылка\""
+
+msgctxt "Languages::ab__fn_show_common_btn.tooltip"
+msgid "A \"General link\" with assigned URL will be displayed under a block"
+msgstr "Под блоком будет отображена кнопка с заданным URL \"Общая ссылка\""
+
+msgctxt "Languages::ab__fn_init_scrollbar"
+msgid "Enable scroll progress bar for the first level"
+msgstr "Включить индикатор прокрутки для первого уровня"
+
+msgctxt "Languages::ab__fn_common_btn_text"
+msgid "\"General link\" button text"
+msgstr "Текст кнопки \"Общая ссылка\""
+
+msgctxt "Languages::ab__fn.common_btn_text.tooltip"
+msgid "Allows to set button text. If leave empty — text \"BUTTON\" will be represented by default"
+msgstr "Позволяет задавать текст кнопки. Если оставить пустым — по умолчанию будет отображен текст \"КНОПКА\""
+
+msgctxt "Languages::ab__fn_show_common_btn_link"
+msgid "\"General link\" URL"
+msgstr "URL \"Общая ссылка\""
+
+msgctxt "Languages::ab__fn_show_common_btn_link.tooltip"
+msgid "Destination URL. Can be an external link, a link inside the store or a dispatcher"
+msgstr "Целевой URL. Может быть внешней ссылкой, ссылкой внутри магазина или диспетчером"
+
+msgctxt "Languages::ab__fn_common_btn_type"
+msgid "Appearance of the \"General link\" button"
+msgstr "Внешний вид кнопки \"Общая ссылка\""
+
+msgctxt "Languages::ab__fn_common_btn_type.tooltip"
+msgid "Choose the button representation on the storefront"
+msgstr "Выберите представление кнопки на витрине"
+
+msgctxt "Languages::ab__fn_cbt_as_btn"
+msgid "Button"
+msgstr "Кнопка"
+
+msgctxt "Languages::ab__fn_cbt_as_txt"
+msgid "Text"
+msgstr "Текст"
+
+msgctxt "Languages::ab__fn_common_btn_class"
+msgid "\"General link\" additional class"
+msgstr "Дополнительный класс \"Общая ссылка\""
+
+msgctxt "Languages::ab__fn_common_btn_class.tooltip"
+msgid "List of classes that will be added to the link (space-separated)"
+msgstr "Список классов, которые будут добавлены к ссылке (указывать через пробел)"
+
+msgctxt "Languages::ab__fn.more"
+msgid "All from the section"
+msgstr "Всё из раздела"
+
+msgctxt "Languages::ab__fn.show_more"
+msgid "Show more [x] of [y]"
+msgstr "Показать ещё [x] из [y]"
+
+msgctxt "Languages::ab__fn.menu.status"
+msgid "Allow displaying in AB: Fast navigation"
+msgstr "Разрешить отображение в AB: Быстрая навигация"
+
+msgctxt "Languages::ab__fn.menu.status.tooltip"
+msgid "Activate an option for editing the AB: Fast navigation block element"
+msgstr "Включить настройку для редактирования элемента блока AB: Быстрая навигация"
+
+msgctxt "Languages::ab__fn.menu.icon"
+msgid "Icon"
+msgstr "Иконка"
+
+msgctxt "Languages::ab__fn.menu.use_origin_image"
+msgid "Use images originals"
+msgstr "Использовать оригиналы изображений"
+
+msgctxt "Languages::ab__fn.menu.use_origin_image.tooltip"
+msgid "When the option is enabled — uploaded originals will be used \"as is\" (recommend using small size images). Images sizes are set in the block settings on layouts page"
+msgstr "Когда настройка включена — загруженные оригиналы будут использоваться \"как есть\""
+"(желательно использовать изображения небольшого размера). Размеры иконок задаются в параметрах блока на странице макетов"
+
+msgctxt "Languages::ab__fn.menu.label.show"
+msgid "Show label"
+msgstr "Показывать маркер"
+
+msgctxt "Languages::ab__fn.menu.label.show.tooltip"
+msgid "Display label for this language"
+msgstr "Отобразить маркер для данного языка"
+
+msgctxt "Languages::ab__fn.menu.label"
+msgid "Label text"
+msgstr "Текст маркера"
+
+msgctxt "Languages::ab__fn.menu.label_color"
+msgid "Label text color"
+msgstr "Цвет текста маркера"
+
+msgctxt "Languages::ab__fn.menu.label_background"
+msgid "Label background color"
+msgstr "Цвет фона маркера"
+
+msgctxt "Languages::ab__fn.category.status"
+msgid "Allow displaying in AB: Fast navigation"
+msgstr "Разрешить отображение в AB: Быстрая навигация"
+
+msgctxt "Languages::ab__fn.category.status.tooltip"
+msgid "Activate an option for editing the AB: Fast navigation block element"
+msgstr "Включить настройку для редактирования элемента блока AB: Быстрая навигация"
+
+msgctxt "Languages::ab__fn.category.use_origin_image"
+msgid "Use images originals"
+msgstr "Использовать оригиналы изображений"
+
+msgctxt "Languages::ab__fn.category.use_origin_image.tooltip"
+msgid "When the option is enabled — uploaded originals will be used \"as is\" (recommend using small size images). Images sizes are set in the block settings on layouts page"
+msgstr "Когда настройка включена — загруженные оригиналы будут использоваться \"как есть\""
+"(желательно использовать изображения небольшого размера). Размеры иконок задаются в параметрах блока на странице макетов"
+
+msgctxt "Languages::ab__fn.category.label.show"
+msgid "Show label"
+msgstr "Показывать маркер"
+
+msgctxt "Languages::ab__fn.category.label.show.tooltip"
+msgid "Display label for this language"
+msgstr "Отобразить маркер для данного языка"
+
+msgctxt "Languages::ab__fn.category.label"
+msgid "Label text"
+msgstr "Текст маркера"
+
+msgctxt "Languages::ab__fn.category.label_color"
+msgid "Label text color"
+msgstr "Цвет текста маркера"
+
+msgctxt "Languages::ab__fn.category.label_background"
+msgid "Label background color"
+msgstr "Цвет фона маркера"
+
+msgctxt "Languages::ab__fn.front.button.defult_text"
+msgid "Button"
+msgstr "Кнопка"
+
+msgctxt "Languages::ab__fast_navigation.help"
+msgid "Help"
+msgstr "Справка"
+
+msgctxt "Languages::ab__fast_navigation.help.doc"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__fast_navigation.doc'>documentation</a>."
+msgstr "Ознакомиться с <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__fast_navigation.doc'>документацией</a>."
+
+msgctxt "Languages::ab__fast_navigation.demodata"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__fn.demodata_description"
+msgid "Fast demo data creation for add-on"
+msgstr "Быстрое создание демо-данных для модуля"
+
+msgctxt "Languages::ab__fn.demodata.success.menu_created.blocks_placed"
+msgid "Menu added to block [names]"
+msgstr "Меню добавлено в блок [names]"
+
+msgctxt "Languages::ab__fn.demodata.table.description"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__fn.demodata.table.action"
+msgid "Action"
+msgstr "Действие"
+
+msgctxt "Languages::ab__fn.demodata.table.add_menu"
+msgid "Add the menu"
+msgstr "Добавить меню"
+
+msgctxt "Languages::ab__fn.demodata.place_into_blocks"
+msgid "Place into blocks"
+msgstr "Расставить по блокам"
+
+msgctxt "Languages::ab__fast_navigation.export"
+msgid "Export"
+msgstr "Экспорт"
+
+msgctxt "Languages::ab__fn.demodata.actions.export_menu"
+msgid "Menu"
+msgstr "Меню"
+
+msgctxt "Languages::ab__fn.demodata.actions.export_menu.placeholder"
+msgid "Menu ID"
+msgstr "ID меню"
+
+msgctxt "Languages::ab__fn.export_description"
+msgid "Fast menu export for the add-on AB: Fast navigation"
+msgstr "Быстрый экспорт меню для модуля AB: Быстрая навигация"
+
+msgctxt "Languages::ab__fn.export.table.description"
+msgid "The export data"
+msgstr "Экспортируемые данные"
+
+msgctxt "Languages::ab__fn.export.table.data"
+msgid "Data for export"
+msgstr "Данные для экспорта"
+
+msgctxt "Languages::ab__fn.export.table.action"
+msgid "Action"
+msgstr "Действие"
+
+msgctxt "Languages::ab__fn.demodata.success.menu_created"
+msgid "Demo menu <a target=\"_blank\" href=\"[href]\">[name]</a> is added"
+msgstr "Добавлено демо-меню <a target=\"_blank\" href=\"[href]\">[name]</a>"
+
+msgctxt "Languages::ab__fn.demodata.errors.file_broken"
+msgid "File [file_path] does not exist or was broken"
+msgstr "Файл [file_path] отсутствует или был поврежден"
+
+msgctxt "Languages::privilege_groups.ab__fast_navigation"
+msgid "AB: Fast navigation"
+msgstr "AB: Быстрая навигация"
+
+#. Alexbranding. Do not modify this file manually!

@@ -1,0 +1,307 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::ab__landing_categories"
+msgid "AB: Landing categories/pages"
+msgstr "AB: Посадочные категории/страницы"
+
+msgctxt "Addons::description::ab__landing_categories"
+msgid "Allows to create landing pages for categories"
+msgstr "Позволяет создавать посадочные страницы для категорий"
+
+msgctxt "Languages::ab__landing_categories"
+msgid "AB: Landing categories/pages"
+msgstr "AB: Посадочные категории/страницы"
+
+msgctxt "Languages::ab__lc_catalog"
+msgid "AB: Catalog"
+msgstr "AB: Каталог"
+
+msgctxt "Languages::ab__lc.breadcrumb_catalog"
+msgid "Catalog"
+msgstr "Каталог"
+
+msgctxt "Languages::ab__lc.catalog.image_control"
+msgid "Way of displaying icon"
+msgstr "Способ отображения иконки"
+
+msgctxt "Languages::ttc_ab__lc.catalog.image_control"
+msgid "For display the size specified in the fields \"Categories list thumbnail width/height\" on admin panel page \"Settings\" - \"Thumbnails\" will be used. Size 32*32px will be used for displaying to the left"
+msgstr "Для отображения сверху будет использоваться размер, указанный в полях \"Ширина/Высота иконки в списке категорий\" на странице админ панели \"Настройки\" - \"Иконки\". Для отображения слева будет использоваться размер 32*32px"
+
+msgctxt "Languages::ab__lc.catalog.image_control.none"
+msgid "Don't display"
+msgstr "Не отображать"
+
+msgctxt "Languages::ab__lc.catalog.image_control.top"
+msgid "Display the category image on top of the name"
+msgstr "Отображать изображение категории сверху над названием"
+
+msgctxt "Languages::ab__lc.catalog.image_control.left"
+msgid "Display the category mini-icon to the left of the name"
+msgstr "Отображать мини-иконку категории слева от названия"
+
+msgctxt "Languages::ab__lc.catalog.icon"
+msgid "Category mini-icon"
+msgstr "Мини-иконка категории"
+
+msgctxt "Languages::ttc_ab__lc.catalog.icon"
+msgid "Is displayed on the page <b>AB: Catalog</b> to the left of the name of category"
+msgstr "Отображается на странице <b>AB: Каталог</b> слева от названия категории"
+
+msgctxt "Languages::ab__lc.catalog.show_more"
+msgid "More"
+msgstr "Ещё"
+
+msgctxt "Languages::ab__lc_landing_category"
+msgid "AB: Landing category/page"
+msgstr "AB: Посадочная категория/страница"
+
+msgctxt "Languages::ab__lc.landing_category.landing"
+msgid "Use category as a landing page"
+msgstr "Использовать категорию как посадочную страницу"
+
+msgctxt "Languages::ttc_ab__lc.landing_category.landing"
+msgid "The page of category will be displayed as a landing. Only subcategories, without products will be displayed"
+msgstr "Страница категории будет отображаться как посадочная. Отобразятся только подкатегории, без товаров и без фильтров"
+
+msgctxt "Languages::ab__lc.landing_category.subsubcategories"
+msgid "Amount of sub-subcategories"
+msgstr "Количество под-подкатегорий"
+
+msgctxt "Languages::ttc_ab__lc.landing_category.subsubcategories"
+msgid "The maximum amount of displayed sub-subcategories. If it is equal 0 - sub-subcategories won't be displayed"
+msgstr "Максимальное количество отображаемых под-подкатегорий. Если равно 0, тогда под-подкатегории отображаться не будут"
+
+msgctxt "Languages::ab__lc.landing_category.show_more"
+msgid "More"
+msgstr "Ещё"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure"
+msgid "AB: Management of the displayed structure of landing category/page"
+msgstr "AB: Управление отображаемой структурой посадочной категории/страницы"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.menu_id"
+msgid "Menu ID"
+msgstr "ID меню"
+
+msgctxt "Languages::ttc_ab__lc.control_subcategory_structure.menu_id"
+msgid "Specify the menu ID which will be used for creation of the new structure of the subcategories"
+msgstr "Укажите ID меню, которое будет использовано для построения новой структуры подкатегорий"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.add_menu"
+msgid "Add and/or associate Menu"
+msgstr "Добавить и/или связать Меню"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.add_menu.info"
+msgid "The landing category menu is created only if necessary, as the menu is searched for by code <code>ABLC-xxx</code>, where <code>xxx</code> — category_id"
+msgstr "Меню создается только при необходимости, так как предварительно происходит поиск меню по коду <code>ABLC-xxx</code>, где <code>xxx</code> — category_id"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.add_menu.info.multiplestore"
+msgid "Before creating the Menu — select <b>Store</b>"
+msgstr "Перед созданием Меню — выберите <b>Магазин</b>"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.add_menu.added_new_menu"
+msgid "The Menu has been successfully created and is associated with the current category!"
+msgstr "Меню было успешно создано и связано с текущей категорией!"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.add_menu.used_existing_menu"
+msgid "The Menu already existed and was associated with the current category!"
+msgstr "Меню уже существовало и было связано с текущей категорией!"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.how_to_use_menu"
+msgid "Using of menu items"
+msgstr "Использование пунктов меню"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.how_to_use_menu.not_to_use"
+msgid "Not to use"
+msgstr "Не использовать"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.how_to_use_menu.prepend"
+msgid "Add menu items in the beginning of a structure of the subcategories"
+msgstr "Добавить пункты меню в начало структуры подкатегорий"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.how_to_use_menu.append"
+msgid "Add menu items in the end of a structure of the subcategories"
+msgstr "Добавить пункты меню в конец структуры подкатегорий"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.how_to_use_menu.replace"
+msgid "Replace the current sub-categories structure with the menu items"
+msgstr "Заместить текущую структуру подкатегорий пунктами меню"
+
+msgctxt "Languages::ab__lc.control_subcategory_structure.inherit_control"
+msgid "To inherit management"
+msgstr "Наследовать управление"
+
+msgctxt "Languages::ttc_ab__lc.control_subcategory_structure.inherit_control"
+msgid "If it is noted, then each point of a subcategory will be constructed taking into account its settings <b>AB: Management of the displayed structure of landing category/page</b> on <b>AB: Landing category/page</b> pages"
+msgstr "Если отмечено, тогда каждый пункт подкатегории будет построен с учетом ее настроек <b>AB: Управление отображаемой структурой посадочной категории/страницы</b> на страницах <b>AB: Посадочная категория/страница</b>"
+
+msgctxt "Languages::ab__lc.add_menu.added_new_menu"
+msgid "The new Menu is created"
+msgstr "Создано новое Меню"
+
+msgctxt "Languages::ab__lc.add_menu.used_existing_menu"
+msgid "The existing Menu is used"
+msgstr "Используется существующее Меню"
+
+msgctxt "Languages::ab__lc.help"
+msgid "Help"
+msgstr "Справка"
+
+msgctxt "Languages::ab__lc.help.doc"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__landing_categories.doc'>documentation</a>."
+msgstr "Ознакомиться с <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__landing_categories.doc'>документацией</a>."
+
+msgctxt "SettingsOptions::ab__landing_categories::add_catalog_to_breadcrumbs"
+msgid "Adding <b>AB: Catalog</b> to the breadcrumbs"
+msgstr "Добавить <b>AB: Каталог</b> в хлебные крошки"
+
+msgctxt "SettingsOptions::ab__landing_categories::maximum_number_of_displayed_items"
+msgid "The maximum amount of displayed subcategories on the pages <b>AB: Catalog</b> and <b>feature/brand</b>"
+msgstr "Максимальное количество отображаемых подкатегорий на страницах <b>AB: Каталог</b> и <b>характеристики/бренда</b>"
+
+msgctxt "SettingsOptions::ab__landing_categories::catalog_menu"
+msgid "Menu ID"
+msgstr "ID меню"
+
+msgctxt "SettingsTooltips::ab__landing_categories::catalog_menu"
+msgid "Specify the ID menu which will be used for creation of new structure. If it is equal 0, <b>AB: Catalog</b> structure will be constructed by a tree of categories"
+msgstr "Укажите ID меню, которое будет использовано для построения новой структуры. Если равно 0, тогда структура <b>AB: Каталог</b> будет построена деревом категорий"
+
+msgctxt "SettingsOptions::ab__landing_categories::show_category_tree"
+msgid "Show categories tree on the page of the feature/brand"
+msgstr "Отображать дерево категорий на странице характеристики/бренда"
+
+msgctxt "SettingsTooltips::ab__landing_categories::show_category_tree"
+msgid "It will form the links structure of categories (up to 3 levels) which contents this brand products. If you use the <a target='_blank' href='https://cs-cart.alexbranding.com/en/seo-pages-for-filters-en.html'>SEO pages for filters addon</a> and the corresponding intersection pages of category-brand are created, then the structure will contain links to such SEO pages"
+msgstr "Сформирует ссылочную структуру категорий (до 3-х уровней), в которых присутствуют товары бренда. Если используется модуль <a target='_blank' href='https://cs-cart.alexbranding.com/ru/seo-pages-for-filters.html'>SEO-страницы для фильтров</a> и созданы соответствующие страницы пересечений категория-бренд, то в структуре будут представлены ссылки на такие SEO-страницы"
+
+msgctxt "SettingsOptions::ab__landing_categories::ab__as"
+msgid "AB: Advanced sitemap"
+msgstr "AB: Расширенная карта сайта"
+
+msgctxt "SettingsOptions::ab__landing_categories::ab__as_add_to_sitemap"
+msgid "Add <b>AB: Catalog</b> to the XML-sitemap"
+msgstr "Добавить <b>AB: Каталог</b> в XML-карту сайта"
+
+msgctxt "Languages::ab__lc.settings"
+msgid "General settings"
+msgstr "Общие настройки"
+
+msgctxt "Languages::ab__lc.category.list"
+msgid "Landing categories list"
+msgstr "Список Посадочных категорий"
+
+msgctxt "Languages::ab__lc.category.list.tooltip"
+msgid "To correctly display the hierarchy of categories, the parent categories for the landing categories will be displayed, even if they are not landing categories!"
+msgstr "Для правильного отображения иерархии категорий, будут отображены и родительские категории для посадочных категорий, даже если они не являются посадочными!"
+
+msgctxt "Languages::ab__lc.demodata"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__lc.demodata_description"
+msgid "The page of quick creation of a demo category for demonstration of operating of the addon"
+msgstr "Страница быстрого создания демо-категории для демонстрации работы модуля"
+
+msgctxt "Languages::ab__lc.demodata.table.description"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__lc.demodata.table.action"
+msgid "Action"
+msgstr "Действие"
+
+msgctxt "Languages::ab__lc.demodata.table.add_category"
+msgid "Add a category"
+msgstr "Добавить категорию"
+
+msgctxt "Languages::ab__lc.export"
+msgid "Export"
+msgstr "Экспорт"
+
+msgctxt "Languages::ab__lc.export.description"
+msgid "The page of quick creation of the exports of the functional"
+msgstr "Страница быстрого создания експортов функционала"
+
+msgctxt "Languages::ab__lc.export.table.description"
+msgid "The exported data"
+msgstr "Экспортируемые данные"
+
+msgctxt "Languages::ab__lc.export.table.data"
+msgid "Data for export"
+msgstr "Данные для экспорта"
+
+msgctxt "Languages::ab__lc.export.table.action"
+msgid "Action"
+msgstr "Действие"
+
+msgctxt "Languages::ab__lc.demodata.actions.export_category"
+msgid "Categories"
+msgstr "Категории"
+
+msgctxt "Languages::ab__lc.demodata.actions.export_category.placeholder"
+msgid "Categories ID"
+msgstr "ID категорий"
+
+msgctxt "Languages::ab__lc.demodata.success.category"
+msgid "<a href=\"[href]\" target=\"_blank\">Demo category</a> was installed successfully"
+msgstr "<a href=\"[href]\" target=\"_blank\">Демо-категория</a> была создана успешно"
+
+msgctxt "Languages::privilege_groups.ab__landing_categories"
+msgid "AB: Landing categories/pages"
+msgstr "AB: Посадочные категории/страницы"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories_group"
+msgid "\"AB: Landing categories/pages\" add-on"
+msgstr "Модуль \"AB: Посадочные категории/страницы\""
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories_group_description"
+msgid "Allows to create landing pages for categories"
+msgstr "Позволяет создавать посадочные страницы для категорий"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.columns_count"
+msgid "Columns quantity"
+msgstr "Количество столбцов"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.thumbnail_width"
+msgid "Thumbnail width"
+msgstr "Ширина иконки категории"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.thumbnail_height"
+msgid "Thumbnail height"
+msgstr "Высота иконки категории"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.columns_count.variants.3"
+msgid "3"
+msgstr "3"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.columns_count.variants.4"
+msgid "4"
+msgstr "4"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.columns_count.variants.5"
+msgid "5"
+msgstr "5"
+
+msgctxt "Languages::abt__ut2.settings.addons.ab__landing_categories.columns_count.variants.6"
+msgid "6"
+msgstr "6"
+
+msgctxt "Languages::abt__yt.settings.addons.ab__landing_categories_group"
+msgid "\"AB: Landing categories/pages\" add-on"
+msgstr "Модуль \"AB: Посадочные категории/страницы\""
+
+msgctxt "Languages::abt__yt.settings.addons.ab__landing_categories.thumbnail_width"
+msgid "Thumbnail width"
+msgstr "Ширина иконки категории"
+
+msgctxt "Languages::abt__yt.settings.addons.ab__landing_categories.thumbnail_height"
+msgid "Thumbnail height"
+msgstr "Высота иконки категории"
+
+#. Alexbranding. Do not modify this file manually!

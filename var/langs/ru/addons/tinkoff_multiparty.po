@@ -1,0 +1,358 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: cs-cart-ru\n"
+"X-Crowdin-Project-ID: 54044\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /release-4.18.3/addons/tinkoff_multiparty.po\n"
+"X-Crowdin-File-ID: 9528\n"
+"PO-Revision-Date: 2024-10-07 13:33\n"
+
+msgctxt "Addons::name::tinkoff_multiparty"
+msgid "T-Bank Multiparty"
+msgstr "Т-Банк Сплитование"
+
+msgctxt "Addons::description::tinkoff_multiparty"
+msgid "Allows you to accept payments via T-Bank Multiparty"
+msgstr "Позволяет принимать платежи через Т-Банк, даже если получателей средств несколько."
+
+msgctxt "Languages::addons.tinkoff_multiparty.tinkoff_payment"
+msgid "T-Bank Multiparty"
+msgstr "Т-Банк Сплитование"
+
+msgctxt "Languages::addons.tinkoff_multiparty.url_for_payment_notifications"
+msgid "URL for payment notifications"
+msgstr "URL для уведомлений"
+
+msgctxt "Languages::addons.tinkoff_multiparty.url_for_success"
+msgid "URL for successful payments"
+msgstr "URL для удавшихся платежей"
+
+msgctxt "Languages::addons.tinkoff_multiparty.url_for_fail"
+msgid "URL for failed payments"
+msgstr "URL для неудавшихся платежей"
+
+msgctxt "Languages::addons.tinkoff_multiparty.terminal_key"
+msgid "Terminal"
+msgstr "Терминал"
+
+msgctxt "Languages::addons.tinkoff_multiparty.terminal_key_notice"
+msgid "Copy this from your T-Bank terminal settings"
+msgstr "Скопируйте из настроек терминала Т-Банка."
+
+msgctxt "Languages::addons.tinkoff_multiparty.terminal_password"
+msgid "Password"
+msgstr "Пароль"
+
+msgctxt "Languages::addons.tinkoff_multiparty.terminal_password_notice"
+msgid "Copy this from your T-Bank terminal settings"
+msgstr "Скопируйте из настроек терминала Т-Банка."
+
+msgctxt "Languages::addons.tinkoff_multiparty.send_receipt"
+msgid "Send receipt"
+msgstr "Отправлять чек"
+
+msgctxt "Languages::addons.tinkoff_multiparty.receipt_acquiring_should_be_set"
+msgid "Bank accepts the receipt only if the corresponding online cashier option is activated in the terminal settings.<br>For formation of receipts, fill company name, address and phone number in the company information"
+msgstr "Банк принимает чек, только если в настройках терминала активирована соответствующая онлайн-касса.<br>Для формирования чеков заполните название компании, адрес и номер телефона в информации о компании."
+
+msgctxt "Languages::addons.tinkoff_multiparty.pay_type"
+msgid "Pay type"
+msgstr "Тип оплаты"
+
+msgctxt "Languages::addons.tinkoff_multiparty.one_step_payment"
+msgid "One-step payment"
+msgstr "Оплата в один шаг"
+
+msgctxt "Languages::addons.tinkoff_multiparty.two_step_payment"
+msgid "Two-step payment"
+msgstr "Оплата в два шага"
+
+msgctxt "Languages::addons.tinkoff_multiparty.transfer_funds"
+msgid "Transfer funds"
+msgstr "Перевести средства"
+
+msgctxt "Languages::addons.tinkoff_multiparty.funds_were_transferred"
+msgid "Funds were transferred"
+msgstr "Средства переведены"
+
+msgctxt "Languages::addons.tinkoff_multiparty.payment_status"
+msgid "Payment status"
+msgstr "Статус платежа"
+
+msgctxt "Languages::addons.tinkoff_multiparty.payment_failed"
+msgid "Payment failed"
+msgstr "Платёж не удался"
+
+msgctxt "Languages::addons.tinkoff_multiparty.payment_message"
+msgid "Payment message"
+msgstr "Сообщение при платеже"
+
+msgctxt "Languages::addons.tinkoff_multiparty.confirmed_order_status"
+msgid "Order status for sending final receipt"
+msgstr "Статус заказа для чека полного расчёта"
+
+msgctxt "Languages::addons.tinkoff_multiparty.confirmed_order_status.description"
+msgid "This status means that the product has been delivered, or that the service has been rendered in full"
+msgstr "Этот статус означает, что товар был доставлен, а услуга оказана полностью"
+
+msgctxt "Languages::addons.tinkoff_multiparty.final_receipt_sent"
+msgid "Final receipt sent"
+msgstr "Чек полного расчёта отправлен"
+
+msgctxt "Languages::addons.tinkoff_multiparty.tinkoff_send_closing_receipt_error"
+msgid "Error sending final receipt"
+msgstr "Ошибка при отправке чека полного расчёта"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ffd_version"
+msgid "FFD Version"
+msgstr "Версия ФФД"
+
+msgctxt "Languages::addons.tinkoff_multiparty.receipt_object_is_required"
+msgid "Couldn't proceed to payment due to a technical issue. Please use another payment method or contact us."
+msgstr "Не удалось перейти к оплате из-за технической проблемы. Пожалуйста, воспользуйтесь другим способом оплаты или свяжитесь с нами."
+
+msgctxt "Languages::addons.tinkoff_multiparty.tinkoff_multiparty"
+msgid "T-Bank Multiparty"
+msgstr "Т-Банк Сплитование"
+
+msgctxt "Languages::addons.tinkoff_multiparty.enable_tinkoff_multiparty_payment"
+msgid "Enable the T-Bank Multiparty payment method to register a marketplace point"
+msgstr "Включите способ оплаты \"Т-Банк Сплитование\", чтобы зарегистрировать точку маркетплейса."
+
+msgctxt "Languages::addons.tinkoff_multiparty.shopcode_is_not_registered"
+msgid "T-Bank account is not registered"
+msgstr "Учётная запись Т-Банка не зарегистрирована"
+
+msgctxt "Languages::addons.tinkoff_multiparty.shopcode_is_registered"
+msgid "T-Bank account is registered"
+msgstr "Учётная запись Т-Банка зарегистрирована"
+
+msgctxt "Languages::addons.tinkoff_multiparty.form_register_shopcode"
+msgid "T-Bank account registration form"
+msgstr "Форма регистрации учётной записи Т-Банка"
+
+msgctxt "Languages::addons.tinkoff_multiparty.button_form_register_shopcode"
+msgid "T-Bank account registration form"
+msgstr "Форма регистрации учётной записи Т-Банка"
+
+msgctxt "Languages::addons.tinkoff_multiparty.button_form_sm_register"
+msgid "Register seller"
+msgstr "Зарегистрировать продавца"
+
+msgctxt "Languages::addons.tinkoff_multiparty.shopcode_point"
+msgid "T-Bank account"
+msgstr "Учётная запись Т-Банка"
+
+msgctxt "Languages::addons.tinkoff_multiparty.number_agreement_with_bank"
+msgid "Number of the agreement with the bank"
+msgstr "Номер договора с банком"
+
+msgctxt "Languages::addons.tinkoff_multiparty.date_agreement_with_bank"
+msgid "Date of the agreement with the bank"
+msgstr "Дата договора с банком"
+
+msgctxt "Languages::addons.tinkoff_multiparty.cancel_funds"
+msgid "Full refund"
+msgstr "Полный возврат"
+
+msgctxt "Languages::addons.tinkoff_multiparty.funds_were_refunded"
+msgid "Funds were refunded"
+msgstr "Средства возвращены"
+
+msgctxt "Languages::addons.tinkoff_multiparty.main_information"
+msgid "Main information"
+msgstr "Основная информация"
+
+msgctxt "Languages::addons.tinkoff_multiparty.service_provider_email.name"
+msgid "Billing email address"
+msgstr "Email-адрес плательщика"
+
+msgctxt "Languages::addons.tinkoff_multiparty.service_provider_email.description"
+msgid "Registers are sent to this address"
+msgstr "Реестры выплат будут отправлены на этот адрес"
+
+msgctxt "Languages::addons.tinkoff_multiparty.billing_descriptor.name"
+msgid "Company name (transliterated)"
+msgstr "Навзание компании (английскими буквами)"
+
+msgctxt "Languages::addons.tinkoff_multiparty.billing_descriptor.description"
+msgid "Displayed in SMS or 3DS verification message. From 1 to 14 Latin characters"
+msgstr "Отображается в SMS или при проверке 3D-Secure. Может содержать от 1 до 14 латинских букв."
+
+msgctxt "Languages::addons.tinkoff_multiparty.full_name.name"
+msgid "Company name (full)"
+msgstr "Название компании (полное)"
+
+msgctxt "Languages::addons.tinkoff_multiparty.name.name"
+msgid "Company name (short)"
+msgstr "Название компании (краткое)"
+
+msgctxt "Languages::addons.tinkoff_multiparty.name.description"
+msgid "Including a legal form (JSC, LLC, individual entrepreneur, etc.). Only Cyrlilic characters"
+msgstr "Включая организанионно-правовую форму (ОАО, ООО, ИП, и т.п.). Можно использовать только кириллицу."
+
+msgctxt "Languages::addons.tinkoff_multiparty.phone_organization"
+msgid "Phone"
+msgstr "Телефон"
+
+msgctxt "Languages::addons.tinkoff_multiparty.inn.name"
+msgid "INN"
+msgstr "ИНН"
+
+msgctxt "Languages::addons.tinkoff_multiparty.kpp.name"
+msgid "KPP"
+msgstr "КПП"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ogrn.name"
+msgid "OGRN"
+msgstr "ОГРН"
+
+msgctxt "Languages::addons.tinkoff_multiparty.kpp.description"
+msgid "Fill with zeroes in case KPP is missing: 000000000"
+msgstr "Если КПП нет, заполните нулями: 000000000"
+
+msgctxt "Languages::addons.tinkoff_multiparty.email.name"
+msgid "Email"
+msgstr "E-mail"
+
+msgctxt "Languages::addons.tinkoff_multiparty.site_url.name"
+msgid "URL"
+msgstr "URL"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses"
+msgid "Company address"
+msgstr "Адрес компании"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_type.name"
+msgid "Type of address"
+msgstr "Тип адреса"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_type.legal"
+msgid "Legal address"
+msgstr "Юридический адрес"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_type.actual"
+msgid "Actual address"
+msgstr "Фактический адрес"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_type.post"
+msgid "Post address"
+msgstr "Почтовый адрес"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_type.other"
+msgid "Other address"
+msgstr "Другой адрес"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_zip.name"
+msgid "Postal code"
+msgstr "Почтовый индекс"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_country.name"
+msgid "Country"
+msgstr "Страна"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_country.description"
+msgid "Three-letter ISO country code"
+msgstr "ISO-код страны (3 буквы)"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_city.name"
+msgid "City or locality"
+msgstr "Город или местоположение"
+
+msgctxt "Languages::addons.tinkoff_multiparty.addresses_street.name"
+msgid "Street, house, building, apartment, office, etc."
+msgstr "Улица, дом, строение, квартира, офис, и т.д."
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo"
+msgid "Company representative"
+msgstr "Представитель компании"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_first_name.name"
+msgid "First name"
+msgstr "Имя"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_last_name.name"
+msgid "Last name"
+msgstr "Фамилия"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_middle_name.name"
+msgid "Middle name"
+msgstr "Отчество"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_birth_date.name"
+msgid "Date of birth"
+msgstr "Дата рождения"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_phone.name"
+msgid "Phone number"
+msgstr "Номер телефона"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_country.name"
+msgid "Country of citizenship"
+msgstr "Страна гражданства"
+
+msgctxt "Languages::addons.tinkoff_multiparty.ceo_country.description"
+msgid "Three-letter ISO country code"
+msgstr "ISO-код страны (3 буквы)"
+
+msgctxt "Languages::addons.tinkoff_multiparty.bank"
+msgid "Bank details"
+msgstr "Банковская информация"
+
+msgctxt "Languages::addons.tinkoff_multiparty.bank_account.name"
+msgid "Account number"
+msgstr "Номер счёта"
+
+msgctxt "Languages::addons.tinkoff_multiparty.bank_name.name"
+msgid "Bank name"
+msgstr "Наименование банка"
+
+msgctxt "Languages::addons.tinkoff_multiparty.bank_bik.name"
+msgid "BIC"
+msgstr "БИК"
+
+msgctxt "Languages::addons.tinkoff_multiparty.sm_register_username"
+msgid "SM-Register username"
+msgstr "Имя пользователя в SM-Register"
+
+msgctxt "Languages::addons.tinkoff_multiparty.sm_register_password"
+msgid "SM-Register password"
+msgstr "Пароль в SM-Register"
+
+msgctxt "Languages::addons.tinkoff_multiparty.funds_were_refunded"
+msgid "Funds were refunded"
+msgstr "Средства возвращены"
+
+msgctxt "Languages::addons.tinkoff_multiparty.two_step.description"
+msgid "With a two-step payment, funds are debited immediately if there are products from several vendors in the cart"
+msgstr "При оплате в два шага средства списываются со счёта сразу, если в корзине есть товары от нескольких продавцов."
+
+msgctxt "Languages::addons.tinkoff_multiparty.marketplace_inn.name"
+msgid "INN of the marketplace"
+msgstr "ИНН маркетплейса"
+
+msgctxt "Languages::addons.tinkoff_multiparty.marketplace_inn.description"
+msgid "The INN of the marketplace is required to send receipts"
+msgstr "ИНН маркетплейса необходим для отправки чеков."
+
+msgctxt "Languages::addons.tinkoff_multiparty.full_refunded.notification"
+msgid "The refund did not cause an error: [errorCode]"
+msgstr "Возврат не сработал из-за ошибки: [errorCode]"
+
+msgctxt "Languages::addons.tinkoff_multiparty.closing_receipt_cannot_sent"
+msgid "Final receipt couldn't be sent automatically because the payment session status differs from \"CONFIRMED\". Please send the final receipt manually."
+msgstr "Не удалось автоматически отправить чек полного расчёта, потому что статус платёжной сессии отличается от \"CONFIRMED\". Пожалуйста, отправьте чек полного расчёта вручную."
+
+msgctxt "Languages::addons.tbank_multiparty.log_amounts_do_not_match"
+msgid "T-Bank notification declined: Store and notification order total amounts do not match."
+msgstr "Уведомление Т-Банка отклонено: не совпадает сумма заказа в магазине и в уведомлении."
+
+msgctxt "Languages::addons.tbank_multiparty.log_notification_exception"
+msgid "T-Bank notification error: [error_msg]"
+msgstr "Ошибка уведомления Т-Банка: [error_msg]"
+

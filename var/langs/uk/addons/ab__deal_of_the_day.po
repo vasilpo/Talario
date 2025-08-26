@@ -1,0 +1,769 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
+
+msgctxt "Addons::name::ab__deal_of_the_day"
+msgid "AB: Extended promotions"
+msgstr "AB: Розширені промо-акції"
+
+msgctxt "Addons::description::ab__deal_of_the_day"
+msgid "Add-on extends native CS-Cart promotions functionality, turning them into a powerful marketing tool"
+msgstr "Модуль розширює базовий функціонал промо-акцій CS-Cart, перетворюючи його в потужний маркетинговий інструмент"
+
+msgctxt "Languages::ab__deal_of_the_day"
+msgid "AB: Extended promotions"
+msgstr "AB: Розширені промо-акції"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::count_to"
+msgid "Countdown to"
+msgstr "Зворотний відлік до"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::count_to"
+msgid "What time will be used as end time for countdown"
+msgstr "Задає точку відліку для лічильника"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::count_to::end_of_the_day"
+msgid "The end of the day"
+msgstr "Закінчення дня"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::count_to::end_of_the_promotion"
+msgid "The end of the promotion"
+msgstr "Закінчення промо-акції"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::countdown_type"
+msgid "Countdown type"
+msgstr "Тип лічильника"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::countdown_type"
+msgid "Defines, what countdown type will be displayed on the storefront"
+msgstr "Визначає, який тип лічильника буде відображено на вітрині"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::countdown_type::flipclock"
+msgid "FlipClock.js"
+msgstr "FlipClock.js"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::countdown_type::javascript"
+msgid "Javascript"
+msgstr "Javascript"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::max_height"
+msgid "Maximum height of description, px"
+msgstr "Максимальна висота опису, px"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::max_height"
+msgid "Hides the description of the promotion when height of description exceeds the specified value. Text of link is a language variable — <code>ab__dotd.more</code> and <code>ab__dotd.less</code>"
+msgstr "Приховує опис промо-акції, коли висота опису перевищує вказане значення. Текст посилання є мовними змінними — <code>ab__dotd.more</code> й <code>ab__dotd.less</code>"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::promotions_per_page"
+msgid "Promotions per page"
+msgstr "Промо-акцій на сторінку"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::promotions_per_page"
+msgid "Quantity of promotions on the list page. To show all promotions on one page — enter <code>0</code>"
+msgstr "Кількість промо-акцій на сторінці списку. Для відображення всіх промо-акцій на одній сторінці — вкажіть <code>0</code>"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::chains_per_page"
+msgid "Combinations per page"
+msgstr "Комбінацій на сторінку"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::chains_per_page"
+msgid "Quantity of products combinations from \"Buy together\" add-on on the list page. To show all combinations on one page — enter <code>0</code>"
+msgstr "Кількість комбінацій товарів від модуля \"Купити разом\" на сторінці списку промо-акцій. Для відображення всіх комбінацій на одній сторінці — вкажіть <code>0</code>"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::highlight_when_left"
+msgid "Highlighting the promotion"
+msgstr "Виділення промо-акції"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::highlight_when_left"
+msgid "Highlight the promotion, when days left"
+msgstr "Виділяти промо-акцію, якщо залишилось днів"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::0"
+msgid "don't highlight"
+msgstr "не виділяти"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::1"
+msgid "1"
+msgstr "1"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::2"
+msgid "2"
+msgstr "2"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::3"
+msgid "3"
+msgstr "3"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::4"
+msgid "4"
+msgstr "4"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::5"
+msgid "5"
+msgstr "5"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::6"
+msgid "6"
+msgstr "6"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::7"
+msgid "7"
+msgstr "7"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::amount_of_promos_in_prods_lists"
+msgid "Amount of displayed promotions in product lists"
+msgstr "Кількість промо-акцій, відображених у списках товарів"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::0"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::1"
+msgid "1"
+msgstr "1"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::2"
+msgid "2"
+msgstr "2"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::3"
+msgid "3"
+msgstr "3"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::4"
+msgid "4"
+msgstr "4"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::5"
+msgid "5"
+msgstr "5"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::amount_of_promos_in_prods_lists"
+msgid "Set amount of applied to a product catalog promotions, which will be displayed in products lists"
+msgstr "Встановлює кількість промо-акцій для каталогу товару, що будуть відображені в списках товарів"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__as"
+msgid "AB: Advanced sitemap"
+msgstr "AB: Розширена карта сайту"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__as_add_to_sitemap"
+msgid "Adding promotions pages to the XML-sitemap"
+msgstr "Додає сторінки промо-акцій до XML-карти сайту"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__show_expired_promos"
+msgid "Showing expired promotions"
+msgstr "Показ минулих промо-акцій"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::ab__show_expired_promos"
+msgid "Showing expired promotions on the promotions list page"
+msgstr "Показ минулих промо-акцій на сторінці списку промо-акцій"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__show_awaited_promos"
+msgid "Showing awaiting promotions"
+msgstr "Показ майбутніх промо-акцій"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::ab__show_awaited_promos"
+msgid "Showing awaiting promotions on the promotions list page"
+msgstr "Показ майбутніх промо-акцій на сторінці списку промо-акцій"
+
+msgctxt "Languages::block_ab__deal_of_the_day"
+msgid "AB: Deal of the day"
+msgstr "AB: Товар дня"
+
+msgctxt "Languages::ab__dotd_time_left"
+msgid "Promotion expires within"
+msgstr "До завершення акції залишилось"
+
+msgctxt "Languages::ab__dotd_product_label"
+msgid "Promotion"
+msgstr "Акція"
+
+msgctxt "Languages::ab__dotd.more"
+msgid "More"
+msgstr "Більше"
+
+msgctxt "Languages::ab__dotd.less"
+msgid "Less"
+msgstr "Менше"
+
+msgctxt "Languages::ab__dotd.form.h1"
+msgid "h1 tag"
+msgstr "Тег h1"
+
+msgctxt "Languages::ab__dotd.form.page_title"
+msgid "Page title"
+msgstr "Заголовок сторінки"
+
+msgctxt "Languages::ab__dotd.form.meta_description"
+msgid "Meta tag <code>description</code>"
+msgstr "Мета тег <code>description</code>"
+
+msgctxt "Languages::ab__dotd.form.meta_keywords"
+msgid "Meta tag <code>keywords</code>"
+msgstr "Мета тег <code>keywords</code>"
+
+msgctxt "Languages::ab__dotd.form.page_image"
+msgid "Image for promotion page"
+msgstr "Зображення для сторінки промо-акції"
+
+msgctxt "Languages::ab__dotd.form.list_image"
+msgid "Image for promotions list"
+msgstr "Зображення для списку промо-акцій"
+
+msgctxt "Languages::ab__dotd.form.group_by_category"
+msgid "Group by category"
+msgstr "Групувати по категорії"
+
+msgctxt "Languages::ab__dotd.form.use_products_filter"
+msgid "Use filter by products"
+msgstr "Застосувати фільтр по товарах"
+
+msgctxt "Languages::ab__dotd.form.show_label_in_products_lists"
+msgid "Display label (sticker) \"Promotion\" in products lists"
+msgstr "Відображати лейбл (стікер) \"Акція\" в списках товарів"
+
+msgctxt "Languages::ab__dotd.form.show_label_in_products_lists.tooltip"
+msgid "All products with this promotion will be output in products lists with \"Promotion\" label"
+msgstr "Усі товари, що підпадають під умови цієї промо-акції, будуть відображатись з лейблом \"Акція\" у списках товарів"
+
+msgctxt "Languages::ab__dotd.form.show_in_products_lists"
+msgid "Display promotion in product lists"
+msgstr "Відображати промо-акцію в списках товарів"
+
+msgctxt "Languages::ab__dotd.form.show_countdown_on_promotion_page"
+msgid "Display countdown on the promotion page"
+msgstr "Відображати лічильник на сторінці промо-акцію"
+
+msgctxt "Languages::ab__dotd.form.show_countdown_on_product_page"
+msgid "Display countdown on the product page"
+msgstr "Відображати лічильник на сторінці товару"
+
+msgctxt "Languages::ab__dotd.from"
+msgid "from"
+msgstr "з"
+
+msgctxt "Languages::ab__dotd.to"
+msgid "to"
+msgstr "до"
+
+msgctxt "Languages::ab__dotd.page_action_period"
+msgid "Promotion period:"
+msgstr "Період проведення промо-акції:"
+
+msgctxt "Languages::ab__dotd.days_left"
+msgid "<span>[n]</span> <div>day left</div>|<span>[n]</span> <div>days left</div>"
+msgstr "<div>Залишився</div> <span>[n]</span> <div>день</div>|<div>Залишилось</div> <span>[n]</span> <div>дні</div>|<div>Залишилось</div> <span>[n]</span> <div>днів</div>"
+
+msgctxt "Languages::ab__dotd.clear_filter"
+msgid "Clear filter"
+msgstr "Очистити фільтр"
+
+msgctxt "Languages::ab__dotd.detailed"
+msgid "Promotion details"
+msgstr "Деталі промо-акції"
+
+msgctxt "Languages::ab__promotions_list"
+msgid "AB: Promotions list"
+msgstr "AB: Список промо-акцій"
+
+msgctxt "Languages::ab__promotions_view"
+msgid "AB: Promotion page"
+msgstr "AB: Сторінка промо-акції"
+
+msgctxt "Languages::block_ab__promotions"
+msgid "AB: Promotions"
+msgstr "AB: Промо-акції"
+
+msgctxt "Languages::ab__dotd.add_promotions_and_close"
+msgid "Add promotions and close"
+msgstr "Додати промо-акції та закрити"
+
+msgctxt "Languages::ab__dotd.add_promotions"
+msgid "Add promotions"
+msgstr "Додати промо-акції"
+
+msgctxt "Languages::ab__dotd_scroller"
+msgid "Promotions scroller"
+msgstr "Скролер промо-акцій"
+
+msgctxt "Languages::ab__dotd_sorted_promotions"
+msgid "Active promotions"
+msgstr "Активні акції"
+
+msgctxt "Languages::ab__dotd.sort.created"
+msgid "by creation date"
+msgstr "за датою створення"
+
+msgctxt "Languages::ab__dotd.sort.to_date"
+msgid "by ending date"
+msgstr "за датою завершення"
+
+msgctxt "Languages::ab__dotd.sort.priority"
+msgid "by priority"
+msgstr "за пріоритетом"
+
+msgctxt "Languages::ab__dotd.sort.name"
+msgid "by name"
+msgstr "за назвою"
+
+msgctxt "Languages::ab__dotd.choose_promotion"
+msgid "Choose promotion"
+msgstr "Вибір промо-акції"
+
+msgctxt "Languages::ab__deal_of_the_day_title_product"
+msgid "Promotions"
+msgstr "Промо-акції"
+
+msgctxt "Languages::ab__dotd.all_promotions"
+msgid "Also in promotions"
+msgstr "Також в акціях"
+
+msgctxt "Languages::ab__dotd.all_promotions.title"
+msgid "View all promotions for this product"
+msgstr "Переглянути усі промо-акції для цього товару"
+
+msgctxt "Languages::ab__show_additional_product_images"
+msgid "Show additional products images"
+msgstr "Показати додаткові зображення товарів"
+
+msgctxt "Languages::ab__dotd.countdown.years"
+msgid "[n] year|[n] years|[n] years"
+msgstr "[n] рік|[n] роки|[n] років"
+
+msgctxt "Languages::ab__dotd.countdown.months"
+msgid "[n] month|[n] months|[n] months"
+msgstr "[n] місяць|[n] місяці|[n] місяців"
+
+msgctxt "Languages::ab__dotd.countdown.days"
+msgid "[n] day|[n] days|[n] days"
+msgstr "[n] день|[n] дні|[n] днів"
+
+msgctxt "Languages::ab__dotd.countdown.hours"
+msgid "[n] hour|[n] hours|[n] hours"
+msgstr "[n] година|[n] години|[n] годин"
+
+msgctxt "Languages::ab__dotd.countdown.minutes"
+msgid "[n] minute|[n] minutes|[n] minutes"
+msgstr "[n] хвилина|[n] хвилини|[n] хвилин"
+
+msgctxt "Languages::ab__dotd.countdown.seconds"
+msgid "[n] second|[n] seconds|[n] seconds"
+msgstr "[n] секунда|[n] секунди|[n] секунд"
+
+msgctxt "Languages::ab__dotd.countdown.simple.years"
+msgid "years"
+msgstr "років"
+
+msgctxt "Languages::ab__dotd.countdown.simple.months"
+msgid "months"
+msgstr "місяців"
+
+msgctxt "Languages::ab__dotd.countdown.simple.days"
+msgid "days"
+msgstr "днів"
+
+msgctxt "Languages::ab__dotd.countdown.simple.hours"
+msgid "hours"
+msgstr "годин"
+
+msgctxt "Languages::ab__dotd.countdown.simple.minutes"
+msgid "minutes"
+msgstr "хвилин"
+
+msgctxt "Languages::ab__dotd.countdown.simple.seconds"
+msgid "seconds"
+msgstr "секунд"
+
+msgctxt "Languages::ab__dotd.promotion_expired"
+msgid "Promotion has expired"
+msgstr "Акція завершена"
+
+msgctxt "Languages::ab__dotd.get_more_combinations"
+msgid "Show more [n] combination|Show more [n] combinations"
+msgstr "Показати ще [n] комбінацію|Показати ще [n] комбінації|Показати ще [n] комбінацій"
+
+msgctxt "Languages::ab__dotd.showed_combinations"
+msgid "Shown [n] from [total]"
+msgstr "Показано [n] з [total]"
+
+msgctxt "Languages::ab__dotd.chains_list.title"
+msgid "Products combinations"
+msgstr "Комбінації товарів"
+
+msgctxt "Languages::ab__dotd.today_only"
+msgid "Only today"
+msgstr "Лише сьогодні"
+
+msgctxt "Languages::ab__dotd_expired_promotions"
+msgid "Expired promotions"
+msgstr "Минулі акції"
+
+msgctxt "Languages::ab__dotd_awaited_promotions"
+msgid "Awaiting promotions"
+msgstr "Майбутні акції"
+
+msgctxt "Languages::ab__dotd.promotion_awaited"
+msgid "Promotion is awaiting"
+msgstr "Акція очікується"
+
+msgctxt "Languages::ab__dotd_time_awaited_left"
+msgid "To start promotion remains"
+msgstr "До початку акції залишилось"
+
+msgctxt "Languages::ab__dotd.days_to_start"
+msgid "<span>[n]</span> day left before the start|<span>[n]</span> days left before the start"
+msgstr "До початку <span>[n]</span> день|До початку <span>[n]</span> дні|До початку <span>[n]</span> днів"
+
+msgctxt "Languages::block_ab__promotions_description"
+msgid "Promotions list"
+msgstr "Список промо-акцій"
+
+msgctxt "Languages::block_ab__deal_of_the_day_description"
+msgid "Preview of the chosen promotion"
+msgstr "Анонс обраної промо-акції"
+
+msgctxt "Languages::ab__dotd.settings"
+msgid "General settings"
+msgstr "Загальні налаштування"
+
+msgctxt "Languages::block_ab__promotion_main_data"
+msgid "AB: Promotion header"
+msgstr "AB: Шапка промо-акції"
+
+msgctxt "Languages::block_ab__promotion_main_data_description"
+msgid "General promotion data (name, image, description etc.)"
+msgstr "Основні дані промо-акції (назва, зображення, опис)"
+
+msgctxt "Languages::block_ab__promotion_categories_filter"
+msgid "AB: Filter by categories"
+msgstr "AB: Фільтр по категоріях"
+
+msgctxt "Languages::block_ab__promotion_categories_filter_description"
+msgid "List of product categories that participate in the promotion"
+msgstr "Список категорій товарів, які приймають участь у акції"
+
+msgctxt "Languages::ab__promotion_categories_filter"
+msgid "AB: Filter by categories"
+msgstr "AB: Фільтр по категоріях"
+
+msgctxt "Languages::ab__promotion_main_data"
+msgid "Promotion header"
+msgstr "Шапка промо-акції"
+
+msgctxt "Languages::ab__dotd.form.hide_products_block"
+msgid "Hide product block"
+msgstr "Приховати блок товарів"
+
+msgctxt "Languages::ab__dotd_schedule"
+msgid "AB: Promotion schedule"
+msgstr "AB: Розклад промо-акції"
+
+msgctxt "Languages::ab__dotd.form.use_schedule"
+msgid "Use schedule"
+msgstr "Використовувати розклад"
+
+msgctxt "Languages::ab__dotd.error.use_schedule_is_on"
+msgid "When using the \"AB: Promotion schedule\" available period changes are not available"
+msgstr "При використанні \"AB: Розклад промо-акції\" зміна періоду доступності недоступні"
+
+msgctxt "Languages::ab__dotd.tab.ab__dotd_schedule_header"
+msgid "Use the time range selection for each day of each month to specify the promotion activity period. When setting the schedule, refer to that left mouse button - select, right mouse button - unselect"
+msgstr "Щоб задати період доступності промо-акції використовуйте вибір часових діапазонів для кожного дня кожного місяця. При налаштуванні розкладу керуйтесь тим, що ліва кнопка миші — відмітити, права — скасувати вибір"
+
+msgctxt "Languages::ab__dotd.form.use_schedule.tooltip"
+msgid "If you activate this option, the standard promotion setting \"Use available period\" will be disabled and the promotion activity will be determined by the Schedule that you can set in this tab interface. Conversely, if you disable this setting, the standard option \"Use available period\" will control activity of the promotion."
+msgstr "При активації цього налаштування стандартне налаштування промо-акції \"Задати період доступності\" буде деактивовано й активність промо-акції буде визначатись Розкладом, яке Ви можете корегувати в інтерфейсі цієї вкладки. І навпаки: при деактивації цього налаштування активність акції визначатиметься стандартним налаштуванням \"Задати період доступності\""
+
+msgctxt "Languages::ab__dotd.schedule.table_header"
+msgid "Time and Date"
+msgstr "Час і Дата"
+
+msgctxt "Languages::sort_order"
+msgid "Order"
+msgstr "Порядок"
+
+msgctxt "Languages::ab__dotd.all_promotions_list"
+msgid "All promotions"
+msgstr "Усі промо-акціi"
+
+msgctxt "Languages::ab__dotd.view_promotion"
+msgid "More"
+msgstr "Докладніше"
+
+msgctxt "Languages::ab__dotd.block.priority"
+msgid "Priority"
+msgstr "Пріоритет"
+
+msgctxt "Languages::block_ab__multi_deal_of_the_day"
+msgid "AB: Multi Deal of the day"
+msgstr "AB: Мульти Товар дня"
+
+msgctxt "Languages::block_ab__multi_deal_of_the_day_description"
+msgid "Display anounce of one of chosen promotions, considering to their priorities"
+msgstr "Відображає анонс однієї з обраних промо-акцій, згідно з пріоритетом"
+
+msgctxt "Languages::ab__dotd_enable_countdown_timer"
+msgid "Display promotion countdown"
+msgstr "Відображати лічильник промо-акції"
+
+msgctxt "Languages::ab__dotd.category_filter_icon"
+msgid "Icon for block of filters"
+msgstr "Іконка для блоку фільтрів"
+
+msgctxt "Languages::ab__dotd.all_products"
+msgid "All categories"
+msgstr "Всі категорії"
+
+msgctxt "Languages::ab__dotd.more_products_from_category"
+msgid "More products from the category [category]"
+msgstr "Більше товарів із категорії [category]"
+
+msgctxt "Languages::ab__dotd.main_category_filter_icon"
+msgid "Image for item \"All categories\" of the filter by categories"
+msgstr "Зображення для пункту \"Всі категорії\" фільтра по категоріям"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day_group"
+msgid "AB: Extended promotions"
+msgstr "AB: Розширені промо-акції"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day_group_description"
+msgid "There are settings below that influence elements that are added by the add-on \"AB: Extended promotions\""
+msgstr "Нижче наведено налаштування, які впливають на додані модулі \"AB: Розширені промо-акції\""
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.block_background"
+msgid "Block background"
+msgstr "Фон блоку"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.block_fonts_color"
+msgid "Text color in the block"
+msgstr "Колір тексту в блоці"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.block_fonts_color.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Налаштування працює тільки, якщо фон блоку співпадає з фоном сайту"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bordered_block"
+msgid "Add border for block"
+msgstr "Додати межу для блоку"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bordered_block.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Налаштування працює тільки, якщо фон блоку співпадає з фоном сайту"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.shadow_block"
+msgid "Add shadow for block"
+msgstr "Додати тінь для блоку"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.rounded_corners_blocks"
+msgid "Round corners at elements of block"
+msgstr "Округлити кути у елементів блоку"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title"
+msgid "Highlight the title of the promotion"
+msgstr "Виділити заголовок промо-акції кольором"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title.tooltip"
+msgid "Colors the title of the promotion with the theme color \"Discount Label\""
+msgstr "Заголовок промо-акції буде пофарбовано в колір, який застосовується темою для \"Discount Label\""
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day_group"
+msgid "AB: Extended promotions"
+msgstr "AB: Розширені промо-акції"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day_group_description"
+msgid "There are settings below that influence elements that are added by the add-on \"AB: Extended promotions\""
+msgstr "Нижче наведено налаштування, які впливають на додані модулі \"AB: Розширені промо-акції\""
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.block_background"
+msgid "Block background"
+msgstr "Фон блоку"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.block_fonts_color"
+msgid "Text color in the block"
+msgstr "Колір тексту в блоці"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.block_fonts_color.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Налаштування працює тільки, якщо фон блоку співпадає з фоном сайту"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bordered_block"
+msgid "Add border for block"
+msgstr "Додати межу для блоку"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bordered_block.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Налаштування працює тільки, якщо фон блоку співпадає з фоном сайту"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.shadow_block"
+msgid "Add shadow for block"
+msgstr "Додати тінь для блоку"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.rounded_corners_blocks"
+msgid "Round corners at elements of block"
+msgstr "Округлити кути у елементів блоку"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title"
+msgid "Highlight the title of the promotion"
+msgstr "Виділити заголовок промо-акції кольором"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title.tooltip"
+msgid "Colors the title of the promotion with the theme color \"Discount Label\""
+msgstr "Заголовок промо-акції буде пофарбовано в колір, який застосовується темою для \"Discount Label\""
+
+msgctxt "Languages::ab__dotd.help"
+msgid "Help"
+msgstr "Довідка"
+
+msgctxt "Languages::ab__dotd_help.docs"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__deal_of_the_day.doc'>documentation</a>"
+msgstr "Ознайомитись з <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__deal_of_the_day.doc'>документацією</a>"
+
+msgctxt "Languages::privilege_groups.ab__deal_of_the_day"
+msgid "AB: Extended promotions"
+msgstr "AB: Розширені промо-акції"
+
+msgctxt "Languages::privileges.ab__dotd_manage_seodata"
+msgid "Manage promotions SEO data"
+msgstr "Керування SEO-даними промо-акцій"
+
+msgctxt "Languages::privileges.ab__dotd_view_seodata"
+msgid "View promotions SEO data"
+msgstr "Перегляд SEO-даних промо-акцій"
+
+msgctxt "Languages::ab__dotd.autoinstall.no_demodata"
+msgid "File with demo data is missing"
+msgstr "Файл з демо-даними відсутній"
+
+msgctxt "Languages::ab__dotd.autoinstall.promotions_not_created"
+msgid "Failed to create demo promotions"
+msgstr "Не вдалось створити демо промо-акції"
+
+msgctxt "Languages::ab__dotd.autoinstall.promotions_created"
+msgid "Demo promotions [promotions] are created successfully"
+msgstr "Демо промо-акції [promotions] успішно створені"
+
+msgctxt "Languages::ab__dotd.demodata"
+msgid "Demo data"
+msgstr "Демо-дані"
+
+msgctxt "Languages::ab__dotd.demodata_description"
+msgid "Installing demo data page"
+msgstr "Сторінка завантаження демо-даних"
+
+msgctxt "Languages::ab__dotd.demodata.table.description"
+msgid "Demo data"
+msgstr "Демо-дані"
+
+msgctxt "Languages::ab__dotd.demodata.table.action"
+msgid "Action"
+msgstr "Дія"
+
+msgctxt "Languages::ab__dotd.demodata.table.add_promotions"
+msgid "Add promotions"
+msgstr "Додавання промо-акцій"
+
+msgctxt "Languages::ab__dotd.demodata.place_into_blocks"
+msgid "Place into blocks"
+msgstr "Розставити по блоках"
+
+msgctxt "Languages::ab__dotd.layouts"
+msgid "Layouts"
+msgstr "Макети"
+
+msgctxt "Languages::ab__dotd.layouts.layout_was_reset"
+msgid "Layout was reset"
+msgstr "Макет було скинуто"
+
+msgctxt "Languages::ab__dotd.layouts.choose_layout_to_reset"
+msgid "Choose layout to reset"
+msgstr "Оберіть макет для скидання"
+
+msgctxt "Languages::ab__dotd.layouts.table.dispatch_description"
+msgid "Type of the layout page"
+msgstr "Тип сторінки макету"
+
+msgctxt "Languages::ab__dotd.layouts.table.dispatch"
+msgid "Dispatch"
+msgstr "Dispatch"
+
+msgctxt "Languages::ab__dotd.layouts.table.layouts"
+msgid "Layouts"
+msgstr "Макети"
+
+msgctxt "Languages::ab__dotd.layouts.table.action"
+msgid "Action"
+msgstr "Дія"
+
+msgctxt "Languages::ab__dotd.layouts.table.get_file"
+msgid "Get file"
+msgstr "Завантажити файл"
+
+msgctxt "Languages::ab__dotd.layouts.layout_is_not_found"
+msgid "Layout is not found"
+msgstr "Макет не знайдено"
+
+msgctxt "Languages::ab__dotd.layouts.header"
+msgid "All layout pages, added by the add-on, are displayed on this page. You can reset pages in any layout to the default state. Also you can download xml-file of a layout page and import it manually."
+msgstr "На цій сторінці відображено усі сторінки макетів, що додано модулем. Ви можете скинути сторінку в рамках будь-якого макету до стану за замовченням для поточної версії модуля. Також Ви можете завантажити xml-файл сторінки макету та імпортувати його вручну."
+
+msgctxt "Languages::ab__emd.tabs.promotions.view"
+msgid "Promotions"
+msgstr "Промо-акції"
+
+msgctxt "Languages::ab__emd.setting.header.promotions.view"
+msgid "Promotions general pattern"
+msgstr "Загальний шаблон промо-акцій"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action"
+msgid "Redefine categories meta tags"
+msgstr "Перевизначати мета-теги"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.page_title"
+msgid "Page tag <code>title</code> pattern"
+msgstr "Шаблон тега <code>title</code>"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.meta_description"
+msgid "Meta tag <code>description</code> pattern"
+msgstr "Шаблон мета-тега <code>description</code>"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.meta_keywords"
+msgid "Meta tag <code>keywords</code> pattern"
+msgstr "Шаблон мета-тега <code>keywords</code>"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action.do_not_override"
+msgid "Do not redefine"
+msgstr "Не перевизначати"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action.override_empty"
+msgid "Redefine empty"
+msgstr "Перевизначати пусті"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action.override_all"
+msgid "Redefine all"
+msgstr "Перевизначати всі"
+
+msgctxt "Languages::ab__dotd.placeholders.promotion"
+msgid "<b>[promotion]</b> — promotion name (as is)<br> <b>[promotion_lower]</b> — promotion name (lowercase)<br> <b>[Promotion]</b> — promotion name (the first letter is uppercase others are lowercase)<br> <b>[PROMOTION]</b> — promotion name (uppercase)"
+msgstr "<b>[promotion]</b> — назва промо-акції (як є)<br>"
+"<b>[promotion_lower]</b> — назва промо-акції (малі літери)<br>"
+"<b>[Promotion]</b> — назва промо-акції (перша велика, решта малі)<br>"
+"<b>[PROMOTION]</b> — назва промо-акції (великі літери)"
+
+msgctxt "Languages::ab__dotd.placeholders.h1"
+msgid "<b>[h1_tag]</b> — h1 value (as is)<br> <b>[h1_tag_lower]</b> — h1 value (lowercase)<br> <b>[H1_tag]</b> — h1 value (the first letter is uppercase others are lowercase)<br> <b>[H1_TAG]</b> — h1 value (uppercase)"
+msgstr "<b>[h1_tag]</b> — значення h1 (як є)<br>"
+"<b>[h1_tag_lower]</b> — значення h1 (малі літери)<br>"
+"<b>[H1_tag]</b> — значення h1 (перша велика, решта малі)<br>"
+"<b>[H1_TAG]</b> — значення h1 (великі літери)"
+
+msgctxt "Languages::ab__dotd.placeholders.short_description"
+msgid "<b>[short_description]</b> — promotion short description"
+msgstr "<b>[short_description]</b> — короткий опис промо-акції"
+
+msgctxt "Languages::ab__dotd.placeholders.detailed_description"
+msgid "<b>[detailed_description]</b> — promotion detailed description"
+msgstr "<b>[detailed_description]</b> — детальний опис промо-акції"
+
+#. Alexbranding. Do not modify this file manually!

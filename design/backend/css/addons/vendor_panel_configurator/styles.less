@@ -1,0 +1,20 @@
+.vendor-panel-configurator-tab {
+    .vendor-panel-configurator-tab__selector {
+        margin-left: 4px;
+    }
+
+    &.active {
+        .vendor-panel-configurator-tab__selector--optional {
+            background: var(--cs-content-background);
+            outline-color: var(--cs-content-background);
+        }
+
+        .vendor-panel-configurator-tab__selector--optional:checked::after {
+            color: var(--cs-main-color);
+        }
+    }
+}
+
+.control-group.vendor-panel-configurator-field {
+    margin-bottom: 0;
+}

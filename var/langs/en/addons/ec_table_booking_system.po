@@ -1,0 +1,503 @@
+msgid ""
+msgstr "Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US"
+
+msgctxt "LanguageName"
+msgid "Localized language name"
+msgstr "English"
+
+msgctxt "Addons::name::ec_table_booking_system"
+msgid "Ecarter : Booking System"
+msgstr "Ecarter : Booking System"
+
+msgctxt "Addons::description::ec_table_booking_system"
+msgid "This Add-on allows admin to create booking"
+msgstr "This Add-on allows admin to create booking"
+
+msgctxt "Languages::table_booking_and_reservation"
+msgid "Booking System"
+msgstr "Booking System"
+
+msgctxt "Languages::ec_table_booking_system.no_booking_info_please_choose_booking"
+msgid "No booking info please choose booking"
+msgstr "No booking info please choose booking"
+
+msgctxt "Languages::ec_table_booking_system.please_choose_booking_manually"
+msgid "Please choose booking manually"
+msgstr "Please choose booking manually"
+
+msgctxt "Languages::ec_table_booking_system.booking_info"
+msgid "Booking info"
+msgstr "Booking info"
+
+msgctxt "Languages::ec_table_booking_system.booking_date"
+msgid "Booking date"
+msgstr "Booking date"
+
+msgctxt "Languages::ec_table_booking_system.booking_slot"
+msgid "Booking slot"
+msgstr "Booking slot"
+
+msgctxt "Languages::ec_table_booking_system.booking_slots"
+msgid "Booking slot"
+msgstr "Booking slot"
+
+msgctxt "Languages::ec_table_booking_system.start_time"
+msgid "Start time"
+msgstr "Start time"
+
+msgctxt "Languages::ec_table_booking_system.end_time"
+msgid "End time"
+msgstr "End time"
+
+msgctxt "Languages::ec_table_booking_system.book_time"
+msgid "Book time"
+msgstr "Book time"
+
+msgctxt "Languages::ec_table_booking_system.break_time"
+msgid "Break time"
+msgstr "Break time"
+
+msgctxt "Languages::ec_table_booking_system.status"
+msgid "Status"
+msgstr "Status"
+
+msgctxt "Languages::ec_table_booking_system.days"
+msgid "Days"
+msgstr "Days"
+
+msgctxt "Languages::ec_table_booking_system.ec_table_booking"
+msgid "Booking system"
+msgstr "Booking system"
+
+msgctxt "Languages::ec_table_booking_system.choose_booking"
+msgid "Select Booking"
+msgstr "Select Booking"
+
+msgctxt "Languages::ec_table_booking_system.sunday_timing"
+msgid "Sunday timing"
+msgstr "Sunday timing"
+
+msgctxt "Languages::ec_table_booking_system.monday_timing"
+msgid "Monday timing"
+msgstr "Monday timing"
+
+msgctxt "Languages::ec_table_booking_system.tuesday_timing"
+msgid "Tuesday timing"
+msgstr "Tuesday timing"
+
+msgctxt "Languages::ec_table_booking_system.wednesday_timing"
+msgid "Wednesday timing"
+msgstr "Wednesday timing"
+
+msgctxt "Languages::ec_table_booking_system.thursday_timing"
+msgid "Thursday timing"
+msgstr "Thursday timing"
+
+msgctxt "Languages::ec_table_booking_system.friday_timing"
+msgid "Friday timing"
+msgstr "Friday timing"
+
+msgctxt "Languages::ec_table_booking_system.saturday_timing"
+msgid "Saturday timing"
+msgstr "Saturday timing"
+
+msgctxt "Languages::ec_table_booking_system.start_day"
+msgid "Start day"
+msgstr "Start day"
+
+msgctxt "Languages::ec_table_booking_system.end_day"
+msgid "End day"
+msgstr "End day"
+
+msgctxt "Languages::ec_table_booking_system.week_lang"
+msgid "Week lang"
+msgstr "Week lang"
+
+msgctxt "Languages::ec_table_booking_system.ec_selectslot_qty_header"
+msgid "Booking slots : "
+msgstr "Booking slots : "
+
+msgctxt "Languages::ec_table_booking_system.ec_select_slot"
+msgid "Select Slot"
+msgstr "Select Slot"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_qty"
+msgid "Qty"
+msgstr "Qty"
+
+msgctxt "Languages::ec_table_booking_system.booking_type"
+msgid "Booking type"
+msgstr "Booking type"
+
+msgctxt "Languages::ec_table_booking_system.date_from"
+msgid "Date from"
+msgstr "Date from"
+
+msgctxt "Languages::ec_table_booking_system.date_to"
+msgid "Date to"
+msgstr "Date to"
+
+msgctxt "Languages::ec_table_booking_system.start_date"
+msgid "Start date"
+msgstr "Start date"
+
+msgctxt "Languages::ec_table_booking_system.end_date"
+msgid "End date"
+msgstr "End date"
+
+msgctxt "Languages::ec_table_booking_system.booked_orders"
+msgid "Booked orders"
+msgstr "Booked orders"
+
+msgctxt "Languages::ec_table_booking_system.amount"
+msgid "Amount"
+msgstr "Amount"
+
+msgctxt "Languages::ec_table_booking_system.ec_booking_system.time_to_from"
+msgid "Time to from"
+msgstr "Time to from"
+
+msgctxt "Languages::ec_table_booking_system.add_booking"
+msgid "Add booking"
+msgstr "Add booking"
+
+msgctxt "Languages::ec_table_booking_system.select_booking"
+msgid "Select booking"
+msgstr "Select booking"
+
+msgctxt "Languages::ec_table_booking_system.booking_status"
+msgid "Booking status"
+msgstr "Booking status"
+
+msgctxt "Languages::ec_table_booking_system.please_set_booking_time_numeric_only"
+msgid "Please set booking time in numeric only"
+msgstr "Please set booking time in numeric only"
+
+msgctxt "Languages::ec_table_booking_system.please_set_break_time_numeric_only"
+msgid "Please set break time in numeric only"
+msgstr "Please set break time in numeric only"
+
+msgctxt "Languages::ec_table_booking_system.same_product_exist_in_different_order_first_cancel_previous_order"
+msgid "Same product exist in different order first cancel previous order"
+msgstr "Same product exist in different order first cancel previous order"
+
+msgctxt "Languages::ec_table_booking_system.booking_already_reserved_or_expired"
+msgid "Please pick valid slot"
+msgstr "Please pick valid slot"
+
+msgctxt "Languages::ec_table_booking_system.note"
+msgid "Note"
+msgstr "Note"
+
+msgctxt "Languages::ec_table_booking_system.note_details"
+msgid "Please update the "Booking Slots" everytime you update the Book time,Break time,Start time,End time"
+msgstr "Please update the "Booking Slots" everytime you update the Book time,Break time,Start time,End time"
+
+msgctxt "Languages::ec_table_booking_system.hide_quantity_selector"
+msgid "Restrict buyer to single quantity selection"
+msgstr "Restrict buyer to single quantity selection"
+
+msgctxt "Languages::ec_table_booking_system.product_booking_info_updated"
+msgid "Product booking info updated"
+msgstr "Product booking info updated"
+
+msgctxt "Languages::ec_table_booking_system.customer_name"
+msgid "Customer Name"
+msgstr "Customer Name"
+
+msgctxt "Languages::ec_table_booking_system.cannot_by_compare"
+msgid "You cannot add to cart the booking product in comparison list, Please go to Product detail page"
+msgstr "You cannot add to cart the booking product in comparison list, Please go to Product detail page"
+
+msgctxt "Languages::ec_table_booking_system.time_clashes"
+msgid "Please provide different time for same days as time is clashing"
+msgstr "Please provide different time for same days as time is clashing"
+
+msgctxt "Languages::ec_table_booking_system.cannot_edit_booked_order"
+msgid "You cannot edit booked order"
+msgstr "You cannot edit booked order"
+
+msgctxt "SettingsOptions::ec_table_booking_system::decline_status"
+msgid "Booking Decline Order Status"
+msgstr "Booking Decline Order Status"
+
+msgctxt "SettingsTooltips::ec_table_booking_system::decline_status"
+msgid "Select the order status on which you want to decline the booking."
+msgstr "Select the order status on which you want to decline the booking."
+
+msgctxt "Languages::ec_table_booking_system.booking_product_not_allowed_in_cart_from_admin"
+msgid "Booking product not allowed to be added to cart from backend."
+msgstr "Booking product not allowed to be added to cart from backend."
+
+msgctxt "Languages::ec_table_booking_system.booking_already_placed_just"
+msgid "This booking has just been placed. Please try another booking."
+msgstr "This booking has just been placed. Please try another booking."
+
+msgctxt "Languages::ec_table_booking_system.cannot_copy_booked_order"
+msgid "You cannot copy Booked Order !"
+msgstr "You cannot copy Booked Order !"
+
+msgctxt "Languages::ec_table_booking_system.please_set_booking_time_by_slot"
+msgid "Please select Book time according to slot timing !"
+msgstr "Please select Book time according to slot timing !"
+
+msgctxt "Languages::ec_table_booking_system.booking_amount"
+msgid "Availability"
+msgstr "Availability"
+
+msgctxt "Languages::ec_table_booking_system.booking_slots"
+msgid "Booking Slots"
+msgstr "Booking Slots"
+
+msgctxt "Languages::ec_table_booking_system.saved_slots"
+msgid "The slots are saved successfully"
+msgstr "The slots are saved successfully"
+
+msgctxt "Languages::ec_table_booking_system.booking_table_amount"
+msgid "Qty"
+msgstr "Qty"
+
+msgctxt "Languages::ec_table_booking_system.saved_amount"
+msgid "Amount saved"
+msgstr "Amount saved"
+
+msgctxt "Languages::ec_table_booking_system.ec_table_booking_type"
+msgid "Booking products"
+msgstr "Booking products"
+
+msgctxt "Languages::ec_table_booking_system.date_to"
+msgid "Date to"
+msgstr "Date to"
+
+msgctxt "Languages::ec_table_booking_system.start_date"
+msgid "Start date"
+msgstr "Start date"
+
+msgctxt "Languages::ec_table_booking_system.no_items"
+msgid "No-Items"
+msgstr "No-Items"
+
+msgctxt "Languages::ec_table_booking_system.booked"
+msgid "Booked"
+msgstr "Booked"
+
+
+msgctxt "Languages::ec_table_booking_system.cancelled"
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_slot"
+msgid "Select Slot"
+msgstr "Select Slot"
+
+msgctxt "Languages::ec_table_booking_system.ec_selectslot_qty_header"
+msgid "Booking slots : "
+msgstr "Booking slots : "
+
+msgctxt "Languages::ec_table_booking_system.time_to_from"
+msgid "Time to from"
+msgstr "Time to from"
+
+msgctxt "Languages::ec_table_booking_system.order"
+msgid "Order Id"
+msgstr "Order Id"
+
+msgctxt "Languages::ec_table_booking_system.email"
+msgid "Email"
+msgstr "Email"
+
+msgctxt "Languages::ec_table_booking_system.date"
+msgid "Date"
+msgstr "Date"
+
+msgctxt "Languages::ec_table_booking_system.booing_company"
+msgid "Booking System"
+msgstr "Booking System"
+
+msgctxt "Languages::ec_table_booking.block_date"
+msgid "Blocked date"
+msgstr "Blocked date"
+
+msgctxt "Languages::ec_table_booking_type"
+msgid "Blocked Type"
+msgstr "Blocked Type"
+
+msgctxt "Languages::ec_table_booking.select_date"
+msgid "Select date"
+msgstr "Select date"
+
+msgctxt "Languages::ec_table_booking.select_start_date"
+msgid "Start date"
+msgstr "Start date"
+
+msgctxt "Languages::ec_table_booking.select_end_date"
+msgid "End date"
+msgstr "End date"
+
+
+msgctxt "Languages::ec_table_booking.slots_info"
+msgid "Number of dates"
+msgstr "Number of dates"
+
+msgctxt "Languages::ec_table_booking.choose_date_range"
+msgid "0 dates"
+msgstr "0 dates"
+
+msgctxt "Languages::ec_table_booking.rental_booking"
+msgid "Rental booking"
+msgstr "Rental booking"
+
+msgctxt "Languages::ec_table_booking.table_booking"
+msgid "Table booking"
+msgstr "Table booking"
+
+msgctxt "Languages::ec_table_booking_system.ec_select_booking"
+msgid "Select Booking"
+msgstr "Select Booking"
+
+msgctxt "Languages::ec_table_booking_system.dates_already_booked"
+msgid "Some dates already booked : [dates]. Please choose different dates."
+msgstr "Some dates already booked : [dates]. Please choose different dates."
+
+msgctxt "Languages::ec_table_booking_system.error_occurred"
+msgid "Booking data not found during booking process. Please try again."
+msgstr "Booking data not found during booking process. Please try again."
+
+msgctxt "Languages::privileges.view_ec_table_booking_system"
+msgid "Booking System"
+msgstr "Booking System"
+
+msgctxt "Languages::privilege_groups.ec_table_booking_system"
+msgid "Booking System"
+msgstr "Booking System"
+
+msgctxt "Languages::ec_table_booking.offer_booking_plan"
+msgid "Booking Functionality"
+msgstr "Booking Functionality"
+
+msgctxt "Languages::vendor_plans.offer_booking_system"
+msgid "Offer Booking"
+msgstr "Offer Booking"
+
+msgctxt "Languages::ec_table_booking.hourly"
+msgid "Hourly"
+msgstr "Hourly"
+
+msgctxt "Languages::ec_table_booking.hourly_and_daily"
+msgid "Hourly and Daily"
+msgstr "Hourly and Daily"
+
+msgctxt "Languages::ec_table_booking.daily"
+msgid "Daily"
+msgstr "Daily"
+
+msgctxt "Languages::ec_table_booking.price"
+msgid "Seasonal Price"
+msgstr "Seasonal Price"
+
+msgctxt "Languages::start_day"
+msgid "Date"
+msgstr "Date"
+
+msgctxt "Languages::booking_reservation_amount"
+msgid "Amount"
+msgstr "Amount"
+
+msgctxt "Languages::ec_table_booking_system.minimum_booking_time"
+msgid "Minimum booking Time"
+msgstr "Minimum booking Time"
+
+msgctxt "Languages::ec_table_booking.days"
+msgid "Days"
+msgstr "Days"
+
+msgctxt "Languages::ec_booking.color_unavailable"
+msgid "Unavailable dates"
+msgstr "Unavailable dates"
+
+msgctxt "Languages::ec_booking.color_free"
+msgid "Free dates"
+msgstr "Free dates"
+
+msgctxt "Languages::ec_booking.color_reserved"
+msgid "Reserved dates"
+msgstr "Reserved dates"
+
+msgctxt "Languages::ec_booking.options"
+msgid "Options"
+msgstr "Options"
+
+msgctxt "Languages::ec_table_booking_system.please_select_dates"
+msgid "Please select date range"
+msgstr "Please select date range"
+
+msgctxt "Languages::ec_booking_quantity"
+msgid "Availability"
+msgstr "Availability"
+
+msgctxt "Languages::ec_booking.apply_all"
+msgid "Apply All"
+msgstr "Apply All"
+
+msgctxt "Languages::ec_booking.time_format"
+msgid "Time format"
+msgstr "Time format"
+
+msgctxt "Languages::ec_booking.delete_status"
+msgid "Booking decline status"
+msgstr "Booking decline status"
+
+msgctxt "Languages::ec_booking.week_start"
+msgid "Select start of the week"
+msgstr "Select start of the week"
+
+msgctxt "Languages::ec_booking_12_hour_format"
+msgid "12 hours"
+msgstr "12 hours"
+
+msgctxt "Languages::ec_booking_24_hour_format"
+msgid "24 hours"
+msgstr "24 hours"
+
+msgctxt "Languages::ec_booking_sunday"
+msgid "Sunday"
+msgstr "Sunday"
+
+msgctxt "Languages::ec_booking_monday"
+msgid "Monday"
+msgstr "Monday"
+
+msgctxt "Languages::ec_date_range_filter"
+msgid "Booking Date Filter"
+msgstr "Booking Date Filter"
+
+msgctxt "Languages::ec_booking.approve_status"
+msgid "Select Status from decline to approve"
+msgstr "Select Status from decline to approve"
+
+msgctxt "Languages::ec_booking.search_booking_product"
+msgid "Booking Product"
+msgstr "Booking Product"
+
+msgctxt "Languages::ec_table_booking_system.product_update_sucessfullly"
+msgid "Booking data are updated successfully in the selected product"
+msgstr "Booking data are updated successfully in the selected product"
+
+msgctxt "Languages::ec_table_booking_system.default_ec_table_booking"
+msgid "Default booking setting"
+msgstr "Default booking setting"
+
+msgctxt "Languages::ec_table_booking_system.show_price_on_each_date"
+msgid "Show Price on every date"
+msgstr "Show Price on every date"
+
+msgctxt "Languages::ec_table_booking_system.please_add_date_properly"
+msgid "You have to select both start and end date"
+msgstr "You have to select both start and end date"
+
+msgctxt "Languages::ec_table_booking_system.update_product"
+msgid "Select Product"
+msgstr "Select Product"

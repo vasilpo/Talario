@@ -1,0 +1,212 @@
+.nav__actions {
+    --cs-actions-nav-margin: 0px;
+
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 56px;
+    margin-top: var(--cs-actions-nav-margin);
+    margin-bottom: 4px;
+    padding: 6px 0;
+    background: var(--cs-body-background);
+    z-index: var(--cs-zindex-fixed-navbar); // z-index: 1030;
+    transition: 0s top;
+    min-height: auto;
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    .nav__actions {
+        --cs-actions-nav-margin: 14px;
+    }
+}
+
+.nav__actions--scroll-header {
+    position: static;
+}
+
+.actions__wrapper {
+    display: flex;
+    justify-content: space-between;
+    row-gap: 8px;
+    column-gap: 4px;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+@media (min-width: 1200px) {
+    .actions__wrapper {
+        gap: 4px;
+    }
+}
+
+// Actions wrapper without back button
+.actions__wrapper--no-back {
+    flex-wrap: wrap-reverse;
+}
+
+// Actions wrapper with back button
+.actions__wrapper:not(.actions__wrapper--no-back) {
+    display: grid;
+    grid-template-areas:
+        "nav-actions-back nav-actions-bar"
+        "nav-actions-title nav-actions-title";
+    grid-template-columns: auto 1fr;
+}
+
+// var(--cs-desktop-breakpoint) + 1px
+@media (min-width: 1024px) {
+    .actions__wrapper:not(.actions__wrapper--no-back) {
+        display: flex;
+    }
+}
+
+// Back button
+.nav__actions-back {
+    grid-area: nav-actions-back;
+}
+
+@media (min-width: 1200px) {
+    .nav__actions-back {
+        display: flex;
+    }
+}
+
+.last-viewed-items__back-link:not(:hover):not(:focus):not(:active) {
+    background: transparent;
+    border-color: transparent;
+}
+
+.last-viewed-items__back-link.last-viewed-items__back-link {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.last-viewed-items__dropdown {
+    display: none;
+}
+
+.last-viewed-items__dropdown.last-viewed-items__dropdown.last-viewed-items__dropdown {
+    box-shadow: none;
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    .last-viewed-items__dropdown {
+        display: inline-block;
+    }
+}
+
+// Page title
+.nav__actions-title {
+    display: flex;
+    align-items: center;
+    grid-area: nav-actions-title;
+    min-width: 0;
+    min-height: ~"calc(var(--cs-base-line-height) + 2 * (5px + 1px))";  // Button height: min-height: 32px;
+    margin-right: auto;
+    flex-shrink: 99999; // Prevent button wrapping on pages with a possibly long page title
+}
+
+.title__heading {
+    --cs-title-heading-font-size: ~"calc(var(--cs-font-size-large) + 2px)";
+
+    margin: 0;
+    font-weight: bold;
+    font-size: var(--cs-title-heading-font-size);
+    line-height: normal;
+    word-break: break-all;
+    word-break: break-word;
+}
+
+@media (min-width: 0px) {
+    .title__heading--lg {
+        --cs-title-heading-font-size: var(--cs-base-font-size);
+    }
+}
+
+@media (min-width: 768px) {
+    .title__heading--lg {
+        --cs-title-heading-font-size: ~"calc(var(--cs-font-size-large) + 2px)";
+    }
+}
+
+.title__heading--xl {
+    --cs-title-heading-font-size: ~"calc(var(--cs-base-font-size) - 1px)";
+}
+
+@media (min-width: 768px) {
+    .title__heading--xl {
+        --cs-title-heading-font-size: ~"calc(var(--cs-font-size-large) + 1px)";
+    }
+}
+
+.title__heading--xxl {
+    --cs-title-heading-font-size: var(--cs-font-size-small);
+}
+
+.title__heading .f-middle {
+    color: var(--cs-text-muted-color);
+    font-weight: normal;
+    font-size: var(--cs-base-font-size);
+}
+
+.title__heading .f-small {
+    color: var(--cs-placeholder-text);
+    font-weight: normal;
+    font-size: var(--cs-font-size-small);
+}
+
+// Page actions
+.nav__actions-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+    grid-area: nav-actions-bar;
+    row-gap: 5px;
+    margin: 0;
+    margin-left: auto;
+}
+
+.nav__actions-adv-buttons {
+    margin-left: 5px;
+}
+
+// Primary button
+.nav__actions-btn-primary {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.nav__actions-btn-primary.nav__actions-btn-primary {
+    font-size: 0;
+}
+
+.nav__actions-btn-primary .btn__icon--with-text {
+    margin-right: 0;
+}
+
+@media (min-width: 1200px) {
+    .nav__actions-btn-primary.nav__actions-btn-primary {
+        font-size: var(--cs-base-font-size);
+    }
+
+    .nav__actions-btn-primary .btn__icon--with-text {
+        margin-right: 6px;
+    }
+}
+
+// Save button
+.nav__actions-btn-save {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+@media (min-width: 1200px) {
+    .nav__actions-btn-save {
+        padding-left: 8px;
+        padding-right: 8px;
+    }    
+}

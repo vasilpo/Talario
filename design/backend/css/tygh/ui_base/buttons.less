@@ -1,0 +1,536 @@
+// Bootstrap styles
+.btn {
+    display: inline-flex;
+    padding: 5px 13px;
+    color: var(--cs-text-color);
+    text-shadow: 0 1px 1px var(--cs-inverse-shadow75-color);
+    background: var(--cs-btn-background);
+    border-top-color: var(--cs-btn-border);
+    border-right-color: var(--cs-btn-border);
+    border-bottom-color: var(--cs-btn-border-more);
+    border-left-color: var(--cs-btn-border);
+    box-shadow: none;
+    min-width: ~"calc(var(--cs-base-line-height) + 2 * (5px + 1px))";   // min-width: 32px;
+    min-height: ~"calc(var(--cs-base-line-height) + 2 * (5px + 1px))";  // min-height: 32px;
+
+    // Hover/focus state
+    &:hover,
+    &:focus {
+        color: var(--cs-text-color);
+        background-position: 0;
+        background: var(--cs-btn-background-highlight);
+        transition: background 0.1s linear;
+    }
+
+    // Active state
+    &.active,
+    &:active {
+        color: var(--cs-text-color);
+        background: var(--cs-btn-background-highlight);
+        box-shadow: inset 0 1px 4px var(--cs-shadow10-color), 0 1px 2px var(--cs-shadow5-color);
+    }
+
+    // Disabled state
+    &.disabled,
+    &[disabled] {
+        color: var(--cs-text-color);
+        background: var(--cs-btn-background-highlight);
+    }
+}
+
+// Button Sizes
+// --------------------------------------------------
+
+// Large
+.btn-large {
+    padding: var(--cs-padding-large);
+    // 11px from var(--cs-padding-large)
+    min-width: ~"calc(var(--cs-base-line-height) + 2 * (11px + 1px))";   // min-width: 44px;
+    min-height: ~"calc(var(--cs-base-line-height) + 2 * (11px + 1px))";  // min-height: 44px;
+}
+
+// Small
+.btn-small {
+    padding: var(--cs-padding-small);
+    // 2px from var(--cs-padding-small)
+    min-width: ~"calc(var(--cs-base-line-height) + 2 * (2px + 1px))";   // min-width: 26px;
+    min-height: ~"calc(var(--cs-base-line-height) + 2 * (2px + 1px))";  // min-height: 26px;
+}
+
+// Mini
+.btn-mini {
+    padding: var(--cs-padding-mini);
+    // 0px from var(--cs-padding-mini)
+    min-width: ~"calc(var(--cs-base-line-height) + 2 * (0px + 1px))";   // min-width: 22px;
+    min-height: ~"calc(var(--cs-base-line-height) + 2 * (0px + 1px))";  // min-height: 22px;
+}
+
+// Block button
+// -------------------------
+
+.btn-block {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+// Alternate buttons
+// --------------------------------------------------
+
+// Provide *some* extra contrast for those who can get it
+.btn-primary.active,
+.btn-warning.active,
+.btn-danger.active,
+.btn-success.active,
+.btn-info.active,
+.btn-inverse.active {
+    color: var(--cs-inverse-shadow75-color);
+}
+
+// Set the backgrounds
+// -------------------------
+.btn-primary {
+    color: var(--cs-input-background);
+    text-shadow: 0 1px 1px var(--cs-shadow25-color);
+    background: var(--cs-btn-primary-background);
+    border-top-color: var(--cs-btn-primary-background-highlight);
+    border-right-color: var(--cs-btn-primary-background-highlight);
+    border-bottom-color: var(--cs-btn-primary-border-more);
+    border-left-color: var(--cs-btn-primary-background-highlight);
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
+    color: var(--cs-input-background);
+    background-color: var(--cs-btn-primary-background-highlight);
+}
+// Warning appears are orange
+.btn-warning {
+    color: var(--cs-input-background);
+    text-shadow: 0 1px 1px var(--cs-shadow25-color);
+    background: var(--cs-btn-warning-background);
+    border-top-color: var(--cs-btn-warning-background-highlight);
+    border-right-color: var(--cs-btn-warning-background-highlight);
+    border-bottom-color: var(--cs-btn-warning-border-more);
+    border-left-color: var(--cs-btn-warning-background-highlight);
+}
+.btn-warning:hover, .btn-warning:focus, .btn-warning:active, .btn-warning.active, .btn-warning.disabled, .btn-warning[disabled] {
+    color: var(--cs-input-background);
+    background-color: var(--cs-btn-warning-background-highlight);
+}
+// Danger and error appear as red
+.btn-danger {
+    color: var(--cs-input-background);
+    text-shadow: 0 1px 1px var(--cs-shadow25-color);
+    background: var(--cs-btn-danger-background);
+    border-top-color: var(--cs-btn-danger-background-highlight);
+    border-right-color: var(--cs-btn-danger-background-highlight);
+    border-bottom-color: var(--cs-btn-danger-border-more);
+    border-left-color: var(--cs-btn-danger-background-highlight);
+}
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active, .btn-danger.active, .btn-danger.disabled, .btn-danger[disabled] {
+    color: var(--cs-input-background);
+    background-color: var(--cs-btn-danger-background-highlight);
+}
+// Success appears as green
+.btn-success {
+    color: var(--cs-input-background);
+    text-shadow: 0 1px 1px var(--cs-shadow25-color);
+    background: var(--cs-btn-success-background);
+    border-top-color: var(--cs-btn-success-background-highlight);
+    border-right-color: var(--cs-btn-success-background-highlight);
+    border-bottom-color: var(--cs-btn-success-border-more);
+    border-left-color: var(--cs-btn-success-background-highlight);
+}
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .btn-success.disabled, .btn-success[disabled] {
+    color: var(--cs-input-background);
+    background-color: var(--cs-btn-success-background-highlight);
+}
+// Info appears as a neutral blue
+.btn-info {
+    color: var(--cs-input-background);
+    text-shadow: 0 1px 1px var(--cs-shadow25-color);
+    background: var(--cs-btn-info-background);
+    border-top-color: var(--cs-btn-info-background-highlight);
+    border-right-color: var(--cs-btn-info-background-highlight);
+    border-bottom-color: var(--cs-btn-info-border-more);
+    border-left-color: var(--cs-btn-info-background-highlight);
+}
+.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .btn-info.disabled, .btn-info[disabled] {
+    color: var(--cs-input-background);
+    background-color: var(--cs-btn-info-background-highlight);
+}
+// Inverse appears as dark gray
+.btn-inverse {
+    color: var(--cs-input-background);
+    text-shadow: 0 1px 1px var(--cs-shadow25-color);
+    background: var(--cs-btn-inverse-background);
+    border-top-color: var(--cs-btn-inverse-background-highlight);
+    border-right-color: var(--cs-btn-inverse-background-highlight);
+    border-bottom-color: var(--cs-btn-inverse-border-more);
+    border-left-color: var(--cs-btn-inverse-background-highlight);
+}
+.btn-inverse:hover, .btn-inverse:focus, .btn-inverse:active, .btn-inverse.active, .btn-inverse.disabled, .btn-inverse[disabled] {
+    color: var(--cs-input-background);
+    background-color: var(--cs-btn-inverse-background-highlight);
+}
+
+
+// Link buttons
+// --------------------------------------------------
+
+// Make a button look and behave like a link
+.btn-link,
+.btn-link:active,
+.btn-link[disabled] {
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+}
+.btn-link {
+    border-color: transparent;
+    cursor: pointer;
+    color: var(--cs-link-color);
+    border-radius: 0;
+}
+.btn-link:hover,
+.btn-link:focus {
+    color: var(--cs-link-color-hover);
+    text-decoration: underline;
+    background-color: transparent;
+}
+.btn-link[disabled]:hover,
+.btn-link[disabled]:focus {
+    color: var(--cs-text-color);
+}
+
+
+// Button groups
+
+// Reposition the caret
+.btn .caret {
+    margin-left: 4px;
+}
+// Account for other colors
+.btn-primary,
+.btn-warning,
+.btn-danger,
+.btn-info,
+.btn-success,
+.btn-inverse {
+    .caret {
+        border-top-color: var(--cs-btn-background);
+        border-bottom-color: var(--cs-btn-background);
+    }
+}
+
+.btn-group.open {
+
+    // The clickable button for toggling the menu
+    // Remove the gradient and set the same inset shadow as the :active state
+    .dropdown-toggle {
+      box-shadow: inset 0 1px 4px var(--cs-shadow10-color), 0 1px 2px var(--cs-shadow5-color);
+    }
+}
+
+.btn-group > .btn + .dropdown-toggle {
+    box-shadow: inset 1px 0 0 var(--cs-inverse-shadow12-color), inset 0 0 0 var(--cs-inverse-shadow20-color), 0 0 2px var(--cs-shadow5-color);
+}
+
+// Labels
+
+// Base classes
+.label,
+.badge {
+    color: var(--cs-btn-background);
+    text-shadow: 0 -1px 0 var(--cs-shadow25-color);
+    background-color: var(--cs-placeholder-text);
+}
+
+// Hover/focus state, but only for links
+a {
+    &.label:hover,
+    &.label:focus,
+    &.badge:hover,
+    &.badge:focus {
+        color: var(--cs-btn-background);
+    }
+}
+
+// Colors
+// Only give background-color difference to links (and to simplify, we don't qualifty with `a` but [href] attribute)
+.label,
+.badge {
+    // Important (red)
+    &-important         { background-color: var(--cs-btn-danger-background); }
+    &-important[href]   { background-color: var(--cs-btn-danger-background-highlight); }
+    // Warnings (orange)
+    &-warning           { background-color: var(--cs-btn-warning-background); }
+    &-warning[href]     { background-color: var(--cs-btn-warning-background-highlight); }
+    // Success (green)
+    &-success           { background-color: var(--cs-btn-success-background); }
+    &-success[href]     { background-color: var(--cs-btn-success-background-highlight); }
+    // Info (turquoise)
+    &-info              { background-color: var(--cs-btn-info-background); }
+    &-info[href]        { background-color: var(--cs-btn-info-background-highlight); }
+    // Inverse (black)
+    &-inverse           { background-color: var(--cs-btn-inverse-background); }
+    &-inverse[href]     { background-color: var(--cs-btn-inverse-background-highlight); }
+}
+
+
+
+// Custom styles
+
+.btn__icon {
+    display: inline-flex;
+    vertical-align: top;
+}
+
+.btn__icon:not(:only-child) {
+    margin-right: 5px;
+}
+
+.btn__icon.btn__icon--caret:not(:only-child) {
+    margin-right: 0;
+}
+
+.btn__icon--text {
+    vertical-align: text-bottom;
+}
+
+.btn .cs-icon:not(:last-child) {
+    margin-right: 6px;
+}
+
+.btn__icon--with-text:only-child {
+    margin-right: 6px;
+}
+
+.btn__icon--with-text.btn__icon--last {
+    margin-left: 6px;
+    margin-right: auto;
+}
+
+.btn .flag.cs-icon:not(:last-child) {
+    margin-right: 0;
+}
+
+.btn .cs-icon:not(:last-child) + .caret {
+    margin-left: 0;
+}
+
+.btn-toolbar .btn-link {
+  font-size: var(--cs-base-font-size);
+}
+.btn-checkbox {
+    position: relative;
+    margin: -4px -8px;
+    input[type="checkbox"] {
+        position: absolute;
+        top: 9px;
+        left: 6px;
+        z-index: 5;
+    }
+    .caret {
+        margin-left: ~"calc(100% - 3px)";
+        margin-top: 10px;
+    }
+    .dropdown-toggle {
+        box-shadow: none;
+        border-radius: var(--cs-base-border-radius);
+        padding: 3px 13px 3px 6px;
+        width: 50px;
+        height: var(--cs-input-height);
+        border: 1px solid transparent ;
+        background: transparent;
+    }
+    .dropdown-menu, .caret {
+        visibility: hidden;
+    }
+}
+.btn-indent {
+    margin-bottom: 10px;
+}
+// .btn-group must open at all width on mobile devices
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    .btn-group,
+    .dropdown {
+        &.open {
+            position: unset;
+
+            .dropdown-menu {
+                top: auto;
+                right: 17px;
+            }
+            .dropdown-menu.dropdown-menu {
+                left: 17px;
+            }
+        }
+    }
+    .controls {
+        .btn-group,
+        .dropdown {
+            &.open .dropdown-menu {
+                left: 0;
+                right: 0;
+            }
+        }
+    }
+}
+// var(--cs-tablet-breakpoint)
+@media (width: 767px) {
+    .controls {
+        .btn-group,
+        .dropdown {
+            &.open .dropdown-menu {
+                right: auto;
+            }
+        }
+    }
+}
+.checkbox-list label{
+    display: inline-block;
+    margin-right: 10px;
+    min-width: 185px;
+    input[type="checkbox"] {
+        margin-top: 0 !important;
+        margin-right: 9px;
+    }
+}
+.btn-live-edit {
+    margin: 12px 0px;
+}
+// show dropdown menu on hover
+.btn-hover {
+    &:hover ul.dropdown-menu{
+        display: block;
+    }
+    ul.dropdown-menu{
+        margin-top: 0px;
+    }
+}
+
+[class*="o-status-"] {
+    white-space: nowrap;
+}
+
+textarea {
+    resize: vertical;
+}
+.btn-toolbar .tab-tools {
+    > .btn + .btn,
+    > .btn-group + .btn,
+    > .btn + .btn-group {
+      margin-left: 5px;
+    }
+}
+.tab-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+.control-toolbar {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.control-toolbar__btns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.control-toolbar__btns-left {
+    display: flex;
+    justify-content: flex-start;
+    flex-grow: 1;
+}
+.control-toolbar__btns-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 3;
+    gap: 10px;
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
+    .control-toolbar__btns-center {
+        flex-direction: row;
+    }
+}
+.control-toolbar__btns-right {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+}
+.control-toolbar__select {
+    width: 100%;
+    max-width: 500px;
+
+    .select2-search__field {
+        width: 100% !important;
+        min-width: 200px !important;
+        margin-bottom: 0;
+    }
+}
+
+// List with button
+.list-with-btns {
+    margin-top: 15px;
+    li {
+        margin-bottom: 20px;
+    }
+    .list-description {
+        display: inline-block;
+        width: 143px;
+        vertical-align: top;
+    }
+}
+
+.form-edit.form-horizontal .controls .btn-group {
+    margin-top: 2px;
+}
+
+.btn-expand {
+    display: inline-flex;
+    min-width: var(--cs-input-height);
+    min-height: var(--cs-input-height);
+    padding-left: 6px;
+    padding-right: 6px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+
+    &--header {
+        min-height: 22px;
+        vertical-align: top;
+    }
+
+    .icon-caret-right {
+        margin-top: 0;
+    }
+
+    &-wrapper {
+        display: inline-block;
+        min-width: var(--cs-input-height);
+        height: 22px;
+        text-align: center;
+        vertical-align: top;
+    }
+}
+
+button.label, button.badge {
+    border: 0;
+}
+
+.btn-group > {
+
+    .btn-add,
+    .btn-clone {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}

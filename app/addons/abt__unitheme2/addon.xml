@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+<id>abt__unitheme2</id>
+<version>4.18.3.b</version>
+<priority>10000</priority>
+<position>0</position>
+<status>active</status>
+<default_language>en</default_language>
+<ab>
+<hash>237a7350df98932ccbf449736e4fae037d53db4c, 2025-04-14 16:50:07</hash>
+<layout_version>ult11</layout_version>
+<compatibility>
+<dependencies>
+<ab__addons_manager><min>2.5.6</min></ab__addons_manager>
+<ab__deal_of_the_day><min>3.10.5</min></ab__deal_of_the_day>
+<ab__category_banners><min>2.3.0</min></ab__category_banners>
+<ab__motivation_block><min>2.11.1</min></ab__motivation_block>
+<ab__video_gallery><min>3.6.0</min></ab__video_gallery>
+</dependencies>
+</compatibility>
+</ab>
+<authors>
+<author>
+<name>AlexBranding</name>
+<email>info@alexbranding.com</email>
+<url>https://alexbranding.com</url>
+</author>
+</authors>
+<supplier>AlexBranding</supplier>
+<supplier_link>https://cs-cart.alexbranding.com</supplier_link>
+<supplier_page>ab__am.addons</supplier_page>
+<compatibility>
+<dependencies>ab__addons_manager,banners</dependencies>
+<conflicts>rus_theme_style,abt__unitheme,abt__youpitheme,ab__auto_loading_products,ab__advanced_banners</conflicts>
+<core_version><min>4.18.3</min></core_version>
+<core_edition>ULTIMATE,MULTIVENDOR</core_edition>
+</compatibility>
+<settings layout="separate" edition_type="ROOT,VENDOR,STOREFRONT">
+<sections>
+<section id="settings">
+<items>
+<item id="code"><type>hidden</type><default_value>ABA-8pJNE0La32Th1toiLCzPe</default_value></item>
+<item id="build"><type>hidden</type><default_value>1202</default_value></item>
+</items>
+</section>
+</sections>
+</settings>
+<queries>
+<item for="uninstall">DELETE FROM ?:privileges WHERE section_id = 'abt__unitheme2' OR group_id = 'abt__unitheme2'</item>
+<item>REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view)
+VALUES ('abt__ut2.settings.view', 'Y', 'ab__addons', 'abt__unitheme2', 'Y')
+,('abt__ut2.settings.manage', 'Y', 'ab__addons', 'abt__unitheme2', 'N');
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_settings (
+section varchar(100) NOT NULL,
+name varchar(100) NOT NULL,
+storefront_id int(11) unsigned NOT NULL DEFAULT '0',
+lang_code char(2) NOT NULL DEFAULT '',
+value mediumtext,
+PRIMARY KEY (section, name, storefront_id, lang_code)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_less_settings (
+section varchar(100) NOT NULL,
+name varchar(100) NOT NULL,
+value mediumtext,
+style varchar(100) NOT NULL DEFAULT '',
+PRIMARY KEY (section,name,style)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_fly_menu_content (
+item_id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+type varchar(100) NOT NULL,
+storefront_id int(11) unsigned NOT NULL DEFAULT 0,
+position mediumint(8) unsigned NOT NULL DEFAULT 0,
+content mediumtext,
+PRIMARY KEY (item_id)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_microdata (
+id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+company_id int(11) unsigned NOT NULL DEFAULT 0,
+field varchar(255) NOT NULL DEFAULT '',
+PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_microdata_description (
+id mediumint(8) unsigned NOT NULL,
+value varchar(255) NOT NULL DEFAULT '',
+lang_code char(2) NOT NULL DEFAULT '',
+PRIMARY KEY (id, lang_code)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_banner_images (
+abt__ut2_banner_image_id mediumint(8) unsigned NOT NULL auto_increment,
+banner_id mediumint(8) unsigned NOT NULL default 0,
+lang_code char(2) NOT NULL default '',
+PRIMARY KEY (abt__ut2_banner_image_id),
+UNIQUE KEY banner_lang_code (banner_id, lang_code)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_checkout_cities (
+city_id INT NOT NULL,
+country_code VARCHAR(2) NOT NULL,
+state_code VARCHAR(32) NOT NULL,
+PRIMARY KEY (city_id)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_banner_groups (
+banner_group_id INT NOT NULL auto_increment,
+PRIMARY KEY (banner_group_id)
+) DEFAULT CHARSET=utf8;
+</item>
+<item>
+CREATE TABLE IF NOT EXISTS ?:abt__ut2_banner_group_descriptions (
+banner_group_id INT NOT NULL ,
+group_name VARCHAR(255) NOT NULL,
+lang_code CHAR(2) NOT NULL,
+PRIMARY KEY (banner_group_id,lang_code)
+) DEFAULT CHARSET=utf8;
+</item>
+</queries>
+<functions>
+<item for="install">fn_abt__ut2_install</item>
+</functions>
+</addon>

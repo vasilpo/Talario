@@ -1,0 +1,80 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+
+.ab-sticker-full_size, .row-status {
+    .T-sticker.ab-sticker.circle,
+    .P-sticker.ab-sticker.circle {
+        flex-direction: column;
+        border-radius: 13px;
+        
+        @media (min-width: 768px) {
+            border-radius: 50px;
+            width: 48px;
+            height: 48px;
+            padding: 0 !important;
+            
+            font-family: Arial, sans-serif;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            
+            .ab-sticker__name {
+                padding: 3px;
+                overflow: hidden;
+                    
+                > span {
+                    max-width: 100%;
+                    letter-spacing: 0;
+                    .hyphens(auto);
+                }
+                
+                * {
+                    line-height: 1.35;
+                }
+                &.uppercase {
+                    font-size: 75%;
+                }
+                big {
+                    font-size: 16px;
+                    
+                    i {
+                        max-height: 18px;
+                        font-size: 18px;
+                        display: inline-flex;
+                        align-items: center;
+                    }
+                }
+            }
+        }
+    }
+
+    .P-sticker.ab-sticker.circle {
+        @media (min-width: 768px) {
+            width: auto;
+            height: auto;
+        }
+    }
+}
+.ab-sticker-small_size .T-sticker.ab-sticker.circle,
+.ab-sticker-small_size .P-sticker.ab-sticker.circle {
+    border-radius: 50%;
+}
+
+.row-status .ab-sticker.T-sticker big {
+    font-size: 16px;
+}

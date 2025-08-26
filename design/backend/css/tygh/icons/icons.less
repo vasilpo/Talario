@@ -1,0 +1,113 @@
+.cs-icon {
+    display: block;
+    margin: auto;
+    max-height: 100%;
+    max-width: 100%;
+    height: var(--cs-icon-size);
+    width: var(--cs-icon-size);
+}
+
+// Icon tones
+.cs-icon--apply-color {
+    color: var(--cs-text-inverse-color);
+}
+
+.cs-icon--tone-base svg {
+    fill: var(--cs-text-color);
+}
+
+.cs-icon--tone-muted svg {
+    fill: var(--cs-text-muted-color);
+}
+
+.cs-icon--tone-warning svg {
+    fill: var(--cs-btn-warning-background);
+}
+
+.cs-icon--tone-error svg {
+    fill: var(--cs-btn-danger-background);
+}
+
+.cs-icon--tone-interactive svg {
+    fill: var(--cs-btn-primary-background);
+}
+
+.cs-icon--tone-info svg {
+    fill: var(--cs-btn-info-background);
+}
+
+.cs-icon--tone-success svg {
+    fill: var(--cs-btn-success-background);
+}
+
+.cs-icon--tone-primary svg {
+    fill: var(--cs-btn-primary-background);
+}
+
+.cs-icon--tone-text-warning svg {
+    fill: var(--cs-warning-text);
+}
+
+.cs-icon--tone-text-error svg {
+    fill: var(--cs-error-text);
+}
+
+.cs-icon--tone-text-info svg {
+    fill: var(--cs-info-text);
+}
+
+.cs-icon--tone-text-success svg {
+    fill: var(--cs-success-text);
+}
+
+// Custom
+.cs-icon--small {
+    transform: scale(0.8);
+}
+
+th .cs-icon--type-asc,
+th .cs-icon--type-desc,
+th .cs-icon--type-caret-up,
+th .cs-icon--type-caret-down,
+th .cs-icon--type-caret-left,
+th .cs-icon--type-caret-right {
+    display: inline-flex;
+    vertical-align: top;
+    transform: scale(0.8);
+}
+
+// Fallback to collapsed block
+.icon-caret-down:after {
+    content: url('../templates/icons/caret_down.svg');
+}
+
+.icon-caret-right:after {
+    content: url('../templates/icons/caret_right.svg');
+}
+
+// Fix icon size
+.cs-icon--type-user {
+    transform: scale(0.9);
+}
+
+.cs-icon--type-cog,
+.cs-icon--type-gear,
+.cs-icon--type-off,
+.cs-icon--type-trash,
+.cs-icon--type-align-justify {
+    transform: scale(0.85);
+}
+
+.cs-icon__hidden-accessible {
+    position: absolute !important;
+    top: 0;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    border: 0 !important;
+    white-space: nowrap !important
+}

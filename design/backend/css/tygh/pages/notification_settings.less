@@ -1,0 +1,129 @@
+.notification-group {
+    &__toggle-editor {
+        white-space: nowrap;
+    }
+
+    &__editor {
+        width: calc(~"100vw" - 2 * 17px);
+        max-width: 500px;
+    }
+}
+
+// var(--cs-tablet-breakpoint) + 2px
+@media (min-width: 769px) {
+    .notification-group__existing-receivers {
+        margin-top: 5px;
+    }
+}
+
+.notification-group-existing-receivers__item {
+
+    &::after {
+        content: ',';
+    }
+
+    &:last-of-type::after {
+        content: '';
+    }
+}
+
+.notification-group-editor {
+    &__body {
+        padding: 16px;
+    }
+
+    &__input-group {
+        margin-bottom: 16px;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .select2-search__field {
+            width: 100% !important;
+        }
+
+        .select2-container--disabled {
+            &.select2-container--default .select2-selection--multiple {
+                border: none;
+                background: none;
+            }
+
+            .select2-search--inline {
+                display: none;
+            }
+        }
+    }
+
+    &__label {
+        font-weight: bold;
+    }
+
+    &__footer {
+        border-top: 1px solid var(--cs-dropdown-divider-top);
+        padding: 16px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__btn {
+        margin-left: 16px / 2;
+    }
+}
+td.notification-settings__name {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.notification-settings {
+    &__table {
+        table-layout: fixed;
+
+        p {
+            margin: 0;
+        }
+
+        .mobile-hide {
+            // var(--cs-tablet-breakpoint) + 1px
+            @media (max-width: 768px) {
+                display: none;
+            }
+        }
+
+        .dropdown {
+            text-align: right;
+        }
+    }
+
+    .table-responsive tbody tr&__receiver  {
+        td {
+            display: table-cell;
+            
+            &:first-child {
+        
+                // var(--cs-tablet-breakpoint) + 1px
+                @media (max-width: 768px) {
+                    margin-right: 8%;
+                }
+
+                @media (max-width: 320px) {
+                    margin-right: 17%;
+                }
+            }
+
+            // var(--cs-tablet-breakpoint) + 1px
+            @media (max-width: 768px) {
+                padding: 0;
+            }
+        }
+
+        // var(--cs-tablet-breakpoint) + 1px
+        @media (max-width: 768px) {
+            display: flex;
+        }
+    }
+
+    tbody + tbody &__group th,
+    tbody + tbody &__group td {
+        padding-top: 30px;
+    }
+}

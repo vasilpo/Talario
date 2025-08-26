@@ -1,0 +1,122 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Japanese\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_panel_configurator.po\n"
+"X-Crowdin-File-ID: 9448\n"
+"PO-Revision-Date: 2024-10-07 13:31\n"
+
+msgctxt "Addons::name::vendor_panel_configurator"
+msgid "Vendor panel configurator"
+msgstr "出品者管理画面設定"
+
+msgctxt "Addons::description::vendor_panel_configurator"
+msgid "Simplifies the vendor panel by showing vendors only the fields and menus that they need to see."
+msgstr "出品者管理画面のスタイルを変更し、商品詳細ページで出品者が必要とするタブやフィールドのみを表示することができます。また、出品者管理画面の色を変更できます。"
+
+msgctxt "SettingsSections::vendor_panel_configurator::product_page_settings"
+msgid "Product page settings"
+msgstr "商品ページ設定"
+
+msgctxt "SettingsSections::vendor_panel_configurator::vendor_panel_style"
+msgid "Vendor panel style"
+msgstr "スタイル"
+
+msgctxt "Languages::vendor_panel_configurator.unconfigurable_tab"
+msgid "This tab has no configurable fields and is displayed as is"
+msgstr "このタブには設定可能な項目はなく、全てが表示されます。"
+
+msgctxt "Languages::vendor_panel_configurator.product_page_configuration"
+msgid "Product page settings"
+msgstr "商品ページ設定"
+
+msgctxt "Languages::vendor_panel_configurator.theme_styles"
+msgid "Logos and styles"
+msgstr "ロゴとスタイル"
+
+msgctxt "Languages::vendor_panel_configurator.theme_styles.description"
+msgid "Manage logos used on site and in e-mails and configure appearance of the microstore and product pages"
+msgstr "ショップやメールで使用するロゴの管理、専用ページや商品ページの外観の設定"
+
+msgctxt "Languages::vendor_panel_configurator.payment_methods.description"
+msgid "Manage how you receive payments from customers"
+msgstr "支払方法の管理"
+
+msgctxt "Languages::vendor_panel_configurator.configure_vendor_panel_notice"
+msgid "You can customize the vendor panel via the bottom toolbar: <a href=\"[block_manager_link]\">edit menus and onboarding</a> or <a href=\"[theme_editor_link]\">choose a color scheme</a>."
+msgstr "出品者管理画面をカスタマイズ可能です：<a href=\"[block_manager_link]\">メニューの設定</a> または <a href=\"[theme_editor_link]\">カラースキーマを選択</a>"
+
+msgctxt "Languages::vendor_panel_configurator.sidebar_color"
+msgid "Sidebar color"
+msgstr "サイドバーの背景色"
+
+msgctxt "Languages::vendor_panel_configurator.element_color"
+msgid "Element color"
+msgstr "メインカラー"
+
+msgctxt "Languages::vendor_panel_configurator.sidebar_background_image"
+msgid "Sidebar background image"
+msgstr "サイドバーの背景画像"
+
+msgctxt "Languages::vendor_panel_configurator.sidebar_background_image_description"
+msgid "If you upload the background image, it will be displayed instead of the sidebar color. If you upload it, we recommend picking a sidebar color that matches the background image."
+msgstr "背景画像をアップロードすると、サイドバーの背景色の上に背景画像が表示されます。アップロードする場合は、背景画像に一致するサイドバーの背景色を選択することをおすすめします。"
+
+msgctxt "Languages::vendor_panel_configurator.global_setting_warning"
+msgid "This setting doesn't appear on the product editing page right now, because it is set globally for all products. Check the <a href=\"[settings_url]\" target=\"_blank\">\"Settings\" menu</a> to find it."
+msgstr "この設定は、すべてにおいて統一設定されているため、商品編集画面には表示されません。<a href=\"[settings_url]\" target=\"_blank\">基本設定</a>を確認してください。"
+
+msgctxt "Languages::vendor_panel_configurator.theme_editor.sidebar"
+msgid "Sidebar"
+msgstr "サイドバー"
+
+msgctxt "Languages::vendor_panel_configurator.theme_editor.element"
+msgid "Element"
+msgstr "エレメント"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Custom"
+msgid "Custom"
+msgstr "カスタム"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Light"
+msgid "Light"
+msgstr "ライト"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Purple"
+msgid "Purple"
+msgstr "パープル"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Lemongrass"
+msgid "Lemongrass"
+msgstr "レモングラス"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Sweety"
+msgid "Sweety"
+msgstr "スイーティ"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Sand"
+msgid "Sand"
+msgstr "サンド"
+
+msgctxt "Languages::vendor_panel_configurator.logo"
+msgid "Logo"
+msgstr "ロゴ"
+
+msgctxt "Languages::vendor_panel_configurator.logo_description"
+msgid "We recommend a PNG image no smaller than 68x68px, and with transparent background. The best aspect ratio is between 3.5:1 (for example, 245x70px) and 6.1:1 (for example, 610x100px)."
+msgstr "68x68 ピクセル以上で背景が透明な PNG 画像をおすすめします。最適なアスペクト比は 3.5:1 (例: 245x70 ピクセル) から 6.1:1 (例: 610x100 ピクセル) です。"
+
+msgctxt "Languages::vendor_panel_configurator.logo_dark"
+msgid "Logo (dark theme)"
+msgstr "ロゴ（ダークテーマ）"
+
+msgctxt "Languages::vendor_panel_configurator.logo_dark_description"
+msgid "Same recommendations as for standard logo. This logo appears against a dark background: in the bottom toolbar, or when the dark theme is selected."
+msgstr "標準ロゴの推奨事項を参照してください。このロゴは、下部のツールバー、またはダーク テーマが選択されている場合に、暗い背景に対して表示されます。"
+

@@ -1,0 +1,313 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+.span16 > .ab__deal_of_the_day {
+    @media (max-width: 899px) {
+        padding: 20px;
+        overflow: hidden;
+    }
+}
+.ab__deal_of_the_day {
+    max-width: @fluidContainerMaxWidth;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 0;
+
+    .ab-scroller-pd {
+        overflow: visible;
+    }
+    .pd_padding_block-1() when (@pd_block_background = @content_bg) {
+        padding: 40px 20px 40px;
+
+    	@media (max-width: 767px) {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+    .pd_padding_block-1() when not (@pd_block_background = @content_bg) {
+		padding: 40px 40px calc(~'20px * 1.3');
+	}
+	.pd_padding_block-1();
+
+    .ab-pd {
+        &__item {
+            background: @content_bg;
+
+            .pd_padding_block-3() when (@pd_block_background = @content_bg) {
+        		@media (min-width: 321px) and (max-width: 480px) {
+                    box-shadow: inset 0 0 0 1px @base;
+                    padding: 20px;
+                    margin-bottom: 20px;
+        	    }
+        	}
+        	.pd_padding_block-3();
+
+            .pd_rounded_corners() when (@pd_rounded_corners_block = true) {
+        	    border-radius: 6px;
+                overflow: hidden;
+    		}
+    		.pd_rounded_corners();
+	    }
+	    &__rating {
+    	    height: 20px;
+
+    	    i, .ty-product-review-reviews-stars {
+                font-size: 18px;
+    	    }
+	    }
+    }
+    .pd-promotion__title {
+        .checkColor() when (@abt__yt_addons_ab__deal_of_the_day_bright_color_promotion_title = true) {
+            color: @pd_color_bright_elements !important;
+        }
+        .checkColor() when (@abt__yt_addons_ab__deal_of_the_day_bright_color_promotion_title = false) {
+			color: contrast(@pd_block_background, @pd_block_fonts_color, white) !important;
+			text-shadow: 1px 1px 0 contrast(@pd_block_background, transparent, rgba(0, 0, 0, 0.1));
+		}
+		.checkColor();
+    }
+    .pd-promotion__buttons {
+    	text-align: left;
+    	margin: 10px 0;
+    }
+    .all-promotions__button {
+        margin: 20px 0;
+    }
+    .pd-content-block .owl-theme .owl-controls {
+        margin-top: 0;
+    }
+
+    @media (max-width: 767px) {
+        .ab-pd__image {
+        	height: inherit !important;
+        }
+    }
+
+    .owl-theme .owl-controls:not(.owl-controls-outside) .owl-buttons div {
+        border-radius: 0;
+        height: 100px;
+        width: 24px;
+        margin: 0;
+        line-height: 110px;
+
+        @media (max-width: 767px) {
+            width: 20px;
+        }
+    }
+    .owl-buttons {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        top: 50%;
+        z-index: 2;
+
+        .pd_padding_block-4() when (@pd_block_background = @content_bg) {
+            width: 100%;
+            margin-top: -27px;
+        }
+        .pd_padding_block-4() when not (@pd_block_background = @content_bg) {
+            width: calc(~'100% + 40px');
+            margin: -27px -20px 0 -20px;
+
+            > div {
+                background: fade(@content_bg, 90%) !important;
+            }
+    	}
+    	.pd_padding_block-4();
+    }
+}
+
+.ty-product-block {
+    .ab__deal_of_the_day {
+        margin-bottom: calc(20px + 5px);
+        border: 0 none;
+
+        .yt_round(@round: 4px) when (@abt__yt_general_show_rounds = show_rounds) {
+            .border-radius(@round);
+        }
+        .yt_round(@round: 8px) when (@abt__yt_general_show_rounds = show_full_rounds) {
+            .border-radius(@round);
+        }
+        .yt_round();
+
+        > div.col1 {
+            padding-bottom: 0;
+        }
+        @media (min-width: 768px) {
+            flex-direction: row;
+        }
+    }
+    div.js-counter {
+        height: 50px;
+        font-size: x-small;
+
+        > div {
+            min-width: 60px;
+
+            > span {
+                font-size: large;
+            }
+        }
+    }
+    .action-title {
+        margin-bottom: 10px;
+    }
+    .actions-link {
+		margin-top: 5px;
+    }
+    .pd-details-promo-link {
+        padding-top: 10px;
+        padding-right: 10px;
+
+        a:first-child {
+            margin-right: 10px;
+        }
+        .ty-icon {
+            position: relative;
+            padding-left: 3px;
+            top: 1px;
+        }
+    }
+}
+
+.ty-quick-view__wrapper {
+    .ab__deal_of_the_day {
+        margin: 20px 0 0;
+        float: left;
+
+        > div.col2 {
+            align-items: center;
+        }
+    }
+}
+
+.ab-pd__image {
+    .owl-controls {
+        display: none;
+    }
+}
+
+.ab_dotd_product_label {
+    display: inline;
+    position: relative;
+    top: -5px;
+    color: white;
+    background-color: @discount_label;
+    font-size: 8px;
+    text-transform: uppercase;
+    padding: 0 5px 1px 5px;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    z-index: auto;
+
+	.border-radius(2px);
+}
+.grid-list .ypi-grid-list__item_body {
+    .ab_dotd_product_label {
+        padding: 1px 5px 1px 5px;
+
+        @media (max-width: 767px) {
+        	margin-top: -1px;
+            height: 13px;
+            font-size: .452rem;
+    	}
+	}
+}
+
+.ab__dotd_promotions {
+    padding-bottom: 20px;
+
+	&-item {
+    	max-height: 330px;
+
+		&_image {
+			max-height: 224px;
+		}
+		@media (max-width: 1400px) {
+    		&_title {
+                min-height: 85px;
+            }
+		}
+        .ty-no-image {
+            padding-top: 60.6%;
+        }
+	}
+}
+
+.ypi-categories_grid.promotion-page {
+	.ty-breadcrumbs {
+	    text-align: left;
+	    justify-content: flex-start;
+	}
+}
+.ab__dotd_promotion {
+	&-image {
+		margin-top: 20px;
+	}
+}
+
+.ty-wysiwyg-content .ab__dotd_promotions, .ypi-dt-product-tabs .ab__dotd_promotions {
+    .ab__dotd_promotions-item {
+        border: 1px solid @base;
+    }
+	@media (min-width: 481px) {
+		&-item {
+			max-width: calc(~'280px - 10px');
+		}
+    }
+    @media (min-width: 1400px) {
+		&-item {
+		    min-width: calc(~'33.3333%  - 10px');
+		}
+	}
+}
+
+.fluidContainerMaxWidth() when (@fluidContainerMaxWidth = 1200px) {
+
+	.container-fluid > .container-fluid-row.container-fluid-row-no-limit .ab__deal_of_the_day {
+        @media (max-width: 1360px) {
+            padding-right: @fluid-row_max-padding;
+			padding-left: @fluid-row_max-padding;
+        }
+        @media (max-width: 1200px) {
+            padding-right: @fluid-row_min-padding;
+            padding-left: @fluid-row_min-padding;
+        }
+    }
+}
+.fluidContainerMaxWidth() when (@fluidContainerMaxWidth = 1500px) {
+
+	.container-fluid > .container-fluid-row.container-fluid-row-no-limit .ab__deal_of_the_day {
+		@media (max-width: 1660px) {
+            padding-right: @fluid-row_max-padding;
+            padding-left: @fluid-row_max-padding;
+            max-width: @fluidContainerMaxWidth;
+	    }
+	    @media (max-width: 1200px) {
+            padding-right: @fluid-row_min-padding;
+            padding-left: @fluid-row_min-padding;
+	    }
+	}
+}
+.fluidContainerMaxWidth();
+
+@abt__ut2_addons_ab__deal_of_the_day_block_fonts_color: contrast(@content_bg, @font, white);
+@abt__ut2_addons_ab__deal_of_the_day_block_background: @content_bg;
+@abt__ut2_addons_ab__deal_of_the_day_bordered_block: false;
+@abt__ut2_addons_ab__deal_of_the_day_shadow_block: false;
+@abt__ut2_addons_ab__deal_of_the_day_pd_rounded_corners_block: false;

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+<id>ab__image_previewers</id>
+<version>1.0.2</version>
+<priority>2021</priority>
+<position>0</position>
+<status>active</status>
+<default_language>en</default_language>
+<ab>
+<hash>6178d7dbee98932fd5869f91917612198423073e, 2023-09-25 13:03:42</hash>
+<compatibility>
+<dependencies>
+<ab__addons_manager><min>2.5.2</min></ab__addons_manager>
+</dependencies>
+</compatibility>
+</ab>
+<authors>
+<author>
+<name>AlexBranding</name>
+<email>info@alexbranding.com</email>
+<url>https://alexbranding.com</url>
+</author>
+</authors>
+<supplier>AlexBranding</supplier>
+<supplier_link>https://cs-cart.alexbranding.com</supplier_link>
+<supplier_page>ab__am.addons</supplier_page>
+<compatibility>
+<conflicts>sd_eagleowl</conflicts>
+<dependencies>ab__addons_manager</dependencies>
+<core_version><min>4.13.1</min></core_version>
+<core_edition>ULTIMATE,MULTIVENDOR</core_edition>
+</compatibility>
+<settings layout="separate" edition_type="ROOT,VENDOR,STOREFRONT">
+<sections>
+<section id="settings">
+<items>
+<item id="ps_display_price">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="ps_display_add_to_cart">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="ps_display_navigation_dots">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="ps_display_zoom">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="ps_display_fullscreen">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="ps_close_with_gesture">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="code"><type>hidden</type><default_value>ABA-hgyXFi6vZNA7J2iybhwnn</default_value></item>
+<item id="build"><type>hidden</type><default_value>1143</default_value></item>
+</items>
+</section>
+</sections>
+</settings>
+<queries>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('ab__ip.data.manage', 'Y', 'ab__addons', 'ab__image_previewers', 'Y')</item>
+<item for="uninstall">DELETE FROM ?:privileges WHERE section_id = 'ab__image_previewers' OR group_id = 'ab__image_previewers'</item>
+</queries>
+</addon>

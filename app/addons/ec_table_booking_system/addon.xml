@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+	<id>ec_table_booking_system</id>
+	<version>3.1</version>
+	<name>Ecarter : Table Booking System</name>
+	<priority>7000</priority>
+	<position>500</position>
+	<status>active</status>
+	<has_icon>Y</has_icon>
+	<default_language>en</default_language>
+	<authors>
+        <author>
+            <name>Ecarter Technologies Pvt. Ltd.</name>
+            <email>support@ecarter.co</email>
+            <url>https://store.ecarter.co</url>
+        </author>
+    </authors>
+    <supplier>Ecarter Technologies Pvt. Ltd.</supplier>
+    <supplier_link>https://store.ecarter.co</supplier_link>
+	<auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+	<settings edition_type="ROOT,ULT:VENDOR">
+		<sections>
+			<section id="general">
+				<items>
+					<item id="booking_settings">
+                        <type>template</type>
+                        <default_value>booking.tpl</default_value>
+                    </item>
+				</items>
+			</section>
+		</sections>
+	</settings>
+	<queries>
+		<item>
+			DROP TABLE IF EXISTS ?:ec_table_booking_system
+		</item>
+		<item>
+			CREATE TABLE IF NOT EXISTS `?:ec_table_booking_system` (
+				`product_id` int(11) NOT NULL,
+				`booking_type` char(1) NOT NULL,
+				`quantity_selector` char(1) NOT NULL,
+				`show_price_date` char(1) NOT NULL,
+				`blocked_date` text NOT NULL,
+				`from_date` varchar(20) NOT NULL,
+				`to_date` varchar(20) NOT NULL,
+				`slot_time` int(11) NOT NULL,
+				`free_time` int(11) NOT NULL,
+				`days_data` text NOT NULL,
+				`minimum_booking_time` text NOT NULL,
+				PRIMARY KEY (`product_id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=UTF8;
+		</item>
+		<item for="uninstall">
+			DROP TABLE IF EXISTS ?:ec_table_booking_system
+		</item>
+		<item>
+			DROP TABLE IF EXISTS ?:ec_table_booking_system_booking_info
+		</item>
+		<item>
+			CREATE TABLE IF NOT EXISTS `?:ec_table_booking_system_booking_info` (
+				`id` int(11) NOT NULL AUTO_INCREMENT,
+				`order_id` int(11) NOT NULL,
+				`product_id` int(11) NOT NULL,
+				`booking_info` text NOT NULL,
+				`start_date` text NOT NULL,
+				`end_date` text NOT NULL,
+				`slot` text NOT NULL,
+				`quantity` int(11) NOT NULL,
+				`status` char(1) NOT NULL,
+				`booking_type` char(1) NOT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=UTF8;
+		</item>
+		<item for="uninstall">
+			DROP TABLE IF EXISTS ?:ec_table_booking_system_booking_info
+		</item>
+
+		<item>
+			DROP TABLE IF EXISTS ?:ec_table_booking_system_price
+		</item>
+		<item>
+			CREATE TABLE IF NOT EXISTS `?:ec_table_booking_system_price` (
+				`id` int(11) NOT NULL AUTO_INCREMENT,
+				`product_id` int(11) NOT NULL,
+				`from_date` int(11) NOT NULL,
+				`to_date` int(11) NOT NULL,
+				`price` decimal(12,2) NOT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=UTF8;
+		</item>
+		<item for="uninstall">
+			DROP TABLE IF EXISTS ?:ec_table_booking_system_price
+		</item>
+
+		<item for="install">ALTER TABLE ?:companies ADD blocked_date text NOT NULL;</item>
+        <item for="uninstall">ALTER TABLE ?:companies DROP blocked_date;</item>
+
+		<item for="install">ALTER TABLE ?:companies ADD booking_data text NOT NULL;</item>
+        <item for="uninstall">ALTER TABLE ?:companies DROP booking_data;</item>
+
+		<item for="install">ALTER TABLE ?:vendor_plans ADD offer_booking tinyint(1)	NOT NULL;</item>
+        <item for="uninstall">ALTER TABLE ?:vendor_plans DROP offer_booking;</item>
+
+		<item for="install" editions="MULTIVENDOR,ULTIMATE">
+            REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('manage_ec_table_booking_system', 'Y', 'addons', 'ec_table_booking_system', 'N');
+        </item>
+        <item for="install" editions="MULTIVENDOR,ULTIMATE">
+            REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('view_ec_table_booking_system', 'Y', 'addons', 'ec_table_booking_system', 'Y');
+        </item>
+        <item for="uninstall" editions="MULTIVENDOR,ULTIMATE">
+            DELETE FROM ?:privileges WHERE privilege IN ('manage_ec_table_booking_system', 'view_ec_table_booking_system');
+        </item>
+
+	</queries>
+<marketplace_product_id>3410</marketplace_product_id><marketplace_license_number>MP-02N5-N780-5FFD-OJG8</marketplace_license_number></addon>

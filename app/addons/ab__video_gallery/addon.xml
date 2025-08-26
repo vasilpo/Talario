@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+<id>ab__video_gallery</id>
+<version>3.7.0</version>
+<priority>2017</priority>
+<position>0</position>
+<status>active</status>
+<default_language>en</default_language>
+<authors>
+<author>
+<name>AlexBranding</name>
+<email>info@alexbranding.com</email>
+<url>https://alexbranding.com</url>
+</author>
+</authors>
+<supplier>AlexBranding</supplier>
+<supplier_link>https://cs-cart.alexbranding.com</supplier_link>
+<supplier_page>ab__am.addons</supplier_page>
+<compatibility>
+<dependencies>ab__addons_manager</dependencies>
+<core_version><min>4.18.1</min></core_version>
+<core_edition>ULTIMATE,MULTIVENDOR</core_edition>
+</compatibility>
+<ab>
+<hash>1a416ad48d98932de0462a9dd3d5f6e19063d869, 2024-08-16 17:35:08</hash>
+<compatibility>
+<dependencies>
+<ab__addons_manager><min>2.5.2</min></ab__addons_manager>
+<abt__unitheme2><min>4.18.1.b</min></abt__unitheme2>
+<abt__youpitheme><min>4.15.2.b</min></abt__youpitheme>
+</dependencies>
+</compatibility>
+</ab>
+<settings layout="separate" edition_type="ROOT,VENDOR,STOREFRONT">
+<sections>
+<section id="settings">
+<items>
+<item id="position">
+<type>selectbox</type>
+<default_value>post</default_value>
+<variants>
+<item id="pre" />
+<item id="post" />
+</variants>
+</item>
+<item id="show_in_lists">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="on_thumbnail_click">
+<type>selectbox</type>
+<default_value>open_popup</default_value>
+<variants>
+<item id="image_replace" />
+<item id="open_popup" />
+</variants>
+</item>
+<item id="controls">
+<type>checkbox</type>
+<default_value>N</default_value>
+</item>
+<item id="repeat">
+<type>checkbox</type>
+<default_value>N</default_value>
+</item>
+<item id="th_size">
+<type>input</type>
+<default_value>65</default_value>
+</item>
+<item id="cycle">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="vertical">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="video_icon">
+<type>selectbox</type>
+<default_value>youtube</default_value>
+</item>
+<item id="enable_microdata">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="code"><type>hidden</type><default_value>ABA-1mRdWjgN7nuXwzY7Mxxj0</default_value></item>
+<item id="build"><type>hidden</type><default_value>1171</default_value></item>
+</items>
+</section>
+</sections>
+</settings>
+<functions>
+<item for="install">fn_ab__video_gallery_install</item>
+</functions>
+<queries>
+<item for="install">
+CREATE TABLE IF NOT EXISTS ?:ab__video_gallery (
+video_id MEDIUMINT(8) UNSIGNED NOT NULL auto_increment,
+type CHAR(1) NOT NULL DEFAULT 'Y',
+product_id MEDIUMINT(8) UNSIGNED NOT NULL,
+pos SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0,
+product_pos_type CHAR(1) NOT NULL DEFAULT 'D',
+product_pos SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0,
+autoplay CHAR(1) NOT NULL DEFAULT 'N',
+show_in_list CHAR(1) NOT NULL DEFAULT 'N',
+status CHAR(1) NOT NULL DEFAULT 'A',
+icon_type VARCHAR(16) NOT NULL DEFAULT 'snapshot',
+settings TEXT NOT NULL,
+storefront_id int(11) UNSIGNED NOT NULL DEFAULT 0,
+PRIMARY KEY (video_id),
+KEY status (status),
+KEY product_id (product_id)
+) DEFAULT CHARSET UTF8;
+</item>
+<item for="install">
+CREATE TABLE IF NOT EXISTS ?:ab__video_gallery_descriptions (
+video_id MEDIUMINT(8) UNSIGNED NOT NULL,
+video_path VARCHAR(255) NOT NULL DEFAULT '',
+title VARCHAR(255) NOT NULL DEFAULT '',
+description MEDIUMTEXT NOT NULL DEFAULT '',
+lang_code CHAR(2) NOT NULL DEFAULT '',
+PRIMARY KEY (video_id,lang_code)
+) DEFAULT CHARSET UTF8;
+</item>
+<item for="install">
+CREATE TABLE IF NOT EXISTS ?:ab__video_gallery_settings (
+product_id MEDIUMINT(8) UNSIGNED NOT NULL,
+var VARCHAR(32) NOT NULL DEFAULT '',
+value VARCHAR(255) NOT NULL DEFAULT '',
+PRIMARY KEY (product_id, var)
+) DEFAULT CHARSET UTF8;
+</item>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_DEFAULT, section_id, group_id, is_view) VALUES ('ab__vg_manage_videos', 'Y', 'ab__addons', 'ab__video_gallery', 'N')</item>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_DEFAULT, section_id, group_id, is_view) VALUES ('ab__vg_view_videos', 'Y', 'ab__addons', 'ab__video_gallery', 'Y')</item>
+<item for="uninstall">DELETE FROM ?:privileges WHERE section_id = 'ab__video_gallery' OR group_id = 'ab__video_gallery'</item>
+</queries>
+</addon>

@@ -1,0 +1,41 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US"
+
+msgctxt "Addons::name::google_analytics"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Addons::description::google_analytics"
+msgid "Integrates a Google Analytics service with the store"
+msgstr "Integrates a Google Analytics service with the store"
+
+msgctxt "SettingsSections::google_analytics::general"
+msgid "General"
+msgstr "General"
+
+msgctxt "SettingsOptions::google_analytics::tracking_code"
+msgid "Google Analytics account number"
+msgstr "Google Analytics account number"
+
+msgctxt "SettingsOptions::google_analytics::track_ecommerce"
+msgid "Track e-commerce transactions"
+msgstr "Track e-commerce transactions"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_title"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_description"
+msgid "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+msgstr "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+
+msgctxt "Languages::google_analytics.google_ads_cookies_title"
+msgid "Google Ads"
+msgstr "Google Ads"
+
+msgctxt "Languages::google_analytics.google_ads_cookies_description"
+msgid "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."
+msgstr "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."

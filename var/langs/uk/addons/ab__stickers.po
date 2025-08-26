@@ -1,0 +1,1150 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
+
+msgctxt "Addons::name::ab__stickers"
+msgid "AB: Stickers"
+msgstr "AB: Стікери"
+
+msgctxt "Addons::description::ab__stickers"
+msgid "Add-on allows to add product stickers"
+msgstr "Модуль дозволяє додати стікери товарам"
+
+msgctxt "Languages::ab__stickers"
+msgid "AB: Stickers"
+msgstr "AB: Стікери"
+
+msgctxt "Languages::ab__stickers.settings"
+msgid "General settings"
+msgstr "Загальні налаштування"
+
+msgctxt "SettingsSections::ab__stickers::settings"
+msgid "General"
+msgstr "Загальні"
+
+msgctxt "SettingsSections::ab__stickers::text_stickers"
+msgid "Text stickers"
+msgstr "Текстові стікери"
+
+msgctxt "SettingsSections::ab__stickers::vendors"
+msgid "Vendors"
+msgstr "Продавці"
+
+msgctxt "SettingsSections::ab__stickers::graphic_stickers"
+msgid "Graphic stickers"
+msgstr "Графічні стікери"
+
+msgctxt "SettingsOptions::ab__stickers::ts_appearance"
+msgid "Appearance"
+msgstr "Зовнішній вигляд"
+
+msgctxt "SettingsTooltips::ab__stickers::ts_appearance"
+msgid "Defines the appearence of text stickers"
+msgstr "Визначає як будуть виглядати текстові стікери"
+
+msgctxt "SettingsOptions::ab__stickers::gs_image_size_in_lists"
+msgid "Icon size in product lists, px"
+msgstr "Розмір іконки у списках товарів, рх"
+
+msgctxt "SettingsTooltips::ab__stickers::gs_image_size_in_lists"
+msgid "Defines icon size in product lists"
+msgstr "Визначає розмір іконки у списках товарів"
+
+msgctxt "SettingsVariants::ab__stickers::gs_image_size_in_lists::24"
+msgid "24x24"
+msgstr "24x24"
+
+msgctxt "SettingsVariants::ab__stickers::gs_image_size_in_lists::36"
+msgid "36x36"
+msgstr "36x36"
+
+msgctxt "SettingsVariants::ab__stickers::gs_image_size_in_lists::50"
+msgid "50x50"
+msgstr "50x50"
+
+msgctxt "SettingsOptions::ab__stickers::gs_image_size_on_product_pages"
+msgid "Icon size on product pages, px"
+msgstr "Розмір іконки на сторінках товарів, рх"
+
+msgctxt "SettingsTooltips::ab__stickers::gs_image_size_on_product_pages"
+msgid "Defines icon size on product pages"
+msgstr "Визначає розмір іконки на сторінках товарів"
+
+msgctxt "SettingsVariants::ab__stickers::gs_image_size_on_product_pages::24"
+msgid "24x24"
+msgstr "24x24"
+
+msgctxt "SettingsVariants::ab__stickers::gs_image_size_on_product_pages::36"
+msgid "36x36"
+msgstr "36x36"
+
+msgctxt "SettingsVariants::ab__stickers::gs_image_size_on_product_pages::50"
+msgid "50x50"
+msgstr "50x50"
+
+msgctxt "SettingsOptions::ab__stickers::output_position"
+msgid "Output position on the image block"
+msgstr "Позиція відображення на блоці зображення"
+
+msgctxt "SettingsTooltips::ab__stickers::output_position"
+msgid "Please note, for RTL languages ​​- the meaning will be opposite"
+msgstr "Зверніть увагу, що для RTL мов - значення буде протилежним"
+
+msgctxt "SettingsVariants::ab__stickers::output_position::L"
+msgid "Left"
+msgstr "Зліва"
+
+msgctxt "SettingsVariants::ab__stickers::output_position::R"
+msgid "Right"
+msgstr "Справа"
+
+msgctxt "SettingsOptions::ab__stickers::enable_for_vendors"
+msgid "Allow vendors to manage stickers"
+msgstr "Дозволити продавцям керувати стікерами"
+
+msgctxt "SettingsSections::ab__stickers::pictograms"
+msgid "Pictograms"
+msgstr "Піктограми"
+
+msgctxt "SettingsOptions::ab__stickers::p_appearance"
+msgid "Appearance"
+msgstr "Зовнішній вигляд"
+
+msgctxt "SettingsTooltips::ab__stickers::p_appearance"
+msgid "Defines how pictograms will look"
+msgstr "Визначає, як виглядатимуть піктограми"
+
+msgctxt "Languages::ab__stickers.help"
+msgid "Help"
+msgstr "Довідка"
+
+msgctxt "Languages::ab__stickers.help.docs"
+msgid "Read <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__stickers.doc'>the documentation</a>."
+msgstr "Ознайомитись з <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__stickers.doc'>документацією</a>."
+
+msgctxt "Languages::privilege_groups.ab__stickers"
+msgid "AB: Stickers"
+msgstr "AB: Стікери"
+
+msgctxt "Languages::ab__stickers.output_type"
+msgid "Stickers output type on the image block"
+msgstr "Спосіб відображення стікерів на блоці зображення"
+
+msgctxt "Languages::ab__stickers.output_type.tooltip"
+msgid "The setting allows to specify how the sticker list will be presented in each corner (upper left, upper right, lower left and lower right) of the product grid template \"Grid\" and in the product image block on the product page"
+msgstr "Налаштування дозволяє вказати яким способом буде наведено список стікерів в кожному кутку (верхній лівий, верхній правий, нижній лівий і нижній правий) товарної плитки шаблону «Сітка» і в блоці зображень товару на сторінці товару"
+
+msgctxt "Languages::ab__stickers.output_type.column"
+msgid "Column"
+msgstr "В колонку"
+
+msgctxt "Languages::ab__stickers.output_type.row"
+msgid "Row"
+msgstr "В рядок"
+
+msgctxt "Languages::ab__stickers.output_position"
+msgid "Position on image block"
+msgstr "Позиція на блоці зображення"
+
+msgctxt "Languages::ab__stickers.output_position.AP"
+msgid "All positions"
+msgstr "Всі позиції"
+
+msgctxt "Languages::ab__stickers.output_position.TL"
+msgid "Upper left corner"
+msgstr "Верхній лівий кут"
+
+msgctxt "Languages::ab__stickers.output_position.TR"
+msgid "Upper right corner"
+msgstr "Верхній правий кут"
+
+msgctxt "Languages::ab__stickers.output_position.BL"
+msgid "Lower left corner"
+msgstr "Нижній лівий кут"
+
+msgctxt "Languages::ab__stickers.output_position.BR"
+msgid "Lower right corner"
+msgstr "Нижній правий кут"
+
+msgctxt "Languages::ab__stickers.output_position.T"
+msgid "Upper corner"
+msgstr "Верхній кут"
+
+msgctxt "Languages::ab__stickers.output_position.B"
+msgid "Lower corner"
+msgstr "Нижній кут"
+
+msgctxt "Languages::ab__stickers.manage"
+msgid "Sticker list"
+msgstr "Список стікерів"
+
+msgctxt "Languages::ab__stickers.update"
+msgid "Sticker managing"
+msgstr "Керування стікером"
+
+msgctxt "Languages::ab__stickers.manage.add.dynamic"
+msgid "Add dynamic sticker"
+msgstr "Додати динамічний стікер"
+
+msgctxt "Languages::ab__stickers.manage.add.constant"
+msgid "Add static sticker"
+msgstr "Додати статичний стікер"
+
+msgctxt "Languages::ab__stickers.manage.edit"
+msgid "Edit sticker"
+msgstr "Редагувати стікер"
+
+msgctxt "Languages::ab__stickers.manage.remove_links"
+msgid "Remove all links with the objects"
+msgstr "Видалити усі зв'язки з об'єктами"
+
+msgctxt "Languages::ab__stickers.params.name"
+msgid "Name"
+msgstr "Назва"
+
+msgctxt "Languages::ab__stickers.params.status"
+msgid "Status"
+msgstr "Статус"
+
+msgctxt "Languages::ab__stickers.params.type"
+msgid "Type"
+msgstr "Тип"
+
+msgctxt "Languages::ab__stickers.params.type.A"
+msgid "All types"
+msgstr "Всі типи"
+
+msgctxt "Languages::ab__stickers.params.type.C"
+msgid "Static sticker"
+msgstr "Статичний стікер"
+
+msgctxt "Languages::ab__stickers.params.type.D"
+msgid "Dynamic sticker"
+msgstr "Динамічний стікер"
+
+msgctxt "Languages::ab__stickers.params.type.category"
+msgid "Category sticker"
+msgstr "Стікер категорії"
+
+msgctxt "Languages::ab__stickers.params.type.product"
+msgid "Product sticker"
+msgstr "Стікер товару"
+
+msgctxt "Languages::ab__stickers.params.position"
+msgid "Position"
+msgstr "Позиція"
+
+msgctxt "Languages::ab__stickers.params.class"
+msgid "User-defined CSS-class"
+msgstr "CSS-клас користувача"
+
+msgctxt "Languages::ab__stickers.params.available_use"
+msgid "Validity period"
+msgstr "Період дії"
+
+msgctxt "Languages::ab__stickers.params.available_from"
+msgid "Available from"
+msgstr "Період дії з"
+
+msgctxt "Languages::ab__stickers.params.available_to"
+msgid "Available till"
+msgstr "Період дії до"
+
+msgctxt "Languages::ab__stickers.params.color"
+msgid "Text color"
+msgstr "Колір тексту"
+
+msgctxt "Languages::ab__stickers.params.color.tooltip"
+msgid "Please, select the checkbox to use your own color"
+msgstr "Встановіть прапорець, щоб застосувати власний колір"
+
+msgctxt "Languages::ab__stickers.params.background"
+msgid "Background color"
+msgstr "Колір фону"
+
+msgctxt "Languages::ab__stickers.params.background.tooltip"
+msgid "Please, select the checkbox to use your own color"
+msgstr "Встановіть прапорець, щоб застосувати власний колір"
+
+msgctxt "Languages::ab__stickers.params.link_count"
+msgid "Links"
+msgstr "Зв'язки"
+
+msgctxt "Languages::ab__stickers.params.link_count.tooltip"
+msgid "Number of linked objects to the sticker"
+msgstr "Кількість прив'язаних об'єктів до стікера"
+
+msgctxt "Languages::ab__stickers.new_sticker"
+msgid "New sticker"
+msgstr "Новий стікер"
+
+msgctxt "Languages::ab__stickers.name.tooltip"
+msgid "This field value will be displayed on"
+msgstr "Значення цього поля буде відображатись на пристроях типу"
+
+msgctxt "Languages::ab__stickers.name_for_desktop"
+msgid "Text for full view"
+msgstr "Текст для повного виду"
+
+msgctxt "Languages::ab__stickers.name_for_desktop.tooltip"
+msgid "This field value will be displayed on Desktop and Tablet devices (recommended for templates with big product images)"
+msgstr "Значення цього поля буде відображатись на пристроях типу ПК і Планшет (рекомендується для шаблонів з великими зображеннями товарів)"
+
+msgctxt "Languages::ab__stickers.name_for_mobile"
+msgid "Text for short view"
+msgstr "Текст для скороченого виду"
+
+msgctxt "Languages::ab__stickers.name_for_mobile.tooltip"
+msgid "This field value will be displayed on Phone devices (recommended for templates with small product images)"
+msgstr "Значення цього поля буде відображатись на пристроях типу Смартфон (рекомендується для шаблонів з дрібними зображеннями товарів)"
+
+msgctxt "Languages::ab__stickers.attached_products"
+msgid "Attached products"
+msgstr "Прикріплені товари"
+
+msgctxt "Languages::ab__stickers.style"
+msgid "Style"
+msgstr "Стиль"
+
+msgctxt "Languages::ab__stickers.style.T"
+msgid "Text"
+msgstr "Текстовий"
+
+msgctxt "Languages::ab__stickers.style.G"
+msgid "Graphic"
+msgstr "Графічний"
+
+msgctxt "Languages::ab__stickers.style.P"
+msgid "Pictogram"
+msgstr "Піктограма"
+
+msgctxt "Languages::ab__stickers.text_color"
+msgid "Text color"
+msgstr "Колір тексту"
+
+msgctxt "Languages::ab__stickers.sticker_bg"
+msgid "Background color"
+msgstr "Колір фону"
+
+msgctxt "Languages::ab__stickers.editing_sticker"
+msgid "Sticker managing"
+msgstr "Керування стікером"
+
+msgctxt "Languages::ab__stickers.deleted_stickers"
+msgid "[n] sticker is deleted|[n] stickers are deleted"
+msgstr "[n] стікер видалено|[n] стікери видалено|[n] стікерів видалено"
+
+msgctxt "Languages::ab__stickers.cloned_stickers"
+msgid "[n] sticker was cloned|[n] stickers were cloned"
+msgstr "[n] стікер дубльований|[n] стікери дубльовані|[n] стікерів дубльовано"
+
+msgctxt "Languages::ab__stickers.cloned"
+msgid "[Cloned]"
+msgstr "[Дубльований]"
+
+msgctxt "Languages::ab__stickers.description"
+msgid "Description"
+msgstr "Опис"
+
+msgctxt "Languages::ab__stickers.description.tooltip"
+msgid "This field value will be displayed when hover mouse pointer"
+msgstr "Значення цього поля буде відображатись при наведені мишкою на стікер"
+
+msgctxt "Languages::ab__stickers.group_conditions"
+msgid "If [set] of these conditions [set_value]"
+msgstr "Якщо [set] із цих умов [set_value]"
+
+msgctxt "Languages::ab__stickers.conditions.all"
+msgid "every"
+msgstr "кожне"
+
+msgctxt "Languages::ab__stickers.conditions.any"
+msgid "any"
+msgstr "будь-яке"
+
+msgctxt "Languages::ab__stickers.conditions.true"
+msgid "are true"
+msgstr "виконується"
+
+msgctxt "Languages::ab__stickers.conditions.false"
+msgid "are false"
+msgstr "не виконується"
+
+msgctxt "Languages::ab__stickers.conditions.names.price"
+msgid "Product price"
+msgstr "Ціна товару"
+
+msgctxt "Languages::ab__stickers.conditions.names.feature"
+msgid "Product feature"
+msgstr "Характеристика товару"
+
+msgctxt "Languages::ab__stickers.conditions.names.categories"
+msgid "Categories"
+msgstr "Категорії"
+
+msgctxt "Languages::ab__stickers.conditions.names.tags"
+msgid "Product tag"
+msgstr "Тег товару"
+
+msgctxt "Languages::ab__stickers.conditions.names.discount"
+msgid "Discount, %"
+msgstr "Знижка, %"
+
+msgctxt "Languages::ab__stickers.conditions.names.vendor_plans"
+msgid "Vendor plan"
+msgstr "Тариф продавця"
+
+msgctxt "Languages::ab__stickers.avail_from"
+msgid "Available from"
+msgstr "Доступний з"
+
+msgctxt "Languages::ab__stickers.avail_till"
+msgid "Available to"
+msgstr "Доступний до"
+
+msgctxt "Languages::ab__stickers.storefronts.sticker_page.description"
+msgid "Select the storefronts for which this sticker will be applied"
+msgstr "Оберіть вітрини, для яких буде застосовуватись цей стікер"
+
+msgctxt "Languages::ab__stickers.search_by"
+msgid "Search by AB: Stickers"
+msgstr "Пошук по АВ: Стікерам"
+
+msgctxt "Languages::ab__stickers.available_placeholders"
+msgid "The following placeholders are available for fields \"Text for full view\", \"Text for short view\", \"Description\""
+msgstr "Вам також доступні наступні плейсхолдери для полів \"Текст для повного виду\", \"Текст для скороченого виду\", \"Опис\""
+
+msgctxt "Languages::ab__stickers.conditions.names.free_shipping"
+msgid "Free shipping"
+msgstr "Безкоштовна доставка"
+
+msgctxt "Languages::ab__stickers.conditions.names.qty_discounts"
+msgid "Quantity discounts"
+msgstr "Оптові знижки"
+
+msgctxt "Languages::ab__stickers.conditions.names.amount"
+msgid "In stock"
+msgstr "В наявності"
+
+msgctxt "Languages::ab__stickers.conditions.names.sales_amount"
+msgid "Number of sales"
+msgstr "Кількість продажів"
+
+msgctxt "Languages::ab__stickers.conditions.names.popularity"
+msgid "Product popularity"
+msgstr "Популярність товару"
+
+msgctxt "Languages::ab__stickers.conditions.names.rating"
+msgid "Product rating"
+msgstr "Рейтинг товару"
+
+msgctxt "Languages::ab__stickers.conditions.names.rating.tooltip"
+msgid "The value must be decimal"
+msgstr "Введене значення має бути дробове"
+
+msgctxt "Languages::ab__stickers.conditions.names.comments"
+msgid "Number of reviews"
+msgstr "Кількість відгуків"
+
+msgctxt "Languages::ab__stickers.conditions.names.comments.tooltip"
+msgid "Only accepted reviews will be counted"
+msgstr "До розрахунку беруться лише ухвалені відгуки"
+
+msgctxt "Languages::ab__stickers.conditions.names.pre_order"
+msgid "Buy in advance"
+msgstr "Передзамовлення"
+
+msgctxt "Languages::ab__stickers.conditions.names.weight"
+msgid "Product weight"
+msgstr "Вага товару"
+
+msgctxt "Languages::ab__stickers.conditions.names.creating_date"
+msgid "Creating date"
+msgstr "Дата створення"
+
+msgctxt "Languages::ab__stickers.conditions.names.creating_date.tooltip"
+msgid "Number of the days from creation date of the product to current date"
+msgstr "Кількість днів від дати створення товару до поточної дати"
+
+msgctxt "Languages::ab__stickers.conditions.names.age_verification"
+msgid "Age limit"
+msgstr "Обмеження за віком"
+
+msgctxt "Languages::ab__stickers.placeholders.end_line"
+msgid "Line break"
+msgstr "Перенесення рядка"
+
+msgctxt "Languages::ab__stickers.placeholders.discount"
+msgid "The discount value in percents"
+msgstr "Значення знижки у відсотках"
+
+msgctxt "Languages::ab__stickers.placeholders.min_qty_discount_count"
+msgid "Minimal products quantity for quantity discount"
+msgstr "Мінімальна кількість товарів для оптової знижки"
+
+msgctxt "Languages::ab__stickers.placeholders.min_qty_discount_price"
+msgid "Minimal products price with quantity discount"
+msgstr "Мінімальна вартість товарів при оптовій знижці"
+
+msgctxt "Languages::ab__stickers.placeholders.min_qty_discount_percentage"
+msgid "Discount percentage with minimal quantity purchase"
+msgstr "Відсоток знижки при мінімальній оптовій покупці"
+
+msgctxt "Languages::ab__stickers.placeholders.amount"
+msgid "Product quantity in stock"
+msgstr "Кількість товарів в наявності"
+
+msgctxt "Languages::ab__stickers.placeholders.rating"
+msgid "Product rating value, for example: 4.5 or 5.0"
+msgstr "Значення рейтингу для товару, наприклад: 4.5 або 5.0"
+
+msgctxt "Languages::ab__stickers.placeholders.avail_since"
+msgid "The date when buy in advance for product is available"
+msgstr "Дата, з якою доступне передзамовлення по товару"
+
+msgctxt "Languages::ab__stickers.placeholders.weight"
+msgid "Product weight"
+msgstr "Вага товару"
+
+msgctxt "Languages::ab__stickers.placeholders.ceil_integer_weight"
+msgid "Product weight (rounded up to bigger integer number)"
+msgstr "Вага товару (округлений до більшого цілого числа)"
+
+msgctxt "Languages::ab__stickers.placeholders.price"
+msgid "Product price"
+msgstr "Ціна товару"
+
+msgctxt "Languages::ab__stickers.placeholders.list_price"
+msgid "List product price"
+msgstr "Рекомендована ціна товару"
+
+msgctxt "Languages::ab__stickers.placeholders.discount_sum"
+msgid "Discount amount in the selected currency"
+msgstr "Сума знижки в обраній валюті"
+
+msgctxt "Languages::ab__stickers.placeholders.feature_value"
+msgid "Feature value, where [id] is the identifier of the feature, which value should be displayed"
+msgstr "Значення характеристики, де [id] – ідентифікатор характеристики, значення якої потрібно відобразити"
+
+msgctxt "Languages::ab__stickers.show"
+msgid "Display"
+msgstr "Показувати"
+
+msgctxt "Languages::ab__stickers.show.small"
+msgid "Display in the lists with small items"
+msgstr "Показувати в списках з дрібними елементами"
+
+msgctxt "Languages::ab__stickers.show.small.tooltip"
+msgid "Catalog lists:<br/>Small items;<br/>Text links;<br/>"
+msgstr "Перелік списків:<br/>Дрібні елементи;<br/>Текстові посилання;<br/>"
+
+msgctxt "Languages::ab__stickers.max_count"
+msgid "Maximal number"
+msgstr "Максимальна кількість"
+
+msgctxt "Languages::ab__stickers.available_placeholders.header"
+msgid "Available placeholders"
+msgstr "Доступні плейсхолдери"
+
+msgctxt "Languages::ab__stickers.conditions.names.promotion"
+msgid "Promotion"
+msgstr "Промоакція"
+
+msgctxt "Languages::ab__stickers.border_width"
+msgid "Outline width"
+msgstr "Ширина контуру"
+
+msgctxt "Languages::ab__stickers.border_color"
+msgid "Outline color"
+msgstr "Колір контуру"
+
+msgctxt "Languages::ab__stickers.uppercase_text"
+msgid "Text in capitals"
+msgstr "Текст великими літерами"
+
+msgctxt "Languages::ab__stickers.available_tags.header"
+msgid "Available html tags and other entities"
+msgstr "Доступні html-теги та інші сутності"
+
+msgctxt "Languages::ab__stickers.available_tags"
+msgid "For fields Text for full view and Text for short view there are available html tags and <a target=\"_blank\" href=\"https://www.w3schools.com/charsets/ref_emoji.asp\">Emoji Unicode</a>"
+msgstr "Для полів Текст для повного виду і Текст для скороченого виду Вам також доступні певні html-теги і <a target=\"_blank\" href=\"https://www.w3schools.com/charsets/ref_emoji.asp\">Emoji Unicode</a>"
+
+msgctxt "Languages::ab__stickers.available_tags.content"
+msgid "Available tags:[available_tags]"
+msgstr "Доступні теги:[available_tags]"
+
+msgctxt "Languages::ab__stickers.update_page_details"
+msgid "You can see examples after install of <a href=\"[href_demo]\" target=\"_blank\">demo data</a> or in <a href=\"https://docs.cs-cart.abt.team/en/ab__stickers.doc/#p-2891\" target=\"_blank\">documentation</a>"
+msgstr "Приклади використання Ви можете подивитись, встановивши <a href=\"[href_demo]\" target=\"_blank\">демо-дані</a> або в <a href=\"https://docs.cs-cart.abt.team/ru/ab__stickers.doc/#p-2891\" target=\"_blank\">документації</a>"
+
+msgctxt "Languages::ab__stickers.formulas.header"
+msgid "Mathematical formulas"
+msgstr "Математичні формули"
+
+msgctxt "Languages::ab__stickers.formulas"
+msgid "Mathematical formulas are also available for the fields \"Text for full view\", \"Text for short view\", \"Description\". The formula looks like this: <code>${formula}</code>. In the formula you can use mathematical operations (+-*/), placeholders from the \"Available placeholders\" list and modifiers."
+msgstr "Також для полів \"Текст для повного виду\", \"Текст для скороченого виду\", \"Опис\" вам доступні математичні формули. Формула має вигляд: <code>${formula}</code>. В формулі можна використовувати арифметичні операції (+-*/), плейсхолдери зі списку \"Доступні плейсхолдери\" та модифікатори."
+
+msgctxt "Languages::ab__stickers.formulas.content"
+msgid "Available modifiers: [available_formula_modifiers]"
+msgstr "Доступні модифікатори: [available_formula_modifiers]"
+
+msgctxt "Languages::ab__stickers.formulas.modifier.abs"
+msgid "absolute value (modulus of a number)"
+msgstr "абсолютне значення (модуль числа)"
+
+msgctxt "Languages::ab__stickers.formulas.modifier.ceil"
+msgid "rounding of number to a higher integer"
+msgstr "округлення числа до більшого цілого"
+
+msgctxt "Languages::ab__stickers.formulas.modifier.floor"
+msgid "rounding of number to a lower integer"
+msgstr "округлення числа до меншого цілого"
+
+msgctxt "Languages::ab__stickers.formulas.modifier.round"
+msgid "rounding of number to the nearest with the specified number of decimal places"
+msgstr "округлення числа до найближчого із зазначеною кількістю символів після коми"
+
+msgctxt "Languages::ab__stickers.formulas.modifier.pow"
+msgid "raising a number to a power"
+msgstr "зведення числа в ступінь"
+
+msgctxt "Languages::ab__stickers.formulas.modifier.sqrt"
+msgid "returns the square root of a number"
+msgstr "повертає квадратний корінь числа"
+
+msgctxt "Languages::ab__stickers.demodata"
+msgid "Demo data"
+msgstr "Демо-дані"
+
+msgctxt "Languages::ab__stickers.field_with_available_placeholders"
+msgid "For the field there are available placeholders, html tags and formulas"
+msgstr "Для цього поля доступно використання плейсхолдерів, html-тегів та формул"
+
+msgctxt "Languages::ab__stickers.field_with_available_placeholders.wysiwyg"
+msgid "For the field there are available placeholders, html tags and formulas"
+msgstr "Для цього поля доступно використання плейсхолдерів, html-тегів та формул"
+
+msgctxt "Languages::ab__stickers.full_size.image_size"
+msgid "Image size (full view)"
+msgstr "Розмір зображення (повний вид)"
+
+msgctxt "Languages::ab__stickers.small_size.image_size"
+msgid "Image size (short view)"
+msgstr "Розмір зображення (скорочений вид)"
+
+msgctxt "Languages::ab__stickers.output_settings.tooltip"
+msgid "You can set sticker display on the product page and in different lists types (to display stickers properly in the lists with small product images)"
+msgstr "Тут Ви можете налаштувати відображення стікеру на сторінці товару і в різних видах списків (для правильного відображення стікерів у списках з дрібними зображеннями товарів)"
+
+msgctxt "Languages::ab__stickers.output_settings.small_size"
+msgid "Short view"
+msgstr "Скорочений вид"
+
+msgctxt "Languages::ab__stickers.output_settings.full_size"
+msgid "Full view"
+msgstr "Повний вид"
+
+msgctxt "Languages::ab__stickers.delete_all"
+msgid "Delete all stickers"
+msgstr "Видалити всі стікери"
+
+msgctxt "Languages::ab__stickers.appearance_style"
+msgid "Appearance"
+msgstr "Зовнішній вигляд"
+
+msgctxt "Languages::ab__stickers.appearance_style.default.tooltip"
+msgid "Setting value 'Appearance' will be used from the tab 'Text stickers' of the add-on setting"
+msgstr "Буде застосовуватись значення налаштування 'Зовнішній вигляд' із вкладки 'Текстові стікери' налаштування модулю"
+
+msgctxt "Languages::ab__stickers.appearance_style.rounded"
+msgid "Rounded"
+msgstr "Округлений"
+
+msgctxt "Languages::ab__stickers.appearance_style.rectangular"
+msgid "Rectangular"
+msgstr "Прямокутний"
+
+msgctxt "Languages::ab__stickers.appearance_style.teardrop"
+msgid "Teardrop"
+msgstr "Краплеподібний"
+
+msgctxt "Languages::ab__stickers.appearance_style.beveled_angle"
+msgid "Beveled angle"
+msgstr "Зі скошеним кутом"
+
+msgctxt "Languages::ab__stickers.appearance_style.circle"
+msgid "Circle"
+msgstr "Круглий"
+
+msgctxt "Languages::ab__stickers.use_theme_presets"
+msgid "Use color values from the current theme"
+msgstr "Застосувати значення кольорів з поточної теми"
+
+msgctxt "Languages::ab__stickers.use_theme_presets.tooltip"
+msgid "Setting value \"Discount label\" will be used from settings <a href=\"[href]\" target=\"_blank\">of theme colors</a>"
+msgstr "Буде застосовуватись значення налаштування \"Етикетка зі знижкою\" з налаштувань <a href=\"[href]\" target=\"_blank\">кольорів теми</a>"
+
+msgctxt "Languages::ab__stickers.condition_groups.default"
+msgid "Default conditions"
+msgstr "Загальні умови"
+
+msgctxt "Languages::ab__stickers.list_has_prohibited_positions"
+msgid "This list type consists of forbidden positions of display"
+msgstr "Цей вид списку має заборонені позиції відображення"
+
+msgctxt "Languages::ab__stickers.list_has_prohibited_positions.docs"
+msgid "See the details in <a href=\"https://docs.cs-cart.abt.team/en/ab__stickers.doc/v1.2.0#p-3171\" target=\"_blank\">documentation</a>"
+msgstr "Читайте детальніше в <a href=\"https://docs.cs-cart.abt.team/ru/ab__stickers.doc/v1.2.0#p-3171\" target=\"_blank\">документації</a>"
+
+msgctxt "Languages::ab__stickers.vendor_edit"
+msgid "Allow vendor to manage"
+msgstr "Дозволити керування продавцю"
+
+msgctxt "Languages::ab__stickers.added_by_addon"
+msgid "Functionality is added by the add-on AB: Stickers"
+msgstr "Функціонал доданий модулем AB: Стікери"
+
+msgctxt "Languages::ab__stickers.conditions.names.buy_together"
+msgid "Buy together"
+msgstr "Комбінації товарів"
+
+msgctxt "Languages::ab__stickers.conditions.names.buy_together.tooltip"
+msgid "Product consists of product combination"
+msgstr "Товар має комбінацію товарів"
+
+msgctxt "Languages::ab__stickers.conditions.names.discount_sum"
+msgid "Discount amount"
+msgstr "Сума знижки"
+
+msgctxt "Languages::ab__stickers.op_not_empty"
+msgid "not empty"
+msgstr "не пусто"
+
+msgctxt "Languages::ab__stickers.sticker_bg.opacity"
+msgid "Background color saturation"
+msgstr "Насиченість кольору фону"
+
+msgctxt "Languages::ab__stickers.font_family"
+msgid "Font"
+msgstr "Шрифт"
+
+msgctxt "Languages::ab__stickers.font_size"
+msgid "Text size, px"
+msgstr "Розмір тексту, px"
+
+msgctxt "Languages::ab__stickers.vertical_position"
+msgid "Vertical align"
+msgstr "Вертикальне вирівнювання"
+
+msgctxt "Languages::ab__stickers.horizontal_position"
+msgid "Horizontal align"
+msgstr "Горизонтальне вирівнювання"
+
+msgctxt "Languages::ab__stickers.vertical_margin"
+msgid "Padding vertically, px"
+msgstr "Відступ по вертикалі, px"
+
+msgctxt "Languages::ab__stickers.horizontal_margin"
+msgid "Padding horizontally, px"
+msgstr "Відступ по горизонталі, px"
+
+msgctxt "Languages::ab__stickers.rotate"
+msgid "Rotation, &#176;"
+msgstr "Поворот, &#176;"
+
+msgctxt "Languages::ab__stickers.pictogram_vertical_position.VT"
+msgid "Top"
+msgstr "Зверху"
+
+msgctxt "Languages::ab__stickers.pictogram_vertical_position.VM"
+msgid "Center"
+msgstr "По центру"
+
+msgctxt "Languages::ab__stickers.pictogram_vertical_position.VB"
+msgid "Below"
+msgstr "Знизу"
+
+msgctxt "Languages::ab__stickers.pictogram_horizontal_position.HL"
+msgid "Left"
+msgstr "Зліва"
+
+msgctxt "Languages::ab__stickers.pictogram_horizontal_position.HC"
+msgid "Center"
+msgstr "По центру"
+
+msgctxt "Languages::ab__stickers.pictogram_horizontal_position.HR"
+msgid "Right"
+msgstr "Справа"
+
+msgctxt "Languages::ab__stickers.pictogram.fonts"
+msgid "Font list"
+msgstr "Список шрифтів"
+
+msgctxt "Languages::ab__stickers.pictogram.fonts.add_font"
+msgid "Upload font(s)"
+msgstr "Завантажити шрифт(и)"
+
+msgctxt "Languages::ab__stcikers.pictogram.font_download"
+msgid "Font(s)"
+msgstr "Шрифт(и)"
+
+msgctxt "Languages::ab__stickers.pictogram.fonts.delete_all"
+msgid "Delete all selected fonts"
+msgstr "Видалити всі завантажені шрифти"
+
+msgctxt "Languages::ab__stickers.pictogram.font_group.default"
+msgid "Standard fonts"
+msgstr "Cтандартні шрифти"
+
+msgctxt "Languages::ab__stickers.pictogram.font_group.custom"
+msgid "Loaded fonts"
+msgstr "Завантажені шрифти"
+
+msgctxt "Languages::ab__stcikers.pictogram.font_download.help"
+msgid "You may find fonts <a href='https://fonts.google.com/' target='_blank'>here</a>"
+msgstr "Шрифти можна знайти <a href='https://fonts.google.com/' target='_blank'>тут</a>"
+
+msgctxt "Languages::ab__stickers.pictograms.deleted_fonts"
+msgid "Scripts are removed"
+msgstr "Шрифти видалено"
+
+msgctxt "Languages::ab__stickers.pictograms.not_deleted_fonts"
+msgid "Some scripts cannot be removed as they are used in the following pictograms:<br>"
+msgstr "Деякі шрифти не можливо видалити, так як вони використовуються в наступних піктограмах:<br>"
+
+msgctxt "Languages::ab__stickers.pictogram.help.text"
+msgid "You can use the following placeholders:<br><br><code>[feature_<b>***</b>_name]</code> - feature name.<br><br><code>[feature_***]</code> - feature value.<br><br><code>[feature_***_with_prefix]</code> - feature value with prefix.<br><br><code>[feature_***_with_suffix]</code> - feature value with suffix.<br><br><code>[feature_***_with_prefix_and_<br>suffix]</code> - feature value with prefix and suffix.<br><br><code>[feature_***_prefix]</code> - feature prefix.<br><br><code>[feature_***_suffix]</code> - feature suffix.<br><br>You can also use a special parameter <b>space</b> for placeholders<br><br><code>[feature_***_with_prefix]</code> ,<br><br><code>[feature_***_with_suffix]</code> ,<br><br><code>[feature_***_with_prefix_and_<br>suffix]</code> ,<br> to add spaces between prefix, value and suffix.<br><br>For example, <code>[feature_***_with_prefix|space]</code> (parameter <b>space</b> must be at the end of placeholder).<br><br>Where <code>***</code> is a feature identity (id)"
+msgstr "Ви можете використовувати наступні плейсхолдери:<br><br><code>[feature_<b>***</b>_name]</code> - назва характеристики.<br><br><code>[feature_***]</code> - значення характеристики.<br><br><code>[feature_***_with_prefix]</code> - значення характеристики з префіксом.<br><br><code>[feature_***_with_suffix]</code> - значення характеристики з суфіксом.<br><br><code>[feature_***_with_prefix_and_<br>suffix]</code> - значення характеристики з префіксом і суфіксом.<br><br><code>[feature_***_prefix]</code> - префікс характеристики.<br><br><code>[feature_***_suffix]</code> - суфікс характеристики.<br><br>Також можна використовувати спеціальний параметр <b>space</b> для плейсхолдерів<br><br><code>[feature_***_with_prefix]</code> ,<br><br><code>[feature_***_with_suffix]</code> ,<br><br><code>[feature_***_with_prefix_and_<br>suffix]</code> ,<br> щоб додати відступи між префіксом, значенням та суфіксом.<br><br>Наприклад, <code>[feature_***_with_prefix|space]</code> (параметр <b>space</b> повинен бути в кінці плейсхолдеру).<br><br>Де <code>***</code> це ідентифікатор (id) характеристики"
+
+msgctxt "Languages::ab__stickers.op_exist"
+msgid "exist"
+msgstr "існує"
+
+msgctxt "Languages::ab__stickers.text_stroke_width"
+msgid "Inking width"
+msgstr "Ширина обведення"
+
+msgctxt "Languages::ab__stickers.text_stroke_color"
+msgid "Inking color"
+msgstr "Колір обведення"
+
+msgctxt "Languages::ab__stickers.pictogram.help.for_all_languages"
+msgid "Change color for all languages"
+msgstr "Замінити текст для всіх мов"
+
+msgctxt "Languages::ab__stickers.conditions.names.company_id"
+msgid "Vendor"
+msgstr "Продавець"
+
+msgctxt "Languages::ab__stickers.display_size"
+msgid "Display size"
+msgstr "Розмір відображення"
+
+msgctxt "Languages::ab__stickers.display_place"
+msgid "Display place"
+msgstr "Місце відображення"
+
+msgctxt "Languages::ab__stickers.display_pictogram"
+msgid "Display"
+msgstr "Відображати"
+
+msgctxt "Languages::ab__stickers.display_place.not_display"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::ab__stickers.display_place.product_labels"
+msgid "On the product image"
+msgstr "На зображенні товару"
+
+msgctxt "Languages::ab__stickers.display_place.price.before"
+msgid "Above the price"
+msgstr "Над ціною"
+
+msgctxt "Languages::ab__stickers.display_place.price.after"
+msgid "Under the price"
+msgstr "Під ціною"
+
+msgctxt "Languages::ab__stickers.display_on.detailed_page"
+msgid "Product page"
+msgstr "Сторінка товару"
+
+msgctxt "Languages::ab__stickers.object.select"
+msgid "Select sticker(-s)"
+msgstr "Оберіть стікер(и)"
+
+msgctxt "Languages::ab__stickers.object.you_need_to_select_company"
+msgid "Please, select a Store to choose stickers"
+msgstr "Будь ласка, оберіть Магазин для вибору стікерів"
+
+msgctxt "Languages::ab__stickers.stickers_list.below"
+msgid "There is a sticker list that you can attach to the product"
+msgstr "Нижче приведено список стікерів, які Ви можете прив'язати до цього товару"
+
+msgctxt "Languages::ab__stickers.attached_stickers"
+msgid "Attached stickers"
+msgstr "Прикріплені стікери"
+
+msgctxt "Languages::ab__stickers.attached_stickers.product_page.tooltip"
+msgid "Selected stickers will always be displayed on this product"
+msgstr "Обрані стікери завжди будуть відображатись на цьому товарі"
+
+msgctxt "Languages::ab__stickers.attached_stickers.sticker_page.tooltip"
+msgid "The selected sticker will always be displayed on the pages of the following products"
+msgstr "Обраний стікер завжди буде відображатись на сторінках наступних товарів"
+
+msgctxt "Languages::ab__stickers.find_available_stickers"
+msgid "Find available stickers"
+msgstr "Знайти доступні стікери"
+
+msgctxt "Languages::ab__stickers.errors.missed_fields"
+msgid "These fields are required and cannot be deleted"
+msgstr "Ці поля обов'язкові і не можуть бути видалені"
+
+msgctxt "Languages::ab__stickers.link_generation"
+msgid "Links generation"
+msgstr "Генерація зв'язків"
+
+msgctxt "Languages::ab__stickers.cron_jobs"
+msgid "Cron tasks"
+msgstr "Cron завдання"
+
+msgctxt "Languages::ab__stickers.generation.description"
+msgid "To update deprecated information on Cron, use this command:"
+msgstr "Для оновлення застарілої інформації по Cron-у використовуйте цю команду:"
+
+msgctxt "Languages::ab__stickers.generate.generated_ids.description"
+msgid "Generate sticker links to products|Generate stickers links to products"
+msgstr "Згенерувати зв'язки стікеру до товарів|Згенерувати зв'язки стікерів до товарів"
+
+msgctxt "Languages::ab__stickers.generate.in_progress"
+msgid "Links generation"
+msgstr "Генерація зв'язків"
+
+msgctxt "Languages::ab__stickers.generate.checking_generated"
+msgid "Check of generated links"
+msgstr "Перевірка вже згенерованих зв'язків"
+
+msgctxt "Languages::ab__stickers.generate.prev_query_in_process"
+msgid "Updating of the links is in progress. The last change was made [last_time] seconds ago. Please, wait."
+msgstr "Оновлення зв'язків вже в процесі обробки. Остання зміна зареєстрована [last_time] сек. назад. Будь ласка, очікуйте."
+
+msgctxt "Languages::ab__stickers.generated_stickers"
+msgid "Generated stickers"
+msgstr "Згенеровані стікери"
+
+msgctxt "Languages::ab__stickers.generated_stickers.product_page.tooltip"
+msgid "These static stickers are attached to the product through the conditions"
+msgstr "Ці статичні стікери прикріплені до товару через умови"
+
+msgctxt "Languages::ab__stickers.successes.generated"
+msgid "Links for sticker [sticker] were generated successfully|Links for stickers <br/>[sticker]<br/> were generated successfully"
+msgstr "Зв'язки для стікеру [sticker] успішно згенеровано|Зв'язки для стікерів:<br/>[sticker]<br/>успішно згенеровані"
+
+msgctxt "Languages::ab__stickers.errors.no_stickers_for_generation"
+msgid "There are no stickers to generate links<br/> Probable causes:<br/> You probably updated your links recently<br/> You have not static stickers with conditions"
+msgstr "Відсутні стікери для генерації зв'язків.<br/>"
+"Можливі причини:<br/>"
+"Ви нещодавно оновлювали зв'язки<br/>"
+"У Вас відсутні статичні стікери зі створеними умовами"
+
+msgctxt "Languages::ab__stickers.errors.no_pictograms_for_generation"
+msgid "No links for pictograms were found. <br>Possible reasons:<br/>You didn't update links for pictograms (stickers).<br/>Pictograms are already in a generation process."
+msgstr "Не знайдено зв'язків для генерації піктограм.<br>Можливі причини:<br/>Ви не оновили зв'язки для піктограм (стікерів).<br/>Піктограми уже в процесі генерації."
+
+msgctxt "Languages::ab__stickers.generated_for_sticker"
+msgid "<a href=\"[sticker_href]\" target=\"_blank\">[sticker]</a> <a href=\"[links_href]\" target=\"_blank\">number of links: [links]</a>"
+msgstr "<a href=\"[sticker_href]\" target=\"_blank\">[sticker]</a> <a href=\"[links_href]\" target=\"_blank\">кількість зв'язків: [links]</a>"
+
+msgctxt "Languages::ab__stickers.cron.generate_links_title"
+msgid "Links generation"
+msgstr "Генерація зв'язків"
+
+msgctxt "Languages::ab__stickers.cron.generate_links_text"
+msgid "To update deprecated information on Cron, use this command:"
+msgstr "Для оновлення застарілої інформації по Cron-у використовуйте цю команду:"
+
+msgctxt "Languages::ab__stickers.cron.generate_pictograms_title"
+msgid "Generate pictograms"
+msgstr "Генерація піктограм"
+
+msgctxt "Languages::ab__stickers.cron.generate_pictograms_text"
+msgid "Use this command to generate pictograms by Cron.<br><b>Limits</b><br>Use parameter <code>--limit</code> to specify a number of processing pictograms in 1 iteration."
+msgstr "Для генерації піктограм по Cron-у використовуйте цю команду.<br><b>Обмеження</b><br>Застосовуйте параметр <code>--limit</code>, щоб вказати кількість піктограм, що обробляються за 1 ітерацію."
+
+msgctxt "Languages::ab__stickers.notify_generate_links"
+msgid "Links generation"
+msgstr "Генерація зв'язків"
+
+msgctxt "Languages::ab__stickers.notify_generate_pictograms"
+msgid "Generate pictograms"
+msgstr "Генерація піктограм"
+
+msgctxt "Languages::ab__stickers.pictogram.generated_pictogram"
+msgid "[sticker]: [count] products"
+msgstr "[sticker]: [count] товарів"
+
+msgctxt "Languages::ab__stickers.pictogram.generate_for_products"
+msgid "Generate pictograms for products"
+msgstr "Згенерувати піктограми для товарів"
+
+msgctxt "Languages::ab__stickers.notify_limit"
+msgid "Up to [limit] records will be processed in one time."
+msgstr "За один раз буде оброблено до [limit] записів"
+
+msgctxt "Languages::ab__stickers.pictograms.successes_generated"
+msgid "The following pictograms are generated:<br><br>[sticker]"
+msgstr "Згенеровано наступні піктограми:<br><br>[sticker]"
+
+msgctxt "Languages::ab__stickers.cron.limit_description"
+msgid "<b>Limits</b><br>Use parameter <code>--limit</code> to specify a number of processing pictograms in 1 iteration."
+msgstr "<b>Обмеження</b><br>Застосовуйте параметр <code>--limit</code>, щоб вказати кількість піктограм, що обробляються за 1 ітерацію."
+
+msgctxt "Languages::ab__stickers.demodata.description"
+msgid "On this page you can quickly add demo stickers"
+msgstr "На цій сторінці Ви можете швидко додати демо-стікери"
+
+msgctxt "Languages::ab__stickers.demodata.table.description"
+msgid "Demo data view"
+msgstr "Вигляд демо-даних"
+
+msgctxt "Languages::ab__stickers.demodata.table.add_stickers"
+msgid "Add demo stickers"
+msgstr "Додати демо-стікери"
+
+msgctxt "Languages::ab__stickers.demodata.install.success"
+msgid "Demo stickers were created successfully"
+msgstr "Демо-стікери були створені успішно"
+
+msgctxt "Languages::ab__stickers.demodata.download_graphic_stickers_source"
+msgid "If you wish to change demo stickers (e.g., background color of the sticker), you may download correspond source images by <a href=\"https://drive.google.com/drive/folders/1VnZIlP0X6ES2UYUZXNiQWvc9G_tDr6KA\" target=\"_blank\">reference</a>"
+msgstr "Якщо Ви бажаєте змінити демо-стікери (наприклад, колір фону стікерів), Ви можете завантажити відповідні початкові зображення за <a href=\"https://drive.google.com/drive/folders/1VnZIlP0X6ES2UYUZXNiQWvc9G_tDr6KA\" target=\"_blank\">посиланням</a>"
+
+msgctxt "Languages::ab__stickers_import"
+msgid "AB: Stickers: Import"
+msgstr "AB: Стікери: Імпорт"
+
+msgctxt "Languages::ab__stickers_export"
+msgid "AB: Stickers: Export"
+msgstr "AB: Стікери: Експорт"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.ab__s_pictogram_position"
+msgid "AB: Stickers: Display pictograms"
+msgstr "AB: Стікери: Відображати піктограми"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.ab__s_pictogram_position.variants.n"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.ab__s_pictogram_position.variants.position_1"
+msgid "Position 1"
+msgstr "Позиція 1"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.ab__s_pictogram_position.variants.position_2"
+msgid "Position 2"
+msgstr "Позиція 2"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.ab__s_pictogram_position"
+msgid "AB: Stickers: Display pictograms"
+msgstr "AB: Стікери: Відображати піктограми"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.ab__s_pictogram_position.variants.n"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.ab__s_pictogram_position.variants.position_1"
+msgid "Position 1"
+msgstr "Позиція 1"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.ab__s_pictogram_position.variants.position_2"
+msgid "Position 2"
+msgstr "Позиція 2"
+
+msgctxt "Languages::abt__ut2.settings.product_list.short_list.ab__s_pictogram_position.variants.n"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.product_list.short_list.ab__s_pictogram_position.variants.position_1"
+msgid " "
+msgstr "Позиція 1"
+
+msgctxt "Languages::abt__ut2.settings.product_list.short_list.ab__s_pictogram_position"
+msgid "AB: Stickers: Display pictograms"
+msgstr "AB: Стікери: Відображати піктограми"
+
+msgctxt "Languages::abt__ut2.settings.products.view.ab__s_pictogram_position"
+msgid "AB: Stickers: Display pictograms"
+msgstr "AB: Стікери: Відображати піктограми"
+
+msgctxt "Languages::abt__ut2.settings.products.view.ab__s_pictogram_position.variants.n"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.products.view.ab__s_pictogram_position.variants.position_1"
+msgid "Position 1"
+msgstr "Позиція 1"
+
+msgctxt "Languages::abt__ut2.settings.products.view.ab__s_pictogram_position.variants.position_2"
+msgid "Position 2"
+msgstr "Позиція 2"
+
+msgctxt "Languages::abt__ut2.settings.product_list.ab__stickers_group"
+msgid "Add-on \"AB: Stickers\""
+msgstr "Модуль \"AB: Стікери\""
+
+msgctxt "Languages::abt__ut2.settings.product_list.ab__stickers_group_description"
+msgid "Customize sticker behavior on product lists"
+msgstr "Налаштувати поведінку стікерів в списках товарів"
+
+msgctxt "Languages::abt__ut2.settings.product_list.ab__stickers.hide_stickers_on_hover"
+msgid "Hide stickers on hover"
+msgstr "Приховувати стікери при наведенні"
+
+msgctxt "Languages::abt__ut2.settings.product_list.ab__stickers.hide_stickers_on_hover.tooltip"
+msgid "Hide stickers when hovering over a product image block"
+msgstr "Приховувати стікери при наведенні на блок зображення товару"
+
+msgctxt "Languages::abt__ut2.settings.products.ab__stickers_group"
+msgid "Add-on \"AB: Stickers\""
+msgstr "Модуль \"AB: Стікери\""
+
+msgctxt "Languages::abt__ut2.settings.products.ab__stickers_group_description"
+msgid "Customize sticker behavior on the product detailed page"
+msgstr "Налаштувати поведінку стікерів на картці товару"
+
+msgctxt "Languages::abt__ut2.settings.products.ab__stickers.hide_stickers_on_hover"
+msgid "Hide stickers on hover"
+msgstr "Приховувати стікери при наведенні"
+
+msgctxt "Languages::abt__ut2.settings.products.ab__stickers.hide_stickers_on_hover.tooltip"
+msgid "Hide stickers when hovering over a product image block"
+msgstr "Приховувати стікери при наведенні на блок зображення товару"
+
+msgctxt "Languages::abt__yt.settings.products.ab__s_pictogram_position"
+msgid "AB: Stickers: Display pictograms"
+msgstr "AB: Стікери: Відображати піктограми"
+
+msgctxt "Languages::abt__yt.settings.product_list.ab__s_pictogram_position"
+msgid "AB: Stickers: Display pictograms"
+msgstr "AB: Стікери: Відображати піктограми"
+
+msgctxt "Languages::abt__yt.settings.product_list.ab__s_pictogram_position.variants.n"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__yt.settings.product_list.ab__s_pictogram_position.variants.position_1"
+msgid "Position 1"
+msgstr "Позиція 1"
+
+msgctxt "Languages::abt__yt.settings.products.ab__s_pictogram_position.variants.n"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__yt.settings.products.ab__s_pictogram_position.variants.position_1"
+msgid "Position 1"
+msgstr "Позиція 1"
+
+#. Alexbranding. Do not modify this file manually!

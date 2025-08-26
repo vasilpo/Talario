@@ -1,0 +1,512 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::ab__motivation_block"
+msgid "AB: Motivation block"
+msgstr "AB: Блок мотивации"
+
+msgctxt "Addons::description::ab__motivation_block"
+msgid "Add-on allows to create a motivation block"
+msgstr "Модуль позволяет создавать блок мотивации"
+
+msgctxt "Languages::ab__motivation_block"
+msgid "AB: Motivation block"
+msgstr "AB: Блок мотивации"
+
+msgctxt "SettingsSections::ab__motivation_block::settings"
+msgid "General"
+msgstr "Основные"
+
+msgctxt "SettingsSections::ab__motivation_block::appearance"
+msgid "Appearance"
+msgstr "Внешний вид"
+
+msgctxt "SettingsSections::ab__motivation_block::admin_panel"
+msgid "Admin panel settings"
+msgstr "Настройки административной панели"
+
+msgctxt "SettingsOptions::ab__motivation_block::appearance_type_styles"
+msgid "Block Style"
+msgstr "Стиль оформления блока"
+
+msgctxt "SettingsVariants::ab__motivation_block::appearance_type_styles::fill"
+msgid "Without Frames"
+msgstr "Без обрамления"
+
+msgctxt "SettingsVariants::ab__motivation_block::appearance_type_styles::framed"
+msgid "With Frames"
+msgstr "С обрамлением"
+
+msgctxt "SettingsOptions::ab__motivation_block::bg_color"
+msgid "Background color"
+msgstr "Цвет фона"
+
+msgctxt "SettingsOptions::ab__motivation_block::description_type"
+msgid "Elements description type"
+msgstr "Тип описания элементов"
+
+msgctxt "SettingsVariants::ab__motivation_block::description_type::smarty"
+msgid "HTML-content with Smarty support"
+msgstr "HTML-содержимое с поддержкой Smarty"
+
+msgctxt "SettingsVariants::ab__motivation_block::description_type::html"
+msgid "HTML-content"
+msgstr "HTML-содержимое"
+
+msgctxt "SettingsOptions::ab__motivation_block::use_additional_categories"
+msgid "Use additional product categories"
+msgstr "Учитывать дополнительные категории товара"
+
+msgctxt "SettingsTooltips::ab__motivation_block::use_additional_categories"
+msgid "If the setting is enabled, then not only the main product category will be used to select motivational elements, but also additional"
+msgstr "Если настройка включена, то для выборки мотивационных элементов будет использоваться не только основная категория товара, "
+"но и дополнительные"
+
+msgctxt "SettingsOptions::ab__motivation_block::template_variant"
+msgid "Template variant"
+msgstr "Вариант шаблона"
+
+msgctxt "SettingsTooltips::ab__motivation_block::template_variant"
+msgid "The setting defines a template for displaying a motivation block"
+msgstr "Настройка определяет шаблон для отображения блока мотивации"
+
+msgctxt "SettingsVariants::ab__motivation_block::template_variant::vertical_tabs"
+msgid "Vertical tabs"
+msgstr "Вертикальные вкладки"
+
+msgctxt "SettingsVariants::ab__motivation_block::template_variant::horizontal_tabs"
+msgid "Horizontal tabs"
+msgstr "Горизонтальные вкладки"
+
+msgctxt "SettingsOptions::ab__motivation_block::save_element_state"
+msgid "Save disclosure state for elements in block"
+msgstr "Сохранять состояние раскрытия элементов"
+
+msgctxt "SettingsTooltips::ab__motivation_block::save_element_state"
+msgid "With active setting, the state of disclosure for elements in block will be saved for each user"
+msgstr "При активной настройке состояние раскрытия элементов блока будет сохраняться для пользователя"
+
+msgctxt "SettingsOptions::ab__motivation_block::use_contrast_style_elements"
+msgid "Apply contrast to elements"
+msgstr "Применить контраст к элементам"
+
+msgctxt "SettingsTooltips::ab__motivation_block::use_contrast_style_elements"
+msgid "If you have chosen a dark block color, the setting will make the color of the elements contrasting (white)"
+msgstr "Если выбран темный цвет блока, то настройка сделает цвет элементов контрастным (белым)"
+
+msgctxt "SettingsOptions::ab__motivation_block::use_style_presets"
+msgid "Use style presets"
+msgstr "Использовать пресеты стилей​"
+
+msgctxt "SettingsTooltips::ab__motivation_block::use_style_presets"
+msgid "With active configuration, the content of motivational elements will have a predefined style"
+msgstr "При активной настройке контент мотивационных элементов будет иметь предопределенное стилевое оформление"
+
+msgctxt "SettingsOptions::ab__motivation_block::display_attached_mb_items_on_cat_page"
+msgid "Display a list of motivational elements attached for this category"
+msgstr "Отобразить список мотивационных элементов назначенных для данной категории"
+
+msgctxt "SettingsTooltips::ab__motivation_block::display_attached_mb_items_on_cat_page"
+msgid "With active setting, the list of motivational elements attached to the chosen category will be displayed on the category editing page (in the \"Add-ons\" tab)"
+msgstr "При активной настройке на странице редактирования категории (во вкладке \"Модули\") будет отображен список прикрепленных к ней мотивационных элементов"
+
+msgctxt "Languages::ab__motivation_block.manage"
+msgid "Data management"
+msgstr "Управление данными"
+
+msgctxt "Languages::ab__mb.description"
+msgid "Custom content (HTML/Smarty)"
+msgstr "Пользовательское содержимое (HTML/Smarty)"
+
+msgctxt "Languages::ab__mb.icon_class"
+msgid "Icon class"
+msgstr "Класс иконки"
+
+msgctxt "Languages::ab__mb.icon_color"
+msgid "Icon color"
+msgstr "Цвет иконки"
+
+msgctxt "Languages::ab__mb.icon_type"
+msgid "Icon type"
+msgstr "Тип иконки"
+
+msgctxt "Languages::ab__mb_icon_type.img"
+msgid "Image"
+msgstr "Изображение"
+
+msgctxt "Languages::ab__mb_icon_type.icon"
+msgid "Icon"
+msgstr "Иконка"
+
+msgctxt "Languages::ab__mb_icon_type.nothing"
+msgid "No icon"
+msgstr "Нет иконки"
+
+msgctxt "Languages::tt_addons_ab__motivation_block_views_ab__motivation_block_update_image"
+msgid "The image is displayed \"as is\" without scaling. Upload the prepared image of the necessary size, it is recommended to use size 24*24px"
+msgstr "Изображение выводится \"как есть\", без масштабирования. Загрузите подготовленное изображение нужного размера, рекомендуется использовать размер 24*24px"
+
+msgctxt "Languages::ab__mb.new_motivation_item"
+msgid "New motivational element"
+msgstr "Новый мотивационный элемент"
+
+msgctxt "Languages::ab__mb.editing_motivation_item"
+msgid "Editing motivational element"
+msgstr "Редактирование мотивационного элемента"
+
+msgctxt "Languages::ab__mb_expanded"
+msgid "Set the disclosure element by default"
+msgstr "Установить раскрытие элемента по умолчанию"
+
+msgctxt "Languages::ab__mb_vendor_edit"
+msgid "Allow vendor editing"
+msgstr "Разрешить вендору редактирование"
+
+msgctxt "Languages::block_ab__motivation_block"
+msgid "AB: Motivation block"
+msgstr "AB: Блок мотивации"
+
+msgctxt "Languages::block_ab__motivation_block_description"
+msgid "Output additional information about the store work"
+msgstr "Вывод дополнительной информации о работе магазина"
+
+msgctxt "Languages::ab__mb_bg_color"
+msgid "Block color"
+msgstr "Цвет блока"
+
+msgctxt "Languages::ab__mb.settings"
+msgid "General settings"
+msgstr "Общие настройки"
+
+msgctxt "Languages::ab__motivation_block.breadcrumbs.manage"
+msgid "AB: Motivation block: Data management"
+msgstr "AB: Блок мотивации: Управление данными"
+
+msgctxt "Languages::ab__mb.destinations"
+msgid "Rate areas"
+msgstr "Тарифные зоны"
+
+msgctxt "Languages::ab__mb.destinations.text_all_destinations_included"
+msgid "All rate areas are included"
+msgstr "Все тарифные зоны включены"
+
+msgctxt "Languages::ab__mb.destinations.add_destinations"
+msgid "Add rate areas"
+msgstr "Добавить тарифные зоны"
+
+msgctxt "Languages::ab__mb.destinations.add_destinations_and_close"
+msgid "Add rate areas and close"
+msgstr "Добавить тарифные зоны и закрыть"
+
+msgctxt "Languages::ab__mb_all_destinations"
+msgid "All rate areas"
+msgstr "Все тарифные зоны"
+
+msgctxt "Languages::ab__mb.set_default_value"
+msgid "Restore by default"
+msgstr "Восстановить по умолчанию"
+
+msgctxt "Languages::ab__mb.template_path.templates.warning"
+msgid "The standard information output provided by CS-Cart by default will be blocked"
+msgstr "Стандартный вывод информации, предусмотренный CS-Cart по умолчанию при этом будет заблокирован"
+
+msgctxt "Languages::ab__mb.errors.disabled_option_choosen"
+msgid "Invalid value for \"[field]\" field"
+msgstr "Недопустимое значение в поле \"[field]\""
+
+msgctxt "Languages::ab__mb.template_path.tooltip"
+msgid "Choose a way to fill content of motivational element"
+msgstr "Выберите способ наполнения контента мотивационного элемента"
+
+msgctxt "Languages::ab__mb.template_path.variants.custom"
+msgid "Custom content (HTML/Smarty)"
+msgstr "Пользовательское содержимое (HTML/Smarty)"
+
+msgctxt "Languages::ab__mb.template_path.variants.custom.tooltip"
+msgid "Allows you to set your own fill for the motivational element"
+msgstr "Позволяет задать Ваше собственное заполнение для мотивационного элемента"
+
+msgctxt "Languages::ab__mb.template_path.templates.geo_maps"
+msgid "Shipping information"
+msgstr "Информация о доставке товара"
+
+msgctxt "Languages::ab__mb.template_path.templates.geo_maps.tooltip"
+msgid "The template displays information about the cost of delivery of products. Available when the \"Maps and Geolocation\" add-on is active. Information will be shown only with active setting \"Show shipping cost and time on product pages\" for \"Maps and Geolocation\" add-on. The standard information output provided by CS-Cart by default will be blocked"
+msgstr "Шаблон выводит информацию о стоимости доставки товара. Доступен, "
+"при активном модуле \"Карты и геолокация\". Информация о стоимости доставки "
+"будет выведена лишь в случае, если в настройках модуля \"Карты и геолокации\" активна "
+"настройка \"Показать стоимость и сроки доставки на страницах товаров\". Стандартный вывод информации, предусмотренный CS-Cart по умолчанию при этом будет заблокирован"
+
+msgctxt "Languages::ab__mb.template_path.templates.payment_methods"
+msgid "Payment methods information"
+msgstr "Информация о способах оплат"
+
+msgctxt "Languages::ab__mb.template_path.templates.payment_methods.tooltip"
+msgid "The template displays information about the available payment methods"
+msgstr "Шаблон выводит информацию о доступных способах оплат"
+
+msgctxt "Languages::ab__mb.template_path.templates.categories_list"
+msgid "Product categories list"
+msgstr "Список категорий товара"
+
+msgctxt "Languages::ab__mb.template_path.templates.categories_list.tooltip"
+msgid "The template displays a list of all categories in which the product is involved. It is available if there is at least one category in the store (except for the \"Trash category\")"
+msgstr "Шаблон выводит список всех категорий, в которых участвует товар. Доступен при наличии в магазине хоть одной категории (за исключением \"Категории-корзины\")"
+
+msgctxt "Languages::ab__mb.template_path.templates.tags_list"
+msgid "Product tags list"
+msgstr "Список тегов товара"
+
+msgctxt "Languages::ab__mb.template_path.templates.tags_list.tooltip"
+msgid "The template displays a list of all tags assigned to the product. Available when the \"Tags\" add-on is active. Be sure to create and assigned tags for products"
+msgstr "Шаблон выводит список всех тегов назначенных товару. Доступен, "
+"при активном модуле \"Теги\". Убедитесь, что создали и назначили теги для товаров"
+
+msgctxt "Languages::ab__mb.templates_settings.max_tags_count"
+msgid "Maximum tags count"
+msgstr "Максимальное количество тегов"
+
+msgctxt "Languages::ab__mb.only_for.vertical_tabs.tooltip"
+msgid "This setting only works if the \"Vertical tabs\" display option is selected in the add-on settings"
+msgstr "Данная настройка работает, только если в настройках модуля выбран вариант отображения \"Вертикальные вкладки\""
+
+msgctxt "Languages::ab__mb.vendor.motivation_item.template_choosen"
+msgid "For this motivational element, the type of filling using the template is set. <br>You can contact the store administrator to create another motivational element with the filling type \"Custom content (HTML/Smarty)\""
+msgstr "Для данного мотивационного элемента задан тип наполнения с использованием шаблона.<br>Вы можете обратиться к администратору магазина, чтобы он создал другой мотивационный элемент с типом наполнение \"Пользовательское содержимое (HTML/Smarty)\""
+
+msgctxt "Languages::ab__mb.template_path.search.ignore_this_field"
+msgid "Ignore this field"
+msgstr "Игнорировать данное поле"
+
+msgctxt "Languages::ab__mb.template_path.search.ignore_this_field.tooltip"
+msgid "When choosing this option - the 'Template' field of the motivational element will not be taken into account when sampling"
+msgstr "При выборе данного варианта - поле 'Шаблон' мотивационного элемента не будет учитываться в выборке"
+
+msgctxt "Languages::ab__mb.templates_settings.brand_feature_id"
+msgid "\"Brand\" feature ID"
+msgstr "ID характеристики \"Бренд\""
+
+msgctxt "Languages::ab__mb.templates_settings.brand_feature_id.tooltip"
+msgid "This setting will be used to form a filter link in the product category"
+msgstr "Данная настройка будет использована для формирования ссылки на фильтр в категории товара"
+
+msgctxt "Languages::ab__mb.update_help.title"
+msgid "Additional info for content managing"
+msgstr "Дополнительная информация для формирования контента"
+
+msgctxt "Languages::ab__mb.update_help.tip_1"
+msgid "To fill the content of motivational elements, you can use all the variables declared on the Smarty product page, for example: <br/><hr>Array <code>{$product}</code> - information about the current product; <br/><hr>Massive <code>{$currencies}</code> - currency information; <br/><hr>Array <code>{$user_info}</code> - information about the user (note that if the client is not authorized, the array will be empty); <br/><hr>Array <code>{$settings}</code> - an array of store settings."
+msgstr "Для наполнения контента мотивационных элементов Вы можете использовать все объявленные на странице товара Smarty переменные, например:"
+"<br/><hr>Массив <code>{$product}</code> - информация о текущем товаре;"
+"<br/><hr>Массив <code>{$currencies}</code> - информация о валютах;"
+"<br/><hr>Массив <code>{$user_info}</code> - информация о пользователе (обратите вниманиe, что если клиент не авторизован, то массив будет пустым);"
+"<br/><hr>Массив <code>{$settings}</code> - массив настроек магазина."
+
+msgctxt "Languages::ab__mb.go_to"
+msgid "Go to page of"
+msgstr "Перейти на страницу"
+
+msgctxt "Languages::ab__mb.go_to.destinations_manage"
+msgid "Go to page of destinations management"
+msgstr "Перейти на страницу редактирования тарифных зон"
+
+msgctxt "Languages::ab__mb.go_to.mb_manage"
+msgid "Go to page of motivational elements management"
+msgstr "Перейти на страницу управления мотивационными элементами"
+
+msgctxt "Languages::ab__mb.admin.categories_update.description"
+msgid "There is a <a href=\"[href]\" target=\"_blank\">list of motivational elements</a> that will be displayed for products in this category. <br/>Please note that <span title=\"[text]\" class=\"cm-tooltip\" style=\"color: red\">other conditions</span> may be used due to which these motivational elements will not be displayed for products of this category"
+msgstr "Здесь представлен <a href=\"[href]\" target=\"_blank\">список мотивационных элементов</a>, которые будут отображены для товаров этой категории."
+"<br/>Обратите внимание, что могут применяться <span title=\"[text]\" class=\"cm-tooltip\" style=\"color: red\">другие условия</span>, из-за которых данные мотивационные элементы не будут отображены для товаров этой категории."
+
+msgctxt "Languages::ab__mb.admin.categories_update.description.tooltip"
+msgid "The conditions for displaying motivational elements depend on: <ul><li>Terms for categories</li><li>Terms for destinations</li></ul> See <a href='[href]' title='Documentation' target='_blank'>the documentation</a> for more details"
+msgstr "Условия для отображения мотивационных элементов зависят от:"
+"<ul><li>Условий для категорий</li><li>Условий для тарифных зон</li></ul>"
+"Подробнее об условиях смотрите <a href='[href]' title='Документация' target='_blank'>в документации</a>"
+
+msgctxt "Languages::ab__mb.admin.categories_update.description.tooltip.link"
+msgid "https://docs.cs-cart.abt.team/en/ab__motivation_block.doc/#p-946"
+msgstr "https://docs.cs-cart.abt.team/ru/ab__motivation_block.doc/#p-946"
+
+msgctxt "Languages::ab__mb.exclude.categories"
+msgid "Active for"
+msgstr "Активен для"
+
+msgctxt "Languages::ab__mb.exclude.categories.tooltip"
+msgid "Choose how to use objects selected by picker"
+msgstr "Выберите как использовать объекты выбранные пикером"
+
+msgctxt "Languages::ab__mb.exclude.destinations"
+msgid "Active for"
+msgstr "Активен для"
+
+msgctxt "Languages::ab__mb.exclude.destinations.tooltip"
+msgid "Choose how to use objects selected by picker"
+msgstr "Выберите как использовать объекты выбранные пикером"
+
+msgctxt "Languages::ab__mb.exclude.products"
+msgid "Active for"
+msgstr "Активен для"
+
+msgctxt "Languages::ab__mb.exclude.products.tooltip"
+msgid "Choose how to use objects selected by picker"
+msgstr "Выберите как использовать объекты выбранные пикером"
+
+msgctxt "Languages::ab__mb.exclude.exclude"
+msgid "all not in the list"
+msgstr "всех не в списке"
+
+msgctxt "Languages::ab__mb.exclude.not_exclude"
+msgid "all in the list"
+msgstr "всех в списке"
+
+msgctxt "Languages::ab__mb.exclude.exclude.full_text"
+msgid "Active for all not in the list"
+msgstr "Активен для всех не в списке"
+
+msgctxt "Languages::ab__mb.exclude.not_exclude.full_text"
+msgid "Active for all in the list"
+msgstr "Активен для всех в списке"
+
+msgctxt "Languages::ab__mb.not_display_on"
+msgid "Do not display on"
+msgstr "Не показывать на"
+
+msgctxt "Languages::ab__mb.products.also_in_categories"
+msgid "This product also participates in category|This product also participates in categories"
+msgstr "Этот товар также участвует в категории|Этот товар также участвует в категориях"
+
+msgctxt "Languages::ab__motivation_block.demodata"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__mb.demodata.description"
+msgid "On this page, you can quickly create a demo data for the motivation block"
+msgstr "На этой странице можете быстро создать демо-данные для блока мотивации"
+
+msgctxt "Languages::ab__mb.demodata.table.description"
+msgid "Demo data type"
+msgstr "Вид демо-данных"
+
+msgctxt "Languages::ab__mb.demodata.table.add_blocks"
+msgid "Add demo data into the motivation block"
+msgstr "Добавить демо-данные в блок мотивации"
+
+msgctxt "Languages::ab__mb.demodata.successes.blocks"
+msgid "Motivational elements [blocks] were successfully created"
+msgstr "Мотивационные элементы [blocks] были успешно созданы"
+
+msgctxt "Languages::ab__mb.demodata.errors.no_data"
+msgid "It seems the \"data.json\" file was deleted"
+msgstr "Кажется, файл \"data.json\" был удален"
+
+msgctxt "Languages::ab__motivation_block.icons"
+msgid "Available icons"
+msgstr "Доступные иконки"
+
+msgctxt "Languages::ab__mb.icons.info"
+msgid "On this page, you can find the available icons list"
+msgstr "На этой странице можно ознакомиться со списком доступных иконок"
+
+msgctxt "Languages::ab__mb.icons.tygh_icons"
+msgid "Icons list by default"
+msgstr "Список иконок по умолчанию"
+
+msgctxt "Languages::ab__mb.icons.class"
+msgid "Icon class"
+msgstr "Класс иконки"
+
+msgctxt "Languages::ab__mb.icons.class.tooltip"
+msgid "A value which needs to be used in the field \"Icon class\" in motivation block settings"
+msgstr "Значение, которое нужно использовать в поле \"Класс иконки\" в настройках блока мотивации"
+
+msgctxt "Languages::ab__mb.class_copied"
+msgid "The class is copied in a clipboard"
+msgstr "Класс скопирован в буфер обмена"
+
+msgctxt "Languages::ab__mb_icon_class.tooltip"
+msgid "The complete available icons list can be found on the page <a href=\"[link]\">Administration panel → AB: Add-ons → AB: Motivation block → Available icons</a>"
+msgstr "Полный список доступных иконок может быть найден на странице <a href=\"[link]\">Административная панель"
+" → АВ: Модули → AB: Блок мотивации → Доступные иконки</a>"
+
+msgctxt "Languages::ab__mb.icons.yt_icons"
+msgid "List of icons added by AB: YoupiTheme"
+msgstr "Список иконок добавленных темой AB: YoupiTheme"
+
+msgctxt "Languages::ab__mb.icons.refreshed_successfully"
+msgid "Icons have been updated successfully"
+msgstr "Иконки обновлены успешно"
+
+msgctxt "Languages::ab__mb.icons.refresh"
+msgid "Refresh icons"
+msgstr "Обновить иконки"
+
+msgctxt "Languages::ab__motivation_block.help"
+msgid "Help"
+msgstr "Справка"
+
+msgctxt "Languages::ab__mb_help.docs"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__motivation_block.doc'>documentation</a>."
+msgstr "Ознакомиться с <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__motivation_block.doc'>документацией</a>."
+
+msgctxt "Languages::privilege_groups.ab__motivation_block"
+msgid "AB: Motivation block"
+msgstr "AB: Блок мотивации"
+
+msgctxt "Languages::privileges.ab__mb_manage_data"
+msgid "Managing motivational data"
+msgstr "Управление мотивационными данными"
+
+msgctxt "Languages::privileges.ab__mb_view_data"
+msgid "Viewing motivational data"
+msgstr "Просмотр мотивационных данных"
+
+msgctxt "Languages::ab__mb.upgrade_notifications.title"
+msgid "AB: Motivation block was successfully updated to v[ver]!"
+msgstr "AB: Блок мотивации успешно обновлен до v[ver]!"
+
+msgctxt "Languages::ab__mb.upgrade_notifications.text"
+msgid "The detailed list of changes for <b>v[ver]</b> version look in documentation for the add-on in the section <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/en/ab__motivation_block.doc#p-929\">List of releases</a>."
+msgstr "Подробный список изменений, вошедший в версию <b>v[ver]</b> смотрите в документации по модулю в разделе <a target=\"_blank\" href=\"https://docs.cs-cart.abt.team/ru/ab__motivation_block.doc#p-929\">Список релизов</a>."
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.0.0.added_new_settings.title"
+msgid "Added new settings"
+msgstr "Добавлены новые настройки"
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.0.0.added_new_settings.text"
+msgid "Please note that new settings have been added to the add-on settings."
+msgstr "Пожалуйста, обратите Ваше внимание, что в настройках модуля добавились новые настройки."
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.0.0.added_templates.title"
+msgid "A new way of filling motivational elements has been added."
+msgstr "Добавлен новый способ наполнения мотивационных элементов."
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.0.0.added_templates.text"
+msgid "Please note that in the settings of the motivational element, the \"Template\" field was added that defines the way the content of the motivational element is filled."
+msgstr "Обратите внимание, что в настройках мотивационного элемента было добавлено поле \"Шаблон\" определяющее способ наполнения контента мотивационного элемента."
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.1.0.added_template.title"
+msgid "Added a new template \"Information about payment methods\""
+msgstr "Добавлен новый шаблон \"Информация о способах оплат\""
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.1.0.added_template.text"
+msgid "Please note that a new version of the template has been added to fill the content of the motivational element"
+msgstr "Обратите внимание, что был добавлен новый вариант шаблона для заполнения контента мотивационного элемента"
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.1.0.regenerate_data.title"
+msgid "Regenerate demo-data"
+msgstr "Пересоздайте демо-данные"
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.1.0.regenerate_data.text"
+msgid "If you use old demo-data of the add-on (or your data is based on old demo-data), regenerate demo-data"
+msgstr "Если у Вас используются старые демо-данные модуля (либо Ваши данные созданы на основе старых демо-данных), пересоздайте их"
+
+msgctxt "Languages::ab__mb.upgrade_notifications.2.11.1.sf_addon_deleted.text"
+msgid "Add-on \"Security bug fix for \"AB: Motivation block\" was deleted"
+msgstr "Модуль \"Исправление ошибки безопасности для \"AB: Блок мотивации\" был удалён"
+
+#. Alexbranding. Do not modify this file manually!

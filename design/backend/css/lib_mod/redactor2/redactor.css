@@ -1,0 +1,675 @@
+/* Redactor 2*/
+
+/* Variables */
+:root {
+    --redactor2-fg-heading: var(--cs-text-color);
+    --redactor2-fg-text: var(--cs-text-color);
+    --redactor2-fg-subtle: rgba(0, 0, 0, 0.6);
+    --redactor2-fg-placeholder: var(--cs-placeholder-text);
+    --redactor2-bg-body: var(--cs-content-background);
+    --redactor2-bg-source: #262626;
+    --redactor2-bg-input: #ffffff;
+    --redactor2-bg-input-shaded: var(--cs-shadow2-color);
+    --redactor2-bg-input-disabled: rgba(0, 0, 0, 0.03);
+    --redactor2-bg-base: #ffffff;
+    --redactor2-bg-toolbar: var(--cs-content-background);
+    --redactor2-bg-toolbar-raised: rgba(255, 255, 255, 0.97);
+    --redactor2-bg-raised: #ffffff;
+    --redactor2-bg-overlay: var(--cs-content-background);
+    --redactor2-bg-control: #ffffff;
+    --redactor2-bg-control-inverted: var(--cs-text-color);
+    --redactor2-bg-aluminum: #f8f8f8;
+    --redactor2-bg-silver: #f0f0f0;
+    --redactor2-bg-platinum: #e5e5e5;
+    --redactor2-border-input: var(--cs-shadow15-color);
+    --redactor2-border-focus: var(--cs-main-color);
+    --redactor2-fg-dark-accent: var(--cs-text-color);
+    --redactor2-fg-dark-text: var(--cs-text-color);
+    --redactor2-fg-dark-subtle: var(--cs-text-muted-color);
+    --redactor2-fg-dark-minimal: rgba(0, 0, 0, 0.5);
+    --redactor2-fg-dark-dimmed: var(--cs-shadow30-color);
+    --redactor2-bg-dark-dimmed: rgba(0, 0, 0, 0.03);
+    --redactor2-bg-dark-minimal: var(--cs-shadow5-color);
+    --redactor2-bg-dark-subtle: var(--cs-shadow7-color);
+    --redactor2-bg-dark-medium: rgba(0, 0, 0, 0.1);
+    --redactor2-bg-dark-strong: rgba(0, 0, 0, 0.2);
+    --redactor2-bg-dark-emphasis: rgba(0, 0, 0, 0.25);
+    --redactor2-bg-dark-accent: var(--cs-text-color);
+    --redactor2-bg-dark-accent-hover: var(--cs-shadow80-color);
+    --redactor2-border-dark-dimmed: var(--cs-shadow5-color);
+    --redactor2-border-dark-minimal: var(--cs-text-muted-color);
+    --redactor2-border-dark-subtle: var(--cs-shadow10-color);
+    --redactor2-border-dark-medium: var(--cs-text-color);
+    --redactor2-border-dark-strong: rgba(0, 0, 0, 0.2);
+    --redactor2-border-dark-emphasis: rgba(0, 0, 0, 0.3);
+    --redactor2-border-dark-accent: #000000;
+    --redactor2-fg-light-accent: var(--cs-text-inverse-color);
+    --redactor2-fg-light-text: var(--cs-inverse-shadow75-color);
+    --redactor2-fg-light-subtle: rgba(255, 255, 255, 0.6);
+    --redactor2-fg-light-minimal: rgba(255, 255, 255, 0.5);
+    --redactor2-fg-light-dimmed: var(--cs-inverse-shadow50-color);
+    --redactor2-bg-light-dimmed: rgba(255, 255, 255, 0.03);
+    --redactor2-bg-light-minimal: rgba(255, 255, 255, 0.05);
+    --redactor2-bg-light-subtle: var(--cs-inverse-shadow10-color);
+    --redactor2-bg-light-medium: rgba(255, 255, 255, 0.1);
+    --redactor2-bg-light-strong: rgba(255, 255, 255, 0.2);
+    --redactor2-bg-light-emphasis: rgba(255, 255, 255, 0.25);
+    --redactor2-bg-light-accent: #ffffff;
+    --redactor2-bg-light-accent-hover: rgba(255, 255, 255, 0.8);
+    --redactor2-border-light-dimmed: rgba(255, 255, 255, 0.05);
+    --redactor2-border-light-minimal: rgba(255, 255, 255, 0.07);
+    --redactor2-border-light-subtle: rgba(255, 255, 255, 0.1);
+    --redactor2-border-light-medium: rgba(255, 255, 255, 0.15);
+    --redactor2-border-light-strong: rgba(255, 255, 255, 0.2);
+    --redactor2-border-light-emphasis: rgba(255, 255, 255, 0.3);
+    --redactor2-border-light-accent: #ffffff;
+    --redactor2-fg-black-accent: #000000;
+    --redactor2-fg-black-text: rgba(0, 0, 0, 0.8);
+    --redactor2-fg-black-subtle: rgba(0, 0, 0, 0.6);
+    --redactor2-fg-black-minimal: rgba(0, 0, 0, 0.5);
+    --redactor2-fg-black-dimmed: rgba(0, 0, 0, 0.4);
+    --redactor2-bg-black-dimmed: rgba(0, 0, 0, 0.03);
+    --redactor2-bg-black-minimal: rgba(0, 0, 0, 0.05);
+    --redactor2-bg-black-subtle: rgba(0, 0, 0, 0.07);
+    --redactor2-bg-black-medium: rgba(0, 0, 0, 0.1);
+    --redactor2-bg-black-strong: rgba(0, 0, 0, 0.2);
+    --redactor2-bg-black-emphasis: rgba(0, 0, 0, 0.25);
+    --redactor2-bg-black-accent: #000000;
+    --redactor2-bg-black-accent-hover: rgba(0, 0, 0, 0.8);
+    --redactor2-border-black-dimmed: rgba(0, 0, 0, 0.05);
+    --redactor2-border-black-minimal: rgba(0, 0, 0, 0.07);
+    --redactor2-border-black-subtle: rgba(0, 0, 0, 0.1);
+    --redactor2-border-black-medium: rgba(0, 0, 0, 0.15);
+    --redactor2-border-black-strong: rgba(0, 0, 0, 0.2);
+    --redactor2-border-black-emphasis: rgba(0, 0, 0, 0.3);
+    --redactor2-border-black-accent: #000000;
+    --redactor2-fg-white-accent: var(--cs-text-inverse-color);
+    --redactor2-fg-white-text: var(--cs-inverse-shadow75-color);
+    --redactor2-fg-white-subtle: rgba(255, 255, 255, 0.6);
+    --redactor2-fg-white-minimal: rgba(255, 255, 255, 0.5);
+    --redactor2-fg-white-dimmed: rgba(255, 255, 255, 0.4);
+    --redactor2-bg-white-dimmed: rgba(255, 255, 255, 0.03);
+    --redactor2-bg-white-minimal: rgba(255, 255, 255, 0.05);
+    --redactor2-bg-white-subtle: rgba(255, 255, 255, 0.07);
+    --redactor2-bg-white-medium: rgba(255, 255, 255, 0.1);
+    --redactor2-bg-white-strong: rgba(255, 255, 255, 0.2);
+    --redactor2-bg-white-emphasis: rgba(255, 255, 255, 0.25);
+    --redactor2-bg-white-accent: #ffffff;
+    --redactor2-bg-white-accent-hover: rgba(255, 255, 255, 0.8);
+    --redactor2-border-white-dimmed: rgba(255, 255, 255, 0.05);
+    --redactor2-border-white-minimal: rgba(255, 255, 255, 0.07);
+    --redactor2-border-white-subtle: rgba(255, 255, 255, 0.1);
+    --redactor2-border-white-medium: rgba(255, 255, 255, 0.15);
+    --redactor2-border-white-strong: rgba(255, 255, 255, 0.2);
+    --redactor2-border-white-emphasis: rgba(255, 255, 255, 0.3);
+    --redactor2-border-white-accent: #ffffff;
+    --redactor2-fg-primary-accent: var(--cs-main-color);
+    --redactor2-fg-primary-static: #046BFB;
+    --redactor2-bg-primary-dimmed: rgba(115, 174, 255, 0.05);
+    --redactor2-bg-primary-minimal: rgba(115, 174, 255, 0.1);
+    --redactor2-bg-primary-subtle: var(--cs-dropdown-link-background-active);
+    --redactor2-bg-primary-medium: rgba(115, 174, 255, 0.25);
+    --redactor2-bg-primary-strong: rgba(115, 174, 255, 0.35);
+    --redactor2-bg-primary-emphasis: rgba(115, 174, 255, 0.45);
+    --redactor2-bg-primary-accent: var(--cs-main-color);
+    --redactor2-bg-primary-accent-hover: rgba(4, 107, 251, 0.8);
+    --redactor2-bg-primary-static: #046BFB;
+    --redactor2-border-primary-dimmed: rgba(115, 174, 255, 0.1);
+    --redactor2-border-primary-minimal: rgba(115, 174, 255, 0.15);
+    --redactor2-border-primary-subtle: rgba(115, 174, 255, 0.25);
+    --redactor2-border-primary-medium: rgba(115, 174, 255, 0.35);
+    --redactor2-border-primary-strong: rgba(115, 174, 255, 0.6);
+    --redactor2-border-primary-emphasis: rgba(115, 174, 255, 0.8);
+    --redactor2-border-primary-accent: #046BFB;
+    --redactor2-border-primary-static: #046BFB;
+    --redactor2-fg-negative-accent: var(--cs-btn-danger-background);
+    --redactor2-fg-negative-static: #DD0548;
+    --redactor2-fg-negative-light: #FF6393;
+    --redactor2-bg-negative-dimmed: rgba(255, 99, 147, 0.05);
+    --redactor2-bg-negative-minimal: rgba(255, 99, 147, 0.1);
+    --redactor2-bg-negative-subtle: rgba(255, 99, 147, 0.15);
+    --redactor2-bg-negative-medium: rgba(255, 99, 147, 0.25);
+    --redactor2-bg-negative-strong: rgba(255, 99, 147, 0.35);
+    --redactor2-bg-negative-emphasis: rgba(255, 99, 147, 0.45);
+    --redactor2-bg-negative-accent: #DD0548;
+    --redactor2-bg-negative-accent-hover: rgba(221, 5, 72, 0.8);
+    --redactor2-bg-negative-static: #DD0548;
+    --redactor2-border-negative-dimmed: rgba(255, 99, 147, 0.1);
+    --redactor2-border-negative-minimal: rgba(255, 99, 147, 0.15);
+    --redactor2-border-negative-subtle: rgba(255, 99, 147, 0.25);
+    --redactor2-border-negative-medium: rgba(255, 99, 147, 0.35);
+    --redactor2-border-negative-strong: rgba(255, 99, 147, 0.6);
+    --redactor2-border-negative-emphasis: rgba(255, 99, 147, 0.8);
+    --redactor2-border-negative-accent: #DD0548;
+    --redactor2-border-negative-static: #DD0548;
+    --redactor2-link-color: var(--cs-blue);
+    --redactor2-link-hover-color: #000000;
+    --redactor2-link-dark-color: #000000;
+    --redactor2-link-dark-hover-color: rgba(0, 0, 0, 0.6);
+    --redactor2-link-dark-subtle-color: rgba(0, 0, 0, 0.6);
+    --redactor2-link-dark-subtle-hover-color: #000000;
+    --redactor2-shadow-modal: 0 0 1px rgba(0, 0, 0, 0.25),0 20px 60px rgba(0, 0, 0, 0.15);
+    --redactor2-shadow-dropdown: 0 0 1px var(--cs-shadow25-color),0 10px 25px -5px var(--cs-shadow7-color),0 8px 16px -8px var(--cs-shadow7-color);
+    --redactor2-shadow-context: 0 0 1px rgba(0, 0, 0, 0.25),0 3px 6px -1px rgba(0, 0, 0, 0.1),0 1px 3px -1px rgba(0, 0, 0, 0.2);
+    --redactor2-shadow-control: 0 3px 3px -1.5px rgba(0, 0, 0, 0.06),0 6px 6px -3px rgba(0, 0, 0, 0.06);
+    --redactor2-shadow-toolbar-raised: 0 1px 3px var(--cs-shadow15-color),0 1px 2px var(--cs-shadow5-color);
+    --redactor2-shadow-reorder: 0 15px 30px rgba(0, 0, 0, 0.3);
+    --redactor2-shadow-tab: 0 1px 1px -0.5px rgba(0, 0, 0, 0.12),0 3px 3px -1.5px rgba(0, 0, 0, 0.12);
+    --redactor2-shadow-inner: inset 0 1px 1px rgba(0, 0, 0, 0.15);
+    --redactor2-shadow-handle: 0 1px 1px -0.5px rgba(0, 0, 0, 0.12),0 3px 3px -1.5px rgba(0, 0, 0, 0.12),0 6px 6px -3px rgba(0, 0, 0, 0.12);
+    --redactor2-shadow-action: 0 3px 3px -1.5px rgba(0, 0, 0, 0.06);
+
+    /* content */
+    --redactor2-body-color: var(--redactor2-bg-body);
+    --redactor2-heading-color: var(--redactor2-fg-heading);
+    --redactor2-text-color: var(--redactor2-fg-text);
+    --redactor2-table-border: var(--redactor2-border-dark-minimal);
+    --redactor2-line-color: var(--redactor2-border-dark-minimal);
+    --redactor2-pre-color: var(--redactor2-fg-text);
+    --redactor2-pre-bg: var(--redactor2-bg-dark-minimal);
+    --redactor2-var-color: var(--redactor2-fg-text);
+    --redactor2-kbd-color: var(--redactor2-fg-text);
+    --redactor2-kbd-border: var(--redactor2-border-dark-subtle);
+    --redactor2-kbd-bg: var(--redactor2-bg-light-accent);
+    --redactor2-code-color: var(--redactor2-fg-text);
+    --redactor2-code-bg: var(--redactor2-bg-dark-medium);
+    --redactor2-abbr-border: var(--redactor2-border-dark-emphasis);
+    --redactor2-quote-border-color: var(--redactor2-border-dark-medium);
+
+    /* Quote */
+    --redactor2-quote-color: var(--redactor2-fg-text);
+
+    /* CS-Cart Redactor2 */
+    --redactor2-cs-mark: #ffd61e;
+    --redactor2-cs-redactor-image-resizer: #000;
+    --redactor2-cs-redactor-image-resizer-2: rgba(255, 255, 255, 0.9);
+    --redactor2-cs-droparea: rgba(0, 0, 0, 0.1);
+    --redactor2-cs-droparea-drag-hover: rgba(200, 222, 250, 0.75);
+    --redactor2-cs-droparea-drag-drop: rgba(250, 248, 200, 0.5);
+    --redactor2-cs-placeholder: rgba(0, 0, 0, 0.7);
+    --redactor2-cs-redactor-progress: rgba(255, 255, 255, 0.2);
+    --redactor2-cs-dropdown-a-selected: #000;
+    --redactor2-cs-dropdown-a-selected-2: #fff;
+    --redactor2-cs-dropdown-a-redactor-dropdown-link-selected: #fff;
+    --redactor2-cs-dropdown-a-redactor-dropdown-link-selected-2: #000;
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-code-span: rgba(0, 0, 0, 0.05);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-sample-span: #46a9fc;
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-sample-span-2: rgba(255, 255, 255, 0.9);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-variable-span: rgba(0, 0, 0, 0.5);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-shortcut-span: #000;
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-shortcut-span-2: rgba(255, 255, 255, 0.85);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-cite-span: rgba(0, 0, 0, 0.5);
+    --redactor2-cs-modal-overlay: rgba(255, 255, 255, 0.95);
+    --redactor2-cs-modal: rgba(0, 0, 0, 0.15);
+    --redactor2-cs-modal-redactor-modal-header: rgba(0, 0, 0, 0.05);
+    --redactor2-cs-modal-redactor-modal-close: rgba(0, 0, 0, 0.3);
+    --redactor2-cs-modal-redactor-modal-close-hover: #000;
+    --redactor2-cs-modal-button-redactor-modal-button-delete-hover: rgba(255, 255, 255, 0.6);
+    --redactor2-cs-modal-tabber-a: #ddd;
+    --redactor2-cs-modal-tabber-a-2: #000;
+    --redactor2-cs-modal-tabber-a-hover: #fff;
+    --redactor2-cs-modal-tabber-a-active: rgba(0, 0, 0, 0.05);
+    --redactor2-cs-modal-tabber-a-active-2: #ddd;
+    --redactor2-cs-modal-tabber-a-active-3: rgba(0, 0, 0, 0.5);
+    --redactor2-cs-modal-list-li: rgba(0, 0, 0, 0.07);
+    --redactor2-cs-modal-list-a: #000;
+    --redactor2-cs-modal-list-a-hover: #eee;
+    --redactor2-cs-styles-a-focus: #e21e3b;
+    --redactor2-cs-styles-cite: rgba(0, 0, 0, 0.5);
+    --redactor2-cs-styles-abbr-title: #000;
+    --redactor2-cs-styles-code: rgba(0, 0, 0, 0.05);
+    --redactor2-cs-styles-var: rgba(0, 0, 0, 0.5);
+    --redactor2-cs-styles-samp: #46a9fc;
+    --redactor2-cs-styles-samp-2: rgba(255, 255, 255, 0.9);
+    --redactor2-cs-styles-kbd: #000;
+    --redactor2-cs-styles-kbd-2: rgba(255, 255, 255, 0.85);
+    --redactor2-cs-styles-table-caption: rgba(0, 0, 0, 0.5);
+    --redactor2-cs-styles-table-tfoot-th: rgba(0, 0, 0, 0.5);
+}
+
+:root.cs-dark-theme {
+    /* CS-Cart Redactor2 */
+    --redactor2-cs-mark: #ffd61e;
+    --redactor2-cs-redactor-image-resizer: #fff;
+    --redactor2-cs-redactor-image-resizer-2: rgba(0, 0, 0, 0.9);
+    --redactor2-cs-droparea: rgba(255, 255, 255, 0.1);
+    --redactor2-cs-droparea-drag-hover: rgba(4, 51, 113, 0.75);
+    --redactor2-cs-droparea-drag-drop: rgba(118, 114, 5, 0.5);
+    --redactor2-cs-placeholder: rgba(255, 255, 255, 0.7);
+    --redactor2-cs-redactor-progress: rgba(0, 0, 0, 0.2);
+    --redactor2-cs-dropdown-a-selected: #fff;
+    --redactor2-cs-dropdown-a-selected-2: #000;
+    --redactor2-cs-dropdown-a-redactor-dropdown-link-selected: #000;
+    --redactor2-cs-dropdown-a-redactor-dropdown-link-selected-2: #fff;
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-code-span: rgba(255, 255, 255, 0.05);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-sample-span: #0368ba;
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-sample-span-2: rgba(0, 0, 0, 0.9);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-variable-span: rgba(255, 255, 255, 0.5);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-shortcut-span: #fff;
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-shortcut-span-2: rgba(0, 0, 0, 0.85);
+    --redactor2-cs-dropdown-box-inline-redactor-dropdown-cite-span: rgba(255, 255, 255, 0.5);
+    --redactor2-cs-modal-overlay: rgba(0, 0, 0, 0.95);
+    --redactor2-cs-modal: rgba(255, 255, 255, 0.15);
+    --redactor2-cs-modal-redactor-modal-header: rgba(255, 255, 255, 0.05);
+    --redactor2-cs-modal-redactor-modal-close: rgba(255, 255, 255, 0.3);
+    --redactor2-cs-modal-redactor-modal-close-hover: #fff;
+    --redactor2-cs-modal-button-redactor-modal-button-delete-hover: rgba(0, 0, 0, 0.6);
+    --redactor2-cs-modal-tabber-a: #212121;
+    --redactor2-cs-modal-tabber-a-2: #fff;
+    --redactor2-cs-modal-tabber-a-hover: #000;
+    --redactor2-cs-modal-tabber-a-active: rgba(255, 255, 255, 0.05);
+    --redactor2-cs-modal-tabber-a-active-2: #212121;
+    --redactor2-cs-modal-tabber-a-active-3: rgba(255, 255, 255, 0.5);
+    --redactor2-cs-modal-list-li: rgba(255, 255, 255, 0.07);
+    --redactor2-cs-modal-list-a: #fff;
+    --redactor2-cs-modal-list-a-hover: #121212;
+    --redactor2-cs-styles-a-focus: #bd0f29;
+    --redactor2-cs-styles-cite: rgba(255, 255, 255, 0.5);
+    --redactor2-cs-styles-abbr-title: #fff;
+    --redactor2-cs-styles-code: rgba(255, 255, 255, 0.05);
+    --redactor2-cs-styles-var: rgba(255, 255, 255, 0.5);
+    --redactor2-cs-styles-samp: #0368ba;
+    --redactor2-cs-styles-samp-2: rgba(0, 0, 0, 0.9);
+    --redactor2-cs-styles-kbd: #fff;
+    --redactor2-cs-styles-kbd-2: rgba(0, 0, 0, 0.85);
+    --redactor2-cs-styles-table-caption: rgba(255, 255, 255, 0.5);
+    --redactor2-cs-styles-table-tfoot-th: rgba(255, 255, 255, 0.5);
+}
+
+/* Styles */
+.redactor-layer, .redactor-box {
+    background: var(--redactor2-body-color);
+}
+
+.redactor-layer {
+    border-color: var(--redactor2-border-dark-subtle);
+}
+
+.redactor-toolbar {
+    background: var(--redactor2-bg-toolbar);
+    box-shadow: var(--redactor2-shadow-toolbar-raised);
+}
+
+.redactor-toolbar li a {
+    color: var(--redactor2-fg-dark-text);
+}
+
+.redactor-toolbar li a:hover {
+    background-color: var(--redactor2-bg-dark-subtle);
+    color: var(--redactor2-fg-dark-text);
+}
+
+.redactor-toolbar li a:active, .redactor-toolbar li a.redactor-act {
+    background-color: var(--redactor2-bg-primary-subtle);
+    color: var(--redactor2-fg-dark-text);
+}
+
+.redactor-toolbar li a.redactor-button-disabled:hover {
+    color: var(--redactor2-fg-dark-dimmed);
+}
+
+.redactor-toolbar li a.redactor-button-focus {
+    color: var(--redactor2-fg-dark-accent);
+    background: var(--redactor2-bg-dark-subtle);
+}
+
+.redactor-toolbar.redactor-toolbar-external {
+    border-color: var(--redactor2-border-dark-subtle);
+}
+
+.redactor-air {
+    background: var(--redactor2-bg-control-inverted);
+}
+
+.redactor-air li a {
+    color: var(--redactor2-fg-white-text);
+}
+
+.redactor-air li a:hover {
+    background-color: var(--redactor2-border-focus);
+    color: var(--redactor2-fg-white-accent);
+}
+
+.redactor-air li a:active, .redactor-air li a.redactor-act {
+    background-color: var(--redactor2-border-focus);
+    color: var(--redactor2-fg-white-accent);
+}
+
+.redactor-air li a.redactor-button-disabled:hover {
+    color: var(--redactor2-fg-light-dimmed);
+}
+
+.redactor-air li a.redactor-button-focus {
+    color: var(--redactor2-fg-light-accent);
+    background: var(--redactor2-bg-light-subtle);
+}
+
+.redactor-air li a .re-button-tooltip, .redactor-toolbar li a .re-button-tooltip {
+    background: var(--redactor2-bg-dark-accent);
+    color: var(--redactor2-fg-light-text);
+}
+
+.redactor-toolbar li a {
+    border-right-color: var(--redactor2-border-dark-subtle);
+}
+
+.redactor-link-tooltip {
+    background-color: var(--redactor2-bg-dark-accent);
+    color: var(--redactor2-fg-dark-subtle) !important;
+}
+
+.redactor-link-tooltip a {
+    color: var(--redactor2-fg-placeholder);
+}
+
+.redactor-link-tooltip a:hover {
+    color: var(--redactor2-fg-light-text);
+}
+
+#redactor-image-box {
+    outline: 3px solid var(--redactor2-border-focus);
+    box-shadow: 0 0 12px var(--redactor2-border-focus);
+}
+
+#redactor-image-editter {
+    background-color: var(--redactor2-fg-dark-text);
+    color: var(--redactor2-fg-light-text);
+}
+
+#redactor-image-resizer {
+    border-color: var(--redactor2-cs-redactor-image-resizer);
+    background-color: var(--redactor2-cs-redactor-image-resizer-2);
+}
+
+#redactor-droparea {
+    border-color: var(--redactor2-cs-droparea);
+}
+
+#redactor-droparea.drag-hover {
+    background: var(--redactor2-cs-droparea-drag-hover);
+}
+
+#redactor-droparea.drag-drop {
+    background: var(--redactor2-cs-droparea-drag-drop);
+}
+
+#redactor-droparea-placeholder {
+    color: var(--redactor2-cs-placeholder);
+}
+
+.redactor-image-dragover {
+    outline: 2px solid var(--redactor2-border-focus);
+}
+
+#redactor-progress span {
+    background-image: linear-gradient(45deg, var(--redactor2-cs-redactor-progress) 25%, transparent 25%, transparent 50%, var(--redactor2-cs-redactor-progress) 50%, var(--redactor2-cs-redactor-progress) 75%, transparent 75%, transparent);
+    background-color: var(--redactor2-bg-primary-accent);
+}
+
+.redactor-dropdown {
+    color: var(--redactor2-fg-text);
+    background: var(--redactor2-bg-overlay);
+    box-shadow: var(--redactor2-shadow-dropdown);
+}
+
+.redactor-dropdown li {
+    border-bottom-color: var(--redactor2-border-dark-dimmed);
+}
+
+.redactor-dropdown li:hover {
+    background-color: var(--redactor2-bg-dark-subtle);
+}
+
+.redactor-dropdown li:hover a {
+    color: var(--redactor2-fg-dark-accent) !important;
+}
+
+.redactor-dropdown li.redactor-dropdown-link-inactive a, .redactor-dropdown li.redactor-dropdown-link-inactive a:hover {
+    color: var(--redactor2-fg-dark-dimmed) !important;
+}
+
+.redactor-dropdown a {
+    color: var(--redactor2-fg-dark-accent);
+}
+
+.redactor-dropdown a.selected {
+    background-color: var(--redactor2-cs-dropdown-a-selected);
+    color: var(--redactor2-cs-dropdown-a-selected-2);
+}
+
+.redactor-dropdown a.redactor-dropdown-link-selected {
+    color: var(--redactor2-cs-dropdown-a-redactor-dropdown-link-selected);
+    background: var(--redactor2-cs-dropdown-a-redactor-dropdown-link-selected-2);
+}
+
+.redactor-dropdown-box-inline .redactor-dropdown-marked span {
+    background-color: var(--redactor2-cs-mark);
+    color: var(--redactor2-text-color);
+}
+
+.redactor-dropdown-box-inline .redactor-dropdown-code span {
+    background: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-code-span);
+}
+
+.redactor-dropdown-box-inline .redactor-dropdown-sample span {
+    background: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-sample-span);
+    color: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-sample-span-2);
+}
+
+.redactor-dropdown-box-inline .redactor-dropdown-variable span {
+    color: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-variable-span);
+}
+
+.redactor-dropdown-box-inline .redactor-dropdown-shortcut span {
+    background: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-shortcut-span);
+    color: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-shortcut-span-2)
+}
+
+.redactor-dropdown-box-inline .redactor-dropdown-cite span {
+    color: var(--redactor2-cs-dropdown-box-inline-redactor-dropdown-cite-span);
+}
+
+.redactor-dropdown-box-format .redactor-dropdown-blockquote {
+    color: var(--redactor2-fg-dark-accent);
+}
+
+#redactor-modal-overlay {
+    background-color: var(--redactor2-cs-modal-overlay);
+}
+
+#redactor-modal {
+    background: var(--redactor2-bg-overlay);
+    color: var(--redactor2-bg-dark-accent);
+    box-shadow: 0 4px 40px var(--redactor2-cs-modal);
+}
+
+#redactor-modal #redactor-modal-header {
+    color: var(--redactor2-bg-dark-accent);
+    border-bottom-color: var(--redactor2-cs-modal-redactor-modal-header);
+}
+
+#redactor-modal #redactor-modal-close {
+    color: var(--redactor2-cs-modal-redactor-modal-close);
+}
+
+#redactor-modal #redactor-modal-close:hover {
+    color: var(--redactor2-cs-modal-redactor-modal-close-hover);
+}
+
+#redactor-modal #redactor-modal-body label {
+    color: var(--redactor2-fg-dark-text);
+}
+
+#redactor-modal #redactor-modal-body label .desc {
+    color: var(--redactor2-fg-dark-subtle);
+}
+
+#redactor-modal select, #redactor-modal input[type="text"], #redactor-modal input[type="password"], #redactor-modal input[type="email"], #redactor-modal input[type="url"], #redactor-modal input[type="number"], #redactor-modal textarea {
+    border-color: var(--redactor2-border-input);
+    background-color: var(--redactor2-bg-input-shaded);
+    color: var(--redactor2-fg-dark-text);
+}
+
+#redactor-modal select:focus, #redactor-modal input[type="text"]:focus, #redactor-modal input[type="password"]:focus, #redactor-modal input[type="email"]:focus, #redactor-modal input[type="url"]:focus, #redactor-modal input[type="number"]:focus, #redactor-modal textarea:focus {
+    border-color: var(--redactor2-border-focus);
+}
+
+#redactor-modal button {
+    background-color: transparent;
+    color: var(--cs-text-color);
+    border: 1px solid var(--redactor2-border-dark-subtle);
+}
+
+#redactor-modal button:hover {
+    color: var(--redactor2-fg-dark-accent);
+    background-color: var(--redactor2-bg-dark-subtle);
+}
+
+#redactor-modal button#redactor-modal-button-delete {
+    border-color: var(--redactor2-fg-negative-accent);
+    color: var(--redactor2-fg-negative-accent);
+}
+
+#redactor-modal button#redactor-modal-button-delete:hover {
+    color: var(--redactor2-cs-modal-button-redactor-modal-button-delete-hover);
+    background-color: var(--redactor2-fg-negative-accent);
+}
+
+#redactor-modal button#redactor-modal-button-action {
+    color: var(--redactor2-fg-light-accent);
+    background-color: var(--redactor2-fg-primary-accent);
+    border-color: transparent;
+}
+
+#redactor-modal button#redactor-modal-button-action:hover {
+    color: var(--redactor2-fg-light-accent);
+    background-color: var(--redactor2-fg-primary-accent);
+}
+
+#redactor-modal-tabber a {
+    border-color: var(--redactor2-cs-modal-tabber-a);
+    color: var(--redactor2-cs-modal-tabber-a-2);
+}
+
+#redactor-modal-tabber a:hover {
+    background-color: var(--redactor2-border-focus);
+    border-color: var(--redactor2-border-focus);
+    color: var(--redactor2-cs-modal-tabber-a-hover);
+}
+
+#redactor-modal-tabber a.active {
+    background-color: var(--redactor2-cs-modal-tabber-a-active);
+    border-color: var(--redactor2-cs-modal-tabber-a-active-2);
+    color: var(--redactor2-cs-modal-tabber-a-active-3);
+}
+
+#redactor-modal-list li {
+    border-bottom-color: var(--redactor2-cs-modal-list-li);
+}
+
+#redactor-modal-list a {
+    color: var(--redactor2-cs-modal-list-a);
+}
+
+#redactor-modal-list a:hover {
+    background-color: var(--redactor2-cs-modal-list-a-hover)
+}
+
+.redactor-styles {
+    color: var(--redactor2-text-color);
+}
+
+.redactor-styles a {
+    color: var(--redactor2-link-color);
+}
+
+.redactor-styles a:focus, .redactor-styles a:hover {
+    color: var(--redactor2-cs-styles-a-focus);
+}
+
+.redactor-styles h1, .redactor-styles h2, .redactor-styles h3, .redactor-styles h4, .redactor-styles h5, .redactor-styles h6 {
+    color: var(--redactor2-fg-heading);
+}
+
+.redactor-styles blockquote {
+    color: var(--redactor2-quote-color);
+}
+
+@media (min-width: 768px) {
+    .redactor-styles blockquote {
+        border-left-color: var(--redactor2-quote-border-color);
+    }
+}
+
+.redactor-styles cite {
+    color: var(--redactor2-cs-styles-cite);
+}
+
+.redactor-styles abbr[title], .redactor-styles dfn[title] {
+    border-bottom-color: var(--redactor2-cs-styles-abbr-title);
+}
+
+.redactor-styles mark {
+    background-color: var(--redactor2-cs-mark);
+    color: var(--redactor2-text-color);
+}
+
+.redactor-styles pre {
+    color: var(--redactor2-pre-color);
+    background: var(--redactor2-pre-bg);
+}
+
+.redactor-styles code {
+    background: var(--redactor2-cs-styles-code);
+}
+
+.redactor-styles var {
+    color: var(--redactor2-cs-styles-var);
+}
+
+.redactor-styles samp {
+    background: var(--redactor2-cs-styles-samp);
+    color: var(--redactor2-cs-styles-samp-2);
+}
+
+.redactor-styles kbd {
+    background: var(--redactor2-cs-styles-kbd);
+    color: var(--redactor2-cs-styles-kbd-2);
+}
+
+.redactor-styles hr {
+    border-top: 1px solid var(--redactor2-line-color);
+}
+
+.redactor-styles table caption {
+    color: var(--redactor2-cs-styles-table-caption);
+}
+
+.redactor-styles table th, .redactor-styles table td {
+    border-color: var(--redactor2-table-border);
+}
+
+.redactor-styles table tfoot th, .redactor-styles table tfoot td {
+    color: var(--redactor2-cs-styles-table-tfoot-th);
+}
+
+
+
+/* Plugins */
+
+/* fontcolor */
+.re-dropdown-box-selector-font[style*="background: #eee;"],
+.re-dropdown-box-selector-font[style*="background: rgb(238, 238, 238);"] {
+    background: var(--redactor2-bg-primary-subtle) !important;
+}
+
+.re-dropdown-box-textcolor [data-rule="color"],
+.re-dropdown-box-backcolor [data-rule="background-color"] {
+    border-color: var(--redactor2-bg-overlay) !important;
+}
+
+/* source */
+.redactor2-box .cm-wysiwyg + textarea.open[style*="background: rgb(29, 29, 29);"] {
+    background: var(--cs-text-color) !important;
+    color: var(--cs-text-inverse-color) !important;
+}

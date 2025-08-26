@@ -1,0 +1,232 @@
+// Bootstrap styles
+
+// UTILITY MIXINS
+// --------------------------------------------------
+
+// Webkit-style focus
+// ------------------
+.tab-focus() {
+    // Default
+    outline: thin dotted @textColor;
+    // Webkit
+    outline-width: 5px;
+    outline-style: auto;
+    outline-color: -webkit-focus-ring-color;
+}
+
+// Mixin for form field states
+.formFieldState(@textColor: @textColor, @borderColor: @inputBorder, @backgroundColor: @formActionsBackground) {
+    // Set the text color
+    .control-label,
+    .help-block,
+    .help-inline {
+        color: @textColor;
+    }
+    // Style inputs accordingly
+    .checkbox,
+    .radio,
+    input,
+    select,
+    textarea {
+        color: @textColor;
+    }
+    input,
+    select,
+    textarea {
+        border-color: @borderColor;
+        box-shadow: inset 0 1px 1px @shadow7Color; // Redeclare so transitions work
+        &:focus {
+            border-color: darken(@borderColor, 10%);
+            box-shadow: inset 0 1px 1px @shadow7Color, 0 0 6px lighten(@borderColor, 20%);
+        }
+    }
+    // Give a small background color for input-prepend/-append
+    .input-prepend .add-on,
+    .input-append .add-on {
+        color: @textColor;
+        background-color: @backgroundColor;
+        border-color: @textColor;
+    }
+}
+
+// Gradient Bar Colors for buttons and alerts
+.gradientBar(@primaryColor, @secondaryColor, @textColor: @textColor, @textShadow: 0 -1px 0 @shadow25Color) {
+    color: @textColor;
+    text-shadow: @textShadow;
+    #gradient > .vertical(@primaryColor, @secondaryColor);
+    border-color: @secondaryColor @secondaryColor darken(@secondaryColor, 15%) @secondaryColor;
+    border-color: @shadow10Color @shadow10Color fadein(@shadow10Color, 15%) @shadow10Color;
+}
+
+// Gradients
+#gradient {
+    .horizontal(@startColor: @gray, @endColor: @grayDark) {
+        background-color: @endColor;
+        background-image: linear-gradient(to right, @startColor, @endColor); // Standard, IE10
+        background-repeat: repeat-x;
+    }
+    .vertical(@startColor: @gray, @endColor: @grayDark) {
+        background-color: mix(@startColor, @endColor, 60%);
+        background-image: linear-gradient(to bottom, @startColor, @endColor); // Standard, IE10
+        background-repeat: repeat-x;
+    }
+    .directional(@startColor: @gray, @endColor: @grayDark, @deg: 45deg) {
+        background-color: @endColor;
+        background-repeat: repeat-x;
+        background-image: linear-gradient(@deg, @startColor, @endColor); // Standard, IE10
+    }
+    .horizontal-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) {
+        background-color: mix(@midColor, @endColor, 80%);
+        background-image: linear-gradient(to right, @startColor, @midColor @colorStop, @endColor);
+        background-repeat: no-repeat;
+    }
+
+    .vertical-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) {
+        background-color: mix(@midColor, @endColor, 80%);
+        background-image: linear-gradient(@startColor, @midColor @colorStop, @endColor);
+        background-repeat: no-repeat;
+    }
+    .radial(@innerColor: @gray, @outerColor: @grayDark) {
+        background-color: @outerColor;
+        background-repeat: no-repeat;
+    }
+    .striped(@color: @gray, @angle: 45deg) {
+        background-color: @color;
+        background-image: linear-gradient(@angle, @inverseShadow15Color 25%, transparent 25%, transparent 50%, @inverseShadow15Color 50%, @inverseShadow15Color 75%, transparent 75%, transparent);
+    }
+}
+
+// Button backgrounds
+// ------------------
+.buttonBackground(@startColor, @endColor, @textColor: @inputBackground, @textShadow: 0 0 0 transparent) {
+    color: @textColor;
+    text-shadow: @textShadow;
+    background: @startColor;
+    border-top-color: @endColor;
+    border-right-color: @endColor;
+    border-bottom-color: darken(@endColor, 15%);
+    border-left-color: @endColor;
+
+    // in these cases the gradient won't cover the background, so we override
+    &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
+        color: @textColor;
+        background-color: @endColor;
+    }
+}
+
+// COMPONENT MIXINS
+// --------------------------------------------------
+
+// Horizontal dividers
+// -------------------------
+// Dividers (basically an hr) within dropdowns and nav lists
+.nav-divider(@top: @hrBorder, @bottom: @inputBackground) {
+    height: 2px;
+    margin: ((@baseLineHeight / 4) - 2) 1px; // 4px 1px
+    background-color: @top;
+    border-bottom: 1px solid @bottom;
+}
+
+// Custom styles
+
+//
+// Mixins
+// --------------------------------------------------
+
+
+// Flexbox
+// --------------------------------------------------
+.display-flex() {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.display-flex-inline() {
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+}
+
+.flex-dir-column() {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+}
+
+.flex-dir-row() {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+}
+
+.flex-wrap() {
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+}
+
+.flex-justify-content(@ies_param, @other_param) {
+    -webkit-box-pack: @ies_param;
+    -webkit-justify-content: @other_param;
+    -ms-flex-pack: @ies_param;
+    justify-content: @other_param;
+}
+
+.flex-align-items(@param) {
+    -webkit-box-align: @param;
+    -webkit-align-items: @param;
+    -ms-flex-align: @param;
+    align-items: @param;
+}
+
+.fit-height {
+    min-height: -webkit-max-content;
+    min-height: -moz-max-content;
+    min-height: max-content;
+}
+
+.flex(@param1, @param2, @param3) {
+    -webkit-box-flex: @param1;
+    -webkit-flex: @param1 @param2 @param3;
+    -moz-box-flex: @param1;
+    -ms-flex: @param1 @param2 @param3;
+    flex: @param1 @param2 @param3;
+}
+
+// Cursors
+// --------------------------------------------------
+.cursor-grab() {
+    cursor: pointer;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+.cursor-grabbing {
+    cursor: move;
+    cursor:  -webkit-grabbing;
+    cursor:  -moz-grabbing;
+    cursor:  grabbing;
+}
+
+// Text break
+// --------------------------------------------------
+.word-break() {
+    word-break: break-all;
+    word-break: break-word;
+}
+
+.show-off() {
+    visibility: hidden !important;
+    display: none !important;
+
+    top: -9999px !important;
+    left: -9999px !important;
+}

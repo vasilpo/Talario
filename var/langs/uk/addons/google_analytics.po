@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uk\n"
+"X-Crowdin-File: /release-4.18.3/addons/google_analytics.po\n"
+"X-Crowdin-File-ID: 9328\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::google_analytics"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Addons::description::google_analytics"
+msgid "Integrates a Google Analytics service with the store"
+msgstr "Інтегрує служби Google Analytics з магазином"
+
+msgctxt "SettingsSections::google_analytics::general"
+msgid "General"
+msgstr "Загальні"
+
+msgctxt "SettingsOptions::google_analytics::tracking_code"
+msgid "Google Analytics account number"
+msgstr "номер аккаунта Google Analytics"
+
+msgctxt "SettingsOptions::google_analytics::track_ecommerce"
+msgid "Track e-commerce transactions"
+msgstr "Відстеження транзакцій електронної комерції"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_title"
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_description"
+msgid "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+msgstr "Google Analytics — це служба, яка надає нам аналітику веб-сайтів: кількість унікальних відвідувачів, найбільш і найменш популярні сторінки тощо. Ось <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">заява Google Analytics щодо конфіденційності</a>."
+
+msgctxt "Languages::google_analytics.google_ads_cookies_title"
+msgid "Google Ads"
+msgstr "Google Ads"
+
+msgctxt "Languages::google_analytics.google_ads_cookies_description"
+msgid "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."
+msgstr "Google Ads – це служба, яка дозволяє нам робити для вас персоналізовані пропозиції. Цей дозвіл дозволяє нам установлювати файли cookie та надсилати деякі ваші дані, пов’язані з рекламою, до Google. Ось <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">як Google обробляє дані, пов’язані з рекламою</a>."
+

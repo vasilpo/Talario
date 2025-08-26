@@ -1,0 +1,287 @@
+/*!
+ * jQuery UI CSS Framework 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/category/theming/
+ *
+ * To view and modify this theme, visit http://jqueryui.com/themeroller/
+ */
+
+
+/* Component containers
+----------------------------------*/
+.ui-widget {
+    font-family: var(--cs-jqueryui-ff-default);
+    font-size: var(--cs-jqueryui-fs-default);
+}
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button {
+    font-family: var(--cs-jqueryui-ff-default);
+}
+.ui-widget.ui-widget-content {
+    border: 1px solid var(--cs-jqueryui-border-color-default);
+}
+.ui-widget-content {
+    border: 1px solid var(--cs-jqueryui-border-color-content);
+    background: var(--cs-jqueryui-bg-color-content) var(--cs-jqueryui-bg-img-url-content) var(--cs-jqueryui-bg-content-x-pos) var(--cs-jqueryui-bg-content-y-pos) var(--cs-jqueryui-bg-content-repeat);
+    color: var(--cs-jqueryui-fc-content);
+}
+.ui-widget-content a {
+    color: var(--cs-jqueryui-fc-content);
+}
+.ui-widget-header {
+    border: 1px solid var(--cs-jqueryui-border-color-header);
+    background: var(--cs-jqueryui-bg-color-header) var(--cs-jqueryui-bg-img-url-header) var(--cs-jqueryui-bg-header-x-pos) var(--cs-jqueryui-bg-header-y-pos) var(--cs-jqueryui-bg-header-repeat);
+    color: var(--cs-jqueryui-fc-header);
+}
+.ui-widget-header a {
+    color: var(--cs-jqueryui-fc-header);
+}
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-button,
+
+/* We use html here because we need a greater specificity to make sure disabled
+works properly when clicked or hovered */
+html .ui-button.ui-state-disabled:hover,
+html .ui-button.ui-state-disabled:active {
+    border: 1px solid var(--cs-jqueryui-border-color-default);
+    background: var(--cs-jqueryui-bg-color-default) var(--cs-jqueryui-bg-img-url-default) var(--cs-jqueryui-bg-default-x-pos) var(--cs-jqueryui-bg-default-y-pos) var(--cs-jqueryui-bg-default-repeat);
+    font-weight: var(--cs-jqueryui-fw-default);
+    color: var(--cs-jqueryui-fc-default);
+}
+.ui-state-default a,
+.ui-state-default a:link,
+.ui-state-default a:visited,
+a.ui-button,
+a:link.ui-button,
+a:visited.ui-button,
+.ui-button {
+    color: var(--cs-jqueryui-fc-default);
+}
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus,
+.ui-button:hover,
+.ui-button:focus {
+    border: 1px solid var(--cs-jqueryui-border-color-hover);
+    background: var(--cs-jqueryui-bg-color-hover) var(--cs-jqueryui-bg-img-url-hover) var(--cs-jqueryui-bg-hover-x-pos) var(--cs-jqueryui-bg-hover-y-pos) var(--cs-jqueryui-bg-hover-repeat);
+    font-weight: var(--cs-jqueryui-fw-default);
+    color: var(--cs-jqueryui-fc-hover);
+}
+.ui-state-hover a,
+.ui-state-hover a:hover,
+.ui-state-hover a:link,
+.ui-state-hover a:visited,
+.ui-state-focus a,
+.ui-state-focus a:hover,
+.ui-state-focus a:link,
+.ui-state-focus a:visited,
+a.ui-button:hover,
+a.ui-button:focus {
+    color: var(--cs-jqueryui-fc-hover);
+}
+
+.ui-visual-focus {
+    box-shadow: 0 0 3px 1px var(--cs-jqueryui-main-color);
+}
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+    border: 1px solid var(--cs-jqueryui-border-color-active);
+    background: var(--cs-jqueryui-bg-color-active) var(--cs-jqueryui-bg-img-url-active) var(--cs-jqueryui-bg-active-x-pos) var(--cs-jqueryui-bg-active-y-pos) var(--cs-jqueryui-bg-active-repeat);
+    font-weight: var(--cs-jqueryui-fw-default);
+    color: var(--cs-jqueryui-fc-active);
+}
+.ui-icon-background,
+.ui-state-active .ui-icon-background {
+    border: var(--cs-jqueryui-border-color-active);
+    background-color: var(--cs-jqueryui-fc-active);
+}
+.ui-state-active a,
+.ui-state-active a:link,
+.ui-state-active a:visited {
+    color: var(--cs-jqueryui-fc-active);
+}
+
+/* Interaction Cues
+----------------------------------*/
+.ui-state-highlight,
+.ui-widget-content .ui-state-highlight,
+.ui-widget-header .ui-state-highlight {
+    border: 1px solid var(--cs-jqueryui-border-color-highlight);
+    background: var(--cs-jqueryui-bg-color-highlight) var(--cs-jqueryui-bg-img-url-highlight) var(--cs-jqueryui-bg-highlight-x-pos) var(--cs-jqueryui-bg-highlight-y-pos) var(--cs-jqueryui-bg-highlight-repeat);
+    color: var(--cs-jqueryui-fc-highlight);
+}
+.ui-state-checked {
+    border: 1px solid var(--cs-jqueryui-border-color-highlight);
+    background: var(--cs-jqueryui-bg-color-highlight);
+}
+.ui-state-highlight a,
+.ui-widget-content .ui-state-highlight a,
+.ui-widget-header .ui-state-highlight a {
+    color: var(--cs-jqueryui-fc-highlight);
+}
+.ui-state-error,
+.ui-widget-content .ui-state-error,
+.ui-widget-header .ui-state-error {
+    border: 1px solid var(--cs-jqueryui-border-color-error);
+    background: var(--cs-jqueryui-bg-color-error) var(--cs-jqueryui-bg-img-url-error) var(--cs-jqueryui-bg-error-x-pos) var(--cs-jqueryui-bg-error-y-pos) var(--cs-jqueryui-bg-error-repeat);
+    color: var(--cs-jqueryui-fc-error);
+}
+.ui-state-error a,
+.ui-widget-content .ui-state-error a,
+.ui-widget-header .ui-state-error a {
+    color: var(--cs-jqueryui-fc-error);
+}
+.ui-state-error-text,
+.ui-widget-content .ui-state-error-text,
+.ui-widget-header .ui-state-error-text {
+    color: var(--cs-jqueryui-fc-error);
+}
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon,
+.ui-widget-content .ui-icon {
+    background-image: var(--cs-jqueryui-icons-content);
+}
+.cs-dark-theme .ui-icon,
+.cs-dark-theme .ui-widget-content .ui-icon {
+    background-image: var(--cs-jqueryui-icons-content-dark);
+}
+.ui-widget-header .ui-icon {
+    background-image: var(--cs-jqueryui-icons-header);
+}
+.cs-dark-theme .ui-widget-header .ui-icon {
+    background-image: var(--cs-jqueryui-icons-header-dark);
+}
+.ui-state-hover .ui-icon,
+.ui-state-focus .ui-icon,
+.ui-button:hover .ui-icon,
+.ui-button:focus .ui-icon {
+    background-image: var(--cs-jqueryui-icons-hover);
+}
+.ui-state-active .ui-icon,
+.ui-button:active .ui-icon {
+    background-image: var(--cs-jqueryui-icons-active);
+}
+.ui-state-highlight .ui-icon,
+.ui-button .ui-state-highlight.ui-icon {
+    background-image: var(--cs-jqueryui-icons-highlight);
+}
+.ui-state-error .ui-icon,
+.ui-state-error-text .ui-icon {
+    background-image: var(--cs-jqueryui-icons-error);
+}
+.ui-button .ui-icon {
+    background-image: var(--cs-jqueryui-icons-default);
+}
+
+
+
+/* Misc visuals
+----------------------------------*/
+
+/* Corner radius */
+.ui-corner-all,
+.ui-corner-top,
+.ui-corner-left,
+.ui-corner-tl {
+    border-top-left-radius: var(--cs-jqueryui-corner-radius);
+}
+.ui-corner-all,
+.ui-corner-top,
+.ui-corner-right,
+.ui-corner-tr {
+    border-top-right-radius: var(--cs-jqueryui-corner-radius);
+}
+.ui-corner-all,
+.ui-corner-bottom,
+.ui-corner-left,
+.ui-corner-bl {
+    border-bottom-left-radius: var(--cs-jqueryui-corner-radius);
+}
+.ui-corner-all,
+.ui-corner-bottom,
+.ui-corner-right,
+.ui-corner-br {
+    border-bottom-right-radius: var(--cs-jqueryui-corner-radius);
+}
+
+/* Overlays */
+.ui-widget-overlay {
+    background: var(--cs-jqueryui-bg-color-overlay) var(--cs-jqueryui-bg-img-url-overlay) var(--cs-jqueryui-bg-overlay-x-pos) var(--cs-jqueryui-bg-overlay-y-pos) var(--cs-jqueryui-bg-overlay-repeat);
+    opacity: var(--cs-jqueryui-opacity-overlay);
+    -ms-filter: var(--cs-jqueryui-opacity-filter-overlay); /* support: IE8 */
+}
+.ui-widget-shadow {
+    -webkit-box-shadow: var(--cs-jqueryui-offset-left-shadow) var(--cs-jqueryui-offset-top-shadow) var(--cs-jqueryui-thickness-shadow) var(--cs-jqueryui-bg-color-shadow);
+    box-shadow: var(--cs-jqueryui-offset-left-shadow) var(--cs-jqueryui-offset-top-shadow) var(--cs-jqueryui-thickness-shadow) var(--cs-jqueryui-bg-color-shadow);
+}
+
+/*
+ * jQuery UI Datepicker 1.10.0
+ *
+ * Copyright 2013, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://jqueryui.com/datepicker/
+ */
+
+.ui-datepicker .ui-datepicker-header {
+    background-color: var(--cs-form-actions-background);
+    color: var(--cs-text-color);
+}
+
+.ui-datepicker th {
+    color: var(--cs-text-muted-color);
+}
+
+.ui-datepicker-today a:hover {
+    background-color: var(--cs-text-muted-color);
+    color: var(--cs-text-inverse-color);
+
+}
+.ui-datepicker-today a {
+    background-color: var(--cs-placeholder-text);
+}
+
+.ui-datepicker td:hover {
+    color: var(--cs-text-inverse-color);
+}
+
+.ui-datepicker td .ui-state-default {
+    color: var(--cs-text-color);
+}
+
+.ui-datepicker td .ui-state-active {
+    background: var(--cs-text-color);
+    color: var(--cs-text-inverse-color);
+}
+
+.ui-datepicker td .ui-state-hover {
+    color: var(--cs-text-inverse-color);
+    background: var(--cs-btn-primary-background);
+    text-shadow: 0 -1px 0 var(--cs-shadow25-color);
+    border-color: var(--cs-shadow10-color) var(--cs-shadow10-color) var(--cs-shadow25-color);
+}

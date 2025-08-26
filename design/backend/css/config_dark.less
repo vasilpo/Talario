@@ -1,0 +1,244 @@
+// Bootstrap variables
+
+//
+// Variables
+// --------------------------------------------------
+
+
+// Global values
+// --------------------------------------------------
+
+
+// Grays
+// -------------------------
+@black:                 #000;
+@grayDarker:            #222;
+@grayDark:              #333;
+@gray:                  #555;
+@grayLight:             #999;
+@grayLighter:           #eee;
+@white:                 #fff;
+
+
+// Accent colors
+// -------------------------
+@blue:                  lighten(#049cdb, 20%);
+@blueDark:              lighten(#0064cd, 20%);
+@green:                 lighten(#14be68, 20%);
+@red:                   lighten(#e34963, 20%);
+@yellow:                lighten(#ffc40d, 20%);
+@orange:                lighten(#f89406, 20%);
+@pink:                  lighten(#c3325f, 20%);
+@purple:                lighten(#7a43b6, 20%);
+
+
+// Scaffolding
+// -------------------------
+@bodyBackground:        #282c2f;
+@textColor:             #e3e3e3;
+
+
+// Links
+// -------------------------
+@linkColor:             @mainColor;
+@linkColorHover:        lighten(@linkColor, 15%);
+
+
+// Tables
+// -------------------------
+@tableBackground:                   transparent; // overall background-color
+@tableBackgroundAccent:             #1c1f21; // for striping
+@tableBackgroundHover:              #35393b; // for hover
+@tableBorder:                       #454a4f; // table and cell border
+
+// Buttons
+// -------------------------
+@btnBackground:                     #121517;
+@btnBackgroundHighlight:            #1f2528;
+@btnBorder:                         #8f9499;
+
+@btnPrimaryBackground:              #8dcffb;
+@btnPrimaryBackgroundHighlight:     spin(@btnPrimaryBackground, 5%);
+
+@btnInfoBackground:                 lighten(#5bc0de, 20%);
+@btnInfoBackgroundHighlight:        lighten(@btnInfoBackground, 10%);
+
+@btnSuccessBackground:              lighten(#5cb432, 20%);
+@btnSuccessBackgroundHighlight:     lighten(@btnSuccessBackground, 10%);
+
+@btnWarningBackground:              lighten(#f5a812, 20%);
+@btnWarningBackgroundHighlight:     lighten(@btnWarningBackground, 10%);
+
+@btnDangerBackground:               lighten(#f84f8c, 20%);
+@btnDangerBackgroundHighlight:      lighten(@btnDangerBackground, 10%);
+
+@btnInverseBackground:              #bbb;
+@btnInverseBackgroundHighlight:     lighten(@btnInverseBackground, 10%);
+
+
+// Forms
+// -------------------------
+@inputBackground:               #121517;
+@inputBorder:                   #8f9499;
+@inputDisabledBackground:       #2c2d30;
+@formActionsBackground:         #282c2f;
+
+
+// Dropdowns
+// -------------------------
+@dropdownBackground:            #202527;
+@dropdownBorder:                #454a4f;
+@dropdownDividerTop:            #454a4f;
+@dropdownDividerBottom:         #202527;
+
+@dropdownLinkColor:             #e1e3ea;
+@dropdownLinkColorHover:        #e1e3ea;
+@dropdownLinkColorActive:       #e1e3ea;
+
+@dropdownLinkBackgroundActive:  #35393b;
+@dropdownLinkBackgroundHover:   @dropdownLinkBackgroundActive;
+
+
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+
+// Sprite icons path
+// -------------------------
+@iconSpritePath:          "../../media/images/lib/twitterbootstrap/glyphicons-halflings-white.png";
+@iconWhiteSpritePath:     "../../media/images/lib/twitterbootstrap/glyphicons-halflings.png";
+
+
+// Input placeholder text color
+// -------------------------
+@placeholderText:         #606366;
+
+
+// Hr border color
+// -------------------------
+@hrBorder:                #454a4f;
+
+
+// Wells
+// -------------------------
+@wellBackground:                  #455159;
+
+
+// Navbar
+// -------------------------
+@navbarBackgroundHighlight:       #121517;
+@navbarBackground:                lighten(@navbarBackgroundHighlight, 5%);
+@navbarBorder:                    lighten(@navbarBackground, 12%);
+
+@navbarText:                      #e1e3ea;
+@navbarLinkColor:                 #e1e3ea;
+@navbarLinkColorHover:            lighten(@navbarText, 5%);
+@navbarLinkColorActive:           lighten(@navbarText, 10%);
+@navbarLinkBackgroundHover:       transparent;
+@navbarLinkBackgroundActive:      lighten(@navbarBackground, 5%);
+
+@navbarBrandColor:                @navbarLinkColor;
+
+// Inverted navbar
+@navbarInverseBackground:                darken(#ffffff, 5%);
+@navbarInverseBackgroundHighlight:       #ffffff;
+@navbarInverseBorder:                    darken(@navbarInverseBackground, 12%);
+
+@navbarInverseText:                      #777;
+@navbarInverseLinkColor:                 #777;
+@navbarInverseLinkColorHover:            @grayDark;
+@navbarInverseLinkColorActive:           @gray;
+@navbarInverseLinkBackgroundHover:       transparent;
+@navbarInverseLinkBackgroundActive:      darken(@navbarInverseBackground, 5%);
+
+@navbarInverseSearchBackground:          darken(@navbarInverseBackground, 25%);
+@navbarInverseSearchBackgroundFocus:     @white;
+@navbarInverseSearchBorder:              @navbarInverseBackground;
+@navbarInverseSearchPlaceholderColor:    #ccc;
+
+@navbarInverseBrandColor:                @navbarInverseLinkColor;
+
+
+// Pagination
+// -------------------------
+@paginationBackground:                #121517;
+@paginationBorder:                    #8f9499;
+@paginationActiveBackground:          #1f2528;
+
+
+// Hero unit
+// -------------------------
+@heroUnitBackground:              #282c2f;
+@heroUnitHeadingColor:            inherit;
+@heroUnitLeadColor:               inherit;
+
+
+// Form states and alerts
+// -------------------------
+@warningText:             lighten(@btnWarningBackground, 5%);
+@warningBackground:       #8c6718;
+@warningBorder:           lighten(spin(@warningBackground, -10), 3%);
+
+@errorText:               lighten(@btnDangerBackground, 5%);
+@errorBackground:         #8c1d18;
+@errorBorder:             lighten(spin(@errorBackground, -10), 3%);
+
+@successText:             lighten(@btnSuccessBackground, 5%);
+@successBackground:       #378c18;
+@successBorder:           lighten(spin(@successBackground, -10), 5%);
+
+@infoText:                lighten(@btnInfoBackground, 5%);
+@infoBackground:          #185b8c;
+@infoBorder:              lighten(spin(@infoBackground, -10), 7%);
+
+
+// Tooltips and popovers
+// -------------------------
+@tooltipColor:            #2d2d2d;
+@tooltipBackground:       rgba(255, 255, 255, 0.8);
+@tooltipArrowColor:       @tooltipBackground;
+
+@popoverBackground:       #121517;
+@popoverArrowColor:       #121517;
+@popoverTitleBackground:  lighten(@popoverBackground, 3%);
+
+// Special enhancement for popovers
+@popoverArrowOuterColor:  rgba(255,255,255,.25);
+
+
+
+// CS-Cart custom variables
+// COLORS
+@themeStyle: "dark";
+@mainColor: #8dcffb;
+@textMutedColor: spin(desaturate(darken(@textColor, 30%), 25%), -15%);
+@textInverseColor: #121517;
+@contentBackground: #121517;
+@shadow2Color: rgba(255, 255, 255, 0.025);
+@shadow5Color: rgba(255, 255, 255, 0.05);
+@shadow7Color: rgba(255, 255, 255, 0.075);
+@shadow10Color: rgba(255, 255, 255, 0.1);
+@shadow15Color: rgba(255, 255, 255, 0.15);
+@shadow20Color: rgba(255, 255, 255, 0.2);
+@shadow25Color: rgba(255, 255, 255, 0.25);
+@shadow30Color: rgba(255, 255, 255, 0.3);
+@shadow50Color: rgba(255, 255, 255, 0.5);
+@shadow60Color: rgba(255, 255, 255, 0.6);
+@shadow80Color: rgba(255, 255, 255, 0.8);
+@inverseShadow0Color: rgba(0, 0, 0, 0);
+@inverseShadow10Color: rgba(0, 0, 0, 0.1);
+@inverseShadow12Color: rgba(0, 0, 0, 0.125);
+@inverseShadow15Color: rgba(0, 0, 0, 0.15);
+@inverseShadow20Color: rgba(0, 0, 0, 0.2);
+@inverseShadow50Color: rgba(0, 0, 0, 0.5);
+@inverseShadow75Color: rgba(0, 0, 0, 0.75);
+@btnBorderMore: lighten(@btnBorder, 10%);
+@btnPrimaryBorderMore: lighten(@btnPrimaryBackgroundHighlight, 10%);
+@btnWarningBorderMore: lighten(@btnWarningBackgroundHighlight, 10%);
+@btnDangerBorderMore: lighten(@btnDangerBackgroundHighlight, 10%);
+@btnSuccessBorderMore: lighten(@btnSuccessBackgroundHighlight, 10%);
+@btnInfoBorderMore: lighten(@btnInfoBackgroundHighlight, 10%);
+@btnInverseBorderMore: lighten(@btnInverseBackgroundHighlight, 10%);
+
+@textMutedColorMore: darken(@textMutedColor, 20%);

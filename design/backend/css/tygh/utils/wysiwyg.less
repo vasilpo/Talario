@@ -1,0 +1,31 @@
+.wysiwyg-block-loader {
+    display: block;
+    width: 100%;
+    border: 0 !important;
+    font-size: 0;
+}
+
+.wysiwyg-block-loader::selection {
+    background-color: var(--cs-placeholder-text);
+}
+
+.wysiwyg-block-loader:after {
+    content: attr(title);
+    display: block;
+    padding: 10px 10px 10px 40px;
+    width: auto;
+    border: 1px solid var(--cs-shadow30-color);
+    color: var(--cs-text-color);
+    border-radius: 2px;
+    background-color: var(--cs-input-disabled-background);
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaAQMAAACThN6NAAAABlBMVEUAAAAzMzPI8eYgAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfjBwoMOCHTdao5AAAAGklEQVQI12M4c+bMAQYwgQAHQAhM0E4Mbi8AAMMbkfxoVA0AAAAASUVORK5CYII=');
+    background-repeat: no-repeat;
+    background-position: 7px 7px;
+    font-size: var(--cs-base-font-size);
+    font-style: normal;
+    font-weight: normal;
+}
+
+[aria-describedby="wysiwyg_bm_picker"] {
+    min-width: 990px;
+}

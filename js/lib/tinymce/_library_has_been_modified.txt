@@ -1,0 +1,14 @@
+The library has been modified
+---
+
+1. 
+- [-] skins/lightgray/skin.min.css
+/*# sourceMappingURL=skin.min.css.map */
+
+https://github.com/tinymce/tinymce/issues/5489
+
+
+2. 
+skins/lightgray/skin.min.css
+Added variables for colors.
+

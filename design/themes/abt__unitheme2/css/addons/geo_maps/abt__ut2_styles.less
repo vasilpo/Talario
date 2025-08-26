@@ -1,0 +1,255 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+.ty-geo-maps {
+	&-shipping {
+		&__wrapper {
+			margin: 0;
+			border: 0;
+
+			a:not(.ty-btn) {
+				position: relative;
+				white-space: nowrap;
+				padding: 0;
+
+				> span:not(.ty-icon), bdi {
+					.ajx-link();
+					position: relative;
+				}
+
+				> span.ty-icon {
+					font-size: 18px;
+					vertical-align: middle;
+					color: @links;
+				}
+			}
+		}
+		&__title {
+			margin-top: 0;
+		}
+		&__item {
+			padding: var(--gap-xs) 0;
+		}
+		&__label {
+			display: inline;
+			line-height: 145%;
+			color: var(--color-font-lighten);
+			margin-right: 3px;
+		}
+		&__value {
+			display: inline;
+			line-height: 145%;
+		}
+		&__list.ty-table {
+			margin: var(--gap-xs) 0 0 0;
+			border-top: 1px solid @base;
+
+			tr {
+				border: none;
+			}
+		}
+		&__link-text {
+			border-bottom: 0;
+		}
+	}
+}
+
+.ty-geo-maps-shipping__loader {
+	width: 30px;
+	height: 30px;
+	margin-top: 10px;
+}
+
+.mobile-screen .ty-geo-maps-shipping__wrapper {
+	border: 1px solid @base;
+	padding: var(--gap-s);
+	border-radius: var(--border-radius-box);
+}
+
+.tygh-top-panel {
+	.ty-geo-maps__geolocation {
+		.ty-icon {
+			color: contrast(@top_panel_bg, @links, white);
+		}
+		bdi {
+			color: @top_panel_links;
+		}
+	}
+}
+
+.ty-geo-maps__geolocation {
+	padding: 0;
+
+	.ty-icon-location-arrow {
+		color: var(--color-main);
+	}
+	a {
+		height: @header-t-height;
+		padding: 0 var(--gap-sm);
+	}
+	&__map {
+		margin: 0;
+		width: min(900px, 80vw);
+		height: 433px;
+
+		@media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+			width: 100%;
+		}
+	}
+}
+.ty-btn.ty-geo-maps__geolocation__set-location {
+	min-width: 100px;
+}
+
+.ab__mb_item-description {
+	.ty-geo-maps {
+		&-shipping {
+			&__wrapper {
+				margin-top: 0;
+			}
+			&__link * {
+				color: @links;
+			}
+			&__title {
+				font-weight: normal;
+			}
+		}
+		&__geolocation a * {
+			color: @links;
+		}
+	}
+}
+
+.geo-map-google-search-bar {
+	margin-left: 10px !important;
+	margin-right: 10px !important;
+}
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] cost and time of delivery methods
+==============================================================================*/
+.ty-geo-maps-shipping__popup {
+	margin-bottom: initial;
+
+	@media (max-width: 767px) {
+		margin-block-end: var(--gap-xs);
+	}
+}
+
+.ty-geo-maps-shipping__list-city {
+	line-height: 1.3;
+	text-align: end;
+
+	@media (max-width: 767px) {
+		text-align: start;
+	}
+
+	.ty-geo-maps__geolocation {
+		margin-inline-start: var(--gap-xxs);
+	}
+
+	a.ty-geo-maps__geolocation__opener {
+		height: initial;
+		padding: initial;
+	}
+}
+
+.ty-geo-maps-shipping__list.ty-table {
+	margin-top: var(--gap-xs);
+	border: 0 none;
+
+	@media (max-width: 767px) {
+		margin-top: 25px;
+	}
+
+	tbody {
+		tr {
+			border-top: 1px solid var(--color-base);
+
+			&:first-child {
+				@media (max-width: 767px) {
+					border-top: 0 none;
+				}
+			}
+
+			&:last-child {
+				border-top: 1px solid var(--color-base5);
+
+				td {
+					padding-block-start: var(--gap-s);
+
+					@media (max-width: 767px) {
+						padding-block-start: initial;
+						margin-block-start: var(--gap-sm);
+					}
+				}
+			}
+
+			+ tr {
+				margin-block-start: var(--gap-xs);
+			}
+		}
+	}
+
+	th,
+	td {
+		border: 0 none;
+		padding: initial;
+		padding-block: var(--gap-sm);
+
+		@media (max-width: 767px) {
+			padding-block: initial;
+		}
+	}
+
+	th + th,
+	td + td {
+		padding-inline-start: var(--gap-xs);
+
+		@media (max-width: 767px) {
+			padding-inline-start: initial;
+		}
+	}
+
+
+	th.ty-geo-maps-shipping__list-head {
+		color: var(--color-font-lighten);
+		font-weight: normal;
+
+	}
+
+	td.ty-geo-maps-shipping__list-col {
+		@media (max-width: 767px) {
+			margin-block-start: var(--gap-xs);
+		}
+
+		&:has(.ty-table__responsive-content:empty) {
+			@media (max-width: 767px) {
+				display: none;
+			}
+		}
+	}
+
+	.ty-table__responsive-header {
+		@media (max-width: 767px) {
+			color: var(--color-font-lighten);
+			font-weight: normal;
+		}
+	}
+}
+/* [[[ END ]]] cost and time of delivery methods
+==============================================================================*/

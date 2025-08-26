@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Japanese\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /release-4.18.3/addons/price_per_unit.po\n"
+"X-Crowdin-File-ID: 9390\n"
+"PO-Revision-Date: 2024-10-07 13:31\n"
+
+msgctxt "Addons::name::price_per_unit"
+msgid "Price per unit"
+msgstr "単位価格"
+
+msgctxt "Addons::description::price_per_unit"
+msgid "Allows you to display price per unit on catalog and product pages."
+msgstr "カタログページと製品ページに単位価格を表示します。"
+
+msgctxt "Languages::price_per_unit"
+msgid "Price per unit"
+msgstr "単位価格"
+
+msgctxt "Languages::unit_name"
+msgid "Unit name"
+msgstr "単位名"
+
+msgctxt "Languages::unit_name_field_description"
+msgid "For example, 'ml' or 'g' without quotes."
+msgstr "例：個、枚、ml、g 等"
+
+msgctxt "Languages::units_in_product"
+msgid "Units in product"
+msgstr "この商品の全容量"
+
+msgctxt "Languages::units_in_product_field_description"
+msgid "Required for automatic calculation of price per unit."
+msgstr "この商品の全容量です。例：50個<br/>X単位価格の自動計算にも使用されます。"
+
+msgctxt "Languages::show_price_per_x_units"
+msgid "Show price per X units"
+msgstr "X単位あたりの価格"
+
+msgctxt "Languages::show_price_per_x_units_field_description"
+msgid "For cases when you want to show price 'per 250 ml' instead of 'per ml'."
+msgstr "X単位あたりの価格を表示します。例：X個 あたり Y円"
+

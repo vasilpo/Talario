@@ -1,0 +1,226 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_rating.po\n"
+"X-Crowdin-File-ID: 9454\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::vendor_rating"
+msgid "Vendor rating"
+msgstr "Sotuvchi reytingi"
+
+msgctxt "Addons::description::vendor_rating"
+msgid "Allows you to rank vendors in the store using multi-critiera rating."
+msgstr "Ko'p mezonli reyting yordamida do'kondagi sotuvchilarni tartiblash imkonini beradi."
+
+msgctxt "Languages::vendor_rating.vendor_rating"
+msgid "Vendor rating"
+msgstr "Sotuvchi reytingi"
+
+msgctxt "Languages::vendor_rating.previous_rating"
+msgid "Previous rating"
+msgstr "Oldingi reyting"
+
+msgctxt "Languages::vendor_rating.rating"
+msgid "Rating"
+msgstr "Reyting"
+
+msgctxt "Languages::vendor_rating.vendor_rating"
+msgid "Vendor rating"
+msgstr "Sotuvchi reytingi"
+
+msgctxt "Languages::sort_by_absolute_vendor_rating_asc"
+msgid "Sort by Vendor rating: Low to High"
+msgstr "Reyting bo‘yicha saralash: Pastdan yuqoriga"
+
+msgctxt "Languages::sort_by_absolute_vendor_rating_desc"
+msgid "Sort by Vendor rating"
+msgstr "Sotuvchi reytingi bo'yicha saralash"
+
+msgctxt "Languages::vendor_rating.absolute_vendor_rating"
+msgid "Overall rating"
+msgstr "Umumiy reyting"
+
+msgctxt "Languages::vendor_rating.absolute_vendor_rating_short"
+msgid "OA rating"
+msgstr "OA reytingi"
+
+msgctxt "Languages::vendor_rating.manual_vendor_rating"
+msgid "Manual vendor rating"
+msgstr "Qo'lda sotuvchi reytingi"
+
+msgctxt "Languages::vendor_rating.manual_vendor_plan_rating"
+msgid "Manual vendor plan rating"
+msgstr "Qo'lda sotuvchi rejasi reytingi"
+
+msgctxt "Languages::vendor_rating.company_rating"
+msgid "[company]'s rating set to [rating]"
+msgstr "[company] reytingi [rating] qilib belgilandi"
+
+msgctxt "Languages::vendor_rating.wrong_formula"
+msgid "Unable to calculate the expression. Original error message: [error]."
+msgstr "Ifodani hisoblab bo‘lmadi. Asl xato xabari: [error]."
+
+msgctxt "Languages::vendor_rating.too_many_variables"
+msgid "The formula uses too many variables. [allowed_variables_count] allowed, [passed_variables_count] passed."
+msgstr "Formula juda ko'p o'zgaruvchilardan foydalanadi. [allowed_variables_count] ruxsat berilgan, [passed_variables_count] o'tdi."
+
+msgctxt "Languages::vendor_rating.division_by_zero"
+msgid "Division by zero"
+msgstr "Nolga bo'linish"
+
+msgctxt "Languages::vendor_rating.unknown_variable"
+msgid "Unknown variable <b>[variable]</b>"
+msgstr "Noma'lum o'zgaruvchi <b>[variable]</b>"
+
+msgctxt "Languages::vendor_rating.run_rating_calculation_by_cron"
+msgid "Rating recalculation is the resource-intensive process. It's recommented to run it automatically at certain time intervals.<br>To do it, add the following command to <a href=\"https://en.wikipedia.org/wiki/Cron\" target=\"_blank\">Cron</a>:"
+msgstr "Reytingni qayta hisoblash resurs talab qiladigan jarayondir. Uni ma'lum vaqt oralig'ida avtomatik ravishda ishga tushirish tavsiya etiladi.<br>Buni amalga oshirish uchun <a href=\"https://en.wikipedia.org/wiki/Cron\" target=\"_blank\">Cron<-ga quyidagi buyruqni qo'shing. /a>:"
+
+msgctxt "Languages::vendor_rating.rating_formula"
+msgid "Rating formula"
+msgstr "Baholash formulasi"
+
+msgctxt "Languages::vendor_rating.variables"
+msgid "You can use the following variables in the formula:"
+msgstr "Formulada quyidagi o'zgaruvchilardan foydalanishingiz mumkin:"
+
+msgctxt "Languages::vendor_rating.criteria.paid_orders_count.name"
+msgid "Amount of paid orders."
+msgstr "To'langan buyurtmalar miqdori."
+
+msgctxt "Languages::vendor_rating.criteria.paid_orders_count.description"
+msgid "Orders in the following statuses placed after the <i>Calculation period start date</i> are taken into account: [statuses]."
+msgstr "<i>Hisoblash davrining boshlanish sanasidan</i> keyin berilgan quyidagi statuslardagi buyurtmalar hisobga olinadi: [statuses]."
+
+msgctxt "Languages::vendor_rating.criteria.paid_orders_total.name"
+msgid "Gross total of paid orders."
+msgstr "To'langan buyurtmalarning yalpi jami."
+
+msgctxt "Languages::vendor_rating.criteria.paid_orders_total.description"
+msgid "Orders in the following statuses placed after the <i>Calculation period start date</i> are taken into account: [statuses]."
+msgstr "<i>Hisoblash davrining boshlanish sanasidan</i> keyin berilgan quyidagi statuslardagi buyurtmalar hisobga olinadi: [statuses]."
+
+msgctxt "Languages::vendor_rating.criteria.active_products_count.name"
+msgid "Amount of active products."
+msgstr "Faol mahsulotlar miqdori."
+
+msgctxt "Languages::vendor_rating.criteria.active_products_count.description"
+msgid "Products in the Active status created after the <i>Calculation period start date</i> are taken into account."
+msgstr "<i>Hisoblash davri boshlanish sanasi</i>dan keyin yaratilgan Faol holatidagi mahsulotlar hisobga olinadi."
+
+msgctxt "Languages::vendor_rating.criteria.manual_vendor_rating.name"
+msgid "Manually set vendor rating."
+msgstr "Sotuvchi reytingini qo'lda o'rnating."
+
+msgctxt "Languages::vendor_rating.criteria.manual_vendor_rating.description"
+msgid "Manual rating can be specified on the <b>Rating</b> tab of the vendor editing page."
+msgstr "Qo'lda baholashni sotuvchining tahrirlash sahifasining <b>Reyting</b> yorlig'ida belgilash mumkin."
+
+msgctxt "Languages::vendor_rating.criteria.vendor_reviews_rating.name"
+msgid "Average vendor review rating."
+msgstr "Sotuvchining o'rtacha reytingi."
+
+msgctxt "Languages::vendor_rating.criteria.vendor_reviews_rating.description"
+msgid "Approved vendor reviews placed after the <i>Calculation period start date</i> are taken into account."
+msgstr "<i>Hisoblash davrining boshlanish sanasidan</i> keyin joylashtirilgan tasdiqlangan sotuvchi sharhlari hisobga olinadi."
+
+msgctxt "Languages::vendor_rating.criteria.product_reviews_rating.name"
+msgid "Average product reviews rating."
+msgstr "Mahsulot sharhlarining o'rtacha reytingi."
+
+msgctxt "Languages::vendor_rating.criteria.product_reviews_rating.description"
+msgid "Approved product reviews placed after the <i>Calculation period start date</i> are taken into account."
+msgstr "<i>Hisoblash davrining boshlanish sanasidan</i> keyin joylashtirilgan tasdiqlangan mahsulot sharhlari hisobga olinadi."
+
+msgctxt "Languages::vendor_rating.criteria.manual_vendor_plan_rating.name"
+msgid "Manually set vendor plan rating."
+msgstr "Sotuvchi rejasi reytingini qo'lda o'rnating."
+
+msgctxt "Languages::vendor_rating.criteria.manual_vendor_plan_rating.description"
+msgid "Manual rating can be specified on the <b>Rating</b> tab of the vendor plan editing page."
+msgstr "Sotuvchi rejasi reytingini qo'lda o'rnating."
+
+msgctxt "Languages::vendor_rating.criteria.returns_count.name"
+msgid "Amount of return requests."
+msgstr "Qaytish talablari miqdori."
+
+msgctxt "Languages::vendor_rating.criteria.returns_count.description"
+msgid "Return requests created after the <i>Calculation period start date</i> are taken into account."
+msgstr "<i>Hisoblash davrining boshlanish sanasidan</i> keyin yaratilgan qaytarish so'rovlari hisobga olinadi."
+
+msgctxt "Languages::vendor_rating.recalculate_rating"
+msgid "Recalculate rating"
+msgstr "Reytingni qayta hisoblang"
+
+msgctxt "Languages::vendor_rating.run_recalculation"
+msgid "Run recalculation"
+msgstr "Qayta hisoblashni ishga tushiring"
+
+msgctxt "Languages::vendor_rating.start_rating_period"
+msgid "Calculation period start date"
+msgstr "Hisoblash davrining boshlanish sanasi"
+
+msgctxt "Languages::vendor_rating.invalid_formula"
+msgid "Invalid formula"
+msgstr "Formula yaroqsiz"
+
+msgctxt "Languages::show_vendor_rating"
+msgid "Show vendor rating"
+msgstr "Sotuvchi reytingini ko'rsatish"
+
+msgctxt "Languages::log_type_vendor_rating"
+msgid "Vendor rating"
+msgstr "Sotuvchi reytingi"
+
+msgctxt "Languages::log_action_vr_success"
+msgid "Successful recalculation"
+msgstr "Muvaffaqiyatli qayta hisoblash"
+
+msgctxt "Languages::log_action_vr_failure"
+msgid "Errors"
+msgstr "Xatolar"
+
+msgctxt "Languages::vendor_rating.calculated_at"
+msgid "Calculated at [date]"
+msgstr "[date] da hisoblangan"
+
+msgctxt "Languages::vendor_rating.recalculate_now"
+msgid "Recalculate now"
+msgstr "Endi qayta hisoblang"
+
+msgctxt "Languages::vendor_rating.rating_ranges"
+msgid "Rating ranges"
+msgstr "Reyting diapazonlari"
+
+msgctxt "Languages::vendor_rating.bronze_rating_lower_limit"
+msgid "Bronze rating lower limit"
+msgstr "Bronza reytingining pastki chegarasi"
+
+msgctxt "Languages::vendor_rating.silver_rating_lower_limit"
+msgid "Silver rating lower limit"
+msgstr "Kumush reytingning pastki chegarasi"
+
+msgctxt "Languages::vendor_rating.gold_rating_lower_limit"
+msgid "Gold rating lower limit"
+msgstr "Oltin reytingning pastki chegarasi"
+
+msgctxt "Languages::vendor_rating.rating_above_price"
+msgid "Rating matters more than price"
+msgstr "Reyting narxdan ko'ra muhimroqdir"
+
+msgctxt "Languages::vendor_rating.rating_above_price_tooltip"
+msgid "When using \"Common products for vendors\", offer products from vendors with highest rating first."
+msgstr "\"Sotuvchilar uchun umumiy mahsulotlar\" dan foydalanayotganda, avvalo, eng yuqori reytingga ega bo'lgan sotuvchilar mahsulotlarini taklif qiling."
+
+msgctxt "Languages::vendor_rating.rating_ranges_description"
+msgid "Setting all ranges to 0 will hide rating icons."
+msgstr "Barcha diapazonlarni 0 ga qo'yish reyting piktogrammalarini yashiradi."
+

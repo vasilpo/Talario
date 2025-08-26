@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+<id>ab__hide_product_description</id>
+<version>2.5.1</version>
+<priority>2016</priority>
+<position>0</position>
+<status>active</status>
+<default_language>en</default_language>
+<authors>
+<author>
+<name>AlexBranding</name>
+<email>info@alexbranding.com</email>
+<url>https://alexbranding.com</url>
+</author>
+</authors>
+<supplier>AlexBranding</supplier>
+<supplier_link>https://cs-cart.alexbranding.com</supplier_link>
+<supplier_page>ab__am.addons</supplier_page>
+<ab>
+<hash>1c2aa3958c98932fecc58cb52079485db08d16c5, 2024-06-26 16:28:09</hash>
+<compatibility>
+<dependencies>
+<ab__addons_manager><min>2.5.2</min></ab__addons_manager>
+<abt__unitheme2><min>4.18.1.b</min></abt__unitheme2>
+</dependencies>
+</compatibility>
+</ab>
+<compatibility>
+<conflicts></conflicts>
+<dependencies>ab__addons_manager</dependencies>
+<core_version><min>4.18.1</min></core_version>
+<core_edition>ULTIMATE,MULTIVENDOR</core_edition>
+</compatibility>
+<settings layout="separate" edition_type="ROOT,VENDOR,STOREFRONT">
+<sections>
+<section id="settings">
+<items>
+<item id="code"><type>hidden</type><default_value>ABA-FhPJFAMc7l2L4mN5PLRNe</default_value></item>
+<item id="build"><type>hidden</type><default_value>1159</default_value></item>
+<item id="max_height"><type>text</type><default_value>250</default_value></item>
+<item id="hide_in_product">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="hide_in_category">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="hide_in_brand">
+<type>checkbox</type>
+<default_value>Y</default_value>
+</item>
+<item id="selectors">
+<type>input</type>
+</item>
+<item id="transition">
+<type>selectbox</type>
+<default_value>0</default_value>
+</item>
+<item id="align">
+<type>selectbox</type>
+<default_value>left</default_value>
+</item>
+<item id="appearance">
+<type>selectbox</type>
+<default_value>text</default_value>
+</item>
+<item id="show_button_after_action">
+<type>checkbox</type>
+<default_value>N</default_value>
+</item>
+<item id="custom_class">
+<type>input</type>
+<default_value>ab-smc</default_value>
+</item>
+</items>
+</section>
+</sections>
+</settings>
+<functions>
+<item for="install">fn_ab__hpd_install</item>
+</functions>
+<queries>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('ab__hpd.data.manage', 'Y', 'ab__addons', 'ab__hide_product_description', 'N')</item>
+<item for="install">REPLACE INTO ?:privileges (privilege, is_default, section_id, group_id, is_view) VALUES ('ab__hpd.data.view', 'Y', 'ab__addons', 'ab__hide_product_description', 'Y')</item>
+<item for="uninstall">DELETE FROM ?:privileges WHERE section_id = 'ab__hide_product_description' OR group_id = 'ab__hide_product_description'</item>
+</queries>
+</addon>

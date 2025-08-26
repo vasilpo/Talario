@@ -1,0 +1,339 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-bg\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "Addons::name::alfabank"
+msgid "Alfabank"
+msgstr "DSK"
+
+msgctxt "Addons::description::alfabank"
+msgid "Online acquiring and payment processing."
+msgstr "Приемане и обработка на плащания онлайн."
+
+msgctxt "Languages::addons.alfabank.token"
+msgid "Token"
+msgstr "Токен"
+
+msgctxt "Languages::addons.alfabank.login"
+msgid "Login-API"
+msgstr "Потребителско име-API"
+
+msgctxt "Languages::addons.alfabank.password"
+msgid "Password"
+msgstr "Парола"
+
+msgctxt "Languages::addons.alfabank.two_staging"
+msgid "Two-phase payments"
+msgstr "Двустъпкови плащания"
+
+msgctxt "Languages::addons.alfabank.one-stage"
+msgid "Disable"
+msgstr "Деактивирай"
+
+msgctxt "Languages::addons.alfabank.two-stage"
+msgid "Enable"
+msgstr "Активирай"
+
+msgctxt "Languages::addons.alfabank.enable_cacert"
+msgid "Verify SSL sertificate"
+msgstr "Провери SSL сертификата"
+
+msgctxt "Languages::addons.alfabank.confirmed_order_status"
+msgid "Confirmed Order status"
+msgstr "Статус при успешно плащане"
+
+msgctxt "Languages::addons.alfabank.send_order"
+msgid "Send cart data (including customer info)"
+msgstr "Изпращане на данни от количката (включително и клиентски данни)"
+
+msgctxt "Languages::addons.alfabank.tax_system"
+msgid "Tax system"
+msgstr "Данъчна система"
+
+msgctxt "Languages::addons.alfabank.logging"
+msgid "Enable logging"
+msgstr "Активирай логване"
+
+msgctxt "Languages::addons.alfabank.wrong_amount"
+msgid "The order total doesn't match the sum that was paid. Please contact the store administration about this your order."
+msgstr "Общата сума на поръчката не съответства на платената сума. Моля, свържете се с администрацията на магазина."
+
+msgctxt "Languages::addons.alfabank.general_settings"
+msgid "General settings"
+msgstr "Общи настройки"
+
+msgctxt "Languages::addons.alfabank.text_ofd_map"
+msgid "Send order to the payment gate"
+msgstr "Изпрати поръчката до платежната страница"
+
+msgctxt "Languages::addons.alfabank.tax_type"
+msgid "Default VAT for product"
+msgstr "ДДС по подразбиране за продукта"
+
+msgctxt "Languages::addons.alfabank.ffdversion"
+msgid "FFD version"
+msgstr "FFD версия"
+
+msgctxt "Languages::addons.alfabank.payment_method_label"
+msgid "Type of the payment method"
+msgstr "Метод за плащане"
+
+msgctxt "Languages::addons.alfabank.payment_object_label"
+msgid "Type of the payment object"
+msgstr "Вид на обекта за плащане"
+
+msgctxt "Languages::addons.alfabank.tax_system_label"
+msgid "Tax system"
+msgstr "Данъчна система"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_0"
+msgid "General"
+msgstr "Общо"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_1"
+msgid "Simplified, income"
+msgstr "Опростено, приход"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_2"
+msgid "Simplified, income minus expenses"
+msgstr "Опростено, приходи минус разходи"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_3"
+msgid "Unified tax on imputed income"
+msgstr "Патентен данък"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_4"
+msgid "Unified agricultural tax"
+msgstr "Данък за земеделски производител"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_5"
+msgid "Patent taxation system"
+msgstr "Патентна данъчна система"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_1"
+msgid "Full prepayment"
+msgstr "Пълно авансово плащане"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_2"
+msgid "Partial prepayment"
+msgstr "Частично авансово плащане"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_3"
+msgid "Advance payment"
+msgstr "Авансово плащане"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_4"
+msgid "Full payment"
+msgstr "Пълно плащане"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_5"
+msgid "Partial payment with further credit"
+msgstr "Частично плащане с последващ кредит"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_6"
+msgid "No payment with further credit"
+msgstr "Без плащане с последващ кредит"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_7"
+msgid "Payment on credit"
+msgstr "Плащане на кредит"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_1"
+msgid "Goods"
+msgstr "Стоки"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_2"
+msgid "Excised goods"
+msgstr "Акцизни стоки"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_3"
+msgid "Job"
+msgstr "Работа"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_4"
+msgid "Service"
+msgstr "Услуга"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_5"
+msgid "Stake in gambling"
+msgstr "Залог в хазарт"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_6"
+msgid "Gambling gain"
+msgstr "Печалба от хазарт"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_7"
+msgid "Lottery ticket"
+msgstr "Лотариен билет"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_8"
+msgid "Lottery gain"
+msgstr "Печалба от лотария"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_9"
+msgid "Intellectual property provision"
+msgstr "Предоставяне на правата за интелектуална собственост"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_10"
+msgid "Payment"
+msgstr "Плащане"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_11"
+msgid "Agent's commission"
+msgstr "Комисионна на агента"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_12"
+msgid "Combined"
+msgstr "Комбинирано"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_13"
+msgid "Other"
+msgstr "Друго"
+
+msgctxt "Languages::addons.alfabank.no_vat"
+msgid "No VAT"
+msgstr "Без ДДС"
+
+msgctxt "Languages::addons.alfabank.vat_0"
+msgid "VAT 0%"
+msgstr "0% ДДС "
+
+msgctxt "Languages::addons.alfabank.vat_10"
+msgid "VAT 10%"
+msgstr "10% ДДС"
+
+msgctxt "Languages::addons.alfabank.vat_18"
+msgid "VAT 18%"
+msgstr "18% ДДС"
+
+msgctxt "Languages::addons.alfabank.vat_20"
+msgid "VAT 20%"
+msgstr "20% ДДС"
+
+msgctxt "Languages::addons.alfabank.vat_10_110"
+msgid "VAT applicable rate 10/110"
+msgstr "Приложима ставка на ДДС 10/110"
+
+msgctxt "Languages::addons.alfabank.vat_18_118"
+msgid "VAT applicable rate 18/118"
+msgstr "Приложима ставка на ДДС 18/118"
+
+msgctxt "Languages::addons.alfabank.vat_20_120"
+msgid "VAT applicable rate 20/120"
+msgstr "Приложима ставка на ДДС 20/120"
+
+msgctxt "Languages::addons.alfabank.vat_5"
+msgid "VAT 5%"
+msgstr "ДДС 5%"
+
+msgctxt "Languages::addons.alfabank.vat_5_105"
+msgid "VAT applicable rate 5/105"
+msgstr "Приложима ставка на ДДС 5/105"
+
+msgctxt "Languages::addons.alfabank.vat_7"
+msgid "VAT 7%"
+msgstr "ДДС 7%"
+
+msgctxt "Languages::addons.alfabank.vat_7_107"
+msgid "VAT applicable rate 7/107"
+msgstr "Приложима ставка на ДДС 7/107"
+
+msgctxt "Languages::addons.alfabank.delivery"
+msgid "Delivery"
+msgstr "Доставка"
+
+msgctxt "Languages::addons.alfabank.payment_surcharge"
+msgid "Payment surcharge"
+msgstr "Доплащане"
+
+msgctxt "Languages::gateway_status"
+msgid "gateway_status"
+msgstr "Статус"
+
+msgctxt "Languages::gateway_approved"
+msgid "gateway_approved"
+msgstr "Одобрено"
+
+msgctxt "Languages::gateway_deposited"
+msgid "gateway_deposited"
+msgstr "Депозирано"
+
+msgctxt "Languages::gateway_refunded"
+msgid "gateway_refunded"
+msgstr "Върнато"
+
+msgctxt "Languages::addons.alfabank.payment_management"
+msgid "Payment Management"
+msgstr "Управление на плащанията"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_status"
+msgid "Payment Status"
+msgstr "Статус на плащането"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_refund"
+msgid "Payment Refund"
+msgstr "Връщане на плащане"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_deposit"
+msgid "Payment Deposit"
+msgstr "ИЗвършено плащане"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_reverse"
+msgid "Payment Reverse"
+msgstr "Сторниране на плащане"
+
+msgctxt "Languages::addons.alfabank.btn_reverse"
+msgid "Reverse"
+msgstr "Сторно"
+
+msgctxt "Languages::addons.alfabank.btn_deposit"
+msgid "Deposit"
+msgstr "Депозиране"
+
+msgctxt "Languages::addons.alfabank.btn_deposit_full"
+msgid "Deposit Full"
+msgstr "Депозиране за цялата сума"
+
+msgctxt "Languages::addons.alfabank.btn_refund"
+msgid "Refund"
+msgstr "Връщане"
+
+msgctxt "Languages::addons.alfabank.btn_refund_full"
+msgid "Refund Full"
+msgstr "Пълно връщане"
+
+msgctxt "Languages::addons.alfabank.btn_check_status"
+msgid "Check Status"
+msgstr "Проверка на статуса"
+
+msgctxt "Languages::addons.alfabank.success_refund_message"
+msgid "Partial refund completed successfully"
+msgstr "Частичното връщане е успешно завършено"
+
+msgctxt "Languages::addons.alfabank.success_full_refund_message"
+msgid "Full refund completed successfully"
+msgstr "Пълното връщане е успешно завършено"
+
+msgctxt "Languages::addons.alfabank.success_full_deposit_message"
+msgid "Full deposit completed successfully"
+msgstr "Депозиране за цялата сума е успешно завършено"
+
+msgctxt "Languages::addons.alfabank.success_deposit_message"
+msgid "Partial deposit completed successfully"
+msgstr "Частичното депозиране е успешно завършено"
+
+msgctxt "Languages::addons.alfabank.success_reverse_message"
+msgid "Reverse completed successfully"
+msgstr "Сторниране плащането е успешно завършено"
+
+msgctxt "Languages::addons.alfabank.back_to_shop_url"
+msgid "Back to shop URL"
+msgstr "Връщане към магазина"
+
+msgctxt "Languages::addons.alfabank.back_to_shop_url_name"
+msgid "Name 'Back to shop' button"
+msgstr "Име на бутона за връщане към магазина"

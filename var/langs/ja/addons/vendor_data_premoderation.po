@@ -1,0 +1,378 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Japanese\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_data_premoderation.po\n"
+"X-Crowdin-File-ID: 9442\n"
+"PO-Revision-Date: 2024-10-07 13:31\n"
+
+msgctxt "Addons::name::vendor_data_premoderation"
+msgid "Vendor data premoderation"
+msgstr "出品者データ設定"
+
+msgctxt "Addons::description::vendor_data_premoderation"
+msgid "Lets you pre-moderate vendors activity"
+msgstr "出品者が登録するデータに関する各種設定を行います"
+
+msgctxt "Languages::vendor_data_premoderation.actions.vendors_on_moderation"
+msgid "Vendors on moderation"
+msgstr "承認が必要な出品者"
+
+msgctxt "Languages::vendor_data_premoderation.actions.require_approval"
+msgid "Products on moderation"
+msgstr "承認が必要な商品"
+
+msgctxt "Languages::vendor_data_premoderation.actions.require_vendor_action"
+msgid "Disapproved products"
+msgstr "却下された商品"
+
+msgctxt "Languages::vendor_data_premoderation.notification_for_deleted_statuses"
+msgid "Vendor Data Premoderation add-on has been disabled. Products with  the \"Requires approval\" or \"Disapproved\" statuses no longer have any status. These products won't appear to customers until you or your vendors set some other status for them. If you activate the add-on again, the statusless products will get their statuses back. If you uninstall the add-on, all products will get a correct status automatically."
+msgstr "出品者データ設定アドオンは無効化されました。\"保留\" および \"却下\" ステータスの商品ステータスは削除されました。これらの商品は他のステータスに設定しない限りショップに表示されません。アドオンを再度有効化した場合は元のステータスに戻ります。アドオンをアンインストールした場合は、すべての商品ステータスは正しく設定されます。"
+
+msgctxt "Languages::vendor_data_premoderation"
+msgid "Vendor data premoderation"
+msgstr "出品者データ設定"
+
+msgctxt "Languages::product_approval"
+msgid "Product approval"
+msgstr "商品の承認"
+
+msgctxt "Languages::notify_vendor_by_email"
+msgid "Notify vendor by e-mail"
+msgstr "出品者にEメールで通知"
+
+msgctxt "Languages::product_approval_status_approved"
+msgid "Your product [product] has been approved by the store administration and added to the product catalog. Now shoppers can order this product in the store."
+msgstr "商品 [product] に関する登録・更新がシステム管理者により承認され、マーケットプレイスに反映されました。"
+
+msgctxt "Languages::product_approval_status_disapproved"
+msgid "Your product [product] has been disapproved by the store administration"
+msgstr "商品 [product] に関する登録・更新がシステム管理者により却下されました。"
+
+msgctxt "Languages::products_approval_status_approved"
+msgid "Thank you for submitting new products. The following products have been approved by the store administration and added to the product catalog"
+msgstr "次の商品に関する登録・更新がシステム管理者により承認され、マーケットプレイスに反映されました。"
+
+msgctxt "Languages::text_shoppers_can_order_products"
+msgid "Now shoppers can order these products in the store."
+msgstr "登録・更新いただいた商品はマーケットプレイスにて購入可能な状態になりました。"
+
+msgctxt "Languages::products_approval_status_disapproved"
+msgid "Thank you for submitting new products. The following products have been disapproved by the store administration"
+msgstr "次の商品に関する登録・更新はシステム管理者により却下されました。"
+
+msgctxt "Languages::approve_selected"
+msgid "Approve selected"
+msgstr "選択したデータの登録・更新を承認"
+
+msgctxt "Languages::disapprove_selected"
+msgid "Disapprove selected"
+msgstr "選択したデータの登録・更新を却下"
+
+msgctxt "Languages::pre_moderation"
+msgid "Require approval for new products"
+msgstr "商品データ登録にはシステム管理者の承認が必要"
+
+msgctxt "Languages::pre_moderation_edit"
+msgid "Require approval for updated products"
+msgstr "商品データ更新にはシステム管理者の承認が必要"
+
+msgctxt "Languages::pre_moderation_edit_vendors"
+msgid "Require approval for vendor profile changes"
+msgstr "出品者データ更新にはシステム管理者の承認が必要"
+
+msgctxt "Languages::text_not_approved_products"
+msgid "You have products that require your approval. Please <a href=\"[link]\">follow this link</a> to review these products."
+msgstr "確認が必要な商品データの登録・更新申請があります。以下のURLにアクセスのうえ申請を処理してください。<a href=\"[link]\">処理ページへ移動</a>"
+
+msgctxt "Languages::products_approval_status_changed"
+msgid "Your product(s) have been [status]"
+msgstr "商品の登録・更新が[status]されました"
+
+msgctxt "Languages::approval"
+msgid "Approval"
+msgstr "承認"
+
+msgctxt "Languages::text_vendor_profile_changes_notice"
+msgid "Are you sure that you want to update the profile? Information about your company will not be available in the customer area until the administrator approves it."
+msgstr "出品者データを更新してよろしいですか？ 出品者データはシステム管理者が更新内容を承認するまで外部に非表示となります。"
+
+msgctxt "Languages::privileges.manage_product_premoderation"
+msgid "Can manage"
+msgstr "管理"
+
+msgctxt "Languages::privilege_groups.product_premoderation"
+msgid "Product approval"
+msgstr "商品の承認"
+
+msgctxt "SettingsSections::vendor_data_premoderation::vendors"
+msgid "Vendor account"
+msgstr "出品者アカウント"
+
+msgctxt "SettingsSections::vendor_data_premoderation::products"
+msgid "Vendor products"
+msgstr "出品者の商品"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::products_prior_approval"
+msgid "Approval of newly-created products"
+msgstr "商品データ登録に関する承認"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::products_updates_approval"
+msgid "Approval of product info updates"
+msgstr "商品データ更新に関する承認"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::vendor_profile_updates_approval"
+msgid "Approval of vendor profile updates"
+msgstr "出品者データ更新に関する承認"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::product_approval_notifications"
+msgid "Notify vendors about product moderation results"
+msgstr "出品者取扱商品のステータス変更通知"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::product_premoderation_fields"
+msgid "Require approval for updates of"
+msgstr "更新時に承認が必要"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendor_profile_updates_approval::none"
+msgid "Isn't required"
+msgstr "不要"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendor_profile_updates_approval::custom"
+msgid "Required for some vendors"
+msgstr "個別設定"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendor_profile_updates_approval::all"
+msgid "Required for all vendors"
+msgstr "必須"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_prior_approval::none"
+msgid "Isn't required"
+msgstr "不要"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_prior_approval::custom"
+msgid "Required for some vendors"
+msgstr "個別設定"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_prior_approval::all"
+msgid "Required for all vendors"
+msgstr "必須"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_updates_approval::none"
+msgid "Isn't required"
+msgstr "不要"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_updates_approval::custom"
+msgid "Required for some vendors"
+msgstr "個別設定"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::products_updates_approval::all"
+msgid "Required for all vendors"
+msgstr "必須"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::none"
+msgid "Don't notify"
+msgstr "通知なし"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::email"
+msgid "Send e-mail"
+msgstr "Eメールを送信"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::notifications_center"
+msgid "Display a notification in the Notifications center"
+msgstr "通知に表示"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::product_approval_notifications::email_notifications_center"
+msgid "Send e-mail and display a notification in the Notifications center"
+msgstr "Eメール送信と通知に表示"
+
+msgctxt "Languages::email_template.vendor_data_premoderation_notification"
+msgid "Vendor premoderation"
+msgstr "出品者データ設定"
+
+msgctxt "Languages::vendor_data_premoderation.exclude_disapproved_products"
+msgid "Exclude disapproved products"
+msgstr "却下した商品を除く"
+
+msgctxt "Languages::vendor_data_premoderation.product_status.requires_approval"
+msgid "Requires approval"
+msgstr "保留"
+
+msgctxt "Languages::vendor_data_premoderation.product_status.disapproved"
+msgid "Disapproved"
+msgstr "却下"
+
+msgctxt "Languages::vendor_data_premoderation.require_approval"
+msgid "Products on moderation"
+msgstr "承認が必要な商品"
+
+msgctxt "Languages::vendor_data_premoderation.vendors_require_approval"
+msgid "Vendors on moderation"
+msgstr "承認が必要な出品者"
+
+msgctxt "Languages::vendor_data_premoderation.require_vendor_action"
+msgid "Disapproved products"
+msgstr "却下された商品"
+
+msgctxt "Languages::vendor_data_premoderation.disapproved"
+msgid "Disapproved"
+msgstr "却下"
+
+msgctxt "Languages::vendor_data_premoderation.approve_product_btn"
+msgid "Approve product"
+msgstr "この商品を承認"
+
+msgctxt "Languages::vendor_data_premoderation.approve_product"
+msgid "Approve \"[product]\""
+msgstr "\"[product]\"を承認"
+
+msgctxt "Languages::vendor_data_premoderation.disapprove_product_btn"
+msgid "Disapprove product"
+msgstr "この商品を却下"
+
+msgctxt "Languages::vendor_data_premoderation.disapprove_product"
+msgid "Disapprove \"[product]\""
+msgstr "\"[product]\"を却下"
+
+msgctxt "Languages::vendor_data_premoderation.disapprove_products"
+msgid "Disapprove products"
+msgstr "商品却下"
+
+msgctxt "Languages::vendor_data_premoderation.disapproval_reason"
+msgid "Disapproval reason"
+msgstr "却下理由"
+
+msgctxt "Languages::vendor_data_premoderation.enter_disapproval_reason"
+msgid "Enter the reason for disapproval and save the changes."
+msgstr "却下理由を入力して保存"
+
+msgctxt "Languages::vendor_data_premoderation.notification.products_require_approval.title"
+msgid "You have [n] product that requires your approval|You have [n] products that require your approval"
+msgstr "承認が必要な商品が [n] 個あります|承認が必要な商品が [n] 個あります"
+
+msgctxt "Languages::vendor_data_premoderation.notification.products_require_approval.message"
+msgid "This product is pending for your approval since [since]. Click here to view this product.|These products are pending for your approval since [since]. Click here to view these products."
+msgstr "この商品は[since]以来、承認保留となっています。ここをクリックして商品を確認してください。|この商品は[since]以来、承認保留となっています。ここをクリックして商品を確認してください。"
+
+msgctxt "Languages::vendor_data_premoderation.notification.approved.title"
+msgid "Your product has been approved|Your products have been approved"
+msgstr "商品が承認されました|商品が承認されました"
+
+msgctxt "Languages::vendor_data_premoderation.notification.approved.message"
+msgid "\"[product]\" has been approved by the store administration and added to the product catalog. Click here to view this product.|[n] products have been approved by the store administration and added to the product catalog. Click here to view these products."
+msgstr "\"[product]\"はマーケットプレイス運営者に承認されました。ここをクリックして商品を確認してください。|[n]個の商品はマーケットプレイス運営者に承認されました。ここをクリックして商品を確認してください。"
+
+msgctxt "Languages::vendor_data_premoderation.notification.disapproved.title"
+msgid "Your product has been disapproved|Your products have been disapproved"
+msgstr "商品が却下されました|商品が却下されました"
+
+msgctxt "Languages::vendor_data_premoderation.notification.disapproved.message"
+msgid "\"[product]\" has been disapproved by the store administration. Click here to view this product.|[n] products have been disapproved by the store administration. Click here to view these products."
+msgstr "\"[product]\"はマーケットプレイス運営者に却下されました。ここをクリックして商品を確認してください。|[n]個の商品ははマーケットプレイス運営者に却下されました。ここをクリックして商品を確認してください。"
+
+msgctxt "Languages::vendor_data_premoderation.products_sent_to_premoderation"
+msgid "Your changes have been saved. Before your product is added to the product catalog, it must be approved by the store administration. Follow <a href=\"[product_approval_url]\">this link</a> to view products that require approval.|Your changes have been saved. Before your products are added to the product catalog, they must be approved by the store administration. Follow <a href=\"[product_approval_url]\">this link</a> to view products that require approval."
+msgstr "変更が保存されました。ショップに表示される前にマーケットプレイス運営者に承認される必要があります。<a href=\"[product_approval_url]\">このリンク</a>から承認が必要な商品を確認してください。|変更が保存されました。ショップに表示される前にマーケットプレイス運営者に承認される必要があります。<a href=\"[product_approval_url]\">このリンク</a>から承認が必要な商品を確認してください。"
+
+msgctxt "Languages::vendor_data_premoderation.event.product_status.approved.name"
+msgid "Vendor data premoderation: your product was approved"
+msgstr "出品者取扱商品の承認"
+
+msgctxt "Languages::vendor_data_premoderation.event.product_status.disapproved.name"
+msgid "Vendor data premoderation: your product was disapproved"
+msgstr "出品者取扱商品の却下"
+
+msgctxt "Languages::vendor_data_premoderation.approval_info_text"
+msgid "If approval is required only for some vendors, you'll be able to set what vendors need moderation on the Add-ons tab of the vendor editing page."
+msgstr "特定の出品者のみ承認が必要な場合、「個別設定」にすると出品者編集ページの\"アドオン\"タブで設定できます。"
+
+msgctxt "Languages::internal_template.vendor_data_premoderation_product_approved"
+msgid "Vendor data premoderation: your product was approved"
+msgstr "出品者取扱商品の承認"
+
+msgctxt "Languages::internal_template.vendor_data_premoderation_product_disapproved"
+msgid "Vendor data premoderation: your product was disapproved"
+msgstr "出品者取扱商品の却下"
+
+msgctxt "Languages::vendor_data_premoderation.approval_required_before_changing_owner"
+msgid "Your approval is required before you can change the owner. Click <a href=\"[url]\" target=\"_blank\">here</a> to view the products that have not been moderated yet."
+msgstr "所有者を変更するには、事前に承認が必要です。まだ変更されていない商品を表示するには、 <a href=\"[url]\" target=\"_blank\">ここ</a> をクリックしてください。"
+
+msgctxt "Languages::vendor_data_premoderation.moderation"
+msgid "Moderation"
+msgstr "出品者データ設定"
+
+msgctxt "SettingsOptions::vendor_data_premoderation::vendors_prior_approval"
+msgid "Approval of newly-created vendors"
+msgstr "出品者データ登録に関する承認"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendors_prior_approval::none"
+msgid "Isn't required"
+msgstr "不要"
+
+msgctxt "SettingsVariants::vendor_data_premoderation::vendors_prior_approval::all"
+msgid "Required for all vendors"
+msgstr "必須"
+
+msgctxt "Languages::vendor_data_premoderation.preventing_registration_info_text"
+msgid "If you want to prevent vendor registration altogether, please check <a href=\"[url]\" target=\"_blank\">Settings → Vendors</a>."
+msgstr "管理画面へのアクセスには承認を必要とする場合は、<a href=\"[url]\" target=\"_blank\">基本設定 > 出品者</a> の「管理画面へのアクセスには承認が必要」を設定してください。"
+
+msgctxt "Languages::vendor_data_premoderation.prior_to_date"
+msgid "Prior to [date]"
+msgstr "[date] 更新"
+
+msgctxt "Languages::vendor_data_premoderation.deleted"
+msgid "Deleted"
+msgstr "削除されたファイル"
+
+msgctxt "Languages::vendor_data_premoderation.added"
+msgid "Added"
+msgstr "追加されたファイル"
+
+msgctxt "Languages::vendor_data_premoderation.event.added_product.name"
+msgid "Vendor data premoderation: number of products on moderation"
+msgstr "承認申請中の商品数"
+
+msgctxt "Languages::vendor_data_premoderation.added_product.title"
+msgid "[n] product awaits your approval|[n] products await your approval"
+msgstr "承認待ちの商品が[n]個あります|承認待ちの商品が[n]個あります"
+
+msgctxt "Languages::vendor_data_premoderation.added_product.message"
+msgid "[n] product awaits your approval.<br>This product is awaiting approval since [since_at].|[n] products await your approval.<br>The earliest of these products awaiting approval since [since_at]."
+msgstr "[n]個の商品が [since_at] 以来承認待ちです。|[n]個の商品が [since_at] 以来承認待ちです。"
+
+msgctxt "Languages::vendor_data_premoderation.added_product.action"
+msgid "<a href=\"[url]\" target=\"_blank\">View pending products</a>"
+msgstr "<a href=\"[url]\" target=\"_blank\">保留中の商品を表示</a>"
+
+msgctxt "Languages::email_template.vendor_data_premoderation_added_product"
+msgid "Vendor data premoderation: products awaiting moderation"
+msgstr "出品者データ設定: 承認待ちの商品"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.analytics_card.on_moderation"
+msgid "On moderation"
+msgstr "要承認"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.analytics_card.disapproved"
+msgid "Disapproved"
+msgstr "却下済"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.todo.products_disapproved"
+msgid "<strong>[n] product</strong> requires editing.|<strong>[n] products</strong> require editing."
+msgstr "修正が必要な商品が <strong>[n] 個</strong> あります。|修正が必要な商品が <strong>[n] 個</strong> あります。"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.todo.pending_vendors"
+msgid "<strong>[n] vendor</strong> (and their products) is hidden until you review them.|<strong>[n] vendors</strong> (and their products) are hidden until you review them."
+msgstr "<strong>[n] 件の出品者</strong> が承認待ちです。出品者およびその商品は承認されるまで表示されません。|<strong>[n] 件の出品者</strong> が承認待ちです。出品者およびその商品は承認されるまで表示されません。"
+
+msgctxt "Languages::vendor_data_premoderation.dashboard.todo.products_require_approval"
+msgid "<strong>[n] product</strong> requires your approval.|<strong>[n] products</strong> require your approval."
+msgstr "承認が必要な商品が <strong>[n] 個</strong> あります。|承認が必要な商品が <strong>[n] 個</strong> あります。"
+

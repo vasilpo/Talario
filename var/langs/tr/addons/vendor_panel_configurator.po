@@ -1,0 +1,122 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_panel_configurator.po\n"
+"X-Crowdin-File-ID: 9448\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::vendor_panel_configurator"
+msgid "Vendor panel configurator"
+msgstr "Satıcı paneli yapılandırıcısı"
+
+msgctxt "Addons::description::vendor_panel_configurator"
+msgid "Simplifies the vendor panel by showing vendors only the fields and menus that they need to see."
+msgstr "Satıcılara yalnızca görmeleri gereken alanları ve menüleri göstererek satıcı panelini basitleştirir."
+
+msgctxt "SettingsSections::vendor_panel_configurator::product_page_settings"
+msgid "Product page settings"
+msgstr "Ürün sayfası ayarları"
+
+msgctxt "SettingsSections::vendor_panel_configurator::vendor_panel_style"
+msgid "Vendor panel style"
+msgstr "Satıcı paneli stili"
+
+msgctxt "Languages::vendor_panel_configurator.unconfigurable_tab"
+msgid "This tab has no configurable fields and is displayed as is"
+msgstr "Bu sekmede yapılandırılabilir alan yoktur ve olduğu gibi görüntülenir."
+
+msgctxt "Languages::vendor_panel_configurator.product_page_configuration"
+msgid "Product page settings"
+msgstr "Ürün ayarları"
+
+msgctxt "Languages::vendor_panel_configurator.theme_styles"
+msgid "Logos and styles"
+msgstr "Logolar ve stiller"
+
+msgctxt "Languages::vendor_panel_configurator.theme_styles.description"
+msgid "Manage logos used on site and in e-mails and configure appearance of the microstore and product pages"
+msgstr "Sitede ve e-postalarda kullanılan logoları yönetin ve mikro mağaza ve ürün sayfalarının görünümünü yapılandırın"
+
+msgctxt "Languages::vendor_panel_configurator.payment_methods.description"
+msgid "Manage how you receive payments from customers"
+msgstr "Müşterilerden nasıl ödeme alacağınızı yönetin"
+
+msgctxt "Languages::vendor_panel_configurator.configure_vendor_panel_notice"
+msgid "You can customize the vendor panel via the bottom toolbar: <a href=\"[block_manager_link]\">edit menus and onboarding</a> or <a href=\"[theme_editor_link]\">choose a color scheme</a>."
+msgstr "Satıcı panelini alttaki araç çubuğu aracılığıyla özelleştirebilirsiniz: <a href=\"[block_manager_link]\">düzenleme menüleri ve katılım</a> veya <a href=\"[theme_editor_link]\">bir renk şeması seçin</a>."
+
+msgctxt "Languages::vendor_panel_configurator.sidebar_color"
+msgid "Sidebar color"
+msgstr "Kenar çubuğu rengi"
+
+msgctxt "Languages::vendor_panel_configurator.element_color"
+msgid "Element color"
+msgstr "Öğe rengi"
+
+msgctxt "Languages::vendor_panel_configurator.sidebar_background_image"
+msgid "Sidebar background image"
+msgstr "Kenar çubuğu arka plan resmi"
+
+msgctxt "Languages::vendor_panel_configurator.sidebar_background_image_description"
+msgid "If you upload the background image, it will be displayed instead of the sidebar color. If you upload it, we recommend picking a sidebar color that matches the background image."
+msgstr "Arka plan resmini yüklerseniz, kenar çubuğu rengi yerine görüntülenecektir. Yüklerseniz, arka plan resmiyle eşleşen bir kenar çubuğu rengi seçmenizi öneririz."
+
+msgctxt "Languages::vendor_panel_configurator.global_setting_warning"
+msgid "This setting doesn't appear on the product editing page right now, because it is set globally for all products. Check the <a href=\"[settings_url]\" target=\"_blank\">\"Settings\" menu</a> to find it."
+msgstr "Bu ayar, tüm ürünler için global olarak ayarlandığından, şu anda ürün düzenleme sayfasında görünmüyor. Bulmak için <a href=\"[settings_url]\" target=\"_blank\">\"Ayarlar\" menüsü</a> kontrol edin."
+
+msgctxt "Languages::vendor_panel_configurator.theme_editor.sidebar"
+msgid "Sidebar"
+msgstr "kenar çubuğu"
+
+msgctxt "Languages::vendor_panel_configurator.theme_editor.element"
+msgid "Element"
+msgstr "eleman"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Custom"
+msgid "Custom"
+msgstr "Gelenek"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Light"
+msgid "Light"
+msgstr "Işık"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Purple"
+msgid "Purple"
+msgstr "Mor"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Lemongrass"
+msgid "Lemongrass"
+msgstr "Limon otu"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Sweety"
+msgid "Sweety"
+msgstr "tatlım"
+
+msgctxt "Languages::vendor_panel_configurator.color_schema.Sand"
+msgid "Sand"
+msgstr "Kum"
+
+msgctxt "Languages::vendor_panel_configurator.logo"
+msgid "Logo"
+msgstr "Logo"
+
+msgctxt "Languages::vendor_panel_configurator.logo_description"
+msgid "We recommend a PNG image no smaller than 68x68px, and with transparent background. The best aspect ratio is between 3.5:1 (for example, 245x70px) and 6.1:1 (for example, 610x100px)."
+msgstr "68x68 pikselden küçük olmayan ve şeffaf arka plana sahip bir PNG resmi öneriyoruz. En iyi en boy oranı 3,5:1 (örneğin, 245x70 piksel) ile 6,1:1 (örneğin, 610x100 piksel) arasındadır."
+
+msgctxt "Languages::vendor_panel_configurator.logo_dark"
+msgid "Logo (dark theme)"
+msgstr "Logo (karanlık tema)"
+
+msgctxt "Languages::vendor_panel_configurator.logo_dark_description"
+msgid "Same recommendations as for standard logo. This logo appears against a dark background: in the bottom toolbar, or when the dark theme is selected."
+msgstr "Standart logoyla aynı öneriler. Bu logo koyu bir arka planda görünür: alt araç çubuğunda veya koyu tema seçildiğinde."
+

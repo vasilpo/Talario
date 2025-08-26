@@ -1,0 +1,450 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Uzbek\n"
+"Language: uz_UZ\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /release-4.18.3/addons/vendor_plans.po\n"
+"X-Crowdin-File-ID: 9450\n"
+"PO-Revision-Date: 2024-10-02 13:31\n"
+
+msgctxt "Addons::name::vendor_plans"
+msgid "Vendor plans"
+msgstr "Sotuvchi rejalari"
+
+msgctxt "Addons::description::vendor_plans"
+msgid "Create plans with different restrictions and prices for your vendors"
+msgstr "Sotuvchilaringiz uchun turli cheklovlar va narxlar bilan rejalar yarating"
+
+msgctxt "SettingsOptions::vendor_plans::commissions_header"
+msgid "Commissions"
+msgstr "Komissiyalar"
+
+msgctxt "SettingsOptions::vendor_plans::include_shipping"
+msgid "Include shipping cost in vendor commissions"
+msgstr "Yetkazib berish narxini sotuvchi komissiyalariga qo'shing"
+
+msgctxt "SettingsOptions::vendor_plans::include_taxes_in_commission"
+msgid "Include taxes in vendor commissions"
+msgstr "Sotuvchi komissiyalariga soliqlarni qo'shing"
+
+msgctxt "SettingsTooltips::vendor_plans::include_taxes_in_commission"
+msgid "Calculate vendor commissions without subtracting taxes from the order total beforehand."
+msgstr "Oldindan buyurtma summasidan soliqlarni ayirmasdan sotuvchi komissiyalarini hisoblang."
+
+msgctxt "SettingsOptions::vendor_plans::allow_vendors_to_change_plan"
+msgid "Allow vendors to change their current plan"
+msgstr "Sotuvchilarga joriy rejalarini o'zgartirishga ruxsat bering"
+
+msgctxt "SettingsOptions::vendor_plans::collect_taxes_from_vendors"
+msgid "Collect taxes from vendors"
+msgstr "Sotuvchilardan soliq yig'ish"
+
+msgctxt "SettingsTooltips::vendor_plans::collect_taxes_from_vendors"
+msgid "Send collected taxes to the account of the marketplace."
+msgstr "Yig'ilgan soliqlarni bozor hisobiga yuboring."
+
+msgctxt "Languages::vendor_plans.vendor_plans"
+msgid "Vendor plans"
+msgstr "Sotuvchi rejalari"
+
+msgctxt "Languages::block_vendor_plan_info"
+msgid "Vendor plan info"
+msgstr "Sotuvchi rejasi haqida ma'lumot"
+
+msgctxt "Languages::block_vendor_plan_info_description"
+msgid "Shows information about the selected vendor plan"
+msgstr "Tanlangan sotuvchi rejasi haqidagi ma'lumotlarni ko'rsatadi"
+
+msgctxt "Languages::vendor_plans.plan"
+msgid "Plan"
+msgstr "Reja"
+
+msgctxt "Languages::vendor_plans.plan_short"
+msgid "Plan"
+msgstr "Reja"
+
+msgctxt "Languages::vendor_plans.commission"
+msgid "Commission"
+msgstr "Komissiya"
+
+msgctxt "Languages::vendor_plans.restrictions"
+msgid "Restrictions"
+msgstr "Cheklovlar"
+
+msgctxt "Languages::vendor_plans.periodicity_month"
+msgid "per month"
+msgstr "oyiga"
+
+msgctxt "Languages::vendor_plans.periodicity_year"
+msgid "per year"
+msgstr "yiliga"
+
+msgctxt "Languages::vendor_plans.periodicity_onetime"
+msgid "one time"
+msgstr "bir marta"
+
+msgctxt "Languages::vendor_plans.products_limit"
+msgid "Max. products"
+msgstr "Maks. mahsulotlar"
+
+msgctxt "Languages::vendor_plans.products_limit_tooltip"
+msgid "Set the maximum number of products a vendor can have on this plan. Leave empty to allow unlimited number of products."
+msgstr "Ushbu rejada sotuvchiga ega bo'lishi mumkin bo'lgan maksimal mahsulotlar sonini belgilang. Cheksiz miqdordagi mahsulotlarga ruxsat berish uchun bo'sh qoldiring."
+
+msgctxt "Languages::vendor_plans.vendor_store_tooltip"
+msgid "A vendor can have his or her own microstore at a separate address like <i>example.com/vendor/</i>. A microstore only contains products of the vendor who owns this microstore. Also, search results in a vendor's microstore only include products of this vendor."
+msgstr "Sotuvchi <i>example.com/vendor/</i> kabi alohida manzilda o'z mikrodo'koniga ega bo'lishi mumkin. Mikrodo'konda faqat ushbu mikrodo'konga ega bo'lgan sotuvchining mahsulotlari mavjud. Bundan tashqari, sotuvchining mikrodo'konidagi qidiruv natijalari faqat ushbu sotuvchining mahsulotlarini o'z ichiga oladi."
+
+msgctxt "Languages::vendor_plans.add_vendor_plan"
+msgid "Add vendor plan"
+msgstr "Sotuvchi rSotuvchi rejasini qo'shingejasini qo'shing"
+
+msgctxt "Languages::vendor_plans.new_vendor_plan"
+msgid "New vendor plan"
+msgstr "Yangi sotuvchi rejasi"
+
+msgctxt "Languages::vendor_plans.editing_vendor_plan"
+msgid "Editing vendor plan"
+msgstr "Sotuvchi rejasini tahrirlash"
+
+msgctxt "Languages::vendor_plans.delete_plan_vendor_exists_text"
+msgid "Couldn't delete the plan: some vendors use it"
+msgstr "Rejani oʻchirib boʻlmadi: baʼzi sotuvchilar undan foydalanishadi"
+
+msgctxt "Languages::vendor_plans.disable_plan_vendor_exists_text"
+msgid "Couldn't disable the plan: some vendors use it"
+msgstr "Rejani oʻchirib boʻlmadi: baʼzi sotuvchilar undan foydalanishadi"
+
+msgctxt "Languages::vendor_plans.transaction_fee"
+msgid "Transaction fee"
+msgstr "Tranzaksiya komissiyasi"
+
+msgctxt "Languages::vendor_plans.fixed_transaction_fee"
+msgid "Transaction fee (abs)"
+msgstr "Tranzaksiya to'lovi (abs)"
+
+msgctxt "Languages::vendor_plans.revenue"
+msgid "Revenue"
+msgstr "Daromad"
+
+msgctxt "Languages::vendor_plans.revenue_up_to"
+msgid "Revenue up to"
+msgstr "gacha bo'lgan daromad"
+
+msgctxt "Languages::vendor_plans.revenue_up_to_tooltip"
+msgid "The maximum monthly revenue allowed for the vendors who use this plan. Leave this field empty to allow unlimited revenue."
+msgstr "Ushbu rejadan foydalanadigan sotuvchilar uchun ruxsat etilgan maksimal oylik daromad. Cheksiz daromad olish uchun ushbu maydonni bo'sh qoldiring."
+
+msgctxt "Languages::vendor_plans.vendor_store"
+msgid "Vendor microstore"
+msgstr "Sotuvchi mikrodo'koni"
+
+msgctxt "Languages::vendor_plans.best_choise"
+msgid "Offer as the best choice"
+msgstr "Eng yaxshi tanlov sifatida taklif qiling"
+
+msgctxt "Languages::vendor_plans.best_choise_short"
+msgid "Best choice"
+msgstr "Eng yaxshi tanlov"
+
+msgctxt "Languages::vendor_plans.select_plan_text"
+msgid "You will be charged for the plan after the admin approves your vendor account"
+msgstr "Administrator sotuvchi hisobingizni tasdiqlaganidan keyin sizdan reja uchun to‘lov olinadi"
+
+msgctxt "Languages::vendor_plans.current_plan"
+msgid "Current plan"
+msgstr "Joriy reja"
+
+msgctxt "Languages::vendor_plans.current_plan_usage"
+msgid "Current plan usage"
+msgstr "Joriy tarif rejasidan foydalanish"
+
+msgctxt "Languages::vendor_plans.best_choice"
+msgid "Best choice"
+msgstr "Eng yaxshi tanlov"
+
+msgctxt "Languages::vendor_plans.choose_your_plan"
+msgid "Choose your plan"
+msgstr "Rejangizni tanlang"
+
+msgctxt "Languages::vendor_plans.choose"
+msgid "Choose"
+msgstr "Tanlang"
+
+msgctxt "Languages::vendor_plans.month"
+msgid "Month"
+msgstr "oy"
+
+msgctxt "Languages::vendor_plans.year"
+msgid "Year"
+msgstr "Yil"
+
+msgctxt "Languages::vendor_plans.plan_name"
+msgid "Plan name"
+msgstr "Reja nomi"
+
+msgctxt "Languages::vendor_plans.products_limit_value"
+msgid "<strong>[n]</strong> product|<strong>[n]</strong> products"
+msgstr "<strong>[n]</strong> mahsulot|<strong>[n]</strong> mahsulotlar"
+
+msgctxt "Languages::vendor_plans.unlimited"
+msgid "Unlimited"
+msgstr "Cheksiz"
+
+msgctxt "Languages::vendor_plans.products_limit_unlimited"
+msgid "<strong>Unlimited</strong> products"
+msgstr "<strong>Cheksiz</strong> mahsulotlar"
+
+msgctxt "Languages::vendor_plans.revenue_up_to_value"
+msgid "Revenue up to <strong>[revenue]</strong>"
+msgstr "<strong>[revenue]</strong>gacha bo'lgan daromad"
+
+msgctxt "Languages::vendor_plans.revenue_up_to_unlimited"
+msgid "<strong>Unlimited</strong> revenue"
+msgstr "<strong>Cheksiz</strong> daromad"
+
+msgctxt "Languages::vendor_plans.transaction_fee_value"
+msgid "Transaction fee: <strong>[value]</strong>"
+msgstr "Tranzaksiya to‘lovi: <strong>[value]</strong>"
+
+msgctxt "Languages::vendor_plans.vendor_commission"
+msgid "Vendor commission"
+msgstr "Sotuvchi komissiyasi"
+
+msgctxt "Languages::vendor_plans.category_is_empty"
+msgid "Please specify a category."
+msgstr "Turkumni belgilang."
+
+msgctxt "Languages::vendor_plans.vendor_approved_text"
+msgid "Your plan has been set to [plan]. See the details of your plan below."
+msgstr "Rejangiz [plan] qilib belgilandi. Rejangiz tafsilotlarini quyida ko'ring."
+
+msgctxt "Languages::vendor_plans.plan_payment"
+msgid "Payment for Your Plan"
+msgstr "Sizning rejangiz uchun to'lov"
+
+msgctxt "Languages::vendor_plans.plan_payment_text"
+msgid "A sum of [price] has been withdrawn from your account for using the [plan] plan. Follow the link to <a href=\"[href]\">view your account balance</a> or see the details of your plan below."
+msgstr "[plan] rejasidan foydalanganingiz uchun hisobingizdan [price] summasi yechib olindi. <a href=\"[href]\">hisob balansingizni ko‘rish</a> uchun havolaga o‘ting yoki quyida tarif rejangiz tafsilotlarini ko‘ring."
+
+msgctxt "Languages::vendor_plans.plan_has_been_changed"
+msgid "Your Plan Has Been Changed"
+msgstr "Rejangiz o'zgartirildi"
+
+msgctxt "Languages::vendor_plans.plan_has_been_changed_text"
+msgid "Your plan has been changed to [plan]. See the details of your new plan below."
+msgstr "Sizning rejangiz [plan] ga o'zgartirildi. Quyida yangi rejangiz tafsilotlarini ko'ring."
+
+msgctxt "Languages::vendor_plans.products_exceeded_text"
+msgid "Cannot add more products: you have reached the maximum number of products allowed by your plan. To change your plan, please <a href=\"[href]\">follow this link</a>."
+msgstr "Boshqa mahsulotlarni qoʻshib boʻlmaydi: siz rejangizda ruxsat etilgan mahsulotlarning maksimal soniga yetdingiz. Rejangizni oʻzgartirish uchun <a href=\"[href]\">ushbu havolaga oʻting</a>."
+
+msgctxt "Languages::vendor_plans.revenue_exceeded_subj"
+msgid "Maximum Revenue Exceeded"
+msgstr "Maksimal daromad oshib ketdi"
+
+msgctxt "Languages::vendor_plans.revenue_exceeded_text"
+msgid "<a href=\"[href]\">[vendor]</a> exceeded the maximum revenue allowed by the [plan] plan."
+msgstr "<a href=\"[href]\">[vendor]</a> [plan] rejasida ruxsat etilgan maksimal daromaddan oshib ketdi."
+
+msgctxt "Languages::vendor_plans.not_available"
+msgid "Not available"
+msgstr "Mavjud emas"
+
+msgctxt "Languages::vendor_plans.many_products_text"
+msgid "Too many products ([actual]/[allowed])"
+msgstr "Juda koʻp mahsulot ([[actual]/[allowed])"
+
+msgctxt "Languages::vendor_plans.much_revenue_text"
+msgid "Too much revenue ([actual]/[allowed])"
+msgstr "Haddan tashqari daromad ([actual]/[allowed])"
+
+msgctxt "Languages::vendor_plans.plan_not_available_text"
+msgid "Sorry, this plan is not available for you. Please choose an available plan."
+msgstr "Kechirasiz, bu reja siz uchun mavjud emas. Iltimos, mavjud tarif rejasini tanlang."
+
+msgctxt "Languages::vendor_plans.plan_will_be_change_text"
+msgid "You are switching to another vendor plan. You will be charged the full price of the plan. Are you sure you want to continue?"
+msgstr "Siz boshqa sotuvchi rejasiga o'tyapsiz. Sizdan rejaning toʻliq narxi olinadi. Davom etishni xohlaysizmi?"
+
+msgctxt "Languages::email_template.vendor_plans_plan_changed"
+msgid "Vendor plans: plan changed notification"
+msgstr "Sotuvchining rejalari: reja o'zgartirilganligi haqida bildirishnoma"
+
+msgctxt "Languages::email_template.vendor_plans_payment"
+msgid "Vendor plans: payment notification"
+msgstr "Sotuvchi rejalari: to'lov bildirishnomasi"
+
+msgctxt "Languages::email_template.vendor_plans_revenue"
+msgid "Vendor plans: revenue notification"
+msgstr "Sotuvchi rejalari: daromad haqida xabarnoma"
+
+msgctxt "Languages::privileges.view_vendor_plans"
+msgid "Can view"
+msgstr "Ko'rish mumkin"
+
+msgctxt "Languages::privileges.manage_vendor_plans"
+msgid "Can edit"
+msgstr "Tahrirlash mumkin"
+
+msgctxt "Languages::privilege_groups.vendor_plans"
+msgid "Vendor plans"
+msgstr "Sotuvchi rejalari"
+
+msgctxt "Languages::addons.vendor_plans.commission_description_absolute"
+msgid "[amount] out of [sum]"
+msgstr "[sum] dan [amount]"
+
+msgctxt "Languages::vendor_plans.out_of_amount"
+msgid "out of [amount]"
+msgstr "tashqari [amount]"
+
+msgctxt "Languages::addons.vendor_plans.commission_description_percent"
+msgid "[amount]% of [sum]"
+msgstr "[sum] dan [amount]%"
+
+msgctxt "Languages::addons.vendor_plans.payout_for_the_plan"
+msgid "Payout for the vendor plan: [plan]"
+msgstr "Sotuvchi rejasi uchun to'lov: [plan]"
+
+msgctxt "Languages::vendor_plan"
+msgid "Vendor plan"
+msgstr "Sotuvchi rejasi"
+
+msgctxt "Languages::vendor_plans.update_for_plan.title"
+msgid "Should your changes affect existing vendors?"
+msgstr "Sizning o'zgarishlaringiz mavjud sotuvchilarga ta'sir qilishi kerakmi?"
+
+msgctxt "Languages::vendor_plans.update_for_plan.general_message"
+msgid "What should we do about <a href=\"[search_url]\" target=\"_blank\">[n] vendor </a> who is using this plan now?|What should we do about <a href=\"[search_url]\" target=\"_blank\">[n] vendors </a> who are using this plan now?"
+msgstr "Hozir ushbu tarif rejasidan foydalanayotgan <a href=\"[search_url]\" target=\"_blank\">[n] sotuvchi </a> haqida nima qilishimiz kerak?|<a href=\"[search_url]\" haqida nima qilishimiz kerak target=\"_blank\">[n] sotuvchi </a> kim hozir ushbu tarif rejasidan foydalanmoqda?"
+
+msgctxt "Languages::vendor_plans.storefronts_update_for_plan.add_storefronts_message"
+msgid "Add the vendor to the storefronts that got added to the plan|Add the vendors to the storefronts that got added to the plan"
+msgstr "Sotuvchini rejaga qo'shilgan vitrinalarga qo'shing|Rejaga qo'shilgan vitrinalarga sotuvchilarni qo'shing"
+
+msgctxt "Languages::vendor_plans.storefronts_update_for_plan.remove_storefronts_message"
+msgid "Remove the vendor from the storefronts that got removed from this plan|Remove the vendors from the storefronts that got removed from this plan"
+msgstr "Ushbu rejadan olib tashlangan doʻkon peshtaxtalaridan sotuvchini olib tashlang|Bu rejadan olib tashlangan doʻkon peshtaxtalaridan sotuvchini olib tashlang"
+
+msgctxt "Languages::vendor_plans.storefronts_update_for_vendor.title"
+msgid "The vendor got moved to another plan"
+msgstr "Sotuvchi boshqa rejaga o'tdi"
+
+msgctxt "Languages::vendor_plans.storefronts_update_for_vendor.general_message"
+msgid "What should we do about the storefronts that are available to this vendor?"
+msgstr "Ushbu sotuvchi uchun mavjud bo'lgan do'konlar haqida nima qilishimiz kerak?"
+
+msgctxt "Languages::vendor_plans.storefronts_update_for_vendor.add_storefronts_message"
+msgid "Add the vendor to the storefronts available in the new vendor plan"
+msgstr "Sotuvchini yangi sotuvchi rejasida mavjud bo'lgan do'konlarga qo'shing"
+
+msgctxt "Languages::vendor_plans.storefronts_update_for_vendor.remove_storefronts_message"
+msgid "Remove the vendor from the storefronts available in his previous plan"
+msgstr "Sotuvchini oldingi rejasida mavjud bo'lgan do'konlardan olib tashlang"
+
+msgctxt "Languages::vendor_plans.advanced_vendor_plan_creation"
+msgid "Advanced vendor plan creation"
+msgstr "Kengaytirilgan sotuvchi rejasini yaratish"
+
+msgctxt "Languages::vendor_plans.text_vendor_plan_created"
+msgid "A new vendor plan \"[plan_name]\" has been created. You can now <a href=\"[link]\">set restrictions for vendors using this plan</a>."
+msgstr "“[plan_name]” yangi sotuvchi rejasi yaratildi. Endi siz <a href=\"[link]\">ushbu tarif rejasidan foydalanadigan sotuvchilar uchun cheklovlar o‘rnatishingiz mumkin</a>."
+
+msgctxt "Languages::vendor_plans.commission_fee"
+msgid "[commission]% fee"
+msgstr "[commission]% to'lov"
+
+msgctxt "Languages::vendor_plans.default_vendor_plan"
+msgid "Default plan"
+msgstr "Standart reja"
+
+msgctxt "Languages::vendor_plans.event.plan_changed"
+msgid "Vendor plan was changed"
+msgstr "Sotuvchi rejasi o'zgartirildi"
+
+msgctxt "Languages::vendor_plans"
+msgid "Vendor plans"
+msgstr "Sotuvchi rejalari"
+
+msgctxt "Languages::email_template.vendor_plans_vendor_plan_changed_info_for_admin"
+msgid "Vendor plans: vendor plan was changed"
+msgstr "Sotuvchi rejalari: sotuvchi rejasi o'zgartirildi"
+
+msgctxt "Languages::vendor_plans.vendor_plan_has_been_changed"
+msgid "Vendor \"[vendor]\" moved to \"[plan]\""
+msgstr "\"[vendor]\" sotuvchisi \"[plan]\"ga ko'chirildi"
+
+msgctxt "Languages::vendor_plans.vendor_plan_has_been_changed_text"
+msgid "The plan of vendor \"[vendor]\" was changed from \"[old_plan]\" to \"[new_plan]\"."
+msgstr "Sotuvchining \"[vendor]\" rejasi \"[old_plan]\"dan \"[new_plan]\"ga o'zgartirildi."
+
+msgctxt "Languages::vendor_plans.old_plan"
+msgid "Old plan"
+msgstr "Eski reja"
+
+msgctxt "Languages::vendor_plans.new_plan"
+msgid "New plan"
+msgstr "Yangi reja"
+
+msgctxt "Languages::vendor_plans.usergroups_update_for_plan.add_usergroups_message"
+msgid "Add vendor administrators to the user groups added to the plan"
+msgstr "Rejaga qo'shilgan foydalanuvchilar guruhlariga sotuvchi ma'murlarini qo'shing"
+
+msgctxt "Languages::vendor_plans.usergroups_update_for_plan.remove_usergroups_message"
+msgid "Remove vendor administrators from the user groups removed from the plan"
+msgstr "Sotuvchi ma'murlarini rejadan olib tashlangan foydalanuvchilar guruhlaridan olib tashlang"
+
+msgctxt "Languages::vendor_plans.usergroups_update_for_plan"
+msgid "These are the user groups that vendor's administrators will get when a vendor gets this plan"
+msgstr "Bular sotuvchi ushbu rejani olganida sotuvchining ma'murlari oladigan foydalanuvchilar guruhlari"
+
+msgctxt "Languages::vendor_plans.category_is_not_available"
+msgid "Sorry, this category is not available for the vendor. Please check the configuration of the vendor plan."
+msgstr "Kechirasiz, ushbu turkum sotuvchi uchun mavjud emas. Iltimos, sotuvchi rejasining konfiguratsiyasini tekshiring."
+
+msgctxt "Languages::vendor_plans.all_storefronts_included"
+msgid "All storefronts included"
+msgstr "Barcha do'konlar vitrinalari kiritilgan"
+
+msgctxt "Languages::vendor_plans.all_categories_included"
+msgid "All categories included"
+msgstr "Barcha toifalar kiritilgan"
+
+msgctxt "Languages::vendor_plans.disable_plan_is_default_text"
+msgid "Couldn't disable the vendor plan. At least one active or hidden vendor plan must exist."
+msgstr "Sotuvchi rejasini o‘chirib bo‘lmadi. Kamida bitta faol yoki yashirin sotuvchi rejasi mavjud bo'lishi kerak."
+
+msgctxt "Languages::vendor_plans.dashboard.analytics_card.vendor_plan"
+msgid "Products used on the plan"
+msgstr "Rejada ishlatiladigan mahsulotlar"
+
+msgctxt "Languages::vendor_plans.dashboard.analytics_card.vendor_plan_limits"
+msgid "[name] plan limits"
+msgstr "[name] reja chegaralari"
+
+msgctxt "Languages::vendor_plans.dashboard.analytics_card.view_plan"
+msgid "View plan"
+msgstr "Rejani ko'rish"
+
+msgctxt "Languages::vendor_plans.plan_has_been_set"
+msgid "Your Plan Has Been Set"
+msgstr ""
+
+msgctxt "Languages::vendor_plans.plan_has_been_set_text"
+msgid "You subscribed to \"[plan]\" plan. See the details of your new plan below."
+msgstr ""
+
+msgctxt "Languages::vendor_plans.vendor_plan_has_been_set"
+msgid "Vendor \"[vendor]\" set to \"[plan]\""
+msgstr ""
+
+msgctxt "Languages::vendor_plans.vendor_plan_has_been_set_text"
+msgid "The new vendor \"[vendor]\" subscribed to \"[new_plan]\" plan."
+msgstr ""
+

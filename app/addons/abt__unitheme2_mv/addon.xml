@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+<id>abt__unitheme2_mv</id>
+<version>4.18.1.a</version>
+<priority>10010</priority>
+<position>0</position>
+<status>active</status>
+<default_language>en</default_language>
+<ab>
+<hash>0f2eb0d80e98932dd961d7e066bc360f133f7dfe, 2024-06-25 15:36:16</hash>
+<layout_version>mv7</layout_version>
+<compatibility>
+<dependencies>
+<ab__addons_manager><min>2.5.2</min></ab__addons_manager>
+<abt__unitheme2><min>4.18.1.b</min></abt__unitheme2>
+</dependencies>
+</compatibility>
+</ab>
+<authors>
+<author>
+<name>AlexBranding</name>
+<email>info@alexbranding.com</email>
+<url>https://alexbranding.com</url>
+</author>
+</authors>
+<supplier>AlexBranding</supplier>
+<supplier_link>https://cs-cart.alexbranding.com</supplier_link>
+<supplier_page>ab__am.addons</supplier_page>
+<compatibility>
+<dependencies>abt__unitheme2,ab__addons_manager</dependencies>
+<conflicts>abt__unitheme,abt__youpitheme</conflicts>
+<core_version><min>4.18.1</min></core_version>
+<core_edition>MULTIVENDOR</core_edition>
+</compatibility>
+<settings edition_type="ROOT,VENDOR,STOREFRONT" layout="separate">
+<sections>
+<section id="settings">
+<items>
+<item id="code"><type>hidden</type><default_value>ABA-DtacaHR54Ej2FoYBJ1DKj</default_value></item>
+<item id="build"><type>hidden</type><default_value>1123</default_value></item>
+</items>
+</section>
+</sections>
+</settings>
+<functions>
+<item for="install">fn_abt__ut2_mv_copy_layouts</item>
+<item for="install">fn_abt__ut2_mv_remove_cscart_layouts</item>
+</functions>
+</addon>

@@ -1,0 +1,769 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::ab__deal_of_the_day"
+msgid "AB: Extended promotions"
+msgstr "AB: Расширенные промо-акции"
+
+msgctxt "Addons::description::ab__deal_of_the_day"
+msgid "Add-on extends native CS-Cart promotions functionality, turning them into a powerful marketing tool"
+msgstr "Модуль расширяет базовый функционал промо-акций CS-Cart, превращая их в мощный маркетинговый инструмент"
+
+msgctxt "Languages::ab__deal_of_the_day"
+msgid "AB: Extended promotions"
+msgstr "AB: Расширенные промо-акции"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::count_to"
+msgid "Countdown to"
+msgstr "Обратный отсчёт до"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::count_to"
+msgid "What time will be used as end time for countdown"
+msgstr "Задаёт точку отсчёта для счётчика"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::count_to::end_of_the_day"
+msgid "The end of the day"
+msgstr "Окончания дня"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::count_to::end_of_the_promotion"
+msgid "The end of the promotion"
+msgstr "Окончания промо-акции"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::countdown_type"
+msgid "Countdown type"
+msgstr "Тип счётчика"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::countdown_type"
+msgid "Defines, what countdown type will be displayed on the storefront"
+msgstr "Определяет, какой тип счётчика будет отображён на витрине"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::countdown_type::flipclock"
+msgid "FlipClock.js"
+msgstr "FlipClock.js"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::countdown_type::javascript"
+msgid "Javascript"
+msgstr "Javascript"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::max_height"
+msgid "Maximum height of description, px"
+msgstr "Максимальная высота описания, px"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::max_height"
+msgid "Hides the description of the promotion when height of description exceeds the specified value. Text of link is a language variable — <code>ab__dotd.more</code> and <code>ab__dotd.less</code>"
+msgstr "Скрывает описание промо-акции, когда высота описания превышает указанное значение. Текст ссылки является языковыми переменными — <code>ab__dotd.more</code> и <code>ab__dotd.less</code>"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::promotions_per_page"
+msgid "Promotions per page"
+msgstr "Промо-акций на страницу"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::promotions_per_page"
+msgid "Quantity of promotions on the list page. To show all promotions on one page — enter <code>0</code>"
+msgstr "Количество промо-акций на странице списка. Для отображения всех промо-акций на одной странице — укажите <code>0</code>"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::chains_per_page"
+msgid "Combinations per page"
+msgstr "Комбинаций на страницу"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::chains_per_page"
+msgid "Quantity of products combinations from \"Buy together\" add-on on the list page. To show all combinations on one page — enter <code>0</code>"
+msgstr "Количество комбинаций товаров из модуля \"Комбинации товаров\" на странице списка акций. Для отображения всех комбинаций на одной странице — введите <code>0</code>"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::highlight_when_left"
+msgid "Highlighting the promotion"
+msgstr "Выделение промо-акции"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::highlight_when_left"
+msgid "Highlight the promotion, when days left"
+msgstr "Выделять промо-акцию, когда осталось дней"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::0"
+msgid "don't highlight"
+msgstr "не выделять"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::1"
+msgid "1"
+msgstr "1"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::2"
+msgid "2"
+msgstr "2"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::3"
+msgid "3"
+msgstr "3"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::4"
+msgid "4"
+msgstr "4"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::5"
+msgid "5"
+msgstr "5"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::6"
+msgid "6"
+msgstr "6"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::highlight_when_left::7"
+msgid "7"
+msgstr "7"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::amount_of_promos_in_prods_lists"
+msgid "Amount of displayed promotions in product lists"
+msgstr "Количество отображаемых промо-акций в списках товаров"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::0"
+msgid "Do not display"
+msgstr "Не отображать"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::1"
+msgid "1"
+msgstr "1"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::2"
+msgid "2"
+msgstr "2"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::3"
+msgid "3"
+msgstr "3"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::4"
+msgid "4"
+msgstr "4"
+
+msgctxt "SettingsVariants::ab__deal_of_the_day::amount_of_promos_in_prods_lists::5"
+msgid "5"
+msgstr "5"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::amount_of_promos_in_prods_lists"
+msgid "Set amount of applied to a product catalog promotions, which will be displayed in products lists"
+msgstr "Устанавливает количество примененных к товару промо-акций для каталога, которые будут отображены в списках товаров"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__as"
+msgid "AB: Advanced sitemap"
+msgstr "AB: Расширенная карта сайта"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__as_add_to_sitemap"
+msgid "Adding promotions pages to the XML-sitemap"
+msgstr "Добавление страниц промо-акций в XML-карту сайта"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__show_expired_promos"
+msgid "Showing expired promotions"
+msgstr "Показ истекших промо-акций"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::ab__show_expired_promos"
+msgid "Showing expired promotions on the promotions list page"
+msgstr "Показ истекших промо-акции на странице списка промо-акций"
+
+msgctxt "SettingsOptions::ab__deal_of_the_day::ab__show_awaited_promos"
+msgid "Showing awaiting promotions"
+msgstr "Показ ожидаемых промо-акций"
+
+msgctxt "SettingsTooltips::ab__deal_of_the_day::ab__show_awaited_promos"
+msgid "Showing awaiting promotions on the promotions list page"
+msgstr "Показ ожидаемых промо-акций на странице списка промо-акций"
+
+msgctxt "Languages::block_ab__deal_of_the_day"
+msgid "AB: Deal of the day"
+msgstr "AB: Товар дня"
+
+msgctxt "Languages::ab__dotd_time_left"
+msgid "Promotion expires within"
+msgstr "До завершения акции осталось"
+
+msgctxt "Languages::ab__dotd_product_label"
+msgid "Promotion"
+msgstr "Aкция"
+
+msgctxt "Languages::ab__dotd.more"
+msgid "More"
+msgstr "Больше"
+
+msgctxt "Languages::ab__dotd.less"
+msgid "Less"
+msgstr "Меньше"
+
+msgctxt "Languages::ab__dotd.form.h1"
+msgid "h1 tag"
+msgstr "Тег h1"
+
+msgctxt "Languages::ab__dotd.form.page_title"
+msgid "Page title"
+msgstr "Заголовок страницы"
+
+msgctxt "Languages::ab__dotd.form.meta_description"
+msgid "Meta tag <code>description</code>"
+msgstr "Мета тег <code>description</code>"
+
+msgctxt "Languages::ab__dotd.form.meta_keywords"
+msgid "Meta tag <code>keywords</code>"
+msgstr "Мета тег <code>keywords</code>"
+
+msgctxt "Languages::ab__dotd.form.page_image"
+msgid "Image for promotion page"
+msgstr "Изображение для страницы промо-акции"
+
+msgctxt "Languages::ab__dotd.form.list_image"
+msgid "Image for promotions list"
+msgstr "Изображение для списка промо-акций"
+
+msgctxt "Languages::ab__dotd.form.group_by_category"
+msgid "Group by category"
+msgstr "Группировать по категории"
+
+msgctxt "Languages::ab__dotd.form.use_products_filter"
+msgid "Use filter by products"
+msgstr "Использовать фильтр по товарам"
+
+msgctxt "Languages::ab__dotd.form.show_label_in_products_lists"
+msgid "Display label (sticker) \"Promotion\" in products lists"
+msgstr "Отображать лейбл (стикер) \"Акция\" в списках товаров"
+
+msgctxt "Languages::ab__dotd.form.show_label_in_products_lists.tooltip"
+msgid "All products with this promotion will be output in products lists with \"Promotion\" label"
+msgstr "Все товары, к которым применена данная промо-акция будут отображаться с лейблом \"Акция\" в списках товаров"
+
+msgctxt "Languages::ab__dotd.form.show_in_products_lists"
+msgid "Display promotion in product lists"
+msgstr "Отображать промо-акцию в списках товаров"
+
+msgctxt "Languages::ab__dotd.form.show_countdown_on_promotion_page"
+msgid "Display countdown on the promotion page"
+msgstr "Отображать счётчик на странице промо-акции"
+
+msgctxt "Languages::ab__dotd.form.show_countdown_on_product_page"
+msgid "Display countdown on the product page"
+msgstr "Отображать счётчик на странице товара"
+
+msgctxt "Languages::ab__dotd.from"
+msgid "from"
+msgstr "от"
+
+msgctxt "Languages::ab__dotd.to"
+msgid "to"
+msgstr "по"
+
+msgctxt "Languages::ab__dotd.page_action_period"
+msgid "Promotion period:"
+msgstr "Период проведения промо-акции:"
+
+msgctxt "Languages::ab__dotd.days_left"
+msgid "<span>[n]</span> <div>day left</div>|<span>[n]</span> <div>days left</div>"
+msgstr "<div>Остался</div> <span>[n]</span> <div>день</div>|<div>Осталось</div> <span>[n]</span> <div>дня</div>|<div>Осталось</div> <span>[n]</span> <div>дней</div>"
+
+msgctxt "Languages::ab__dotd.clear_filter"
+msgid "Clear filter"
+msgstr "Очистить фильтр"
+
+msgctxt "Languages::ab__dotd.detailed"
+msgid "Promotion details"
+msgstr "Подробности промо-акции"
+
+msgctxt "Languages::ab__promotions_list"
+msgid "AB: Promotions list"
+msgstr "AB: Список промо-акций"
+
+msgctxt "Languages::ab__promotions_view"
+msgid "AB: Promotion page"
+msgstr "AB: Страница промо-акции"
+
+msgctxt "Languages::block_ab__promotions"
+msgid "AB: Promotions"
+msgstr "AB: Промо-акции"
+
+msgctxt "Languages::ab__dotd.add_promotions_and_close"
+msgid "Add promotions and close"
+msgstr "Добавить промо-акции и закрыть"
+
+msgctxt "Languages::ab__dotd.add_promotions"
+msgid "Add promotions"
+msgstr "Добавить промо-акции"
+
+msgctxt "Languages::ab__dotd_scroller"
+msgid "Promotions scroller"
+msgstr "Скроллер промо-акций"
+
+msgctxt "Languages::ab__dotd_sorted_promotions"
+msgid "Active promotions"
+msgstr "Действующие акции"
+
+msgctxt "Languages::ab__dotd.sort.created"
+msgid "by creation date"
+msgstr "по дате создания"
+
+msgctxt "Languages::ab__dotd.sort.to_date"
+msgid "by ending date"
+msgstr "по дате завершения"
+
+msgctxt "Languages::ab__dotd.sort.priority"
+msgid "by priority"
+msgstr "по приоритету"
+
+msgctxt "Languages::ab__dotd.sort.name"
+msgid "by name"
+msgstr "по названию"
+
+msgctxt "Languages::ab__dotd.choose_promotion"
+msgid "Choose promotion"
+msgstr "Выбор промо-акции"
+
+msgctxt "Languages::ab__deal_of_the_day_title_product"
+msgid "Promotions"
+msgstr "Промо-акции"
+
+msgctxt "Languages::ab__dotd.all_promotions"
+msgid "Also in promotions"
+msgstr "Также в акциях"
+
+msgctxt "Languages::ab__dotd.all_promotions.title"
+msgid "View all promotions for this product"
+msgstr "Просмотреть все промо-акции для этого товара"
+
+msgctxt "Languages::ab__show_additional_product_images"
+msgid "Show additional products images"
+msgstr "Показать дополнительные изображения товаров"
+
+msgctxt "Languages::ab__dotd.countdown.years"
+msgid "[n] year|[n] years|[n] years"
+msgstr "[n] год|[n] года|[n] лет"
+
+msgctxt "Languages::ab__dotd.countdown.months"
+msgid "[n] month|[n] months|[n] months"
+msgstr "[n] месяц|[n] месяца|[n] месяцев"
+
+msgctxt "Languages::ab__dotd.countdown.days"
+msgid "[n] day|[n] days|[n] days"
+msgstr "[n] день|[n] дня|[n] дней"
+
+msgctxt "Languages::ab__dotd.countdown.hours"
+msgid "[n] hour|[n] hours|[n] hours"
+msgstr "[n] час|[n] часа|[n] часов"
+
+msgctxt "Languages::ab__dotd.countdown.minutes"
+msgid "[n] minute|[n] minutes|[n] minutes"
+msgstr "[n] минута|[n] минуты|[n] минут"
+
+msgctxt "Languages::ab__dotd.countdown.seconds"
+msgid "[n] second|[n] seconds|[n] seconds"
+msgstr "[n] секунда|[n] секунды|[n] секунд"
+
+msgctxt "Languages::ab__dotd.countdown.simple.years"
+msgid "years"
+msgstr "лет"
+
+msgctxt "Languages::ab__dotd.countdown.simple.months"
+msgid "months"
+msgstr "месяцев"
+
+msgctxt "Languages::ab__dotd.countdown.simple.days"
+msgid "days"
+msgstr "дней"
+
+msgctxt "Languages::ab__dotd.countdown.simple.hours"
+msgid "hours"
+msgstr "часов"
+
+msgctxt "Languages::ab__dotd.countdown.simple.minutes"
+msgid "minutes"
+msgstr "минут"
+
+msgctxt "Languages::ab__dotd.countdown.simple.seconds"
+msgid "seconds"
+msgstr "секунд"
+
+msgctxt "Languages::ab__dotd.promotion_expired"
+msgid "Promotion has expired"
+msgstr "Акция завершена"
+
+msgctxt "Languages::ab__dotd.get_more_combinations"
+msgid "Show more [n] combination|Show more [n] combinations"
+msgstr "Показать ещё [n] комбинацию|Показать ещё [n] комбинации|Показать ещё [n] комбинаций"
+
+msgctxt "Languages::ab__dotd.showed_combinations"
+msgid "Shown [n] from [total]"
+msgstr "Показано [n] из [total]"
+
+msgctxt "Languages::ab__dotd.chains_list.title"
+msgid "Products combinations"
+msgstr "Комбинации товаров"
+
+msgctxt "Languages::ab__dotd.today_only"
+msgid "Only today"
+msgstr "Только сегодня"
+
+msgctxt "Languages::ab__dotd_expired_promotions"
+msgid "Expired promotions"
+msgstr "Истекшие акции"
+
+msgctxt "Languages::ab__dotd_awaited_promotions"
+msgid "Awaiting promotions"
+msgstr "Ожидаемые акции"
+
+msgctxt "Languages::ab__dotd.promotion_awaited"
+msgid "Promotion is awaiting"
+msgstr "Акция ожидается"
+
+msgctxt "Languages::ab__dotd_time_awaited_left"
+msgid "To start promotion remains"
+msgstr "До начала акции осталось"
+
+msgctxt "Languages::ab__dotd.days_to_start"
+msgid "<span>[n]</span> day left before the start|<span>[n]</span> days left before the start"
+msgstr "До начала <span>[n]</span> день|До начала <span>[n]</span> дня|До начала <span>[n]</span> дней"
+
+msgctxt "Languages::block_ab__promotions_description"
+msgid "Promotions list"
+msgstr "Список промо-акций"
+
+msgctxt "Languages::block_ab__deal_of_the_day_description"
+msgid "Preview of the chosen promotion"
+msgstr "Анонс выбранной промо-акции"
+
+msgctxt "Languages::ab__dotd.settings"
+msgid "General settings"
+msgstr "Общие настройки"
+
+msgctxt "Languages::block_ab__promotion_main_data"
+msgid "AB: Promotion header"
+msgstr "AB: Шапка промо-акции"
+
+msgctxt "Languages::block_ab__promotion_main_data_description"
+msgid "General promotion data (name, image, description etc.)"
+msgstr "Основные данные промо-акции (название, изображение, описание)"
+
+msgctxt "Languages::block_ab__promotion_categories_filter"
+msgid "AB: Filter by categories"
+msgstr "AB: Фильтр по категориям"
+
+msgctxt "Languages::block_ab__promotion_categories_filter_description"
+msgid "List of product categories that participate in the promotion"
+msgstr "Список категорий товаров, участвующих в акции"
+
+msgctxt "Languages::ab__promotion_categories_filter"
+msgid "AB: Filter by categories"
+msgstr "AB: Фильтр по категориям"
+
+msgctxt "Languages::ab__promotion_main_data"
+msgid "Promotion header"
+msgstr "Шапка промо-акции"
+
+msgctxt "Languages::ab__dotd.form.hide_products_block"
+msgid "Hide product block"
+msgstr "Скрыть блок товаров"
+
+msgctxt "Languages::ab__dotd_schedule"
+msgid "AB: Promotion schedule"
+msgstr "AB: Расписание промо-акции"
+
+msgctxt "Languages::ab__dotd.form.use_schedule"
+msgid "Use schedule"
+msgstr "Использовать расписание"
+
+msgctxt "Languages::ab__dotd.error.use_schedule_is_on"
+msgid "When using the \"AB: Promotion schedule\" available period changes are not available"
+msgstr "При использовании \"AB: Расписание промо-акции\" изменения периода доступности недоступны"
+
+msgctxt "Languages::ab__dotd.tab.ab__dotd_schedule_header"
+msgid "Use the time range selection for each day of each month to specify the promotion activity period. When setting the schedule, refer to that left mouse button - select, right mouse button - unselect"
+msgstr "Для того, чтобы задать период активности промо-акции используйте выбор временных диапазонов для каждого дня каждого месяца. При настройке расписания руководствуйтесь тем, что левая кнопка мыши — выбрать, правая — отменить выбор"
+
+msgctxt "Languages::ab__dotd.form.use_schedule.tooltip"
+msgid "If you activate this option, the standard promotion setting \"Use available period\" will be disabled and the promotion activity will be determined by the Schedule that you can set in this tab interface. Conversely, if you disable this setting, the standard option \"Use available period\" will control activity of the promotion."
+msgstr "При активации этой настройки стандартная настройка промо-акции \"Задать период доступности\" будет деактивирована и активность промо-акции будет определяться Расписанием, которое Вы можете задать в интерфейсе этой вкладки. И наоборот: при деактивации этой настройки активность акции будет определяться стандартной настройкой \"Задать период доступности\""
+
+msgctxt "Languages::ab__dotd.schedule.table_header"
+msgid "Time and Date"
+msgstr "Время и Дата"
+
+msgctxt "Languages::sort_order"
+msgid "Order"
+msgstr "Порядок"
+
+msgctxt "Languages::ab__dotd.all_promotions_list"
+msgid "All promotions"
+msgstr "Все промо-акции"
+
+msgctxt "Languages::ab__dotd.view_promotion"
+msgid "More"
+msgstr "Подробнее"
+
+msgctxt "Languages::ab__dotd.block.priority"
+msgid "Priority"
+msgstr "Приоритет"
+
+msgctxt "Languages::block_ab__multi_deal_of_the_day"
+msgid "AB: Multi Deal of the day"
+msgstr "AB: Мульти Товар дня"
+
+msgctxt "Languages::block_ab__multi_deal_of_the_day_description"
+msgid "Display anounce of one of chosen promotions, considering to their priorities"
+msgstr "Отображает анонс одной из выбранных промо-акций, согласно приоритету"
+
+msgctxt "Languages::ab__dotd_enable_countdown_timer"
+msgid "Display promotion countdown"
+msgstr "Отображать счётчик промо-акции"
+
+msgctxt "Languages::ab__dotd.category_filter_icon"
+msgid "Icon for block of filters"
+msgstr "Иконка для блока фильтров"
+
+msgctxt "Languages::ab__dotd.all_products"
+msgid "All categories"
+msgstr "Все категории"
+
+msgctxt "Languages::ab__dotd.more_products_from_category"
+msgid "More products from the category [category]"
+msgstr "Больше товаров из категории [category]"
+
+msgctxt "Languages::ab__dotd.main_category_filter_icon"
+msgid "Image for item \"All categories\" of the filter by categories"
+msgstr "Изображение для пункта \"Все категории\" фильтра по категориям"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day_group"
+msgid "AB: Extended promotions"
+msgstr "AB: Расширенные промо-акции"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day_group_description"
+msgid "There are settings below that influence elements that are added by the add-on \"AB: Extended promotions\""
+msgstr "Ниже представлены настройки, которые воздействуют на элементы добавляемые модулем \"AB: Расширенные промо-акции\""
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.block_background"
+msgid "Block background"
+msgstr "Фон блока"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.block_fonts_color"
+msgid "Text color in the block"
+msgstr "Цвет текста в блоке"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.block_fonts_color.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Окрашивает заголовок промо-акции в цвет темы \"Discount Label\""
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bordered_block"
+msgid "Add border for block"
+msgstr "Добавить границу для блока"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bordered_block.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Настройка работает только, если фон блока совпадает с фоном сайта"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.shadow_block"
+msgid "Add shadow for block"
+msgstr "Добавить тень для блока"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.rounded_corners_blocks"
+msgid "Round corners at elements of block"
+msgstr "Скруглить углы у элементов блока"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title"
+msgid "Highlight the title of the promotion"
+msgstr "Выделить заголовок промо-акции цветом"
+
+msgctxt "Languages::abt__ut2.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title.tooltip"
+msgid "Colors the title of the promotion with the theme color \"Discount Label\""
+msgstr "Заголовок промо-акции будет окрашен в цвет, который используется темой для \"Лейбл со скидкой\""
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day_group"
+msgid "AB: Extended promotions"
+msgstr "AB: Расширенные промо-акции"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day_group_description"
+msgid "There are settings below that influence elements that are added by the add-on \"AB: Extended promotions\""
+msgstr "Ниже представлены настройки, которые воздействуют на элементы добавляемые модулем \"AB: Расширенные промо-акции\""
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.block_background"
+msgid "Block background"
+msgstr "Фон блока"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.block_fonts_color"
+msgid "Text color in the block"
+msgstr "Цвет текста в блоке"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.block_fonts_color.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Окрашивает заголовок промо-акции в цвет темы \"Discount Label\""
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bordered_block"
+msgid "Add border for block"
+msgstr "Добавить границу для блока"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bordered_block.tooltip"
+msgid "Setting works only if block background matches with website background"
+msgstr "Настройка работает только, если фон блока совпадает с фоном сайта"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.shadow_block"
+msgid "Add shadow for block"
+msgstr "Добавить тень для блока"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.rounded_corners_blocks"
+msgid "Round corners at elements of block"
+msgstr "Скруглить углы у элементов блока"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title"
+msgid "Highlight the title of the promotion"
+msgstr "Выделить заголовок промо-акции цветом"
+
+msgctxt "Languages::abt__yt.less_settings.addons.ab__deal_of_the_day.bright_color_promotion_title.tooltip"
+msgid "Colors the title of the promotion with the theme color \"Discount Label\""
+msgstr "Заголовок промо-акции будет окрашен в цвет, который используется темой для \"Лейбл со скидкой\""
+
+msgctxt "Languages::ab__dotd.help"
+msgid "Help"
+msgstr "Справка"
+
+msgctxt "Languages::ab__dotd_help.docs"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__deal_of_the_day.doc'>documentation</a>"
+msgstr "Ознакомиться с <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__deal_of_the_day.doc'>документацией</a>"
+
+msgctxt "Languages::privilege_groups.ab__deal_of_the_day"
+msgid "AB: Extended promotions"
+msgstr "AB: Расширенные промо-акции"
+
+msgctxt "Languages::privileges.ab__dotd_manage_seodata"
+msgid "Manage promotions SEO data"
+msgstr "Управление SEO-данными промо-акций"
+
+msgctxt "Languages::privileges.ab__dotd_view_seodata"
+msgid "View promotions SEO data"
+msgstr "Просмотр SEO-данных промо-акций"
+
+msgctxt "Languages::ab__dotd.autoinstall.no_demodata"
+msgid "File with demo data is missing"
+msgstr "Файл с демо-данными отсутствует"
+
+msgctxt "Languages::ab__dotd.autoinstall.promotions_not_created"
+msgid "Failed to create demo promotions"
+msgstr "Не удалось создать демо промо-акции"
+
+msgctxt "Languages::ab__dotd.autoinstall.promotions_created"
+msgid "Demo promotions [promotions] are created successfully"
+msgstr "Демо промо-акции [promotions] успешно созданы"
+
+msgctxt "Languages::ab__dotd.demodata"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__dotd.demodata_description"
+msgid "Installing demo data page"
+msgstr "Страница загрузки демо-данных"
+
+msgctxt "Languages::ab__dotd.demodata.table.description"
+msgid "Demo data"
+msgstr "Демо-данные"
+
+msgctxt "Languages::ab__dotd.demodata.table.action"
+msgid "Action"
+msgstr "Действие"
+
+msgctxt "Languages::ab__dotd.demodata.table.add_promotions"
+msgid "Add promotions"
+msgstr "Добавление промо-акций"
+
+msgctxt "Languages::ab__dotd.demodata.place_into_blocks"
+msgid "Place into blocks"
+msgstr "Расставить по блокам"
+
+msgctxt "Languages::ab__dotd.layouts"
+msgid "Layouts"
+msgstr "Макеты"
+
+msgctxt "Languages::ab__dotd.layouts.layout_was_reset"
+msgid "Layout was reset"
+msgstr "Макет был сброшен"
+
+msgctxt "Languages::ab__dotd.layouts.choose_layout_to_reset"
+msgid "Choose layout to reset"
+msgstr "Выберите макет для сброса"
+
+msgctxt "Languages::ab__dotd.layouts.table.dispatch_description"
+msgid "Type of the layout page"
+msgstr "Тип страницы макета"
+
+msgctxt "Languages::ab__dotd.layouts.table.dispatch"
+msgid "Dispatch"
+msgstr "Dispatch"
+
+msgctxt "Languages::ab__dotd.layouts.table.layouts"
+msgid "Layouts"
+msgstr "Макеты"
+
+msgctxt "Languages::ab__dotd.layouts.table.action"
+msgid "Action"
+msgstr "Действие"
+
+msgctxt "Languages::ab__dotd.layouts.table.get_file"
+msgid "Get file"
+msgstr "Скачать файл"
+
+msgctxt "Languages::ab__dotd.layouts.layout_is_not_found"
+msgid "Layout is not found"
+msgstr "Макет не найден"
+
+msgctxt "Languages::ab__dotd.layouts.header"
+msgid "All layout pages, added by the add-on, are displayed on this page. You can reset pages in any layout to the default state. Also you can download xml-file of a layout page and import it manually."
+msgstr "На этой странице отображаются все страницы макетов, добавляемые модулем. Вы можете сбросить страницу в рамках любого макета до состояния по умолчанию для текущей версии модуля. Также Вы можете скачать xml-файл страницы макета и импортировать его вручную."
+
+msgctxt "Languages::ab__emd.tabs.promotions.view"
+msgid "Promotions"
+msgstr "Промо-акции"
+
+msgctxt "Languages::ab__emd.setting.header.promotions.view"
+msgid "Promotions general pattern"
+msgstr "Основной шаблон промо-акций"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action"
+msgid "Redefine categories meta tags"
+msgstr "Переопределить мета-теги"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.page_title"
+msgid "Page tag <code>title</code> pattern"
+msgstr "Шаблон тега <code>title</code>"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.meta_description"
+msgid "Meta tag <code>description</code> pattern"
+msgstr "Шаблон мета-тега <code>description</code>"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.meta_keywords"
+msgid "Meta tag <code>keywords</code> pattern"
+msgstr "Шаблон мета-тега <code>keywords</code>"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action.do_not_override"
+msgid "Do not redefine"
+msgstr "Не переопределять"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action.override_empty"
+msgid "Redefine empty"
+msgstr "Переопределять пустые"
+
+msgctxt "Languages::ab__emd.setting.promotions.view.action.override_all"
+msgid "Redefine all"
+msgstr "Переопределять все"
+
+msgctxt "Languages::ab__dotd.placeholders.promotion"
+msgid "<b>[promotion]</b> — promotion name (as is)<br> <b>[promotion_lower]</b> — promotion name (lowercase)<br> <b>[Promotion]</b> — promotion name (the first letter is uppercase others are lowercase)<br> <b>[PROMOTION]</b> — promotion name (uppercase)"
+msgstr "<b>[promotion]</b> — название промо-акции (как есть)<br>"
+"<b>[promotion_lower]</b> — название промо-акции (строчные буквы)<br>"
+"<b>[Promotion]</b> — название промо-акции (первая заглавная, остальные строчные)<br>"
+"<b>[PROMOTION]</b> — название промо-акции (заглавные буквы)"
+
+msgctxt "Languages::ab__dotd.placeholders.h1"
+msgid "<b>[h1_tag]</b> — h1 value (as is)<br> <b>[h1_tag_lower]</b> — h1 value (lowercase)<br> <b>[H1_tag]</b> — h1 value (the first letter is uppercase others are lowercase)<br> <b>[H1_TAG]</b> — h1 value (uppercase)"
+msgstr "<b>[h1_tag]</b> — значение h1 (как есть)<br>"
+"<b>[h1_tag_lower]</b> — значение h1 (строчные буквы)<br>"
+"<b>[H1_tag]</b> — значение h1 (первая заглавная, остальные строчные)<br>"
+"<b>[H1_TAG]</b> — значение h1 (заглавные буквы)"
+
+msgctxt "Languages::ab__dotd.placeholders.short_description"
+msgid "<b>[short_description]</b> — promotion short description"
+msgstr "<b>[short_description]</b> — краткое описание промо-акции"
+
+msgctxt "Languages::ab__dotd.placeholders.detailed_description"
+msgid "<b>[detailed_description]</b> — promotion detailed description"
+msgstr "<b>[detailed_description]</b> — детальное описание промо-акции"
+
+#. Alexbranding. Do not modify this file manually!

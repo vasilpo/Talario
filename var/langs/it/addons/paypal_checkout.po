@@ -1,0 +1,234 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /release-4.18.3/addons/paypal_checkout.po\n"
+"X-Crowdin-File-ID: 9378\n"
+"PO-Revision-Date: 2024-10-02 13:29\n"
+
+msgctxt "Addons::name::paypal_checkout"
+msgid "PayPal Complete Payments"
+msgstr "PayPal completa i pagamenti"
+
+msgctxt "Addons::description::paypal_checkout"
+msgid "A PayPal solution for online stores. Lets you accept payments through PayPal and other means."
+msgstr "Una soluzione PayPal per i negozi online. Ti consente di accettare pagamenti tramite PayPal e altri mezzi."
+
+msgctxt "SettingsSections::paypal_checkout::general"
+msgid "General"
+msgstr "Generale"
+
+msgctxt "Languages::paypal_checkout.paypal_checkout"
+msgid "PayPal Complete Payments"
+msgstr "PayPal completa i pagamenti"
+
+msgctxt "Languages::paypal_checkout.paypal"
+msgid "PayPal"
+msgstr "PayPal"
+
+msgctxt "Languages::paypal_checkout.client_id"
+msgid "App Client ID"
+msgstr "ID client dell'app"
+
+msgctxt "Languages::paypal_checkout.secret"
+msgid "App Secret"
+msgstr "Segreto dell'app"
+
+msgctxt "Languages::paypal_checkout.order_id"
+msgid "Order ID in PayPal"
+msgstr "ID ordine su PayPal"
+
+msgctxt "Languages::paypal_checkout.capture_id"
+msgid "Capture ID in PayPal"
+msgstr "Acquisisci ID in PayPal"
+
+msgctxt "Languages::paypal_checkout.webhook_help_message"
+msgid "Specify the following URL when configuring a webhook for your REST application:"
+msgstr "Specificare il seguente URL durante la configurazione di un webhook per l'applicazione REST:"
+
+msgctxt "Languages::paypal_checkout.webhook"
+msgid "PayPal Complete Payments webhook: [payload]"
+msgstr "Webhook pagamenti completi PayPal: [payload]"
+
+msgctxt "Languages::paypal_checkout.settings.account"
+msgid "Account settings"
+msgstr "Impostazioni dell'account"
+
+msgctxt "Languages::paypal_checkout.settings.enable_funding"
+msgid "Funding sources to show on checkout"
+msgstr "Fonti di finanziamento da mostrare al momento del pagamento"
+
+msgctxt "Languages::paypal_checkout.funding.card"
+msgid "Credit or debit cards"
+msgstr "Carte di credito o di debito"
+
+msgctxt "Languages::paypal_checkout.funding.credit"
+msgid "PayPal Credit"
+msgstr "Credito PayPal"
+
+msgctxt "Languages::paypal_checkout.funding.venmo"
+msgid "Venmo"
+msgstr "Venmo"
+
+msgctxt "Languages::paypal_checkout.funding.sepa"
+msgid "SEPA-Lastschrift"
+msgstr "SEPA-Lastschrift"
+
+msgctxt "Languages::paypal_checkout.funding.bancontact"
+msgid "Bancontact"
+msgstr "Bancontatto"
+
+msgctxt "Languages::paypal_checkout.funding.eps"
+msgid "eps"
+msgstr "eps"
+
+msgctxt "Languages::paypal_checkout.funding.giropay"
+msgid "giropay"
+msgstr "giropay"
+
+msgctxt "Languages::paypal_checkout.funding.ideal"
+msgid "iDEAL"
+msgstr "ideale"
+
+msgctxt "Languages::paypal_checkout.funding.mybank"
+msgid "MyBank"
+msgstr "La mia banca"
+
+msgctxt "Languages::paypal_checkout.funding.p24"
+msgid "Przelewy24"
+msgstr "Przelewy24"
+
+msgctxt "Languages::paypal_checkout.funding.sofort"
+msgid "Sofort"
+msgstr "Sofort"
+
+msgctxt "Languages::paypal_checkout.settings.enable_cards"
+msgid "Cards to show on checkout"
+msgstr "Carte da mostrare alla cassa"
+
+msgctxt "Languages::paypal_checkout.card.visa"
+msgid "Visa"
+msgstr "Visa"
+
+msgctxt "Languages::paypal_checkout.card.mastercard"
+msgid "Mastercard"
+msgstr "MasterCard"
+
+msgctxt "Languages::paypal_checkout.card.amex"
+msgid "American Express"
+msgstr "American Express"
+
+msgctxt "Languages::paypal_checkout.card.discover"
+msgid "Discover"
+msgstr "Scoprire"
+
+msgctxt "Languages::paypal_checkout.card.jcb"
+msgid "JCB"
+msgstr "JCB"
+
+msgctxt "Languages::paypal_checkout.card.elo"
+msgid "Elo"
+msgstr "Elo"
+
+msgctxt "Languages::paypal_checkout.card.hiper"
+msgid "Hiper"
+msgstr "Hiper"
+
+msgctxt "Languages::paypal_checkout.debug_id"
+msgid "PayPal Debug ID"
+msgstr "ID di debug PayPal"
+
+msgctxt "Languages::paypal_checkout.paypal_cookie_title"
+msgid "PayPal"
+msgstr "PayPal"
+
+msgctxt "Languages::paypal_checkout.paypal_cookie_description"
+msgid "PayPal is a payment provider. It allows us to accept payments, if you choose a payment method powered by PayPal. Here is <a href=\"https://www.paypal.com/us/webapps/mpp/ua/privacy-full\" target=\"_blank\">PayPal privacy statement</a>."
+msgstr "PayPal è un fornitore di servizi di pagamento. Ci consente di accettare pagamenti, se scegli un metodo di pagamento alimentato da PayPal. Ecco <a href=\"https://www.paypal.com/us/webapps/mpp/ua/privacy-full\" target=\"_blank\">Informativa sulla privacy di PayPal</a>."
+
+msgctxt "Languages::paypal_checkout.funding.paylater"
+msgid "PayPal Pay Later"
+msgstr "PayPal Paga più tardi"
+
+msgctxt "Languages::paypal_checkout.funding.mercadopago"
+msgid "Mercado Pago"
+msgstr "Mercato Pago"
+
+msgctxt "Languages::paypal_checkout.funding.blik"
+msgid "BLIK"
+msgstr "BLIK"
+
+msgctxt "Languages::paypal_checkout.settings.style"
+msgid "Button appearance"
+msgstr "Aspetto del pulsante"
+
+msgctxt "Languages::paypal_checkout.style.shape"
+msgid "Shape"
+msgstr "Forma"
+
+msgctxt "Languages::paypal_checkout.shape.pill"
+msgid "Pill"
+msgstr "Pillola"
+
+msgctxt "Languages::paypal_checkout.shape.rect"
+msgid "Rectangular"
+msgstr "Rettangolare"
+
+msgctxt "Languages::paypal_checkout.style.color"
+msgid "Color"
+msgstr "Colore"
+
+msgctxt "Languages::paypal_checkout.color.gold"
+msgid "Gold"
+msgstr "Oro"
+
+msgctxt "Languages::paypal_checkout.color.blue"
+msgid "Blue"
+msgstr "Blu"
+
+msgctxt "Languages::paypal_checkout.color.silver"
+msgid "Silver"
+msgstr "Argento"
+
+msgctxt "Languages::paypal_checkout.color.black"
+msgid "Black"
+msgstr "Nero"
+
+msgctxt "Languages::paypal_checkout.style.height"
+msgid "Height"
+msgstr "Altezza"
+
+msgctxt "Languages::paypal_checkout.send_shipment_info"
+msgid "Send shipment info to PayPal"
+msgstr "Invia informazioni sulla spedizione a PayPal"
+
+msgctxt "Languages::paypal_checkout.shipment_info_was_not_sent.tracking_number_empty"
+msgid "Shipping info was not sent to PayPal because the tracking number is empty"
+msgstr "Le informazioni sulla spedizione non sono state inviate a PayPal perché il numero di tracciamento è vuoto"
+
+msgctxt "Languages::paypal_checkout.shipment_info_was_not_sent.carrier_empty"
+msgid "Shipping info was not sent to PayPal because the carrier is empty"
+msgstr "Le informazioni sulla spedizione non sono state inviate a PayPal perché il corriere è vuoto"
+
+msgctxt "Languages::paypal_checkout.shipment_info_was_not_sent.no_capture_id"
+msgid "Shipping info was not sent to PayPal because the capture id is missing, try again later"
+msgstr "Le informazioni sulla spedizione non sono state inviate a PayPal perché manca l'ID di acquisizione, riprova più tardi"
+
+msgctxt "Languages::paypal_checkout.shipment_info_was_not_sent.no_order_id"
+msgid "Shipping info was not sent to PayPal because the PayPal order id is missing, try again later"
+msgstr "Le informazioni sulla spedizione non sono state inviate a PayPal perché manca l'ID ordine PayPal, riprova più tardi"
+
+msgctxt "Languages::paypal_checkout.send_shipping_address"
+msgid "Send shipping address to PayPal"
+msgstr "Invia l'indirizzo di spedizione a PayPal"
+
+msgctxt "Languages::paypal_checkout.send_shipping_address_tooltip"
+msgid "Useful for fraud protection or shipping labels. Can cause issues with payment if the address provided by the customer isn't valid."
+msgstr "Utile per la protezione dalle frodi o per le etichette di spedizione. Può causare problemi con il pagamento se l'indirizzo fornito dal cliente non è valido."
+

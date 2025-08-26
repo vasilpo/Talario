@@ -1,0 +1,38 @@
+.select2-container--default {
+    .select2-selection--single {
+        background-color: var(--cs-select2-selection-bg-top-color);
+        border: 1px solid var(--cs-select2-border-color);
+        border-radius: var(--cs-select2-border-radius);
+
+        .select2-selection__rendered {
+            color: var(--cs-select2-text-color);
+        }
+
+        .select2-selection__placeholder {
+            color: var(--cs-select2-results-choice-fg-unselectable-color);
+        }
+
+        .select2-selection__arrow {
+
+            b {
+                border-color: var(--cs-select2-text-color) transparent transparent transparent;
+            }
+        }
+    }
+
+    &.select2-container--disabled {
+        .select2-selection--single {
+            background-color: var(--cs-select2-input-disabled-background);
+        }
+    }
+
+    &.select2-container--open {
+        .select2-selection--single {
+            .select2-selection__arrow {
+                b {
+                    border-color: transparent transparent var(--cs-select2-text-color) transparent;
+                }
+            }
+        }
+    }
+}

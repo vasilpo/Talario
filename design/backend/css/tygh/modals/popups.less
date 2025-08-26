@@ -1,0 +1,315 @@
+@import "../../config.less";
+
+// width: 48px;
+:root {
+    --cs-ui-dialog-titlebar-close-width: ~"calc(var(--cs-icon-size) + 2 * (4px + 1px + 5px + 4px))";
+    --cs-ui-dialog-titlebar-close-height: ~"calc(var(--cs-icon-size) + 2 * (4px + 1px + 1px))";
+}
+
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    html.dialog-is-open {
+        body {
+            overflow: hidden;
+        }
+    }
+}
+
+// Popup dialog styles
+.object-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: 13px 13px 40px;
+    .controls .shift-input {
+        display: block;
+    }
+    .notification-content {
+        top: 11px;
+        right: 15px;
+        left: 15px;
+        min-width: 420px;
+        position: absolute;
+        z-index: 1510;
+    }
+    .buttons-container-picker {
+        border-radius: 0;
+        box-shadow: none;
+        .modal-footer();
+        background-color: transparent;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        margin-bottom: 0;
+        padding: 20px 14px;
+        text-align: right; // right align buttons
+        border-top: 1px solid var(--cs-hr-border); // Properly space out buttons
+        .btn+.btn {
+            margin-bottom: 0;
+            margin-left: 5px; // account for input[type="submit"] which gets the bottom margin like all other inputs
+        } // but override that for button groups
+        .btn-group .btn+.btn {
+            margin-left: -1px;
+        }
+        .form-edit .input-large {
+            width: 50px !important;
+        }
+        .input-append,
+        .input-prepend {
+            margin-bottom: 0;
+        }
+    }
+    .form-edit .input-large {
+        width: 684px !important;
+    }
+    .dropdown-toggle {
+        margin-top: 0px;
+    }
+}
+
+.ui-dialog {
+    padding: 0;
+    max-width: 90%;
+    position: fixed !important;
+    .ui-dialog-content {
+        overflow: hidden;
+        padding: 0;
+        .control-group:hover {
+            background: transparent;
+        }
+    }
+    .ui-dialog-title {
+        padding-right: ~"calc(var(--cs-ui-dialog-titlebar-close-width) + 9px - 15px)"; // padding-right: 42px;
+        width: 100%;
+        white-space: nowrap;
+    }
+    .btn-link {
+        padding-top: 5px;
+    }
+    .upload-file-local input[type="file"] {
+        z-index: 2000;
+    }
+    .setting-wide .input-large {
+        width: 520px !important;
+    }
+
+    // Elfinder popup fix
+    &.ui-front {
+        z-index: 1050;
+    }
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    border-color: var(--cs-content-background);
+    border-bottom: 1px solid var(--cs-dropdown-border);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.ui-dialog .ui-dialog-title {
+    color: var(--cs-text-color);
+}
+
+.ui-widget {
+    input.btn {
+        font-family: var(--cs-sans-font-family);
+    }
+}
+
+.ui-widget {
+    font-size: var(--cs-base-font-size);
+}
+
+.ui-widget-content a {
+    color: var(--cs-link-color);
+}
+
+.ui-widget-content a.btn {
+    color: var(--cs-text-color);
+}
+
+.ui-widget-content a.btn-primary {
+    color: var(--cs-text-inverse-color);
+}
+
+.ui-widget-content a.link--monochrome,
+.ui-widget-content a.link--monochrome:hover,
+.ui-widget-content a.link--monochrome:focus,
+.ui-widget-content a.link--monochrome:active,
+.ui-widget-content a.link--monochrome.active {
+    color: var(--cs-text-color);
+}
+
+.ui-widget .btn-small {
+    font-size: var(--cs-font-size-small);
+}
+
+.ui-widget-overlay {
+    position: fixed;
+    z-index: 1001;
+    opacity: 0.6;
+    filter: Alpha(Opacity=60);
+}
+
+.dialog-auto-sized {
+    .object-container {
+        padding-bottom: 60px;
+    }
+}
+
+// Popup close button
+.ui-dialog .ui-dialog-titlebar-close,
+.popup-close.popup-close.popup-close {
+    right: 9px;
+    width: var(--cs-ui-dialog-titlebar-close-width); // width: 48px;
+    margin-top: -16px;
+    padding: 4px;
+    height: var(--cs-ui-dialog-titlebar-close-height); // height: 32px;
+    line-height: var(--cs-icon-size);
+    opacity: 0.5;
+    border: 1px solid transparent;
+}
+
+.ui-dialog .ui-dialog-titlebar-close:hover,
+.ui-dialog .ui-dialog-titlebar-close:focus,
+.ui-dialog .ui-dialog-titlebar-close:active,
+.popup-close.popup-close.popup-close:hover,
+.popup-close.popup-close.popup-close:focus,
+.popup-close.popup-close.popup-close:active {
+    padding: 4px;
+    background: var(--cs-btn-background-highlight);
+    border-color: var(--cs-btn-border);
+}
+
+.ui-dialog .ui-dialog-titlebar-close:active,
+.popup-close.popup-close.popup-close:active {
+    box-shadow: inset 0 1px 4px var(--cs-shadow10-color), 0 1px 2px var(--cs-shadow5-color);
+}
+
+.ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick,
+.popup-close.popup-close.popup-close:after {
+    width: var(--cs-icon-size);
+    height: var(--cs-icon-size);
+    margin-top: ~"calc(var(--cs-icon-size) / -2)"; // margin-top: -10px;
+    margin-left: ~"calc(var(--cs-icon-size) / -2)"; // margin-left: -10px;
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='m4.46967 4.46967c.29289-.29289.76777-.29289 1.06066 0l4.46967 4.46967 4.4697-4.46967c.2929-.29289.7677-.29289 1.0606 0s.2929.76777 0 1.06066l-4.4696 4.46967 4.4696 4.4697c.2929.2929.2929.7677 0 1.0606s-.7677.2929-1.0606 0l-4.4697-4.4696-4.46967 4.4696c-.29289.2929-.76777.2929-1.06066 0s-.29289-.7677 0-1.0606l4.46967-4.4697-4.46967-4.46967c-.29289-.29289-.29289-.76777 0-1.06066z'/></svg>"); // remove.svg
+    background-position: left top;
+    transform: scale(1.25);
+}
+
+.cs-dark-theme .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick,
+.cs-dark-theme .popup-close.popup-close.popup-close:after {
+    background-image: url("data:image/svg+xml,<svg fill='%23fff' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='m4.46967 4.46967c.29289-.29289.76777-.29289 1.06066 0l4.46967 4.46967 4.4697-4.46967c.2929-.29289.7677-.29289 1.0606 0s.2929.76777 0 1.06066l-4.4696 4.46967 4.4696 4.4697c.2929.2929.2929.7677 0 1.0606s-.7677.2929-1.0606 0l-4.4697-4.4696-4.46967 4.4696c-.29289.2929-.76777.2929-1.06066 0s-.29289-.7677 0-1.0606l4.46967-4.4697-4.46967-4.46967c-.29289-.29289-.29289-.76777 0-1.06066z'/></svg>"); // remove.svg
+}
+
+.popup-close.popup-close.popup-close {
+    border-radius: var(--cs-base-border-radius);
+    opacity: 0.90;
+    top: 50%;
+}
+
+.popup-close.popup-close.popup-close:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+// var(--cs-tablet-breakpoint)
+@media (max-width: 767px) {
+    // Strictly set popup width on mobiles
+    .ui-dialog {
+        width: 100vw !important;
+        
+    }
+
+    [role="dialog"].ui-dialog.ui-widget {
+        height: 100% !important;
+    }
+
+    .hidden.ui-dialog-content.ui-widget-content {
+        min-height: unset !important;
+        max-height: unset !important;
+
+        position: absolute;
+        bottom: 0;
+        top: 51px;
+        left: 0;
+        right: 0;
+    }
+
+    .ui-dialog-content.ui-widget-content {
+        // var(--cs-tablet-breakpoint)
+        @media (max-width: 767px) {
+            height: auto !important;
+        }
+    }
+
+    [aria-describedby="content_select_fields_to_edit"].ui-dialog {
+        width: 100vw !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 100vh !important;
+    }
+
+    // Popup bottom block with buttons
+    .object-container {
+        .buttons-container-picker,
+        .buttons-container-picker.modal-footer {
+            padding: 5px;
+
+            // Toggle 'save/close' buttons centered on mobiles
+            text-align: center;
+
+            .pull-left,
+            .pull-right {
+                display: block;
+                width: 100%;
+
+                float: auto;
+                float: unset;
+
+                text-align: center;
+
+                margin: 0;
+            }
+        }
+    }
+
+    // Reset padding in advanced product search
+    .adv-search .modal-footer {
+        span {
+            padding: 0px;
+        }
+
+        > .pull-left {
+            padding-bottom: 10px;
+        }
+    }
+}
+
+// var(--cs-desktop-breakpoint)
+@media (max-width: 1023px) {
+    .buttons-container.buttons-container-picker {
+        background-color: var(--cs-content-background);
+        z-index: 1000;
+    }
+
+    .object-container {
+        padding-bottom: 0px;
+
+        &:after {
+            content: "";
+            display: block;
+            padding-bottom: 130px;
+        }
+    }
+
+    // do not show tooltips while popup is open
+    .dialog-is-open .tooltip {
+        display: none !important;
+        visibility: none !important;
+        top: -9999px !important;
+        left: -9999px !important;
+    }
+}

@@ -1,0 +1,75 @@
+// design/backend/templates/views/index/components/custom_blocks_section/custom_blocks_section.tpl
+
+.custom-blocks-section {
+    width: 100%;
+}
+
+.custom-blocks-section--fixed {
+    max-width: var(--dashboard-full-column-width);
+}
+
+.custom-blocks-section:empty {
+    display: none;
+}
+
+.custom-blocks-section__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.custom-blocks-section__title {
+    margin: 0;
+}
+
+.custom-blocks-section__column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-basis: 0;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.custom-blocks-section__card {
+    border: 1px solid var(--cs-dashboard-border-color);
+    border-radius: var(--cs-base-border-radius);
+    padding: 16px;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+.custom-blocks-section__create {
+    display: flex;
+    padding: 8px 16px;
+    width: 100%;
+    border: 1px solid var(--cs-dashboard-border-color);
+    border-radius: var(--cs-base-border-radius);
+    word-break: break-word;
+}
+
+.custom-blocks-section__create:hover,
+.custom-blocks-section__create:focus,
+.custom-blocks-section__create:active {
+    text-decoration: none;
+}
+
+.custom-blocks-section__create:hover {
+    color: var(--cs-btn-primary-background);
+    background-color: var(--cs-btn-background-highlight);
+}
+
+.custom-blocks-section__create:focus {
+    box-shadow: inset 0 1px 4px var(--cs-shadow10-color), 0 1px 2px var(--cs-shadow5-color);
+}
+
+.custom-blocks-section__create--center {
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .custom-blocks-section__create--fixed {
+        padding-left: 28px;
+        padding-right: 28px;
+    }
+}

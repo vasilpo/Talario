@@ -1,0 +1,113 @@
+// Addons
+.addons-list .cm-row-status-n .row-status,
+.addons-list .cm-row-status-n .row-status a,
+.addons-list .cm-row-status-n small,
+.addons-list .cm-row-status-n >span,
+.addons-list .cm-row-status-n th {
+    color: var(--cs-text-muted-color);
+}
+.addons-list .cm-row-status-n .cs-icon,
+.addons-list .cm-row-status-n img {
+    opacity: 0.4;
+}
+
+.addon-info-msg {
+    form {
+        margin: 10px 0 0;
+    }
+}
+
+.install-addon {
+    width: 600px;
+    .install-addon-wrapper {
+        text-align: center;
+        span.install-addon-banner {
+            height: 141px;
+            width: 151px;
+            color: var(--cs-input-border);
+            margin-bottom: 20px;
+        }
+        img.install-addon-banner {
+            padding: 20px 0 34px 0;
+        }
+        .install-addon-text {
+            padding-bottom: 20px;
+        }
+        .fileuploader {
+            text-align: center;
+            padding-bottom: 10px;
+        }
+    }
+}
+
+.cs-dark-theme .install-addon .install-addon-wrapper img.install-addon-banner {
+    filter: invert(1);
+}
+
+.admin-content-wrap .sidebar .sidebar-row.marketplace {
+    background: var(--cs-well-background);
+}
+
+.marketplace-link {
+    margin-top: 20px;
+}
+.ui-dialog .marketplace {
+    margin: 20px -13px 20px -13px !important;
+    position: relative;
+    .marketplace-link {
+        margin: 6px;
+    }
+}
+.sidebar-note-item {
+    margin-bottom: 10px;
+    span {
+        display: block;
+        color: var(--cs-text-muted-color);;
+        margin-left: 10px;
+    }
+}
+
+.tablesorter-header-inner::after {
+    display: inline-block;
+    width: var(--cs-icon-size);
+    height: var(--cs-icon-size);
+    position: absolute;
+    right: ~"calc(var(--cs-icon-size) * -1)";
+    bottom: 0;
+    opacity: 0.3;
+
+    .tablesorter-headerAsc & {
+        content: url('../templates/icons/asc.svg');
+    }
+
+    .tablesorter-headerDesc & {
+        content: url('../templates/icons/desc.svg');
+    }
+}
+
+.cs-dark-theme .tablesorter-header-inner::after {
+    filter: invert(1);
+}
+
+.tablesorter-header[data-ca-sortable-column="true"] {
+    cursor: pointer;
+
+    .tablesorter-header-inner {
+        position: relative;
+        display: inline-block;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.addons-list__view-more-addons {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.addons-market {
+    margin-bottom: 0;
+}

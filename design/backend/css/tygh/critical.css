@@ -1,0 +1,10 @@
+body {
+    font-size: 13px;
+}
+
+input, textarea, button {
+    --cs-critical-css-border-color: #dde4ef;
+
+    border-width: 1px;
+    border-color: var(--cs-critical-css-border-color);
+}

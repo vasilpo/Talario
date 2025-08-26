@@ -1,0 +1,31 @@
+.select2-container--default {
+
+    .select2-search--dropdown {
+        .select2-search__field {
+            border: 1px solid var(--cs-select2-focus-border-color);
+        }
+    }
+
+    .select2-results > .select2-results__options {
+        max-height: var(--cs-select2-results-max-height);
+    }
+
+    .select2-results__option {
+        &[aria-selected=true] {
+            background-color: var(--cs-select2-selection-color); // Added for Select 2 ver. 4.0.13
+        }
+    }
+
+    .select2-results__option--disabled {
+        color: var(--cs-select2-results-choice-fg-unselectable-color);
+    }
+
+    .select2-results__option--selected {
+        background-color: var(--cs-select2-input-disabled-background); // Not used
+    }
+
+    .select2-results__option--highlighted.select2-results__option--selectable {
+        background-color: var(--cs-select2-results-choice-bg-hover-color);
+        color: var(--cs-select2-results-choice-fg-hover-color);
+    }
+}

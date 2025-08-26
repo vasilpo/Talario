@@ -1,0 +1,47 @@
+.widget-copy {
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--cs-form-actions-background);
+    border-radius: 3px;
+
+    &--compact {
+        margin-bottom: 0;
+    }
+
+    &__body {
+        padding: 0.8rem 1rem;
+    }
+    &__btn {
+        display: block;
+        z-index: 10;
+        position: relative;
+        top: 0.2rem;
+        right: 0.2rem;
+        float: right;
+        padding: .25rem .5rem;
+        border: 0;
+        border-radius: .25rem;
+        color: var(--cs-text-muted-color);
+        font-weight: bold;
+        font-size: 0.75rem;
+        cursor: pointer;
+        background-color: transparent;
+
+        &:hover {
+            color: var(--cs-text-inverse-color);
+            background-color: var(--cs-btn-primary-background);
+        }
+    }
+    .ui-widget &__btn {
+        font-size: 0.75rem;
+    }
+    &__pre {
+        margin: 0;
+        padding: 1.5rem 1rem;
+        border: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    &__code-text {
+        font-size: 0.875rem;
+    }
+}

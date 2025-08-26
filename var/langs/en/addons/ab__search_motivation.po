@@ -1,0 +1,159 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::ab__search_motivation"
+msgid "AB: Search motivation"
+msgstr "AB: Search motivation"
+
+msgctxt "Addons::description::ab__search_motivation"
+msgid "Adds motivation placeholder in search field"
+msgstr "Adds motivation placeholder in search field"
+
+msgctxt "Languages::ab__search_motivation"
+msgid "AB: Search motivation"
+msgstr "AB: Search motivation"
+
+msgctxt "SettingsOptions::ab__search_motivation::show_on_homepage"
+msgid "Display on the homepage"
+msgstr "Display on the homepage"
+
+msgctxt "SettingsOptions::ab__search_motivation::show_on_category_page"
+msgid "Display on the categories page"
+msgstr "Display on the categories page"
+
+msgctxt "SettingsOptions::ab__search_motivation::show_on_product_page"
+msgid "Display on the product page"
+msgstr "Display on the product page"
+
+msgctxt "SettingsOptions::ab__search_motivation::show_on_cart_page"
+msgid "Display on the cart page"
+msgstr "Display on the cart page"
+
+msgctxt "SettingsOptions::ab__search_motivation::show_on_checkout_page"
+msgid "Display on the checkout page"
+msgstr "Display on the checkout page"
+
+msgctxt "SettingsOptions::ab__search_motivation::shuffle"
+msgid "Accidental order"
+msgstr "Accidental order"
+
+msgctxt "SettingsOptions::ab__search_motivation::add_default"
+msgid "Add default expressions"
+msgstr "Add default expressions"
+
+msgctxt "SettingsTooltips::ab__search_motivation::add_default"
+msgid "Allows to add default expressions to the pages where search expressions have already been assigned"
+msgstr "Allows to add default expressions to the pages where search expressions have already been assigned"
+
+msgctxt "SettingsOptions::ab__search_motivation::delay"
+msgid "Delay script execution for n seconds"
+msgstr "Delay script execution for n seconds"
+
+msgctxt "SettingsTooltips::ab__search_motivation::delay"
+msgid "The setting affects the loading speed of your page. You can delay the execution of the script so as not to interfere with the execution of more important tasks"
+msgstr "The setting affects the loading speed of your page. You can delay the execution of the script so as not to interfere with the execution of more important tasks"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::0"
+msgid "0"
+msgstr "0"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::1"
+msgid "1"
+msgstr "1"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::2"
+msgid "2"
+msgstr "2"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::3"
+msgid "3"
+msgstr "3"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::4"
+msgid "4"
+msgstr "4"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::5"
+msgid "5"
+msgstr "5"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::6"
+msgid "6"
+msgstr "6"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::7"
+msgid "7"
+msgstr "7"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::8"
+msgid "8"
+msgstr "8"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::9"
+msgid "9"
+msgstr "9"
+
+msgctxt "SettingsVariants::ab__search_motivation::delay::10"
+msgid "10"
+msgstr "10"
+
+msgctxt "Languages::ab__search_motivation.search_phrases"
+msgid "Search expressions"
+msgstr "Search expressions"
+
+msgctxt "Languages::ttc_ab__search_motivation.search_phrases"
+msgid "Input the list of expressions for this category; each expression should be written from a new line"
+msgstr "Input the list of expressions for this category; each expression should be written from a new line"
+
+msgctxt "Languages::ttc_ab__search_motivation.default_search_phrases"
+msgid "Will be used when fields in categories are empty"
+msgstr "Will be used when fields in categories are empty"
+
+msgctxt "Languages::ab__search_motivation.default_search_phrases"
+msgid "Search expressions by default"
+msgstr "Search expressions by default"
+
+msgctxt "Languages::ab__search_motivation.manage"
+msgid "Search expressions by default"
+msgstr "Search expressions by default"
+
+msgctxt "Languages::ab__sm.settings"
+msgid "General settings"
+msgstr "General settings"
+
+msgctxt "Languages::ab__sm.demo_phrases.added"
+msgid "Added search motivation expressions"
+msgstr "Added search motivation expressions"
+
+msgctxt "Languages::ab__sm.demo_phrases.0"
+msgid "Try our search"
+msgstr "Try our search"
+
+msgctxt "Languages::ab__sm.demo_phrases.1"
+msgid "Enter the product name here"
+msgstr "Enter the product name here"
+
+msgctxt "Languages::ab__sm.demo_phrases.2"
+msgid "For example, iphone X"
+msgstr "For example, iphone X"
+
+msgctxt "Languages::ab__sm.random_char"
+msgid "abcdefghijklmnopqrstuvwxyz"
+msgstr "abcdefghijklmnopqrstuvwxyz"
+
+msgctxt "Languages::ab__search_motivation.help"
+msgid "Help"
+msgstr "Help"
+
+msgctxt "Languages::ab__search_motivation.help.doc"
+msgid "Read <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__search_motivation.doc'>the documentation</a>."
+msgstr "Read <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__search_motivation.doc'>the documentation</a>."
+
+msgctxt "Languages::privilege_groups.ab__search_motivation"
+msgid "AB: Search motivation"
+msgstr "AB: Search motivation"
+
+#. Alexbranding. Do not modify this file manually!

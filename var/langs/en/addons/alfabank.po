@@ -1,0 +1,339 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_GB\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgctxt "Addons::name::alfabank"
+msgid "Alfabank"
+msgstr "Alfabank"
+
+msgctxt "Addons::description::alfabank"
+msgid "Online acquiring and payment processing."
+msgstr "Online acquiring and payment processing."
+
+msgctxt "Languages::addons.alfabank.token"
+msgid "Token"
+msgstr "Token"
+
+msgctxt "Languages::addons.alfabank.login"
+msgid "Login-API"
+msgstr "Login-API"
+
+msgctxt "Languages::addons.alfabank.password"
+msgid "Password"
+msgstr "Password"
+
+msgctxt "Languages::addons.alfabank.two_staging"
+msgid "Two-phase payments"
+msgstr "Two-phase payments"
+
+msgctxt "Languages::addons.alfabank.one-stage"
+msgid "Disable"
+msgstr "Disable"
+
+msgctxt "Languages::addons.alfabank.two-stage"
+msgid "Enable"
+msgstr "Enable"
+
+msgctxt "Languages::addons.alfabank.enable_cacert"
+msgid "Verify SSL sertificate"
+msgstr "Verify SSL sertificate"
+
+msgctxt "Languages::addons.alfabank.confirmed_order_status"
+msgid "Confirmed Order status"
+msgstr "Confirmed Order status"
+
+msgctxt "Languages::addons.alfabank.send_order"
+msgid "Send cart data (including customer info)"
+msgstr "Send cart data (including customer info)"
+
+msgctxt "Languages::addons.alfabank.tax_system"
+msgid "Tax system"
+msgstr "Tax system"
+
+msgctxt "Languages::addons.alfabank.logging"
+msgid "Enable logging"
+msgstr "Enable logging"
+
+msgctxt "Languages::addons.alfabank.wrong_amount"
+msgid "The order total doesn't match the sum that was paid. Please contact the store administration about this your order."
+msgstr "The order total doesn't match the sum that was paid. Please contact the store administration about this your order."
+
+msgctxt "Languages::addons.alfabank.general_settings"
+msgid "General settings"
+msgstr "General settings"
+
+msgctxt "Languages::addons.alfabank.text_ofd_map"
+msgid "Send order to the payment gate"
+msgstr "Send order to the payment gate"
+
+msgctxt "Languages::addons.alfabank.tax_type"
+msgid "Default VAT for product"
+msgstr "Default VAT for product"
+
+msgctxt "Languages::addons.alfabank.ffdversion"
+msgid "FFD version"
+msgstr "FFD version"
+
+msgctxt "Languages::addons.alfabank.payment_method_label"
+msgid "Type of the payment method"
+msgstr "Type of the payment method"
+
+msgctxt "Languages::addons.alfabank.payment_object_label"
+msgid "Type of the payment object"
+msgstr "Type of the payment object"
+
+msgctxt "Languages::addons.alfabank.tax_system_label"
+msgid "Tax system"
+msgstr "Tax system"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_0"
+msgid "General"
+msgstr "General"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_1"
+msgid "Simplified, income"
+msgstr "Simplified, income"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_2"
+msgid "Simplified, income minus expences"
+msgstr "Simplified, income minus expences"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_3"
+msgid "Unified tax on imputed income"
+msgstr "Unified tax on imputed income"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_4"
+msgid "Unified agricultural tax"
+msgstr "Unified agricultural tax"
+
+msgctxt "Languages::addons.alfabank.entry_tax_system_5"
+msgid "Patent taxation system"
+msgstr "Patent taxation system"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_1"
+msgid "Full prepayment"
+msgstr "Full prepayment"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_2"
+msgid "Partial prepayment"
+msgstr "Partial prepayment"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_3"
+msgid "Advance payment"
+msgstr "Advance payment"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_4"
+msgid "Full payment"
+msgstr "Full payment"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_5"
+msgid "Partial payment with further credit"
+msgstr "Partial payment with further credit"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_6"
+msgid "No payment with further credit"
+msgstr "No payment with further credit"
+
+msgctxt "Languages::addons.alfabank.entry_payment_method_7"
+msgid "Payment on credit"
+msgstr "Payment on credit"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_1"
+msgid "Goods"
+msgstr "Goods"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_2"
+msgid "Excised goods"
+msgstr "Excised goods"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_3"
+msgid "Job"
+msgstr "Job"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_4"
+msgid "Service"
+msgstr "Service"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_5"
+msgid "Stake in gambling"
+msgstr "Stake in gambling"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_6"
+msgid "Gambling gain"
+msgstr "Gambling gain"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_7"
+msgid "Lottery ticket"
+msgstr "Lottery ticket"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_8"
+msgid "Lottery gain"
+msgstr "Lottery gain"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_9"
+msgid "Intellectual property provision"
+msgstr "Intellectual property provision"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_10"
+msgid "Payment"
+msgstr "Payment"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_11"
+msgid "Agent's commission"
+msgstr "Agent's commission"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_12"
+msgid "Combined"
+msgstr "Combined"
+
+msgctxt "Languages::addons.alfabank.entry_payment_object_13"
+msgid "Other"
+msgstr "Other"
+
+msgctxt "Languages::addons.alfabank.no_vat"
+msgid "No VAT"
+msgstr "No VAT"
+
+msgctxt "Languages::addons.alfabank.vat_0"
+msgid "VAT 0%"
+msgstr "VAT 0%"
+
+msgctxt "Languages::addons.alfabank.vat_10"
+msgid "VAT 10%"
+msgstr "VAT 10%"
+
+msgctxt "Languages::addons.alfabank.vat_18"
+msgid "VAT 18%"
+msgstr "VAT 18%"
+
+msgctxt "Languages::addons.alfabank.vat_20"
+msgid "VAT 20%"
+msgstr "VAT 20%"
+
+msgctxt "Languages::addons.alfabank.vat_10_110"
+msgid "VAT applicable rate 10/110"
+msgstr "VAT applicable rate 10/110"
+
+msgctxt "Languages::addons.alfabank.vat_18_118"
+msgid "VAT applicable rate 18/118"
+msgstr "VAT applicable rate 18/118"
+
+msgctxt "Languages::addons.alfabank.vat_20_120"
+msgid "VAT applicable rate 20/120"
+msgstr "VAT applicable rate 20/120"
+
+msgctxt "Languages::addons.alfabank.vat_5"
+msgid "VAT 5%"
+msgstr "VAT 5%"
+
+msgctxt "Languages::addons.alfabank.vat_5_105"
+msgid "VAT applicable rate 5/105"
+msgstr "VAT applicable rate 5/105"
+
+msgctxt "Languages::addons.alfabank.vat_7"
+msgid "VAT 7%"
+msgstr "VAT 7%"
+
+msgctxt "Languages::addons.alfabank.vat_7_107"
+msgid "VAT applicable rate 7/107"
+msgstr "VAT applicable rate 7/107"
+
+msgctxt "Languages::addons.alfabank.delivery"
+msgid "Delivery"
+msgstr "Delivery"
+
+msgctxt "Languages::addons.alfabank.payment_surcharge"
+msgid "Payment surcharge"
+msgstr "Payment surcharge"
+
+msgctxt "Languages::gateway_status"
+msgid "gateway_status"
+msgstr "Gateway Status"
+
+msgctxt "Languages::gateway_approved"
+msgid "gateway_approved"
+msgstr "Approved"
+
+msgctxt "Languages::gateway_deposited"
+msgid "gateway_deposited"
+msgstr "Deposited"
+
+msgctxt "Languages::gateway_refunded"
+msgid "gateway_refunded"
+msgstr "Refunded"
+
+msgctxt "Languages::addons.alfabank.payment_management"
+msgid "Payment Management"
+msgstr "Payment Management"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_status"
+msgid "Payment Status"
+msgstr "Payment Status"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_refund"
+msgid "Payment Refund"
+msgstr "Payment Refund"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_deposit"
+msgid "Payment Deposit"
+msgstr "Payment Deposit"
+
+msgctxt "Languages::addons.alfabank.gateway_payment_reverse"
+msgid "Payment Reverse"
+msgstr "Payment Reverse"
+
+msgctxt "Languages::addons.alfabank.btn_reverse"
+msgid "Reverse"
+msgstr "Reverse"
+
+msgctxt "Languages::addons.alfabank.btn_deposit"
+msgid "Deposit"
+msgstr "Deposit"
+
+msgctxt "Languages::addons.alfabank.btn_deposit_full"
+msgid "Deposit Full"
+msgstr "Deposit Full"
+
+msgctxt "Languages::addons.alfabank.btn_refund"
+msgid "Refund"
+msgstr "Refund"
+
+msgctxt "Languages::addons.alfabank.btn_refund_full"
+msgid "Refund Full"
+msgstr "Refund Full"
+
+msgctxt "Languages::addons.alfabank.btn_check_status"
+msgid "Check Status"
+msgstr "Check Status"
+
+msgctxt "Languages::addons.alfabank.success_refund_message"
+msgid "Partial refund completed successfully"
+msgstr "Partial refund completed successfully"
+
+msgctxt "Languages::addons.alfabank.success_full_refund_message"
+msgid "Full refund completed successfully"
+msgstr "Full refund completed successfully"
+
+msgctxt "Languages::addons.alfabank.success_full_deposit_message"
+msgid "Full deposit completed successfully"
+msgstr "Full deposit completed successfully"
+
+msgctxt "Languages::addons.alfabank.success_deposit_message"
+msgid "Partial deposit completed successfully"
+msgstr "Partial deposit completed successfully"
+
+msgctxt "Languages::addons.alfabank.success_reverse_message"
+msgid "Reverse completed successfully"
+msgstr "Reverse completed successfully"
+
+msgctxt "Languages::addons.alfabank.back_to_shop_url"
+msgid "Back to shop URL"
+msgstr "Back to shop URL"
+
+msgctxt "Languages::addons.alfabank.back_to_shop_url_name"
+msgid "Name 'Back to shop' button"
+msgstr "Name 'Back to shop' button"

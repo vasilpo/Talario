@@ -1,0 +1,248 @@
+/*
+    Category related colors
+*/
+
+:root {
+    --cs-mobile-app-border-radius: @borderRadius;
+    --cs-mobile-app-bottom-tabs-background-color: @bottomTabsBackgroundColor;
+    --cs-mobile-app-bottom-tabs-icon-color: @bottomTabsIconColor;
+    --cs-mobile-app-bottom-tabs-primary-badge-color: @bottomTabsPrimaryBadgeColor;
+    --cs-mobile-app-bottom-tabs-selected-icon-color: @bottomTabsSelectedIconColor;
+    --cs-mobile-app-bottom-tabs-selected-text-color: @bottomTabsSelectedTextColor;
+    --cs-mobile-app-bottom-tabs-text-color: @bottomTabsTextColor;
+    --cs-mobile-app-button-background-color: @buttonBackgroundColor;
+    --cs-mobile-app-button-with-background-text-color: @buttonWithBackgroundTextColor;
+    --cs-mobile-app-button-without-background-text-color: @buttonWithoutBackgroundTextColor;
+    --cs-mobile-app-categories-background-color: @categoriesBackgroundColor;
+    --cs-mobile-app-categories-header-color: @categoriesHeaderColor;
+    --cs-mobile-app-category-block-background-color: @categoryBlockBackgroundColor;
+    --cs-mobile-app-category-block-text-color: @categoryBlockTextColor;
+    --cs-mobile-app-category-border-radius: @categoryBorderRadius;
+    --cs-mobile-app-category-empty-image: @categoryEmptyImage;
+    --cs-mobile-app-danger-color: @dangerColor;
+    --cs-mobile-app-dark-color: @darkColor;
+    --cs-mobile-app-discussion-message-color: @discussionMessageColor;
+    --cs-mobile-app-dots-swiper-color: @dotsSwiperColor;
+    --cs-mobile-app-gray-color: @grayColor;
+    --cs-mobile-app-info-color: @infoColor;
+    --cs-mobile-app-light-color: @lightColor;
+    --cs-mobile-app-menu-icons-color: @menuIconsColor;
+    --cs-mobile-app-menu-items-border-color: @menuItemsBorderColor;
+    --cs-mobile-app-menu-text-color: @menuTextColor;
+    --cs-mobile-app-nav-bar-background-color: @navBarBackgroundColor;
+    --cs-mobile-app-nav-bar-button-color: @navBarButtonColor;
+    --cs-mobile-app-nav-bar-text-color: @navBarTextColor;
+    --cs-mobile-app-product-border-color: @productBorderColor;
+    --cs-mobile-app-product-discount-color: @productDiscountColor;
+    --cs-mobile-app-rating-stars-color: @ratingStarsColor;
+    --cs-mobile-app-screen-background-color: @screenBackgroundColor;
+    --cs-mobile-app-status-bar-color: @statusBarColor;
+    --cs-mobile-app-status-bar-icon-color: contrast(@navBarBackgroundColor, black, white);
+    --cs-mobile-app-success-color: @successColor;
+}
+
+.categoriesBackgroundColor {
+    color: var(--cs-mobile-app-categories-background-color);
+}
+.categoriesHeaderColor {
+    color: var(--cs-mobile-app-categories-header-color);
+}
+.categoryBlockBackgroundColor {
+    color: var(--cs-mobile-app-category-block-background-color);
+}
+.categoryBlockTextColor {
+    color: var(--cs-mobile-app-category-block-text-color);
+}
+.categoryBorderRadius {
+    border-radius: ~"calc(var(--cs-mobile-app-category-border-radius) * 1px)";
+}
+.categoryEmptyImage {
+    color: var(--cs-mobile-app-category-empty-image);
+}
+.categoriesBackgroundColor__background {
+    background-color: var(--cs-mobile-app-categories-background-color);
+}
+.categoriesHeaderColor__background {
+    background-color: var(--cs-mobile-app-categories-header-color);
+}
+.categoryBlockBackgroundColor__background {
+    background-color: var(--cs-mobile-app-category-block-background-color);
+}
+.categoryBlockTextColor__background {
+    background-color: var(--cs-mobile-app-category-block-text-color);
+}
+.categoryEmptyImage__background {
+    background-color: var(--cs-mobile-app-category-empty-image);
+}
+
+/*Bottom tabs related colors*/
+.bottomTabsBackgroundColor {
+    background-color: var(--cs-mobile-app-bottom-tabs-background-color);
+}
+.bottomTabsTextColor {
+    color: var(--cs-mobile-app-bottom-tabs-text-color);
+}
+.bottomTabsSelectedTextColor {
+    color: var(--cs-mobile-app-bottom-tabs-selected-text-color);
+}
+.bottomTabsIconColor {
+    color: var(--cs-mobile-app-bottom-tabs-icon-color);
+}
+.bottomTabsSelectedIconColor {
+    color: var(--cs-mobile-app-bottom-tabs-selected-icon-color);
+}
+.bottomTabsPrimaryBadgeColor {
+    background-color: var(--cs-mobile-app-bottom-tabs-primary-badge-color);
+}
+
+/* Navbar related colors */
+.statusBarColor {
+    color: var(--cs-mobile-app-status-bar-color);
+}
+.navBarBackgroundColor {
+    color: var(--cs-mobile-app-nav-bar-background-color);
+}
+.navBarButtonColor {
+    color: var(--cs-mobile-app-nav-bar-button-color);
+}
+.navBarTextColor {
+    color: var(--cs-mobile-app-nav-bar-text-color);
+}
+.screenBackgroundColor {
+    color: var(--cs-mobile-app-screen-background-color);
+}
+
+.statusBarColor__background {
+    background-color: var(--cs-mobile-app-status-bar-color);
+}
+.navBarBackgroundColor__background {
+    background-color: var(--cs-mobile-app-nav-bar-background-color);
+}
+.navBarButtonColor__background {
+    background-color: var(--cs-mobile-app-nav-bar-button-color);
+}
+.navBarTextColor__background {
+    background-color: var(--cs-mobile-app-nav-bar-text-color);
+}
+.screenBackgroundColor__background {
+    background-color: var(--cs-mobile-app-screen-background-color);
+}
+
+/* Product screen related colors */
+.buttonWithBackgroundTextColor {
+    color: var(--cs-mobile-app-button-with-background-text-color);
+}
+.buttonWithoutBackgroundTextColor {
+    color: var(--cs-mobile-app-button-without-background-text-color);
+}
+.ratingStarsColor {
+    color: var(--cs-mobile-app-rating-stars-color);
+}
+.discussionMessageColor {
+    color: var(--cs-mobile-app-discussion-message-color);
+}
+
+.buttonBackgroundColor__background {
+    background-color: var(--cs-mobile-app-button-background-color);
+}
+.buttonWithBackgroundTextColor__background {
+    background-color: var(--cs-mobile-app-button-with-background-text-color);
+}
+.ratingStarsColor__background {
+    background-color: var(--cs-mobile-app-rating-stars-color);
+}
+.discussionMessageColor__background {
+    background-color: var(--cs-mobile-app-discussion-message-color);
+}
+
+
+/* other related colors */
+.successColor {
+    color: var(--cs-mobile-app-success-color);
+}
+.infoColor {
+    color: var(--cs-mobile-app-info-color);
+}
+.dangerColor {
+    color: var(--cs-mobile-app-danger-color);
+}
+.darkColor {
+    color: var(--cs-mobile-app-dark-color);
+}
+.grayColor {
+    color: var(--cs-mobile-app-gray-color);
+}
+.lightColor {
+    color: var(--cs-mobile-app-light-color);
+}
+.productDiscountColor {
+    color: var(--cs-mobile-app-product-discount-color);
+}
+.productBorderColor {
+    color: var(--cs-mobile-app-product-border-color);
+}
+
+.successColor__background {
+    background-color: var(--cs-mobile-app-success-color);
+}
+.infoColor__background {
+    background-color: var(--cs-mobile-app-info-color);
+}
+.dangerColor__background {
+    background-color: var(--cs-mobile-app-danger-color);
+}
+.darkColor__border {
+    background-color: var(--cs-mobile-app-dark-color);
+}
+.grayColor__border {
+    border-color: var(--cs-mobile-app-gray-color);
+}
+.darkColor__background {
+    background-color: var(--cs-mobile-app-dark-color);
+}
+.grayColor__background {
+    background-color: var(--cs-mobile-app-gray-color);
+}
+.lightColor__background {
+    background-color: var(--cs-mobile-app-light-color);
+}
+.borderRadius {
+    border-radius: ~"calc(var(--cs-mobile-app-border-radius) * 1px)";
+}
+.productDiscountColor__background {
+    background-color: var(--cs-mobile-app-product-discount-color);
+}
+.productBorderColor__background {
+    background-color: var(--cs-mobile-app-product-border-color);
+}
+.menuTextColor {
+    color: var(--cs-mobile-app-menu-text-color);
+}
+.menuIconsColor {
+    color: var(--cs-mobile-app-menu-icons-color);
+}
+.menuItemsBorderColor {
+    border-color: var(--cs-mobile-app-menu-items-border-color);
+}
+
+.darkColor__border {
+    border-color: var(--cs-mobile-app-dark-color);
+}
+.grayColor__border {
+    border-color: var(--cs-mobile-app-gray-color);
+}
+.lightColor__border {
+    border-color: var(--cs-mobile-app-light-color);
+}
+.productBorderColor__border {
+    border-color: var(--cs-mobile-app-product-border-color);
+}
+.SectionRow__border {
+    border-color: #F1F1F1;
+}
+.dotsSwiperColor {
+    color: var(--cs-mobile-app-dots-swiper-color);
+}
+.statusBarIconColor {
+    color: var(--cs-mobile-app-status-bar-icon-color);
+}

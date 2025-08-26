@@ -1,0 +1,29 @@
+.logo-menu__logo {
+    --cs-top-bar-btn-inner-height: 34px;
+
+    max-height: var(--cs-top-bar-btn-inner-height);
+    width: auto;
+    max-width: ~"calc(var(--main-menu-width) - 16px * 2)"; // max-width: 208px;
+}
+
+.logo-menu__logo--cscart {
+    height: 100%;
+    max-width: 100px;
+}
+
+@media (prefers-color-scheme: light) {
+    .logo-menu__logo--light {
+        display: block;
+    }
+    .logo-menu__logo--dark {
+        display: none;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .logo-menu__logo--light {
+        display: none;
+    }
+    .logo-menu__logo--dark {
+        display: block;
+    }
+}

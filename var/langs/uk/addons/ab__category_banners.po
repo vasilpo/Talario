@@ -1,0 +1,343 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Ukrainian\n"
+"Language: uk_UA\n"
+
+msgctxt "Addons::name::ab__category_banners"
+msgid "AB: Banners for categories"
+msgstr "AB: Банери для категорій"
+
+msgctxt "Addons::description::ab__category_banners"
+msgid "Add-on allows to add banners among products of categories"
+msgstr "Модуль дає можливість додавати банери посеред товарів категорій"
+
+msgctxt "Languages::ab__category_banners"
+msgid "AB: Banners for categories"
+msgstr "AB: Банери для категорій"
+
+msgctxt "Languages::ab__cb.banner_position"
+msgid "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+msgstr "Позиція банера, що може бути зазначена наступними способами:<br/><ul><li><code>7</code> - номер одиничної позиції</li><li><code>1,5,7,9</code> - номери кількох позицій</li><li><code>1-10</code> - діапазон кількох позицій</li></ul>Дозволено використання комбінацій цих варіантів. Наприклад:<br/><code>1-5, 7-9, 13</code> - банер буде показано на одній позиції із: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+
+msgctxt "SettingsOptions::ab__category_banners::item_nth"
+msgid "Position by default"
+msgstr "Позиція за замовчуванням"
+
+msgctxt "SettingsTooltips::ab__category_banners::item_nth"
+msgid "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+msgstr "Позиція банера, що може бути зазначена наступними способами:<br/><ul><li><code>7</code> - номер одиничної позиції</li><li><code>1,5,7,9</code> - номери кількох позицій</li><li><code>1-10</code> - діапазон кількох позицій</li></ul>Дозволено використання комбінацій цих варіантів. Наприклад:<br/><code>1-5, 7-9, 13</code> - банер буде показано на одній позиції із: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+
+msgctxt "SettingsOptions::ab__category_banners::decrease_items_per_page"
+msgid "Remove last product"
+msgstr "Прибрати останній товар"
+
+msgctxt "SettingsTooltips::ab__category_banners::decrease_items_per_page"
+msgid "Removes the last product from a displaying in the grid to save its structure"
+msgstr "Прибирає останній товар з відображення у сітці, щоб зберегти структуру"
+
+msgctxt "SettingsOptions::ab__category_banners::cron_key"
+msgid "Cron key"
+msgstr "Cron ключ"
+
+msgctxt "SettingsTooltips::ab__category_banners::cron_key"
+msgid "For automatic updating, existence of a key necessarily. Length should be from 10 to 20 characters (only latin letters and digits)"
+msgstr "Для автоматичного оновлення, наявність ключа обов'язкова. Довжина має бути в межах від 10 до 20 символів (лише латинські букви і цифри)"
+
+msgctxt "Languages::ab__cb.cat_banner"
+msgid "banner for category"
+msgstr "банер для категорії"
+
+msgctxt "Languages::ab__cb.datatime"
+msgid "date/time"
+msgstr "дати/часу"
+
+msgctxt "Languages::ab__cb.set_from_and_to"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::ab__category_banners.add"
+msgid "Add banner for category"
+msgstr "Додати банер для категорії"
+
+msgctxt "Languages::ab__category_banners.adding"
+msgid "Adding banner for category"
+msgstr "Додання банер для категорії"
+
+msgctxt "Languages::ab__category_banners.editing"
+msgid "Editing banner for category"
+msgstr "Редагування банер для категорії"
+
+msgctxt "Languages::ab__cb.form.include_subcategories"
+msgid "Show in subcategories"
+msgstr "Показувати у підкатегоріях"
+
+msgctxt "Languages::ab__cb.form.url"
+msgid "Link"
+msgstr "Посилання"
+
+msgctxt "Languages::ab__cb.form.position"
+msgid "Position"
+msgstr "Позиція"
+
+msgctxt "Languages::ab__cb.form.target_blank"
+msgid "Open banner link in a new window"
+msgstr "Відкрити посилання банера в новому вікні"
+
+msgctxt "Languages::ab__cb.form.nofollow"
+msgid "Add attribute rel=\"nofollow\""
+msgstr "Додати атрибут rel=\"nofollow\""
+
+msgctxt "Languages::ab__cb.form.from_date"
+msgid "Active from date/time"
+msgstr "Активний з дати/часу"
+
+msgctxt "Languages::ab__cb.form.to_date"
+msgid "Active to date/time"
+msgstr "Активний до дати/часу"
+
+msgctxt "Languages::ab__cb.form.monday"
+msgid "Monday"
+msgstr "Понеділок"
+
+msgctxt "Languages::ab__cb.form.tuesday"
+msgid "Tuesday"
+msgstr "Вівторок"
+
+msgctxt "Languages::ab__cb.form.wednesday"
+msgid "Wednesday"
+msgstr "Середа"
+
+msgctxt "Languages::ab__cb.form.thursday"
+msgid "Thursday"
+msgstr "Четвер"
+
+msgctxt "Languages::ab__cb.form.friday"
+msgid "Friday"
+msgstr "П'ятниця"
+
+msgctxt "Languages::ab__cb.form.saturday"
+msgid "Saturday"
+msgstr "Субота"
+
+msgctxt "Languages::ab__cb.form.sunday"
+msgid "Sunday"
+msgstr "Неділя"
+
+msgctxt "Languages::ab__cb.form.content_general"
+msgid "General"
+msgstr "Загальне"
+
+msgctxt "Languages::ab__cb.form.content_link"
+msgid "Link"
+msgstr "Посилання"
+
+msgctxt "Languages::ab__cb.form.content_schedule"
+msgid "Schedule"
+msgstr "Розклад"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_image"
+msgid "The image is output \"as is\", without cutting"
+msgstr "Зображення виводиться \"як є\", без змін у розмірі"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.url"
+msgid "The link format with the indication of the controller is recommended (for example, products.view?product_id=12121)"
+msgstr "Рекомендується формат посилання із зазначенням контролера (наприклад, products.view?product_id=12121)"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.nofollow"
+msgid "It's recommended to use for external link (to another site) or link to non-indexing pages"
+msgstr "Рекомендується до застосування для посилань на зовнішні ресурси (інші сайти) або сторінки що не індексуються"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.position"
+msgid "Banner position, which can be specified in the one way to:<br/><ul><li><code>7</code> - single position number</li><li><code>1,5,7,9</code> - numbers for several positions</li><li><code>1-10</code> - range of several positions</li></ul>Using combinations of these options is permitted. For example:<br/><code>1-5, 7-9, 13</code> - will be shown banner in one position from: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+msgstr "Позиція банера, що може бути зазначена наступними способами:<br/><ul><li><code>7</code> - номер одиничної позиції</li><li><code>1,5,7,9</code> - номери кількох позицій</li><li><code>1-10</code> - діапазон кількох позицій</li></ul>Дозволено використання комбінацій цих варіантів. Наприклад:<br/><code>1-5, 7-9, 13</code> - банер буде показано на одній позиції із: 1, 2, 3, 4, 5, 7, 8, 9, 13"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.monday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.tuesday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.wednesday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.thursday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.friday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.saturday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::tt_addons_ab__category_banners_views_ab__category_banners_update_ab__cb.form.sunday"
+msgid "Set the time of action of banner 'from' and 'to'.<br/> If start time didn't set, then it is equal 00:00<br/> If end time didn't set, then it is equal 23:59<br/> If both values didn't set then banner will be displayed from 00:00 to 23:59"
+msgstr "Встановіть час дії банера 'з' і 'по'.<br/>"
+"Якщо не встановлено час початку, то воно дорівнює 00:00<br/>"
+"Якщо не встановлено час завершення, то воно дорівнює 23:59<br/>"
+"Якщо обидва значення не встановлені, то банер буде відображатися з 00:00 по 23:59"
+
+msgctxt "Languages::ab__cb.errors.cron_key"
+msgid "<p>Warning! The value <code>[value]</code> of the setting <code>Cron key</code> doesn't meet the safety requirements</p>"
+msgstr "<p>Увага! Введене Вами значення <code>[value]</code> налаштування <code>Cron ключ</code> не відповідає вимогам безпеки</p>"
+
+msgctxt "Languages::ab__cb.cron_links"
+msgid "<p>For an automatic switching off of expired banners - use one of these links:<b/r><br/><code>[cron_cmd]</code><br/>or<br/><code>[cron_url]</code></p>"
+msgstr "<p>Для автоматичного вимкнення прострочених банерів застосовуйте одне із цих посилань:<br/><br/><code>[cron_cmd]</code><br/>або<br/><code>[cron_url]</code></p>"
+
+msgctxt "Languages::ab__category_banners.manage"
+msgid "Banners management"
+msgstr "Керування банерами"
+
+msgctxt "Languages::ab__cb.help.cron.title"
+msgid "Automatic switching off of expired banners"
+msgstr "Автоматичне вимкнення прострочених банерів"
+
+msgctxt "Languages::ab__cb.form.m_turn_on"
+msgid "Switch on selected"
+msgstr "Увімкнути обрані"
+
+msgctxt "Languages::ab__cb.form.m_turn_off"
+msgid "Switch off selected"
+msgstr "Вимкнути обрані"
+
+msgctxt "Languages::ab__cb.form.grid_image"
+msgid "Images for an output as a grid"
+msgstr "Зображення для виводу як сітка"
+
+msgctxt "Languages::ab__cb.form.list_image"
+msgid "Images for an output as a list without options"
+msgstr "Зображення для виводу як список без опцій"
+
+msgctxt "Languages::ab__cb.form.short_list_image"
+msgid "Images for an output as a compact list"
+msgstr "Зображення для виводу як компактний список"
+
+msgctxt "Languages::ab__cb.settings"
+msgid "General settings"
+msgstr "Загальні налаштування"
+
+msgctxt "Languages::ab__cb.validator.wrong_time_format"
+msgid "Time shall be in a format hh:mm"
+msgstr "Час має бути у форматі hh:mm"
+
+msgctxt "Languages::ab__category_banners.help"
+msgid "Help"
+msgstr "Довідка"
+
+msgctxt "Languages::ab__cb.help.doc"
+msgid "Read the <a target='_blank' href='https://cs-cart.alexbranding.com/en/ab__category_banners.doc'>documentation</a>."
+msgstr "Ознайомитись з <a target='_blank' href='https://cs-cart.alexbranding.com/ru/ab__category_banners.doc'>документацією</a>."
+
+msgctxt "Languages::privilege_groups.ab__category_banners"
+msgid "AB: Banners for categories"
+msgstr "AB: Банери для категорій"
+
+msgctxt "Languages::privileges.ab__cb_manage_banners"
+msgid "AB: Manage banners for categories"
+msgstr "AB: Керування банерами для категорій"
+
+msgctxt "Languages::privileges.ab__cb_view_banners"
+msgid "AB: View banners for categories"
+msgstr "AB: Перегляд банерів для категорій"
+
+msgctxt "Languages::ab__category_banners.demodata"
+msgid "Demo data"
+msgstr "Демо-дані"
+
+msgctxt "Languages::ab__cb.demodata_description"
+msgid "Demo data can be downloaded on this page"
+msgstr "На цій сторінці можуть бути завантажені демо-дані"
+
+msgctxt "Languages::ab__cb.demodata.table.description"
+msgid "Demo data"
+msgstr "Демо-дані"
+
+msgctxt "Languages::ab__cb.demodata.table.action"
+msgid "Action"
+msgstr "Дія"
+
+msgctxt "Languages::ab__cb.demodata.table.add_banners"
+msgid "Add banners"
+msgstr "Додати банери"
+
+msgctxt "Languages::ab__category_banners.export"
+msgid "Data export"
+msgstr "Експорт даних"
+
+msgctxt "Languages::ab__cb.export_description"
+msgid "Add-on data can be exported on this page"
+msgstr "На цій сторінці можуть бути експортовані дані модуля"
+
+msgctxt "Languages::ab__cb.export.table.description"
+msgid "Data export"
+msgstr "Експорт даних"
+
+msgctxt "Languages::ab__cb.export.table.data"
+msgid "Data for export"
+msgstr "Дані для експорту"
+
+msgctxt "Languages::ab__cb.export.table.action"
+msgid "Action"
+msgstr "Дія"
+
+msgctxt "Languages::ab__cb.export.actions.banners"
+msgid "Banners export"
+msgstr "Експорт банерів"
+
+msgctxt "Languages::ab__cb.export.actions.banners.placeholder"
+msgid "Banners ID"
+msgstr "ID банерів"
+
+msgctxt "Languages::ab__cb.autoinstall.no_demodata"
+msgid "File with demo data is missing"
+msgstr "Файл з демо-даними відсутній"
+
+msgctxt "Languages::ab__cb.autoinstall.no_category"
+msgid "Available category not found"
+msgstr "Доступна категорія не знайдена"
+
+msgctxt "Languages::ab__cb.autoinstall.banners_not_created"
+msgid "Failed to create demo category banners"
+msgstr "Не вдалося створити демо банери для категорій"
+
+msgctxt "Languages::ab__cb.autoinstall.banners_created"
+msgid "Demo category banners [banners] is created successfully"
+msgstr "Демо банери для категорій [banners] успішно створено"
+
+msgctxt "Languages::ab__cb.upgrade_notifications.2.0.0.title"
+msgid "Multiple banners output"
+msgstr "Множинне відображення банерів"
+
+msgctxt "Languages::ab__cb.upgrade_notifications.2.0.0.text"
+msgid "Banners behavier has been changed. The output of several banners at the same time is allowed. They will be displayed in random order at the specified positions. Check the settings and change the position of the banners if necessary."
+msgstr "Поведінку банерів було змінено. На одній сторінці дозволено відображення кількох банерів, які будуть виводитись у випадковому порядку на вказаних позиціях. Перевірте правильність налаштувань і змініть позиції банерів при необхідності."
+
+#. Alexbranding. Do not modify this file manually!

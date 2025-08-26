@@ -1,0 +1,68 @@
+// design/backend/templates/views/index/components/analytics_section/analytics_card/bar_chart.tpl
+
+.analytics-card-bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.analytics-card-bar-chart__title {
+    font-size: var(--cs-font-size-small);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.analytics-card-bar-chart__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.analytics-card-bar-chart__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.analytics-card-bar-chart__item-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.analytics-card-bar-chart__item-values {
+    display: flex;
+    gap: 4px;
+}
+
+.analytics-card-bar-chart__item-total {
+    color: var(--cs-text-muted-color);
+}
+
+.analytics-card-bar-chart__item-total:before {
+    content: '/';
+    margin-right: 4px;
+}
+
+.analytics-card-bar-chart__item-progress {
+    margin: 0;
+    height: 22px;
+    border-radius: var(--cs-border-radius-small);
+}
+
+.analytics-card-bar-chart__item-bar.analytics-card-bar-chart__item-bar {
+    background: var(--cs-dashboard-secondary-color);
+}
+
+.analytics-card-bar-chart__item-bar:not(
+    .analytics-card-bar-chart__item-bar--primary):not(
+    .analytics-card-bar-chart__item-bar--danger) {
+    opacity: 0.7;
+}
+
+.analytics-card-bar-chart__item-bar--primary.analytics-card-bar-chart__item-bar--primary {
+    background: var(--cs-dashboard-primary-color);
+}
+
+.analytics-card-bar-chart__item-bar--danger.analytics-card-bar-chart__item-bar--danger {
+    background: var(--cs-error-text);
+}

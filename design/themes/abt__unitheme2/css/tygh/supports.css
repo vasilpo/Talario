@@ -1,0 +1,144 @@
+/*******************************************************************************************
+*   ___  _          ______                     _ _                _                        *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
+* / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
+* |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
+* | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
+* \_| |_/_|\___/_/\_\____/|_|  \__,_|_| |_|\__,_|_|_| |_|\__, |  \___\___|\__,_|_| |_| |_| *
+*                                                         __/ |                            *
+*                                                        |___/                             *
+* ---------------------------------------------------------------------------------------- *
+* This is commercial software, only users who have purchased a valid license and accept    *
+* to the terms of the License Agreement can install and use this program.                  *
+* ---------------------------------------------------------------------------------------- *
+* website: https://cs-cart.alexbranding.com                                                *
+*   email: info@alexbranding.com                                                           *
+*******************************************************************************************/
+/*==============================================================================
+   [[[ BEGIN ]]] gift certificate
+==============================================================================*/
+@container qc_gift-certificate-buttons (max-width: 360px) {
+    body .ty-gift-certificate__buttons .ty-btn__add-to-cart {
+        margin-inline-start: initial;
+    }
+}
+/* [[[ END ]]] gift certificate
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] Product feature list
+==============================================================================*/
+@container qc--product-feature (min-width: 700px) {
+    .fg-two-col .abt__ut2--product-features__list {
+        column-count: 2;
+        column-gap: var(--gap-s);
+    }
+}
+
+@container qc--product-feature (max-width: 340px) {
+    body .abt__ut2--product-features__container .ty-product-feature {
+        background: unset;
+        padding: unset;
+        display: block;
+    }
+    body .abt__ut2--product-features__container .ty-product-feature:not(:last-child),
+    body .abt__ut2--product-features__container .ty-product-feature-group:not(:last-child) {
+        margin-bottom: var(--gap-xs);
+    }
+    body .abt__ut2--product-features__container .fg-two-col .ty-product-feature::after {
+        content: none;
+    }
+    body .abt__ut2--product-features__container .fg-two-col .ty-product-feature,
+    body .abt__ut2--product-features__container .fg-two-col .ty-product-feature-group {
+        padding-top: unset;
+        padding-bottom: unset;
+    }
+
+    body .abt__ut2--product-features__container .ty-product-feature__label,
+    body .abt__ut2--product-features__container .ty-product-feature__value {
+        padding-inline: unset;
+        width: unset;
+        max-width: unset;
+        min-width: unset;
+    }
+    body .abt__ut2--product-features__container .ty-product-feature__label {
+        padding-block: unset;
+    }
+    body .abt__ut2--product-features__container .ty-product-feature__label.object-container {
+        padding-inline-end: 17px;
+    }
+    body .abt__ut2--product-features__container .fg-two-col .ty-product-feature__label > span {
+        background: unset;
+    }
+    body .abt__ut2--product-features__container .ty-product-feature__value {
+        margin-block-start: var(--gap-xxs);
+    }
+    body .abt__ut2--product-features__container .fg-two-col .ty-product-feature__value {
+        background: unset;
+    }
+    body .abt__ut2--product-features__container .cm-ab-similar-filter-container .ty-product-feature__value {
+        margin-inline-start: var(--check-radio-size);
+    }
+    body .abt__ut2--product-features__container .cm-ab-similar-filter-container .ty-product-feature__value:not(:has(input[type=checkbox])) {
+        margin-inline-start: initial;
+        padding-inline-start: initial;
+    }
+}
+/* [[[ END ]]] Product feature list
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] LEGACY
+==============================================================================*/
+
+/* Lite Checkout */
+@supports (-webkit-appearance: none) {
+    .selector:not(*:root), .litecheckout .litecheckout__field--selectbox .litecheckout__input {
+        padding-top: 10px !important;
+        padding-left: 6px !important;
+    }
+}
+/* End of Lite Checkout */
+
+/* [[[ END ]]] LEGACY
+==============================================================================*/
+@container intprod (max-width: 640px) {
+    .ut2-banner .width-half.internal-products {
+        flex-wrap: wrap;
+    }
+    .ut2-banner .width-half.valign-top.internal-products {
+        align-items: flex-start;
+        align-content: flex-start;
+    }
+    .ut2-banner .width-half.valign-center.internal-products {
+        align-items: flex-end;
+        align-content: center;
+    }
+    .ut2-banner .width-half.valign-bottom.internal-products {
+        align-items: flex-end;
+        align-content: flex-end;
+    }
+    .ut2-banner .ut2-a__content.width-half.internal-products .ut2-a__description {
+        height: auto;
+        min-width: max(70%, 300px);
+    }
+    .ut2-banner .width-half.align-center.internal-products .ut2-a__description .box {
+        text-align: center;
+        width: 100%;
+    }
+    .ut2-banner .ut2-a__content.width-half .ut2-a__products {
+        order: 1;
+        height: fit-content;
+        flex: 0 0 auto;
+    }
+    .ut2-banner .mask-full-height .ut2-a__description {
+        background-image: unset !important;
+        background-color: unset !important;
+    }
+    .ut2-banner .mask-full-height .ut2-a__content {
+        background-image: var(--ab-banner-mask-background-gradient);
+        background-color: var(--ab-banner-mask-background-color);
+    }
+}

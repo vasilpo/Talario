@@ -1,0 +1,1 @@
+<li>{btn type="list" text=__('abt__ut2.copy_banner') href="banners.duplicate?banner_id=`$banner.banner_id`"}</li>

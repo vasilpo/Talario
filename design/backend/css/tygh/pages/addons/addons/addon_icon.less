@@ -1,0 +1,67 @@
+/*
+    views/addons/components/addons/addon_icon.tpl
+*/
+
+// Wrapper
+.addons-addon-icon__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 13px;
+    overflow: hidden;
+    box-shadow: 0 1px 1px var(--cs-shadow10-color), 0 1px 3px var(--cs-shadow10-color);
+}
+
+.addons-addon-icon__wrapper--link:hover,
+.addons-addon-icon__wrapper--link:focus {
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.addons-addon-icon__wrapper--n,
+.addons-addon-icon__wrapper--d {
+    background-color: var(--cs-content-background);
+}
+
+.addons-addon-icon__wrapper--large {
+    width: 192px;
+    height: 192px;
+    border-radius: 42px;
+}
+
+.addons-addon-icon__wrapper--marketplace {
+    width: 152px;
+    height: 60px;
+    border-radius: var(--cs-base-border-radius);
+}
+
+// Image
+.addons-addon-icon__image {
+    background: var(--cs-content-background);
+}
+
+.addons-addon-icon__image--n,
+.addons-addon-icon__image--d {
+    opacity: 0.4;
+}
+
+.addons-addon-icon__image--label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    text-shadow:  0px 1px 3px var(--cs-shadow10-color);
+    font-size: 30px;
+    color: var(--cs-main-color);
+    background-image: linear-gradient(var(--cs-text-inverse-color), var(--cs-form-actions-background));
+}
+
+.addons-addon-icon__image--label.addons-addon-icon__image--large {
+    font-size: 96px;
+    text-shadow: 0px 3px 10px var(--cs-shadow10-color);
+}

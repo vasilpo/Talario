@@ -1,0 +1,27 @@
+{
+    "version": "0.0.1",
+    "require": {
+        "cdek-it/sdk2.0": "^1.0",
+        "jms/serializer": "3.29.1"
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "echo [WARNING] Delete all .git dirs",
+            "rm -rf vendor/cdek-it/sdk2.0/tests",
+            "rm -rf vendor/jms/serializer/tests",
+            "rm -rf vendor/jms/metadata/tests",
+            "rm -rf vendor/jms/parser-lib/tests",
+            "rm -rf vendor/phpcollection/phpcollection/tests",
+            "rm -rf vendor/alextartan/guzzle-psr18-adapter/test"
+        ],
+        "post-install-cmd": [
+            "echo [WARNING] Delete all .git dirs",
+            "rm -rf vendor/cdek-it/sdk2.0/tests",
+            "rm -rf vendor/jms/serializer/tests",
+            "rm -rf vendor/jms/metadata/tests",
+            "rm -rf vendor/jms/parser-lib/tests",
+            "rm -rf vendor/phpcollection/phpcollection/tests",
+            "rm -rf vendor/alextartan/guzzle-psr18-adapter/test"
+        ]
+    }
+}

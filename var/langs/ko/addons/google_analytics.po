@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Korean\n"
+"Language: ko_KR\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: ko\n"
+"X-Crowdin-File: /release-4.18.3/addons/google_analytics.po\n"
+"X-Crowdin-File-ID: 9328\n"
+"PO-Revision-Date: 2024-10-02 13:30\n"
+
+msgctxt "Addons::name::google_analytics"
+msgid "Google Analytics"
+msgstr "구글 애널리틱스"
+
+msgctxt "Addons::description::google_analytics"
+msgid "Integrates a Google Analytics service with the store"
+msgstr "Google Analytics 서비스를 상점과 통합합니다."
+
+msgctxt "SettingsSections::google_analytics::general"
+msgid "General"
+msgstr "일반적인"
+
+msgctxt "SettingsOptions::google_analytics::tracking_code"
+msgid "Google Analytics account number"
+msgstr "구글 애널리틱스 계정 번호"
+
+msgctxt "SettingsOptions::google_analytics::track_ecommerce"
+msgid "Track e-commerce transactions"
+msgstr "전자 상거래 추적"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_title"
+msgid "Google Analytics"
+msgstr "구글애널리틱스"
+
+msgctxt "Languages::google_analytics.google_analytics_cookies_description"
+msgid "Google Analytics is a service that provides us with website analytics: the number of unique visitors, the most and least popular pages, etc. Here is <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics statement on privacy</a>."
+msgstr "Google Analytics는 웹사이트 분석(순 방문자 수, 가장 인기 있는 페이지 및 가장 인기 없는 페이지 등)을 제공하는 서비스입니다. 다음은 <a href=\"https://support.google.com/analytics/answer/6004245\" target=\"_blank\">Google Analytics의 개인 정보 보호 정책</a>입니다."
+
+msgctxt "Languages::google_analytics.google_ads_cookies_title"
+msgid "Google Ads"
+msgstr "구글 광고"
+
+msgctxt "Languages::google_analytics.google_ads_cookies_description"
+msgid "Google Ads is a service that allows us to make personalized offers for you. This permission allows us to set cookies and send some of your data related to advertising to Google. Here is <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">how Google handles ad-related data</a>."
+msgstr "Google Ads는 귀하에게 맞춤화된 제안을 제공할 수 있는 서비스입니다. 이 권한을 통해 당사는 쿠키를 설정하고 광고와 관련된 일부 데이터를 Google에 전송할 수 있습니다. <a href=\"https://safety.google/privacy/ads-and-data/\" target=\"_blank\">Google에서 광고 관련 데이터를 처리하는 방법은 다음과 같습니다</a>."
+
