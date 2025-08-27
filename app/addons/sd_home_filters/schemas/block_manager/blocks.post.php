@@ -8,13 +8,15 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
+use Tygh\Enum\YesNo;
+
 defined('BOOTSTRAP') or die('Access denied');
 
 /** @var array $schema */
 
 $schema['product_filters_home']['settings']['sd_apply_button'] = [
     'type'          => 'checkbox',
-    'default_value' => 'N',
+    'default_value' => YesNo::NO,
 ];
 
 return $schema;

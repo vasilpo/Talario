@@ -140,12 +140,11 @@
 
     <script>
         (function(_, $) {
-            $(function() {
-                var $btn = $('#apply_filters_btn_{$block.block_id}');
+            $(document).ready(function() {
                 var $container = $('#product_filters_{$block.block_id}');
                 $container.find('.cm-product-filters-checkbox, .cm-product-filters-select').off('change');
 
-                $btn.on('click', function() {
+                $('#apply_filters_btn_{$block.block_id}').on('click', function() {
                     var url = $container.data('caBaseUrl');
                     var features = {};
                     $container.find('.cm-product-filters-checkbox:checked, .cm-product-filters-select').each(function() {
