@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>sd_home_filters</id>
+    <version>4.18.3</version>
+    <default_language>ru</default_language>
+    <supplier>Simtech Development</supplier>
+    <supplier_link>https://www.simtechdev.com</supplier_link>
+    <priority>1000</priority>
+    <status>active</status>
+    <has_icon>Y</has_icon>
+    <compatibility>
+        <core_version>
+            <min>4.18.3</min>
+        </core_version>
+        <core_edition>
+            MULTIVENDOR
+        </core_edition>
+    </compatibility>
+</addon>
