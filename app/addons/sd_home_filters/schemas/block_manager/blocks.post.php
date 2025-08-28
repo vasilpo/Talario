@@ -17,6 +17,7 @@ defined('BOOTSTRAP') or die('Access denied');
 $schema['product_filters_home']['settings']['sd_apply_button'] = [
     'type'          => 'checkbox',
     'default_value' => YesNo::NO,
+    'tooltip'       => __('sd_home_filters.apply_button_tooltip'),
 ];
 
 return $schema;

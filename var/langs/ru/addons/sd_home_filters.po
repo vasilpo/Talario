@@ -19,3 +19,7 @@ msgstr "Переход на страницу результатов по кно�
 msgctxt "Languages::sd_home_filters.show_results"
 msgid "Show the result"
 msgstr "Показать результат"
+
+msgctxt "Languages::sd_home_filters.apply_button_tooltip"
+msgid "This setting only applies to the horizontal filter template"
+msgstr "Данная настройка применяется только к шаблону с горизонтальным расположением фильтра"
