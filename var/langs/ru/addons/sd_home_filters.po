@@ -1,0 +1,25 @@
+msgid ""
+msgstr "Project-Id-Version: tygh"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU"
+
+msgctxt "Addons::name::sd_home_filters"
+msgid "Simtech Development: Filters on the main page"
+msgstr "Simtech Development: Фильтры на главной"
+
+msgctxt "Addons::description::sd_home_filters"
+msgid "Adds the ability to display filters on the main page with the Show results button. <a href=\"https://www.simtechdev.ru/\" target=\"_blank\">Поддержка</a>"
+msgstr "Добавляет возможность вывода фильтров на главной странице с кнопкой \"Показать результаты\". <a href=\"https://www.simtechdev.ru/\" target=\"_blank\">Поддержка</a>"
+
+msgctxt "Languages::sd_apply_button"
+msgid "Click on the button to go to the results page"
+msgstr "Переход на страницу результатов по кнопке"
+
+msgctxt "Languages::sd_home_filters.show_results"
+msgid "Show the result"
+msgstr "Показать результат"
+
+msgctxt "Languages::sd_home_filters.apply_button_tooltip"
+msgid "This setting only applies to the horizontal filter template"
+msgstr "Данная настройка применяется только к шаблону с горизонтальным расположением фильтра"
