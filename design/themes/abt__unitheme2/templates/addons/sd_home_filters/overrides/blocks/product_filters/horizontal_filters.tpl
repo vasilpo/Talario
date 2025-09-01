@@ -113,7 +113,15 @@
                     {/foreach}
                 {/capture}
             {/if}
-
+        {/if}
+        {if $block.type == "product_filters_home" && $block.properties.sd_apply_button == "YesNo::YES"|enum}
+            <div class="ut2-scroll-item ty-horizontal-product-filters__apply-inline">
+                <button type="button"
+                        id="apply_filters_btn_{$block.block_id}"
+                        class="ty-btn ty-btn__primary">
+                    {__("sd_home_filters.show_results")}
+                </button>
+            </div>
         {/if}
     </div>
     <button class="ut2-scroll-right" type="button"><span class="ut2-icon-arrow_forward_black"></span></button>
@@ -130,14 +138,6 @@
 </div>
 
 {if $block.type == "product_filters_home" && $block.properties.sd_apply_button == "YesNo::YES"|enum}
-    <div class="ty-horizontal-product-filters__apply">
-        <button type="button"
-                id="apply_filters_btn_{$block.block_id}"
-                class="ty-btn ty-btn__primary">
-            {__("sd_home_filters.show_results")}
-        </button>
-    </div>
-
     <script>
         (function(_, $) {
             $(document).ready(function() {
