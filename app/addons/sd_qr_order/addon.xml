@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>sd_qr_order</id>
+    <version>1.0</version>
+    <priority>2500</priority>
+    <position>200</position>
+    <status>active</status>
+    <default_language>en</default_language>
+    <supplier>Simtech Development</supplier>
+    <supplier_link>https://www.simtechdev.com</supplier_link>
+    <has_icon>Y</has_icon>
+    <authors>
+        <author>
+            <name>Simtech Development</name>
+            <email>sales@simtechdev.com</email>
+            <url>https://www.simtechdev.com</url>
+        </author>
+    </authors>
+    <autoload>
+        <psr4 prefix="Tygh\Addons\SdQrOrder\">src</psr4>
+        <psr4 prefix="Tygh\Enum\Addons\SdQrOrder\">src/Enum</psr4>
+        <psr4 prefix="chillerlan\QRCode\">lib/php-qrcode/src</psr4>
+        <psr4 prefix="chillerlan\Settings\">lib/php-settings-container/src</psr4>
+    </autoload>
+    <bootstrap>\Tygh\Addons\SdQrOrder\Bootstrap</bootstrap>
+    <settings>
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="statuses">
+                        <type>multiple select</type>
+                        <default_value><![CDATA[#M#P=Y]]></default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>

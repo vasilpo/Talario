@@ -1,0 +1,21 @@
+msgid ""
+msgstr "Project-Id-Version: tygh"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU"
+
+msgctxt "Addons::name::sd_qr_order"
+msgid "Simtech Development: Order QR Code"
+msgstr "Simtech Development: QR-код заказа"
+
+msgctxt "Addons::description::sd_qr_order"
+msgid "Adds a QR code for quick access to the order details page. <a href=\"https://www.simtechdev.ru/\" target=\"_blank\">Support</a>"
+msgstr "Добавляет QR-код для быстрого перехода на детальную страницу заказа. <a href=\"https://www.simtechdev.ru/\" target=\"_blank\">Поддержка</a>"
+
+msgctxt "SettingsOptions::sd_qr_order::statuses"
+msgid "Statuses"
+msgstr "Статусы"
+
+msgctxt "SettingsTooltips::sd_qr_order::statuses"
+msgid "When an order is changed to the corresponding status, a QR code is generated."
+msgstr "При изменении заказа в соответствующий статус будет генерироваться QR-код."
