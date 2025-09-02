@@ -8,7 +8,7 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-namespace Tygh\Addons\QrOrder;
+namespace Tygh\Addons\SdQrOrder;
 
 use Tygh\Core\ApplicationInterface;
 use Tygh\Core\BootstrapInterface;

@@ -18,4 +18,4 @@ msgstr "Статусы"
 
 msgctxt "SettingsTooltips::sd_qr_order::statuses"
 msgid "When an order is changed to the corresponding status, a QR code is generated."
-msgstr "При изменении заказа в соответствующий статус бедет генерироваться QR-код."
+msgstr "При изменении заказа в соответствующий статус будет генерироваться QR-код."

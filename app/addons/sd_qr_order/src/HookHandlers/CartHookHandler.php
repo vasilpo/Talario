@@ -8,9 +8,10 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-namespace Tygh\Addons\QrOrder\HookHandlers;
+namespace Tygh\Addons\SdQrOrder\HookHandlers;
 
-use Tygh\Addons\QrOrder\Helpers\QrHelper;
+use Tygh\Addons\SdQrOrder\Helpers\QrHelper;
+use Tygh\Enum\Addons\SdQrOrder\ImageSettings;
 use Tygh\Tygh;
 use Tygh\Registry;
 use Tygh\Storage;
@@ -33,11 +34,9 @@ class CartHookHandler
      */
     public function changeOrderStatus($status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
     {
-        {
-            $selected_statuses = (array) Registry::get('addons.sd_qr_order.statuses');
-            if (array_key_exists($status_to, $selected_statuses)) {
-                QrHelper::generateOrderQr($order_info['order_id']);
-            }
+        $selected_statuses = (array) Registry::get('addons.sd_qr_order.statuses');
+        if (array_key_exists($status_to, $selected_statuses)) {
+            QrHelper::generateOrderQr($order_info['order_id']);
         }
     }
 
@@ -53,7 +52,7 @@ class CartHookHandler
     public function deleteOrder($order_id)
     {
         if (!empty($order_id)) {
-            Storage::instance('images')->deleteByPattern('qr_code_orders' . '/' . $order_id . '/');
+            Storage::instance('images')->deleteByPattern(ImageSettings::DIRECTORY . '/' . $order_id . '/');
         }
     }
 }

@@ -8,7 +8,7 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
- use Tygh\Addons\QrOrder\Documents\Order\QrCodeVariable;
+ use Tygh\Addons\SdQrOrder\Documents\Order\QrCodeVariable;
 
  defined('BOOTSTRAP') or die('Access denied');
  

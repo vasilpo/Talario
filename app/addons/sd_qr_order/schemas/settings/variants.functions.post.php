@@ -17,11 +17,5 @@ defined('BOOTSTRAP') or die('Access denied');
  */
 function fn_settings_variants_addons_sd_qr_order_statuses()
 {
-    $order_statuses = fn_get_statuses(STATUSES_ORDER, [], false, true);
-    $result = [];
-    foreach ($order_statuses as $o_status) {
-        $result[$o_status['status']] = $o_status['description'];
-    }
-
-    return $result;
+    return fn_get_simple_statuses();
 }

@@ -17,12 +17,12 @@
         </author>
     </authors>
     <autoload>
-        <psr4 prefix="Tygh\Addons\QrOrder\">src</psr4>
-        <psr4 prefix="Tygh\Enum\Addons\QrOrder\">src/Enum</psr4>
+        <psr4 prefix="Tygh\Addons\SdQrOrder\">src</psr4>
+        <psr4 prefix="Tygh\Enum\Addons\SdQrOrder\">src/Enum</psr4>
         <psr4 prefix="chillerlan\QRCode\">lib/php-qrcode/src</psr4>
         <psr4 prefix="chillerlan\Settings\">lib/php-settings-container/src</psr4>
     </autoload>
-    <bootstrap>\Tygh\Addons\QrOrder\Bootstrap</bootstrap>
+    <bootstrap>\Tygh\Addons\SdQrOrder\Bootstrap</bootstrap>
     <settings>
         <sections>
             <section id="general">

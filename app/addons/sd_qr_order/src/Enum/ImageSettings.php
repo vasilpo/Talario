@@ -8,11 +8,13 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-namespace Tygh\Enum\Addons\QrOrder;
+namespace Tygh\Enum\Addons\SdQrOrder;
 
 class ImageSettings
 {
     const SIZE = 150;
     const VERSION = 5;
     const SCALE = 5;
+    const DIRECTORY = 'qr_code_orders';
+    const FILE = 'order.png';
 }

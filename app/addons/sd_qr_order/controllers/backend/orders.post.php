@@ -8,7 +8,7 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-use Tygh\Addons\QrOrder\Helpers\QrHelper;
+use Tygh\Addons\SdQrOrder\Helpers\QrHelper;
 use Tygh\Registry;
 use Tygh\Tygh;
 

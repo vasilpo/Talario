@@ -8,9 +8,10 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-namespace Tygh\Addons\QrOrder\Documents\Order;
+namespace Tygh\Addons\SdQrOrder\Documents\Order;
 
-use Tygh\Enum\Addons\QrOrder\ImageSettings;
+use Tygh\Enum\Addons\SdQrOrder\ImageSettings;
+use Tygh\Enum\SiteArea;
 use Tygh\Template\Document\Order\Context;
 use Tygh\Template\IVariable;
 use Tygh\Storage;
@@ -36,13 +37,13 @@ class QrCodeVariable implements IVariable
     */
     private function getQrImage(int $order_id)
     {
-        $structure = "qr_code_orders/{$order_id}/";
-        $file = "order.png";
+        $structure = ImageSettings::DIRECTORY . "/{$order_id}/";
+        $file = ImageSettings::FILE;
 
         $file_path = Storage::instance('images')->getAbsolutePath($structure . $file);
-        $size = ImageSettings::SIZE;
         if (file_exists($file_path)) {
-            $url = fn_url(Storage::instance('images')->getUrl($structure . $file), 'C');
+            $size = ImageSettings::SIZE;
+            $url = fn_url(Storage::instance('images')->getUrl($structure . $file), SiteArea::STOREFRONT);
             return "<img src=\"{$url}\" alt=\"Qr-code\" width=\"{$size}\" height=\"{$size}\">";
         }
 

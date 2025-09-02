@@ -8,7 +8,7 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-namespace Tygh\Addons\QrOrder\Helpers;
+namespace Tygh\Addons\SdQrOrder\Helpers;
 
 use Tygh\Registry;
 use chillerlan\QRCode\QRCode;
@@ -16,7 +16,8 @@ use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRGdImagePNG;
 use Tygh\Storage;
 use chillerlan\QRCode\Common\EccLevel;
-use Tygh\Enum\Addons\QrOrder\ImageSettings;
+use Tygh\Enum\Addons\SdQrOrder\ImageSettings;
+use Tygh\Enum\SiteArea;
 
 class QrHelper
 {
@@ -27,30 +28,34 @@ class QrHelper
      *
      * @return void
      */
-    public static function generateOrderQr(int $order_id)
-    {
-        $url = fn_url("orders.details?order_id={$order_id}", 'A');
-
-        $structure = "qr_code_orders/{$order_id}/";
-        $file = "order.png";
-
-        $dir_path = Storage::instance('images')->getAbsolutePath($structure);
-        if (!file_exists($dir_path)) {
-            fn_mkdir($dir_path);
-        }
-        $file_path = $dir_path . $file;
-
-        if (!file_exists($file_path)) {
-            $options = new QROptions([
-                'version'         => ImageSettings::VERSION,
-                'eccLevel'        => EccLevel::L,
-                'scale'           => ImageSettings::SCALE,
-                'outputInterface' => QRGdImagePNG::class,
-            ]);
-
-            (new QRCode($options))->render($url, $file_path);
-        }
+    public static function generateOrderQr(int $order_id): void
+{
+    if (empty($order_id)) {
+        return;
     }
+
+    $file_path = Storage::instance('images')
+        ->getAbsolutePath(ImageSettings::DIRECTORY . "/{$order_id}/" . ImageSettings::FILE);
+
+    if (file_exists($file_path)) {
+        return;
+    }
+
+    $dir_path = dirname($file_path);
+    if (!is_dir($dir_path)) {
+        fn_mkdir($dir_path);
+    }
+
+    $options = new QROptions([
+        'version'         => ImageSettings::VERSION,
+        'eccLevel'        => EccLevel::L,
+        'scale'           => ImageSettings::SCALE,
+        'outputInterface' => QRGdImagePNG::class,
+    ]);
+
+    $url = fn_url("orders.details?order_id={$order_id}", SiteArea::ADMIN_PANEL);
+    (new QRCode($options))->render($url, $file_path);
+}
 
     /**
      * Get Qr-code for order.
@@ -61,8 +66,8 @@ class QrHelper
      */
     public static function getOrderQr(int $order_id)
     {
-        $structure = "qr_code_orders/{$order_id}/";
-        $file = "order.png";
+        $structure = ImageSettings::DIRECTORY . "/{$order_id}/";
+        $file = ImageSettings::FILE;
         $file_path = Storage::instance('images')->getAbsolutePath($structure . $file);
 
         if (file_exists($file_path)) {

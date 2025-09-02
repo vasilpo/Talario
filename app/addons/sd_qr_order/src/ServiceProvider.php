@@ -8,11 +8,11 @@
  * and use this program.                                                    *
  ***************************************************************************/
 
-namespace Tygh\Addons\QrOrder;
+namespace Tygh\Addons\SdQrOrder;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use Tygh\Addons\QrOrder\HookHandlers\CartHookHandler;
+use Tygh\Addons\SdQrOrder\HookHandlers\CartHookHandler;
 use Tygh\Application;
 
 class ServiceProvider implements ServiceProviderInterface
