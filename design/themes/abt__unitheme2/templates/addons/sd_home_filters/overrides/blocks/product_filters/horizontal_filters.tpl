@@ -162,6 +162,8 @@
 
                     if (features_hash_parts.length) {
                         url += (url.indexOf('?') === -1 ? '?' : '&') + 'features_hash=' + features_hash_parts.join('_');
+                    } else {
+                        url += (url.indexOf('?') === -1 ? '?' : '&') + 'q=&search_performed=Y';
                     }
 
                     window.location.href = fn_url(url);
