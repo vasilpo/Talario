@@ -29,33 +29,33 @@ class QrHelper
      * @return void
      */
     public static function generateOrderQr(int $order_id): void
-{
-    if (empty($order_id)) {
-        return;
+    {
+        if (empty($order_id)) {
+            return;
+        }
+
+        $file_path = Storage::instance('images')
+            ->getAbsolutePath(ImageSettings::DIRECTORY . "/{$order_id}/" . ImageSettings::FILE);
+
+        if (file_exists($file_path)) {
+            return;
+        }
+
+        $dir_path = dirname($file_path);
+        if (!is_dir($dir_path)) {
+            fn_mkdir($dir_path);
+        }
+
+        $options = new QROptions([
+            'version'         => ImageSettings::VERSION,
+            'eccLevel'        => EccLevel::L,
+            'scale'           => ImageSettings::SCALE,
+            'outputInterface' => QRGdImagePNG::class,
+        ]);
+
+        $url = fn_url("orders.details?order_id={$order_id}", SiteArea::VENDOR_PANEL);
+        (new QRCode($options))->render($url, $file_path);
     }
-
-    $file_path = Storage::instance('images')
-        ->getAbsolutePath(ImageSettings::DIRECTORY . "/{$order_id}/" . ImageSettings::FILE);
-
-    if (file_exists($file_path)) {
-        return;
-    }
-
-    $dir_path = dirname($file_path);
-    if (!is_dir($dir_path)) {
-        fn_mkdir($dir_path);
-    }
-
-    $options = new QROptions([
-        'version'         => ImageSettings::VERSION,
-        'eccLevel'        => EccLevel::L,
-        'scale'           => ImageSettings::SCALE,
-        'outputInterface' => QRGdImagePNG::class,
-    ]);
-
-    $url = fn_url("orders.details?order_id={$order_id}", SiteArea::ADMIN_PANEL);
-    (new QRCode($options))->render($url, $file_path);
-}
 
     /**
      * Get Qr-code for order.
