@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>sd_design_changes</id>
+    <version>4.15.1.1</version>
+    <priority>11000</priority>
+    <position>1</position>
+    <status>active</status>
+    <has_icon>Y</has_icon>
+    <default_language>en</default_language>
+    <supplier>Simtech Development</supplier>
+    <supplier_link>http://www.simtechdev.com</supplier_link>
+    <authors>
+        <author>
+            <name>Simtech Development</name>
+            <email>sales@simtechdev.com</email>
+            <url>http://www.simtechdev.com</url>
+        </author>
+    </authors>
+    <compatibility>
+        <core_version>
+            <min>4.15.1</min>
+        </core_version>
+    </compatibility>
+</addon>

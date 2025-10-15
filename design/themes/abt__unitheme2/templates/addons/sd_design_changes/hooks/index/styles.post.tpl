@@ -1,0 +1,1 @@
+{style src="addons/sd_design_changes/index.less"}

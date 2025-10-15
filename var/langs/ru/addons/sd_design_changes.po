@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+
+msgctxt "Addons::name::sd_design_changes"
+msgid "Simtech Development: Design changes"
+msgstr "Simtech Development: Изменения дизайна"
+
+msgctxt "Addons::description::sd_design_changes"
+msgid "Adds design changes for the site. <a href=\"https://www.simtechdev.ru\" target=\"_blank\">Support</a>"
+msgstr "Добавляет изменения в дизайне. <a href=\"https://www.simtechdev.ru/\" target=\"_blank\">Поддержка</a>"
+
+msgctxt "Languages::block_sd_cta_block"
+msgid "SD: CTA block"
+msgstr "SD: Блок CTA"
+
+msgctxt "Languages::sd_cta_block"
+msgid "SD: CTA block"
+msgstr "SD: Блок CTA"
+
+#  OPTIONS ###
+msgctxt "Languages::sd_design_changes.option.button_main"
+msgid "Main button"
+msgstr "Главная кнопка"
+
+msgctxt "Languages::sd_design_changes.option.button_main_url"
+msgid "Main button URL"
+msgstr "URL главной кнопки"
+
+msgctxt "Languages::sd_design_changes.option.button_secondary"
+msgid "Secondary button"
+msgstr "Вспомогательная кнопка"
+
+msgctxt "Languages::sd_design_changes.option.button_secondary_url"
+msgid "Secondary button URL"
+msgstr "URL вспомогательной кнопки"

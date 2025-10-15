@@ -21,6 +21,7 @@ var/*
 var/tools/migration/composer.lock
 var/tools/migration/conf.php
 var/tools/migration/vendor
+.devcontainer
 
 upgrades/*
 !upgrades/source_restore.php
