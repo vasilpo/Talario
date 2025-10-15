@@ -7,3 +7,7 @@ msgstr "Project-Id-Version: tygh\n"
 msgctxt "Addons::name::sd_design_changes"
 msgid "Simtech Development: Design changes"
 msgstr "Simtech Development: Design changes"
+
+msgctxt "Addons::description::sd_design_changes"
+msgid "Adds design changes for the site. <a href=\"https://www.simtechdev.ru\" target=\"_blank\">Support</a>"
+msgstr "Adds design changes for the site. <a href=\"https://www.simtechdev.ru\" target=\"_blank\">Support</a>"
