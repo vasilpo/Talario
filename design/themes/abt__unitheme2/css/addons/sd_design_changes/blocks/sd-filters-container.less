@@ -1,0 +1,54 @@
+@sd-filters-container-shadow: inset 0 0 0 1px rgba(0,0,0,.1), 0 0 10px rgba(0,0,0,.1);
+
+.sd-filters-container {
+    --container-padding: var(--gap-m);
+    --container-gap: 20px;
+
+    flex-wrap: wrap;
+    gap: var(--container-gap);
+    padding-top: var(--container-padding);
+    padding-bottom: var(--container-padding);
+    border-radius: var(--border-radius-box);
+    box-shadow: @sd-filters-container-shadow;
+
+    @media (max-width: @mq-large) {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    .row-fluid & {
+        display: flex;
+    }
+
+    & > .row-fluid {
+        padding-left: var(--container-padding);
+        padding-right: var(--container-padding);
+    }
+
+    .ut2-btn-search {
+        display: none;
+    }
+
+    .ty-search-block__input {
+        font-size: var(--font-size-normal);
+    }
+
+    .ty-horizontal-product-filters {
+        @media (max-width: @mq-large) {
+            flex-wrap: wrap;
+            gap: var(--container-gap);
+        }
+
+        .ut2-scroll-left,
+        .ut2-scroll-right {
+            @media (max-width: @mq-large-phone) {
+                top: 0;
+            }
+        }
+    }
+
+    .ty-horizontal-product-filters-dropdown__wrapper {
+        padding-left: var(--container-gap);
+        padding-right: var(--container-gap);
+    }
+}
