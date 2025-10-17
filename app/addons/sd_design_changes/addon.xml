@@ -8,12 +8,12 @@
     <has_icon>Y</has_icon>
     <default_language>en</default_language>
     <supplier>Simtech Development</supplier>
-    <supplier_link>http://www.simtechdev.com</supplier_link>
+    <supplier_link>https://www.simtechdev.com</supplier_link>
     <authors>
         <author>
             <name>Simtech Development</name>
             <email>sales@simtechdev.com</email>
-            <url>http://www.simtechdev.com</url>
+            <url>https://www.simtechdev.com</url>
         </author>
     </authors>
     <compatibility>
@@ -21,4 +21,8 @@
             <min>4.15.1</min>
         </core_version>
     </compatibility>
+    <autoload>
+        <psr4 prefix="Tygh\Addons\SdDesignChanges\">src</psr4>
+    </autoload>
+    <bootstrap>\Tygh\Addons\SdDesignChanges\Bootstrap</bootstrap>
 </addon>
