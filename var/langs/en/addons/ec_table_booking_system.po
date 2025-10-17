@@ -32,6 +32,10 @@ msgctxt "Languages::ec_table_booking_system.booking_info"
 msgid "Booking info"
 msgstr "Booking info"
 
+msgctxt "Languages::ec_table_booking_system.booking_address"
+msgid "Booking address"
+msgstr "Booking address"
+
 msgctxt "Languages::ec_table_booking_system.booking_date"
 msgid "Booking date"
 msgstr "Booking date"
