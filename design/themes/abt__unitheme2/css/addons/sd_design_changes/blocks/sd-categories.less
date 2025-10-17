@@ -1,0 +1,85 @@
+@sd-categories-block-image-wrapper: #f2f1f0;
+
+.sd-categories-block {
+    --sd-categories-block-size: 165px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--sd-categories-block-size), 1fr));
+    gap: var(--gap-xs);
+    justify-items: start;
+
+    @media (max-width: @mq-tablet - 1) {
+        --sd-categories-block-size: 55%;
+
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth
+    }
+
+    @media (pointer: coarse) {
+        .mixin-no-scrollbar();
+        padding-bottom: 0;
+    }
+
+    &__item {
+        scroll-snap-align: center;
+        width: 100%;
+        max-width: 100%;
+        min-height: 90px;
+        height: 100%;
+        flex-shrink: 0;
+        position: relative;
+        background-color: @sd-categories-block-image-wrapper;
+        border-radius: var(--border-radius-box);
+        transition: background .2s;
+
+        &:hover {
+            background-color: darken(@sd-categories-block-image-wrapper, 2%);
+        }
+
+        @media (max-width: @mq-tablet - 1) {
+            max-width: var(--sd-categories-block-size);
+        }
+    }
+
+    &__item-image-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: var(--gap-xxs);
+        aspect-ratio: ~'16/9';
+        background-position: right bottom;
+        background-size: 40%;
+        background-repeat: no-repeat;
+        overflow: hidden;
+
+        .ty-no-image {
+            width: 100%;
+            height: 100%;
+            cursor: inherit;
+        }
+    }
+
+    &__item-name {
+        flex-shrink: 0;
+        font-weight: 500;
+        padding-top: var(--gap-sm);
+        padding-left: var(--gap-sm);
+        max-width: 60%;
+        word-wrap: break-word;
+        -webkit-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
+        overflow-wrap: break-word;
+
+        &--full-width {
+            max-width: 100%;
+            padding-right: var(--gap-sm);
+        }
+    }
+}
