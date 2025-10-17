@@ -2,6 +2,9 @@
     <div class="ty-control-group">
         <strong class="ty-control-group__label">{__('ec_table_booking_system.booking_info')}:</strong>
         <span class="ty-control-group__item">
+            {if $cart.products.$key.extra.booking_info.address}
+                {__('ec_table_booking_system.booking_address')}: {$cart.products.$key.extra.booking_info.address}<br/>
+            {/if}
             {if $cart.products.$key.extra.booking_info.booking_type == "T"}
                 {__('ec_table_booking_system.booking_date')}: {$cart.products.$key.extra.booking_info.booking_date|date_format:"`$settings.Appearance.date_format`"}
                 <br>

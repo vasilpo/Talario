@@ -6,8 +6,8 @@
             <option value="">{__("ec_table_booking_system.ec_select_slot")}</option>
             {foreach from=$available_time_slots item=available_time_slot key=key}
                 {if $available_time_slot.amount > 0}
-                    {$val = "`$available_time_slot.0` to `$available_time_slot.1`"}
-                    <option value="{$val}" {if $val  == $selected_time}selected="selected"{/if}>{$available_time_slot.0} to {$available_time_slot.1}</option>
+                    {$val = "`$available_time_slot.0` - `$available_time_slot.1`"}
+                    <option value="{$val}" {if $val  == $selected_time}selected="selected"{/if}>{$available_time_slot.0} - {$available_time_slot.1}</option>
                     {if $val  == $selected_time}
                         {$ec_qty = $available_time_slot.amount}
                     {/if}

@@ -1,9 +1,9 @@
 <?php
 /**
  * CS-Cart Table Booking System - ec_table_booking_system
- * 
+ *
  * PHP version 7.1
- * 
+ *
  * @category  Add-on
  * @package   CS_Cart
  * @author    Ecarter Technologies Private Limited <support@ecarter.co>
@@ -22,10 +22,10 @@ use Tygh\Addons\EcTableBookingSystem\Enum\FilterTypes;
 /**
  * Hook update_product_pre used for pre Updation of product data
  *
- * @param mixed $product_data 
- * @param mixed $product_id   
- * @param mixed $lang_code 
- * @param mixed $can_update 
+ * @param mixed $product_data
+ * @param mixed $product_id
+ * @param mixed $lang_code
+ * @param mixed $can_update
  *
  * @return void
  */
@@ -34,27 +34,27 @@ function Fn_Ec_Table_Booking_System_Update_Product_pre(&$product_data, &$product
     if (isset($product_data['booking_data']) && !empty($product_data['booking_data'])) {
         $is_booking_type_available = db_get_field("SELECT booking_type FROM ?:ec_table_booking_system WHERE product_id = ?i",$product_id);
         if(!empty($is_booking_type_available) && $is_booking_type_available == 'Y' && $product_data['booking_data']['booking_type'] == 'N') {
-            $product_data['is_edp']='N'; 
+            $product_data['is_edp']='N';
         }
        else if ($product_data['booking_data']['booking_type'] != 'N' && $product_data['booking_data']['booking_type'] != '1T') {
             $product_data['tracking'] = 'D';
-            $product_data['is_edp']='Y'; 
+            $product_data['is_edp']='Y';
         }
     }
 }
 function Fn_Ec_Table_Booking_System_Check_Amount_In_Stock($product_id, $amount, $product_options, $cart_id, &$is_edp, $original_amount, $cart){
     if ($is_edp == 'Y' && (db_get_field("SELECT booking_type FROM ?:ec_table_booking_system WHERE product_id = ?i", $product_id) == 'T' || db_get_field("SELECT booking_type FROM ?:ec_table_booking_system WHERE product_id = ?i", $product_id) == 'R')){
-        $is_edp = 'N'; 
+        $is_edp = 'N';
     }
 }
 /**
  * Hook update_product_post is used for post Updation of product data
  *
- * @param mixed $product_data 
- * @param mixed $product_id 
- * @param mixed $lang_code 
- * @param mixed $create 
- * 
+ * @param mixed $product_data
+ * @param mixed $product_id
+ * @param mixed $lang_code
+ * @param mixed $create
+ *
  * @return void
  */
 function Fn_Ec_Table_Booking_System_Update_Product_post(&$product_data, &$product_id, &$lang_code, &$create)
@@ -64,7 +64,7 @@ function Fn_Ec_Table_Booking_System_Update_Product_post(&$product_data, &$produc
     }
 }
 function Fn_Ec_Table_Booking_System_Get_products($params, &$fields, $sortings, &$condition, &$join, $sorting, $group_by, $lang_code, $having)
-{ 
+{
     $fields['booking_type'] = "?:ec_table_booking_system.booking_type as booking_type";
     $join .= db_quote(" LEFT JOIN ?:ec_table_booking_system ON ?:ec_table_booking_system.product_id = products.product_id ");
     if(!empty($params['ec_table_booking_type'])){
@@ -83,10 +83,10 @@ function Fn_Ec_Table_Booking_System_Get_products($params, &$fields, $sortings, &
 /**
  * Using join condition and field_list data to get product data
  *
- * @param mixed $product_id 
- * @param mixed $field_list 
- * @param mixed $join 
- * @param mixed $auth 
+ * @param mixed $product_id
+ * @param mixed $field_list
+ * @param mixed $join
+ * @param mixed $auth
  *
  * @return void
  */
@@ -113,10 +113,10 @@ function fn_ec_table_booking_system_get_product_data_post(&$product_data, $auth,
 /**
  * Get product data
  *
- * @param mixed $product_id 
- * @param mixed $field_list 
- * @param mixed $join 
- * @param mixed $auth 
+ * @param mixed $product_id
+ * @param mixed $field_list
+ * @param mixed $join
+ * @param mixed $auth
  *
  * @return void
  */
@@ -137,10 +137,10 @@ function Fn_Ec_Table_Booking_System_Get_My_Product_data(&$product_id, &$field_li
 /**
  * Update order details
  *
- * @param mixed $order_id 
- * @param mixed $force_notification 
- * @param mixed $order_info 
- * @param mixed $_error 
+ * @param mixed $order_id
+ * @param mixed $force_notification
+ * @param mixed $order_info
+ * @param mixed $_error
  *
  * @return void
  */
@@ -148,7 +148,7 @@ function Fn_Ec_Table_Booking_System_Order_Placement_routines(&$order_id, &$force
 {
     $status = $order_info['status'];
 
-   
+
     if (in_array($status, fn_get_order_paid_statuses())) {
         $cart = fn_get_order_info($order_id);
         if (isset($cart['product_groups'])) {
@@ -187,7 +187,7 @@ function Fn_Ec_Table_Booking_System_Order_Placement_routines(&$order_id, &$force
                             // $day = strtolower(date('l', $order_product['extra']['booking_info']['booking_date']));
                             // $data = $days_data[$day]['time_by_amount'];
                             // foreach($data as $key => $item) {
-                            //     $time_slots = explode(" to ",$order_product['extra']['booking_info']['booking_slot']);
+                            //     $time_slots = explode(" - ",$order_product['extra']['booking_info']['booking_slot']);
                             //     if(strcmp($item['start_time'], $time_slots[0]) == 0) {
                             //         if(strcmp($item['end_time'], $time_slots[1]) == 0)
                             //             $days_data[$day]['time_by_amount'][$key]['amount'] = $item['amount'] - $order_product['extra']['booking_info']['booking_slot_amount'];
@@ -202,8 +202,8 @@ function Fn_Ec_Table_Booking_System_Order_Placement_routines(&$order_id, &$force
                             $input_data['slot'] = $order_product['extra']['booking_info']['booking_slot'];
                             $input_data['quantity'] = $order_product['extra']['booking_info']['booking_slot_amount'];
 
-                        } 
-                        else { 
+                        }
+                        else {
                             $startDate = $order_product['extra']['booking_info']['from'];
                             $startDate = str_replace('/', '-', $startDate);
                             $from   = fn_date_format(strtotime($startDate), "%Y-%m-%d");
@@ -217,7 +217,7 @@ function Fn_Ec_Table_Booking_System_Order_Placement_routines(&$order_id, &$force
 
                         }
 
-                       
+
                         $input_data['booking_type'] = $order_product['extra']['booking_info']['booking_type'];
                         $input_data['booking_info'] = serialize($order_product['extra']['booking_info']);
                         db_query("INSERT INTO ?:ec_table_booking_system_booking_info ?e", $input_data);
@@ -230,8 +230,8 @@ function Fn_Ec_Table_Booking_System_Order_Placement_routines(&$order_id, &$force
 /**
  * Update and Verify booking details
  *
- * @param mixed $booking_data 
- * @param mixed $product_id 
+ * @param mixed $booking_data
+ * @param mixed $product_id
  *
  * @return void
  */
@@ -310,7 +310,7 @@ function Fn_Ec_Table_Booking_System_Update_Booking_data($booking_data, $product_
         // if ($from_date <= $date_curr || $from_date >= $to_date) {
         //     fn_set_notification('E', __('error'), __('ec_table_booking_system.date_from_early'));
         //     return false;
-        // } 
+        // }
         if(!isset($booking_data['sunday_status'])) {
             $booking_data['sunday_status'] = 0;
         }
@@ -385,7 +385,7 @@ function Fn_Ec_Table_Booking_System_Update_Booking_data($booking_data, $product_
                 $t_diff=0;
             }
         }
-       
+
         //change for invalid date end
         $_days_data = db_get_field("SELECT days_data FROM ?:ec_table_booking_system WHERE product_id = ?i", $product_id);
         if ($_days_data) {
@@ -395,7 +395,7 @@ function Fn_Ec_Table_Booking_System_Update_Booking_data($booking_data, $product_
             // foreach($_days_data as $day=>$)
             // $days_data[$day]['time_by_amount'] = $request_data['booking_data'];
         }
-        $booking_data['days_data'] = serialize($days_data);        
+        $booking_data['days_data'] = serialize($days_data);
         if (!is_numeric($booking_data['slot_time'])) {
             $booking_data['slot_time'] = 0;
             fn_set_notification('W', __('warning'), __('ec_table_booking_system.please_set_booking_time_numeric_only'));
@@ -449,7 +449,7 @@ function Fn_Ec_Table_Booking_System_Update_Booking_data($booking_data, $product_
     return false;
 }
 
-function fn_ec_table_booking_system_get_cart_product_data($product_id, &$_pdata, $product, &$auth, &$cart, $hash) {
+function fn_ec_table_booking_system_get_cart_product_data($product_id, &$_pdata, &$product, &$auth, &$cart, $hash) {
     if(!empty($product['extra']['booking_info'])) {
         $booking_info = $product['extra']['booking_info'];
         if ($booking_info['booking_type'] == 'T') {
@@ -460,8 +460,7 @@ function fn_ec_table_booking_system_get_cart_product_data($product_id, &$_pdata,
             $price = fn_apply_options_modifiers($product['product_options'], $price, 'P', array(), array('product_data' => $product));
 
             $_pdata['price'] = $price;
-        }
-        elseif($booking_info['booking_type'] == 'R') {
+        } elseif($booking_info['booking_type'] == 'R') {
             $booking_date = explode("to",$booking_info['booking_date'] );
             if(!empty($booking_date[0]) && !empty($booking_date[1])) {
                 $dates = fn_ec_table_booking_get_between_dates($booking_date[0], $booking_date[1]);
@@ -473,16 +472,23 @@ function fn_ec_table_booking_system_get_cart_product_data($product_id, &$_pdata,
                 $_pdata['price'] = $price;
             }
         }
+
+        if (!empty($_pdata['company_id'])) {
+            $company_address = db_get_row('SELECT city, address FROM ?:companies WHERE company_id = ?i', $_pdata['company_id']);
+            if (!empty($company_address['city']) || !empty($company_address['address'])) {
+                $product['extra']['booking_info']['address'] = trim(implode(' ', $company_address));
+            }
+        }
     }
 
 }
 /**
  * Product data updation before adding product to cart
  *
- * @param mixed $product_data 
- * @param mixed $cart 
- * @param mixed $auth 
- * @param mixed $update 
+ * @param mixed $product_data
+ * @param mixed $cart
+ * @param mixed $auth
+ * @param mixed $update
  *
  * @return void
  */
@@ -504,9 +510,9 @@ function Fn_Ec_Table_Booking_System_Pre_Add_To_cart(&$product_data, &$cart, &$au
                     if($cart['products'][$key]['extra']['booking_info']['booking_type'] == 'T') {
                         $product_data[$key]['extra']['booking_info']['booking_type'] = $cart['products'][$key]['extra']['booking_info']['booking_type'];
                         $product_data[$key]['extra']['booking_info']['booking_date'] = $cart['products'][$key]['extra']['booking_info']['booking_date'];
-                        $product_data[$key]['extra']['booking_info']['booking_slot_amount'] = $cart['products'][$key]['extra']['booking_info']['booking_slot_amount']; 
+                        $product_data[$key]['extra']['booking_info']['booking_slot_amount'] = $cart['products'][$key]['extra']['booking_info']['booking_slot_amount'];
                         $product_data[$key]['extra']['booking_info']['booking_slot'] = $cart['products'][$key]['extra']['booking_info']['booking_slot'];
-                    } 
+                    }
                     if (!fn_ec_table_booking_system_check_slot_if_already_booked($product_id, $product_data[$key]['extra']['booking_info'])) {
                         fn_set_notification('W', __('warning'), __('ec_table_booking_system.booking_already_reserved_or_expired'));
                         unset($product_data[$key]);
@@ -534,7 +540,7 @@ function Fn_Ec_Table_Booking_System_Pre_Add_To_cart(&$product_data, &$cart, &$au
                 }
                 $product_data[$key]['extra']['booking_info']['booking_type'] = $product_data[$key]['booking_info']['booking_type'];
                 if ($product_data[$key]['booking_info']['booking_type'] == 'T') {
-                    fn_define('ORDER_MANAGEMENT', true);       
+                    fn_define('ORDER_MANAGEMENT', true);
                     $product_data[$key]['extra']['booking_info']['booking_slot'] = $product_data[$key]['booking_info']['booking_slot'];
                     $product_data[$key]['extra']['booking_info']['booking_date'] = strtotime($product_data[$key]['booking_info']['booking_date']);
                     $product_data[$key]['extra']['booking_info']['original_booking_date'] = $product_data[$key]['booking_info']['booking_date'];
@@ -547,7 +553,7 @@ function Fn_Ec_Table_Booking_System_Pre_Add_To_cart(&$product_data, &$cart, &$au
                 }
                 elseif($product_data[$key]['booking_info']['booking_type'] == 'R') {
                     unset($product_data[$key]['is_edp']);
-                    fn_define('ORDER_MANAGEMENT', true);   
+                    fn_define('ORDER_MANAGEMENT', true);
                     $product_data[$key]['extra']['booking_info']['booking_date'] = $product_data[$key]['booking_info']['booking_date'];
                     $booking_date = explode("to",$product_data[$key]['extra']['booking_info']['booking_date'] );
                     if(!empty($booking_date[0]) && !empty($booking_date[1])) {
@@ -593,7 +599,7 @@ function Fn_Ec_Table_Booking_System_Pre_Add_To_cart(&$product_data, &$cart, &$au
 
 function fn_ec_table_booking_price_wise_product_price($date_selected,$product_id) {
     $price_wise_in_array = db_get_array("SELECT * FROM ?:ec_table_booking_system_price  WHERE product_id = ?i",$product_id);
-   
+
     $price = 0;
     $number_of_dates_done = 0;
     $number_dats_available = 0;
@@ -624,13 +630,13 @@ function fn_ec_table_booking_price_wise_product_price($date_selected,$product_id
                             $number_of_dates_done++;
                         }
                     }
-                }  
+                }
             }
         }
     }
-   
+
     // fn_print_R($price);
-   
+
     if(!empty($number_dats_available)) {
         if($number_dats_available != $number_of_dates_done) {
             $remaining = $number_dats_available - $number_of_dates_done;
@@ -650,7 +656,7 @@ function fn_ec_table_booking_price_wise_product_price($date_selected,$product_id
 function fn_ec_table_booking_get_between_dates($startDate, $endDate)
 {
     $rangArray = [];
-        
+
     // $startDate = strtotime($startDate);
     // $endDate = strtotime($endDate);
 
@@ -660,10 +666,10 @@ function fn_ec_table_booking_get_between_dates($startDate, $endDate)
     $endDate = str_replace('/', '-', $endDate);
     $endDate = strtotime($endDate);
 
-            
-    for ($currentDate = $startDate; $currentDate <= $endDate; 
+
+    for ($currentDate = $startDate; $currentDate <= $endDate;
                                     $currentDate += (86400)) {
-                                            
+
         $date = date('Y-m-d', $currentDate);
         $rangArray[] = $date;
     }
@@ -673,11 +679,11 @@ function fn_ec_table_booking_get_between_dates($startDate, $endDate)
 /**
  * Return available and unavailable time slots
  *
- * @param mixed $start_time 
- * @param mixed $end_time 
- * @param mixed $booking_slot 
- * @param mixed $break_slot 
- * @param mixed $booked 
+ * @param mixed $start_time
+ * @param mixed $end_time
+ * @param mixed $booking_slot
+ * @param mixed $break_slot
+ * @param mixed $booked
  *
  * @return array $out,$out_avoid
  */
@@ -709,7 +715,7 @@ function Fn_Ec_Table_Booking_System_Time_Slots_array($start_time, $end_time, $bo
             }
             unset($time_by_amount[$key]['start_time']);
             unset($time_by_amount[$key]['end_time']);
-            $current_slots = $time_by_amount[$key][0].' to '.$time_by_amount[$key][1];
+            $current_slots = $time_by_amount[$key][0].' - '.$time_by_amount[$key][1];
             if(isset($n_booked_info[$selected_date][$current_slots])) {
                 $item['amount'] = $item['amount'] - $n_booked_info[$selected_date][$current_slots];
                 $time_by_amount[$key]['amount'] = $item['amount'];
@@ -788,7 +794,7 @@ function fn_ec_table_booking_system_get_saved_data($request_data)
     }
 }
 function fn_ec_save_booking_data_by_amount($request_data)
-{   
+{
     if(!empty($request_data['product_id'])) {
         $product_id = $request_data['product_id'];
         $day = $request_data['day'];
@@ -821,8 +827,8 @@ function fn_ec_save_booking_data_by_amount($request_data)
 /**
  * Get all available and unavailable slots of single day multiple slots
  *
- * @param mixed $selected_date 
- * @param mixed $product_id 
+ * @param mixed $selected_date
+ * @param mixed $product_id
  *
  * @return array $available_time_slots,$unavailable_time_slots
  */
@@ -974,7 +980,7 @@ function fn_ec_table_booking_system_check_quantity_selector($product_id) {
 /**
  * Check if product is a booking product
  *
- * @param mixed $product_id 
+ * @param mixed $product_id
  *
  * @return boolean
  */
@@ -989,8 +995,8 @@ function Fn_Ec_Table_Booking_System_Check_If_Booking_product($product_id)
 /**
  * Get all booking products
  *
- * @param mixed $type 
- * @param mixed $params 
+ * @param mixed $type
+ * @param mixed $params
  *
  * @return array $booking_data,$params
  */
@@ -1016,10 +1022,10 @@ function Fn_Ec_Table_Booking_System_Get_All_Booking_products($type = '', $params
 /**
  * Get booking info of a booking product
  *
- * @param mixed $product_id 
- * @param mixed $type 
- * @param mixed $status 
- * @param mixed $params 
+ * @param mixed $product_id
+ * @param mixed $type
+ * @param mixed $status
+ * @param mixed $params
  *
  * @return array $all_booking_info,$params
  */
@@ -1066,10 +1072,10 @@ function Fn_Ec_Table_Booking_System_Get_Booked_info($product_id = 0, $type = '',
 /**
  * Get booking information of a product
  *
- * @param mixed $product_id 
- * @param mixed $type 
- * @param mixed $status 
- * @param mixed $params 
+ * @param mixed $product_id
+ * @param mixed $type
+ * @param mixed $status
+ * @param mixed $params
  *
  * @return array $booking_info,$params
  */
@@ -1101,8 +1107,8 @@ function Fn_Ec_Table_Booking_System_Get_Booked_information($product_id = 0, $typ
         'email'     => "orders.email",
         'order_id'  => "orders.order_id"
     );
-    $join .= "LEFT JOIN ?:orders as orders ON orders.order_id = booking_and_reservation_booking_info.order_id ";    
-    $join .= "LEFT JOIN ?:ec_table_booking_system as booking_and_reservation ON booking_and_reservation.product_id = booking_and_reservation_booking_info.product_id "; 
+    $join .= "LEFT JOIN ?:orders as orders ON orders.order_id = booking_and_reservation_booking_info.order_id ";
+    $join .= "LEFT JOIN ?:ec_table_booking_system as booking_and_reservation ON booking_and_reservation.product_id = booking_and_reservation_booking_info.product_id ";
     if ($status == 'A') {
         $condition .= db_quote('AND status = ?s', 'A');
     }
@@ -1125,7 +1131,7 @@ function Fn_Ec_Table_Booking_System_Get_Booked_information($product_id = 0, $typ
     }
     if (!empty($params['status'])) {
         $condition .= db_quote(" AND booking_and_reservation_booking_info.status IN (?a)", $params['status']);
-    } 
+    }
     if (isset($params['order_id']) && !empty($params['order_id'])) {
         $condition.= db_quote(' AND orders.order_id IN (?a)', $params['order_id']);
     }
@@ -1164,8 +1170,8 @@ function Fn_Ec_Table_Booking_System_Get_Booked_information($product_id = 0, $typ
 /**
  * Reorder of a product
  *
- * @param mixed $order_info 
- * @param mixed $cart 
+ * @param mixed $order_info
+ * @param mixed $cart
  *
  * @return void
  */
@@ -1181,8 +1187,8 @@ function Fn_Ec_Table_Booking_System_reorder(&$order_info, &$cart)
 /**
  * Check if booking slot is already booked
  *
- * @param mixed $product_id 
- * @param mixed $booking_info 
+ * @param mixed $product_id
+ * @param mixed $booking_info
  *
  * @return boolean
  */
@@ -1203,7 +1209,7 @@ function Fn_Ec_Table_Booking_System_Check_Slot_If_Already_booked($product_id, $b
                 foreach ($all_slots['available_time_slots'] as $_key => $time_slots) {
                     $amount = $time_slots['amount'];
                     unset($time_slots['amount']);
-                    $time_slot = implode(' to ', $time_slots);
+                    $time_slot = implode(' - ', $time_slots);
                     if ($booking_info['booking_slot'] == $time_slot) {
                         if($amount >= $booking_slot_amount)
                             return true;
@@ -1213,7 +1219,7 @@ function Fn_Ec_Table_Booking_System_Check_Slot_If_Already_booked($product_id, $b
                 }
             }
             return false;
-        } 
+        }
         elseif($booking_info['booking_type'] == 'R') {
             $alreay_booked_slots    = fn_ec_table_booking_system_get_already_booked_slot($product_id);
             $booked = array('formated' => array());
@@ -1244,8 +1250,8 @@ function Fn_Ec_Table_Booking_System_Check_Slot_If_Already_booked($product_id, $b
 /**
  * Check booking order status
  *
- * @param mixed $order_id 
- * @param mixed $product_id 
+ * @param mixed $order_id
+ * @param mixed $product_id
  *
  * @return void
  */
@@ -1267,8 +1273,8 @@ function Fn_Ec_Table_Booking_System_Get_Booking_Status_params()
 /**
  * Change status of booking
  *
- * @param mixed $params 
- * @param mixed $result 
+ * @param mixed $params
+ * @param mixed $result
  *
  * @return void
  */
@@ -1289,7 +1295,7 @@ function Fn_Ec_Table_Booking_System_Tools_Change_status($params, &$result)
         //         $available_booking_data = db_get_row("SELECT * FROM ?:ec_table_booking_system WHERE product_id = ?i",$booked_order_info['product_id']);
         //         $days_data = unserialize($available_booking_data['days_data']);
         //         $day = strtolower(date('l', $booked_booking_info['booking_date']));
-        //         $booking_slot = explode(" to ",$booked_booking_info['booking_slot']);
+        //         $booking_slot = explode(" - ",$booked_booking_info['booking_slot']);
         //         foreach($days_data[$day]['time_by_amount'] as $key => $item) {
         //             if($item['start_time'] == $booking_slot[0] && $item['end_time'] == $booking_slot[1]) {
         //                 $remaining_amount = $item['amount'] + $booked_booking_info['booking_slot_amount'];
@@ -1321,7 +1327,7 @@ function Fn_Ec_Table_Booking_System_Tools_Change_status($params, &$result)
             $notify_vendor              = $force_notification['V'];
             $force_notification['V']    = true;
         }
-        
+
         if(isset($params['order_id']) && !empty($result)) {
 
             $addon_settings = fn_get_ec_table_booking_system_settings();
@@ -1334,22 +1340,22 @@ function Fn_Ec_Table_Booking_System_Tools_Change_status($params, &$result)
             $order_info = fn_get_order_info($params['order_id']);
             $edp_data = fn_generate_ekeys_for_edp(['status_from' => $order_info['status'], 'status_to' => $status_to], $order_info);
             $order_info['status'] = $status_to;
-        
+
             db_query('UPDATE ?:orders SET status = ?s, updated_at = ?i WHERE order_id = ?i', $status_to, TIME, $params['order_id']);
-        
+
             if ($status_to !== STATUS_PARENT_ORDER && $status_to !== STATUS_INCOMPLETED_ORDER) {
                 $status_id = strtolower($status_to);
                 $event_dispatcher = EventDispatcherProvider::getEventDispatcher();
                 $notification_settings_factory = EventDispatcherProvider::getNotificationSettingsFactory();
                 $notification_rules = $notification_settings_factory->create($force_notification);
-        
+
                 $event_dispatcher->dispatch(
                     "order.status_changed.{$status_id}",
                     ['order_info' => $order_info],
                     $notification_rules,
                     new OrderProvider($order_info)
                 );
-        
+
                 if ($edp_data) {
                     $notification_rules = fn_get_edp_notification_rules($force_notification ?: [], $edp_data);
                     $event_dispatcher->dispatch(
@@ -1360,7 +1366,7 @@ function Fn_Ec_Table_Booking_System_Tools_Change_status($params, &$result)
                     );
                 }
             }
-        
+
             fn_order_notification($order_info, $edp_data, $force_notification);
         }
     }
@@ -1368,7 +1374,7 @@ function Fn_Ec_Table_Booking_System_Tools_Change_status($params, &$result)
 /**
  * Check status change allowed or not
  *
- * @param mixed $id 
+ * @param mixed $id
  *
  * @return boolean
  */
@@ -1397,12 +1403,12 @@ function Fn_Ec_Table_Booking_System_Allow_Status_change($id)
             $days_data = unserialize($available_booking_data['days_data']);
             $day = strtolower(date('l', $booked_booking_info['booking_date']));
             $already_available_product_data = $days_data[$day]['time_by_amount'];
-            $booking_slot = explode(" to ",$booked_booking_info['booking_slot']);
+            $booking_slot = explode(" - ",$booked_booking_info['booking_slot']);
             foreach($already_available_product_data as $key => $item) {
                 if($item['start_time'] == $booking_slot[0] && $item['end_time'] == $booking_slot[1]) {
                     if($item['amount'] >= $booked_booking_info['booking_slot_amount']){
                         break;
-                    } 
+                    }
                     else {
                         $allow = 0;
                         break;
@@ -1419,7 +1425,7 @@ function Fn_Ec_Table_Booking_System_Allow_Status_change($id)
 /**
  * Get Dates in a formatted manner
  *
- * @param mixed $date_array 
+ * @param mixed $date_array
  *
  * @return array $formatted_date_array
  */
@@ -1430,7 +1436,7 @@ function Fn_Ec_Table_Booking_System_Get_Formated_dates($date_array = array())
     if (count($date_array) == 1) {
         $formated_date_array['date_str'] = $formated_date_array['first'] = fn_date_format($date_array[0], Registry::get('settings.Appearance.date_format'));
     } else {
-        for ($index=count($date_array) - 1; $index >= 0 ; $index--) { 
+        for ($index=count($date_array) - 1; $index >= 0 ; $index--) {
             $formated_date_array['more'][] = fn_date_format($date_array[$index], Registry::get('settings.Appearance.date_format'));
         }
         $formated_date_array['date_str']    = implode(', ', $formated_date_array['more']);
@@ -1453,12 +1459,12 @@ function Fn_Settings_Variants_Addons_Ec_Table_Booking_System_Decline_status()
 /**
  * Change booking order status
  *
- * @param mixed $status_to 
- * @param mixed $status_from 
- * @param mixed $order_info 
- * @param mixed $force_notification 
- * @param mixed $order_statuses 
- * @param mixed $place_order 
+ * @param mixed $status_to
+ * @param mixed $status_from
+ * @param mixed $order_info
+ * @param mixed $force_notification
+ * @param mixed $order_statuses
+ * @param mixed $place_order
  *
  * @return void
  */
@@ -1472,7 +1478,7 @@ function Fn_Ec_Table_Booking_System_Change_Order_status($status_to, $status_from
         if ($decline_status === $status_to) {
             $booking_status['status'] = 'D';
         } else {
-            $booking_status['status'] = 'A';            
+            $booking_status['status'] = 'A';
         }
         db_query('UPDATE ?:ec_table_booking_system_booking_info SET ?u WHERE order_id = ?i', $booking_status, $order_id);
     }
@@ -1480,9 +1486,9 @@ function Fn_Ec_Table_Booking_System_Change_Order_status($status_to, $status_from
 /**
  * Updation of data before order placing
  *
- * @param mixed $cart 
- * @param mixed $allow 
- * @param mixed $product_groups 
+ * @param mixed $cart
+ * @param mixed $allow
+ * @param mixed $product_groups
  *
  * @return void
  */
@@ -1503,7 +1509,7 @@ function Fn_Ec_Table_Booking_System_Pre_Place_order(&$cart, &$allow, &$product_g
 /**
  * Check if product is a booking product
  *
- * @param mixed $product_id 
+ * @param mixed $product_id
  *
  * @return string $type
  */
@@ -1515,10 +1521,10 @@ function Fn_Ec_Table_Booking_System_Is_Booking_product($product_id)
 /**
  * Calculate cart content
  *
- * @param mixed $cart 
- * @param mixed $cart_products 
- * @param mixed $auth 
- * @param mixed $apply_cart_promotions 
+ * @param mixed $cart
+ * @param mixed $cart_products
+ * @param mixed $auth
+ * @param mixed $apply_cart_promotions
  *
  * @return void
  */
@@ -1611,7 +1617,7 @@ function fn_ec_table_booking_get_blocked_date_product_id($blocked_date) {
         foreach($blocked_date as $key => $item) {
             $startDate = str_replace('/', '-', $item);
             $blocked_date[$key] = date('Y-m-d',strtotime($startDate));
-            
+
         }
     }
     return $blocked_date;
@@ -1642,7 +1648,7 @@ function Fn_Ec_Table_Booking_System_Get_Already_Booked_slot($product_id)
 }
 
 
-function Fn_Ec_Table_Booking_System_Get_Already_Booked_Slot_By_Table_booking($product_id,$booking_type) 
+function Fn_Ec_Table_Booking_System_Get_Already_Booked_Slot_By_Table_booking($product_id,$booking_type)
 {
     $available_booking_data = db_get_row("SELECT * FROM ?:ec_table_booking_system WHERE product_id = ?i",$product_id);
     $days_data = unserialize($available_booking_data['days_data']);
@@ -1774,7 +1780,7 @@ function fn_ec_table_booking_system_get_product_filter_fields(array &$filters){
 }
 
 function fn_ec_table_booking_system_get_current_filters_post(array $params, array &$filters, array $selected_filters, $area, $lang_code, array $variant_values, array $range_values, array &$field_variant_values, array $field_range_values)
-{   
+{
     foreach ($filters as &$filter) {
         if ($filter['field_type'] == FilterTypes::DATEFILTER) {
             if(!empty($selected_filters[$filter['filter_id']])) {
@@ -1804,7 +1810,7 @@ function fn_ec_table_booking_system_get_additional_information(&$product, $produ
                     $dates = fn_ec_table_booking_get_between_dates($dates_selected[0],$dates_selected[1]);
                     $product['booking_amount'] = count($dates);
                     $dates = implode("|",$dates);
-                    $price = fn_ec_table_booking_price_wise_product_price($dates,$product['product_id']);    
+                    $price = fn_ec_table_booking_price_wise_product_price($dates,$product['product_id']);
                 }
                 $product['price'] = $price;
             }
@@ -2001,12 +2007,12 @@ function fn_ec_table_booking_system_update_company_pre(&$company_data, $company_
                         }
                     }
                     $booking_data['price_wise'] = $booking_data['R']['price_wise'];
-                    
+
                     if(!empty($booking_data['R']['price_wise'])) {
                         unset($booking_data['R']['price_wise']);
                     }
                     $company_data['booking_data'] = $booking_data;
-        
+
                 }
             }
 
