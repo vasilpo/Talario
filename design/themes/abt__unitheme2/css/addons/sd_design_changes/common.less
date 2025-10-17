@@ -1,0 +1,27 @@
+.mixin-scroll-mobile() {
+    @media (max-width: @mq-tablet - 1) {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        & > div {
+            padding-left: var(--container-fluid-padding);
+            padding-right: var(--container-fluid-padding);
+        }
+    }
+
+    @media (pointer: coarse) {
+        .mixin-no-scrollbar();
+        padding-bottom: 0;
+    }
+}
+
+.rmt-full-width-scroll-mobile,
+.rmt-full-width-scroll-mobile-mainbox > .ty-mainbox-body {
+    .mixin-scroll-mobile();
+}
