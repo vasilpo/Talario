@@ -20,4 +20,16 @@ $schema['addons/sd_design_changes/blocks/categories/sd_categories_list.tpl'] = [
     ]
 ];
 
+
+$schema['blocks/products/ab__grid_list.tpl']['settings'] = array_merge(
+    $schema['blocks/products/ab__grid_list.tpl']['settings'],
+    [
+        'show_short_desc' => [
+            'type' => 'checkbox',
+            'default_value' => YesNo::NO,
+            'option_name' => 'sd_theme_integration.option.show_short_description',
+        ],
+    ]
+);
+
 return $schema;

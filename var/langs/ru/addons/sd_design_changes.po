@@ -42,3 +42,7 @@ msgstr "Вспомогательная кнопка"
 msgctxt "Languages::sd_design_changes.option.button_secondary_url"
 msgid "Secondary button URL"
 msgstr "URL вспомогательной кнопки"
+
+msgctxt "Languages::sd_design_changes.option.show_short_description"
+msgid "Show short description"
+msgstr "Показывать краткое описание"
