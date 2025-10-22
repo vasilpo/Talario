@@ -1,4 +1,10 @@
 <!-- The "{$smarty.template}" template was overriden by the "sd_design_changes" add-on -->
+{include "common/product_data.tpl"
+    product=$product
+    product_labels_position="left-top"
+    show_labels_in_title=false
+    show_price_prefix=true
+}
 {assign var="form_open" value="form_open_{$obj_id}"}
 {$smarty.capture.$form_open nofilter}
 
@@ -66,6 +72,8 @@
         <div class="ut2-gl__price{if $product.price == 0} ut2-gl__no-price{/if}	pr-{$settings.abt__ut2.product_list.price_display_format}{if $product.list_discount || $product.discount} pr-color{/if}" style="min-height: {$smarty.capture.abt__ut2_pr_block_height  nofilter}px;">
             {hook name="products:list_price_block"}
                 <div>
+                    {if $product.price == 0}
+                    {/if}
                     {assign var="price" value="price_{$obj_id}"}
                     {$smarty.capture.$price nofilter}
 

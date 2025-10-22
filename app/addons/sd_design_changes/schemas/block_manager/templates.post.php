@@ -27,7 +27,7 @@ $schema['blocks/products/ab__grid_list.tpl']['settings'] = array_merge(
         'show_short_desc' => [
             'type' => 'checkbox',
             'default_value' => YesNo::NO,
-            'option_name' => 'sd_theme_integration.option.show_short_description',
+            'option_name' => 'sd_design_changes.option.show_short_description',
         ],
     ]
 );
