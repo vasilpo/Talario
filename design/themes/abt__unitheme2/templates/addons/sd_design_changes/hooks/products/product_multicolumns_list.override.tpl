@@ -1,4 +1,10 @@
 <!-- The "{$smarty.template}" template was overriden by the "sd_design_changes" add-on -->
+{include "common/product_data.tpl"
+    product=$product
+    product_labels_position="left-top"
+    show_labels_in_title=false
+    show_price_prefix=true
+}
 {assign var="form_open" value="form_open_{$obj_id}"}
 {$smarty.capture.$form_open nofilter}
 
