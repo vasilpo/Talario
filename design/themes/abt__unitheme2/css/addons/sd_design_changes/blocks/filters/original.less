@@ -1,0 +1,30 @@
+.ty-product-filters {
+    &__search {
+        margin-bottom: var(--gap-s);
+
+        .ty-vendors-locations-use-my-location {
+            top: 11px;
+            right: 11px;
+        }
+
+        .ty-range-slider__item {
+            top: -10px;
+        }
+    }
+
+    &__block {
+        & & {
+            .ut2-filters & {
+                padding: 0;
+            }
+        }
+    }
+
+    .set-distance {
+        margin-top: var(--gap-sm);
+
+        @media (max-width: @mq-tablet - 1) {
+            margin-top: var(--gap-m);
+        }
+    }
+}
