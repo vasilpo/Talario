@@ -40,7 +40,10 @@ $schema['sd_cta_block'] = [
             'option_name' => 'sd_design_changes.option.button_secondary_url'
         ],
     ],
-    'templates' => 'addons/sd_design_changes/blocks/sd_cta_block.tpl',
+    'templates' => [
+        'addons/sd_design_changes/blocks/sd_cta_block.tpl' => [],
+        'addons/sd_design_changes/blocks/sd_cta_partner.tpl' => [],
+    ]
 ];
 
 

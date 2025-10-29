@@ -26,6 +26,10 @@ msgctxt "Languages::sd_cta_block"
 msgid "SD: CTA block"
 msgstr "SD: Блок CTA"
 
+msgctxt "Languages::sd_cta_partner"
+msgid "SD: CTA block partners"
+msgstr "SD: Блок CTA партнёрам"
+
 msgctxt "Languages::sd_categories_list"
 msgid "SD: Categroies list"
 msgstr "SD: Список категорий"
