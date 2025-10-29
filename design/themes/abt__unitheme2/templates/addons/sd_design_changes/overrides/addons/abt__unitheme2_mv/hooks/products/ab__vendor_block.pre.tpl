@@ -50,7 +50,6 @@
 	        {/if}
 
 	        <div class="ut2-vendor-block__contacts">
-				{* {$company_data|fn_print_r} *}
 				{if $settings.abt__ut2.products.vendor.show_phone[$settings.abt__device] == "Y" && $company_data.phone}<div class="ut2-vendor-block__phone"><i class="ut2-icon-outline-headset_mic"></i> {if $settings.abt__device == "mobile"}<a href="tel:{$company_data.phone nofilter}">{/if}{$company_data.phone nofilter}{if $settings.abt__device == "mobile"}</a>{/if}</div>{/if}
 				{if $settings.abt__ut2.products.vendor.show_ask_question_link[$settings.abt__device] == "Y"}{hook name="companies:product_company_data"}{/hook}{/if}
 			</div>
