@@ -14,6 +14,10 @@ msgctxt "Addons::description::sd_design_changes"
 msgid "Adds design changes for the site. <a href=\"https://www.simtechdev.ru\" target=\"_blank\">Support</a>"
 msgstr "Добавляет изменения в дизайне. <a href=\"https://www.simtechdev.ru/\" target=\"_blank\">Поддержка</a>"
 
+msgctxt "SettingsOptions::sd_design_changes::underground_field_id"
+msgid "Underground field id"
+msgstr "ID поля метро"
+
 msgctxt "Languages::block_sd_cta_block"
 msgid "SD: CTA block"
 msgstr "SD: Блок CTA"

@@ -21,6 +21,17 @@
             <min>4.15.1</min>
         </core_version>
     </compatibility>
+    <settings>
+        <sections>
+            <section id="vendor">
+                <items>
+                    <item id="underground_field_id">
+                        <type>input</type>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
     <autoload>
         <psr4 prefix="Tygh\Addons\SdDesignChanges\">src</psr4>
     </autoload>
