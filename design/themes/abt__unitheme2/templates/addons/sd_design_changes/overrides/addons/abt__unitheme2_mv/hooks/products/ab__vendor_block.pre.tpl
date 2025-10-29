@@ -25,16 +25,14 @@
                             </div>
                         </div>
                     {/if}
-                    {if $addons.sd_design_changes.underground_field_id && $company_data.fields}
+                    {if $addons.sd_design_changes.metro_profile_field_id && $company_data.fields}
                         {foreach $company_data.fields as $key => $field}
-                            {if $addons.sd_design_changes.underground_field_id == $key && $field}
+                            {if $addons.sd_design_changes.metro_profile_field_id == $key && $field}
                                 <div class="sd-company-info__row">
                                     <div class="sd-company-info__name">
-                                        {* {$field.name} *}
-                                        Метро:
+                                        {__("sd_design_changes.metro")}:
                                     </div>
                                     <div class="sd-company-info__value">
-                                        {* {$field.value} *}
                                         {$field nofilter}
                                     </div>
                                 </div>

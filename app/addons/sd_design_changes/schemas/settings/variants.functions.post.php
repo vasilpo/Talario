@@ -15,7 +15,7 @@ use Tygh\Enum\ProfileTypes;
 /**
  * @return array
  */
-function fn_settings_variants_addons_sd_design_changes_underground_field_id(): array
+function fn_settings_variants_addons_sd_design_changes_metro_profile_field_id(): array
 {
     $variants = [
         0 => __('none')
