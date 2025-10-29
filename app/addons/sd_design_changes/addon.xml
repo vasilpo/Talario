@@ -23,10 +23,10 @@
     </compatibility>
     <settings>
         <sections>
-            <section id="vendor">
+            <section id="vendors">
                 <items>
-                    <item id="underground_field_id">
-                        <type>input</type>
+                    <item id="metro_profile_field_id">
+                        <type>selectbox</type>
                     </item>
                 </items>
             </section>
