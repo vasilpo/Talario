@@ -37,3 +37,19 @@
 
     background: var(--bg-color);
 }
+
+@sd-h3-title-color: @color-grey-a1;
+
+.sd-h3-title {
+    .ty-mainbox-simple-title,
+    .ty-mainbox-simple-title a,
+    .ty-mainbox-simple-title span {
+        text-decoration: none;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: @body_font_size;
+        color: @sd-h3-title-color;
+        padding: 0;
+        border-bottom: none;
+    }
+}
