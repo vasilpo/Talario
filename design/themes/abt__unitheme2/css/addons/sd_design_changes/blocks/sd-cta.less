@@ -11,6 +11,7 @@
 .sd-cta {
     --sd-title-font-size:    var(--font-size-big);
     --sd-subtitle-font-size: var(--font-size-large);
+    --sd-text-font-size:     var(--font-size-normal);
 
     background-image: url('images/sd_design_changes/сta_background.svg');
     background-color: fade(@color-black-00, 10%);
@@ -24,7 +25,7 @@
     height: 100%;
 
     @media (max-width: @mq-large) {
-        --sd-title-font-size: var(--font-size-large);
+        --sd-title-font-size:    var(--font-size-large);
         --sd-subtitle-font-size: var(--font-size-medium);
 
         grid-template-columns: 1fr;
@@ -79,6 +80,76 @@
             & + .ty-btn {
                 margin-left: 0;
             }
+        }
+    }
+}
+
+@sd-cta-version-2-background:        @color-pink-fe;
+@sd-cta-version-2-button-color:      @color-pink-fe;
+@sd-cta-version-2-button-background: @color-white-ff;
+
+.sd-cta-version-2 {
+    --block-height: 260px;
+    background-image: url('images/sd_design_changes/cta_background_2.jpg');
+    background-color: fade(@sd-cta-version-2-background, 50%);
+    padding-top: var(--gap-l);
+    padding-bottom: var(--gap-l);
+    border-radius: 20px;
+    min-height: var(--block-height);
+
+    @media (max-width: @mq-large-phone) {
+        --block-height: 380px;
+        text-align: center;
+    }
+
+    & > div {
+        &:first-of-type {
+            @media (max-width: @mq-large-phone) {
+                margin-top: auto;
+            }
+        }
+
+        &:last-of-type {
+            @media (max-width: @mq-large-phone) {
+                margin-bottom: auto;
+            }
+        }
+    }
+
+    h2 {
+        color: @sd-cta-text-color;
+        font-size: var(--font-size-extra-big);
+    }
+
+    p {
+        font-size: var(--font-size-medium);
+        font-weight: 400;
+
+        @media (max-width: @mq-large-phone) {
+            font-size: var(--font-size-normal);
+        }
+
+        & + p {
+            padding-top: 0;
+        }
+    }
+
+    .ty-btn {
+        color: @sd-cta-version-2-button-color;
+        background: @sd-cta-version-2-button-background;
+        border-radius: 6px;
+        padding: 15px 35px;
+        min-width: min(280px, 100%);
+        box-shadow: none;
+        height: auto;
+        font-weight: 500;
+
+        @media (max-width: @mq-large-phone) {
+            margin-top: var(--gap-l);
+        }
+
+        &:hover {
+            background: darken(@sd-cta-version-2-button-background, 5%);
         }
     }
 }

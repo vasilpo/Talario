@@ -21,6 +21,17 @@
             <min>4.15.1</min>
         </core_version>
     </compatibility>
+    <settings>
+        <sections>
+            <section id="vendors">
+                <items>
+                    <item id="metro_profile_field_id">
+                        <type>selectbox</type>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
     <autoload>
         <psr4 prefix="Tygh\Addons\SdDesignChanges\">src</psr4>
     </autoload>
