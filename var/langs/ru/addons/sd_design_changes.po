@@ -38,6 +38,10 @@ msgctxt "Languages::sd_design_changes.metro"
 msgid "Metro"
 msgstr "Метро"
 
+msgctxt "Languages::sd_design_changes.sign_up"
+msgid "Sign up"
+msgstr "Зарегистрироваться"
+
 #  OPTIONS ###
 msgctxt "Languages::sd_design_changes.option.button_main"
 msgid "Main button"
@@ -58,3 +62,7 @@ msgstr "URL вспомогательной кнопки"
 msgctxt "Languages::sd_design_changes.option.show_short_description"
 msgid "Show short description"
 msgstr "Показывать краткое описание"
+
+msgctxt "Languages::sd_design_changes.option.buttons_only_for_registered"
+msgid "Buttons only for registered users"
+msgstr "Кнопки только для зарегистрированных"
