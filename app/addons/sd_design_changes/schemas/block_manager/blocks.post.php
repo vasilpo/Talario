@@ -39,6 +39,11 @@ $schema['sd_cta_block'] = [
             'default_value' => '',
             'option_name' => 'sd_design_changes.option.button_secondary_url'
         ],
+        'buttons_only_for_registered' => [
+            'type' => 'checkbox',
+            'default_value' => '',
+            'option_name' => 'sd_design_changes.option.buttons_only_for_registered'
+        ],
     ],
     'templates' => [
         'addons/sd_design_changes/blocks/sd_cta_block.tpl' => [],
