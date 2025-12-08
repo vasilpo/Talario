@@ -1,0 +1,39 @@
+@sd-company-apply-page-background: @color-grey-f3;
+@sd-company-apply-page-shadow:     0 0 30px -5px fade(@color-black-00, 20%);
+@sd-company-apply-page-button:     @color-pink-fe;
+
+.sd-company-apply-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    & > div {
+        padding: var(--gap-l);
+    }
+
+    &__description {
+        background: @sd-company-apply-page-background;
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+
+    &__fields {
+        box-shadow: @sd-company-apply-page-shadow;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    &__button {
+        margin-top: 20px;
+
+        .ty-btn__primary {
+            width: 100%;
+            min-height: 55px;
+            background: @sd-company-apply-page-button;
+            border-radius: 6px;
+
+            &:hover {
+                background: darken(@sd-company-apply-page-button, 5%);
+            }
+        }
+    }
+}

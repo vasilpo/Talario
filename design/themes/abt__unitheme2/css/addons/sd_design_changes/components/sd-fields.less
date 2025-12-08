@@ -1,0 +1,74 @@
+@sd-fields-background:    @color-yellow-fb;
+@sd-fields-border:        @color-grey-cb;
+@sd-fields-active-border: @color-purple-53;
+
+.sd-fields {
+    select,
+    input[type="tel"],
+    input[type="text"],
+    input[type="number"],
+    input[type="password"] {
+        height: 56px;
+        padding: 15px 20px 2px;
+        width: 100%;
+        background: @sd-fields-background;
+        border-color: @sd-fields-border;
+        border-radius: 6px;
+        font-weight: 300;
+
+        &:focus + label,
+        &:not(:placeholder-shown) + label {
+            top: 10px;
+        }
+
+        &:placeholder-shown:not(:focus):not(:focus-within) + label {
+            top: 17px;
+            font-size: 16px;
+        }
+
+        &:focus,
+        &:focus-within {
+            box-shadow: 0 0 0 1px @sd-fields-active-border;
+        }
+
+        & + label {
+            font-size: 12px;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            padding: 0;
+            transition: all .2s;
+        }
+    }
+
+    .ty-control-group {
+        position: relative;
+        margin-bottom: 20px;
+
+        &.ty-first-name,
+        &.ty-last-name {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        &.ty-first-name ~
+        .ty-control-group.ty-last-name {
+            margin-left: 0;
+        }
+
+        &.ty-company__terms {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+    }
+
+    .cm-mask-phone-group label {
+        font-size: 12px;
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        padding: 0;
+        transition: all .2s;
+    }
+}

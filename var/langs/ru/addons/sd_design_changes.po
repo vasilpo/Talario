@@ -66,3 +66,7 @@ msgstr "Показывать краткое описание"
 msgctxt "Languages::sd_design_changes.option.buttons_only_for_registered"
 msgid "Buttons only for registered users"
 msgstr "Кнопки только для зарегистрированных"
+
+msgctxt "Languages::sd_design_changes.request"
+msgid "Request"
+msgstr "Оставить заявку"
