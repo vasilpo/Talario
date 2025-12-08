@@ -3,26 +3,42 @@
 <div class="sd-company-apply-page">
     <div class="sd-company-apply-page__description">
         <h2 class="sd-company-apply-page__title">
-            Как мы работаем
+            {__("sd_design_changes.how_we_work")}
         </h2>
 
-        <div class="sd-company-apply-page-text">
-            <p class="sd-company-apply-page-text__step">
-                ШАГ 1.
-            </p>
+        {function name="step" step_number="" title="" description=""}
+            {if $title|trim != "" && $description|trim != ""}
+                <div class="sd-company-apply-page-text">
+                    <p class="sd-company-apply-page-text__step">{__("sd_design_changes.step")} {$step_number}.</p>
+                    <p class="sd-company-apply-page-text__title">{$title}</p>
+                    <p class="sd-company-apply-page-text__description">{$description}</p>
+                </div>
+            {/if}
+        {/function}
 
-            <p class="sd-company-apply-page-text__title">
-                Подайте заявку
-            </p>
+        {step step_number=1
+            title=__("sd_design_changes.step_title_1")
+            description=__("sd_design_changes.step_text_1")
+        }
 
-            <p class="sd-company-apply-page-text__description">
-                Заполните форму на сайте — укажите название организации и контакты. Это займет 1 минуту
-            </p>
-        </div>
+        {step step_number=2
+            title=__("sd_design_changes.step_title_2")
+            description=__("sd_design_changes.step_text_2")
+        }
+
+        {step step_number=3
+            title=__("sd_design_changes.step_title_3")
+            description=__("sd_design_changes.step_text_3")
+        }
+
+        {step step_number=4
+            title=__("sd_design_changes.step_title_4")
+            description=__("sd_design_changes.step_text_4")
+        }
     </div>
     <div class="sd-company-apply-page__fields" id="apply_for_vendor_account">
         <h2 class="sd-company-apply-page__title">
-            Стать партнером
+            {__("sd_design_changes.become_partner")}
         </h2>
 
         <form class="sd-fields" action="{"companies.apply_for_vendor"|fn_url}" method="post" name="apply_for_vendor_form" enctype="multipart/form-data">
