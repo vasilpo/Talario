@@ -52,6 +52,7 @@
                     default_data_name="company_data"
                     profile_data=$company_data
                     sd_label_position="after"
+                    sd_check_storefront=true
                 }
 
                 {hook name="vendors:apply_description"}
