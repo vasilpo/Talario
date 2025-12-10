@@ -30,6 +30,14 @@ msgctxt "Languages::sd_cta_partner"
 msgid "SD: CTA block partners"
 msgstr "SD: Блок CTA партнёрам"
 
+msgctxt "Languages::block_sd_cta_block_banners"
+msgid "SD: CTA block with banners"
+msgstr "SD: Блок CTA c баннерами"
+
+msgctxt "Languages::sd_cta_block_banners"
+msgid "SD: CTA block with banners"
+msgstr "SD: Блок CTA c баннерами"
+
 msgctxt "Languages::sd_categories_list"
 msgid "SD: Categroies list"
 msgstr "SD: Список категорий"
@@ -66,6 +74,12 @@ msgstr "Показывать краткое описание"
 msgctxt "Languages::sd_design_changes.option.buttons_only_for_registered"
 msgid "Buttons only for registered users"
 msgstr "Кнопки только для зарегистрированных"
+
+msgctxt "Languages::sd_design_changes.option.button_main_label"
+msgid "Label on main button"
+msgstr "Лейбл на главной кнопке"
+
+#  LANG VARS ###
 
 msgctxt "Languages::sd_design_changes.request"
 msgid "Request"
