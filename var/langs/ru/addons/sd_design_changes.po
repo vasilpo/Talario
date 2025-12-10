@@ -80,7 +80,6 @@ msgid "Label on main button"
 msgstr "Лейбл на главной кнопке"
 
 #  LANG VARS ###
-
 msgctxt "Languages::sd_design_changes.request"
 msgid "Request"
 msgstr "Оставить заявку"
