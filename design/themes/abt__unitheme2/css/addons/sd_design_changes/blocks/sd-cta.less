@@ -100,9 +100,13 @@
     min-height: var(--block-height);
 
     @media (max-width: @mq-large-phone) {
-        --block-height: 380px;
-        --fz-xxxl: 28px;
+        --block-height: 267px;
+        --fz-xxxl: 26px;
         text-align: center;
+    }
+
+    @media (max-width: @mq-phone-mini) {
+        --fz-xxxl: 22px;
     }
 
     & > div {
@@ -188,7 +192,6 @@
 .sd-cta-version-3 {
     --fz-xxxl: 64px;
     --fz-l:    22px;
-    padding: var(--gap-l) var(--gap-l);
     background: @sd-cta-version-3-background;
     grid-template-columns: 1fr auto;
 
