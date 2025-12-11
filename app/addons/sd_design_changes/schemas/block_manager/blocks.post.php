@@ -82,4 +82,29 @@ $schema['sd_cta_block_banners'] = [
     'brief_info_function' => 'fn_block_get_block_with_items_info'
 ];
 
+$schema['sd_banner_text'] = [
+    'content' => [
+        'items' => [
+            'remove_indent' => true,
+            'hide_label' => true,
+            'type' => 'enum',
+            'object' => 'banners',
+            'items_function' => 'fn_get_banners',
+            'fillings' => [
+                'manually' => [
+                    'picker' => 'addons/banners/pickers/banners/picker.tpl',
+                    'picker_params' => ['type' => 'links', 'positions' => true]
+                ],
+            ],
+        ],
+    ],
+    'templates' => ['addons/sd_design_changes/blocks/sd_banner_text.tpl' => []],
+    'cache' => [
+        'update_handlers' => [
+            'banners', 'banner_descriptions', 'banner_images'
+        ]
+    ],
+    'brief_info_function' => 'fn_block_get_block_with_items_info'
+];
+
 return $schema;

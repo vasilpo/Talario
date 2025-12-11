@@ -34,9 +34,17 @@ msgctxt "Languages::block_sd_cta_block_banners"
 msgid "SD: CTA block with banners"
 msgstr "SD: Блок CTA c баннерами"
 
-msgctxt "Languages::sd_cta_block_banners"
+msgctxt "Languages::sd_cta_banners"
 msgid "SD: CTA block with banners"
 msgstr "SD: Блок CTA c баннерами"
+
+msgctxt "Languages::block_sd_banner_text"
+msgid "SD: Block with banner"
+msgstr "SD: Блок c баннером"
+
+msgctxt "Languages::sd_banner_text"
+msgid "SD: Block with banner"
+msgstr "SD: Блок c баннером"
 
 msgctxt "Languages::sd_categories_list"
 msgid "SD: Categroies list"
