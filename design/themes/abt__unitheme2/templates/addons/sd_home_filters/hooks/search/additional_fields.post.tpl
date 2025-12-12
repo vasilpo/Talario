@@ -1,0 +1,1 @@
+{script src="js/addons/sd_home_filters/scripts.js"}

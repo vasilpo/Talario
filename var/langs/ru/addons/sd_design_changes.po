@@ -30,6 +30,22 @@ msgctxt "Languages::sd_cta_partner"
 msgid "SD: CTA block partners"
 msgstr "SD: Блок CTA партнёрам"
 
+msgctxt "Languages::block_sd_cta_block_banners"
+msgid "SD: CTA block with banners"
+msgstr "SD: Блок CTA c баннерами"
+
+msgctxt "Languages::sd_cta_banners"
+msgid "SD: CTA block with banners"
+msgstr "SD: Блок CTA c баннерами"
+
+msgctxt "Languages::block_sd_banner_text"
+msgid "SD: Block with banner"
+msgstr "SD: Блок c баннером"
+
+msgctxt "Languages::sd_banner_text"
+msgid "SD: Block with banner"
+msgstr "SD: Блок c баннером"
+
 msgctxt "Languages::sd_categories_list"
 msgid "SD: Categroies list"
 msgstr "SD: Список категорий"
@@ -66,3 +82,60 @@ msgstr "Показывать краткое описание"
 msgctxt "Languages::sd_design_changes.option.buttons_only_for_registered"
 msgid "Buttons only for registered users"
 msgstr "Кнопки только для зарегистрированных"
+
+msgctxt "Languages::sd_design_changes.option.button_main_label"
+msgid "Label on main button"
+msgstr "Лейбл на главной кнопке"
+
+#  LANG VARS ###
+msgctxt "Languages::sd_design_changes.request"
+msgid "Request"
+msgstr "Оставить заявку"
+
+msgctxt "Languages::sd_design_changes.step"
+msgid "Step"
+msgstr "Шаг"
+
+msgctxt "Languages::sd_design_changes.step_title_1"
+msgid "Submit an application"
+msgstr "Подайте заявку"
+
+msgctxt "Languages::sd_design_changes.step_text_1"
+msgid "Fill out the form on the website — specify the organization name and contacts. It will take 1 minute"
+msgstr "Заполните форму на сайте — укажите название организации и контакты. Это займет 1 минуту"
+
+msgctxt "Languages::sd_design_changes.step_title_2"
+msgid "Discuss the terms"
+msgstr "Обсудите условия"
+
+msgctxt "Languages::sd_design_changes.step_text_2"
+msgid "A manager will contact you within one business day to discuss the terms and commission size"
+msgstr "Менеджер свяжется с вами в течение рабочего дня для обсуждения условий и размера комиссии"
+
+msgctxt "Languages::sd_design_changes.step_title_3"
+msgid "Start receiving applications"
+msgstr "Начните получать заявки"
+
+msgctxt "Languages::sd_design_changes.step_text_3"
+msgid "After placing on the platform — receive applications from parents through your personal account"
+msgstr "После размещения на платформе — получайте заявки от родителей через личный кабинет"
+
+msgctxt "Languages::sd_design_changes.step_title_4"
+msgid "Manage the process"
+msgstr "Управляйте процессом"
+
+msgctxt "Languages::sd_design_changes.step_text_4"
+msgid "Use Talario tools for schedule and appointment management"
+msgstr "Используйте инструменты Talario для управления расписанием и записями"
+
+msgctxt "Languages::sd_design_changes.how_we_work"
+msgid "How we work"
+msgstr "Как мы работаем"
+
+msgctxt "Languages::sd_design_changes.become_partner"
+msgid "Become partner"
+msgstr "Стать партнером"
+
+msgctxt "Languages::sd_design_changes.cancel_text"
+msgid "All changes (cancellation, transfer) are made through the Personal Account on the website no later than the established deadlines."
+msgstr "Все изменения (отмена, перенос) осуществляются через Личный кабинет на сайте не позднее установленных сроков"
