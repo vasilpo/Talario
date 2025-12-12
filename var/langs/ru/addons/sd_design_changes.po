@@ -136,6 +136,10 @@ msgctxt "Languages::sd_design_changes.become_partner"
 msgid "Become partner"
 msgstr "Стать партнером"
 
+msgctxt "Languages::sd_design_changes.trial_lesson"
+msgid "Trial lesson"
+msgstr "Пробное занятие"
+
 msgctxt "Languages::sd_design_changes.cancel_text"
 msgid "All changes (cancellation, transfer) are made through the Personal Account on the website no later than the established deadlines."
 msgstr "Все изменения (отмена, перенос) осуществляются через Личный кабинет на сайте не позднее установленных сроков"
