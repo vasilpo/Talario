@@ -38,13 +38,13 @@ PaymentMethodType - Тип источника средств для провед
 | public | [MOBILE_BALANCE](../classes/YooKassa-Model-PaymentMethodType.md#constant_MOBILE_BALANCE) |  | Платеж с баланса мобильного телефона |
 | public | [APPLE_PAY](../classes/YooKassa-Model-PaymentMethodType.md#constant_APPLE_PAY) |  | латеж ApplePay |
 | public | [GOOGLE_PAY](../classes/YooKassa-Model-PaymentMethodType.md#constant_GOOGLE_PAY) |  | Платеж Google Pay |
-| public | [QIWI](../classes/YooKassa-Model-PaymentMethodType.md#constant_QIWI) |  | Платеж из кошелька Qiwi |
+| public | [QIWI](../classes/YooKassa-Model-PaymentMethodType.md#constant_QIWI) | *deprecated* | Платеж из кошелька Qiwi |
 | public | [WEBMONEY](../classes/YooKassa-Model-PaymentMethodType.md#constant_WEBMONEY) | *deprecated* | Платеж из кошелька Webmoney |
 | public | [ALFABANK](../classes/YooKassa-Model-PaymentMethodType.md#constant_ALFABANK) | *deprecated* | Платеж через Альфа-Клик |
 | public | [B2B_SBERBANK](../classes/YooKassa-Model-PaymentMethodType.md#constant_B2B_SBERBANK) |  | Сбербанк Бизнес Онлайн |
 | public | [TINKOFF_BANK](../classes/YooKassa-Model-PaymentMethodType.md#constant_TINKOFF_BANK) |  | Интернет-банк Тинькофф |
 | public | [PSB](../classes/YooKassa-Model-PaymentMethodType.md#constant_PSB) | *deprecated* | ПромсвязьБанк |
-| public | [INSTALLMENTS](../classes/YooKassa-Model-PaymentMethodType.md#constant_INSTALLMENTS) |  | Заплатить по частям |
+| public | [INSTALLMENTS](../classes/YooKassa-Model-PaymentMethodType.md#constant_INSTALLMENTS) | *deprecated* | Заплатить по частям |
 | public | [WECHAT](../classes/YooKassa-Model-PaymentMethodType.md#constant_WECHAT) | *deprecated* | Оплата через WeChat |
 | public | [SBP](../classes/YooKassa-Model-PaymentMethodType.md#constant_SBP) |  | Оплата через сервис быстрых платежей |
 | public | [SBER_LOAN](../classes/YooKassa-Model-PaymentMethodType.md#constant_SBER_LOAN) |  | Прием оплаты с использованием Кредита от СберБанка |
@@ -138,13 +138,15 @@ GOOGLE_PAY = 'google_pay'
 
 
 <a name="constant_QIWI" class="anchor"></a>
-###### QIWI
+###### ~~QIWI~~
 Платеж из кошелька Qiwi
 
 ```php
 QIWI = 'qiwi'
 ```
 
+**deprecated**
+Будет удален в следующих версиях
 
 <a name="constant_WEBMONEY" class="anchor"></a>
 ###### ~~WEBMONEY~~
@@ -198,13 +200,15 @@ PSB = 'psb'
 Будет удален в следующих версиях
 
 <a name="constant_INSTALLMENTS" class="anchor"></a>
-###### INSTALLMENTS
+###### ~~INSTALLMENTS~~
 Заплатить по частям
 
 ```php
 INSTALLMENTS = 'installments'
 ```
 
+**deprecated**
+Будет удален в следующих версиях
 
 <a name="constant_WECHAT" class="anchor"></a>
 ###### ~~WECHAT~~
@@ -328,10 +332,10 @@ Static public valueExists(mixed $value) : bool
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

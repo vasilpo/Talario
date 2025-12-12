@@ -36,6 +36,7 @@
 {$advanced_picker_id=$advanced_picker_id|default:"object_picker_advanced_`$picker_id`"}
 {$additional_query_params = $additional_query_params|default:""}
 {$show_in_stock = $show_in_stock|default:true}
+{$no_container = $no_container|default:true}
 
 {if $multiple && $show_advanced}
     {$empty_variant_text = $empty_variant_text|default:__("type_to_search_or_click_button")}
@@ -52,7 +53,7 @@
                 {include file="pickers/products/picker.tpl"
                     picker_id="{$advanced_picker_id}"
                     data_id="om"
-                    no_container=true
+                    no_container=$no_container
                     icon="icon-reorder"
                     but_text="{__("advanced_products_search")}"
                     show_but_text=false

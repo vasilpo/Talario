@@ -1120,8 +1120,8 @@ class PaypalCommercePlatform
         }
 
         $amount_value = 0;
-        foreach ($amount['breakdown'] as $breakdown) {
-            $amount_value += $breakdown['value'];
+        foreach ($amount['breakdown'] as $type => $breakdown) {
+            $amount_value += $type === 'discount' ? -$breakdown['value'] : $breakdown['value'];
         }
         $amount_value = $this->formatAmount($amount_value, $amount['currency_code'])['value'];
 

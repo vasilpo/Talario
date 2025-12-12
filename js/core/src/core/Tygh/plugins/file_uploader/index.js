@@ -738,9 +738,11 @@ $.extend(FileUploader.prototype, {
             }
             $.getScript('js/lib/elfinder/js/elfinder.min.js', function () {
                 if (_.cart_language !== 'en' && methods.isAvailableLanguage(_.cart_language)) {
-                    $.getScript(`js/lib/elfinder/js/i18n/elfinder.${methods.tranformLanguage(_.cart_language)}.js`)
-                        .then(null, function() { return $.getScript('js/lib/elfinder/js/i18n/elfinder.LANG.js'); })
-                        .done(self._initElfinderFilePickerModal);
+                    $.getScript(`js/lib/elfinder/js/i18n/elfinder.${methods.tranformLanguage(_.cart_language)}.js`, function() {
+                        self._initElfinderFilePickerModal();
+                    }).fail(function () {
+                        self._initElfinderFilePickerModal();
+                    })
                 } else {
                     self._initElfinderFilePickerModal();
                 }

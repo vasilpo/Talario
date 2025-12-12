@@ -53,17 +53,34 @@
         <div class="control-group">
             <label class="control-label" for="m_settings_app_settings_utility_services_config">{__("mobile_app.services_config")}:</label>
             <div class="controls">
-                {if $config_data.google_config_file_uploaded}
-                    <a href="{"mobile_app.get_google_config_file"|fn_url}">google-services.json</a>
-                    <a class="cm-post" href="{"mobile_app.delete_google_config_file&storefront_id=`$selected_storefront_id`"|fn_url}">
+                {if $config_data.google_config_file_uploaded_android}
+                    <a href="{"mobile_app.get_google_config_file&type=android"|fn_url}">google-services.json</a>
+                    <a class="cm-post" href="{"mobile_app.delete_google_config_file&type=android&storefront_id=`$selected_storefront_id`"|fn_url}">
                         {include_ext file="common/icon.tpl"
                             class="icon-remove-sign cm-tooltip hand"
                             title=__("remove_this_item")
                         }
                     </a>
                 {/if}
-                {include file="common/fileuploader.tpl" var_name="mobile_app[google_services_config_file]" hide_server=true}
+                {include file="common/fileuploader.tpl" var_name="mobile_app[google_services_config_file_android]" hide_server=true}
                 <p class="muted description">{__("tt_mobile_app.services_config")}</p>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="m_settings_app_settings_utility_services_config_ios">{__("mobile_app.services_config_ios")}:</label>
+            <div class="controls">
+                {if $config_data.google_config_file_uploaded_ios}
+                    <a href="{"mobile_app.get_google_config_file&type=ios"|fn_url}">GoogleService-Info.plist</a>
+                    <a class="cm-post" href="{"mobile_app.delete_google_config_file&type=ios&storefront_id=`$selected_storefront_id`"|fn_url}">
+                        {include_ext file="common/icon.tpl"
+                            class="icon-remove-sign cm-tooltip hand"
+                            title=__("remove_this_item")
+                        }
+                    </a>
+                {/if}
+                {include file="common/fileuploader.tpl" var_name="mobile_app[google_services_config_file_ios]" hide_server=true}
+                <p class="muted description">{__("tt_mobile_app.services_config_ios")}</p>
             </div>
         </div>
 

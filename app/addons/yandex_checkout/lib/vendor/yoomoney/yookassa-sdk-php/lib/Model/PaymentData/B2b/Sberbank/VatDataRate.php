@@ -1,9 +1,9 @@
 <?php
 
-/**
+/*
  * The MIT License
  *
- * Copyright (c) 2023 "YooMoney", NBСO LLC
+ * Copyright (c) 2025 "YooMoney", NBСO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ use YooKassa\Common\AbstractEnum;
 /**
  * PaymentDataB2bSberbankVatDataRate - Налоговая ставка НДС
  *
+ * - 5 - 5%
  * - 7 - 7%
  * - 10 - 10%
  * - 18 - 18%
@@ -38,6 +39,8 @@ use YooKassa\Common\AbstractEnum;
  */
 class VatDataRate extends AbstractEnum
 {
+    /** 5% */
+    const RATE_5  = '5';
     /** 7% */
     const RATE_7  = '7';
     /** 10% */
@@ -48,9 +51,10 @@ class VatDataRate extends AbstractEnum
     const RATE_20 = '20';
 
     protected static $validValues = array(
+        self::RATE_5  => true,
         self::RATE_7  => true,
         self::RATE_10 => true,
-        self::RATE_18 => true,
+        self::RATE_18 => false,
         self::RATE_20 => true,
     );
 }

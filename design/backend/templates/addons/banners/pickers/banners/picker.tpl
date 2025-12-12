@@ -13,7 +13,7 @@
         {$extra_var = $extra_var|escape:url}
     {/if}
 
-    {if !$no_container}<div class="buttons-container">{/if}{if $picker_view}[{/if}
+    {if !$no_container}<div class="clearfix buttons-container">{/if}{if $picker_view}[{/if}
     {include file="buttons/button.tpl" but_id="opener_picker_`$data_id`" but_href="banners.picker?display=`$display`&picker_for=`$picker_for`&extra=`$extra_var`&checkbox_name=`$checkbox_name`&aoc=`$aoc`&data_id=`$data_id`"|fn_url but_text=$but_text|default:__("add_banners") but_role="add" but_target_id="content_`$data_id`" but_meta="cm-dialog-opener btn pull-right" but_icon="icon-plus"}
     {if $picker_view}]{/if}{if !$no_container}</div>{/if}
 

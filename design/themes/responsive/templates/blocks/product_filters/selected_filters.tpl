@@ -42,7 +42,7 @@
                 {/if}
             {/hook}
             <div class="ty-product-filters__tools clearfix">
-                {include file="buttons/button.tpl" but_text=__("close") but_meta="cm-external-click" but_external_click_id="sw_elm_filter_`$filter_uid`"}
+                {include file="buttons/button.tpl" but_text=__("close") but_meta="cm-external-click" but_external_click_id="sw_elm_selected_filter_`$filter_uid`"}
             </div>
         </div>
     </div>

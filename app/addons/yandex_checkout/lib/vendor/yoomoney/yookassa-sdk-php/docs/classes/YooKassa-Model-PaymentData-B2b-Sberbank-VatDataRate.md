@@ -9,6 +9,7 @@ PaymentDataB2bSberbankVatDataRate - Налоговая ставка НДС
 
 **Description:**
 
+- 5 - 5%
 - 7 - 7%
 - 10 - 10%
 - 18 - 18%
@@ -18,6 +19,7 @@ PaymentDataB2bSberbankVatDataRate - Налоговая ставка НДС
 ### Constants
 | Visibility | Name | Flag | Summary |
 | ----------:| ---- | ---- | ------- |
+| public | [RATE_5](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_5) |  | 5% |
 | public | [RATE_7](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_7) |  | 7% |
 | public | [RATE_10](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_10) |  | 10% |
 | public | [RATE_18](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_18) |  | 18% |
@@ -47,6 +49,15 @@ PaymentDataB2bSberbankVatDataRate - Налоговая ставка НДС
 
 ---
 ## Constants
+<a name="constant_RATE_5" class="anchor"></a>
+###### RATE_5
+5%
+
+```php
+RATE_5 = '5'
+```
+
+
 <a name="constant_RATE_7" class="anchor"></a>
 ###### RATE_7
 7%
@@ -165,10 +176,10 @@ Static public valueExists(mixed $value) : bool
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

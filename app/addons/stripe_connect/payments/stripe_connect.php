@@ -19,11 +19,20 @@ use Tygh\Enum\Addons\StripeConnect\PaymentTypes;
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\OrderStatuses;
 use Tygh\Enum\YesNo;
+use Tygh\Tygh;
 
 /** @var array $order_info */
 /** @var array $processor_data */
 
 if (defined('PAYMENT_NOTIFICATION') && !empty($_REQUEST['order_id'])) {
+    /** @var \Tygh\Lock\Factory $lock_factory */
+    $lock_factory = Tygh::$app['lock.factory'];
+    $lock = $lock_factory->createLock('stripe_connect_handle_order_status_' . $_REQUEST['order_id'], 60.0);
+    if (!$lock->acquire()) {
+        do {
+            $lock->wait();
+        } while (!$lock->acquire());
+    }
 
     $order_info = fn_get_order_info($_REQUEST['order_id']);
     if (!$order_info) {
@@ -33,6 +42,8 @@ if (defined('PAYMENT_NOTIFICATION') && !empty($_REQUEST['order_id'])) {
     if ($mode === 'cancel') {
         fn_change_order_status($_REQUEST['order_id'], OrderStatuses::INCOMPLETED);
     }
+
+    $lock->release();
 
     if (
         $mode === 'cancel'

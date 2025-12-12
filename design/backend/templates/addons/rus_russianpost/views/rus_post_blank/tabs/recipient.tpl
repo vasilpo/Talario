@@ -29,14 +29,14 @@
         <div class="control-group">
             <label for="blank_from_index" class="control-label">{__("rus_post_blank.index")}</small></label>
             <div class="controls">
-                <input type="text" name="blank_data[from_index]" id="blank_from_index" value="{$order_info.s_zipcode}" size="40" class="input-large" />
+                <input type="text" name="blank_data[from_index]" id="blank_from_index" value="{$order_info.s_zipcode}" size="40" class="input-large" maxlength="6"/>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="blank_recipient_phone">{__("rus_post_blank.recipient_phone")}</label>
             <div class="controls">
-                <input type="text" name="blank_data[recipient_phone]" id="blank_recipient_phone" value="{$order_info.recipient_phone}" size="40" class="input-large" />
+                <input type="text" name="blank_data[recipient_phone]" id="blank_recipient_phone" value="{$order_info.recipient_phone}" size="40" class="input-large" maxlength="10"/>
             </div>
         </div>
-    </div>  
+    </div>
 </fieldset>

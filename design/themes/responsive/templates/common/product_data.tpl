@@ -152,13 +152,12 @@
                     <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
                 {/if}
             {elseif ($product.out_of_stock_actions == "OutOfStockActions::SUBSCRIBE"|enum)}
-                <div id="subscribe_form_wrapper"><!--subscribe_form_wrapper--></div>
-
+                <div id="subscribe_form_wrapper_{$obj_prefix}{$obj_id}"><!--subscribe_form_wrapper_{$obj_prefix}{$obj_id}--></div>
                 <script>
                     (function(_, $) {
-                        $.ceAjax('request', fn_url('products.subscription_form?product_id={$product.product_id}'), {
+                        $.ceAjax('request', fn_url('products.subscription_form?product_id={$product.product_id}&obj_id={$obj_id}{($obj_prefix) ? "&obj_prefix=`$obj_prefix`" : "" nofilter}'), {
                             hidden: true,
-                            result_ids: 'subscribe_form_wrapper'
+                            result_ids: 'subscribe_form_wrapper_{$obj_prefix}{$obj_id}'
                         });
                     }(Tygh, Tygh.$));
                 </script>
@@ -288,7 +287,7 @@
                             name="product_data[{$obj_id}][price]"
                             class="ty-price-curency__input cm-numeric"
                             data-a-sign="{$base_currency.symbol nofilter}"
-                            data-a-dec="{if $base_currency.decimal_separator}{$base_currency.decimal_separator nofilter}{else}.{/if}"
+                            data-a-dec="{if $base_currency.decimals_separator}{$base_currency.decimals_separator nofilter}{else}.{/if}"
                             data-a-sep="{if $base_currency.thousands_separator}{$base_currency.thousands_separator nofilter}{else},{/if}"
                             data-p-sign="{if $base_currency.after === "YesNo::YES"|enum}s{else}p{/if}"
                             data-m-dec="{$base_currency.decimals}"

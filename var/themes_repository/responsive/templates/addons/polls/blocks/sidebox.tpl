@@ -14,7 +14,7 @@
     {else}
         <form name="{$form_name|default:"main_login_form"}" action="{""|fn_url}" method="post">
             <input type="hidden" name="page_id" value="{$poll.page_id}" />
-            <input type="hidden" name="redirect_url" value="{$config.current_url}" />
+            <input type="hidden" name="redirect_url" value="{if $smarty.request.redirect_url}{$smarty.request.redirect_url}{else}{$config.current_url}{/if}" />
             <input type="hidden" name="obj_prefix" value="{$block.block_id}" />
             {if $poll.header}<div class="polls__header">{$poll.header nofilter}</div>{/if}
 

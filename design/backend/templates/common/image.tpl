@@ -1,5 +1,6 @@
 {strip}
 
+{$icon_path = ($smarty.const.AREA === "SiteArea::ADMIN_PANEL"|enum) ? "common/icon_deprecated.tpl" : "common/icon.tpl"}
 {$image_data = $image|fn_image_to_display:$image_width:$image_height}
 {$show_detailed_link = $show_detailed_link|default:true}
 
@@ -26,7 +27,7 @@
     {if $image_data.image_path}
         <img {$image_attributes|render_tag_attrs nofilter} />
     {else}
-        <div class="no-image {$no_image_css_class}" style="width: {$image_width|default:$image_height}px; height: {$image_height|default:$image_width}px;">{include_ext file="common/icon_deprecated.tpl" class="glyph-image" title=__("no_image")}</div>
+        <div class="no-image {$no_image_css_class}" style="width: {$image_width|default:$image_height}px; height: {$image_height|default:$image_width}px;">{include_ext file=$icon_path class="glyph-image" title=__("no_image")}</div>
     {/if}
     {if $show_detailed_link && ($image || $href)}</a>{/if}
 {/hook}

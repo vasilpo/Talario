@@ -369,6 +369,11 @@ if ($mode == 'invoice') {
         ];
     }
 
+    if (fn_allowed_for('MULTIVENDOR')) {
+        /** @var \Tygh\Storefront\Storefront $storefront */
+        $params['storefront_id'] = Tygh::$app['storefront']->storefront_id;
+    }
+
     if ($orders === null && $search === null) {
         list($orders, $search) = fn_get_orders($params, Registry::get('settings.Appearance.orders_per_page'));
     }

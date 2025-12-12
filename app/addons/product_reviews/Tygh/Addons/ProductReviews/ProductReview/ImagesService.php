@@ -72,7 +72,8 @@ class ImagesService
      */
     public function attachImages($product_review_id)
     {
-        $filtered = fn_filter_uploaded_data('product_review_data', $this->allowed_extensions);
+        $allowed_file_size_bytes = fn_get_allowed_image_file_size();
+        $filtered = fn_filter_uploaded_data('product_review_data', $this->allowed_extensions, true, true, $allowed_file_size_bytes);
         $filtered = array_slice($filtered, 0, $this->max_images_upload);
 
         $pairs_data = [];

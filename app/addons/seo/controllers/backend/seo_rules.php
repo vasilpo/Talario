@@ -12,7 +12,6 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-use Tygh\Enum\NotificationSeverity;
 use Tygh\Registry;
 use Tygh\Navigation\LastView;
 use Tygh\Languages\Languages;
@@ -38,7 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($_REQUEST['seo_data'])) {
             foreach ($_REQUEST['seo_data'] as $k => $v) {
                 if (!empty($v['name'])) {
-                    $created_seo_name = fn_create_seo_name(0, 's', $v['name'], 0, $v['rule_params'], '', fn_get_corrected_seo_lang_code(DESCR_SL));
+                    fn_create_seo_name(
+                        0,
+                        's',
+                        $v['name'],
+                        0,
+                        $v['rule_params'],
+                        '',
+                        fn_get_corrected_seo_lang_code(DESCR_SL),
+                        true
+                    );
                 }
             }
         }

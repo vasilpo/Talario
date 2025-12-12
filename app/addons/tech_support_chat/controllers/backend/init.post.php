@@ -14,24 +14,21 @@
 
 defined('BOOTSTRAP') or die('Access denied');
 
-/** @var string $controller */
-if ($controller === 'auth' || $controller === 'settings' && $mode === 'change_store_mode') {
-    unset(Tygh::$app['session']['tech_support_chat_widget_id']);
-}
-
-if (isset(Tygh::$app['session']['license_information'])
-    && !isset(Tygh::$app['session']['tech_support_chat_widget_id'])
-) {
+if (isset(Tygh::$app['session']['license_information'])) {
     $license = Tygh::$app['session']['license_information'];
 
     if (strpos($license, '<?xml') !== false) {
         $license = simplexml_load_string($license);
 
-        Tygh::$app['session']['tech_support_chat_widget_id'] = false;
         if (isset($license->OnlineTechSupportWidgetId)) {
-            Tygh::$app['session']['tech_support_chat_widget_id'] = (string) $license->OnlineTechSupportWidgetId;
+            $tech_support_chat_widget_id = (string) $license->OnlineTechSupportWidgetId;
+            fn_set_storage_data('tech_support_chat_widget_id', $tech_support_chat_widget_id);
+        } else {
+            fn_set_storage_data('tech_support_chat_widget_id');
         }
     }
 }
 
-return array(CONTROLLER_STATUS_OK);
+Tygh::$app['view']->assign('tech_support_chat_widget_id', fn_get_storage_data('tech_support_chat_widget_id'));
+
+return [CONTROLLER_STATUS_OK];

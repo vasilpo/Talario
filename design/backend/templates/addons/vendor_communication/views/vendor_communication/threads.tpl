@@ -31,8 +31,9 @@
                 <input type="hidden" name="redirect_url" value="{$config.current_url}">
                 {capture name="threads_list_table"}
                     <div class="table-responsive-wrapper longtap-selection">
-                        <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden">
+                        <table width="100%" class="table table-middle table--relative table-responsive">
                             <thead
+                                    class="thead--overflow-hidden"
                                     data-ca-bulkedit-default-object="true"
                                     data-ca-bulkedit-component="defaultObject"
                             >

@@ -234,6 +234,8 @@ function fn_vendor_debt_payout_get_payout_category()
  */
 function fn_vendor_debt_payout_get_payout_product()
 {
+    require_once Registry::get('config.dir.addons') . 'vendor_debt_payout/Tygh/Enum/Addons/VendorDebtPayout/ProductTypes.php';
+
     static $payout_product_id = null;
     if ($payout_product_id !== null) {
         return $payout_product_id;
@@ -245,6 +247,24 @@ function fn_vendor_debt_payout_get_payout_product()
         . ' WHERE product_type = ?s',
         ProductTypes::DEBT_PAYOUT
     );
+}
+
+/**
+ * Get object_ids for template add-on settings.
+ *
+ * @return array<string, int>
+ */
+function fn_vendor_dept_payout_get_template_setting_ids()
+{
+    /** @var \Tygh\SmartyEngine\Core $view */
+    $view = Tygh::$app['view'];
+    $options = $view->getTemplateVars('options');
+    $addon_setting_ids = [];
+    foreach ($options['general'] as $setting_id => $option_item) {
+        $addon_setting_ids[$option_item['name']] = $setting_id;
+    }
+
+    return $addon_setting_ids;
 }
 
 /**

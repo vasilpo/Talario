@@ -52,17 +52,3 @@ function fn_settings_actions_addons_email_marketing_em_mailchimp_list(&$new_valu
         }
     }
 }
-
-function fn_settings_variants_addons_email_marketing_em_madmimi_list()
-{
-    if (Registry::get('addons.email_marketing.status') == 'A' && Registry::get('addons.email_marketing.em_madmimi_api_key')) {
-        $list = array('' => __('none'));
-        $list = array_merge($list, EmailSync::instance('madmimi')->getLists());
-    } else {
-        $list = array(
-            '' => __('email_marketing.enter_api_key_and_save')
-        );
-    }
-
-    return $list;
-}

@@ -280,6 +280,7 @@
         owner_company_id=$feature.company_id
         but_meta="pull-right"
         hide_delete_button = $hide_categories_delete|default:false
+        no_container=true
     }
     <!--content_tab_feature_categories_{$id}--></div>
     {/if}

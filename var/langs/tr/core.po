@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /release-4.18.3/core.po\n"
-"X-Crowdin-File-ID: 9472\n"
-"PO-Revision-Date: 2024-10-02 13:31\n"
+"X-Crowdin-File: /release-4.18.4/core.po\n"
+"X-Crowdin-File-ID: 9747\n"
+"PO-Revision-Date: 2025-05-27 09:08\n"
 
 msgctxt "LanguageName"
 msgid "Localized language name"
@@ -574,7 +574,7 @@ msgstr "Ana yönetici"
 
 msgctxt "Languages::storefront_admin"
 msgid "Main admin for [storefront]"
-msgstr "[storefront]için ana yönetici"
+msgstr "[storefront] için ana yönetici"
 
 msgctxt "Languages::administrators_notified"
 msgid "[count] administrators notified."
@@ -610,11 +610,11 @@ msgstr "Filtre ekle"
 
 msgctxt "Languages::search_range_from"
 msgid "From"
-msgstr "İtibaren"
+msgstr "Kimden"
 
 msgctxt "Languages::search_range_to"
 msgid "To"
-msgstr "İle"
+msgstr "Kime"
 
 msgctxt "Languages::dynamic_navigation_more"
 msgid "More"
@@ -1322,7 +1322,7 @@ msgstr "Düzen sayfaları"
 
 msgctxt "Languages::block_manager.wrappers.lite_checkout"
 msgid "Lite checkout"
-msgstr "Basit ödeme"
+msgstr "Hızlı ödeme"
 
 msgctxt "Languages::block_manager.description_available_values_for_grid_select"
 msgid "The available values depend on the size and offset of parent and nested elements."
@@ -1734,7 +1734,7 @@ msgstr "You can not use percentage value for base price."
 
 msgctxt "Languages::cant_upload_file"
 msgid "Couldn't upload the file. The problem isn't necessarily on the [product] end. If it occurs regularly, please contact your server administrator or our technical support."
-msgstr "Dosya yüklenemedi. Sorun mutlaka [product] ucunda değil. Düzenli olarak meydana geliyorsa, lütfen sunucu yöneticinizle veya teknik desteğimizle iletişime geçin."
+msgstr "Dosya yüklenemedi. Sorun illa [product] tarasında değil. Düzenli olarak meydana geliyorsa, lütfen sunucu yöneticinizle veya teknik desteğimizle iletişime geçin."
 
 msgctxt "Languages::capture"
 msgid "Capture"
@@ -1774,19 +1774,19 @@ msgstr "DHL"
 
 msgctxt "Languages::carrier_fedexrest"
 msgid "FedEx"
-msgstr ""
+msgstr "Fedex"
 
 msgctxt "Languages::carrier_fedex"
 msgid "FedEx [Deprecated]"
-msgstr ""
+msgstr "Fedex (eski)"
 
 msgctxt "Languages::tools_carrier_fedex_msg"
 msgid "To get API key and Secret key, <a target=\"_blank\" href=\"[url]\">register a project in your FedEx account</a>."
-msgstr ""
+msgstr "API key and Secret key almak için, <a target=\"_blank\" href=\"[url]\">FedEx hesabınız da bir proje kaydedin</a>."
 
 msgctxt "Languages::tools_carrier_fedexdeprecated_msg"
 msgid "This shipping method uses an integration deprecated by FedEx and might stop working eventually. To keep using FedEx, please set up a shipping method that uses \"FedEx\" rather than \"FedEx [Deprecated]\" for rate calculation."
-msgstr ""
+msgstr "Bu gönderim yöntemi, FedEx tarafından kullanım dışı bırakılan bir entegrasyon kullanıyor ve ileride çalışmayı durdurabilir. FedEx'i kullanmaya devam etmek için, ücret hesaplaması için \"FedEx [Deprecated]\" yerine \"FedEx\" kullanan bir gönderim yöntemi ayarlayın."
 
 msgctxt "Languages::carrier_swisspost"
 msgid "SwissPost"
@@ -2136,7 +2136,7 @@ msgstr "Dışa aktarma bulundu"
 
 msgctxt "Languages::actions.export"
 msgid "Export"
-msgstr "İhracat"
+msgstr "Dışa Aktar"
 
 msgctxt "Languages::actions.feature_groups"
 msgid "Feature groups"
@@ -2172,7 +2172,7 @@ msgstr "Sitede düzenle"
 
 msgctxt "Languages::actions.logs"
 msgid "Logs"
-msgstr "Kütükler"
+msgstr "Loglar"
 
 msgctxt "Languages::actions.localizations"
 msgid "Localizations"
@@ -2200,7 +2200,7 @@ msgstr "Gönderi durumları"
 
 msgctxt "Languages::actions.states"
 msgid "States"
-msgstr "Devletler"
+msgstr "Eyaletler"
 
 msgctxt "Languages::actions.templates"
 msgid "Templates"
@@ -3040,7 +3040,7 @@ msgstr "Kullanıcılar"
 
 msgctxt "Languages::my_customers"
 msgid "My customers"
-msgstr "Benim müşterilerim"
+msgstr "Müşterilerim"
 
 msgctxt "Languages::my_administrators"
 msgid "My administrators"
@@ -3216,7 +3216,7 @@ msgstr "Ondalık işareti"
 
 msgctxt "Languages::select_selectbox_option"
 msgid "Select option"
-msgstr "Seçenek seçiniz"
+msgstr "Opsiyon seçiniz"
 
 msgctxt "Languages::default"
 msgid "Default"
@@ -3288,7 +3288,7 @@ msgstr "Geneli düzenle ([name])..."
 
 msgctxt "Languages::global_individual.global"
 msgid "Global"
-msgstr "küresel"
+msgstr "Global"
 
 msgctxt "Languages::global_individual.individual"
 msgid "Individual"
@@ -3296,7 +3296,7 @@ msgstr "Bireysel"
 
 msgctxt "Languages::global_individual.global_value_all_items"
 msgid "Global value for all items"
-msgstr "Tüm öğeler için küresel değer"
+msgstr "Tüm öğeler için global değer"
 
 msgctxt "Languages::global_individual.individual_values_each_item"
 msgid "Individual values for each item"
@@ -3340,7 +3340,7 @@ msgstr "Sil"
 
 msgctxt "Languages::dismiss"
 msgid "Dismiss"
-msgstr "Azletmek"
+msgstr "Reddet"
 
 msgctxt "Languages::deleted"
 msgid "Deleted"
@@ -5192,7 +5192,7 @@ msgstr "Bilgilendirme"
 
 msgctxt "Languages::tip"
 msgid "Tip"
-msgstr "Uç"
+msgstr "İpucu"
 
 msgctxt "Languages::inner_hint"
 msgid "Inner hint"
@@ -5280,7 +5280,7 @@ msgstr "Envanter"
 
 msgctxt "Languages::track_inventory"
 msgid "Track inventory"
-msgstr "Envanteri takip et"
+msgstr "Envanteri izle"
 
 msgctxt "Languages::track_inventory_tooltip"
 msgid "When inventory is tracked, the number of products in stock will decrease after each purchase."
@@ -5372,7 +5372,7 @@ msgstr "Her sayfadaki içerik sayısı"
 
 msgctxt "Languages::objects_per_page"
 msgid "[n] per page"
-msgstr "sayfa başına"
+msgstr "sayfa başına [n]"
 
 msgctxt "Languages::items_title"
 msgid "Items"
@@ -5508,7 +5508,7 @@ msgstr "Son sipariş"
 
 msgctxt "Languages::first_order"
 msgid "First order"
-msgstr "Birinci derece"
+msgstr "İlk Sipariş"
 
 msgctxt "Languages::registration_date"
 msgid "Registration date"
@@ -5692,7 +5692,7 @@ msgstr "Liste fiyatı"
 
 msgctxt "Languages::list_quantity_count"
 msgid "Number of available quantities"
-msgstr "Mevcut miktarların sayısı"
+msgstr "Mevcut adet"
 
 msgctxt "Languages::tmpl_list_without_options"
 msgid "List without options"
@@ -5736,7 +5736,7 @@ msgstr "Yerler"
 
 msgctxt "Languages::rate_areas"
 msgid "Rate areas"
-msgstr "Puan alanları"
+msgstr "Oran alanları"
 
 msgctxt "Languages::statuses_management"
 msgid "Statuses"
@@ -6160,7 +6160,7 @@ msgstr "Niteleyici"
 
 msgctxt "Languages::modifiers"
 msgid "Modifiers"
-msgstr "Tamamlayıcılar"
+msgstr "Dönüştürücüler"
 
 msgctxt "Languages::modify_profile"
 msgid "Modify Profile"
@@ -6918,6 +6918,10 @@ msgctxt "Languages::orders_not_allow_to_change_company"
 msgid "Company has not been changed. It is not allowed to change the company when editing an order."
 msgstr "Firma değiştirilmedi. Bir sipariş düzenlenirken firmanın değiştirilmesine izin verilmez."
 
+msgctxt "Languages::orders_not_allow_to_change_storefront"
+msgid "Changing the storefront will result in the current order data being lost. Click <a href=[link]>Continue</a> if you still want to switch the storefront."
+msgstr ""
+
 msgctxt "Languages::orders_no_items"
 msgid "Use the \"Add products\" button above to add products to order."
 msgstr "Siparişe ürünler eklemek için yukarıdaki \"Ürünler ekle\" butonunu kullanınız."
@@ -7072,7 +7076,7 @@ msgstr "Paket tipi"
 
 msgctxt "Languages::subpackage_type"
 msgid "Subpackage type"
-msgstr ""
+msgstr "Alt paket türü"
 
 msgctxt "Languages::packing_slip"
 msgid "Packing slip"
@@ -10776,7 +10780,7 @@ msgstr "Düzen değiştir"
 
 msgctxt "Languages::layout_page"
 msgid "Layout Page"
-msgstr "Düzen Sayfası"
+msgstr "Düzen sayfaları"
 
 msgctxt "Languages::layout_meta_data"
 msgid "Meta data & more"
@@ -10888,7 +10892,7 @@ msgstr "(ürün detay sayfasında  'Eklenen resimler') i göster"
 
 msgctxt "Languages::addon_files_was_copied"
 msgid "The <b>\"[addon]\"</b> add-on files has been copied successfully"
-msgstr "<b>\"[addon]\"</b> eklenti dosyaları başarıyla kopyalandı"
+msgstr "Eklenti <b>\"[addon]\"</b> başarı ile kuruldu"
 
 msgctxt "Languages::text_addon_cannot_enable"
 msgid "Add-on \"[addon_name]\" is incompatible with the following add-ons: [addons]. It cannot be enabled"
@@ -11184,7 +11188,7 @@ msgstr "Birisi - umarız siz - hesabınızın şifresini [site]sıfırlamamızı
 
 msgctxt "Languages::password_recovery.link_expire"
 msgid "But if you'd like to reset the password, follow the link below. It will expire in 15 minutes"
-msgstr "Ancak şifreyi sıfırlamak istiyorsanız aşağıdaki bağlantıyı izleyin. 15 dakika içinde sona erecek"
+msgstr "Eğer şifreyi sıfırlamak istiyorsanız aşağıdaki bağlantıyı izleyin. Bağlantı 15 dakika içinde sona erecek"
 
 msgctxt "Languages::text_csrf_attack"
 msgid "Access denied: Possible CSRF attack"
@@ -14874,6 +14878,10 @@ msgctxt "SettingsOptions::mailer_smtp_host"
 msgid "SMTP host"
 msgstr "SMTP host"
 
+msgctxt "SettingsTooltips::mailer_smtp_host"
+msgid "You can specify the port after the domain like this: <i>example.com:465</i>"
+msgstr "Şu şekilde domain adresinden sonra port belirtebilirsiniz: <i>example.com:465</i>"
+
 msgctxt "SettingsOptions::string_length"
 msgid "String length"
 msgstr "String length"
@@ -16809,7 +16817,6 @@ msgstr "Yatay filtreler"
 msgctxt "Languages::vendor_filters_description"
 msgid ""
 msgstr ""
-""
 
 msgctxt "Languages::uc_broken_upgrade_connector"
 msgid "Upgrade connector [connector_id] returned incorrect data"
@@ -17019,6 +17026,14 @@ msgstr "Onaylıyor ve devam ediyorum"
 msgctxt "Languages::upgrade_center.error_unable_to_prepare_restore"
 msgid "Unable to prepare restore script."
 msgstr "Geri yükleme komut dosyası hazırlanamıyor."
+
+msgctxt "Languages::upgrade_center.pre_script"
+msgid "Pre-upgrade script"
+msgstr "Güncelle-öncesi metini"
+
+msgctxt "Languages::upgrade_center.pre_script_failed"
+msgid "Pre-upgrade script execution failed."
+msgstr "Güncelle-öncesi metini başlatılamadı."
 
 msgctxt "Languages::text_cc_javascript_disabled"
 msgid "Note! Your browser has the <b>JavaScript</b> disabled. To pay for your order click"
@@ -17894,19 +17909,19 @@ msgstr "Navlun hesap numarası"
 
 msgctxt "Languages::shippings.fedex.error_empty_response"
 msgid "Error: Service returned an empty response"
-msgstr ""
+msgstr "Hata: Servis boş geri döndü."
 
 msgctxt "Languages::ship_fedex_subpackage_type_bag"
 msgid "Bag"
-msgstr ""
+msgstr "Torba"
 
 msgctxt "Languages::ship_fedex_subpackage_type_barrel"
 msgid "Barrel"
-msgstr ""
+msgstr "Varil"
 
 msgctxt "Languages::ship_fedex_subpackage_type_basket"
 msgid "Basket"
-msgstr ""
+msgstr "Basket"
 
 msgctxt "Languages::ship_fedex_subpackage_type_box"
 msgid "Box"
@@ -17914,7 +17929,7 @@ msgstr "Box"
 
 msgctxt "Languages::ship_fedex_subpackage_type_bucket"
 msgid "Bucket"
-msgstr ""
+msgstr "Kova"
 
 msgctxt "Languages::ship_fedex_subpackage_type_bundle"
 msgid "Bundle"
@@ -17922,7 +17937,7 @@ msgstr "Bundle"
 
 msgctxt "Languages::ship_fedex_subpackage_type_cage"
 msgid "Cage"
-msgstr ""
+msgstr "Kafes"
 
 msgctxt "Languages::ship_fedex_subpackage_type_carton"
 msgid "Carton"
@@ -17930,15 +17945,15 @@ msgstr "Carton"
 
 msgctxt "Languages::ship_fedex_subpackage_type_case"
 msgid "Case"
-msgstr ""
+msgstr "Kutu"
 
 msgctxt "Languages::ship_fedex_subpackage_type_chest"
 msgid "Chest"
-msgstr ""
+msgstr "Sadık"
 
 msgctxt "Languages::ship_fedex_subpackage_type_container"
 msgid "Container"
-msgstr ""
+msgstr "Konteyner"
 
 msgctxt "Languages::ship_fedex_subpackage_type_crate"
 msgid "Crate"
@@ -17954,19 +17969,19 @@ msgstr "Drum"
 
 msgctxt "Languages::ship_fedex_subpackage_type_envelope"
 msgid "Envelope"
-msgstr ""
+msgstr "Zarf"
 
 msgctxt "Languages::ship_fedex_subpackage_type_hamper"
 msgid "Hamper"
-msgstr ""
+msgstr "Sepet"
 
 msgctxt "Languages::ship_fedex_subpackage_type_other"
 msgid "Other"
-msgstr ""
+msgstr "Diğer"
 
 msgctxt "Languages::ship_fedex_subpackage_type_package"
 msgid "Package"
-msgstr ""
+msgstr "Paket"
 
 msgctxt "Languages::ship_fedex_subpackage_type_pail"
 msgid "Pail"
@@ -17974,15 +17989,15 @@ msgstr "Pail"
 
 msgctxt "Languages::ship_fedex_subpackage_type_pallet"
 msgid "Pallet"
-msgstr ""
+msgstr "Palet"
 
 msgctxt "Languages::ship_fedex_subpackage_type_parcel"
 msgid "Parcel"
-msgstr ""
+msgstr "Parcel"
 
 msgctxt "Languages::ship_fedex_subpackage_type_reel"
 msgid "Reel"
-msgstr ""
+msgstr "Rulo"
 
 msgctxt "Languages::ship_fedex_subpackage_type_roll"
 msgid "Roll"
@@ -17990,11 +18005,11 @@ msgstr "Roll"
 
 msgctxt "Languages::ship_fedex_subpackage_type_sack"
 msgid "Sack"
-msgstr ""
+msgstr "Bohça"
 
 msgctxt "Languages::ship_fedex_subpackage_type_shrinkwrapped"
 msgid "Shrinkwrapped"
-msgstr ""
+msgstr "Isı filmi ile sarılıp sıkılaştırılmış"
 
 msgctxt "Languages::ship_fedex_subpackage_type_skid"
 msgid "Skid"
@@ -18002,35 +18017,35 @@ msgstr "Skid"
 
 msgctxt "Languages::ship_fedex_subpackage_type_tank"
 msgid "Tank"
-msgstr ""
+msgstr "Tank"
 
 msgctxt "Languages::ship_fedex_subpackage_type_totebin"
 msgid "Totebin"
-msgstr ""
+msgstr "Taşıma kutusu"
 
 msgctxt "Languages::ship_fedex_subpackage_type_tube"
 msgid "Tube"
-msgstr ""
+msgstr "Tüp"
 
 msgctxt "Languages::ship_fedex_subpackage_type_unit"
 msgid "Unit"
-msgstr ""
+msgstr "Birim"
 
 msgctxt "Languages::ship_fedex_pickup_type"
 msgid "Pickup type"
-msgstr ""
+msgstr "Alış türü"
 
 msgctxt "Languages::ship_fedex_pickup_type_contact_fedex_to_schedule"
 msgid "Contact FedEx to schedule"
-msgstr ""
+msgstr "Zamanlama için Fedex'e ulaşın"
 
 msgctxt "Languages::ship_fedex_pickup_type_dropoff_at_fedex_location"
 msgid "Dropoff at FedEx location"
-msgstr ""
+msgstr "Fedex'e bırakın"
 
 msgctxt "Languages::ship_fedex_pickup_type_use_scheduled_pickup"
 msgid "Use scheduled pickup"
-msgstr ""
+msgstr "Zamanlı Alış planlayın"
 
 msgctxt "Languages::ship_fedex_package_type_fedex_extra_large_box"
 msgid "FedEx Extra Large Box"
@@ -18062,7 +18077,7 @@ msgstr "Teslimat seçenekleri"
 
 msgctxt "Languages::shippings.fedex.general_settings"
 msgid "General settings"
-msgstr ""
+msgstr "Genel Ayarlar"
 
 msgctxt "Languages::shippings.fedex.option_broker_select_option"
 msgid "Broker select option"
@@ -18098,11 +18113,11 @@ msgstr "Garantili fonlar"
 
 msgctxt "Languages::shippings.fedex.option_cod_collection_type_company_check"
 msgid "Company check"
-msgstr ""
+msgstr "Firma çeki"
 
 msgctxt "Languages::shippings.fedex.option_cod_collection_type_personal_check"
 msgid "Personal check"
-msgstr ""
+msgstr "Şahıs çeki"
 
 msgctxt "Languages::shippings.fedex.option_custom_delivery_window"
 msgid "Custom delivery window"
@@ -18202,71 +18217,71 @@ msgstr "Konumda tutun"
 
 msgctxt "Languages::shippings.fedex.option_saturday_delivery"
 msgid "Saturday Delivery"
-msgstr ""
+msgstr "Cumartesi teslimi"
 
 msgctxt "Languages::shippings.fedex.option_saturday_pickup"
 msgid "Saturday Pickup"
-msgstr ""
+msgstr "Pazar teslimi"
 
 msgctxt "Languages::shippings.fedex.option_top_load"
 msgid "Top Load"
-msgstr ""
+msgstr "Üstten Yükleme"
 
 msgctxt "Languages::shippings.fedex.option_cut_flowers"
 msgid "Cut flowers"
-msgstr ""
+msgstr "Kesilmiş Çiçekler"
 
 msgctxt "Languages::shippings.fedex.option_exclude_from_consolidation"
 msgid "Exclude from consolidation"
-msgstr ""
+msgstr "Toplu işleme dahil etme"
 
 msgctxt "Languages::shippings.fedex.option_third_party_consignee"
 msgid "Third party consignee"
-msgstr ""
+msgstr "Üçüncü taraf alıcı"
 
 msgctxt "Languages::shippings.fedex.option_over_length"
 msgid "Over length"
-msgstr ""
+msgstr "Aşırı uzunluk"
 
 msgctxt "Languages::shippings.fedex.option_pending_shipment"
 msgid "Pending shipment"
-msgstr ""
+msgstr "Bekleyen gönderim"
 
 msgctxt "Languages::shippings.fedex.option_event_notification"
 msgid "Event notification"
-msgstr ""
+msgstr "Etkinlik bildirimi"
 
 msgctxt "Languages::shippings.fedex.option_delivery_on_invoice_acceptance"
 msgid "Delivery on invoice acceptance"
-msgstr ""
+msgstr "Fatura kabulunde dağıtım"
 
 msgctxt "Languages::shippings.fedex.option_cut_flowers"
 msgid "Cut Flowers"
-msgstr ""
+msgstr "Kesilmiş Çiçekler"
 
 msgctxt "Languages::shippings.fedex.option_exclude_from_consolidation"
 msgid "Exclude From Consolidation"
-msgstr ""
+msgstr "Toplu işleme dahil etme"
 
 msgctxt "Languages::shippings.fedex.option_third_party_consignee"
 msgid "FedEx Third Party Consignee International Priority service (TPC)"
-msgstr ""
+msgstr "FedEx Üçüncü Taraf Alıcı Uluslararası Öncelikli Kargo Hizmeti (TPC)"
 
 msgctxt "Languages::shippings.fedex.option_over_length"
 msgid "Over Length"
-msgstr ""
+msgstr "Aşırı Uzunluk"
 
 msgctxt "Languages::shippings.fedex.option_pending_shipment"
 msgid "Pending Shipment"
-msgstr ""
+msgstr "Bekleyen Gönderim"
 
 msgctxt "Languages::shippings.fedex.option_event_notification"
 msgid "Shipment Event Notification"
-msgstr ""
+msgstr "Gönderim Aktivite bildirimi"
 
 msgctxt "Languages::shippings.fedex.option_delivery_on_invoice_acceptance"
 msgid "Delivery on Invoice Acceptance"
-msgstr ""
+msgstr "Fatura kabulunde dağıtım"
 
 msgctxt "Languages::shippings.fedex.option_home_delivery_premium"
 msgid "Home delivery Premium"

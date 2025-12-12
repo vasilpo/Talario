@@ -94,6 +94,8 @@ if ($addon_setting['vendor_profile_updates_approval'] !== 'none' || $addon_setti
         !empty($request['dispatch'])
         && $request['dispatch'] === 'companies.manage'
         && !empty($request['status'])
+        && !empty($request['status'][0])
+        && !empty($request['status'][1])
         && (
             $request['status'][0] === VendorStatuses::PENDING
             || $request['status'][1] === VendorStatuses::NEW_ACCOUNT

@@ -211,6 +211,7 @@ Buttons
     height: 30px;
     border: 0px;
     border-left: 1px solid #cdcdcd;
+    color: @font;
     background: @base;
     cursor: pointer;
     box-sizing: border-box;
@@ -563,10 +564,6 @@ input[type=number]::-webkit-outer-spin-button {
     vertical-align: middle;
 
     .word-break();
-
-    &.ty-company-name {
-        margin-right: 25px;
-    }
 }
 
 .ty-control-group label.hidden {
@@ -1933,7 +1930,6 @@ WYSIWYG
 .ty-mainbox-title .ty-date {
     font-style: normal;
     font-size: 70%;
-    white-space: nowrap;
 }
 .ty-mainbox-container.ty-float-right,
 .ty-mainbox-container.ty-float-left {
@@ -2813,6 +2809,8 @@ Compare products
     padding: 8px 16px 7px;
     color: #fff;
     background: #1abc9c;
+    word-break: break-all;
+    word-break: break-word;
 }
 
 .ty-compare-products {
@@ -5794,6 +5792,9 @@ Cart contents
 .ty-cart-content__title.ty-left {
     text-align: left;
 }
+.ty-cart-content__title.ty-center {
+    text-align: center;
+}
 .ty-cart-content__title.ty-right {
     text-align: right;
 }
@@ -5963,15 +5964,22 @@ td.ty-cart-content__description {
     margin-right: 25px;
 }
 .ty-cart-items__list-item-desc {
+    --ty-cart-items-list-item-desc-width: 187px;
+
     overflow: hidden;
-    width: 187px;
-
-    @media (min-width: 375px) {
-        width: 240px;
+    width: var(--ty-cart-items-list-item-desc-width);
+}
+@media (min-width: 375px) {
+    .ty-cart-items__list-item-desc {
+        --ty-cart-items-list-item-desc-width: 240px;
     }
-
-    @media (min-width: 481px) {
-        width: 250px;
+}
+.ty-cart-items__list-item-desc--text {
+    --ty-cart-items-list-item-desc-width: 252px;
+}
+@media (min-width: 375px) {
+    .ty-cart-items__list-item-desc--text {
+        --ty-cart-items-list-item-desc-width: 305px;
     }
 }
 .ty-cart-items__list-item-tools {
@@ -6023,6 +6031,8 @@ td.ty-cart-content__description {
     width: 220px;
     text-align: right;
     white-space: normal;
+    word-break: break-all;
+    word-break: break-word;
 }
 .ty-cart-statistic_title_main {
     font-weight: bold;
@@ -6702,12 +6712,9 @@ only screen and (min-device-pixel-ratio: 2) {
     padding-bottom: 2px;
     font-weight: bold;
 }
-.ty-checkout-summary__taxes-amount {
-    display: inline-block;
-    overflow: hidden;
-    width: 70px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.ty-checkout-summary__taxes-name {
+    word-break: break-all;
+    word-break: break-word;
 }
 .ty-checkout-summary__order_discount {
     color: #E74C3C;
@@ -8383,16 +8390,30 @@ Carousel
 }
 /* styling next and prev buttons */
 .owl-theme .owl-controls .owl-buttons div {
-    color: #fff;
     display: inline-block;
     margin: 5px;
     padding: 3px 10px;
     font-size: 12px;
     .border-radius(30px);
-    background: darken(@base, 18%);
     filter: alpha(opacity=70);/*ie7 fix*/
     opacity: 0.7;
 }
+
+.ty-owl-previewer__container .ty-owl-previewer__prev-icon,
+.ty-owl-previewer__container .ty-owl-previewer__next-icon {
+    display: inline-block;
+    width: 15px;
+    line-height: 28px;
+}
+
+.ty-owl-previewer__container .ty-owl-previewer__prev-icon {
+    margin-left: 7px;
+}
+
+.ty-owl-previewer__container .ty-owl-previewer__next-icon {
+    margin-right: 7px;
+}
+
 .owl-theme .owl-controls-outside .owl-buttons div {
     float: left;
     font-size: 15px;

@@ -69,13 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ['order_id' => $params['order_id'], 'advanced_info' => true, 'shipment_id' => $shipment_id]
             );
             $shipment = reset($_shipments);
+            $shipping_info = fn_get_shipping_info($shipment['shipping_id'], DESCR_SL);
 
-            $order_for_sdek = $sdek_api_data_builder->prepareCreateOrderData($order_info, $shipment, $sdek_info['order'], $receipt);
-
-            $shipping_data = fn_get_shipping_info($shipment['shipping_id'], DESCR_SL);
+            $order_for_sdek = $sdek_api_data_builder->prepareCreateOrderData($order_info, $shipping_info, $shipment, $sdek_info, $receipt);
 
             try {
-                $sdek_client = new SdekApiClient($shipping_data['service_params']);
+                $sdek_client = new SdekApiClient($shipping_info['service_params']);
 
                 $order_uuid = $sdek_client->createOrder($order_for_sdek);
 
@@ -95,6 +94,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if (!empty($cdek_number)) {
                             break;
                         }
+
+                        // We have to wait until order info is available on SDEK side
+                        sleep(3);
 
                         $retries++;
                     }

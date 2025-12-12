@@ -64,7 +64,7 @@ abstract class AEntity
      *
      * @return mixed
      */
-    abstract public function index($id = '', $params = array());
+    abstract public function index($id = '', array $params = []);
 
     /**
      * Handles REST POST request. Must create resource and return Api_Response
@@ -379,3 +379,4 @@ abstract class AEntity
         return $this->auth;
     }
 }
+

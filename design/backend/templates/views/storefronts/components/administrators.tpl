@@ -4,8 +4,8 @@ array $storefront_admins Storefront adminitrators list
 
 {if $storefront_admins}
     <div class="table-responsive-wrapper longtap-selection">
-        <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden">
-            <thead data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
+        <table width="100%" class="table table-middle table--relative table-responsive">
+            <thead class="thead--overflow-hidden" data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
                 <tr>
                     <th width="25%">
                         {include file="common/table_col_head.tpl" type="name" text=__("person_name")}

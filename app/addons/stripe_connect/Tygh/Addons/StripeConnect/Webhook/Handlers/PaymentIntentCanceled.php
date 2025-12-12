@@ -49,7 +49,7 @@ class PaymentIntentCanceled implements Handler
 
             /** @var \Tygh\Lock\Factory $lock_factory */
             $lock_factory = Tygh::$app['lock.factory'];
-            $lock = $lock_factory->createLock('stripe_webhook_handle_order_status_' . $order_id, 60.0, false);
+            $lock = $lock_factory->createLock('stripe_connect_handle_order_status_' . $order_id, 60.0);
             if (!$lock->acquire()) {
                 do {
                     $lock->wait();

@@ -5884,7 +5884,7 @@
           notification: e,
           langVars: this.props.langVars,
           onMouseUp: t => {
-            if (t.stopPropagation(), t.preventDefault(), $(t.target).closest(".cc-delete")) we([e.notification_id]).then(t => {
+            if (t.stopPropagation(), t.preventDefault(), $(t.target).closest(".cc-delete").length > 0) we([e.notification_id]).then(t => {
               let {
                 result: r
               } = t;

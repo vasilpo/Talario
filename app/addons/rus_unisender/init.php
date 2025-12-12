@@ -17,7 +17,6 @@
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 fn_register_hooks(
-    'update_profile',
     'place_order',
     'change_order_status',
     'get_notification_rules',

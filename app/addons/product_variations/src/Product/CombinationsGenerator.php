@@ -60,6 +60,24 @@ class CombinationsGenerator
     ) {
         $result = [];
 
+        /**
+         * Executes before generating combinations by feature variant, allows adding custom conditions.
+         *
+         * @param \Tygh\Addons\ProductVariations\Product\CombinationsGenerator $this               Instance of the generator
+         * @param GroupFeatureCollection                                       $feature_variants   Feature variants data
+         * @param array                                                        $exists_product_ids IDs of existing products
+         * @param array                                                        $combinations_data  Combinations data
+         * @param array                                                        $result             Generation result
+         */
+        fn_set_hook(
+            'product_variations_generate_combinations_by_feature_variant_pre',
+            $this,
+            $feature_variants,
+            $exists_product_ids,
+            $combinations_data,
+            $result
+        );
+
         $group_features = $feature_variants->getFeatureCollection();
         $features = $this->getFeatures($feature_variants->getFeatureCollection());
 
@@ -80,6 +98,17 @@ class CombinationsGenerator
         array $combinations_data = []
     ) {
         $result = [];
+
+        /**
+         * Executes before generating combinations, allows adding custom conditions.
+         *
+         * @param \Tygh\Addons\ProductVariations\Product\CombinationsGenerator $this               Instance of the generator
+         * @param GroupFeatureCollection                                       $group_features     Features of current group
+         * @param array                                                        $exists_product_ids IDs of existing products
+         * @param array                                                        $combinations_data  Combinations data
+         * @param array                                                        $result             Generation result
+         */
+        fn_set_hook('product_variations_generate_combinations_pre', $this, $group_features, $exists_product_ids, $combinations_data, $result);
 
         $features = $this->getFeatures($group_features);
 
@@ -147,6 +176,16 @@ class CombinationsGenerator
                 $combinations = $tmp_combinations;
             }
         }
+
+        /**
+         * Executes after feature variants are combined, allows modifying combinations.
+         *
+         * @param \Tygh\Addons\ProductVariations\Product\CombinationsGenerator $this               Instance of the generator
+         * @param array                                                        $features           Features data
+         * @param array                                                        $filter_variant_ids Filter combination IDs
+         * @param array                                                        $combinations       Feature variants combinations
+         */
+        fn_set_hook('product_variations_combine_feature_variants_post', $this, $features, $filter_variant_ids, $combinations);
 
         return $combinations;
     }
@@ -232,6 +271,34 @@ class CombinationsGenerator
         $result = $this->populateCombinationsByCombinationsData($result, $data);
         $result = $this->sortCombinations($result);
         $result = $this->bindBaseProduct($result, $products);
+
+        /**
+         * Executes after combinatons are populated with product data, allows modifying them.
+         *
+         * @param \Tygh\Addons\ProductVariations\Product\CombinationsGenerator $this                          Instance of the generator
+         * @param array                                                        $combinations                  Combinations before modifying
+         * @param array                                                        $features                      Features data
+         * @param array                                                        $products                      Products data
+         * @param array                                                        $data                          Combinations extra data
+         * @param array                                                        $filter_combination_ids        Filter combination IDs
+         * @param array                                                        $result                        Populated combinations data
+         * @param array                                                        $variation_product_feature_ids Product feature IDs
+         * @param array                                                        $exists_combination_ids        IDs of existing combinations
+         * @param array                                                        $exists_parent_combination_ids IDs of existing parent combinations
+         */
+        fn_set_hook(
+            'product_variations_populate_combinations_post',
+            $this,
+            $combinations,
+            $features,
+            $products,
+            $data,
+            $filter_combination_ids,
+            $result,
+            $variation_product_feature_ids,
+            $exists_combination_ids,
+            $exists_parent_combination_ids
+        );
 
         return $result;
     }

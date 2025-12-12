@@ -17,6 +17,8 @@
 | Visibility | Name | Flag | Summary |
 | ----------:| ---- | ---- | ------- |
 | public | [$amount](../classes/YooKassa-Model-Refund.md#property_amount) |  | Сумма возврата |
+| public | [$cancellation_details](../classes/YooKassa-Model-Refund.md#property_cancellation_details) |  | Комментарий к статусу `canceled` |
+| public | [$cancellationDetails](../classes/YooKassa-Model-Refund.md#property_cancellationDetails) |  | Комментарий к статусу `canceled` |
 | public | [$created_at](../classes/YooKassa-Model-Refund.md#property_created_at) |  | Время создания возврата |
 | public | [$createdAt](../classes/YooKassa-Model-Refund.md#property_createdAt) |  | Время создания возврата |
 | public | [$deal](../classes/YooKassa-Model-Refund.md#property_deal) |  | Данные о сделке, в составе которой проходит возврат |
@@ -39,6 +41,7 @@
 | public | [__unset()](../classes/YooKassa-Common-AbstractObject.md#method___unset) |  | Удаляет свойство |
 | public | [fromArray()](../classes/YooKassa-Common-AbstractObject.md#method_fromArray) |  | Устанавливает значения свойств текущего объекта из массива |
 | public | [getAmount()](../classes/YooKassa-Model-Refund.md#method_getAmount) |  | Возвращает сумму возврата |
+| public | [getCancellationDetails()](../classes/YooKassa-Model-Refund.md#method_getCancellationDetails) |  | Возвращает комментарий к статусу canceled: кто отменил возврат и по какой причине |
 | public | [getCreatedAt()](../classes/YooKassa-Model-Refund.md#method_getCreatedAt) |  | Возвращает дату создания возврата |
 | public | [getDeal()](../classes/YooKassa-Model-Refund.md#method_getDeal) |  | Возвращает данные о сделке, в составе которой проходит возврат |
 | public | [getDescription()](../classes/YooKassa-Model-Refund.md#method_getDescription) |  | Возвращает комментарий к возврату |
@@ -54,6 +57,7 @@
 | public | [offsetSet()](../classes/YooKassa-Common-AbstractObject.md#method_offsetSet) |  | Устанавливает значение свойства |
 | public | [offsetUnset()](../classes/YooKassa-Common-AbstractObject.md#method_offsetUnset) |  | Удаляет свойство |
 | public | [setAmount()](../classes/YooKassa-Model-Refund.md#method_setAmount) |  | Устанавливает сумму возврата |
+| public | [setCancellationDetails()](../classes/YooKassa-Model-Refund.md#method_setCancellationDetails) |  | Устанавливает комментарий к статусу canceled: кто отменил возврат и по какой причине |
 | public | [setCreatedAt()](../classes/YooKassa-Model-Refund.md#method_setCreatedAt) |  | Устанавливает вермя создания возврата |
 | public | [setDeal()](../classes/YooKassa-Model-Refund.md#method_setDeal) |  | Устанавливает данные о сделке, в составе которой проходит возврат. |
 | public | [setDescription()](../classes/YooKassa-Model-Refund.md#method_setDescription) |  | Устанавливает комментарий к возврату |
@@ -86,6 +90,30 @@
 Сумма возврата
 
 **Type:** <a href="../classes/YooKassa-Model-AmountInterface.html"><abbr title="\YooKassa\Model\AmountInterface">AmountInterface</abbr></a>
+
+**Details:**
+
+
+<a name="property_cancellation_details"></a>
+#### public $cancellation_details : \YooKassa\Model\CancellationDetailsInterface
+---
+***Description***
+
+Комментарий к статусу `canceled`
+
+**Type:** <a href="../classes/YooKassa-Model-CancellationDetailsInterface.html"><abbr title="\YooKassa\Model\CancellationDetailsInterface">CancellationDetailsInterface</abbr></a>
+
+**Details:**
+
+
+<a name="property_cancellationDetails"></a>
+#### public $cancellationDetails : \YooKassa\Model\CancellationDetailsInterface
+---
+***Description***
+
+Комментарий к статусу `canceled`
+
+**Type:** <a href="../classes/YooKassa-Model-CancellationDetailsInterface.html"><abbr title="\YooKassa\Model\CancellationDetailsInterface">CancellationDetailsInterface</abbr></a>
 
 **Details:**
 
@@ -362,6 +390,27 @@ public getAmount() : \YooKassa\Model\AmountInterface
 
 **Returns:** \YooKassa\Model\AmountInterface - Сумма возврата
 
+
+<a name="method_getCancellationDetails" class="anchor"></a>
+#### public getCancellationDetails() : \YooKassa\Model\CancellationDetailsInterface|null
+
+```php
+public getCancellationDetails() : \YooKassa\Model\CancellationDetailsInterface|null
+```
+
+**Summary**
+
+Возвращает комментарий к статусу canceled: кто отменил возврат и по какой причине
+
+**Details:**
+* Inherited From: [\YooKassa\Model\Refund](../classes/YooKassa-Model-Refund.md)
+
+**Returns:** \YooKassa\Model\CancellationDetailsInterface|null - Комментарий к статусу canceled
+
+##### Tags
+| Tag | Version | Description |
+| --- | ------- | ----------- |
+| since | 1.0.13 |  |
 
 <a name="method_getCreatedAt" class="anchor"></a>
 #### public getCreatedAt() : \DateTime
@@ -647,6 +696,28 @@ public setAmount(\YooKassa\Model\AmountInterface $value) : mixed
 | Type | Description |
 | ---- | ----------- |
 | \YooKassa\Common\Exceptions\InvalidPropertyValueException | Выбрасывается если переданная сумма меньше или равна нулю |
+
+**Returns:** mixed - 
+
+
+<a name="method_setCancellationDetails" class="anchor"></a>
+#### public setCancellationDetails() : mixed
+
+```php
+public setCancellationDetails(\YooKassa\Model\CancellationDetailsInterface $value) : mixed
+```
+
+**Summary**
+
+Устанавливает комментарий к статусу canceled: кто отменил возврат и по какой причине
+
+**Details:**
+* Inherited From: [\YooKassa\Model\Refund](../classes/YooKassa-Model-Refund.md)
+
+##### Parameters:
+| Type | Name | Description |
+| ---- | ---- | ----------- |
+| <code lang="php">\YooKassa\Model\CancellationDetailsInterface</code> | value  | Комментарий к статусу canceled |
 
 **Returns:** mixed - 
 
@@ -940,10 +1011,10 @@ protected getUnknownProperties() : array
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

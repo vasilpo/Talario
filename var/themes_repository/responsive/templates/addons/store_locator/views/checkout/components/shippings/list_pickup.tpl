@@ -40,6 +40,8 @@
         {/if}
         {* End of Search *}
 
+        <div class="ty-pickup__toolbar cm-pickup__toolbar"></div>
+
         {* List *}
         <label for="pickup_office_list"
                class="cm-required cm-multiple-radios hidden"
@@ -50,9 +52,8 @@
              {/if}"
              id="pickup_office_list"
              data-ca-error-message-target-node-change-on-screen="xs,xs-large,sm"
-             data-ca-error-message-target-node-after-mode="true"
              data-ca-error-message-target-node-on-screen=".cm-open-pickups-msg"
-             data-ca-error-message-target-node=".pickup__offices--list"
+             data-ca-error-message-target-node=".cm-pickup__toolbar"
         >
             {foreach from=$shipping.data.stores item=store}
                 {include file="addons/store_locator/views/checkout/components/shippings/items/pickup.tpl" store=$store}

@@ -5,11 +5,11 @@
     {$is_allowed_to_bulk_delete_reviews = fn_check_permissions("discussion", "m_delete", "admin")}
     {$is_owned_object = $runtime.company_id == $object_company_id}
     {$is_company_reviews = $discussion.object_type === "Addons\Discussion\DiscussionObjectTypes::COMPANY"|enum}
-    {$allow_save = $is_allowed_to_update_reviews && !($runtime.company_id && (!$is_owned_object || $is_company_reviews))}
+    {$allow_save = $is_allowed_to_update_reviews && !("MULTIVENDOR"|fn_allowed_for && $runtime.company_id && (!$is_owned_object || $is_company_reviews))}
     <div class="{if $selected_section !== "discussion" && $runtime.controller !== "discussion"}hidden{/if}" id="content_discussion">
     <div class="clearfix">
         <div class="buttons-container buttons-bg pull-right">
-            {if $is_allowed_to_add_reviews && !($runtime.company_id && (!$is_owned_object || $is_company_reviews))}
+            {if $is_allowed_to_add_reviews && !("MULTIVENDOR"|fn_allowed_for && $runtime.company_id && (!$is_owned_object || $is_company_reviews))}
                 {if $discussion.object_type == "Addons\Discussion\DiscussionObjectTypes::TESTIMONIALS_AND_LAYOUT"|enum}
                     {capture name="adv_buttons"}
                         {include file="common/popupbox.tpl"

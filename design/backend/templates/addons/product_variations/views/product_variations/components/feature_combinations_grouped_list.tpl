@@ -6,8 +6,8 @@
         <th width="1%">{include file="common/check_items.tpl"}</th>
         <th width="99%">
             <div class="pull-left">
-                <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="on_variations_tree" class="cm-combinations{if $expand_all} hidden{/if}"><span class="icon-caret-right"> </span></span>
-                <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="off_variations_tree" class="cm-combinations{if !$expand_all} hidden{/if}"><span class="icon-caret-down"> </span></span>
+                <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="on_variations_tree" class="cm-combinations{if $expand_all} hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="off_variations_tree" class="cm-combinations{if !$expand_all} hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
             </div>
             &nbsp;{__("product_variations.variations")}
         </th>
@@ -46,8 +46,8 @@
                 <td width="99%">
                     {strip}
                         <span style="padding-left: {$level * 14}px;">
-                            <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_group_{$group_id}" class="cm-combination {if $expand_all}hidden{/if}" ><span class="icon-caret-right"> </span></span>
-                            <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_group_{$group_id}" class="cm-combination{if !$expand_all} hidden{/if}" ><span class="icon-caret-down"> </span></span>
+                            <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_group_{$group_id}" class="cm-combination {if $expand_all}hidden{/if}" ><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                            <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_group_{$group_id}" class="cm-combination{if !$expand_all} hidden{/if}" ><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
                             <span class="row-status">{$first_combination.group_name}</span>
                         </span>
                     {/strip}

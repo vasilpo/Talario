@@ -34,7 +34,7 @@
                                                             </a>
                                                         </div>
                                                     {/if}
-                                                    <div class="ty-cart-items__list-item-desc">
+                                                    <div class="ty-cart-items__list-item-desc ty-cart-items__list-item-desc--{$block.properties.products_links_type}" >
                                                         <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{$product.product|default:fn_get_product_name($product.product_id) nofilter}</a>
                                                     <p>
                                                         <span>{$product.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$product.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}

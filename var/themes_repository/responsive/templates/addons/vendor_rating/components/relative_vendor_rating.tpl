@@ -4,7 +4,13 @@
 && $addons.vendor_rating.gold_rating_lower_limit === "0"}
     {$show_icon = false}
 {/if}
-{if $show_icon}
+{if $show_icon
+    && (
+        $rating >= $addons.vendor_rating.bronze_rating_lower_limit && $rating < $addons.vendor_rating.silver_rating_lower_limit
+        || $rating >= $addons.vendor_rating.silver_rating_lower_limit && $rating < $addons.vendor_rating.gold_rating_lower_limit
+        || $rating >= $addons.vendor_rating.gold_rating_lower_limit
+    )
+}
     <span class="ty-vendor-rating">
         {if $rating >= $addons.vendor_rating.bronze_rating_lower_limit && $rating < $addons.vendor_rating.silver_rating_lower_limit}
             {include_ext file="common/icon.tpl"

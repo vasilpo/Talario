@@ -165,8 +165,32 @@ function fn_get_preload_font_resources($css, $language_code, $max_fonts_to_prelo
         $css_parse_result
     );
 
+    $font_face_descriptor_patterns = [
+        '/ascent-override:/',
+        '/descent-override:/',
+        '/font-display:/',
+        '/font-family:/',
+        '/font-feature-settings:/',
+        '/font-language-override:/',
+        '/font-named-instance:/',
+        '/font-style:/',
+        '/font-variation-settings:/',
+        '/font-weight:/',
+        '/font-width:/',
+        '/line-gap-override:/',
+        '/src:/',
+        '/unicode-range:/'
+    ];
+
     foreach ($css_parse_result['font_faces'] as $font_face_spec) {
-        $properties = array_filter(explode(';', $font_face_spec));
+        $string = preg_replace($font_face_descriptor_patterns, '/*split*/${0}', $font_face_spec);
+        $properties = preg_split('/\/\*split\*\//', $string, -1, PREG_SPLIT_NO_EMPTY);
+        $properties = array_map(
+            static function ($property) {
+                return trim($property, ';');
+            },
+            $properties
+        );
 
         $font_face_properties = fn_block_styles_get_font_face_properties($properties);
         $family = $font_face_properties['font-family'];

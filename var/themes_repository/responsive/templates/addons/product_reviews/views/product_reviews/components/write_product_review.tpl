@@ -3,13 +3,13 @@
     $locate_to_product_review_tab
 *}
 
-<section class="ty-product-review-write-review">
+<section class="ty-product-review-write-product-review">
 
-    <h4 class="ty-product-review-write-review__title">
+    <h4 class="ty-product-review-write-product-review__title">
         {__("product_reviews.review_this_product")}
     </h4>
 
-    <div class="ty-product-review-write-review__description">
+    <div class="ty-product-review-write-product-review__description">
         <p>{__("product_reviews.review_this_product_description")}</p>
     </div>
 

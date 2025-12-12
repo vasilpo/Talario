@@ -2,7 +2,7 @@
 {if $addons.newsletters}
 <div class="ty-footer-form-block no-help">
     <form action="{""|fn_url}" method="post" name="subscribe_form" class="cm-processing-personal-data">
-        <input type="hidden" name="redirect_url" value="{$config.current_url}" />
+        <input type="hidden" name="redirect_url" value="{if $smarty.request.redirect_url}{$smarty.request.redirect_url}{else}{$config.current_url}{/if}" />
         <input type="hidden" name="newsletter_format" value="2" />
         <div class="ty-footer-form-block__form ty-control-group with-side">
         <div class="ty-footer-form-block__title">{__("stay_connected")}</div>

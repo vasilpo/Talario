@@ -336,14 +336,14 @@
                         </div>
 
                         {if $repo_theme.screenshot}
-                        <a id="image_img_{$theme_id}" href="{$repo_theme.screenshot}" data-ca-image-id="img_{$theme_id}" class="cm-previewer"><img class="screenshot" src="{$repo_theme.screenshot}" alt="" width="250"></a>
+                        <a id="image_img_{$theme_id}" href="{$repo_theme.screenshot}" data-ca-image-id="img_{$theme_id}" class="cm-previewer"><img class="screenshot" src="{$repo_theme.screenshot}" alt=""></a>
                         {/if}
 
                         <div class="theme-actions">
                             {capture name="tools_list"}
 
                                 {if $repo_theme.screenshot}
-                                <li><a id="image_img_{$theme_id}" href="{$repo_theme.screenshot}" data-ca-image-id="img_button_{$theme_id}" class="cm-previewer">{__("preview")}</a></li>
+                                <li><a id="image_img_{$theme_id}" href="{$repo_theme.screenshot}" data-ca-image-id="img_{$theme_id}" class="cm-previewer">{__("preview")}</a></li>
                                 {/if}
 
                                 {* <li><a href={$config.resources.demo_store_url}?demo_theme[C]={$theme_name}>{__("live_preview")}</a></li> *}

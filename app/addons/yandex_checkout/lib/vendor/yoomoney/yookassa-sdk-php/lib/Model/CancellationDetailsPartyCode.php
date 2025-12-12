@@ -1,9 +1,9 @@
 <?php
 
-/**
+/*
  * The MIT License
  *
- * Copyright (c) 2023 "YooMoney", NBСO LLC
+ * Copyright (c) 2025 "YooMoney", NBСO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,24 +34,29 @@ use YooKassa\Common\AbstractEnum;
 class CancellationDetailsPartyCode extends AbstractEnum
 {
     /**
-     * Продавец товаров и услуг
+     * Продавец товаров и услуг.
      */
     const MERCHANT = 'merchant';
 
     /**
-     * ЮKassa
+     * ЮKassa.
      */
-    const YOO_KASSA = 'yoo_kassa';
+    const YOO_MONEY = 'yoo_money';
 
     /**
-     * «Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис)
+     * @deprecated Устарел. Оставлен для обратной совместимости
+     */
+    const YANDEX_CHECKOUT = 'yandex_checkout';
+
+    /**
+     * «Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис).
      */
     const PAYMENT_NETWORK = 'payment_network';
 
-
     protected static $validValues = array(
-        self::MERCHANT        => true,
-        self::YOO_KASSA       => true,
+        self::MERCHANT => true,
+        self::YOO_MONEY => true,
+        self::YANDEX_CHECKOUT => false,
         self::PAYMENT_NETWORK => true,
     );
 }

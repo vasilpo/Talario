@@ -32,7 +32,7 @@
         <input type="hidden" name="redirect_url" value="{$post_redirect_url|default:$config.current_url}" />
         <input type="hidden" name="selected_section" value="" />
 
-        <div class="ty-product-review-new--review__body" id="new_post_{$product_id}">
+        <div class="ty-product-review-new-product-review__body" id="new_post_{$product_id}">
 
             {include file="addons/product_reviews/views/product_reviews/components/new_product_review_rating.tpl"
                 product_id=$product_id

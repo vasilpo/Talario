@@ -39,7 +39,7 @@
                                                             {include file="common/image.tpl" image_width="40" image_height="40" images=$product.main_pair no_ids=true}
                                                         </div>
                                                     {/if}
-                                                    <div class="ty-cart-items__list-item-desc">
+                                                    <div class="ty-cart-items__list-item-desc ty-cart-items__list-item-desc--{$block.properties.products_links_type}">
                                                         <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{$product.product|default:fn_get_product_name($product.product_id) nofilter}</a>
                                                     <p>
                                                         <span>{$product.amount}</span><span dir="{$language_direction}">&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$product.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}

@@ -14,12 +14,12 @@
 
 namespace Tygh\Api\Entities;
 
-use Tygh\Enum\ProductFeatures;
 use Tygh\Api\AEntity;
 use Tygh\Api\Response;
+use Tygh\Enum\ProductFeatures;
+use Tygh\Enum\UserTypes;
 use Tygh\Enum\YesNo;
 use Tygh\Registry;
-use Tygh\Enum\UserTypes;
 use Tygh\Tygh;
 
 class Products extends AEntity
@@ -129,7 +129,6 @@ class Products extends AEntity
         }
 
         if ($valid_params) {
-
             if (!is_array($params['category_ids'])) {
                 $params['category_ids'] = fn_explode(',', $params['category_ids']);
             }
@@ -157,6 +156,7 @@ class Products extends AEntity
         $data = [];
         $status = Response::STATUS_BAD_REQUEST;
         list($_status, $message) = $this->checkProductCompanyId($id, $params);
+
         if ($_status !== Response::STATUS_OK) {
             return [
                 'status' => $_status,

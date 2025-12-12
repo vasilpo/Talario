@@ -23,6 +23,10 @@ $schema = [
     TaxType::VAT_20  => 4,
     TaxType::VAT_110 => 5,
     TaxType::VAT_120 => 6,
+    TaxType::VAT_5   => 7,
+    TaxType::VAT_7   => 8,
+    TaxType::VAT_105 => 9,
+    TaxType::VAT_107 => 10,
 ];
 
 return $schema;

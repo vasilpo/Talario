@@ -252,6 +252,14 @@ msgctxt "Languages::tt_mobile_app.services_config"
 msgid "Upload the google-services.json file that was generated when you added an Android application in Firebase."
 msgstr "Upload the google-services.json file that was generated when you added an Android application in Firebase."
 
+msgctxt "Languages::mobile_app.services_config_ios"
+msgid "Firebase config file (iOS)"
+msgstr "Firebase config file (iOS)"
+
+msgctxt "Languages::tt_mobile_app.services_config_ios"
+msgid "Upload the GoogleService-Info.plist file that was generated when you added an iOS application in Firebase."
+msgstr "Upload the GoogleService-Info.plist file that was generated when you added an iOS application in Firebase."
+
 msgctxt "Languages::mobile_app.crop_when_resize"
 msgid "Crop image"
 msgstr "Crop image"
@@ -4873,3 +4881,8 @@ msgstr "Upload file"
 msgctxt "Languages::mobile_app.mobile_delete_file"
 msgid "Delete file"
 msgstr "Delete file"
+
+msgctxt "Languages::mobile_app.unknown_os_type"
+msgid "Unknown OS type for definition of Firebase config file name."
+msgstr "Unknown OS type for definition of Firebase config file name."
+

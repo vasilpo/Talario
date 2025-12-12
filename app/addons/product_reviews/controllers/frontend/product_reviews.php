@@ -110,6 +110,7 @@ if ($mode === 'get_new_post_form') {
             'product_reviews_ratings'               => fn_product_reviews_get_reviews_ratings(),
             'user_data'                             => empty($auth['user_id']) ? [] : fn_get_user_info($auth['user_id']),
             'product_reviews_images_upload_allowed' => Registry::get('addons.product_reviews.images_upload_allowed'),
+            'upload_max_filesize_mb'                   => fn_get_allowed_image_file_size(true),
         ]);
 
         Tygh::$app['view']->display('addons/product_reviews/views/product_reviews/components/new_product_review.tpl');

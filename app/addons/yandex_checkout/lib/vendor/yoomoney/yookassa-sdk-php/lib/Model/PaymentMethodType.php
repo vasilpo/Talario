@@ -1,9 +1,9 @@
 <?php
 
-/**
+/*
  * The MIT License
  *
- * Copyright (c) 2023 "YooMoney", NBСO LLC
+ * Copyright (c) 2025 "YooMoney", NBСO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,10 @@ class PaymentMethodType extends AbstractEnum
     const APPLE_PAY      = 'apple_pay';
     /** Платеж Google Pay */
     const GOOGLE_PAY     = 'google_pay';
-    /** Платеж из кошелька Qiwi */
+    /**
+     * Платеж из кошелька Qiwi
+     * @deprecated Будет удален в следующих версиях
+     */
     const QIWI           = 'qiwi';
     /**
      * Платеж из кошелька Webmoney
@@ -86,7 +89,10 @@ class PaymentMethodType extends AbstractEnum
      * @deprecated Будет удален в следующих версиях
      */
     const PSB            = 'psb';
-    /** Заплатить по частям */
+    /**
+     * Заплатить по частям
+     * @deprecated Будет удален в следующих версиях
+     */
     const INSTALLMENTS   = 'installments';
     /**
      * Оплата через WeChat
@@ -111,11 +117,11 @@ class PaymentMethodType extends AbstractEnum
         self::MOBILE_BALANCE => true,
         self::APPLE_PAY      => false,
         self::GOOGLE_PAY     => false,
-        self::QIWI           => true,
+        self::QIWI           => false,
         self::WEBMONEY       => false,
         self::ALFABANK       => false,
         self::TINKOFF_BANK   => true,
-        self::INSTALLMENTS   => true,
+        self::INSTALLMENTS   => false,
         self::B2B_SBERBANK   => true,
         self::PSB            => false,
         self::WECHAT         => false,

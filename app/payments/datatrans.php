@@ -103,10 +103,10 @@ if (defined('PAYMENT_NOTIFICATION')) {
     $pp_response_url = fn_link_attach($pp_response_url, $session->getName() . '='. $session->getID());
     $pp_cancel_url = fn_link_attach($pp_cancel_url, $session->getName() . '='. $session->getID());
 
-    if ($processor_data['processor_params']['mode'] == 'test') {
-        $pp_url = "https://pay.sandbox.datatrans.com/upp/jsp/upStart.jsp";
+    if ($processor_data['processor_params']['mode'] === 'test') {
+        $pp_url = 'https://pay.sandbox.datatrans.com/upp/jsp/upStart.jsp';
     } else {
-        $pp_url = "https://payment.datatrans.biz/upp/jsp/upStart.jsp";
+        $pp_url = 'https://pay.datatrans.com/upp/jsp/upStart.jsp';
     }
 
     if (CART_LANGUAGE == 'fr') {
@@ -127,7 +127,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
         'cancelUrl' => $pp_cancel_url,
         'language' => $language,
         'reqtype' => $processor_data['processor_params']['transaction_type'],
-        'sign' => $processor_data['processor_params']['sign'],        
+        'sign' => $processor_data['processor_params']['sign'],
     );
 
     fn_create_payment_form($pp_url, $post_data, 'DataTrans');

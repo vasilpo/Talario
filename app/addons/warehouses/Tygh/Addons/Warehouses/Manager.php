@@ -18,7 +18,6 @@ use Tygh\Database\Connection;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\YesNo;
 use Tygh\Providers\StorefrontProvider;
-use Tygh;
 
 class Manager
 {
@@ -832,12 +831,17 @@ class Manager
             // Update 'all storefronts' summary amounts
             $this->db->query(
                 'INSERT INTO ?:warehouses_sum_products_amount (storefront_id, product_id, amount)'
-                . ' (SELECT 0 as storefront_id, warehouses_sum_products_amount.product_id,'
-                . ' SUM(warehouses_sum_products_amount.amount) AS amount'
-                . ' FROM ?:warehouses_sum_products_amount AS warehouses_sum_products_amount'
-                . ' WHERE ?p AND warehouses_sum_products_amount.storefront_id <> 0'
-                . ' GROUP BY warehouses_sum_products_amount.product_id)',
-                $product_condition
+                . ' (SELECT'
+                    . ' 0 AS storefront_id,'
+                    . ' warehouses_products_amount.product_id,'
+                    . ' SUM(warehouses_products_amount.amount) AS amount'
+                . ' FROM ?:warehouses_products_amount AS warehouses_products_amount'
+                . ' INNER JOIN ?:store_locations AS store_locations'
+                .       ' ON store_locations.store_location_id = warehouses_products_amount.warehouse_id'
+                . ' WHERE ?p AND store_locations.status = ?s'
+                . ' GROUP BY warehouses_products_amount.product_id)',
+                $product_condition,
+                ObjectStatuses::ACTIVE
             );
         }
 
@@ -852,12 +856,13 @@ class Manager
 
         if (!empty($params['reset_stock_split_flag'])) {
             $this->db->query(
-                'UPDATE ?:products SET is_stock_split_by_warehouses = ?s'
-                . ' WHERE product_id IN '
-                . ' (SELECT product_id FROM ?:warehouses_products_amount'
-                . ' LEFT JOIN ?:store_locations ON ?:warehouses_products_amount.warehouse_id = ?:store_locations.store_location_id'
-                . ' WHERE ?p AND ?:store_locations.status = ?s'
-                . ' GROUP BY product_id)',
+                'UPDATE ?:products'
+                . ' INNER JOIN ?:warehouses_products_amount'
+                    . ' ON ?:products.product_id = ?:warehouses_products_amount.product_id'
+                . ' INNER JOIN ?:store_locations'
+                    . ' ON ?:store_locations.store_location_id = ?:warehouses_products_amount.warehouse_id'
+                . ' SET ?:products.is_stock_split_by_warehouses = ?s'
+                . ' WHERE ?:products.?p AND ?:store_locations.status = ?s',
                 YesNo::YES,
                 $product_condition,
                 ObjectStatuses::ACTIVE
@@ -953,21 +958,18 @@ class Manager
                     continue;
                 }
 
-                $data = [];
                 foreach ($warehouses_storefront_ids[$warehouse->getWarehouseId()] as $storefront_id) {
-                    if (isset($data[$storefront_id])) {
-                        $data[$storefront_id]['amount'] += $warehouse->getAmount();
+                    $key = $storefront_id . '_' . $product_stock->getProductId();
+
+                    if (isset($warehouses_sum_amounts[$key])) {
+                        $warehouses_sum_amounts[$key]['amount'] += $warehouse->getAmount();
                     } else {
-                        $data[$storefront_id] = [
+                        $warehouses_sum_amounts[$key] = [
                             'product_id'    => $product_stock->getProductId(),
                             'amount'        => $warehouse->getAmount(),
                             'storefront_id' => $storefront_id
                         ];
                     }
-                }
-
-                foreach ($data as $storefront_data) {
-                    $warehouses_sum_amounts[] = $storefront_data;
                 }
             }
         }

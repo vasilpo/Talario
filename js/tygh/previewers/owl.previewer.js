@@ -3,10 +3,18 @@
   if ($().owlCarousel == undefined) {
     $.getScript('js/lib/owlcarousel/owl.carousel.min.js');
   }
+  const icon_left = '<span class="ty-icon ty-icon-left-open ty-owl-previewer__prev-icon"></span>';
+  const icon_right = '<span class="ty-icon ty-icon-right-open ty-owl-previewer__next-icon"></span>';
   $.cePreviewer('handlers', {
     display: function (elm) {
       var imageId = elm.data('caImageId');
+      if (typeof imageId === 'undefined' || imageId === '') {
+        return;
+      }
       var elms = $('a[data-ca-image-id="' + imageId + '"] img');
+      if (elms.length === 0) {
+        return;
+      }
       var previewer = $('<div class="ty-owl-previewer"></div>');
       var previewerContainer = $('<div class="ty-owl-previewer__container owl-carousel"></div>');
       elms.each(function (index, elm) {
@@ -53,7 +61,7 @@
         stopOnHover: true,
         pagination: true,
         navigation: true,
-        navigationText: ['', ''],
+        navigationText: [icon_left, icon_right],
         beforeInit: function () {
           $.ceEvent('trigger', 'ce.previewers.beforeInit', [this]);
         }

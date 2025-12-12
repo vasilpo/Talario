@@ -41,8 +41,6 @@
                             </item>
                             <item id="mailchimp">
                             </item>
-                            <item id="madmimi">
-                            </item>
                         </variants>
                     </item>
                     <item id="em_token">
@@ -59,19 +57,6 @@
                         <type>input</type>
                     </item>
                     <item id="em_mailchimp_list">
-                        <type>selectbox</type>
-                    </item>
-                </items>
-            </section>
-            <section id="madmimi">
-                <items>
-                    <item id="em_madmimi_username">
-                        <type>input</type>
-                    </item>
-                    <item id="em_madmimi_api_key">
-                        <type>input</type>
-                    </item>
-                    <item id="em_madmimi_list">
                         <type>selectbox</type>
                     </item>
                 </items>

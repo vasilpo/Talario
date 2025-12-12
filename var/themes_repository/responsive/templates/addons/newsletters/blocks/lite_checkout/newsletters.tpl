@@ -22,8 +22,7 @@
                            {if $user_mailing_lists[$list.list_id]}checked="checked"{/if}
                            class="checkbox"
                            data-ca-lite-checkout-element="newsletter-toggler"
-                    />
-                    {$list.object}
+                    />{$list.object}
                 </label>
             </div>
         {/foreach}

@@ -275,8 +275,10 @@ class EACQClient extends EACQApiClient
             ) {
                 $this->getReceiptItemsForMarkedProducts($item, $items, $payment_method, $payment_object);
             } else {
+                $item_name = mb_strlen($item->getName()) > 128 ? mb_substr($item->getName(), 0, 125) . '...' : $item->getName();
+
                 $single_item = [
-                    'Name'          => $item->getName(),
+                    'Name'          => $item_name,
                     'Quantity'      => $item->getQuantity(),
                     'Amount'        => (string) ($item->getTotal() * 100),
                     'Price'         => (string) ($item->getPrice() * 100),
@@ -332,9 +334,10 @@ class EACQClient extends EACQApiClient
                 'MarkCodeType' => strtoupper($mark_code_data['marking_code_format']),
                 'Value' => $mark_code_data['marking_code']
             ];
+            $marked_item_name = mb_strlen($item->getName()) > 128 ? mb_substr($item->getName(), 0, 125) . '...' : $item->getName();
 
             $marked_item = [
-                'Name'               => $item->getName(),
+                'Name'               => $marked_item_name,
                 'Price'              => (string) ($item->getPrice() * 100),
                 'Quantity'           => 1,
                 'Amount'             => (string) ($item->getPrice() * 100),

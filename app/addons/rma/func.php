@@ -1315,6 +1315,10 @@ function fn_rma_get_returns($params, $items_per_page = 0, $lang_code = CART_LANG
         $condition .= db_quote(' AND ?:rma_returns.action = ?s', $params['action']);
     }
 
+    if (!empty($params['return_action'])) {
+        $condition .= db_quote(' AND ?:rma_returns.action = ?s', $params['return_action']);
+    }
+
     if (!empty($params['return_id'])) {
         $condition .= db_quote(' AND ?:rma_returns.return_id = ?i', $params['return_id']);
     }

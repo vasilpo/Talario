@@ -48,7 +48,7 @@
                 <td class="center mobile-hide" width="6%">
                     <input type="checkbox" name="tax_ids[]" value="{$tax.tax_id}" class="cm-item cm-item-status-{$tax.status|lower} hide" />
                 </td>
-                <td width="15%" class="nowrap" data-ct-tax-name="{$tax.tax}" data-th="{__("name")}">
+                <td width="15%" class="wrap-word" data-ct-tax-name="{$tax.tax}" data-th="{__("name")}">
                     <a href="{"taxes.update?tax_id=`$tax.tax_id`"|fn_url}" class="link--monochrome">{$tax.tax}</a>
                 </td>
                 <td width="10%" data-th="{__("regnumber")}">

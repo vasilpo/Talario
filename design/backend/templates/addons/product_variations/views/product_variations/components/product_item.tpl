@@ -14,8 +14,8 @@
     <td>
         {if !$product.parent_product_id && $product.has_children}
             <button alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="sw_product_variations_group_{$product.product_id}" aaaid="on_variations" class="cm-combinations cm-product-variations__collapse product-variations__collapse-btn product-variations__collapse-btn--collapsed" type="button">
-                <span class="icon-caret-down" data-ca-switch-id="product_variations_group_{$product.product_id}"> </span>
-                <span class="icon-caret-right hidden" data-ca-switch-id="product_variations_group_{$product.product_id}"> </span>
+                <span class="icon-caret-down cs-dark-theme-invert" data-ca-switch-id="product_variations_group_{$product.product_id}"> </span>
+                <span class="icon-caret-right cs-dark-theme-invert hidden" data-ca-switch-id="product_variations_group_{$product.product_id}"> </span>
             </button>
         {else}
             &nbsp;

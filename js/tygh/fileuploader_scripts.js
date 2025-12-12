@@ -44,9 +44,11 @@
         }
         $.getScript('js/lib/elfinder/js/elfinder.min.js', function () {
           if (_.cart_language !== 'en' && $.ceFileUploader('isAvailableLanguage', _.cart_language)) {
-            $.getScript("js/lib/elfinder/js/i18n/elfinder.".concat($.ceFileUploader('tranformLanguage', _.cart_language), ".js")).then(null, function () {
-              return $.getScript('js/lib/elfinder/js/i18n/elfinder.LANG.js');
-            }).done(fileuploader.start_server_browser);
+            $.getScript("js/lib/elfinder/js/i18n/elfinder.".concat($.ceFileUploader('tranformLanguage', _.cart_language), ".js"), function () {
+              fileuploader.start_server_browser();
+            }).fail(function () {
+              fileuploader.start_server_browser();
+            });
           } else {
             fileuploader.start_server_browser();
           }
@@ -235,7 +237,7 @@
     clean_form: function (suffix) {
       suffix = suffix ? suffix : '';
       const $fileuploaderElement = $("#file_uploader_".concat(suffix));
-      $fileuploaderElement.find('.cm-fu-file .cs-icon').trigger('click');
+      $fileuploaderElement.find('.cm-fu-file .cs-icon, .cm-fu-file .ty-icon').trigger('click');
     },
     removeFile: function ($removeFileButton) {
       var elementId = $removeFileButton.prop('id');

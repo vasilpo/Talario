@@ -18,7 +18,7 @@
             <input type="hidden" name="order_id" value="{$order_info.order_id}" />
 
             <div class="ty-control-group">
-                <label for="email" class="ty-control-group__label ty-login__filed-label cm-required">{__("email")}</label>
+                <label for="email" class="ty-control-group__label ty-login__filed-label cm-required cm-email cm-trim">{__("email")}</label>
                 <input type="text" id="email" name="user_data[email]" size="32" maxlength="128" value="{$order_info.email}" class="cm-autocomplete-off ty-login__input cm-focus" />
             </div>
 

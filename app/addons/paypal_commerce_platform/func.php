@@ -119,6 +119,20 @@ function fn_paypal_commerce_platform_get_payments(
         return;
     }
 
+    /**
+     * The maximum allowed number of purchase_units in an order is 10.
+     * This is a limitation set by the PayPal, and attempting to specify
+     * more than 10 purchase_units will result in an error when creating the order in PayPal.
+     */
+    if (count(Tygh::$app['session']['cart']['product_groups']) > 10) {
+        $condition[] = db_quote(
+            '(?:payment_processors.processor_script IS NULL'
+            . ' OR ?:payment_processors.processor_script <> ?s)',
+            PaypalCommercePlatform::getScriptName()
+        );
+        return;
+    }
+
     foreach (Tygh::$app['session']['cart']['product_groups'] as $product_group) {
         if (!PaypalCommercePlatform::getChargeReceiver($product_group['company_id'])) {
             $condition[] = db_quote(

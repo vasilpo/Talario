@@ -16,6 +16,7 @@ namespace Tygh\Addons\PaypalCheckout\Webhook;
 
 use stdClass;
 
+#[\AllowDynamicProperties]
 abstract class Event
 {
     /** @var string $id */

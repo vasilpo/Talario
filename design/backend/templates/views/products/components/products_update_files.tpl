@@ -31,8 +31,8 @@
                 <tr>
                     <th>
                         <div class="pull-left">
-                            <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="on_cat" class="cm-combinations{if $expand_all} hidden{/if}"><span class="icon-caret-right"> </span></span>
-                            <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="off_cat" class="cm-combinations{if !$expand_all} hidden{/if}"><span class="icon-caret-down"> </span></span>
+                            <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="on_cat" class="cm-combinations{if $expand_all} hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                            <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" id="off_cat" class="cm-combinations{if !$expand_all} hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
                         </div>
                         &nbsp;{__("name")}
                     </th>

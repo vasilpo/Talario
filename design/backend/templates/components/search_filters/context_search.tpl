@@ -14,7 +14,7 @@
     {$form_id = $context_search.form_id|default:"search_form"}
     {$name = $context_search.name|default:$context_search.id}
 
-    <div class="context-search">
+    <div class="context-search" data-ca-search-filters="contextSearch">
         <label class="context-search__label input-prepend">
             <input type="search" {""}
                 name="{$name}" {""}

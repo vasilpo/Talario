@@ -254,7 +254,7 @@ function fn_rus_yandex_metrika_sum_statistics(&$statistics, $added, $deleted)
             }
 
             if (isset($added[$product_id])) {
-                fn_rus_yandex_metrika_sum($product_id, $statistics, $added, $statistic_deleted);
+                fn_rus_yandex_metrika_sum($product_id, $statistics, $added[$product_id], $statistic_deleted);
             }
         }
     }

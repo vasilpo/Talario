@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($_REQUEST['returns'])) {
             $order_id = (int) $_REQUEST['order_id'];
             $returns = (array) $_REQUEST['returns'];
-            $action = $_REQUEST['action'];
+            $action = $_REQUEST['action'] ?? $_REQUEST['return_action'];
             $comment = $_REQUEST['comment'];
 
             $order_info = fn_get_order_info($order_id);

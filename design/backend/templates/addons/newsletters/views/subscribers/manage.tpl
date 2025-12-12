@@ -42,10 +42,10 @@
                                    <input type="checkbox" name="subscriber_ids[]" value="{$s.subscriber_id}" class="cm-item hide" /></td>
                             <td>
                                 <button type="button" name="plus_minus" id="on_subscribers_{$s.subscriber_id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combination-subscribers btn-expand">
-                                    <span class="icon-caret-right"></span>
+                                    <span class="icon-caret-right cs-dark-theme-invert"></span>
                                 </button>
                                 <button type="button" name="minus_plus" id="off_subscribers_{$s.subscriber_id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combination-subscribers btn-expand">
-                                    <span class="icon-caret-down"></span>
+                                    <span class="icon-caret-down cs-dark-theme-invert"></span>
                                 </button>
                             </td>
                             <td data-th="{__("email")}"><input type="hidden" name="subscribers[{$s.subscriber_id}][email]" value="{$s.email}" />

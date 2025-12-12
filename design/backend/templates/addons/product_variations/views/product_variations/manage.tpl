@@ -58,7 +58,12 @@
                 {__("product_variations.warning.before_edit_variations_save_product")}
             </div>
         </div>
-
+        {include file="common/pagination.tpl"
+            div_id="content_variations_pagination"
+            search=$search
+            current_url=$product_variations_tab_url
+            disable_history=true
+        }
         {if $products}
             {$context_menu_id = "context_menu_{uniqid()}"}
             {capture name="manage_variation_products_table"}
@@ -133,5 +138,11 @@
         {else}
             <p class="no-items">{__("product_variations.add_variations_description")}</p>
         {/if}
+        {include file="common/pagination.tpl"
+            div_id="content_variations_pagination"
+            search=$search
+            current_url=$product_variations_tab_url
+            disable_history=true
+        }
     </form>
 <!--content_variations--></div>

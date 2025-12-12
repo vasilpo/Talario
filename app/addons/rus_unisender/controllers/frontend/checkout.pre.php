@@ -17,9 +17,7 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-
-    if ($mode == 'place_order' || $mode == 'subscribe_unisender_customer') {
-
+    if ($mode === 'place_order') {
         $user_data = $_SESSION['cart']['user_data'];
         $subscriber_id = fn_unisender_get_subscriber_id($user_data['email']);
 
@@ -27,16 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             if (empty($subscriber_id)) {
                 $subscriber_id = fn_unisender_add_subscriber($user_data['email']);
             }
-            fn_unisender_subscribe($user_data, reset($_REQUEST['unisender_lists']), true);
 
+            fn_unisender_subscribe($user_data, reset($_REQUEST['unisender_lists']), true);
         } else {
             if (!empty($subscriber_id)) {
                 fn_unisender_unsubscribe($subscriber_id);
             }
-        }
-
-        if ($mode == 'subscribe_unisender_customer') {
-            return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout');
         }
     }
 }

@@ -14,8 +14,8 @@
     {strip}
         <div class="link">
             {if $page.subpages}
-                <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="cm-combination{if $expanded} hidden{/if}" ><span class="icon-caret-right"> </span></span>
-                <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_{$comb_id}" class="cm-combination{if !$expanded} hidden{/if}" ><span class="icon-caret-down"> </span></span>
+                <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="cm-combination{if $expanded} hidden{/if}" ><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_{$comb_id}" class="cm-combination{if !$expanded} hidden{/if}" ><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
             {/if}
             <a href="{"pages.update?page_id=`$page.page_id`&come_from=`$come_from`"|fn_url}" {if $page.status == "N"}class="manage-root-item-disabled"{/if} id="page_title_{$page.page_id}" title="{$page.page}" {if !$page.subpages} style="padding-{$direction}: 14px;"{/if}>{$page.page}</a>
         </div>

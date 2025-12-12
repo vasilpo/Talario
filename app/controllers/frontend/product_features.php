@@ -121,7 +121,6 @@ if ($mode === 'add_product') {
     }
     Tygh::$app['view']->assign('list', $list);
     Tygh::$app['view']->assign('action', $action);
-
     if (!empty(Tygh::$app['session']['continue_url'])) {
         Tygh::$app['view']->assign('continue_url', Tygh::$app['session']['continue_url']);
     }

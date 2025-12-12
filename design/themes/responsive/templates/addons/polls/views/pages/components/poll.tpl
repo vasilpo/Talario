@@ -40,7 +40,7 @@
     <form name="{$form_name|default:"main_login_form"}" action="{""|fn_url}" method="post">
         <input type="hidden" name="page_id" value="{$poll.page_id}" />
         <input type="hidden" name="obj_prefix" value="{$obj_prefix}" />
-        <input type="hidden" name="redirect_url" value="{$config.current_url}" />
+        <input type="hidden" name="redirect_url" value="{if $smarty.request.redirect_url}{$smarty.request.redirect_url}{else}{$config.current_url}{/if}" />
 
         {if $poll.has_required_questions}{__("text_mandatory_fields") nofilter}{/if}
         

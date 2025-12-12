@@ -1,5 +1,6 @@
 {$post_max_size = $server_env->getIniVar("post_max_size")}
-{$upload_max_filesize = $server_env->getIniVar("upload_max_filesize")}
+{$upload_max_filesize = ($is_image && !empty($upload_max_filesize_mb))
+    ? "{$upload_max_filesize_mb}M" : $server_env->getIniVar("upload_max_filesize")}
 
 {if $max_upload_filesize}
     {if $post_max_size > $max_upload_filesize}
@@ -108,7 +109,7 @@
                 </label>
             </div>
         </div>
-        {if !$hide_server}
+        {if !$hide_server && fn_check_user_access($auth.user_id, "edit_files")}
             <a class="btn" onclick="Tygh.fileuploader.show_loader(this.id);" id="server_{$id_var_name}">{__("server")}</a>
         {/if}
         <a class="btn" onclick="Tygh.fileuploader.show_loader(this.id);" id="url_{$id_var_name}">{__("url")}</a>

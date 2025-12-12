@@ -132,9 +132,7 @@
         }
         $.getScript('js/lib/elfinder/js/elfinder.min.js', function () {
           if (_.cart_language !== 'en' && $.ceFileUploader('isAvailableLanguage', _.cart_language)) {
-            $.getScript("js/lib/elfinder/js/i18n/elfinder.".concat($.ceFileUploader('tranformLanguage', _.cart_language), ".js")).then(null, function () {
-              return $.getScript('js/lib/elfinder/js/i18n/elfinder.LANG.js');
-            });
+            $.getScript("js/lib/elfinder/js/i18n/elfinder.".concat($.ceFileUploader('tranformLanguage', _.cart_language), ".js"));
           }
         });
         var pluginsQueue = ['js/lib/redactor2/plugins/fontcolor/fontcolor.js', 'js/lib/redactor2/plugins/table/table.js', 'js/lib/redactor2/plugins/imageupload/imageupload.js', 'js/lib/redactor2/plugins/source/source.js', 'js/lib/redactor2/plugins/alignment/alignment.js', 'js/lib/redactor2/plugins/video/video.js'];

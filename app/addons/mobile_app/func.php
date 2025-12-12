@@ -1115,36 +1115,37 @@ function fn_mobile_app_add_notification_about_report($report_object_id, $report_
             break;
     }
 
-    list($root_admins,) = fn_get_users(
-        [
-            'is_root'   => YesNo::YES,
-            'user_type' => UserTypes::ADMIN,
-        ],
-        Tygh::$app['session']['auth']
-    );
-
-    foreach ($root_admins as $root_admin) {
-        if (!$root_admin['company_id']) {
-            $notifications_center->add([
-                'user_id'       => $root_admin['user_id'],
-                'title'         => $notification_title,
-                'message'       => __(
-                    'mobile_app.notification.report.message',
-                    [
-                        '[profile_url]'    => fn_url('profiles.update?user_id=' . $user_data['user_id'], SiteArea::ADMIN_PANEL),
-                        '[user_id]'        => $user_data['user_id'],
-                        '[user_email]'     => fn_get_user_email($user_data['user_id']),
-                        '[report_message]' => $message
-                    ]
-                ),
-                'area'          => SiteArea::ADMIN_PANEL,
-                'section'       => NotificationsCenter::SECTION_COMMUNICATION,
-                'tag'           => 'mobile_app.event.new_report',
-                'action_url'    => $action_url,
-                'language_code' => Registry::get('settings.Appearance.backend_default_language'),
-            ]);
-
-            break;
-        }
+    if (fn_allowed_for('MULTIVENDOR')) {
+        $root_admin_id = db_get_field(
+            'SELECT user_id FROM ?:users WHERE is_root = ?s AND user_type = ?s',
+            YesNo::YES,
+            UserTypes::ADMIN
+        );
+    } else {
+        $root_admin_id = db_get_field(
+            'SELECT user_id FROM ?:users WHERE is_root = ?s AND user_type = ?s AND company_id = ?i',
+            YesNo::YES,
+            UserTypes::ADMIN,
+            0
+        );
     }
+
+    $notifications_center->add([
+        'user_id'       => $root_admin_id,
+        'title'         => $notification_title,
+        'message'       => __(
+            'mobile_app.notification.report.message',
+            [
+                '[profile_url]'    => fn_url('profiles.update?user_id=' . $user_data['user_id'], SiteArea::ADMIN_PANEL),
+                '[user_id]'        => $user_data['user_id'],
+                '[user_email]'     => fn_get_user_email($user_data['user_id']),
+                '[report_message]' => $message
+            ]
+        ),
+        'area'          => SiteArea::ADMIN_PANEL,
+        'section'       => NotificationsCenter::SECTION_COMMUNICATION,
+        'tag'           => 'mobile_app.event.new_report',
+        'action_url'    => $action_url,
+        'language_code' => Registry::get('settings.Appearance.backend_default_language'),
+    ]);
 }

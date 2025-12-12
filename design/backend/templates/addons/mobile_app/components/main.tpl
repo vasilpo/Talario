@@ -5,31 +5,31 @@
     
     <div class="categoriesBackgroundColor__background" style="margin-left: -10px; margin-right: -10px; padding: 10px 10px;">
         <div class="mockup__category-container">
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Electronics</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Computers</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Sports & Outdoors</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Apparel</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Books</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Music</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Movies & TV</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Video Games</p>
             </div>
-            <div class="mockup__category-item categoryBlockBackgroundColor__background categoryBorderRadius">
+            <div class="mockup__category-item mockup__category-item--border categoryBlockBackgroundColor__background categoryBorderRadius">
                 <p class="mockup__category-name categoryBlockTextColor">Office Supplies</p>
             </div>
         </div>

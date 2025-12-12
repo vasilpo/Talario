@@ -311,29 +311,41 @@ function fn_create_seo_name(
             }
         }
 
+        $redirect_data = [];
+
         if ($create_redirect) {
-            $url = fn_generate_seo_url_from_schema(array(
+            $redirect_data = [
                 'type' => $object_type,
                 'object_id' => $object_id,
                 'lang_code' => $lang_code
-            ), false, array(), $company_id);
+            ];
+
+            if ($object_type === ObjectTypes::STATIC_DISPATCH) {
+                $post_fix = fn_check_seo_schema_option($seo_var, 'html_options', $seo_settings) ? SEO_FILENAME_EXTENSION : '';
+                $redirect_data['post_fix'] = $post_fix;
+                $redirect_data['dest'] = $_data['dispatch'];
+            }
+
+            $url = fn_generate_seo_url_from_schema($redirect_data, false, [], $company_id);
         }
 
         $affected_rows = db_query("INSERT INTO ?:seo_names ?e ON DUPLICATE KEY UPDATE ?u", $_data, $_data);
-
         // cache object name only if the names cache is not empty already
         if (!empty($names_cache) && $affected_rows) {
             $names_cache[$_object_name] = 1;
         }
 
         if ($affected_rows && $create_redirect) {
-            fn_seo_update_redirect(array(
-                'src' => $url,
-                'type' => $object_type,
-                'object_id' => $object_id,
-                'company_id' => $company_id,
-                'lang_code' => $lang_code
-            ), 0, false);
+            $redirect_data['src'] = $url;
+            $redirect_data['company_id'] = $company_id;
+
+            if ($object_type === ObjectTypes::STATIC_DISPATCH) {
+                /** @psalm-suppress PossiblyUndefinedVariable */
+                $redirect_data['dest'] = '/' . $_data['name'] . $post_fix;
+                unset($redirect_data['post_fix']);
+            }
+
+            fn_seo_update_redirect($redirect_data, 0, false);
         }
 
     } else {
@@ -595,20 +607,35 @@ function fn_seo_get_route(array &$req, array &$result, &$area, &$is_allowed_url)
         $requested_language = null;
         $language_in_uri = fn_seo_get_language_from_uri($uri);
         $is_requested_language_in_path = false;
+        $redirect_without_secondary_language = false;
 
-        if ($language_in_uri && $show_secondary_language_in_uri) {
-            $requested_language = $language_in_uri;
+        if ($language_in_uri) {
             $is_requested_language_in_path = true;
+
+            if ($show_secondary_language_in_uri) {
+                $requested_language = $language_in_uri;
+            } else {
+                $redirect_without_secondary_language = true;
+            }
         }
+
         if (isset($req['sl'])) {
             $requested_language = $req['sl'];
         }
 
-        if ($show_secondary_language_in_uri && $requested_language === $frontend_default_language) {
+        if (
+            ($show_secondary_language_in_uri && $requested_language === $frontend_default_language)
+            || $redirect_without_secondary_language
+        ) {
             if ($is_requested_language_in_path) {
                 $uri = fn_seo_remove_language_from_uri($uri);
             }
-            unset($req['sl']);
+
+            if ($redirect_without_secondary_language) {
+                $req['sl'] = $language_in_uri;
+            } else {
+                unset($req['sl']);
+            }
 
             $redirect_url = trim(Registry::get('config.current_location'), '/') . $uri;
 
@@ -827,10 +854,6 @@ function fn_seo_get_route(array &$req, array &$result, &$area, &$is_allowed_url)
     }
 
     // check redirects
-    if (!empty($is_allowed_url)) {
-        return;
-    }
-
     $query_string = [];
     $uri = fn_get_request_uri($_SERVER['REQUEST_URI']);
 
@@ -850,7 +873,20 @@ function fn_seo_get_route(array &$req, array &$result, &$area, &$is_allowed_url)
 
     $condition = fn_get_seo_company_condition('?:seo_redirects.company_id');
 
-    $redirect_data = db_get_row('SELECT type, object_id, dest, lang_code FROM ?:seo_redirects WHERE src = ?s ?p', $uri, $condition);
+    $redirect_data = db_get_row(
+        'SELECT redirect_id, src, type, object_id, dest, lang_code FROM ?:seo_redirects WHERE src = ?s ?p',
+        $uri,
+        $condition
+    );
+
+    if (!empty($is_allowed_url)) {
+        //revome self-redirects
+        if (!empty($redirect_data) && $redirect_data['src'] === $uri) {
+            fn_delete_seo_redirect($redirect_data['redirect_id']);
+        }
+
+        return;
+    }
 
     if (!empty($redirect_data)) {
         $result = [
@@ -1024,6 +1060,8 @@ function fn_seo_update_object($object_data, $object_id, $type, $lang_code)
         // If this is tree object and we need to create redirect - create it for all children
         if ($create_redirect && $is_tree_object) {
             $children = fn_seo_get_object_children($type);
+            $children = fn_seo_check_children_as_tree_object($children);
+
             if (!empty($children)) {
                 $path = fn_get_seo_parent_path($object_id, $type);
                 $path .= !empty($path) ? '/' . $object_id : $object_id;
@@ -1523,7 +1561,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
                 || rtrim($url, '/') === $locations[$area]['https']
             ) {
                 $url = rtrim($url, '/') . '/' . $index_script;
-                $parsed_url['path'] = rtrim($parsed_url['path'], '/') . '/' . $index_script;
+                $parsed_url['path'] = rtrim($parsed_url['path'] ?? '', '/') . '/' . $index_script;
             }
         }
     }
@@ -1603,7 +1641,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
             foreach ($seo_vars as $type => $seo_var) {
                 if (empty($seo_var['dispatch']) || ($seo_var['dispatch'] == $parsed_query['dispatch'] && !empty($parsed_query[$seo_var['item']]))) {
 
-                    if (!empty($seo_var['dispatch'])) {
+                    if (!empty($seo_var['dispatch']) && !is_array($parsed_query[$seo_var['item']])) {
                         $link_parts['name'] = fn_seo_get_name($type, $parsed_query[$seo_var['item']], '', $company_id_in_url, $lang_code);
                     } else {
                         $link_parts['name'] = fn_seo_get_name($type, 0, $parsed_query['dispatch'], $company_id_in_url, $lang_code);
@@ -1613,7 +1651,7 @@ function fn_seo_url_post(&$url, &$area, &$original_url, &$prefix, &$company_id_i
                         continue;
                     }
 
-                    if (fn_check_seo_schema_option($seo_var, 'tree_options', $seo_settings)) {
+                    if (fn_check_seo_schema_option($seo_var, 'tree_options', $seo_settings) && !is_array($parsed_query[$seo_var['item']])) {
                         $parent_item_names = fn_seo_get_parent_items_path($seo_var, $type, $parsed_query[$seo_var['item']], $company_id_in_url, $lang_code);
                         $link_parts['parent_items_names'] = !empty($parent_item_names) ? join('/', $parent_item_names) . '/' : '';
                     }
@@ -1901,7 +1939,7 @@ function fn_seo_update_tree_object($object_id, $object_type, $params)
     $frontend_default_language = Registry::get('settings.Appearance.frontend_default_language');
 
     // Update item itself if it wasn't deleted
-    if (!isset($params['after_deletion']) || !$params['after_deletion']) {
+    if ((!isset($params['after_deletion']) || !$params['after_deletion']) && !empty($object_id)) {
         $lang_codes = array($frontend_default_language);
         $seo_settings = fn_get_seo_settings($params['company_id']);
 
@@ -2037,7 +2075,20 @@ function fn_generate_seo_url_from_schema($redirect_data, $full = true, $query_st
             }
         }
 
-        $url = $http_path . $redirect_data['dest'];
+        if ($full) {
+            $dest = $redirect_data['dest'];
+        } else {
+            $dest = fn_seo_get_name(
+                ObjectTypes::STATIC_DISPATCH,
+                0,
+                $redirect_data['dest'],
+                null,
+                fn_get_corrected_seo_lang_code(DESCR_SL)
+            );
+            $dest .= $redirect_data['post_fix'] ?? '';
+        }
+
+        $url = (empty($http_path) ? '/' : $http_path) . $dest;
     } else {
         $url = $seo_vars[$redirect_data['type']]['dispatch'] . '?' . $seo_vars[$redirect_data['type']]['item'] . '=' . $redirect_data['object_id'];
     }
@@ -2195,6 +2246,26 @@ function fn_seo_get_object_children($object_type)
     foreach ($schema as $type => $params) {
         if (!empty($params['parent_type']) && $params['parent_type'] == $object_type) {
             $children[] = $type;
+        }
+    }
+
+    return $children;
+}
+
+/**
+ * Checks the child objects of the current object for tree structure.
+ *
+ * @param array<int, string> $children Child objects of current object.
+ *
+ * @return array
+ */
+function fn_seo_check_children_as_tree_object(array $children)
+{
+    foreach ($children as $key => $child) {
+        $seo_var = fn_get_seo_vars($child);
+
+        if (!fn_check_seo_schema_option($seo_var, 'tree_options')) {
+            unset($children[$key]);
         }
     }
 
@@ -2458,11 +2529,16 @@ function fn_seo_update_product_categories_post($product_id, $product_data, $exis
             }
         }
 
-        foreach ($company_ids as $company_id) {
-            fn_seo_update_tree_object($product_id, 'p', array(
-                'company_id' => $company_id,
-                'object_types' => array('p')
-            ));
+        $seo_vars = fn_get_seo_vars(ObjectTypes::PRODUCT);
+        $is_tree_object = fn_check_seo_schema_option($seo_vars, 'tree_options');
+
+        if ($is_tree_object) {
+            foreach ($company_ids as $company_id) {
+                fn_seo_update_tree_object($product_id, ObjectTypes::PRODUCT, [
+                    'company_id' => $company_id,
+                    'object_types' => [ObjectTypes::PRODUCT],
+                ]);
+            }
         }
 
         return true;
@@ -2533,6 +2609,27 @@ function fn_seo_get_categories_post(&$categories, &$params, &$lang_code)
     return true;
 }
 
+/**
+ * The 'update_category_pre' hook handler.
+ *
+ * Actions:
+ *  Gets category old data.
+ *
+ * @param array<string, int|string|array<string, int|string>> $category_data Category data
+ * @param int                                                 $category_id   Category identifier
+ * @param string                                              $lang_code     Two-letter language code (e.g. 'en', 'ru', etc.)
+ *
+ * @see fn_update_category()
+ *
+ * @return void
+ */
+function fn_seo_update_category_pre(array $category_data, int $category_id, string $lang_code)
+{
+    $old_category_data = db_get_row('SELECT company_id, id_path FROM ?:categories WHERE category_id = ?i', $category_id);
+
+    Registry::set('runtime.seo._old_category_data', $old_category_data);
+}
+
 function fn_seo_update_category_post(&$category_data, &$category_id, &$lang_code)
 {
     if (fn_allowed_for('ULTIMATE')) {
@@ -2541,7 +2638,44 @@ function fn_seo_update_category_post(&$category_data, &$category_id, &$lang_code
         }
     }
 
-    fn_seo_update_object($category_data, $category_id, 'c', $lang_code);
+    $seo_name = fn_seo_update_object($category_data, $category_id, ObjectTypes::CATEGORY, $lang_code);
+
+    $seo_vars = fn_get_seo_vars(ObjectTypes::PRODUCT);
+    $is_tree_object = fn_check_seo_schema_option($seo_vars, 'tree_options');
+    $old_category_data = Registry::get('runtime.seo._old_category_data');
+
+    if ((!$is_tree_object) || is_bool($seo_name) || empty($old_category_data)) {
+        return;
+    }
+
+    $condition = db_quote(
+        '(path LIKE ?l OR path LIKE ?l OR path LIKE ?l OR path = ?s) AND type = ?s ?p',
+        '%/' . $old_category_data['id_path'] . '/%',
+        '%/' . $old_category_data['id_path'],
+        $old_category_data['id_path'] . '/%',
+        $old_category_data['id_path'],
+        ObjectTypes::PRODUCT,
+        fn_get_seo_company_condition('?:seo_names.company_id', ObjectTypes::PRODUCT, $category_data['company_id'] ?? 0)
+    );
+
+    fn_iterate_through_seo_names(
+        static function ($seo_name) use ($category_data, $lang_code) {
+            $url = fn_generate_seo_url_from_schema([
+                'type'      => $seo_name['type'],
+                'object_id' => $seo_name['object_id'],
+                'lang_code' => $lang_code
+            ], false);
+
+            fn_seo_update_redirect([
+                'src'        => $url,
+                'type'       => $seo_name['type'],
+                'object_id'  => $seo_name['object_id'],
+                'company_id' => $category_data['company_id'] ?? 0,
+                'lang_code'  => $lang_code
+            ], 0, false);
+        },
+        $condition
+    );
 }
 
 function fn_seo_delete_category_before(&$category_id)
@@ -2583,22 +2717,32 @@ function fn_seo_delete_category_after(&$category_id)
     fn_delete_seo_name($category_id, 'c');
 }
 
-function fn_seo_update_category_parent_pre($category_id, $new_parent_id)
-{
-    $category_data = db_get_row("SELECT company_id, id_path FROM ?:categories WHERE category_id = ?i", $category_id);
-
-    Registry::set('runtime.seo._old_category_data', $category_data);
-}
-
 function fn_seo_update_category_parent_post($category_id, $new_parent_id)
 {
+    $object_id = 0;
+    $object_types = [];
     $old_category_data = Registry::get('runtime.seo._old_category_data');
+    $seo_vars_c = fn_get_seo_vars(ObjectTypes::CATEGORY);
+    $seo_vars_p = fn_get_seo_vars(ObjectTypes::PRODUCT);
 
-    return fn_seo_update_tree_object($category_id, 'c', array(
-        'company_id' => $old_category_data['company_id'],
-        'old_id_path' => $old_category_data['id_path'],
-        'object_types' => array('c', 'p')
-    ));
+    if (fn_check_seo_schema_option($seo_vars_p, 'tree_options')) {
+        $type = ObjectTypes::PRODUCT;
+        $object_types[] = $type;
+    }
+
+    if (fn_check_seo_schema_option($seo_vars_c, 'tree_options')) {
+        $object_id = $category_id;
+        $type = ObjectTypes::CATEGORY;
+        $object_types[] = $type;
+    }
+
+    if (isset($type) && !empty($old_category_data)) {
+        fn_seo_update_tree_object($object_id, $type, [
+            'company_id' => $old_category_data['company_id'],
+            'object_types' => $object_types,
+            'old_id_path' => $old_category_data['id_path'],
+        ]);
+    }
 }
 
 /**
@@ -2647,6 +2791,7 @@ function fn_seo_get_page_data(&$page_data, &$lang_code)
 function fn_seo_get_pages(&$params, &$join, &$condition, &$fields, &$group_by, &$sortings, &$lang_code)
 {
     if (isset($params['compact']) && $params['compact'] == 'Y') {
+        /** @psalm-suppress UndefinedConstant */
         $condition .= db_quote(' OR (?:seo_names.name LIKE ?s ?p)', '%' . preg_replace('/-[a-zA-Z]{1,3}$/i', '', str_ireplace(SEO_FILENAME_EXTENSION, '', $params['q'])) . '%', fn_get_company_condition('?:pages.company_id'));
     }
 
@@ -2696,13 +2841,18 @@ function fn_seo_update_page_parent_pre($page_id, $new_parent_id)
 function fn_seo_update_page_parent_post($page_id, $new_parent_id)
 {
     $old_page_data = Registry::get('runtime.seo._old_page_data');
+    $seo_vars = fn_get_seo_vars(ObjectTypes::PAGE);
+    $is_tree_object = fn_check_seo_schema_option($seo_vars, 'tree_options');
 
-    return fn_seo_update_tree_object($page_id, 'a', array(
-        'company_id' => $old_page_data['company_id'],
-        'old_id_path' => $old_page_data['id_path'],
-        'object_types' => array('a')
-    ));
+    if ($is_tree_object && !empty($old_page_data)) {
+        fn_seo_update_tree_object($page_id, ObjectTypes::PAGE, [
+            'company_id' => $old_page_data['company_id'],
+            'old_id_path' => $old_page_data['id_path'],
+            'object_types' => [ObjectTypes::PAGE],
+        ]);
+    }
 }
+
 /* /Page hooks */
 
 /* Company hooks */
@@ -3036,7 +3186,7 @@ function fn_seo_dispatch_before_display()
         $is_valid = !empty($base_url);
         if (isset($rule['request_handlers'])) {
             foreach ($rule['request_handlers'] as $param => $handler) {
-                if (isset($_REQUEST[$param])) {
+                if (isset($_REQUEST[$param]) && !is_array($_REQUEST[$param])) {
                     if (is_array($handler)) {
                         foreach ($handler as $func => $args) {
                             $is_valid = call_user_func_array($func, $args);
@@ -3696,3 +3846,16 @@ function fn_seo_import_product_descr_post(array $data, $product_id, $prod_compan
 
     fn_seo_update_tree_object($product_id, ObjectTypes::PRODUCT, $params);
 }
+
+/**
+ * Delete 301 redirect by id.
+ *
+ * @param int $redirect_id Redirect ID of 301 redirect.
+ *
+ * @return void
+ */
+function fn_delete_seo_redirect($redirect_id)
+{
+    db_query('DELETE FROM ?:seo_redirects WHERE redirect_id = ?i', $redirect_id);
+}
+

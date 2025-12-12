@@ -13,8 +13,10 @@
 
 {if $view_mode != "list"}
     {if $placement == 'right'}
-        <div class="clearfix shift-button">
-            <div class="pull-right">
+        <div class="clearfix">
+            <div class="pull-right {if !$no_container}buttons-container{/if}">
+    {elseif !$no_container && $type !== "single"}
+        <div class="buttons-container buttons-container--inline">
     {/if}
 
     {if $type != "single"}
@@ -32,6 +34,8 @@
 
     {if $placement == 'right'}
             </div>
+        </div>
+    {elseif !$no_container && $type !== "single"}
         </div>
     {/if}
 {/if}
@@ -123,6 +127,9 @@
     {/foreach}
     {/if}
     {/hook}
+
+    {$aoc = ($display || $options) ? "{$ldelim}aoc{$rdelim}" : null}
+
     {include file="pickers/products/js.tpl"
         clone=true
         product="`$ldelim`product`$rdelim`"
@@ -136,7 +143,7 @@
         type="options"
         options="`$ldelim`options`$rdelim`"
         product_id=""
-        aoc="`$ldelim`aoc`$rdelim`"
+        aoc=$aoc
     }
     </tbody>
     <tbody id="{$data_id}_no_item"{if $item_ids} class="hidden"{/if}>

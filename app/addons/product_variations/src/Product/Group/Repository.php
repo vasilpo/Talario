@@ -479,6 +479,20 @@ class Repository
     }
 
     /**
+     * Find variations group feature collection by group identifier
+     *
+     * @param int $group_id Group ID
+     *
+     * @return GroupFeatureCollection
+     */
+    public function findGroupFeatureCollectionByGroupId($group_id)
+    {
+        $features = $this->createQuery(self::TABLE_GROUP_FEATURES, ['group_id' => $group_id], ['*'])->select('feature_id');
+
+        return GroupFeatureCollection::createFromFeatureList($features);
+    }
+
+    /**
      * @param int[] $group_ids
      *
      * @return int[]

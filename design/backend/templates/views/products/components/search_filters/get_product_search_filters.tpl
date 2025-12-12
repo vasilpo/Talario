@@ -90,7 +90,10 @@
                 key => "subcats_no",
                 label => __("no"),
                 value => "YesNo::NO"|enum,
-                is_checked => ($search.subcats === "YesNo::NO"|enum)
+                is_checked => (
+                    ($search.subcats === "YesNo::NO"|enum)
+                    || (!isset($search.subcats) && isset($search.cid))
+                )
             ]
         ]
     ],

@@ -8,7 +8,10 @@
     {$show_master_product_discount_label = $show_discount_label scope=parent}
     {$show_discount_label=false scope=parent}
     {$show_shipping_label=false scope=parent}
-    {$show_product_amount=true scope=parent}
+
+    {if $show_product_amount !== false}
+        {$show_product_amount=true scope=parent}
+    {/if}
 
     {if !$is_allow_add_common_products_to_cart_list}
         {$show_out_of_stock_block=false scope=parent}

@@ -1,9 +1,9 @@
 <?php
 
-/**
+/*
  * The MIT License
  *
- * Copyright (c) 2023 "YooMoney", NBСO LLC
+ * Copyright (c) 2025 "YooMoney", NBСO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 
 namespace YooKassa\Request\Refunds;
 
+use YooKassa\Model\RefundCancellationDetails;
 use YooKassa\Model\MonetaryAmount;
 use YooKassa\Model\Refund;
 
@@ -63,6 +64,13 @@ abstract class AbstractRefundResponse extends Refund
 
         if (!empty($options['deal'])) {
             $this->setDeal($options['deal']);
+        }
+
+        if (!empty($options['cancellation_details'])) {
+            $cancellationDetails = $options['cancellation_details'];
+            $party               = isset($cancellationDetails['party']) ? $cancellationDetails['party'] : null;
+            $reason              = isset($cancellationDetails['reason']) ? $cancellationDetails['reason'] : null;
+            $this->setCancellationDetails(new RefundCancellationDetails($party, $reason));
         }
     }
 }

@@ -12,7 +12,7 @@ CancellationDetailsReasonCode - Возможные причины отмены �
 ### Constants
 | Visibility | Name | Flag | Summary |
 | ----------:| ---- | ---- | ------- |
-| public | [THREE_D_SECURE_FAILED](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_THREE_D_SECURE_FAILED) |  | Не пройдена аутентификация по 3-D Secure. При новой попытке оплаты пользователю следует пройти аутентификацию, использовать другое платежное средство или обратиться в банк за уточнениями |
+| public | [THREE_D_SECURE_FAILED](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_THREE_D_SECURE_FAILED) |  | Не пройдена аутентификация по 3-D Secure. При новой попытке оплаты пользователю следует пройти аутентификацию, использовать другое платежное средство или обратиться в банк за уточнениями. |
 | public | [CALL_ISSUER](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_CALL_ISSUER) |  | Оплата данным платежным средством отклонена по неизвестным причинам. |
 | public | [CARD_EXPIRED](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_CARD_EXPIRED) |  | Истек срок действия банковской карты. При новой попытке оплаты пользователю следует использовать другое платежное средство |
 | public | [COUNTRY_FORBIDDEN](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_COUNTRY_FORBIDDEN) |  | Нельзя заплатить банковской картой, выпущенной в этой стране. |
@@ -32,6 +32,7 @@ CancellationDetailsReasonCode - Возможные причины отмены �
 | public | [EXPIRED_ON_CAPTURE](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_EXPIRED_ON_CAPTURE) |  | Истек срок списания оплаты у двухстадийного платежа. |
 | public | [DEAL_EXPIRED](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_DEAL_EXPIRED) |  | Для тех, кто использует Безопасную сделку: закончился срок жизни сделки. |
 | public | [UNSUPPORTED_MOBILE_OPERATOR](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_UNSUPPORTED_MOBILE_OPERATOR) |  | Нельзя заплатить с номера телефона этого мобильного оператора. При новой попытке оплаты пользователю следует использовать другое платежное средство. Список поддерживаемых операторов |
+| public | [REJECTED_BY_TIMEOUT](../classes/YooKassa-Model-CancellationDetailsReasonCode.md#constant_REJECTED_BY_TIMEOUT) |  | Отклонено по таймауту |
 
 ---
 ### Properties
@@ -59,7 +60,7 @@ CancellationDetailsReasonCode - Возможные причины отмены �
 ## Constants
 <a name="constant_THREE_D_SECURE_FAILED" class="anchor"></a>
 ###### THREE_D_SECURE_FAILED
-Не пройдена аутентификация по 3-D Secure. При новой попытке оплаты пользователю следует пройти аутентификацию, использовать другое платежное средство или обратиться в банк за уточнениями
+Не пройдена аутентификация по 3-D Secure. При новой попытке оплаты пользователю следует пройти аутентификацию, использовать другое платежное средство или обратиться в банк за уточнениями.
 
 ```php
 THREE_D_SECURE_FAILED = '3d_secure_failed'
@@ -74,7 +75,7 @@ THREE_D_SECURE_FAILED = '3d_secure_failed'
 CALL_ISSUER = 'call_issuer'
 ```
 
-Пользователю следует обратиться в организацию, выпустившую платежное средство
+Пользователю следует обратиться в организацию, выпустившую платежное средство.
 
 <a name="constant_CARD_EXPIRED" class="anchor"></a>
 ###### CARD_EXPIRED
@@ -94,7 +95,7 @@ COUNTRY_FORBIDDEN = 'country_forbidden'
 ```
 
 При новой попытке оплаты пользователю следует использовать другое платежное средство.
-Вы можете настроить ограничения на оплату иностранными банковскими картами
+Вы можете настроить ограничения на оплату иностранными банковскими картами.
 
 <a name="constant_FRAUD_SUSPECTED" class="anchor"></a>
 ###### FRAUD_SUSPECTED
@@ -167,7 +168,7 @@ ISSUER_UNAVAILABLE = 'issuer_unavailable'
 PAYMENT_METHOD_LIMIT_EXCEEDED = 'payment_method_limit_exceeded'
 ```
 
-При новой попытке оплаты пользователю следует использовать другое платежное средство или повторить оплату на следующий день
+При новой попытке оплаты пользователю следует использовать другое платежное средство или повторить оплату на следующий день.
 
 <a name="constant_PAYMENT_METHOD_RESTRICTED" class="anchor"></a>
 ###### PAYMENT_METHOD_RESTRICTED
@@ -213,7 +214,7 @@ CANCELED_BY_MERCHANT = 'canceled_by_merchant'
 EXPIRED_ON_CONFIRMATION = 'expired_on_confirmation'
 ```
 
-Если пользователь еще хочет оплатить, вам необходимо повторить платеж с новым ключом идемпотентности, а пользователю — подтвердить его
+Если пользователь еще хочет оплатить, вам необходимо повторить платеж с новым ключом идемпотентности, а пользователю — подтвердить его.
 
 <a name="constant_EXPIRED_ON_CAPTURE" class="anchor"></a>
 ###### EXPIRED_ON_CAPTURE
@@ -233,7 +234,7 @@ EXPIRED_ON_CAPTURE = 'expired_on_capture'
 DEAL_EXPIRED = 'deal_expired'
 ```
 
-Если вы еще хотите принять оплату, создайте новую сделку и проведите для нее новый платеж
+Если вы еще хотите принять оплату, создайте новую сделку и проведите для нее новый платеж.
 
 <a name="constant_UNSUPPORTED_MOBILE_OPERATOR" class="anchor"></a>
 ###### UNSUPPORTED_MOBILE_OPERATOR
@@ -241,6 +242,15 @@ DEAL_EXPIRED = 'deal_expired'
 
 ```php
 UNSUPPORTED_MOBILE_OPERATOR = 'unsupported_mobile_operator'
+```
+
+
+<a name="constant_REJECTED_BY_TIMEOUT" class="anchor"></a>
+###### REJECTED_BY_TIMEOUT
+Отклонено по таймауту
+
+```php
+REJECTED_BY_TIMEOUT = 'rejected_by_timeout'
 ```
 
 
@@ -326,10 +336,10 @@ Static public valueExists(mixed $value) : bool
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

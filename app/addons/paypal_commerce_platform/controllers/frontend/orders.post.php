@@ -16,6 +16,7 @@ defined('BOOTSTRAP') or die('Access denied');
 
 use Tygh\Addons\PaypalCommercePlatform\Payments\PaypalCommercePlatform;
 use Tygh\Enum\YesNo;
+use Tygh\Registry;
 
 if ($mode === 'details') {
     $view = Tygh::$app['view'];
@@ -30,6 +31,7 @@ if ($mode === 'details') {
         && YesNo::toBool($payment_method['processor_params']['is_paypal_commerce_platform'])
     ) {
         $processor_params = $payment_method['processor_params'];
+        $total = $order_info['total'] - $order_info['payment_surcharge'] + $payment_method['surcharge_value'];
 
         if (!isset($order_info['companies'])) {
             $order_info['companies'] = fn_get_products_companies($order_info['products']);
@@ -43,10 +45,25 @@ if ($mode === 'details') {
             = $payment_info['processor_params']
             = $processor_params;
 
+        if (CART_PRIMARY_CURRENCY !== $processor_params['currency']) {
+            $total = fn_format_price_by_currency($total, CART_PRIMARY_CURRENCY, $processor_params['currency']);
+        }
+        $currency_data = Registry::get('currencies.' . $processor_params['currency']);
+
+        /** @var float $total */
+        $total = fn_format_rate_value(
+            $total,
+            'F',
+            $currency_data['decimals'],
+            '.',
+            ''
+        );
+
         $view->assign(
             [
-                'order_info'     => $order_info,
-                'payment_method' => $payment_method,
+                'order_info'                          => $order_info,
+                'payment_method'                      => $payment_method,
+                'paypal_commerce_platform_cart_total' => $total,
             ]
         );
     }

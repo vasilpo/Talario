@@ -1,14 +1,12 @@
-.logo-menu__logo {
-    --cs-top-bar-btn-inner-height: 34px;
-
-    max-height: var(--cs-top-bar-btn-inner-height);
-    width: auto;
-    max-width: ~"calc(var(--main-menu-width) - 16px * 2)"; // max-width: 208px;
+.logo-menu__btn-inner {
+    justify-content: flex-start;
+    width: ~"calc(var(--main-menu-width) - 16px * 2)"; // max-width: 208px;
 }
 
-.logo-menu__logo--cscart {
-    height: 100%;
-    max-width: 100px;
+.logo-menu__logo {
+    max-height: 100%;
+    object-fit: contain;
+    object-position: left;
 }
 
 @media (prefers-color-scheme: light) {

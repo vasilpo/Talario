@@ -97,7 +97,7 @@
                 original_status char(1) NOT NULL default 'A' COMMENT 'Status of the product before it was sent to moderation',
                 updated_timestamp int(11) unsigned NOT NULL default 0 COMMENT 'Last moderation action timestamp',
                 reason text NOT NULL default '' COMMENT 'Last moderation reason',
-                initial_product_state text COMMENT 'Initial product state before changes',
+                initial_product_state mediumtext COMMENT 'Initial product state before changes',
                 initial_timestamp int(11) unsigned NOT NULL default 0 COMMENT 'Timestamp when the product was sent to moderation',
                 PRIMARY KEY (product_id)
             ) Engine=MyISAM DEFAULT CHARSET UTF8;

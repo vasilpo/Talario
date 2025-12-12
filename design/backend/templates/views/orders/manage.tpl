@@ -30,8 +30,8 @@
 {if $orders}
     {capture name="orders_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden table--show-checkbox table-manage-orders">
-            <thead data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
+            <table width="100%" class="table table-middle table--relative table-responsive table--show-checkbox table-manage-orders">
+            <thead class="thead--overflow-hidden" data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
             <tr>
                 <th width="3%" class="left mobile-hide table__check-items-column table__check-items-column--show-checkbox">
                     {include file="common/check_items.tpl"
@@ -207,11 +207,15 @@
 
 {include file="common/pagination.tpl" div_id=$smarty.request.content_id}
 
+{$href_new_order = "order_management.new"}
+{if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
+    {$href_new_order = $href_new_order|cat:"&s_storefront={$selected_storefront_id}"}
+{/if}
 
 {capture name="adv_buttons"}
     {hook name="orders:manage_tools"}
         {include file="common/tools.tpl"
-            tool_href="order_management.new"
+            tool_href=$href_new_order
             tool_override_meta="btn btn-primary nav__actions-btn-primary"
             prefix="bottom"
             hide_tools="true"

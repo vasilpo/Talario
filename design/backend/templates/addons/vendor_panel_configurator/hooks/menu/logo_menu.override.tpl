@@ -24,16 +24,14 @@
         "class" => (!empty($runtime.vendor_panel_style.logo)) ? "logo-menu__logo logo-menu__logo--custom" : "logo-menu__logo logo-menu__logo--cscart"
     ]}
 
-    <span class="top-bar__btn-inner logo-menu__btn-inner">
-        {if $backoffice_color_scheme === "BackofficeColorSchemeVariants::DARK"|enum}
-            <img {$image_attributes_dark|render_tag_attrs nofilter}/>
-        {elseif $backoffice_color_scheme === "BackofficeColorSchemeVariants::SYSTEM"|enum}
-            {$image_attributes_light.class = "{$image_attributes_light.class} logo-menu__logo--light"}
-            {$image_attributes_dark.class = "{$image_attributes_dark.class} logo-menu__logo--dark"}
-            <img {$image_attributes_light|render_tag_attrs nofilter}/>
-            <img {$image_attributes_dark|render_tag_attrs nofilter}/>
-        {else}
-            <img {$image_attributes_light|render_tag_attrs nofilter}/>
-        {/if}
-    </span>
+    {if $backoffice_color_scheme === "BackofficeColorSchemeVariants::DARK"|enum}
+        <img {$image_attributes_dark|render_tag_attrs nofilter}/>
+    {elseif $backoffice_color_scheme === "BackofficeColorSchemeVariants::SYSTEM"|enum}
+        {$image_attributes_light.class = "{$image_attributes_light.class} logo-menu__logo--light"}
+        {$image_attributes_dark.class = "{$image_attributes_dark.class} logo-menu__logo--dark"}
+        <img {$image_attributes_light|render_tag_attrs nofilter}/>
+        <img {$image_attributes_dark|render_tag_attrs nofilter}/>
+    {else}
+        <img {$image_attributes_light|render_tag_attrs nofilter}/>
+    {/if}
 {/if}

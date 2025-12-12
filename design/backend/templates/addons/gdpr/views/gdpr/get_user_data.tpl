@@ -13,8 +13,8 @@
         {foreach $gdpr_user_data as $item_name => $user}
             <tr>
                 <td>
-                    <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_user_{$item_name}" class="cm-combination-carts"><span class="icon-caret-right"></span></span>
-                    <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_user_{$item_name}" class="hidden cm-combination-carts"><span class="icon-caret-down"></span></span>
+                    <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_user_{$item_name}" class="cm-combination-carts"><span class="icon-caret-right cs-dark-theme-invert"></span></span>
+                    <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_user_{$item_name}" class="hidden cm-combination-carts"><span class="icon-caret-down cs-dark-theme-invert"></span></span>
                     {__("gdpr_{$item_name}")}
                 </td>
             </tr>

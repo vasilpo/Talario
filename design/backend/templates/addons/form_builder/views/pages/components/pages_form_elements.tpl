@@ -55,8 +55,8 @@
     <tbody class="cm-row-item cm-row-status-{$element.status|lower}">
     <tr>
         <td data-th="&nbsp;">
-            <div id="on_box_element_variants_{$element.element_id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand btn cm-combination-options-{$id} hidden"><span class="icon-caret-right"></span></div>
-            <div id="off_box_element_variants_{$element.element_id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand btn cm-combination-options-{$id} {if !$selectable_elements|substr_count:$element.element_type}hidden{/if}"><span class="icon-caret-down"></span> </div>
+            <div id="on_box_element_variants_{$element.element_id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand btn cm-combination-options-{$id} hidden"><span class="icon-caret-right cs-dark-theme-invert"></span></div>
+            <div id="off_box_element_variants_{$element.element_id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand btn cm-combination-options-{$id} {if !$selectable_elements|substr_count:$element.element_type}hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"></span> </div>
         </td>
         <td class="nowrap" data-th="{__("position_short")}">
             <input type="hidden" name="page_data[form][elements_data][{$num}][element_id]" value="{$element.element_id}" />

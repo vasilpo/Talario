@@ -1,3 +1,7 @@
+{if !$addon_setting_ids}
+    {$addon_setting_ids = fn_vendor_dept_payout_get_template_setting_ids()}
+{/if}
+
 {include file = "common/subheader.tpl"
     title = __("vendor_debt_payout.actions_on_suspended")
     target = "#collapsable_addon_option_vendor_debt_payout_actions_on_suspended"

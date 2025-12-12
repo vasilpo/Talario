@@ -320,7 +320,7 @@ class DashboardBlocks
         if (!empty($this->orders_stat['orders'])) {
             if (!empty($this->orders_stat['prev_orders'])) {
                 $orders_stat_diff_orders_percent = number_format(
-                    count($this->orders_stat['prev_orders']) * 100 / count($this->orders_stat['orders'])
+                    ((count($this->orders_stat['orders']) * 100) / count($this->orders_stat['prev_orders'])) - 100
                 );
             } else {
                 $orders_stat_diff_orders_percent = '&infin;';

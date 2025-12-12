@@ -100,7 +100,12 @@
             <div class="control-group">
                 <label class="control-label">{__("product_reviews.customer_photos")}:</label>
                 <div class="controls">
-                    {include file="common/fileuploader.tpl" var_name="product_review_data[0]" is_image=true multiupload="Y"}
+                    {include "common/fileuploader.tpl"
+                        var_name="product_review_data[0]"
+                        is_image=true
+                        multiupload="Y"
+                        upload_max_filesize_mb=$upload_max_filesize_mb
+                    }
                 </div>
             </div>
 

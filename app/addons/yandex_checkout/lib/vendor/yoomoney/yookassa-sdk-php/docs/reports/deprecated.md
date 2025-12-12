@@ -2,15 +2,20 @@
 
 # Deprecated Elements
 ### Table of Contents
+* [lib/Model/CancellationDetailsPartyCode.php](../../lib/Model/CancellationDetailsPartyCode.php)
 * [lib/Model/ConfirmationType.php](../../lib/Model/ConfirmationType.php)
 * [lib/Model/Payment.php](../../lib/Model/Payment.php)
 * [lib/Model/PaymentData/PaymentDataAlfabank.php](../../lib/Model/PaymentData/PaymentDataAlfabank.php)
+* [lib/Model/PaymentData/PaymentDataInstallments.php](../../lib/Model/PaymentData/PaymentDataInstallments.php)
+* [lib/Model/PaymentData/PaymentDataQiwi.php](../../lib/Model/PaymentData/PaymentDataQiwi.php)
 * [lib/Model/PaymentData/PaymentDataWebmoney.php](../../lib/Model/PaymentData/PaymentDataWebmoney.php)
 * [lib/Model/PaymentData/PaymentDataWechat.php](../../lib/Model/PaymentData/PaymentDataWechat.php)
 * [lib/Model/PaymentMethod/PaymentMethodAlfaBank.php](../../lib/Model/PaymentMethod/PaymentMethodAlfaBank.php)
 * [lib/Model/PaymentMethod/PaymentMethodBankCard.php](../../lib/Model/PaymentMethod/PaymentMethodBankCard.php)
 * [lib/Model/PaymentMethod/PaymentMethodFactory.php](../../lib/Model/PaymentMethod/PaymentMethodFactory.php)
+* [lib/Model/PaymentMethod/PaymentMethodInstallments.php](../../lib/Model/PaymentMethod/PaymentMethodInstallments.php)
 * [lib/Model/PaymentMethod/PaymentMethodPsb.php](../../lib/Model/PaymentMethod/PaymentMethodPsb.php)
+* [lib/Model/PaymentMethod/PaymentMethodQiwi.php](../../lib/Model/PaymentMethod/PaymentMethodQiwi.php)
 * [lib/Model/PaymentMethod/PaymentMethodUnknown.php](../../lib/Model/PaymentMethod/PaymentMethodUnknown.php)
 * [lib/Model/PaymentMethod/PaymentMethodWebmoney.php](../../lib/Model/PaymentMethod/PaymentMethodWebmoney.php)
 * [lib/Model/PaymentMethod/PaymentMethodWechat.php](../../lib/Model/PaymentMethod/PaymentMethodWechat.php)
@@ -18,9 +23,15 @@
 * [lib/Model/Payout/PayoutCancellationDetailsPartyCode.php](../../lib/Model/Payout/PayoutCancellationDetailsPartyCode.php)
 * [lib/Model/Receipt.php](../../lib/Model/Receipt.php)
 * [lib/Model/Refund.php](../../lib/Model/Refund.php)
+* [lib/Model/RefundCancellationDetailsPartyCode.php](../../lib/Model/RefundCancellationDetailsPartyCode.php)
 * [lib/Model/Requestor.php](../../lib/Model/Requestor.php)
 * [lib/Model/RequestorInterface.php](../../lib/Model/RequestorInterface.php)
 
+<a id="lib/Model/CancellationDetailsPartyCode.php"></a>
+#### [lib/Model/CancellationDetailsPartyCode.php](../../lib/Model/CancellationDetailsPartyCode.php)
+| Line | Element | Description |
+| ---- | ------- | ----------- |
+| 49 | \YooKassa\Model\CancellationDetailsPartyCode::YANDEX_CHECKOUT | Устарел. Оставлен для обратной совместимости |
 <a id="lib/Model/ConfirmationType.php"></a>
 #### [lib/Model/ConfirmationType.php](../../lib/Model/ConfirmationType.php)
 | Line | Element | Description |
@@ -30,13 +41,23 @@
 #### [lib/Model/Payment.php](../../lib/Model/Payment.php)
 | Line | Element | Description |
 | ---- | ------- | ----------- |
-| 710 | \YooKassa\Model\Payment::setRequestor() | Не используется. Будет удален в следующих версиях |
-| 719 | \YooKassa\Model\Payment::getRequestor() | Не используется. Будет удален в следующих версиях |
+| 711 | \YooKassa\Model\Payment::setRequestor() | Не используется. Будет удален в следующих версиях |
+| 720 | \YooKassa\Model\Payment::getRequestor() | Не используется. Будет удален в следующих версиях |
 <a id="lib/Model/PaymentData/PaymentDataAlfabank.php"></a>
 #### [lib/Model/PaymentData/PaymentDataAlfabank.php](../../lib/Model/PaymentData/PaymentDataAlfabank.php)
 | Line | Element | Description |
 | ---- | ------- | ----------- |
 | 41 | \YooKassa\Model\PaymentData\PaymentDataAlfabank | Будет удален в следующих версиях |
+<a id="lib/Model/PaymentData/PaymentDataInstallments.php"></a>
+#### [lib/Model/PaymentData/PaymentDataInstallments.php](../../lib/Model/PaymentData/PaymentDataInstallments.php)
+| Line | Element | Description |
+| ---- | ------- | ----------- |
+| 35 | \YooKassa\Model\PaymentData\PaymentDataInstallments | Будет удален в следующих версиях |
+<a id="lib/Model/PaymentData/PaymentDataQiwi.php"></a>
+#### [lib/Model/PaymentData/PaymentDataQiwi.php](../../lib/Model/PaymentData/PaymentDataQiwi.php)
+| Line | Element | Description |
+| ---- | ------- | ----------- |
+| 40 | \YooKassa\Model\PaymentData\PaymentDataQiwi | Будет удален в следующих версиях |
 <a id="lib/Model/PaymentData/PaymentDataWebmoney.php"></a>
 #### [lib/Model/PaymentData/PaymentDataWebmoney.php](../../lib/Model/PaymentData/PaymentDataWebmoney.php)
 | Line | Element | Description |
@@ -70,11 +91,21 @@
 | Line | Element | Description |
 | ---- | ------- | ----------- |
 | 40 | \YooKassa\Model\PaymentMethod\PaymentMethodFactory::YANDEX_MONEY | Для поддержки старых платежей |
+<a id="lib/Model/PaymentMethod/PaymentMethodInstallments.php"></a>
+#### [lib/Model/PaymentMethod/PaymentMethodInstallments.php](../../lib/Model/PaymentMethod/PaymentMethodInstallments.php)
+| Line | Element | Description |
+| ---- | ------- | ----------- |
+| 37 | \YooKassa\Model\PaymentMethod\PaymentMethodInstallments | Будет удален в следующих версиях |
 <a id="lib/Model/PaymentMethod/PaymentMethodPsb.php"></a>
 #### [lib/Model/PaymentMethod/PaymentMethodPsb.php](../../lib/Model/PaymentMethod/PaymentMethodPsb.php)
 | Line | Element | Description |
 | ---- | ------- | ----------- |
 | 34 | \YooKassa\Model\PaymentMethod\PaymentMethodPsb | Будет удален в следующих версиях |
+<a id="lib/Model/PaymentMethod/PaymentMethodQiwi.php"></a>
+#### [lib/Model/PaymentMethod/PaymentMethodQiwi.php](../../lib/Model/PaymentMethod/PaymentMethodQiwi.php)
+| Line | Element | Description |
+| ---- | ------- | ----------- |
+| 37 | \YooKassa\Model\PaymentMethod\PaymentMethodQiwi | Будет удален в следующих версиях |
 <a id="lib/Model/PaymentMethod/PaymentMethodUnknown.php"></a>
 #### [lib/Model/PaymentMethod/PaymentMethodUnknown.php](../../lib/Model/PaymentMethod/PaymentMethodUnknown.php)
 | Line | Element | Description |
@@ -94,11 +125,13 @@
 #### [lib/Model/PaymentMethodType.php](../../lib/Model/PaymentMethodType.php)
 | Line | Element | Description |
 | ---- | ------- | ----------- |
-| 74 | \YooKassa\Model\PaymentMethodType::WEBMONEY | Будет удален в следующих версиях |
-| 79 | \YooKassa\Model\PaymentMethodType::ALFABANK | Будет удален в следующих версиях |
-| 88 | \YooKassa\Model\PaymentMethodType::PSB | Будет удален в следующих версиях |
-| 95 | \YooKassa\Model\PaymentMethodType::WECHAT | Будет удален в следующих версиях |
-| 104 | \YooKassa\Model\PaymentMethodType::UNKNOWN | Не используется для реальных платежей |
+| 72 | \YooKassa\Model\PaymentMethodType::QIWI | Будет удален в следующих версиях |
+| 77 | \YooKassa\Model\PaymentMethodType::WEBMONEY | Будет удален в следующих версиях |
+| 82 | \YooKassa\Model\PaymentMethodType::ALFABANK | Будет удален в следующих версиях |
+| 91 | \YooKassa\Model\PaymentMethodType::PSB | Будет удален в следующих версиях |
+| 96 | \YooKassa\Model\PaymentMethodType::INSTALLMENTS | Будет удален в следующих версиях |
+| 101 | \YooKassa\Model\PaymentMethodType::WECHAT | Будет удален в следующих версиях |
+| 110 | \YooKassa\Model\PaymentMethodType::UNKNOWN | Не используется для реальных платежей |
 <a id="lib/Model/Payout/PayoutCancellationDetailsPartyCode.php"></a>
 #### [lib/Model/Payout/PayoutCancellationDetailsPartyCode.php](../../lib/Model/Payout/PayoutCancellationDetailsPartyCode.php)
 | Line | Element | Description |
@@ -116,8 +149,13 @@
 #### [lib/Model/Refund.php](../../lib/Model/Refund.php)
 | Line | Element | Description |
 | ---- | ------- | ----------- |
-| 383 | \YooKassa\Model\Refund::getRequestor() | Не используется. Будет удален в следующих версиях |
-| 391 | \YooKassa\Model\Refund::setRequestor() | Не используется. Будет удален в следующих версиях |
+| 409 | \YooKassa\Model\Refund::getRequestor() | Не используется. Будет удален в следующих версиях |
+| 417 | \YooKassa\Model\Refund::setRequestor() | Не используется. Будет удален в следующих версиях |
+<a id="lib/Model/RefundCancellationDetailsPartyCode.php"></a>
+#### [lib/Model/RefundCancellationDetailsPartyCode.php](../../lib/Model/RefundCancellationDetailsPartyCode.php)
+| Line | Element | Description |
+| ---- | ------- | ----------- |
+| 51 | \YooKassa\Model\RefundCancellationDetailsPartyCode::YANDEX_CHECKOUT | Устарел. Оставлен для обратной совместимости |
 <a id="lib/Model/Requestor.php"></a>
 #### [lib/Model/Requestor.php](../../lib/Model/Requestor.php)
 | Line | Element | Description |
@@ -140,10 +178,10 @@
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

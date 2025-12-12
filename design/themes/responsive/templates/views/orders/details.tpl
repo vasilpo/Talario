@@ -303,9 +303,9 @@
                     {include file="common/subheader.tpl" title="{__("shipment")} #`$shipment.shipment_id`"}
                     <div class="ty-orders-shipment__info">
                         {hook name="orders:shipment_info"}
-                            <p>{$shipment.shipping}</p>
-                            {if $shipment.carrier}
-                                <p>{__("carrier")}: {$shipment.carrier_info.name nofilter}{if $shipment.tracking_number} ({__("tracking_number")}: {if $shipment.carrier_info.tracking_url}<a target="_blank" href="{$shipment.carrier_info.tracking_url nofilter}">{/if}{$shipment.tracking_number}{if $shipment.carrier_info.tracking_url}</a>{/if}){/if}</p>
+                            {if $shipment}
+                                <p>{$shipment.shipping}</p>
+                                {if $shipment.carrier}<p>{__("carrier")}: {$shipment.carrier_info.name nofilter}{/if}{if $shipment.tracking_number} ({__("tracking_number")}: {if $shipment.carrier_info.tracking_url}<a target="_blank" href="{$shipment.carrier_info.tracking_url nofilter}">{/if}{$shipment.tracking_number}{if $shipment.carrier_info.tracking_url}</a>{/if}){/if}</p>
 
                                 {$shipment.carrier_info.info nofilter}
                             {/if}

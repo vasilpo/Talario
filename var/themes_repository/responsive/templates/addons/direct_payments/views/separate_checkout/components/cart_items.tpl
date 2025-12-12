@@ -15,7 +15,7 @@
             <th class="ty-cart-content__title ty-left">{__("product")}</th>
             <th class="ty-cart-content__title ty-left">&nbsp;</th>
             <th class="ty-cart-content__title ty-right">{__("unit_price")}</th>
-            <th class="ty-cart-content__title quantity-cell">{__("quantity")}</th>
+            <th class="ty-cart-content__title ty-center quantity-cell">{__("quantity")}</th>
             <th class="ty-cart-content__title ty-right">{__("total_price")}</th>
         </tr>
     </thead>

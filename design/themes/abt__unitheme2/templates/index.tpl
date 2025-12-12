@@ -85,7 +85,7 @@ window.onerror = function(message, source, lineno, colno, error) {
 {hook name="index:head_scripts"}{/hook}
 </head>
 
-<body class="{$location_data.user_class} {if $settings.ab__device === "mobile"}mobile-screen {/if}{if $settings.ab__device === "tablet"}tablet-screen {/if}{if $settings.ab__device === "desktop"}desktop-screen {/if}">
+<body class="{$location_data.user_class} {if $settings.ab__device === "mobile"}mobile-screen {/if}{if $settings.ab__device === "tablet"}tablet-screen {/if}{if $settings.ab__device === "desktop"}desktop-screen {/if}{if $auth.user_id != 0}user-is-authorized{else}user-is-guest{/if}">
     {hook name="index:body"}
         {if $runtime.customization_mode.design}
             {include file="common/toolbar.tpl"

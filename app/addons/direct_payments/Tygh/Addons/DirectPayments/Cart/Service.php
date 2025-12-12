@@ -52,7 +52,7 @@ class Service
         $this->session = $session;
         $vendor_id = self::DEFAULT_VENDOR_ID;
         $isset_cart = !empty($_SESSION[self::SESSION_CART_FIELD]) || !empty($_SESSION[self::SESSION_LEGACY_CART_FIELD]);
-        $session_is_separate_checkout = isset($_SESSION[self::SESSION_IS_SEPARATE_CHECKOUT_FIELD]) ? $_SESSION[self::SESSION_IS_SEPARATE_CHECKOUT_FIELD] : null;
+        $session_is_separate_checkout = $_SESSION[self::SESSION_IS_SEPARATE_CHECKOUT_FIELD] ?? null;
 
         if (!$session_is_separate_checkout) {
             if (!empty($_SESSION['auth']['user_id']) && $isset_cart) {
@@ -64,7 +64,7 @@ class Service
         }
 
         if (!isset($_SESSION[self::SESSION_CART_FIELD])) {
-            $_SESSION[self::SESSION_CART_FIELD] = array();
+            $_SESSION[self::SESSION_CART_FIELD] = [];
         }
 
         $this->initCarts();
@@ -109,7 +109,7 @@ class Service
         $vendor_id = (int) $vendor_id;
 
         if (!isset($_SESSION[self::SESSION_CART_FIELD][$vendor_id])) {
-            $_SESSION[self::SESSION_CART_FIELD][$vendor_id] = array();
+            $_SESSION[self::SESSION_CART_FIELD][$vendor_id] = [];
 
             fn_clear_cart($_SESSION[self::SESSION_CART_FIELD][$vendor_id]);
         }

@@ -22,8 +22,8 @@
         <th width="84%">
             {if $show_all}
             <div class="pull-left">
-                <span id="on_cat" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-cat {if $expand_all}hidden{/if}"><span class="icon-caret-right"> </span></span>
-                <span id="off_cat" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-cat {if !$expand_all}hidden{/if}"><span class="icon-caret-down"> </span></span>
+                <span id="on_cat" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-cat {if $expand_all}hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                <span id="off_cat" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-cat {if !$expand_all}hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
             </div>
             {/if}
             {__("categories")}
@@ -94,7 +94,7 @@
                           class="hand cm-combination-cat cm-uncheck {if isset($path.$cat_id) || $expand_all}hidden{/if}"
                           data-ca-categories-expand-target
                     >
-                        <span class="icon-caret-right {if $display == "radio"} icon-caret--big{/if}"></span>
+                        <span class="icon-caret-right cs-dark-theme-invert {if $display == "radio"} icon-caret--big{/if}"></span>
                     </span>
                 {else}
                     {if $except_id}
@@ -108,7 +108,7 @@
                           {/if}
                           data-ca-categories-expand-target
                     >
-                        <span class="icon-caret-right{if $display == "radio"} icon-caret--big{/if}"></span>
+                        <span class="icon-caret-right cs-dark-theme-invert{if $display == "radio"} icon-caret--big{/if}"></span>
                     </span>
                 {/if}
                 <span title="{__("collapse_sublist_of_items")}"
@@ -117,7 +117,7 @@
                       data-ca-categories-expand-target
                       data-ca-categories-hide-target
                 >
-                    <span class="icon-caret-down {if $display == "radio"} icon-caret--big{/if}"></span>
+                    <span class="icon-caret-down cs-dark-theme-invert {if $display == "radio"} icon-caret--big{/if}"></span>
                 </span>
             {/if}
 

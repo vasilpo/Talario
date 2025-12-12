@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: ar\n"
-"X-Crowdin-File: /release-4.18.3/addons/stripe_connect.po\n"
-"X-Crowdin-File-ID: 9428\n"
-"PO-Revision-Date: 2024-10-02 13:28\n"
+"X-Crowdin-File: /release-4.18.4/addons/stripe_connect.po\n"
+"X-Crowdin-File-ID: 9687\n"
+"PO-Revision-Date: 2025-05-26 13:29\n"
 
 msgctxt "Addons::name::stripe_connect"
 msgid "Stripe Connect payments"
@@ -70,7 +70,7 @@ msgstr "المفتاح السري"
 
 msgctxt "Languages::stripe_connect.connect_with_stripe_standard"
 msgid "Connect with Stripe Standard"
-msgstr "تواصل مع شريط قياسي"
+msgstr "واصل مع Stripe Standard"
 
 msgctxt "Languages::stripe_connect.disconnect"
 msgid "Disconnect account"
@@ -314,7 +314,7 @@ msgstr "حسابات الشيك"
 
 msgctxt "Languages::stripe_connect.stripe_cookie_title"
 msgid "Stripe"
-msgstr "شريط"
+msgstr "Stripe"
 
 msgctxt "Languages::stripe_connect.stripe_cookie_description"
 msgid "Stripe is a payment provider. It allows us to accept payments, if you choose a payment method powered by Stripe. Here is <a href=\"https://stripe.com/privacy\" target=\"_blank\">Stripe privacy policy</a>."
@@ -322,7 +322,7 @@ msgstr "Stripe هو مزود الدفع. يسمح لنا بقبول المدفو
 
 msgctxt "Languages::stripe_connect.create_stripe_standard_account"
 msgid "Create Stripe Standard account"
-msgstr "قم بإنشاء حساب قياسي في Stripe"
+msgstr "إنشاء حساب Stripe Standard"
 
 msgctxt "Languages::stripe_connect.refunded_via_stripe"
 msgid "Money refunded via Stripe"
@@ -330,7 +330,7 @@ msgstr "الأموال المستردة عبر Stripe"
 
 msgctxt "Languages::stripe_connect.stripe_checkout"
 msgid "Stripe Checkout"
-msgstr "شريط الخروج"
+msgstr "Stripe Checkout"
 
 msgctxt "Languages::stripe_connect.stripe_checkout.description"
 msgid "Take customers to the Stripe Checkout page to complete the payment. We recommend it because that page offers many more payment options than CS-Cart checkout page. You can see those payment options <a href=\"https://dashboard.stripe.com/settings/payment_methods\" target=\"_blank\">on your Stripe Dashboard</a>. Only works when 3-D Secure is <b>enabled</b>."

@@ -8,7 +8,7 @@
                             {include file="common/image.tpl" image_width="40" image_height="40" images=$_product.main_pair no_ids=true}
                         </div>
                     {/if}
-                    <div class="ty-cart-items__list-item-desc">
+                    <div class="ty-cart-items__list-item-desc ty-cart-items__list-item-desc--{$block.properties.products_links_type}">
                         <a href="{"products.view?product_id=`$_product.product_id`"|fn_url}"
                            class="ty-buy-together-cart__item-link">{$_product.product|default:fn_get_product_name($_product.product_id) nofilter}</a>
                         <p>

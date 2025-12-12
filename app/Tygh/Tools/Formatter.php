@@ -133,7 +133,7 @@ class Formatter
      */
     public function asNText($value)
     {
-        return nl2br($value);
+        return nl2br($value ?? '');
     }
 
     /**

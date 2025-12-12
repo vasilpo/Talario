@@ -43,7 +43,7 @@
                 <div class="ty-account-info__orders-txt">{__("track_my_order")}</div>
 
                 <div class="ty-account-info__orders-input ty-control-group ty-input-append">
-                    <label for="track_order_item{$block.snapping_id}" class="cm-required hidden">{__("track_my_order")}</label>
+                    <label for="track_order_item{$block.snapping_id}" class="cm-required cm-trim hidden">{__("track_my_order")}</label>
                     <input type="text" size="20" class="ty-input-text cm-hint" id="track_order_item{$block.snapping_id}" name="track_data" value="{__("order_id")}{if !$auth.user_id}/{__("email")}{/if}" />
                     {include file="buttons/go.tpl" but_name="orders.track_request" alt=__("go")}
                     {include file="common/image_verification.tpl" option="track_orders" align="left" sidebox=true}

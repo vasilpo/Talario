@@ -26,7 +26,7 @@
         {include_ext file="common/icon.tpl" class="icon-" title=$lang_choose assign=_but_text}
         {$_but_role = "icon"}
     {/if}
-    <div class="pull-right">
+    <div class="pull-right {if !$no_container}buttons-container{/if}">
     {include file="buttons/button.tpl" but_id="opener_picker_`$data_id`" but_href="companies.picker?display=`$display`&picker_for=`$picker_for`&extra=`$extra_var`&checkbox_name=`$checkbox_name`&root=`$default_name`&except_id=`$except_id`&data_id=`$data_id``$extra_url`"|fn_url but_text=$_but_text but_role=$_but_role but_target_id="content_`$data_id`" but_meta="cm-dialog-opener btn" but_icon="icon-plus"}
     </div>
 {/if}

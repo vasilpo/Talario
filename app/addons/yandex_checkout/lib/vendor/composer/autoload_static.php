@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite0bf12cd0fc4bda006b70f37dfa668f8
+class ComposerStaticInit5ac37e24a5a172604db0be8aecc94712
 {
     public static $prefixLengthsPsr4 = array (
         'Y' => 
@@ -221,6 +221,9 @@ class ComposerStaticInite0bf12cd0fc4bda006b70f37dfa668f8
         'YooKassa\\Model\\Recipient' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/Recipient.php',
         'YooKassa\\Model\\RecipientInterface' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/RecipientInterface.php',
         'YooKassa\\Model\\Refund' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/Refund.php',
+        'YooKassa\\Model\\RefundCancellationDetails' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/RefundCancellationDetails.php',
+        'YooKassa\\Model\\RefundCancellationDetailsPartyCode' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/RefundCancellationDetailsPartyCode.php',
+        'YooKassa\\Model\\RefundCancellationDetailsReasonCode' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/RefundCancellationDetailsReasonCode.php',
         'YooKassa\\Model\\RefundInterface' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/RefundInterface.php',
         'YooKassa\\Model\\RefundStatus' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/RefundStatus.php',
         'YooKassa\\Model\\Requestor' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/Requestor.php',
@@ -338,9 +341,9 @@ class ComposerStaticInite0bf12cd0fc4bda006b70f37dfa668f8
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite0bf12cd0fc4bda006b70f37dfa668f8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite0bf12cd0fc4bda006b70f37dfa668f8::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite0bf12cd0fc4bda006b70f37dfa668f8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5ac37e24a5a172604db0be8aecc94712::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5ac37e24a5a172604db0be8aecc94712::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit5ac37e24a5a172604db0be8aecc94712::$classMap;
 
         }, null, ClassLoader::class);
     }

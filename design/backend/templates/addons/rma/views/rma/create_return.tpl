@@ -11,7 +11,7 @@
         <td class="nowrap" data-th="&nbsp;"><span>{__("what_you_would_like_to_do")}</span>:</td>
         <td data-th="&nbsp;">&nbsp;&nbsp;</td>
         <td width="100%" data-th="&nbsp;">
-            <select name="action">
+            <select name="return_action">
             {foreach $actions as $action_id => $action}
                 <option value="{$action_id}">{$action.property}</option>
             {/foreach}

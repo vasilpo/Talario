@@ -76,7 +76,7 @@
                     </a>
                 </td>
                 <td class="ty-vendor-communication-search__item ty-vendor-communication-search__message">
-                    <a class="clearfix {if $thread.new_message}ty-new__text{/if}"
+                    <a class="{if $thread.new_message}ty-new__text{/if}"
                         href="{"vendor_communication.view?thread_id=`$thread.thread_id`"|fn_url}"
                         data-ca-thread-id="{$thread.thread_id}"
                         title="{$thread.last_message}"
@@ -95,7 +95,7 @@
                         {$thread.last_message|truncate:300:"...":true}
                     </a>
                 </td>
-                <td class="ty-vendor-communication-search__item">
+                <td class="ty-vendor-communication-search__item ty-vendor-communication-search__subject">
                     {include file="addons/vendor_communication/views/vendor_communication/components/subject.tpl"
                         thread=$thread
                     }

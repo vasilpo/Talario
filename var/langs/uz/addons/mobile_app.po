@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: uz\n"
-"X-Crowdin-File: /release-4.18.3/addons/mobile_app.po\n"
-"X-Crowdin-File-ID: 9348\n"
-"PO-Revision-Date: 2024-10-02 13:31\n"
+"X-Crowdin-File: /release-4.18.4/addons/mobile_app.po\n"
+"X-Crowdin-File-ID: 9621\n"
+"PO-Revision-Date: 2025-05-26 13:32\n"
 
 msgctxt "Addons::name::mobile_app"
 msgid "Mobile application"
@@ -259,6 +259,14 @@ msgstr "Firebase konfiguratsiya fayli (Android)"
 msgctxt "Languages::tt_mobile_app.services_config"
 msgid "Upload the google-services.json file that was generated when you added an Android application in Firebase."
 msgstr "Firebase’ga Android ilovasini qo‘shganingizda yaratilgan google-services.json faylini yuklang."
+
+msgctxt "Languages::mobile_app.services_config_ios"
+msgid "Firebase config file (iOS)"
+msgstr ""
+
+msgctxt "Languages::tt_mobile_app.services_config_ios"
+msgid "Upload the GoogleService-Info.plist file that was generated when you added an iOS application in Firebase."
+msgstr ""
 
 msgctxt "Languages::mobile_app.crop_when_resize"
 msgid "Crop image"
@@ -4878,5 +4886,9 @@ msgstr ""
 
 msgctxt "Languages::mobile_app.mobile_delete_file"
 msgid "Delete file"
+msgstr ""
+
+msgctxt "Languages::mobile_app.unknown_os_type"
+msgid "Unknown OS type for definition of Firebase config file name."
 msgstr ""
 

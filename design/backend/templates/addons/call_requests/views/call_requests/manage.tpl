@@ -13,8 +13,9 @@
 {if $call_requests}
     {capture name="call_requests_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table width="100%" class="table table-middle table-responsive table--overflow-hidden cr-table">
+            <table width="100%" class="table table-middle table-responsive cr-table">
             <thead
+                    class="thead--overflow-hidden"
                     data-ca-bulkedit-default-object="true"
                     data-ca-bulkedit-component="defaultObject"
             >

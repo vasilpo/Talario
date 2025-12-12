@@ -45,7 +45,6 @@
                 {foreach $all_shippings.$group_key as $shipping_id => $item}
                     {if $group.shippings.$shipping_id}
                         {$shipping = $group.shippings.$shipping_id}
-                        {$shipping.service_delivery_time = $item.service_delivery_time}
                         {$shipping.shipping = $item.shipping}
                     {else}
                         {$shipping = $item}
@@ -62,8 +61,8 @@
 
                     {hook name="checkout:shipping_rate"}
                         {$delivery_time = ""}
-                        {if $shipping.delivery_time || $shipping.rate_info.delivery_time}
-                            {$delivery_time = "(`$shipping.rate_info.delivery_time|default:$shipping.delivery_time`)"}
+                        {if $shipping.service_delivery_time || $shipping.delivery_time || $shipping.rate_info.delivery_time}
+                            {$delivery_time = "(`$shipping.service_delivery_time|default:$shipping.rate_info.delivery_time|default:$shipping.delivery_time`)"}
                         {/if}
 
                         {if $shipping.rate}

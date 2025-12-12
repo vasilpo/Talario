@@ -96,12 +96,12 @@
     {elseif $schema.conditions[$condition_data.condition].type == "list"}
         <input type="hidden" name="{$prefix}[operator]" value="in"/>
         <input type="hidden" name="{$prefix}[value]" value="{$condition_data.value}"/>
-        {$condition_data.value|default:__("no_data")}
+        <p>{$condition_data.value|default:__("no_data")}</p>
 
     {elseif $schema.conditions[$condition_data.condition].type == "statement"}
         <input type="hidden" name="{$prefix}[operator]" value="eq"/>
         <input type="hidden" name="{$prefix}[value]" value="Y"/>
-        {__("yes")}
+        <p>{__("yes")}</p>
 
     {elseif $schema.conditions[$condition_data.condition].type == "chained"}
         <div class="select2-wrapper--width-auto">

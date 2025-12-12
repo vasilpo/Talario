@@ -1,3 +1,5 @@
+{$continue_url = $continue_url|default:""}
+
 {if !$comparison_data}
     <p class="ty-no-items ty-compare__no-items">{__("no_products_selected")}</p>
     <div class="buttons-container ty-compare__button-empty">

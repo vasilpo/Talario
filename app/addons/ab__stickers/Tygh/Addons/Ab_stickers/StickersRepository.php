@@ -29,7 +29,6 @@ use Tygh\Navigation\LastView;
 use Tygh\Registry;
 use Tygh\Storefront\Storefront;
 use Tygh\Tools\ErrorHandler;
-use const Ab_stickers\DEFAULT_LANGUAGE;
 
 class StickersRepository
 {

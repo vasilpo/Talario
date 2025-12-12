@@ -12,10 +12,10 @@
 * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
 ****************************************************************************/
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
+defined('BOOTSTRAP') or die('Access denied');
 
 if (defined('PAYMENT_NOTIFICATION')) {
-    if ($mode == 'process') {
+    if ($mode === 'process') {
         if (isset($_REQUEST['SHASIGN']) && isset($_REQUEST['orderID']) & isset($_REQUEST['STATUS'])) {
             $status_code = (int) $_REQUEST['STATUS'];
 
@@ -30,12 +30,12 @@ if (defined('PAYMENT_NOTIFICATION')) {
             unset($data['SHASIGN']);
             uksort($data, 'strcasecmp');
 
-            $sucess_statuses = array(
+            $sucess_statuses = [
                 '5' => 'Authorised',
                 '9' => 'Payment requested',
-            );
+            ];
 
-            $intermediary_statuses = array(
+            $intermediary_statuses = [
                 '50' => 'Authorized waiting external result',
                 '51' => 'Authorisation waiting',
                 '52' => 'Authorisation not known',
@@ -49,9 +49,9 @@ if (defined('PAYMENT_NOTIFICATION')) {
                 '94' => 'Refund declined by the acquirer',
                 '95' => 'Payment processed by merchant',
                 '99' => 'Being processed',
-            );
+            ];
 
-            if (strtoupper($_REQUEST['SHASIGN']) == strtoupper(fn_epdq_generate_sha1_hash($data, $processor_data['epdq_passphrase'], false))) {
+            if (strtoupper($_REQUEST['SHASIGN']) === strtoupper(fn_epdq_generate_sha1_hash($data, $processor_data['epdq_passphrase'], false))) {
                 if (in_array($status_code, array_keys($sucess_statuses))) {
                     $pp_response['order_status'] = 'P';
                     $pp_response['reason_text'] = $sucess_statuses[$status_code];
@@ -66,22 +66,28 @@ if (defined('PAYMENT_NOTIFICATION')) {
                 $pp_response['order_status'] = 'F';
                 $pp_response['reason_text'] = ($status_code == 1) ? __('text_transaction_declined') : __('payments.epdq.hash_error');
             }
-            fn_finish_payment($order_id, $pp_response);
+
+            fn_update_order_payment_info($order_id, $pp_response);
             exit;
         } else {
             die('Access_denied');
         }
-    } elseif ($mode == 'sucess' || $mode == 'decline') {
+    } elseif ($mode === 'sucess' || $mode === 'decline') {
         //we can use common code for both modes bacause necessary actions was done in callback ($mode == 'process')
         if (isset($_REQUEST['order_id'])) {
             $order_id = (int) $_REQUEST['order_id'];
+            $order_info = fn_get_order_info($order_id);
+
             if (fn_check_payment_script('epdq.php', $order_id)) {
+                $pp_response = $order_info['payment_info'];
+                fn_finish_payment($order_id, $pp_response);
                 fn_order_placement_routines('route', $order_id, false);
             }
         }
-    } elseif ($mode == 'cancel') {
+    } elseif ($mode === 'cancel') {
         if (isset($_REQUEST['order_id'])) {
             $order_id = (int) $_REQUEST['order_id'];
+
             if (fn_check_payment_script('epdq.php', $order_id)) {
                 $pp_response['order_status'] = 'N';
                 $pp_response['reason_text']  = __('text_transaction_cancelled');
@@ -91,11 +97,13 @@ if (defined('PAYMENT_NOTIFICATION')) {
         }
     }
 } else {
-    $form_url = ($processor_data['processor_params']['epdq_mode'] == 'test') ? 'https://mdepayments.epdq.co.uk/ncol/test/orderstandard_utf8.asp' : 'https://payments.epdq.co.uk/ncol/prod/orderstandard_utf8.asp';
+    $form_url = ($processor_data['processor_params']['epdq_mode'] === 'test')
+        ? 'https://mdepayments.epdq.co.uk/ncol/test/orderstandard_utf8.asp'
+        : 'https://payments.epdq.co.uk/ncol/prod/orderstandard_utf8.asp';
     $sucess_url = fn_url("payment_notification.sucess?payment=epdq&order_id=$order_id", AREA, 'current');
     $decline_url = fn_url("payment_notification.decline?payment=epdq&order_id=$order_id", AREA, 'current');
     $exception_url = $cancel_url = fn_url("payment_notification.cancel?payment=epdq&order_id=$order_id", AREA, 'current');
-    $post = array(
+    $post = [
         'PSPID' => $processor_data['processor_params']['epdq_pspid'],
         'ORDERID' => (($order_info['repaid']) ? ($order_id . '_' . $order_info['repaid']) : $order_id) . '_' . fn_date_format(time(), '%H_%M_%S'),
         'AMOUNT' => $order_info['total'] * 100,
@@ -125,7 +133,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
         'CATALOGURL' => fn_url(),
         'HOMEURL' => fn_url(),
         'OPERATION' =>  $processor_data['processor_params']['epdq_operation']
-    );
+    ];
 
     if ($processor_data['processor_params']['epdq_3dsecure'] !== 'none') {
         $post['WIN3DS'] = $processor_data['processor_params']['epdq_3dsecure'];
@@ -133,30 +141,37 @@ if (defined('PAYMENT_NOTIFICATION')) {
     //Calculate percentage discount
     $discount = 0;
     $discount_amount = 0;
+
     if (!empty($order_info['subtotal_discount'])) {
         $discount_amount += $order_info['subtotal_discount'];
     }
+
     if (!empty($order_info['use_gift_certificates'])) {
         foreach ($order_info['use_gift_certificates'] as $gc_data) {
             $discount_amount += $gc_data['amount'];
         }
     }
+
     if ($discount_amount) {
         $discount = ($discount_amount / $order_info['subtotal']) * 100;
     }
+
     $key = 1;
+
     if (!empty($order_info['products'])) {
         foreach ($order_info['products'] as $order_product) {
             $post["ITEMID$key"] = $order_product['product_id'];
             $post["ITEMNAME$key"] = fn_format_long_string($order_product['product'], 40);
             $post["ITEMPRICE$key"] = $order_product['price'];
             $post["ITEMQUANT$key"] = $order_product['amount'];
+
             if ($discount) {
                 $post["ITEMDISCOUNT$key"] = $discount;
             }
             $key ++;
         }
     }
+
     $shipping_cost = floatval($order_info['shipping_cost']);
     //Shipping cost and taxes should be handled as separate items, so the AMOUNT parameter value is the same as the sum of all submitted items.
     if (!empty($shipping_cost)) {
@@ -178,7 +193,9 @@ if (defined('PAYMENT_NOTIFICATION')) {
             }
         }
     }
+
     $payment_surcharge = floatval($order_info['payment_surcharge']);
+
     if (!empty($payment_surcharge)) {
         $post["ITEMID$key"] = 1;
         $post["ITEMNAME$key"] = __('payment_surcharge');
@@ -193,11 +210,13 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
     fn_create_payment_form($form_url, $post, 'ePDQ');
 }
+
 exit;
 
 function fn_epdq_generate_sha1_hash($data, $passphrase, $exlude_empty_values = true)
 {
     $str = '';
+
     foreach ($data as $key => $value) {
         if (!empty($value) || (!$exlude_empty_values && $value == 0)) {
             $str .= strtoupper($key) . '=' . $value . $passphrase;

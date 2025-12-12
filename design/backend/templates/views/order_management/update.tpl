@@ -77,18 +77,7 @@
         <!--om_ajax_update_totals--></div>
 
         {if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
-            <div class="clearfix">
-                <div class="control-group">
-                    <label class="control-label">{__("storefront")}</label>
-                    <div class="controls">
-                        {include file="views/storefronts/components/picker/picker.tpl"
-                            input_name="storefront_id"
-                            item_ids=[$selected_storefront_id]
-                            show_advanced=false
-                        }
-                    </div>
-                </div>
-            </div>
+            <input type="hidden" name="storefront_id" value="{$app["storefront"]->storefront_id}"/>
         {/if}
 
         <div class="note clearfix">
@@ -187,7 +176,28 @@
 {/strip}{/capture}
 
 <div id="order_update">
-{include file="common/mainbox.tpl" title_start=$title_start title_end=$smarty.capture.mainbox_title sidebar=$smarty.capture.sidebar content=$smarty.capture.mainbox buttons=$smarty.capture.buttons sidebar_icon="icon-user"}
+{if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
+    {if $cart.order_id == 0}
+        {$storefront_switcher_param_name = "s_storefront"}
+        {$show_all_storefront = false}
+    {else}
+        {$select_storefront = false}
+    {/if}
+    {$storefront_id = $app["storefront"]->storefront_id}
+{/if}
+
+{include "common/mainbox.tpl"
+    title_start=$title_start
+    title_end=$smarty.capture.mainbox_title
+    sidebar=$smarty.capture.sidebar
+    content=$smarty.capture.mainbox
+    buttons=$smarty.capture.buttons
+    sidebar_icon="icon-user"
+    select_storefront=$select_storefront|default:true
+    storefront_switcher_param_name=$storefront_switcher_param_name|default:"switch_company_id"
+    show_all_storefront=$show_all_storefront|default:true
+    selected_storefront_id=$storefront_id|default:$selected_storefront_id
+}
 <!--order_update--></div>
 
 </form>

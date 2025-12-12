@@ -127,3 +127,8 @@ Thumbs.db
 *.msi
 *.msm
 *.msp
+
+### Talario rules ###
+dev_copy*
+index_.php
+index1.php

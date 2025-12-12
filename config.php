@@ -163,8 +163,8 @@ define('CS_PHP_VERSION', phpversion());
 
 // Product information
 define('PRODUCT_NAME', 'Multi-Vendor');
-define('PRODUCT_VERSION', '4.18.3');
-define('PRODUCT_RELEASE_TIMESTAMP', 1728950400);
+define('PRODUCT_VERSION', '4.18.4');
+define('PRODUCT_RELEASE_TIMESTAMP', 1750032000);
 define('PRODUCT_STATUS', '');
 
 

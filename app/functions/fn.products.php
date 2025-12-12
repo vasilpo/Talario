@@ -2160,7 +2160,11 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     $limit = '';
     $group_by = 'products.product_id';
     // Show enabled products
-    $_p_statuses = array('A');
+    $_p_statuses = [ObjectStatuses::ACTIVE];
+
+    if (!empty($params['storefront_statuses'])) {
+        $_p_statuses = array_merge($_p_statuses, (array) $params['storefront_statuses']);
+    }
 
     if (empty($params['usergroup_ids']) || $auth['user_type'] === UserTypes::CUSTOMER) {
         $params['usergroup_ids'] = $auth['usergroup_ids'];

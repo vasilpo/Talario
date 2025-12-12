@@ -21,8 +21,8 @@
 {if $products}
     {capture name="products_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden table--show-checkbox products-table" data-ca-main-content>
-            <thead data-ca-bulkedit-default-object="true" data-target=".products-table" data-ca-bulkedit-component="defaultObject">
+            <table width="100%" class="table table-middle table--relative table-responsive table--show-checkbox products-table" data-ca-main-content>
+            <thead class="thead--overflow-hidden" data-ca-bulkedit-default-object="true" data-target=".products-table" data-ca-bulkedit-component="defaultObject">
             <tr>
                 {hook name="products:manage_head"}
                 <th width="3%" class="left mobile-hide table__check-items-column table__check-items-column--show-checkbox {if !$has_available_products} table__check-items-column--disabled{/if}">

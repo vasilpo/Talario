@@ -372,10 +372,10 @@ class SdekService
         foreach ($goods_parameters as $goods_parameter) {
             $offices = array_filter($offices, static function ($office) use ($goods_parameter) {
                 if (
-                    empty($office['weight_limit'])
+                    !isset($office['weight_min']) || !isset($office['weight_max'])
                     || (
-                        $goods_parameter['weight'] < $office['weight_limit']['WeightMin']
-                        || $goods_parameter['weight'] > $office['weight_limit']['WeightMax']
+                        $goods_parameter['weight'] < $office['weight_min'] * 1000
+                        || $goods_parameter['weight'] > $office['weight_max'] * 1000
                     )
                 ) {
                     return false;

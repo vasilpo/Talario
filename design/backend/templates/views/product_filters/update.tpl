@@ -143,6 +143,7 @@
             owner_company_id=$filter.company_id
             but_meta="pull-right"
             hide_delete_button = $hide_categories_delete|default:false
+            no_container=true
         }
     </div>
 </div>

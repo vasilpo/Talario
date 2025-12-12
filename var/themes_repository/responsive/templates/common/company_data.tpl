@@ -38,7 +38,7 @@
 
 {capture name="company_descr_`$obj_id`"}
     {if $show_descr}
-        {$company.company_description|strip_tags|truncate:1024 nofilter}{if $show_links && $company.company_description|fn_strlen > 1024} <a href="{"companies.products?company_id=`$company.company_id`"|fn_url}">{__("more")}</a>{/if}
+        {$company.company_description|strip_tags|truncate:1024 nofilter}{if $show_links && $company.company_description|fn_strlen > 1024} <a href="{"companies.view?company_id=`$company.company_id`"|fn_url}">{__("more")}</a>{/if}
     {/if}
 {/capture}
 {if $no_capture}

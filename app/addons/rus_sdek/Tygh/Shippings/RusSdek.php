@@ -335,8 +335,8 @@ class RusSdek
                 if (
                     empty($office['weight_limit'])
                     || (
-                        $goods_parameter['weight'] < $office['weight_limit']['WeightMin']
-                        || $goods_parameter['weight'] > $office['weight_limit']['WeightMax']
+                        $goods_parameter['weight'] < $office['weight_limit']['WeightMin'] * 1000
+                        || $goods_parameter['weight'] > $office['weight_limit']['WeightMax'] * 1000
                     )
                 ) {
                     return false;

@@ -59,6 +59,7 @@
                 empty_variant_text=__("all_categories")
                 dropdown_css_class="object-picker__dropdown--categories"
                 object_picker_advanced_btn_class="cm-dialog-destroy-on-close"
+                no_container=true
             }
             </div>
         {else}
@@ -71,6 +72,7 @@
                 empty_variant_text=__("all_categories")
                 dropdown_css_class="object-picker__dropdown--categories"
                 object_picker_advanced_btn_class="cm-dialog-destroy-on-close"
+                no_container=true
             }
         {/if}
     </div>
@@ -108,8 +110,8 @@
     <div class="control-group">
 
         <a href="#" class="search-link cm-combination open cm-save-state link--monochrome" id="sw_filter">
-        <span id="on_filter" class="icon-caret-right cm-save-state {if $smarty.cookies.filter}hidden{/if}"> </span>
-        <span id="off_filter" class="icon-caret-down cm-save-state {if !$smarty.cookies.filter}hidden{/if}"></span>
+        <span id="on_filter" class="icon-caret-right cs-dark-theme-invert cm-save-state {if $smarty.cookies.filter}hidden{/if}"> </span>
+        <span id="off_filter" class="icon-caret-down cs-dark-theme-invert cm-save-state {if !$smarty.cookies.filter}hidden{/if}"></span>
         {__("search_by_product_filters")}</a>
 
         <div id="filter"{if !$smarty.cookies.filter} class="hidden"{/if}>
@@ -123,7 +125,7 @@
 <div class="group form-horizontal">
     <div class="control-group">
 
-        <a class="search-link cm-combination nowrap open cm-save-state link--monochrome" id="sw_feature"><span id="on_feature" class="cm-combination cm-save-state {if $smarty.cookies.feature}hidden{/if}"><span class="icon-caret-right"></span></span><span id="off_feature" class="cm-combination cm-save-state {if !$smarty.cookies.feature}hidden{/if}"><span class="icon-caret-down"></span></span>{__("search_by_product_features")}</a>
+        <a class="search-link cm-combination nowrap open cm-save-state link--monochrome" id="sw_feature"><span id="on_feature" class="cm-combination cm-save-state {if $smarty.cookies.feature}hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"></span></span><span id="off_feature" class="cm-combination cm-save-state {if !$smarty.cookies.feature}hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"></span></span>{__("search_by_product_features")}</a>
 
         <div id="feature"{if !$smarty.cookies.feature} class="hidden"{/if}>
             {include file="views/products/components/advanced_search_form.tpl" filter_features=$feature_items prefix="feature_" data_name="feature_variants"}

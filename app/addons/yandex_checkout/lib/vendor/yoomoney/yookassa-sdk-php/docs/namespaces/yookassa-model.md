@@ -74,6 +74,9 @@
 | [\YooKassa\Model\ReceiptType](../classes/YooKassa-Model-ReceiptType.md) | ReceiptType - Тип чека в онлайн-кассе. |
 | [\YooKassa\Model\Recipient](../classes/YooKassa-Model-Recipient.md) | Класс получателя платежа. |
 | [\YooKassa\Model\Refund](../classes/YooKassa-Model-Refund.md) | Класс объекта с информацией о возврате платежа |
+| [\YooKassa\Model\RefundCancellationDetails](../classes/YooKassa-Model-RefundCancellationDetails.md) | Класс, представляющий модель RefundCancellationDetails. |
+| [\YooKassa\Model\RefundCancellationDetailsPartyCode](../classes/YooKassa-Model-RefundCancellationDetailsPartyCode.md) | Класс, представляющий модель CancellationDetailsPartyCode. |
+| [\YooKassa\Model\RefundCancellationDetailsReasonCode](../classes/YooKassa-Model-RefundCancellationDetailsReasonCode.md) | Класс, представляющий модель RefundCancellationDetailsReasonCode. |
 | [\YooKassa\Model\RefundStatus](../classes/YooKassa-Model-RefundStatus.md) | RefundStatus - Состояние возврата платежа |
 | [\YooKassa\Model\Requestor](../classes/YooKassa-Model-Requestor.md) | Инициатор платежа или возврата. |
 | [\YooKassa\Model\SafeDeal](../classes/YooKassa-Model-SafeDeal.md) | Class SafeBaseDeal |
@@ -95,10 +98,10 @@
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

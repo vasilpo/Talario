@@ -115,7 +115,7 @@ class Dhl implements IService
                         if ($rate) {
                             $return[$code] = array(
                                 'rate' => $rate,
-                                'delivery_time' => $date,
+                                'delivery_time' => trim(preg_replace('/\s+/', ' ', $date)),
                                 'name' => $name
                             );
                         }

@@ -782,7 +782,19 @@ class App
                 $pre_script_file_path = $content_path . 'scripts/' . $schema['scripts']['pre'];
                 $logger->add(sprintf('Executing pre-upgrade script "%s"', $pre_script_file_path));
 
-                include_once $pre_script_file_path;
+                $pre_script_result = include_once $pre_script_file_path;
+
+                if (
+                    $pre_script_result === false
+                    || is_array($pre_script_result) && $pre_script_result[0] === false
+                ) {
+                    $pre_script_error_message = [__('upgrade_center.pre_script') => __('upgrade_center.pre_script_failed')];
+
+                    if (isset($pre_script_result[1])) {
+                        $pre_script_error_message = $pre_script_result[1];
+                    }
+                    return [false, $pre_script_error_message];
+                }
 
                 $logger->add('Pre-upgrade script executed successfully');
             }
