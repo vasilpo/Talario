@@ -77,7 +77,7 @@
             </tbody>
             <tbody id="{$data_id}_no_item"{if $item_ids} class="hidden"{/if}>
             <tr>
-                <td colspan="{if !$view_only}6{else}5{/if}" data-th="&nbsp;" class="table-responsive__td--hide-th-mobile"><p class="no-items">§12{$no_item_text|default:__("no_items") nofilter}</p></td>
+                <td colspan="{if !$view_only}6{else}5{/if}" data-th="&nbsp;" class="table-responsive__td--hide-th-mobile"><p class="no-items">{$no_item_text|default:__("no_items") nofilter}</p></td>
             </tr>
             </tbody>
         </table>

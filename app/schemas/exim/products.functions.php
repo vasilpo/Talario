@@ -116,11 +116,13 @@ function fn_exim_set_product_categories(
             return false;
         }
 
-        if (isset($processed_data['default_categories']['ids'][$company_id])) {
-            $default_category_id = $processed_data['default_categories']['ids'][$company_id];
+        $company_id_for_default_category = fn_allowed_for('ULTIMATE') ? $company_id : 0;
+
+        if (isset($processed_data['default_categories']['ids'][$company_id_for_default_category])) {
+            $default_category_id = $processed_data['default_categories']['ids'][$company_id_for_default_category];
         } else {
-            $default_category_id = fn_get_or_create_default_category_id($company_id);
-            $processed_data['default_categories']['ids'][$company_id] = $default_category_id;
+            $default_category_id = fn_get_or_create_default_category_id($company_id_for_default_category);
+            $processed_data['default_categories']['ids'][$company_id_for_default_category] = $default_category_id;
         }
 
         $default_category_id = (int) $default_category_id;

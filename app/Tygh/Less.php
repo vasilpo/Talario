@@ -267,7 +267,9 @@ class Less extends \lessc
         $result = '';
 
         switch ($value[0]) {
-            case 'keyword': case 'raw_color':
+            case 'keyword':
+            case 'raw_color':
+            case 'variable':
                 $result = $value[1];
 
                 break;
@@ -276,7 +278,8 @@ class Less extends \lessc
                 $delimiter = $value[1];
 
                 foreach ($value[2] as $iteration => $_val) {
-                    $result .= $this->parseVarValue($_val);
+                    $t = $this->parseVarValue($_val);
+                    $result .= $t;
 
                     if (++$iteration < count($value[2])) {
                         $result .= $delimiter;
@@ -308,6 +311,10 @@ class Less extends \lessc
                 break;
             case 'escape':
                 $result = '';
+                break;
+
+            case 'expression':
+                $result = $this->parseVarValue($value[2]) . ' ' . $value[1] . ' ' . $this->parseVarValue($value[3]);
                 break;
 
             default:

@@ -6352,33 +6352,6 @@ input.ty-shipping-options__checkbox {
     }
 }
 
-.ty-product-notify-email {
-    width: 100%;
-    max-width: 300px;
-
-    &__input[type="text"] {
-        padding-right: var(--height-button);
-    }
-    button[type='submit'] {
-        .ty-icon {
-            top: 0;
-            left: 0;
-            position: relative;
-        }
-    }
-
-    &.error {
-        .help-inline {
-            clear: both;
-            float: left;
-
-            p {
-                font-size: small;
-            }
-        }
-    }
-}
-
 .product-description {
     word-break: break-word;
 }
@@ -6912,6 +6885,74 @@ form[name="call_requests_form_main"] .cm-cr-mask-time {
     }
 }
 /* [[[ END ]]] gift certificate
+==============================================================================*/
+
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] subscribe/notify form in product card
+==============================================================================*/
+[id^=subscribe_form_wrapper] {
+    text-align: left;
+    background: fade(@in_stock, 10%);
+    border-radius: var(--border-radius);
+    padding: var(--gap-xs);
+    inline-size: 100%;
+
+    > .ty-control-group {
+        margin: initial;
+
+        &::before,
+        &::after {
+            content: initial;
+        }
+    }
+
+    > [id^=product_notify] {
+        body.user-is-guest & {
+            display: block !important;
+        }
+        body.user-is-authorized & {
+            display: none !important;
+        }
+    }
+
+    .ty-product-notify-email {
+        width: initial;
+        max-width: 300px;
+        margin-block: var(--gap-xs);
+
+        &::before,
+        &::after {
+            content: initial;
+        }
+
+        &.error {
+            .help-inline {
+                p {
+                    font-size: small;
+                }
+            }
+        }
+    }
+
+    .ty-input-text {
+        padding-right: var(--height-button);
+    }
+
+    .ty-btn-go {
+        .ty-icon {
+            top: 0;
+            left: 0;
+            position: relative;
+        }
+    }
+
+    .ty-gdpr-agreement {
+        margin-bottom: initial;
+    }
+}
+/* [[[ END ]]] subscribe/notify form in product card
 ==============================================================================*/
 
 

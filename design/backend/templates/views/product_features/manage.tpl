@@ -18,8 +18,9 @@
             <div class="items-container{if ""|fn_check_form_permissions} cm-hide-inputs{/if} longtap-selection" id="update_features_list">
                 {if $features}
                     <div class="table-responsive-wrapper">
-                        <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden">
+                        <table width="100%" class="table table-middle table--relative table-responsive">
                             <thead 
+                                class="thead--overflow-hidden"
                                 data-ca-bulkedit-default-object="true" 
                                 data-ca-bulkedit-component="defaultObject"
                             >

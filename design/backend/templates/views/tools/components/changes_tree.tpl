@@ -11,11 +11,11 @@
             <span style="padding-{$direction}: {$shift}px;">
                 {if $item.content}
                     {if $show_all}
-                        <span title="{__("expand_sublist_of_items")}" id="on_changes_{$item_id}" class="hand cm-combination {if $expand_all && $item.action != "added"}hidden{/if}"><span class="icon-caret-right"></span></span>
+                        <span title="{__("expand_sublist_of_items")}" id="on_changes_{$item_id}" class="hand cm-combination {if $expand_all && $item.action != "added"}hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"></span></span>
                     {else}
-                        <span title="{__("expand_sublist_of_items")}" id="on_changes_{$item_id}" class="hand cm-combination"><span class="icon-caret-right"></span></span>
+                        <span title="{__("expand_sublist_of_items")}" id="on_changes_{$item_id}" class="hand cm-combination"><span class="icon-caret-right cs-dark-theme-invert"></span></span>
                     {/if}
-                    <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_changes_{$item_id}" class="hand cm-combination{if !$expand_all || !$show_all || $item.action == "added"} hidden{/if}"><span class="icon-caret-down"></span></span>
+                    <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_changes_{$item_id}" class="hand cm-combination{if !$expand_all || !$show_all || $item.action == "added"} hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"></span></span>
                 {else}
                     &nbsp;
                 {/if}

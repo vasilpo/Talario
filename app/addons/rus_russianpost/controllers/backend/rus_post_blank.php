@@ -181,12 +181,10 @@ if ($mode === 'edit') {
             '107_list_height' => 205,
             '107_top' => 0,
             '107_left' => 0,
-            '116_list_width' => 293,
-            '116_list_height' => 205,
-            '116_top' => 0,
-            '116_left' => 0,
             '7p_top' => 0,
             '7p_left' => 0,
+            '7b_top' => 0,
+            '7b_left' => 0,
             '7a_top' => 0,
             '7a_left' => 0,
             '112_list_width' => 210,
@@ -258,15 +256,15 @@ function fn_rus_russian_post_print_blank(array $order_info, $format, array $para
     if ($format === 'blank_7a') {
         $pdf_params['page_width'] = '198mm';
         $pdf_params['page_height'] = '141mm';
+    } elseif ($format === 'blank_7b') {
+        $pdf_params['page_width'] = '293mm';
+        $pdf_params['page_height'] = '210mm';
     } elseif ($format === 'blank_7p') {
-        $pdf_params['page_width'] = '198mm';
-        $pdf_params['page_height'] = '141mm';
+        $pdf_params['page_width'] = '293mm';
+        $pdf_params['page_height'] = '210mm';
     } elseif ($format === 'blank_112ep') {
         $pdf_params['page_width'] = '210mm';
         $pdf_params['page_height'] = '293mm';
-    } elseif ($format === 'blank_116') {
-        $pdf_params['page_width'] = '297mm';
-        $pdf_params['page_height'] = '210mm';
     } elseif ($format === 'blank_107') {
         $pdf_params['page_width'] = '293mm';
         $pdf_params['page_height'] = '210mm';

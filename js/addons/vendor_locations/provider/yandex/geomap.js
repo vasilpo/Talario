@@ -161,7 +161,9 @@
           BalloonContentLayout.superclass.build.call(this);
           $('#ya-button-confirm').click(function (e) {
             e.preventDefault();
-            searchResults.removeAll();
+            if (typeof searchResults !== 'undefined') {
+              searchResults.removeAll();
+            }
             myCollection.removeAll();
             self._removeAllMarkers($container);
             myPlacemark = new ymaps.Placemark(coords, {}, {
@@ -244,7 +246,9 @@
           res.balloon.open();
         });
       }).add('submit', function () {
-        searchResults.removeAll();
+        if (typeof searchResults !== 'undefined') {
+          searchResults.removeAll();
+        }
       });
       return true;
     },

@@ -12,8 +12,9 @@
 {if $usergroups}
     {capture name="usergroups_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table class="table table-middle table--relative table-responsive table--overflow-hidden">
+            <table class="table table-middle table--relative table-responsive">
             <thead
+                class="thead--overflow-hidden"
                 data-ca-bulkedit-default-object="true"
                 data-ca-bulkedit-component="defaultObject"
             >

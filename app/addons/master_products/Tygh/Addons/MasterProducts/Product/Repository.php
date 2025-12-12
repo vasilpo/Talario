@@ -55,9 +55,9 @@ class Repository
     /**
      * Finds product by product identifier
      *
-     * @param int                            $product_id Product ID
-     * @param array<string>                  $extends    Additional fields
-     * @param array<string, string|int|bool> $params     Product search params
+     * @param int                                          $product_id Product ID
+     * @param array<string>                                $extends    Additional fields
+     * @param array<string, string|int|bool|array<string>> $params     Product search params
      *
      * @return array
      */
@@ -71,9 +71,9 @@ class Repository
     /**
      * Finds products by product identifiers
      *
-     * @param int[]                          $product_ids Product IDs
-     * @param array<string>                  $extends     Additional fields
-     * @param array<string, string|int|bool> $params      Product search params
+     * @param int[]                                        $product_ids Product IDs
+     * @param array<string>                                $extends     Additional fields
+     * @param array<string, string|int|bool|array<string>> $params      Product search params
      *
      * @return array Indexed by product_id
      */

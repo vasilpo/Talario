@@ -65,10 +65,8 @@
                     <div class="clearfix">
                         <div class="pull-right">
                     {/if}
-                        <div class="shift-button">
-                            <div class="clearfix">
-                                {include file="buttons/button.tpl" but_id="opener_picker_`$data_id`" but_href="categories.picker?display=`$display`&company_ids=`$company_ids`&picker_for=`$picker_for`&extra=`$extra_var`&checkbox_name=`$checkbox_name`&root=`$default_name`&except_id=`$except_id`&data_id=`$data_id`&is_tristate_checkbox=`$is_tristate_checkbox``$extra_url`"|fn_url but_text=$_but_text but_role=$_but_role but_icon=$_but_icon but_target_id="content_`$data_id`" but_meta="`$but_meta` btn cm-dialog-opener"}
-                            </div>
+                        <div class="clearfix {if !$no_container}buttons-container buttons-container--inline{/if}">
+                            {include file="buttons/button.tpl" but_id="opener_picker_`$data_id`" but_href="categories.picker?display=`$display`&company_ids=`$company_ids`&picker_for=`$picker_for`&extra=`$extra_var`&checkbox_name=`$checkbox_name`&root=`$default_name`&except_id=`$except_id`&data_id=`$data_id`&is_tristate_checkbox=`$is_tristate_checkbox``$extra_url`"|fn_url but_text=$_but_text but_role=$_but_role but_icon=$_but_icon but_target_id="content_`$data_id`" but_meta="`$but_meta` btn cm-dialog-opener"}
                         </div>
                     {if $placement == 'right'}
                     </div>

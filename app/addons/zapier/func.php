@@ -133,7 +133,7 @@ function fn_zapier_place_order_post(array $cart, array $auth, $action, $issuer_i
 {
     list($zapier_hooks,) = fn_zapier_get_hooks();
     foreach ($zapier_hooks as $hook) {
-        if ($hook['trigger_name'] !== 'new_order') {
+        if ($hook['trigger_name'] !== 'new_order' || !empty($cart['order_id'])) {
             continue;
         }
         $order_data = fn_get_order_info($order_id, false, false);

@@ -560,7 +560,8 @@ class ProductBundleService
                 $bundle_product_options = array_column($product_info['product_options'], 'value', 'option_id');
                 $missing_options = array_diff_assoc($bundle_product_options, $cart_product_options);
                 if (!empty($missing_options)) {
-                    continue;
+                    $bundle_complete = false;
+                    break;
                 }
                 $cart_products[$cart_id]['amount'] -= $product_info['amount'];
                 if (empty($cart_products[$cart_id]['amount'])) {

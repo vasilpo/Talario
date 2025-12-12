@@ -1,111 +1,99 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-{literal}
-<style media="screen,print">
+    <head>
+        {literal}
+            <style media="screen,print">
+                body,p,div,td {
+                    color: #000000;
+                    font: 12px Arial;
+                }
+                body {
+                    padding: 0;
+                    margin: 0;
+                }
+                a, a:link, a:visited, a:hover, a:active {
+                    color: #000000;
+                    text-decoration: underline;
+                }
+                a:hover {
+                    text-decoration: none;
+                }
+            </style>
+        {/literal}
+    </head>
 
-body,p,div,td {
-    color: #000000;
-    font: 12px Arial;
-}
-body {
-    padding: 0;
-    margin: 0;
-}
-a, a:link, a:visited, a:hover, a:active {
-    color: #000000;
-    text-decoration: underline;
-}
-a:hover {
-    text-decoration: none;
-}
-</style>
+    <body style="width: 509px; height: 720px;">
+        <div style="width: 509px; height: 720px; position: relative;" >
 
-{/literal}
-</head>
-
-<body style="width: 198mm; height: 141mm;">
-    <div style="top: {$addons.rus_russianpost.7p_top}mm; left: {$addons.rus_russianpost.7p_left}mm; width: 198mm; height: 141mm; position: relative;" >
-        {if $data.print_bg == 'Y'}
-            <img style="width: 198mm; height: 141mm;" src="{$images_dir}/addons/rus_russianpost/blank_7p.jpg" />
-        {/if}
-
-        {if $data.type_mailing == 'package'}
-            <span style="position: absolute; height: 5mm; width: 5mm; top: 13mm; left: 63mm; text-align: center; font: 12pt 'Arial';">&#xD7;</span>
-        {else}
-            <span style="position: absolute; height: 5mm; width: 5mm; top: 19mm; left: 63mm; text-align: center; font: 12pt 'Arial';">&#xD7;</span>
-        {/if}
-
-        {if !empty($data.not_total) && $data.not_total == 'Y'}
-            <span style="position: absolute; height: 5mm; width: 5mm; top: 13mm; left: 99mm; text-align: center; font: 9pt 'Arial';">&#xD7;</span>
-            <span style="position: absolute; height: 5mm; width: 85mm; top: 43mm; left: 100mm; text-align: center; font: 11pt 'Arial';">{$data.total_declared}</span>
-        {/if}
-
-        {if !empty($data.imposed_total) && $data.imposed_total == 'Y'}
-            <span style="position: absolute; height: 5mm; width: 5mm; top: 16mm; left: 99mm; text-align: center; font: 9pt 'Arial';">&#xD7;</span>
-            <span style="position: absolute; height: 5mm; width: 85mm; top: 55mm; left: 100mm; text-align: center; font: 11pt 'Arial';">{$data.total_imposed}</span>
-        {/if}
-
-        <span style="position: absolute; height: 5mm; width: 70mm; top: 50.5mm; left: 23mm; font: 11pt 'Arial';">{if $data.sender == '1'}{$data.whom} {$data.whom2}{else}{$data.fiz_fio} {$data.fiz_fio2}{/if}</span>
-        <span style="position: absolute; height: 15mm; width: 70mm; top: 66mm; left: 17mm; font: 11pt 'Arial'; line-height: 15pt;">{if $data.sender == '1'}{$data.where} {$data.where2}{else}{$data.fiz_address} {$data.fiz_address2}{/if}</span>
-        {if $data.sms_for_sender == 'Y'}
-            <div style="position: absolute; height: 4mm; width: 40mm; top: 83mm; left: 23mm; font: 11pt 'Arial'; margin:0;">
-                <span style="position: absolute; left: 0mm;">{$data.company_phone.0}</span>
-                <span style="position: absolute; left: 4mm;">{$data.company_phone.1}</span>
-                <span style="position: absolute; left: 8mm;">{$data.company_phone.2}</span>
-                <span style="position: absolute; left: 13mm;">{$data.company_phone.3}</span>
-                <span style="position: absolute; left: 17mm;">{$data.company_phone.4}</span>
-                <span style="position: absolute; left: 22mm;">{$data.company_phone.5}</span>
-                <span style="position: absolute; left: 26mm;">{$data.company_phone.6}</span>
-                <span style="position: absolute; left: 30mm;">{$data.company_phone.7}</span>
-                <span style="position: absolute; left: 34mm;">{$data.company_phone.8}</span>
-                <span style="position: absolute; left: 38mm;">{$data.company_phone.9}</span>
-            </div>
-            <span style="position: absolute; height: 5mm; width: 5mm; top: 86mm; left: 17.5mm; text-align: center; font: 9pt 'Arial';">&#xD7;</span>
-        {/if}
-        <span style="position: absolute; height: 4mm; width: 23mm; top: 83mm; left: 70mm; font: 11pt 'Arial'; letter-spacing: 7.6pt;">
-            {if $data.sender == '1'}
-                <span style="position: absolute; left: 0mm;">{$data.index.0}</span>
-                <span style="position: absolute; left: 4mm;">{$data.index.1}</span>
-                <span style="position: absolute; left: 8mm;">{$data.index.2}</span>
-                <span style="position: absolute; left: 12mm;">{$data.index.3}</span>
-                <span style="position: absolute; left: 16mm;">{$data.index.4}</span>
-                <span style="position: absolute; left: 20mm;">{$data.index.5}</span>
-            {else}
-                <span style="position: absolute; left: 0mm;">{$data.fiz_index.0}</span>
-                <span style="position: absolute; left: 4mm;">{$data.fiz_index.1}</span>
-                <span style="position: absolute; left: 8mm;">{$data.fiz_index.2}</span>
-                <span style="position: absolute; left: 12mm;">{$data.fiz_index.3}</span>
-                <span style="position: absolute; left: 16mm;">{$data.fiz_index.4}</span>
-                <span style="position: absolute; left: 20mm;">{$data.fiz_index.5}</span>
+            {if $data.print_bg == 'Y'}
+                <img style="width: 509px; height: 720px;" src="{$images_dir}/addons/rus_russianpost/blank_7p.jpg" />
             {/if}
-        </span>
 
-        <span style="position: absolute; height: 5mm; width: 80mm; top: 75.5mm; left: 105mm; font: 11pt 'Arial';">{$data.from_whom} {$data.from_whom2}</span>
-        <span style="position: absolute; height: 15mm; width: 80mm; top: 91mm; left: 100mm; font: 11pt 'Arial'; line-height: 14pt;">{$data.sender_address} {$data.sender_address2}</span>
-        {if $data.sms_for_recepient == 'Y'}
-            <div style="position: absolute; height: 4mm; width: 40mm; top: 108mm; left: 106mm; font: 11pt 'Arial'; margin:0;">
-                <span style="position: absolute; left: 0mm;">{$data.recipient_phone.0}</span>
-                <span style="position: absolute; left: 4mm;">{$data.recipient_phone.1}</span>
-                <span style="position: absolute; left: 8mm;">{$data.recipient_phone.2}</span>
-                <span style="position: absolute; left: 13mm;">{$data.recipient_phone.3}</span>
-                <span style="position: absolute; left: 17mm;">{$data.recipient_phone.4}</span>
-                <span style="position: absolute; left: 22mm;">{$data.recipient_phone.5}</span>
-                <span style="position: absolute; left: 26mm;">{$data.recipient_phone.6}</span>
-                <span style="position: absolute; left: 30mm;">{$data.recipient_phone.7}</span>
-                <span style="position: absolute; left: 34mm;">{$data.recipient_phone.8}</span>
-                <span style="position: absolute; left: 38mm;">{$data.recipient_phone.9}</span>
-            </div>
-            <span style="position: absolute; height: 5mm; width: 5mm; top: 111.5mm; left: 101mm; text-align: center; font: 9pt 'Arial';">&#xD7;</span>
-        {/if}
-        <span style="position: absolute; height: 4mm; width: 23mm; top: 108mm; left: 153.5mm; font: 11pt 'Arial'; letter-spacing: 7.6pt;">
-            <span style="position: absolute; left: 0mm;">{$data.from_index.0}</span>
-            <span style="position: absolute; left: 4mm;">{$data.from_index.1}</span>
-            <span style="position: absolute; left: 8mm;">{$data.from_index.2}</span>
-            <span style="position: absolute; left: 12mm;">{$data.from_index.3}</span>
-            <span style="position: absolute; left: 16mm;">{$data.from_index.4}</span>
-            <span style="position: absolute; left: 20mm;">{$data.from_index.5}</span>
-        </span>
-    </div>
-</body>
+            {if !empty($data.not_total) && $data.not_total == 'Y'}
+                <span style="position: absolute; height: 29px; width: 87px; top: 84px; left: 276px; text-align: center; font: 8pt 'Arial';">{$data.declared_rub} {$smarty.const.RUSSIANPOST_RUB} {$data.declared_kop} {$smarty.const.RUSSIANPOST_KOP}</span>
+            {/if}
+
+            {if !empty($data.imposed_total) && $data.imposed_total == 'Y'}
+                <span style="position: absolute; height: 29px; width: 87px; top: 84px; left: 384px; text-align: center; font: 8pt 'Arial';">{$data.imposed_rub} {$smarty.const.RUSSIANPOST_RUB} {$data.imposed_kop} {$smarty.const.RUSSIANPOST_KOP}</span>
+            {/if}
+
+            <span style="position: absolute; height: 24px; width: 371px; top: 273px; left: 127px; font: 13pt 'Arial';">{$data.whom}</span>
+            <span style="position: absolute; height: 24px; width: 476px; top: 301px; left: 23px; font: 13pt 'Arial';">{$data.whom2}</span>
+            <span style="position: absolute; height: 99px; width: 422px; top: 329px; left: 75px; font: 12pt 'Arial'; line-height: 20pt;">{$data.where} {$data.where2}</span>
+
+            {if $data.sms_for_sender == 'Y'}
+                <div style="position: absolute; height: 19px; width: 191px; top: 436px; left: 43px; font: 13pt 'Arial'; margin:0;">
+                    <span style="position: absolute; left: 3px;">{$data.company_phone.0}</span>
+                    <span style="position: absolute; left: 22px;">{$data.company_phone.1}</span>
+                    <span style="position: absolute; left: 41px;">{$data.company_phone.2}</span>
+                    <span style="position: absolute; left: 63px;">{$data.company_phone.3}</span>
+                    <span style="position: absolute; left: 81px;">{$data.company_phone.4}</span>
+                    <span style="position: absolute; left: 100px;">{$data.company_phone.5}</span>
+                    <span style="position: absolute; left: 118px;">{$data.company_phone.6}</span>
+                    <span style="position: absolute; left: 137px;">{$data.company_phone.7}</span>
+                    <span style="position: absolute; left: 156px;">{$data.company_phone.8}</span>
+                    <span style="position: absolute; left: 175px;">{$data.company_phone.9}</span>
+                </div>
+                <span style="position: absolute; height: 13px; width: 13px; top: 455px; left: 21px; text-align: center; font: 14pt 'Arial';">&#xD7;</span>
+            {/if}
+
+            <span style="position: absolute; height: 33px; width: 110px; top: 436px; left: 342px; font: 20pt 'Arial'; text-align: center; letter-spacing: 7.6pt;">
+                <span style="position: absolute; left: 3px;">{$data.index.0}</span>
+                <span style="position: absolute; left: 20px;">{$data.index.1}</span>
+                <span style="position: absolute; left: 37px;">{$data.index.2}</span>
+                <span style="position: absolute; left: 54px;">{$data.index.3}</span>
+                <span style="position: absolute; left: 71px;">{$data.index.4}</span>
+                <span style="position: absolute; left: 88px;">{$data.index.5}</span>
+            </span>
+
+            <span style="position: absolute; height: 24px; width: 371px; top: 509px; left: 112px; font: 13pt 'Arial';">{$data.from_whom}</span>
+            <span style="position: absolute; height: 24px; width: 476px; top: 535px; left: 23px; font: 13pt 'Arial';">{$data.from_whom2}</span>
+            <span style="position: absolute; height: 104px; width: 422px; top: 562px; left: 75px; font: 12pt 'Arial'; line-height: 19pt;">{$data.sender_address} {$data.sender_address2}</span>
+
+            {if $data.sms_for_recepient == 'Y'}
+                <div style="position: absolute; height: 19px; width: 191px; top: 676px; left: 43px; font: 13pt 'Arial'; margin:0;">
+                    <span style="position: absolute; left: 3px;">{$data.recipient_phone.0}</span>
+                    <span style="position: absolute; left: 22px;">{$data.recipient_phone.1}</span>
+                    <span style="position: absolute; left: 41px;">{$data.recipient_phone.2}</span>
+                    <span style="position: absolute; left: 63px;">{$data.recipient_phone.3}</span>
+                    <span style="position: absolute; left: 81px;">{$data.recipient_phone.4}</span>
+                    <span style="position: absolute; left: 100px;">{$data.recipient_phone.5}</span>
+                    <span style="position: absolute; left: 118px;">{$data.recipient_phone.6}</span>
+                    <span style="position: absolute; left: 137px;">{$data.recipient_phone.7}</span>
+                    <span style="position: absolute; left: 156px;">{$data.recipient_phone.8}</span>
+                    <span style="position: absolute; left: 175px;">{$data.recipient_phone.9}</span>
+                </div>
+                <span style="position: absolute; height: 13px; width: 13px; top: 695px; left: 22px; text-align: center; font: 14pt 'Arial';">&#xD7;</span>
+            {/if}
+
+            <span style="position: absolute; height: 33px; width: 110px; top: 676px; left: 349px; font: 20pt 'Arial'; text-align: center; letter-spacing: 7.6pt;">
+                <span style="position: absolute; left: 3px;">{$data.from_index.0}</span>
+                <span style="position: absolute; left: 20px;">{$data.from_index.1}</span>
+                <span style="position: absolute; left: 37px;">{$data.from_index.2}</span>
+                <span style="position: absolute; left: 54px;">{$data.from_index.3}</span>
+                <span style="position: absolute; left: 71px;">{$data.from_index.4}</span>
+                <span style="position: absolute; left: 88px;">{$data.from_index.5}</span>
+            </span>
+        </div>
+    </body>
 </html>

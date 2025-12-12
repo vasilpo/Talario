@@ -26,9 +26,11 @@
                 }
 
                 {if $smarty.const.CART_LANGUAGE !== 'en' && $transform_lang_code|in_array:$available_languages}
-		    $.getScript('js/lib/elfinder/js/i18n/elfinder.{$transform_lang_code}.js')
-			.then(null, function() { return $.getScript('js/lib/elfinder/js/i18n/elfinder.LANG.js'); })
-			.done(fn_init_elfinder);
+            $.getScript('js/lib/elfinder/js/i18n/elfinder.{$transform_lang_code}.js', function() {
+                fn_init_elfinder();
+            }).fail(function () {
+                fn_init_elfinder();
+            })
                 {else}
                     fn_init_elfinder();
                 {/if}

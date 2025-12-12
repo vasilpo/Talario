@@ -123,9 +123,9 @@
 
 {/capture}
 
-{include
-    file="common/mainbox.tpl"
-    title=($report_id) ? $report.description : __("new_report")
-    content=$smarty.capture.mainbox
-    buttons=$smarty.capture.buttons
+{include "common/mainbox.tpl"
+    title            = ($report_id) ? $report.description : __("new_report")
+    content          = $smarty.capture.mainbox
+    buttons          = $smarty.capture.buttons
+    select_languages = true
 }

@@ -1,6 +1,6 @@
 
 {foreach from=$items item="item"}
-    <div class="table-wrapper">
+    <div class="table-wrapper min-w-500px">
         <table class="table table-middle table--relative table-tree hidden-inputs">
         {if $items|count == 0}
             <thead>
@@ -22,7 +22,7 @@
                 data-ca-bulkedit-component="defaultObject"
             >
                 <tr>
-                    <th class="left" width="6%">
+                    <th class="left w-50px" width="6%">
                         {include file="common/check_items.tpl" check_statuses=$static_data_statuses}
 
                         <input type="checkbox"
@@ -35,10 +35,10 @@
                     <th width="65%">
                         <div class="pull-left">
                         <span class="hand cm-combinations cm-tooltip" title="{__("expand_collapse_list")}" id="on_item">
-                            <span class="icon-caret-right"></span>
+                            <span class="icon-caret-right cs-dark-theme-invert"></span>
                         </span>
                         <span class="hand cm-combinations hidden cm-tooltip" title="{__("expand_collapse_list")}" id="off_item">
-                            <span class="icon-caret-down"></span>
+                            <span class="icon-caret-down cs-dark-theme-invert"></span>
                         </span>
                         </div>
                         &nbsp;{__("name")}
@@ -53,7 +53,7 @@
             data-ca-longtap-target="input.cm-item"
             data-ca-id="{$id}"
         >
-            <td class="left" width="6%">
+            <td class="left min-w-50px" width="6%">
                 <input type="checkbox" name="static_data_ids[]" value="{$item.param_id}" class="cm-item hide cm-item-status-{$item.status|lower}">
             </td>
             <td width="10%">
@@ -63,15 +63,15 @@
             <span style="padding-{$direction}: {math equation="x*14" x=$item.level|default:0}px;" class="table-elem">
                 {if $item.subitems}
                     <span class="hand cm-combination cm-tooltip" id="on_item_{$item.param_id}" title="{__("expand_sublist_of_items")}">
-                        <span class="icon-caret-right"></span>
+                        <span class="icon-caret-right cs-dark-theme-invert"></span>
                     </span>
                     <span class="hand cm-combination hidden cm-tooltip" id="off_item_{$item.param_id}" title="{__("collapse_sublist_of_items")}">
-                        <span class="icon-caret-down"></span>
+                        <span class="icon-caret-down cs-dark-theme-invert"></span>
                     </span>
                 {else}
                     &nbsp;&nbsp;&nbsp;
                 {/if}
-                <a class="cm-external-click link--monochrome" data-ca-external-click-id="{"opener_group`$item.param_id`"}">{$item.descr}</a>
+                <a class="cm-external-click link--monochrome wrap-word" data-ca-external-click-id="{"opener_group`$item.param_id`"}">{$item.descr}</a>
             </span>
             </td>
             <td class="nowrap" width="10%">

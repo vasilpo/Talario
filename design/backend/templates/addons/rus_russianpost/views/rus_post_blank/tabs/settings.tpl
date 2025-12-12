@@ -32,21 +32,11 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="elm_type_mailing">{__("addons.rus_russianpost.type_mailing")}</label>
+        <label class="control-label" for="elm_type_mailing">{__("addons.rus_russianpost.type_mailing")} <small>({__("addons.rus_russianpost.blank_7p")}, {__("addons.rus_russianpost.blank_7b")})</small></label>
         <div class="controls">
             <select class="span3" name="blank_data[type_mailing]" id="elm_type_mailing">
-                <option value="parcel" >{__("addons.rus_russianpost.type_parcel")}</option>
                 <option value="package" >{__("addons.rus_russianpost.type_package")}</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label" for="blank_sender">{__("sender")} <small>({__("rus_post_blank.7p")}, {__("addons.rus_russianpost.blank_7a")})</small></label>
-        <div class="controls">
-            <select class="span3" name="blank_data[sender]" id="blank_sender">
-                <option value="1" >{__("company")}</option>
-                <option value="0" >{__("rus_post_blank.fiz")}</option>
+                <option value="parcel" >{__("addons.rus_russianpost.type_parcel")}</option>
             </select>
         </div>
     </div>
@@ -100,14 +90,14 @@
     <div class="control-group">
         <label class="control-label" for="blank_text">{__("rus_post_blank.text")} <small>({__("rus_post_blank.line_1")})</small></label>
         <div class="controls">
-            <input type="text" name="blank_data[text1]" id="blank_text" value="" size="40" maxlength="35" class="input-large" />
+            <input type="text" name="blank_data[text1]" id="blank_text" value="" size="40" maxlength="36" class="input-large" />
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="blank_text2">{__("rus_post_blank.text")} <small>({__("rus_post_blank.line_2")})</small></label>
         <div class="controls">
-            <input type="text" name="blank_data[text2]" id="blank_text2" value="" size="40" maxlength="35" class="input-large" />
+            <input type="text" name="blank_data[text2]" id="blank_text2" value="" size="40" maxlength="36" class="input-large" />
         </div>
     </div>
 </fieldset>

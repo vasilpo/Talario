@@ -3493,7 +3493,7 @@ class lessc_parser
     // consume a keyword
     protected function keyword(&$word)
     {
-        if ($this->match('([\w_\-\*!"][\w\-_"]*)', $m)) {
+        if ($this->match('([\w_\-\*!+""][\w\-_+"]*)', $m)) {
             $word = $m[1];
 
             return true;

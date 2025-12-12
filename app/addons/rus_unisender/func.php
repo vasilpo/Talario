@@ -19,16 +19,6 @@ use Tygh\Enum\YesNo;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-function fn_rus_unisender_update_profile($action, $user_data, $current_user_data)
-{
-    if ($action == 'add') {
-        if (fn_allowed_for('MULTIVENDOR') || (fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id'))) {
-            $arr_id = array($user_data['user_id']);
-            fn_add_users_to_unisender($arr_id, false);
-        }
-    }
-}
-
 function fn_settings_variants_addons_rus_unisender_list_name()
 {
     return fn_unisender_get_lists();

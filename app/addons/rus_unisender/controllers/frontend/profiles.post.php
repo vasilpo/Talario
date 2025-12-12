@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             if (empty($subscriber_id)) {
                 $subscriber_id = fn_unisender_add_subscriber($email);
             }
-            fn_unisender_subscribe($_REQUEST['user_data'], reset($_REQUEST['unisender_lists']), true);
 
+            fn_unisender_subscribe($_REQUEST['user_data'], reset($_REQUEST['unisender_lists']), true);
         } else {
             if (!empty($subscriber_id)) {
                 fn_unisender_unsubscribe($subscriber_id);

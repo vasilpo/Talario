@@ -18,11 +18,11 @@
 | [\YooKassa\Model\PaymentData\PaymentDataB2bSberbank](../classes/YooKassa-Model-PaymentData-PaymentDataB2bSberbank.md) | PaymentDataB2BSberbank Платежные данные для проведения оплаты при помощи Сбербанк Бизнес Онлайн. |
 | [\YooKassa\Model\PaymentData\PaymentDataBankCard](../classes/YooKassa-Model-PaymentData-PaymentDataBankCard.md) | PaymentDataBankCard Платежные данные для проведения оплаты при помощи банковской карты |
 | [\YooKassa\Model\PaymentData\PaymentDataBankCardCard](../classes/YooKassa-Model-PaymentData-PaymentDataBankCardCard.md) | Данные банковской карты Необходим при оплате PCI-DSS данными. |
-| [\YooKassa\Model\PaymentData\PaymentDataCash](../classes/YooKassa-Model-PaymentData-PaymentDataCash.md) | PaymentDataCash Платежные данные для проведения оплаты Qiwi. |
+| [\YooKassa\Model\PaymentData\PaymentDataCash](../classes/YooKassa-Model-PaymentData-PaymentDataCash.md) | PaymentDataCash Платежные данные для проведения оплаты наличными. |
 | [\YooKassa\Model\PaymentData\PaymentDataFactory](../classes/YooKassa-Model-PaymentData-PaymentDataFactory.md) | Фабрика создания объекта платежных данных из массива |
 | [\YooKassa\Model\PaymentData\PaymentDataGooglePay](../classes/YooKassa-Model-PaymentData-PaymentDataGooglePay.md) | PaymentDataGooglePay Платежные данные для проведения оплаты при помощи Google Pay. |
 | [\YooKassa\Model\PaymentData\PaymentDataInstallments](../classes/YooKassa-Model-PaymentData-PaymentDataInstallments.md) | Данные для проведения оплаты по частям |
-| [\YooKassa\Model\PaymentData\PaymentDataMobileBalance](../classes/YooKassa-Model-PaymentData-PaymentDataMobileBalance.md) | PaymentDataMobileBalance Платежные данные для проведения оплаты Qiwi. |
+| [\YooKassa\Model\PaymentData\PaymentDataMobileBalance](../classes/YooKassa-Model-PaymentData-PaymentDataMobileBalance.md) | PaymentDataMobileBalance Платежные данные для проведения оплаты балансом телефона. |
 | [\YooKassa\Model\PaymentData\PaymentDataQiwi](../classes/YooKassa-Model-PaymentData-PaymentDataQiwi.md) | PaymentDataQiwi Платежные данные для проведения оплаты Qiwi. |
 | [\YooKassa\Model\PaymentData\PaymentDataSberbank](../classes/YooKassa-Model-PaymentData-PaymentDataSberbank.md) | PaymentDataSberbank Платежные данные для проведения оплаты при помощи Сбербанк Онлайн. |
 | [\YooKassa\Model\PaymentData\PaymentDataSberLoan](../classes/YooKassa-Model-PaymentData-PaymentDataSberLoan.md) | Данные используемые для создания метода оплаты. |
@@ -43,10 +43,10 @@
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

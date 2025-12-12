@@ -31,7 +31,9 @@
 
     {if $placement == 'right'}
         <div class="clearfix">
-            <div class="pull-right">
+            <div class="pull-right {if !$no_container}buttons-container{/if}">
+    {elseif !$no_container}
+        <div class="buttons-container buttons-container--inline">
     {/if}
 
     {if $show_but_text}
@@ -44,6 +46,8 @@
     
     {if $placement == 'right'}
         </div></div>
+    {elseif !$no_container}
+        </div>
     {/if}
 
 {/if}

@@ -14,6 +14,7 @@
  ****************************************************************************/
 
 use Tygh\Addons\ProductVariations\Form\GenerateVariationsForm;
+use Tygh\Addons\ProductVariations\Product\Group\Group;
 use Tygh\Addons\ProductVariations\Product\Group\GroupFeatureCollection;
 use Tygh\Addons\ProductVariations\Request\GenerateProductsAndAttachToGroupRequest;
 use Tygh\Addons\ProductVariations\Request\GenerateProductsAndCreateGroupRequest;
@@ -269,22 +270,12 @@ if ($mode === 'manage') {
     $group_repository = ServiceProvider::getGroupRepository();
     $product_repository = ServiceProvider::getProductRepository();
 
-    $group = $group_repository->findGroupByProductId($product_id);
+    $group_info = $group_repository->findGroupInfoByProductId($product_id);
 
-    if ($group) {
-        $parent_to_child_map = [];
-
-        foreach ($group->getProducts() as $group_product) {
-            if (!$group_product->getParentProductId()) {
-                continue;
-            }
-
-            $parent_to_child_map[$group_product->getParentProductId()] = $group_product->getProductId();
-        }
-
+    if ($group_info) {
         $params = array_merge($_REQUEST, [
-            'sort_by' => 'null',
-            'pid'     => $group->getProductIds(),
+            'sort_by'            => 'null',
+            'variation_group_id' => $group_info['id']
         ]);
 
         // FIXME its need to master products
@@ -293,7 +284,7 @@ if ($mode === 'manage') {
             Registry::set('runtime.company_id', 0);
         }
 
-        list($products, $search) = fn_get_products($params, 0, DESCR_SL);
+        list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.admin_elements_per_page'), DESCR_SL);
         fn_gather_additional_products_data($products, [
             'get_icon'            => true,
             'get_detailed'        => true,
@@ -308,15 +299,24 @@ if ($mode === 'manage') {
             Registry::set('runtime.company_id', $runtime_company_id);
         }
 
-        $selected_features = $product_repository->findFeaturesByFeatureCollection($group->getFeatures());
-        $selected_features = $product_repository->loadFeaturesVariants($selected_features);
+        $group_feature_collection = $group_repository->findGroupFeatureCollectionByGroupId($group_info['id']);
+        $selected_features = $product_repository->loadFeaturesVariants($group_feature_collection->toArray(true));
+        $parent_to_child_map = [];
+
+        foreach ($products as $product) {
+            if (!$product['parent_product_id']) {
+                continue;
+            }
+
+            $parent_to_child_map[$product['parent_product_id']] = $product['product_id'];
+        }
 
         foreach ($products as &$product) {
             $product['has_children'] = isset($parent_to_child_map[$product['product_id']]);
         }
         unset($product);
 
-        $products = $product_repository->loadProductsFeatures($products, $group->getFeatures());
+        $products = $product_repository->loadProductsFeatures($products, $group_feature_collection);
 
         $products = Collection::make($products)->sortBy(function ($item) {
             $key_1 = [];
@@ -348,6 +348,8 @@ if ($mode === 'manage') {
                 $products[$_product_id]['shared_product'] = fn_ult_is_shared_product($_product_id);
             }
         }
+
+        $group = Group::createFromArray($group_info);
 
         $view->assign([
             'product_id'        => $product_id,

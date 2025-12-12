@@ -9,6 +9,7 @@
 
 .ty-input-append--phone-mask .ty-input-phone {
     padding-right: 8px;
+    .rounded_corners(4px 0px 0px 4px);
 }
 
 .ty-btn-group--phone-mask {
@@ -23,7 +24,9 @@
  */
  .ty-select-block__a--phone-mask {
     box-sizing: border-box;
+    height: 32px;
     border-color: darken(@base, 15%);
+    .rounded_corners(0px 4px 4px 0px);
 }
 
 .ty-select-block__a--phone-mask .ty-select-block__arrow {
@@ -42,10 +45,26 @@
 .ty-input-append--phone-mask .ty-select-block__list {
     --list-items: 7;
     --base-line-height: round(@body_font_size * 1.3571428571);
+    --ty-phone-mask-width: ~"calc(100vw - 20px - 2 * 1px)"; // Page width - Left page padding - 2 * Border width
+
     overflow-x: hidden;
     overflow-y: auto;
     max-height: ~"calc((18px + var(--base-line-height)) * (var(--list-items) + 0.5))";
+    max-width: var(--ty-phone-mask-width);
 }
+
+@media (min-width: 768px) {
+    .ty-input-append--phone-mask .ty-select-block__list {
+        --ty-phone-mask-width: ~"calc((100vw - 2 * 20px - 20px - 2 * 1px) / 2)"; // (Page width - Page padding - Page gutter - 2 * Border width) / Columns
+    }
+}
+
+@media (min-width: 1200px) {
+    .ty-input-append--phone-mask .ty-select-block__list {
+        --ty-phone-mask-width: none;
+    }
+}
+
 
 /* ==========================================================================
 Form builder

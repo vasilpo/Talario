@@ -998,7 +998,7 @@ body:not([class]) .ut2-pb .ty-no-image {
             flex-wrap: wrap;
             gap: var(--gap-xs) var(--gap-sm);
 
-            > div {
+            > div:not([id^=subscribe_form_wrapper]) {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
@@ -1007,28 +1007,6 @@ body:not([class]) .ut2-pb .ty-no-image {
 
                 > *:not(a) {
                     flex: 1 0 auto;
-                }
-
-                &#subscribe_form_wrapper {
-                    display: block;
-                    text-align: left;
-                    margin: 0;
-                    padding: var(--gap-xs);
-                    background: fade(@in_stock, 10%);
-                    border-radius: var(--border-radius);
-
-                    .ty-control-group {
-                        margin-top: var(--gap-xxs);
-                        margin-bottom: var(--gap-xxs);
-                    }
-                    .ty-product-notify-email {
-                        margin: var(--gap-xs) 0;
-                    }
-                    .ty-gdpr-agreement.object-container {
-                        padding: unset;
-                        background: unset;
-                        overflow: unset;
-                    }
                 }
             }
         }

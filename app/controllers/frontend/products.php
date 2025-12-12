@@ -252,6 +252,7 @@ if ($mode == 'search') {
     exit;
 } elseif ($mode === 'subscription_form') {
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
+    $_REQUEST['obj_id'] = empty($_REQUEST['obj_id']) ? 0 : $_REQUEST['obj_id'];
 
     $product_notification_email = (isset(Tygh::$app['session']['product_notifications']) ? Tygh::$app['session']['product_notifications']['email'] : '');
     $product_notification_enabled = fn_check_product_notification_setting(
@@ -261,6 +262,8 @@ if ($mode == 'search') {
     );
 
     Tygh::$app['view']->assign('product_id', $_REQUEST['product_id']);
+    Tygh::$app['view']->assign('obj_id', $_REQUEST['obj_id']);
+    Tygh::$app['view']->assign('obj_prefix', $_REQUEST['obj_prefix']);
     Tygh::$app['view']->assign('product_notification_enabled', $product_notification_enabled);
     Tygh::$app['view']->assign('product_notification_email', $product_notification_email);
 }

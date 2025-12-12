@@ -58,20 +58,17 @@
     {$sticky_top_on_actions_panel = 45}
 {/if}
 
-{$title_heading_class = ""}
-{$title_lg_length = 25} {* One line text length on mobile *}
-{$title_xl_length = 50} {* Two line text length on mobile *}
-{$title_xxl_length = 127} {* Maximum length of product name / 2 *}
+{$content_heading_title_class = ""}
+{$content_heading_title_lg_length = 45} {* Two lines text on mobile 375px *}
+{$content_heading_title_xl_length = 90} {* One line text on desktop 1280px *}
 {$title_text = (isset($title_start) && isset($title_end))
     ? ("`$title_start` `$title_end`"|default:"&nbsp;"|strip_tags|strip|sanitize_html)
     : $title|default:"&nbsp;"|strip_tags|strip|sanitize_html
 }
-{if $title_text|count_characters:true > $title_xxl_length}
-    {$title_heading_class = "title__heading--xxl"}
-{elseif $title_text|count_characters:true > $title_xl_length}
-    {$title_heading_class = "title__heading--xl"}
-{elseif $title_text|count_characters:true > $title_lg_length}
-    {$title_heading_class = "title__heading--lg"}
+{if $title_text|count_characters:true > $content_heading_title_xl_length}
+    {$content_heading_title_class = "admin-content-heading__title--xl"}
+{elseif $title_text|count_characters:true > $content_heading_title_lg_length}
+    {$content_heading_title_class = "admin-content-heading__title--lg"}
 {/if}
 
 {$scroll_header = $config.scroll_header|default:false}
@@ -114,9 +111,9 @@ var menu_content = {$convertible_data|default:"''"|unescape nofilter};
                     {include file="common/last_viewed_items.tpl"}
                 </div>
             {/if}
-            <div class="title nav__actions-title {if $select_storefront}title--storefronts{/if}">
+            <div class="title nav__actions-title {if $select_storefront}title--storefronts{/if} visibility-hidden" data-ca-mainbox="navActionsTitle">
                 {if isset($title_start) && isset($title_end)}
-                    <h2 class="title__heading {$title_heading_class}
+                    <h2 class="title__heading 
                         {if $select_storefront}title__heading--storefronts{/if}">
                         <span class="title__part-start mobile-hidden">{$title_start|default:"&nbsp;"|sanitize_html nofilter}{strip}
                         {/strip}{if $title_end|strip_tags|strip|sanitize_html !== ""}:{/if}
@@ -124,9 +121,7 @@ var menu_content = {$convertible_data|default:"''"|unescape nofilter};
                         <span class="title__part-end">{$title_end|default:"&nbsp;"|sanitize_html nofilter}</span>
                     </h2>
                 {else}
-                    <h2 class="title__heading {$title_heading_class}
-                        {if $select_storefront}title__heading--storefronts{/if}"
-                    >
+                    <h2 class="title__heading {if $select_storefront}title__heading--storefronts{/if}">
                         {$title|default:"&nbsp;"|sanitize_html nofilter}
                     </h2>
                 {/if}
@@ -165,6 +160,21 @@ var menu_content = {$convertible_data|default:"''"|unescape nofilter};
     <!--actions_panel--></div>
 {/hook}
 
+<div class="admin-content-wrapper-outer">
+    <div class="admin-content-heading" data-ca-mainbox="contentHeading">
+        {if isset($title_start) && isset($title_end)}
+            <div class="admin-content-heading__title {$content_heading_title_class}" data-ca-mainbox="contentHeadingTitle">
+                <span class="title__part-start mobile-hidden">{$title_start|default:"&nbsp;"|sanitize_html nofilter}{strip}
+                {/strip}{if $title_end|strip_tags|strip|sanitize_html !== ""}:{/if}
+                    </span>
+                <span class="title__part-end">{$title_end|default:"&nbsp;"|sanitize_html nofilter}</span>
+            </div>
+        {else}
+            <div class="admin-content-heading__title {$content_heading_title_class}" data-ca-mainbox="contentHeadingTitle">
+                {$title|default:"&nbsp;"|sanitize_html nofilter}
+            </div>
+        {/if}
+    </div>
 <div class="admin-content-wrapper {$mainbox_content_wrapper_class|default:""}">
 
 <!-- Sidebar left -->
@@ -333,6 +343,7 @@ var menu_content = {$convertible_data|default:"''"|unescape nofilter};
 <!--elm_sidebar--></div>
 {/hook}
 {/if}
+</div>
 
 </div>
 

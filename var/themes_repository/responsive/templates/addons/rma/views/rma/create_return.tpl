@@ -6,7 +6,7 @@
     {if $actions}
         <div class="ty-rma-register__actions">
             <strong>{__("what_you_would_like_to_do")}:</strong>
-            <select class="ty-rma-register__action-select" name="action">
+            <select class="ty-rma-register__action-select" name="return_action">
                 {foreach $actions as $action_id => $action}
                     <option value="{$action_id}">{$action.property}</option>
                 {/foreach}

@@ -71,9 +71,54 @@ if (defined('PAYMENT_NOTIFICATION')) {
      * @var array<string, int|float|string> $processor_data Payment method data
      *
      * @psalm-var array{
-     *   order_id: int,
-     *   payment_id: int
-     * } $order_info
+     *     total: float,
+     *     subtotal: float,
+     *     tax_subtotal: float,
+     *     order_id: int,
+     *     company_id: int,
+     *     shipping_cost: float,
+     *     use_gift_certificates?: bool,
+     *     subtotal_discount: float,
+     *     payment_id: int,
+     *     points_info?: array{
+     *       in_use: int,
+     *     },
+     *     products: array{
+     *       array{
+     *         subtotal: float,
+     *         amount: int,
+     *         product_code: string,
+     *         product: string,
+     *       },
+     *     },
+     *     gift_certificates?: array{
+     *       array{
+     *         extra: array{
+     *           exclude_from_calculate: bool,
+     *         },
+     *         amount: float,
+     *         gift_cert_code: string,
+     *       },
+     *     },
+     *     payment_surcharge?: float,
+     *     s_firstname: string,
+     *     b_firstname: string,
+     *     firstname: string,
+     *     s_lastname: string,
+     *     b_lastname: string,
+     *     lastname: string,
+     *     s_address: string,
+     *     s_country: string,
+     *     s_address_2?: string,
+     *     s_city?: string,
+     *     s_zipcode?: string,
+     *     s_state?: string,
+     *     shipping: array{
+     *       array{
+     *         shipping: string,
+     *       },
+     *     },
+     *   } $order_info
      *
      * @psalm-var array{
      *   processor_params: array{

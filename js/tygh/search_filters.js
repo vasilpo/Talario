@@ -5,7 +5,7 @@
   ajaxPromise.resolve();
 
   // Update search results as you select filters by ajax
-  $(_.doc).on('change input', 'input:not([data-ca-search-filters-update="ignore"]), textarea, select', updateSearchResultsByAjax);
+  $(_.doc).on('change input', '[data-ca-search-filters="form"] input:not([data-ca-search-filters-update="ignore"]), [data-ca-search-filters="form"] textarea, [data-ca-search-filters="form"] select, [data-ca-search-filters="contextSearch"] input', updateSearchResultsByAjax);
 
   // Add a filter button when it is selected in the menu
   $(_.doc).on('change', '[data-ca-search-filters-add-filter-id]', function () {
@@ -147,9 +147,9 @@
       dispatch = submitName;
     }
     if (searchFiltersData.result_ids) {
-      resultIds = "".concat(resultIds, ",").concat(searchFiltersData.result_ids);
+      resultIds = searchFiltersData.result_ids;
     } else if ($searchFilters.data('caTargetId')) {
-      resultIds = "".concat(resultIds, ",").concat($searchFilters.data('caTargetId'));
+      resultIds = $searchFilters.data('caTargetId');
     }
     return {
       data: searchFiltersData,

@@ -23,8 +23,9 @@
 
     {if $product_reviews}
         {capture name="product_reviews_table"}
-            <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden longtap-selection">
+            <table width="100%" class="table table-middle table--relative table-responsive longtap-selection">
                 <thead
+                        class="thead--overflow-hidden"
                         data-ca-bulkedit-default-object="true"
                         data-ca-bulkedit-component="defaultObject"
                 >

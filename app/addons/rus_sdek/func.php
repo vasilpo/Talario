@@ -479,6 +479,10 @@ function fn_sdek_normalize_tax_type($tax_type)
 {
     $map = [
         TaxType::NONE    => 'vatx',
+        TaxType::VAT_5   => 'vat05',
+        TaxType::VAT_7   => 'vat07',
+        TaxType::VAT_105 => 'vat05',
+        TaxType::VAT_107 => 'vat07',
         TaxType::VAT_110 => 'vat10',
         TaxType::VAT_118 => 'vat18',
         TaxType::VAT_120 => 'vat20',
@@ -502,6 +506,12 @@ function fn_sdek_calculate_tax_sum($tax_type, $price)
     $tax_type = strtolower($tax_type);
 
     switch ($tax_type) {
+        case 'vat05':
+            $result = $price * 5 / 105;
+            break;
+        case 'vat07':
+            $result = $price * 7 / 107;
+            break;
         case TaxType::VAT_10:
             $result = $price * 10 / 110;
             break;

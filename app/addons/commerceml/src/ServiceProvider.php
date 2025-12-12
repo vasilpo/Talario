@@ -714,7 +714,7 @@ class ServiceProvider implements ServiceProviderInterface
     /**
      * Gets file limit for uploading
      *
-     * @return int
+     * @return int|float|string
      */
     public static function getUploadFileLimit()
     {

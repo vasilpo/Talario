@@ -9,8 +9,8 @@ msgid "E-mail marketing"
 msgstr "E-mail marketing"
 
 msgctxt "Addons::description::email_marketing"
-msgid "Synchronizes your newsletter subscriber lists with MailChimp and Mad Mimi"
-msgstr "Synchronizes your newsletter subscriber lists with MailChimp and Mad Mimi"
+msgid "Synchronizes your newsletter subscriber lists with MailChimp"
+msgstr "Synchronizes your newsletter subscriber lists with MailChimp"
 
 msgctxt "Languages::email_marketing.subscription_confirmed"
 msgid "Thank you for subscribing to our newsletter"
@@ -120,10 +120,6 @@ msgctxt "SettingsSections::email_marketing::mailchimp"
 msgid "MailChimp"
 msgstr "MailChimp"
 
-msgctxt "SettingsSections::email_marketing::madmimi"
-msgid "MadMimi"
-msgstr "MadMimi"
-
 msgctxt "SettingsOptions::email_marketing::em_show_on_checkout"
 msgid "Newsletter checkbox on checkout"
 msgstr "Newsletter checkbox on checkout"
@@ -152,18 +148,6 @@ msgctxt "SettingsOptions::email_marketing::em_mailchimp_list"
 msgid "List"
 msgstr "List"
 
-msgctxt "SettingsOptions::email_marketing::em_madmimi_username"
-msgid "E-mail"
-msgstr "E-mail"
-
-msgctxt "SettingsOptions::email_marketing::em_madmimi_api_key"
-msgid "API key"
-msgstr "API key"
-
-msgctxt "SettingsOptions::email_marketing::em_madmimi_list"
-msgid "List"
-msgstr "List"
-
 msgctxt "SettingsVariants::email_marketing::em_service::dummy"
 msgid "--"
 msgstr "--"
@@ -171,10 +155,6 @@ msgstr "--"
 msgctxt "SettingsVariants::email_marketing::em_service::mailchimp"
 msgid "MailChimp"
 msgstr "MailChimp"
-
-msgctxt "SettingsVariants::email_marketing::em_service::madmimi"
-msgid "MadMimi"
-msgstr "MadMimi"
 
 msgctxt "Languages::email_template.email_marketing_confirmation"
 msgid "Email marketing: subscription confirmation"

@@ -280,7 +280,8 @@ function fn_dispatch($controller = '', $mode = '', $action = '', $dispatch_extra
     $upload_max_filesize = Bootstrap::getIniParam('upload_max_filesize', true);
     $post_max_size = Bootstrap::getIniParam('post_max_size', true);
 
-    if (!defined('AJAX_REQUEST') &&
+    if (
+        !defined('AJAX_REQUEST') &&
         isset($_SERVER['CONTENT_LENGTH']) && (
             (!empty($upload_max_filesize) && $_SERVER['CONTENT_LENGTH'] > fn_return_bytes($upload_max_filesize)) ||
             (!empty($post_max_size) && $_SERVER['CONTENT_LENGTH'] > fn_return_bytes($post_max_size))

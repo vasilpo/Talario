@@ -6880,6 +6880,10 @@ msgctxt "Languages::orders_not_allow_to_change_company"
 msgid "Company has not been changed. It is not allowed to change the company when editing an order."
 msgstr "Company has not been changed. It is not allowed to change the company when editing an order."
 
+msgctxt "Languages::orders_not_allow_to_change_storefront"
+msgid "Changing the storefront will result in the current order data being lost. Click <a href=[link]>Continue</a> if you still want to switch the storefront."
+msgstr "Changing the storefront will result in the current order data being lost. Click <a href=[link]>Continue</a> if you still want to switch the storefront."
+
 msgctxt "Languages::orders_no_items"
 msgid "Use the \"Add products\" button above to add products to order."
 msgstr "Use the \"Add products\" button above to add products to order."
@@ -14836,6 +14840,10 @@ msgctxt "SettingsOptions::mailer_smtp_host"
 msgid "SMTP host"
 msgstr "SMTP host"
 
+msgctxt "SettingsTooltips::mailer_smtp_host"
+msgid "You can specify the port after the domain like this: <i>example.com:465</i>"
+msgstr "You can specify the port after the domain like this: <i>example.com:465</i>"
+
 msgctxt "SettingsOptions::string_length"
 msgid "String length"
 msgstr "String length"
@@ -16980,6 +16988,14 @@ msgstr "I agree and continue"
 msgctxt "Languages::upgrade_center.error_unable_to_prepare_restore"
 msgid "Unable to prepare restore script."
 msgstr "Unable to prepare restore script."
+
+msgctxt "Languages::upgrade_center.pre_script"
+msgid "Pre-upgrade script"
+msgstr "Pre-upgrade script"
+
+msgctxt "Languages::upgrade_center.pre_script_failed"
+msgid "Pre-upgrade script execution failed."
+msgstr "Pre-upgrade script execution failed."
 
 msgctxt "Languages::text_cc_javascript_disabled"
 msgid "Note! Your browser has the <b>JavaScript</b> disabled. To pay for your order click"

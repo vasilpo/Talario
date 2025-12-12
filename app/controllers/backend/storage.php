@@ -107,6 +107,7 @@ if ($mode == 'manage') {
 } elseif ($mode == 'clear_cache') {
 
     fn_clear_cache();
+    fn_clear_template_cache();
     fn_set_notification('N', __('notice'), __('cache_cleared'));
 
     if (empty($_REQUEST['redirect_url'])) {

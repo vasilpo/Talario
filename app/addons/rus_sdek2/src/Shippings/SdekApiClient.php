@@ -397,32 +397,14 @@ class SdekApiClient
             }
 
             if ($result->isOk()) {
-                $pvzlist = $this->cdek->formatResponseList($result, PickupPointList::class);
+                $offices = json_decode($result->getBody(), true);
 
                 $delivery_points = [];
-                foreach ($pvzlist->items as $pvz) {
-                    $delivery_points[$pvz->code] = (array) $pvz;
-                    $delivery_points[$pvz->code]['location'] = (array) $pvz->location;
-                    if (!empty($pvz->office_image_list)) {
-                        foreach ($pvz->office_image_list as $office_image) {
-                            $delivery_points[$pvz->code]['office_image_list'] = (array) $office_image;
-                        }
-                    }
-                    if (!empty($pvz->work_time_list)) {
-                        foreach ($pvz->work_time_list as $work_time) {
-                            $delivery_points[$pvz->code]['work_time_list'] = (array) $work_time;
-                        }
-                    }
-                    if (!empty($pvz->work_time_exceptions)) {
-                        foreach ($pvz->work_time_exceptions as $work_time_exception) {
-                            $delivery_points[$pvz->code]['work_time_exceptions'] = (array) $work_time_exception;
-                        }
-                    }
-                    if (empty($pvz->phones)) {
-                        continue;
-                    }
-                    foreach ($pvz->phones as $phone) {
-                        $delivery_points[$pvz->code]['phones'] = (array) $phone;
+                foreach ($offices as $office) {
+                    $delivery_points[$office['code']] = $office;
+
+                    if (!empty($office['dimensions'])) {
+                        $delivery_points[$office['code']]['dimensions'] = $office['dimensions'][0];
                     }
                 }
 

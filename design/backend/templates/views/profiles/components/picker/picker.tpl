@@ -25,6 +25,7 @@
 {$ids="ids[]="|implode:$item_ids}
 {$url = $url|default:"profiles.get_manager_list?company_id=`$company_id`&ids[]=`$ids`"}
 {$dropdown_css_class=$dropdown_css_class|default:"select2-dropdown-profiles"}
+{$no_container = $no_container|default:true}
 
 {if $multiple && $show_advanced}
     {$empty_variant_text = $empty_variant_text|default:__("type_to_search_or_click_button")}
@@ -53,7 +54,7 @@
                     picker_id="object_picker_advanced_{$picker_id}"
                     extra_var=$extra_var|default:""
                     shared_force=$users_shared_force
-                    no_container=$no_container|default:false 
+                    no_container=$no_container
                 }
             </div>
         {/if}

@@ -26,7 +26,14 @@
     }
 }
 
-// 3. Admin content wrapper
+// 3. Admin content wrapper outer
+.admin-content-wrapper-outer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+// 4. Admin content wrapper
 .admin-content-wrapper {
     --cs-admin-content-wrapper-padding: 0px;
 
@@ -44,14 +51,14 @@
     }
 }
 
-// 4. Page content
+// 5. Page content
 .page-content {
     flex-grow: 1;
     width: 100%;
     min-width: 0;
 }
 
-// 5. Content wrap
+// 6. Content wrap
 .content-wrap {
     --cs-admin-content-wrap-shadow: none;
     --cs-admin-content-wrap-radius: 0px;

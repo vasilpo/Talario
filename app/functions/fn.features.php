@@ -1208,6 +1208,20 @@ function fn_get_product_feature_variants($params, $items_per_page = 0, $lang_cod
 
     $limit = '';
 
+    /**
+     * Changes SQL parameters for getting product feature variants, executes before total items count.
+     *
+     * @param array  $fields    List of fields for retrieving
+     * @param string $join      String with the complete JOIN information (JOIN type, tables and fields) for an SQL-query
+     * @param string $condition String containing SQL-query condition possibly prepended with a logical operator (AND or OR)
+     * @param string $group_by  String containing the SQL-query GROUP BY field
+     * @param string $sorting   String containing the SQL-query ORDER BY clause
+     * @param string $lang_code 2-letters language code
+     * @param string $limit     String containing the SQL-query LIMIT clause
+     * @param array  $params    Array with search parameters
+     */
+    fn_set_hook('get_product_feature_variants_before_total_count', $fields, $join, $condition, $group_by, $sorting, $lang_code, $limit, $params);
+
     if ($params['fetch_total_count_only'] || !empty($params['items_per_page'])) {
         $params['total_items'] = db_get_field("SELECT COUNT(*) FROM ?:product_feature_variants $join WHERE 1 $condition");
 
@@ -1542,6 +1556,18 @@ function fn_update_product_feature($feature_data, $feature_id, $lang_code = DESC
             );
         }
     }
+
+    /**
+     * Executes before early exit for created features and for cases when feature_id is not set for some reasons.
+     * Allows you to modify data for not only updated but also created feature.
+     *
+     * @param array  $feature_data     Feature data
+     * @param int    $feature_id       Feature identifier
+     * @param string $lang_code        2-letters language code
+     * @param array  $old_feature_data Current feature data if feature is updated
+     * @param string $action           Whether feature is updated or created
+     */
+    fn_set_hook('update_product_feature_before_early_exit', $feature_data, $feature_id, $lang_code, $old_feature_data, $action);
 
     if ($action === 'create' || !$feature_id) {
         return $feature_id;

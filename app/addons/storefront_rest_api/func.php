@@ -13,6 +13,7 @@
  ****************************************************************************/
 
 use Tygh\Addons\StorefrontRestApi\ProfileFields\Manager as ProfileFieldsManager;
+use Tygh\Bootstrap;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\ProductFilterProductFieldTypes;
 use Tygh\Enum\ProductFilterStyles;
@@ -553,6 +554,8 @@ function fn_storefront_rest_api_get_storefront($storefront_id = 0)
     }
     unset($currency);
 
+    $image_max_size = fn_get_allowed_image_file_size();
+
     $storefront = [
         'url'                                         => $storefront->url,
         'status'                                      => $storefront->status,
@@ -573,7 +576,12 @@ function fn_storefront_rest_api_get_storefront($storefront_id = 0)
                     'quantity_tracking' => $settings_manager->getValue('default_tracking', 'Checkout'),
                 ],
             ]
-        ]
+        ],
+        'uploaded_files_size_restrictions' => [
+            'upload_max_filesize' => fn_return_bytes(Bootstrap::getIniParam('upload_max_filesize', true)),
+            'post_max_size'       => fn_return_bytes(Bootstrap::getIniParam('post_max_size', true)),
+            'image_max_size'      => $image_max_size,
+        ],
     ];
 
     /**

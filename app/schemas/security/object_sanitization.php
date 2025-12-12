@@ -129,6 +129,13 @@ $schema = [
             'surcharge_title' => SecurityHelper::ACTION_REMOVE_HTML,
         ]
     ],
+    'product_file'    => [
+        SecurityHelper::SCHEMA_SECTION_FIELD_RULES => [
+            'file_name' => SecurityHelper::ACTION_REMOVE_HTML,
+            'readme'    => SecurityHelper::ACTION_SANITIZE_HTML,
+            'license'   => SecurityHelper::ACTION_SANITIZE_HTML,
+        ]
+    ],
 ];
 
 return $schema;

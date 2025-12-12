@@ -1,5 +1,22 @@
 (function (_, $) {
-  var isCheckoutScriptLoaded, validationLoop, isPlaceOrderAllowed, orderId, isRepayOrder;
+  var isCheckoutScriptLoaded,
+    validationLoop,
+    isPlaceOrderAllowed,
+    orderId,
+    orderTotal,
+    isRepayOrder,
+    options,
+    submitButtonId,
+    applePay,
+    applePayVersion = 14,
+    applePayConfig,
+    applePaySession,
+    applePayPaymentEvent,
+    paymentForm,
+    googlePayDeffered,
+    googlePayConfig,
+    googlePayClient,
+    merchantIds;
   var methods = {
     /**
      * Changes default 'Submit my order' button ID.
@@ -48,45 +65,23 @@
       params.style.shape = params.style.shape || 'rect';
       params.style.label = params.style.label || 'pay';
       params.style.tagline = params.style.tagline || false;
+      paymentForm = params.payment_form;
       methods.stopValidation();
       methods.createPaymentButtonsContainer(params.submit_button_id);
       paypal.Buttons({
         style: params.style,
         onInit: function (data, actions) {
           methods.forbidOrderPlacement(actions);
-          methods.startValidation(params.payment_form, actions);
+          methods.startValidation(paymentForm, actions);
         },
         onClick: function (data, actions) {
-          params.payment_form.ceFormValidator('checkFields', false);
+          paymentForm.ceFormValidator('checkFields', false);
         },
         createOrder: function (data, actions) {
-          var deferredOrder = $.Deferred(),
-            dispatch = 'checkout.place_order';
-          if (isRepayOrder) {
-            dispatch = 'orders.repay';
-          }
-          orderId = null;
-          $.ceAjax('request', fn_url(dispatch), {
-            data: methods.getOrderPlacementRequest(params.payment_form),
-            method: 'post',
-            hidden: true,
-            caching: false,
-            callback: function (res) {
-              if (res.error) {
-                deferredOrder.reject(res);
-                return;
-              }
-              if (res.order_id_in_paypal) {
-                orderId = res.order_id;
-                deferredOrder.resolve(res);
-                return;
-              }
-              deferredOrder.reject({
-                error: ''
-              });
-            }
-          });
+          var deferredOrder = $.Deferred();
+          methods.placeOrder(deferredOrder, paymentForm);
           return deferredOrder.promise().then(function (success) {
+            orderId = success.order_id;
             return success.order_id_in_paypal;
           }, function (fail) {
             new Error(fail.error);
@@ -94,10 +89,56 @@
         },
         onApprove: function (data, actions) {
           $.toggleStatusBox('show');
-          var redirectUrl = fn_url('payment_notification.return' + '?order_id=' + orderId + '&order_id_in_paypal=' + data.orderID + '&payment=paypal_commerce_platform');
-          actions.redirect(redirectUrl);
+          methods.redirect(orderId, data.orderID);
         }
       }).render('#' + params.submit_button_id + '_container').catch(() => {});
+
+      //Google and Apple Pay not support multiple merchants
+      if ((typeof merchantIds === 'string' || merchantIds instanceof String) && merchantIds.includes(',')) {
+        return;
+      }
+      methods.applePayCheck().then(() => {
+        applePay = paypal.Applepay();
+        applePay.config().then(_applePayConfig => {
+          if (_applePayConfig.isEligible) {
+            $('#' + submitButtonId + '_applepay-container').html('<apple-pay-button id="' + submitButtonId + '_applepay_button" class="ty-paypal-commerce-platform-apple-pay-button" buttonstyle="black" type="plain" locale="en">');
+            $('#' + submitButtonId + '_applepay_button').on('click', methods.applePayHandleClicked);
+            applePayConfig = _applePayConfig;
+          } else {
+            console.error('Apple Pay not eligible');
+          }
+        }).catch(applePayConfigError => {
+          console.error('Error while fetching apple pay config');
+          console.error(applePayConfigError);
+        });
+      }).catch(error => console.error(error));
+      googlePayDeffered.done(() => {
+        googlePayClient = new google.payments.api.PaymentsClient({
+          environment: options.debug ? 'TEST' : 'PRODUCTION',
+          paymentDataCallbacks: {
+            onPaymentAuthorized: methods.googlePayPaymentAuthed
+          }
+        });
+        paypal.Googlepay().config().then(config => {
+          googlePayConfig = config;
+          googlePayClient.isReadyToPay({
+            apiVersion: googlePayConfig.apiVersion,
+            apiVersionMinor: googlePayConfig.apiVersionMinor,
+            allowedPaymentMethods: googlePayConfig.allowedPaymentMethods
+          }).then(function (response) {
+            if (!response.result) {
+              return;
+            }
+            const button = googlePayClient.createButton({
+              buttonType: 'pay',
+              buttonSizeMode: 'fill',
+              allowedPaymentMethods: googlePayConfig.allowedPaymentMethods,
+              onClick: methods.googlePayHandleClicked
+            });
+            $('#' + submitButtonId + '_googlepay-container').html(button);
+          }).catch(error => console.error(error));
+        }).catch(error => console.error(error));
+      }).fail(error => console.error(error));
     },
     /**
      * Gets PayPal Smart Buttons script load options.
@@ -106,13 +147,15 @@
      * @returns {{disableCards: string, clientId: string, debug: boolean, disableFunding: string, currency: string}}
      */
     getSmartButtonsLoadOptions: function ($payment) {
+      merchantIds = $payment.data('caPaypalCommercePlatformMerchantIds');
       return {
         clientId: $payment.data('caPaypalCommercePlatformClientId'),
         currency: $payment.data('caPaypalCommercePlatformCurrency'),
+        company_name: $payment.data('caPaypalCommercePlatformCompanyName'),
         disableFunding: $payment.data('caPaypalCommercePlatformDisableFunding'),
         disableCard: $payment.data('caPaypalCommercePlatformDisableCard'),
         debug: $payment.data('caPaypalCommercePlatformDebug'),
-        merchantIds: $payment.data('caPaypalCommercePlatformMerchantIds')
+        merchantIds: merchantIds
       };
     },
     /**
@@ -121,7 +164,7 @@
      * @returns {string}
      */
     getSmartButtonsLoadUrl: function (options) {
-      var url = 'https://www.paypal.com/sdk/js' + '?client-id=' + options.clientId + '&currency=' + options.currency + '&debug=' + (options.debug ? 'true' : 'false') + '&intent=capture' + '&commit=true' + '&integration-date=2020-05-01';
+      var url = 'https://www.paypal.com/sdk/js' + '?client-id=' + options.clientId + '&components=buttons,applepay,googlepay' + '&currency=' + options.currency + '&debug=' + (options.debug ? 'true' : 'false') + '&intent=capture' + '&commit=true' + '&integration-date=2020-05-01';
       if (options.merchantIds) {
         url += '&merchant-id=' + (options.merchantIds.indexOf(',') === -1 ? options.merchantIds : '*');
       }
@@ -133,6 +176,214 @@
       }
       return url;
     },
+    applePayCheck: () => {
+      return new Promise((resolve, reject) => {
+        let errorMsg = '';
+        if (!window.ApplePaySession) {
+          errorMsg = 'This device does not support Apple Pay';
+        } else if (!ApplePaySession.canMakePayments()) {
+          errorMsg = 'This device, although an Apple device, is not capable of making Apple Pay payments';
+        }
+        if (errorMsg !== "") {
+          reject(errorMsg);
+        } else {
+          resolve();
+        }
+      });
+    },
+    applePayPaymentAuthed: event => {
+      applePayPaymentEvent = event.payment;
+      orderId = null;
+      var deferredOrder = $.Deferred(),
+        billingAddress = methods.getBillingAddress(applePayPaymentEvent.billingContact);
+      methods.placeOrder(deferredOrder, paymentForm, billingAddress);
+      deferredOrder.promise().then(function (success) {
+        orderId = success.order_id;
+        applePay.confirmOrder({
+          orderId: success.order_id_in_paypal,
+          token: applePayPaymentEvent.token,
+          billingContact: applePayPaymentEvent.billingContact
+        }).then(confirmResult => {
+          applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
+          methods.redirect(orderId, success.order_id_in_paypal);
+        }).catch(confirmError => {
+          if (confirmError) {
+            console.error('Error confirming order with applepay token');
+            console.error(confirmError);
+            applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
+          }
+        });
+      }, function (fail) {
+        new Error(fail.error);
+      });
+    },
+    applePayValidate: event => {
+      applePay.validateMerchant({
+        validationUrl: event.validationURL,
+        displayName: options.company_name
+      }).then(validateResult => {
+        applePaySession.completeMerchantValidation(validateResult.merchantSession);
+      }).catch(validateError => {
+        console.error(validateError);
+        applePaySession.abort();
+      });
+    },
+    applePayHandleClicked: event => {
+      if (!paymentForm.ceFormValidator('checkFields', false)) {
+        return;
+      }
+      const payment_request = {
+        countryCode: applePayConfig.countryCode,
+        merchantCapabilities: applePayConfig.merchantCapabilities,
+        supportedNetworks: applePayConfig.supportedNetworks,
+        currencyCode: applePayConfig.currencyCode,
+        requiredShippingContactFields: [],
+        requiredBillingContactFields: ['postalAddress'],
+        total: {
+          label: options.company_name,
+          type: 'final',
+          amount: orderTotal
+        }
+      };
+      applePaySession = new ApplePaySession(applePayVersion, payment_request);
+      applePaySession.onvalidatemerchant = methods.applePayValidate;
+      applePaySession.onpaymentauthorized = methods.applePayPaymentAuthed;
+      applePaySession.begin();
+    },
+    googlePayPaymentAuthed: paymentData => {
+      orderId = null;
+      var deferredOrder = $.Deferred(),
+        billingAddress = methods.getBillingAddress(paymentData.paymentMethodData.info.billingAddress);
+      methods.placeOrder(deferredOrder, paymentForm, billingAddress);
+      return new Promise(function (resolve) {
+        deferredOrder.promise().then(success => {
+          orderId = success.order_id;
+          paypal.Googlepay().confirmOrder({
+            orderId: success.order_id_in_paypal,
+            paymentMethodData: paymentData.paymentMethodData
+          }).then(confirmResult => {
+            if (confirmResult.status === 'PAYER_ACTION_REQUIRED') {
+              paypal.Googlepay().initiatePayerAction({
+                orderId: success.order_id_in_paypal
+              }).then(() => {
+                resolve({
+                  transactionState: 'SUCCESS'
+                });
+                methods.redirect(orderId, success.order_id_in_paypal);
+              }).catch(error => console.error(error));
+            } else {
+              resolve({
+                transactionState: 'SUCCESS'
+              });
+              methods.redirect(orderId, success.order_id_in_paypal);
+            }
+          }).catch(error => {
+            if (error) {
+              console.error('Error confirming order with google pay');
+              console.error(error);
+            }
+            resolve({
+              transactionState: 'ERROR'
+            });
+          });
+        }, fail => {
+          resolve({
+            transactionState: 'ERROR'
+          });
+          new Error(fail.error);
+        });
+      });
+    },
+    googlePayHandleClicked: () => {
+      if (!paymentForm.ceFormValidator('checkFields', false)) {
+        return;
+      }
+      const paymentDataRequest = {
+        apiVersion: googlePayConfig.apiVersion,
+        apiVersionMinor: googlePayConfig.apiVersionMinor,
+        allowedPaymentMethods: googlePayConfig.allowedPaymentMethods,
+        merchantInfo: googlePayConfig.merchantInfo,
+        callbackIntents: ['PAYMENT_AUTHORIZATION'],
+        transactionInfo: {
+          countryCode: googlePayConfig.countryCode,
+          currencyCode: options.currency,
+          totalPriceStatus: 'FINAL',
+          totalPrice: orderTotal
+        }
+      };
+      googlePayClient.loadPaymentData(paymentDataRequest);
+    },
+    redirect: (orderId, paypalOrderId) => {
+      var redirectUrl = fn_url('payment_notification.return' + '?order_id=' + orderId + '&order_id_in_paypal=' + paypalOrderId + '&payment=paypal_commerce_platform');
+      $.redirect(redirectUrl);
+    },
+    placeOrder: (promise, paymentForm, billingAddress) => {
+      var orderRequest = methods.getOrderPlacementRequest(paymentForm),
+        dispatch = 'checkout.place_order';
+      if (isRepayOrder) {
+        dispatch = 'orders.repay';
+      }
+      orderRequest.user_data = {
+        ...(orderRequest === null || orderRequest === void 0 ? void 0 : orderRequest.user_data),
+        ...billingAddress
+      };
+      $.ceAjax('request', fn_url(dispatch), {
+        data: orderRequest,
+        method: 'post',
+        hidden: true,
+        caching: false,
+        callback: function (res) {
+          if (res.error) {
+            promise.reject(res);
+            return;
+          }
+          if (res.order_id_in_paypal) {
+            orderId = res.order_id;
+            promise.resolve(res);
+            return;
+          }
+          promise.reject({
+            error: ''
+          });
+        }
+      });
+    },
+    getBillingAddress: rawBillingAddress => {
+      var billingAddress = {},
+        value,
+        fieldsMap = {
+          givenName: 'b_firstname',
+          familyName: 'b_lastname',
+          countryCode: 'b_country',
+          administrativeArea: 'b_state',
+          locality: 'b_city',
+          postalCode: 'b_zipcode',
+          addressLines: 'b_address',
+          name: 'b_firstname',
+          address1: 'b_address',
+          address2: 'b_address',
+          address3: 'b_address'
+        };
+      for (var field in fieldsMap) {
+        if (Object.hasOwn(rawBillingAddress, field)) {
+          value = '';
+          if (!Object.hasOwn(rawBillingAddress, field)) {
+            continue;
+          }
+          value = rawBillingAddress[field];
+          if (Array.isArray(value)) {
+            value = value.join(' ');
+          }
+          if (value && Object.hasOwn(billingAddress, fieldsMap[field])) {
+            value = billingAddress[fieldsMap[field]] + ' ' + value;
+            billingAddress[fieldsMap[field]] = value;
+          } else if (value) {
+            billingAddress[fieldsMap[field]] = value;
+          }
+        }
+      }
+      return billingAddress;
+    },
     /**
      * Initializes payment form.
      *
@@ -140,8 +391,8 @@
      */
     init: function ($payment) {
       var $payment_form = $payment.closest('form');
-      var submitButtonId = methods.setSubmitButtonId($payment.data('caPaypalCommercePlatformButton')),
-        $submitButton = $('#' + submitButtonId);
+      submitButtonId = methods.setSubmitButtonId($payment.data('caPaypalCommercePlatformButton'));
+      var $submitButton = $('#' + submitButtonId);
       $submitButton.addClass('hidden');
       var checkoutScriptLoadCallback = function () {
         isCheckoutScriptLoaded = true;
@@ -162,9 +413,11 @@
       if (isCheckoutScriptLoaded) {
         checkoutScriptLoadCallback();
       } else {
-        var options = methods.getSmartButtonsLoadOptions($payment),
-          url = methods.getSmartButtonsLoadUrl(options);
-        methods.loadScript(url, options.merchantIds, checkoutScriptLoadCallback);
+        options = methods.getSmartButtonsLoadOptions($payment);
+        var url = methods.getSmartButtonsLoadUrl(options);
+        methods.loadApplePayScript();
+        methods.loadPayPalScript(url, options.merchantIds, checkoutScriptLoadCallback);
+        googlePayDeffered = methods.loadGooglePayScript();
       }
     },
     /**
@@ -215,7 +468,7 @@
      * @param {string} submitButtonId
      */
     createPaymentButtonsContainer(submitButtonId) {
-      $('<div class="ty-paypal-commerce-platform-buttons-container" id="' + submitButtonId + '_container"></div>').insertAfter($('#' + submitButtonId));
+      $('<div class="ty-paypal-commerce-platform-buttons-container" id="' + submitButtonId + '_container">' + '<div id="' + submitButtonId + '_applepay-container"></div>' + '<div id="' + submitButtonId + '_googlepay-container" class="ty-paypal-checkout-google-pay-button"></div></div>').insertAfter($('#' + submitButtonId));
     },
     /**
      * Sets up global error handler to work around the following issue:
@@ -236,12 +489,48 @@
      * @param {string} merchantIds                  Comma-separated list of merchant IDs in the current order
      * @param {callback} checkoutScriptLoadCallback Action to execute after script is loaded
      */
-    loadScript(url, merchantIds, checkoutScriptLoadCallback) {
+    loadPayPalScript(url, merchantIds, checkoutScriptLoadCallback) {
       var checkoutScript = _.doc.createElement('script');
       checkoutScript.setAttribute('src', url);
       checkoutScript.setAttribute('data-merchant-id', merchantIds);
       checkoutScript.onload = checkoutScriptLoadCallback;
       _.doc.head.appendChild(checkoutScript);
+    },
+    loadApplePayScript() {
+      var checkoutScript = _.doc.createElement('script');
+      checkoutScript.setAttribute('src', 'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js');
+      _.doc.head.appendChild(checkoutScript);
+    },
+    loadGooglePayScript() {
+      var checkoutScript = _.doc.createElement('script'),
+        deffered = $.Deferred();
+      checkoutScript.setAttribute('src', 'https://pay.google.com/gp/p/js/pay.js');
+      checkoutScript.onload = () => {
+        deffered.resolve();
+      };
+      checkoutScript.onerror = () => {
+        deffered.reject('Error on load the Google Pay script');
+      };
+      _.doc.head.appendChild(checkoutScript);
+      return deffered;
+    },
+    setup: context => {
+      if (_.embedded) {
+        return;
+      }
+      var isCheckoutButtonLoaded = !!$('[name="dispatch[checkout.place_order]"]', context).length;
+      $payment = $('[data-ca-paypal-commerce-platform-checkout]');
+      isRepayOrder = !!$('[name="dispatch[orders.repay]"]', context).length;
+      if ($payment.length) {
+        orderTotal = String($payment.data('caPaypalCommercePlatformTotal'));
+      }
+      if (!isCheckoutButtonLoaded && !isRepayOrder) {
+        return;
+      }
+      if (!$payment.length) {
+        return;
+      }
+      $.cePaypalCommercePlatformCheckout('init', $payment);
     }
   };
   $.extend({
@@ -254,18 +543,7 @@
     }
   });
   $.ceEvent('on', 'ce.commoninit', function (context) {
-    if (_.embedded) {
-      return;
-    }
-    var isCheckoutButtonLoaded = !!$('[name="dispatch[checkout.place_order]"]', context).length;
-    isRepayOrder = !!$('[name="dispatch[orders.repay]"]', context).length;
-    if (!isCheckoutButtonLoaded && !isRepayOrder) {
-      return;
-    }
-    var $payment = $('[data-ca-paypal-commerce-platform-checkout]');
-    if (!$payment.length) {
-      return;
-    }
-    $.cePaypalCommercePlatformCheckout('init', $payment);
+    $.cePaypalCommercePlatformCheckout('setup', context);
   });
+  $.cePaypalCommercePlatformCheckout('setup', document);
 })(Tygh, Tygh.$);

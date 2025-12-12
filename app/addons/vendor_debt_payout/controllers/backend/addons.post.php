@@ -22,14 +22,9 @@ if (
 ) {
     /** @var \Tygh\SmartyEngine\Core $view */
     $view = Tygh::$app['view'];
-    $options = $view->getTemplateVars('options');
-    $addon_setting_ids = [];
-    foreach ($options['general'] as $setting_id => $option_item) {
-        $addon_setting_ids[$option_item['name']] = $setting_id;
-    }
 
     $view->assign([
-        'addon_setting_ids'  => $addon_setting_ids,
+        'addon_setting_ids'  => fn_vendor_dept_payout_get_template_setting_ids(),
         'payout_product_id'  => fn_vendor_debt_payout_get_payout_product(),
         'payout_category_id' => fn_vendor_debt_payout_get_payout_category(),
     ]);

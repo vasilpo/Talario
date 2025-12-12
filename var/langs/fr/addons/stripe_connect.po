@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /release-4.18.3/addons/stripe_connect.po\n"
-"X-Crowdin-File-ID: 9428\n"
-"PO-Revision-Date: 2024-10-02 13:29\n"
+"X-Crowdin-File: /release-4.18.4/addons/stripe_connect.po\n"
+"X-Crowdin-File-ID: 9687\n"
+"PO-Revision-Date: 2025-05-26 13:30\n"
 
 msgctxt "Addons::name::stripe_connect"
 msgid "Stripe Connect payments"
@@ -38,11 +38,11 @@ msgstr ""
 
 msgctxt "Languages::stripe_connect.stripe_connect"
 msgid "Stripe Connect"
-msgstr "Bande Connecter"
+msgstr "Stripe Connect"
 
 msgctxt "Languages::stripe_connect.stripe_connect_short"
 msgid "Stripe"
-msgstr "Bande"
+msgstr "Stripe"
 
 msgctxt "Languages::stripe_connect.redirect_uri_admin"
 msgid "Redirect URI for administrator"
@@ -174,7 +174,7 @@ msgstr "Une erreur s'est produite lors de la création d'un PaymentIntent avec l
 
 msgctxt "Languages::log_type_stripe_connect"
 msgid "Stripe Connect"
-msgstr "Bande Connecter"
+msgstr "Stripe Connect"
 
 msgctxt "Languages::log_action_sc_failure"
 msgid "Error"
@@ -314,7 +314,7 @@ msgstr "Comptes chèques"
 
 msgctxt "Languages::stripe_connect.stripe_cookie_title"
 msgid "Stripe"
-msgstr "Bande"
+msgstr "Stripe"
 
 msgctxt "Languages::stripe_connect.stripe_cookie_description"
 msgid "Stripe is a payment provider. It allows us to accept payments, if you choose a payment method powered by Stripe. Here is <a href=\"https://stripe.com/privacy\" target=\"_blank\">Stripe privacy policy</a>."
@@ -330,7 +330,7 @@ msgstr "Argent remboursé via Stripe"
 
 msgctxt "Languages::stripe_connect.stripe_checkout"
 msgid "Stripe Checkout"
-msgstr "Paiement à rayures"
+msgstr "Stripe Checkout"
 
 msgctxt "Languages::stripe_connect.stripe_checkout.description"
 msgid "Take customers to the Stripe Checkout page to complete the payment. We recommend it because that page offers many more payment options than CS-Cart checkout page. You can see those payment options <a href=\"https://dashboard.stripe.com/settings/payment_methods\" target=\"_blank\">on your Stripe Dashboard</a>. Only works when 3-D Secure is <b>enabled</b>."

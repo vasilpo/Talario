@@ -7,10 +7,10 @@
     {if $category.storefront_categories !== "YesNo::YES"|enum}
         <div class="longtap-selection" data-ca-bulkedit-component="tableWrapper">
     {/if}
-    <table class="table table-tree table-middle table--relative table--overflow-hidden">
+    <table class="table table-tree table-middle table--relative">
         {if $header && !$parent_id}
             {$header=""}
-            <thead data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
+            <thead class="thead--overflow-hidden" data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
                 <tr>
                     {hook name="categories:categories_tree_header"}
                     <th class="mobile-hide table__check-items-column">

@@ -273,12 +273,17 @@ class OAuthHelper
             ],
             'products'                => [
                 $product,
+                'PAYMENT_METHODS',
             ],
             'legal_consents'          => [
                 [
                     'type'    => 'SHARE_DATA_CONSENT',
                     'granted' => true,
                 ],
+            ],
+            'capabilities'            => [
+                'APPLE_PAY',
+                'GOOGLE_PAY',
             ],
         ];
 

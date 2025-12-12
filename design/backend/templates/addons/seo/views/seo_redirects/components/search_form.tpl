@@ -13,11 +13,9 @@
     <select name="type">
     <option value="">--</option>
     {foreach from=$seo_vars key="var_type" item="seo_var"}
-    {if $seo_var.picker || $var_type == "s"}
-    <option {if $var_type == $search.type}selected="selected"{/if} value="{$var_type}">{__($seo_var.name)}</option>
-    {/if}
+        <option {if $var_type == $search.type}selected="selected"{/if} value="{$var_type}">{__($seo_var.name)}</option>
     {/foreach}
-    </select>    
+    </select>
 </div>
 
 {if $addons.seo.single_url != "Y" && $languages|sizeof > 1}

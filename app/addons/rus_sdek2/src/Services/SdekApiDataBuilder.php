@@ -30,6 +30,7 @@ use Tygh\Addons\RusTaxes\TaxType;
 use Tygh\Database\Connection;
 use Tygh\Enum\YesNo;
 use Tygh\Registry;
+use Tygh\Shippings\Shippings;
 
 class SdekApiDataBuilder
 {
@@ -106,27 +107,25 @@ class SdekApiDataBuilder
     /**
      * Builds SDEK order data for API request.
      *
-     * @param array                                 $order_info      Order data
-     * @param array                                 $shipment_info   Shipment data
-     * @param array                                 $sdek_order_info SDEK order info from request
-     * @param \Tygh\Addons\RusTaxes\Receipt\Receipt $receipt         Receipt item object
+     * @param array                                 $order_info    Order data
+     * @param array                                 $shipping_info Shipping data
+     * @param array                                 $shipment_info Shipment data
+     * @param array                                 $sdek_info     SDEK order info from request
+     * @param \Tygh\Addons\RusTaxes\Receipt\Receipt $receipt       Receipt item object
      *
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
      */
     public function prepareCreateOrderData(
         array $order_info,
+        array $shipping_info,
         array $shipment_info,
-        array $sdek_order_info,
+        array $sdek_info,
         Receipt $receipt
     ): Order {
         $shipment_id = $shipment_info['shipment_id'];
         $default_currency = !empty($order_info['secondary_currency']) ? $order_info['secondary_currency'] : $this->default_currency;
 
-        $order_for_sdek = $sdek_order_info;
-
-        foreach ($shipment_info['products'] as $item_id => $amount) {
-            $receipt->setItemQuantity($item_id, ReceiptItem::TYPE_PRODUCT, $amount);
-        }
+        $order_for_sdek = $sdek_info['order'];
 
         $extra_params = [];
         if ($order_info['b_country'] !== 'RU' && $order_info['s_country'] !== 'RU') {
@@ -180,42 +179,15 @@ class SdekApiDataBuilder
             unset($order_for_sdek['to_location']);
         }
 
-        [$sdek_products, $total_weight] = $this->buildProductsDataForSdekOrder(
+        $order_for_sdek['packages'] = $this->buildPackagesForSdekOrder(
             $order_info,
+            $shipping_info,
             $shipment_info,
-            $shipment_id,
+            $sdek_info,
             $this->symbol_grams,
-            $receipt
+            $receipt,
+            $extra_params
         );
-
-        $weight_grams = $total_weight * $this->symbol_grams;
-
-        $order_for_sdek['packages'][$shipment_id] = [
-            'number' => $shipment_id,
-            'weight' => $weight_grams
-        ];
-
-        foreach ($sdek_products as $product) {
-            $product_for_sdek = $this->getDataProduct($product, $sdek_order_info);
-
-            $product_for_sdek['cost'] = $this->getPriceByCurrency(
-                $product['price'],
-                $extra_params,
-                $this->currencies,
-                $default_currency
-            );
-            $product_for_sdek['payment']['value'] = $this->getPriceByCurrency(
-                $product_for_sdek['payment']['value'],
-                $extra_params,
-                $this->currencies,
-                $default_currency
-            );
-
-            $product['weight'] = $this->sdek_service->checkWeight($product['weight'], $this->symbol_grams);
-            $product_for_sdek['weight'] = $product['weight'] * $this->symbol_grams;
-
-            $order_for_sdek['packages'][$shipment_id]['items'][] = $product_for_sdek;
-        }
 
         $order_packages = [];
         if (!empty($order_for_sdek['packages'])) {
@@ -243,9 +215,9 @@ class SdekApiDataBuilder
                 $order_packages[] = Package::create([
                     'number' => $package['number'],
                     'weight' => $package['weight'],
-                    //'length' => 12,
-                    //'width' => 11,
-                    //'height' => 8,
+                    'length' => $package['length'],
+                    'width' => $package['width'],
+                    'height' => $package['height'],
                     'items' => $package_items,
                 ]);
             }
@@ -384,154 +356,166 @@ class SdekApiDataBuilder
     /**
      * Builds products data for SDEK order.
      *
-     * @param array                                 $order_info   Order data
-     * @param array                                 $shipment     Shipment data
-     * @param int                                   $shipment_id  Shipment ID
-     * @param float                                 $symbol_grams Grams symbol
-     * @param \Tygh\Addons\RusTaxes\Receipt\Receipt $receipt      Receipt item object
+     * @param array                                 $order_info    Order data
+     * @param array                                 $shipping_info Shipping data
+     * @param array                                 $shipment      Shipment data
+     * @param array                                 $sdek_info     SDEK order info from request
+     * @param float                                 $symbol_grams  Grams symbol
+     * @param \Tygh\Addons\RusTaxes\Receipt\Receipt $receipt       Receipt item object
+     * @param array                                 $extra_params  Extra data
      *
      * @return array
      *
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
      */
-    protected function buildProductsDataForSdekOrder(
+    protected function buildPackagesForSdekOrder(
         array $order_info,
+        array $shipping_info,
         array $shipment,
-        $shipment_id,
+        array $sdek_info,
         $symbol_grams,
-        Receipt $receipt
+        Receipt $receipt,
+        array $extra_params
     ) {
-        $sdek_products = [];
-        $total_weight = '0';
+        $default_currency = !empty($order_info['secondary_currency']) ? $order_info['secondary_currency'] : $this->default_currency;
 
-        foreach ($receipt->getItems() as $item) {
-            if ($item->getType() !== ReceiptItem::TYPE_PRODUCT || !isset($shipment['products'][$item->getId()])) {
-                continue;
+        $product_ids = [];
+        foreach (array_keys($shipment['products']) as $item_id) {
+            $product_ids[] = $order_info['products'][$item_id]['product_id'];
+        }
+
+        $products_extra = $this->db->getHash(
+            'SELECT product_id, shipping_params, weight FROM ?:products WHERE product_id IN (?n)',
+            'product_id',
+            $product_ids
+        );
+
+        $products = [];
+        foreach ($shipment['products'] as $item_id => $amount) {
+            $receipt->setItemQuantity($item_id, ReceiptItem::TYPE_PRODUCT, $amount);
+
+            $product_id = $order_info['products'][$item_id]['product_id'];
+
+            $product_weight = $this->sdek_service->checkWeight($products_extra[$product_id]['weight'], $symbol_grams);
+            $weight_ar = fn_convert_weight_to_imperial_units($product_weight);
+            $weight = $weight_ar['plain'];
+
+            $p_ship_params = unserialize($products_extra[$product_id]['shipping_params']);
+
+            foreach ($order_info['product_groups'] as $product_group) {
+                if (!empty($product_group['products'][$item_id])) {
+                    $products[$item_id] = $product_group['products'][$item_id];
+                    $products[$item_id]['weight'] = $weight;
+                    $products[$item_id]['amount'] = $amount;
+                    $products[$item_id]['shipping_params'] = $p_ship_params;
+                }
+
+                $shipping_info['package_info'] = $product_group['package_info'];
             }
+        }
 
-            $item_id = $item->getId();
-            $amount = $item->getQuantity();
+        $shipment_product_groups = Shippings::groupProductsList($products, $shipping_info['package_info']['location']);
+        $product_group_data = reset($shipment_product_groups);
 
-            $data_product = $order_info['products'][$item_id];
+        if (empty($product_group_data['package_info_full']['packages'])) {
+            return [];
+        }
 
-            $ware_key = !empty($data_product['product_code'])
-                ? $data_product['product_code']
-                : $data_product['product_id'];
+        $length = !empty($shipping_info['service_params']['length']) ? $shipping_info['service_params']['length'] : SDEK2_DEFAULT_DIMENSIONS;
+        $width = !empty($shipping_info['service_params']['width']) ? $shipping_info['service_params']['width'] : SDEK2_DEFAULT_DIMENSIONS;
+        $height = !empty($shipping_info['service_params']['height']) ? $shipping_info['service_params']['height'] : SDEK2_DEFAULT_DIMENSIONS;
 
-            // FIXME: Order and shipment id unnessesary?
-            $sdek_product = [
-                'ware_key' => $ware_key,
-                'order_id' => $order_info['order_id'],
-                'product' => $data_product['product'],
-                'amount' => $amount,
-                'shipment_id' => $shipment_id
+        $packages = [];
+        foreach ($product_group_data['package_info_full']['packages'] as $i => $shipment_package) {
+            $total_package_weight = 0;
+            $packages[$i] = [
+                'number' => $i,
+                'length' => !empty($shipment_package['shipping_params']['box_length']) ? $shipment_package['shipping_params']['box_length'] : $length,
+                'width'  => !empty($shipment_package['shipping_params']['box_width']) ? $shipment_package['shipping_params']['box_width'] : $width,
+                'height' => !empty($shipment_package['shipping_params']['box_height']) ? $shipment_package['shipping_params']['box_height'] : $height,
+                'items'  => []
             ];
 
-            $product_weight = $this->db->getField(
-                'SELECT weight FROM ?:products WHERE product_id = ?i',
-                $data_product['product_id']
-            );
-
-            if (!empty($data_product['product_options'])) {
-                $product_options = [];
-                foreach ($data_product['product_options'] as $_options) {
-                    $product_options[$_options['option_id']] = $_options['value'];
+            foreach ($receipt->getItems() as $item) {
+                if ($item->getType() !== ReceiptItem::TYPE_PRODUCT || !isset($shipment_package['products'][$item->getId()])) {
+                    continue;
                 }
 
-                $product_weight = fn_apply_options_modifiers($product_options, $product_weight, 'W');
-            }
+                $item_id = $item->getId();
+                $amount = $item->getQuantity();
 
-            $product_weight = $this->sdek_service->checkWeight($product_weight, $symbol_grams);
+                $data_product = $order_info['products'][$item_id];
 
-            $sdek_product['weight'] = $product_weight;
-            $sdek_product['price'] = $item->getPrice();
-            $sdek_product['total'] = $item->getTotal();
+                $ware_key = !empty($data_product['product_code']) ? $data_product['product_code'] : $data_product['product_id'];
 
-            if (!empty($sdek_products[$ware_key]['price']) && ($sdek_product['price'] !== $sdek_products[$ware_key]['price'])) {
-                $ware_key = !empty($data_product['item_id'])
-                    ? $data_product['item_id']
-                    : $data_product['product_id'];
-                $sdek_product['ware_key'] = $ware_key;
-            }
+                $product_for_sdek = [
+                    'name' => $data_product['product'],
+                    'ware_key' => $ware_key,
+                    'amount' => $amount
+                ];
 
-            if (!empty($sdek_products[$ware_key])) {
-                if (!empty($sdek_products[$ware_key]['amount'])) {
-                    $sdek_products[$ware_key]['amount'] += $sdek_product['amount'];
+                $product_weight = $this->db->getField(
+                    'SELECT weight FROM ?:products WHERE product_id = ?i',
+                    $data_product['product_id']
+                );
+
+                if (!empty($data_product['product_options'])) {
+                    $product_options = [];
+                    foreach ($data_product['product_options'] as $_options) {
+                        $product_options[$_options['option_id']] = $_options['value'];
+                    }
+
+                    $product_weight = fn_apply_options_modifiers($product_options, $product_weight, 'W');
                 }
-                if (!empty($sdek_products[$ware_key]['price'])) {
-                    $sdek_products[$ware_key]['price'] = $sdek_product['price'];
+
+                $product_for_sdek['weight'] = $product_weight * $this->symbol_grams;
+                $total_package_weight = $total_package_weight + ($product_weight * $amount);
+
+                $product_price = $item->getPrice() ?? '0.00';
+
+                $payment = '0.00';
+                if (!empty($sdek_info['use_imposed']) && $sdek_info['use_imposed'] === YesNo::YES) {
+                    $payment = (!empty($sdek_info['cash_delivery'])) ? $sdek_info['cash_delivery'] : '0.00';
+
+                    if (!empty($sdek_info['use_product']) && $sdek_info['use_product'] === YesNo::YES) {
+                        $payment += $product_price;
+                    }
                 }
-                if (!empty($sdek_products[$ware_key]['total'])) {
-                    $sdek_products[$ware_key]['total'] += $sdek_product['total'];
-                }
-                if (!empty($sdek_products[$ware_key]['weight'])) {
-                    $sdek_products[$ware_key]['weight'] += $sdek_product['weight'];
-                }
-            } else {
-                $sdek_products[$ware_key] = $sdek_product;
+
+                $tax_code = $item->getTaxType();
+                $product_tax = $this->normalizeTaxType($tax_code);
+
+                $product_for_sdek['payment'] = [
+                    'value' => number_format($payment, 2, '.', ''),
+                    'vat_sum' => number_format($this->calculateTaxSum($product_tax, $payment), 2, '.', ''),
+                    'vat_rate' => $this->normalizeTaxType($product_tax)
+                ];
+
+                $product_for_sdek['cost'] = $this->getPriceByCurrency(
+                    $product_price,
+                    $extra_params,
+                    $this->currencies,
+                    $default_currency
+                );
+
+                $product_for_sdek['payment']['value'] = $this->getPriceByCurrency(
+                    $product_for_sdek['payment']['value'],
+                    $extra_params,
+                    $this->currencies,
+                    $default_currency
+                );
+
+                $packages[$i]['items'][] = $product_for_sdek;
             }
 
-            if (empty($sdek_products[$ware_key]['price'])) {
-                $sdek_products[$ware_key]['price'] = '0.00';
-            }
+            $total_package_weight = $this->sdek_service->checkWeight($total_package_weight, $symbol_grams);
+            $total_package_weight_grams = $total_package_weight * $this->symbol_grams;
 
-            if (empty($sdek_products[$ware_key]['total'])) {
-                $sdek_products[$ware_key]['total'] = '0.00';
-            }
-
-            $tax_code = $item->getTaxType();
-            $tax_sum = $item->getTaxSum();
-
-            $sdek_products[$ware_key]['tax'] = $this->normalizeTaxType($tax_code);
-            $sdek_products[$ware_key]['tax_sum'] = $tax_sum;
-
-            $product_weight = $this->sdek_service->checkWeight($product_weight, $symbol_grams);
-
-            $total_weight = $total_weight + ($product_weight * $amount);
+            $packages[$i]['weight'] = $total_package_weight_grams;
         }
 
-        $total_weight = $this->sdek_service->checkWeight($total_weight, $symbol_grams);
-
-        return [$sdek_products, $total_weight];
-    }
-
-    /**
-     * Forms product data for SDEK.
-     *
-     * @param array $product   Product data
-     * @param array $sdek_info SDEK data
-     *
-     * @return array
-     *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
-     */
-    protected function getDataProduct(array $product, array $sdek_info)
-    {
-        $payment = '0.00';
-        if (!empty($sdek_info['use_imposed']) && $sdek_info['use_imposed'] === YesNo::YES) {
-            $payment = (!empty($sdek_info['cash_delivery'])) ? $sdek_info['cash_delivery'] : '0.00';
-
-            if (!empty($sdek_info['use_product']) && $sdek_info['use_product'] === YesNo::YES) {
-                $payment += $product['price'];
-            }
-        }
-
-        $product_for_sdek = [
-            'name' => $product['product'],
-            'ware_key' => $product['ware_key'],
-            'cost' => number_format($product['price'], 2, '.', ''),
-            'amount' => $product['amount']
-        ];
-
-        $product_for_sdek['payment'] = [
-            'value' => number_format($payment, 2, '.', ''),
-            'vat_sum' => number_format($this->calculateTaxSum($product['tax'], $payment), 2, '.', ''),
-            'vat_rate' => $this->normalizeTaxType($product['tax'])
-        ];
-
-        return $product_for_sdek;
+        return $packages;
     }
 
     /**
@@ -545,8 +529,12 @@ class SdekApiDataBuilder
     {
         $map = [
             TaxType::VAT_0 => 0,
+            TaxType::VAT_5 => 5,
+            TaxType::VAT_7 => 7,
             TaxType::VAT_10 => 10,
             TaxType::VAT_20 => 20,
+            TaxType::VAT_105 => 5,
+            TaxType::VAT_107 => 7,
             TaxType::VAT_110 => 10,
             TaxType::VAT_120 => 20,
         ];
@@ -570,13 +558,17 @@ class SdekApiDataBuilder
      */
     public function calculateTaxSum($tax_type, $price)
     {
-        $tax_type = !empty($tax_type) ? strtolower($tax_type) : '';
-
         switch ($tax_type) {
-            case TaxType::VAT_10:
+            case 5:
+                $result = $price * 5 / 105;
+                break;
+            case 7:
+                $result = $price * 7 / 107;
+                break;
+            case 10:
                 $result = $price * 10 / 110;
                 break;
-            case TaxType::VAT_20:
+            case 20:
                 $result = $price * 20 / 120;
                 break;
             default:

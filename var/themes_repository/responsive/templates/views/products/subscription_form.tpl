@@ -1,5 +1,4 @@
-{$obj_id=$obj_id|default:$product_id}
-<div id="subscribe_form_wrapper">
+<div id="subscribe_form_wrapper_{$obj_prefix}{$obj_id}">
     {hook name="product_data:back_in_stock_checkbox"}
         <div class="ty-control-group">
             <label for="sw_product_notify_{$obj_prefix}{$obj_id}" class="ty-strong" id="label_sw_product_notify_{$obj_prefix}{$obj_id}">
@@ -24,7 +23,7 @@
                     <input type="hidden" name="product_id" value="{$product_id}" disabled />
 
                     <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
-                    <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email}" placeholder="{__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" disabled />
+                    <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email}" placeholder="{__("enter_email")}" class="ty-product-notify-email__input ty-input-text cm-hint" title="{__("enter_email")}" disabled />
 
                     <button class="ty-btn-go cm-ajax" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}">{include_ext file="common/icon.tpl" class="ty-icon-right-dir ty-btn-go__icon"}</button>
 
@@ -32,4 +31,4 @@
             {/hook}
         </div>
     {/if}
-<!--subscribe_form_wrapper--></div>
+<!--subscribe_form_wrapper_{$obj_prefix}{$obj_id}--></div>

@@ -10,8 +10,9 @@
 {if $carts_list}
     {capture name="carts_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table class="table table-sort table-middle table--relative table-responsive table--overflow-hidden table--cart">
+            <table class="table table-sort table-middle table--relative table-responsive table--cart">
             <thead
+                class="thead--overflow-hidden"
                 data-ca-bulkedit-default-object="true"
                 data-ca-bulkedit-component="defaultObject"
             >

@@ -139,7 +139,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
                 $paymaster_products['LMI_SHOPPINGCART.ITEMS[' . $product_count . '].NAME'] = $item->getName();
                 $paymaster_products['LMI_SHOPPINGCART.ITEMS[' . $product_count . '].QTY'] = $item->getQuantity();
                 $paymaster_products['LMI_SHOPPINGCART.ITEMS[' . $product_count . '].PRICE'] = $item->getPrice();
-                $paymaster_products['LMI_SHOPPINGCART.ITEMS[' . $product_count . '].TAX'] = strtoupper($tax_type);
+                $paymaster_products['LMI_SHOPPINGCART.ITEMS[' . $product_count . '].TAX'] = $tax_type;
 
                 $product_count++;
             }

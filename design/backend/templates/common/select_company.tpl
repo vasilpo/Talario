@@ -1,3 +1,13 @@
+{$switcher_param_name = "switch_company_id"}
+{$switcher_data_name = "company_id"}
+{$switcher_title = {__("pick_store")}}
+
+{if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
+    {$switcher_param_name = "s_storefront"}
+    {$switcher_data_name = "storefront_id"}
+    {$switcher_title = {__("select_storefront", ["[store]" => ""])}}
+{/if}
+
 {if $runtime.simple_ultimate}
 	{capture name="mainbox"}
         <h4>{__("error_occured")}</h4>
@@ -8,9 +18,9 @@
         {$id = $select_id|default:"top_company_id"}
 
         <div class="store-selector js-storefront-switcher"
-            data-ca-switcher-param-name="switch_company_id"
-            data-ca-switcher-data-name="company_id">
-            <div class="inline-label">{__("pick_store")} -</div>
+            data-ca-switcher-param-name={$switcher_param_name}
+            data-ca-switcher-data-name={$switcher_data_name}>
+            <div class="inline-label">{$switcher_title} -</div>
             <div class="input-large inline-block">
                 {include file="views/storefronts/components/picker/picker.tpl"
                     autoopen=true

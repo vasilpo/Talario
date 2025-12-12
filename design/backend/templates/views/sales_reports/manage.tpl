@@ -41,4 +41,9 @@
     }
 {/capture}
 
-{include file="common/mainbox.tpl" title=__("reports") content=$smarty.capture.mainbox adv_buttons=$smarty.capture.adv_buttons}
+{include "common/mainbox.tpl"
+    title            = __("reports")
+    content          = $smarty.capture.mainbox
+    adv_buttons      = $smarty.capture.adv_buttons
+    select_languages = true
+}

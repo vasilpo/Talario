@@ -22,8 +22,8 @@
 {if $users}
     {capture name="profiles_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden">
-            <thead data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
+            <table width="100%" class="table table-middle table--relative table-responsive">
+            <thead class="thead--overflow-hidden" data-ca-bulkedit-default-object="true" data-ca-bulkedit-component="defaultObject">
             <tr>
                 <th class="center {$no_hide_input} mobile-hide table__check-items-column">
                 {include file="common/check_items.tpl"

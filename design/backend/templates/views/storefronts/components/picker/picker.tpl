@@ -31,6 +31,7 @@
 {$item_ids = $item_ids|default:[]|array_filter}
 {$dropdown_css_class = "object-picker__dropdown object-picker__dropdown--storefronts `$dropdown_css_class`"|default:"object-picker__dropdown object-picker__dropdown--storefronts"}
 {$search_data = $search_data|default:[]}
+{$no_container = $no_container|default:true}
 
 {if $multiple && $show_advanced}
     {$empty_variant_text = $empty_variant_text|default:__("type_to_search_or_click_button")}
@@ -45,7 +46,7 @@
                 {include file="pickers/storefronts/picker.tpl"
                     picker_id="object_picker_advanced_{$picker_id}"
                     data_id="om"
-                    no_container=true
+                    no_container=$no_container
                     icon="icon-reorder"
                     but_text="{__("advanced_storefronts_search")}"
                     show_but_text=false

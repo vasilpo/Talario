@@ -29,7 +29,7 @@ class Users extends AEntity
      * @param  array $params Filter params (user_ids param ignored on getting one user)
      * @return mixed
      */
-    public function index($id = 0, $params = array())
+    public function index($id = 0, array $params = [])
     {
         if (!$this->safeGet($params, 'user_type', '') && empty($id)) {
             return [
@@ -54,10 +54,10 @@ class Users extends AEntity
         if ($id && !empty($data)) {
             $data = reset($data);
         } else {
-            $data = array(
+            $data = [
                 'users' => $data,
                 'params' => $params,
-            );
+            ];
         }
 
         if (!empty($data) || !empty($id)) {
@@ -66,16 +66,16 @@ class Users extends AEntity
             $status = Response::STATUS_NOT_FOUND;
         }
 
-        return array(
+        return [
             'status' => $status,
             'data' => $data
-        );
+        ];
     }
 
     public function create($params)
     {
         $status = Response::STATUS_BAD_REQUEST;
-        $data = array();
+        $data = [];
         $valid_params = true;
 
         $auth = $this->auth;
@@ -85,23 +85,23 @@ class Users extends AEntity
         $user_id = 0;
 
         if (empty($params['email'])) {
-            $data['message'] = __('api_required_field', array(
+            $data['message'] = __('api_required_field', [
                 '[field]' => 'email'
-            ));
+            ]);
             $valid_params = false;
         }
 
         if (empty($params['user_type'])) {
-            $data['message'] = __('api_required_field', array(
+            $data['message'] = __('api_required_field', [
                 '[field]' => 'user_type'
-            ));
+            ]);
             $valid_params = false;
         }
 
         if (!isset($params['company_id'])) {
-            $data['message'] = __('api_required_field', array(
+            $data['message'] = __('api_required_field', [
                 '[field]' => 'company_id'
-            ));
+            ]);
             $valid_params = false;
         }
 
@@ -117,24 +117,24 @@ class Users extends AEntity
 
             if ($user_id) {
                 $status = Response::STATUS_CREATED;
-                $data = array(
+                $data = [
                     'user_id' => $user_id,
                     'profile_id' => $profile_id
-                );
+                ];
             }
         }
 
-        return array(
+        return [
             'status' => $status,
             'data' => $data
-        );
+        ];
     }
 
     public function update($id, $params)
     {
         $auth = $this->auth;
 
-        $data = array();
+        $data = [];
         $status = Response::STATUS_BAD_REQUEST;
 
         $params = $this->filterUserData($params);
@@ -142,21 +142,21 @@ class Users extends AEntity
         list($user_id, $profile_id) = fn_update_user($id, $params, $auth, true, false);
         if ($user_id) {
             $status = Response::STATUS_OK;
-            $data = array(
+            $data = [
                 'user_id' => $user_id,
                 'profile_id' => $profile_id
-            );
+            ];
         }
 
-        return array(
+        return [
             'status' => $status,
             'data' => $data
-        );
+        ];
     }
 
     public function delete($id)
     {
-        $data = array();
+        $data = [];
         $status = Response::STATUS_BAD_REQUEST;
 
         if (fn_delete_user($id)) {
@@ -165,27 +165,27 @@ class Users extends AEntity
             $status = Response::STATUS_NOT_FOUND;
         }
 
-        return array(
+        return [
             'status' => $status,
             'data' => $data
-        );
+        ];
     }
 
     public function privileges()
     {
-        return array(
+        return [
             'create' => 'manage_users',
             'update' => 'manage_users',
             'delete' => 'manage_users',
             'index'  => 'view_users'
-        );
+        ];
     }
 
     public function childEntities()
     {
-        return array(
+        return [
             'usergroups',
-        );
+        ];
     }
 
 

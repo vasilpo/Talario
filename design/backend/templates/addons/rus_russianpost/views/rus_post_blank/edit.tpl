@@ -20,9 +20,9 @@
         {capture name="buttons"}
             {capture name="tools_list"}
                 <li>{btn class="cm-new-window" type="list" text=__("addons.rus_russianpost.blank_7a") dispatch="dispatch[rus_post_blank.print.blank_7a]" form="print_form"}</li>
+                <li>{btn class="cm-new-window" type="list" text=__("addons.rus_russianpost.blank_7b") dispatch="dispatch[rus_post_blank.print.blank_7b]" form="print_form"}</li>
                 <li>{btn class="cm-new-window" type="list" text=__("addons.rus_russianpost.blank_7p") dispatch="dispatch[rus_post_blank.print.blank_7p]" form="print_form"}</li>
                 <li>{btn class="cm-new-window" type="list" text=__("addons.rus_russianpost.blank_112ep") dispatch="dispatch[rus_post_blank.print.blank_112ep]" form="print_form"}</li>
-                <li>{btn class="cm-new-window" type="list" text=__("addons.rus_russianpost.blank_116") dispatch="dispatch[rus_post_blank.print.blank_116]" form="print_form"}</li>
                 <li>{btn class="cm-new-window" type="list" text=__("addons.rus_russianpost.blank_107") dispatch="dispatch[rus_post_blank.print.blank_107]" form="print_form"}</li>
             {/capture}
             {dropdown content=$smarty.capture.tools_list}

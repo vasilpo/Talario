@@ -37,10 +37,12 @@
             group_id="`$data_name`[product_features]"
         }
 {elseif $feature.feature_type == "ProductFeatures::MULTIPLE_CHECKBOX"|enum}
+    {$suffix = $data_name|md5}
+
     <input type="hidden" name="{$data_name}[product_features][{$feature.feature_id}]" value=""
            {if $over}id="field_{$field}__{$feature.feature_id}_" disabled="disabled"{/if} />
     {include file="views/product_features/components/variants_picker/picker.tpl"
-        input_id=($over) ? "field_{$field}__{$feature.feature_id}_" : ""
+        input_id=($over) ? "field_{$field}__{$feature.feature_id}_" : "feature_{$feature.feature_id}_{$suffix}"
         feature_id=$feature.feature_id
         input_name="{$data_name}[product_features][{$feature.feature_id}][]"
         item_ids=$feature.variants|default:[]

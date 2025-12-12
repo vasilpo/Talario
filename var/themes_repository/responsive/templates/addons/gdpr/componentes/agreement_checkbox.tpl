@@ -2,8 +2,8 @@
     {$show_agreement = true scope="parent"}
     {if !$tooltip_only}
         {$const_suffix = $const_suffix|default:""}
-        {$const_input_id = $input_id|default:"gdpr_agreements_{$type}{if $const_suffix}_{$const_suffix}{/if}"}
-        {$input_id = $input_id|default:"gdpr_agreements_{$type}{if $suffix}_{$suffix}{/if}"}
+        {$const_input_id = $input_id|default:"gdpr_agreements_{$type}{if $const_suffix}_{$const_suffix}{/if}{if $obj_prefix}{$obj_prefix}{/if}{if $obj_id}{$obj_id}{/if}"}
+        {$input_id = $input_id|default:"gdpr_agreements_{$type}{if $suffix}_{$suffix}{/if}{if $obj_prefix}{$obj_prefix}{/if}{if $obj_id}{$obj_id}{/if}"}
         {$gdpr_target_elem = "{$input_id}_label"}
         {$is_accept_gdpr_agreements_checked = ($user_data[$const_input_id] === "Y")}
 
@@ -31,8 +31,7 @@
                     data-ca-error-message-target-node="#{$input_id}_error_wrapper"
                     data-ca-lite-checkout-field="user_data.{$const_input_id}"
                     data-ca-lite-checkout-auto-save="true"
-                />
-            </label>
+            /></label>
             {capture name="content_for_popup"}
                 <div class="ty-gdpr-popup" id="gdpr_popup_{$gdpr_target_elem}">
                     <div class="ty-gdpr-popup-content">

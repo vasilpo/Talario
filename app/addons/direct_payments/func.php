@@ -790,7 +790,7 @@ function fn_direct_payments_bootstrap_checkout_data(Service $cart_service, Core 
     }
 
     if (!empty($vendor_ids)) {
-        list($vendors) = fn_get_companies(['company_id' => $vendor_ids], $auth);
+        [$vendors] = fn_get_companies(['company_id' => $vendor_ids], $auth);
         $vendors = fn_array_value_to_key($vendors, 'company_id');
     }
 

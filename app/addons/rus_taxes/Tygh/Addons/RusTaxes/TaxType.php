@@ -26,12 +26,20 @@ class TaxType
 
     const VAT_0 = 'vat0';
 
+    const VAT_5 = 'vat5';
+
+    const VAT_7 = 'vat7';
+
     const VAT_10 = 'vat10';
 
     /** @deprecated since 4.9.2.SP2 */
     const VAT_18 = 'vat18';
 
     const VAT_20 = 'vat20';
+
+    const VAT_105 = 'vat105';
+
+    const VAT_107 = 'vat107';
 
     const VAT_110 = 'vat110';
 

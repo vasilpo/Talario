@@ -72,7 +72,7 @@
                         </label>
                     </div>
                 </div>
-                {if !$hide_server}
+                {if !$hide_server && fn_check_user_access($auth.user_id, "edit_files")}
                     <a class="btn" onclick="Tygh.fileuploader.show_loader(this.id);" id="server_{$id_var_name}">
                         {__("server")}
                     </a>

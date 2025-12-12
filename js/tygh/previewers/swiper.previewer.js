@@ -3,7 +3,13 @@
   $.loadCss(['js/lib/swiper/swiper.min.css']);
   function fn_display(elm) {
     var imageId = elm.data('caImageId');
+    if (typeof imageId === 'undefined' || imageId === '') {
+      return;
+    }
     var elms = $('a[data-ca-image-id="' + imageId + '"] img');
+    if (elms.length === 0) {
+      return;
+    }
     var previewer = $('<div class="ty-swiper-previewer"></div>');
     var previewerContainer = $('<div class="ty-swiper-previewer__container swiper-container"></div>');
     var previewerWrapper = $('<div class="ty-swiper-previewer__wrapper swiper-wrapper"></div>');

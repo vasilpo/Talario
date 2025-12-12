@@ -435,6 +435,18 @@ strong {
     overflow-x: scroll;
 }
 
+.cs-scroll-horizontal {
+    overflow-x: auto;
+}
+
+.min-w-50px {
+    min-width: 50px;
+}
+
+.min-w-500px {
+    min-width: 500px;
+}
+
 .cm-block-head-scroll {
     visibility: hidden;
 }
@@ -555,6 +567,11 @@ strong {
 .row-actionable:hover td {
     background-color: var(--cs-main-color) !important;
     color: var(--cs-content-background);
+}
+
+.row-actionable:hover td .icon-caret-right.cs-dark-theme-invert,
+.row-actionable:hover td .icon-caret-down.cs-dark-theme-invert {
+    filter: invert(0);
 }
 
 // var(--cs-tablet-breakpoint)

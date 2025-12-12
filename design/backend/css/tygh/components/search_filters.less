@@ -139,6 +139,7 @@
     position: sticky;
     right: 0;
     background: var(--cs-content-background);
+    z-index: 3; // Fix Safari iOS bug: Conflict between sticky and overflow, flex, z-index, absolute
 }
 
 // var(--cs-tablet-breakpoint) + 1px

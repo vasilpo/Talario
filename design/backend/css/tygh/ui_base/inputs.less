@@ -366,9 +366,11 @@ input[type="color"].input-micro,
 
     // Size factor * Base line height + Padding + Border.
     // round(1.2 * var(--cs-base-line-height) + 5px * 2 + 1px * 2);
-    --cs-inputs-micro: 36px;
+    --cs-inputs-micro-width: 36px;
+    --cs-inputs-micro-min-width: 36px;
 
-    width: var(--cs-inputs-micro);
+    width: var(--cs-inputs-micro-width);
+    min-width: var(--cs-inputs-micro-min-width);
 }
 
 // var(--cs-tablet-breakpoint)
@@ -390,7 +392,7 @@ input[type="color"].input-micro,
     input[type="tel"].input-micro,
     input[type="color"].input-micro,
     .uneditable-input.input-micro {
-        --cs-inputs-micro: ~"calc(50% - 16px)";
+        --cs-inputs-micro-width: ~"calc(50% - 16px)";
     }
 }
 
@@ -404,8 +406,10 @@ input[type="color"].input-micro,
     // Size factor * Base line height + Padding + Border.
     // width: round(3 * var(--cs-base-line-height) + 6px * 2 + 1px * 2);
     --cs-inputs-mini-width: 74px;
+    --cs-inputs-mini-min-width: 74px;
 
     width: var(--cs-inputs-mini-width);
+    min-width: var(--cs-inputs-mini-min-width);
 }
 // var(--cs-tablet-breakpoint)
 @media (max-width: 767px) {
@@ -787,6 +791,29 @@ input[type="checkbox"]:before {
         margin-left: 506px;
     }
 }
+
+@media (min-width: 901px) and (max-width: 1100px) {
+    .control-group {
+        .control-label {
+            display: inline-block;
+            float: none;
+            width: auto;
+            padding: 0;
+            text-align: left;
+            &.cm-required {
+                display: inline-block;
+                padding-right: 10px;
+                background-position: right 4px;
+            }
+        }
+        .controls {
+            float: none;
+            width: auto;
+            margin: 0;
+        }
+    }
+}
+
 .form-horizontal .control-label {
     word-break: break-all;
     word-break: break-word;
@@ -806,6 +833,9 @@ label.text-value {
             display: none;
         }
     }
+}
+.buttons-container--inline {
+    display: inline-block;
 }
 .ajax-select-wrap {
     margin-top: 0;

@@ -100,6 +100,8 @@
         {/if}
         {* End of Search *}
 
+        <div class="ty-pickup__toolbar cm-pickup__toolbar-{$group_key}"></div>
+
         {* List *}
         <label for="pickup_office_list_{$group_key}"
                class="cm-required cm-multiple-radios hidden"
@@ -107,9 +109,8 @@
         <div class="litecheckout__fields-row litecheckout__fields-row--wrapped pickup__offices pickup__offices--list pickup__offices--list-{$group_key}"
              id="pickup_office_list_{$group_key}"
              data-ca-error-message-target-node-change-on-screen="xs,xs-large,sm"
-             data-ca-error-message-target-node-after-mode="true"
              data-ca-error-message-target-node-on-screen=".cm-open-pickups-msg"
-             data-ca-error-message-target-node=".pickup__offices--list-{$group_key}"
+             data-ca-error-message-target-node=".cm-pickup__toolbar-{$group_key}"
         >
             {foreach $shipping.data.office as $store}
                 {include file="addons/rus_edost/views/checkout/components/shippings/items/edost.tpl" store=$store}

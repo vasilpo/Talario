@@ -59,6 +59,13 @@ class OrderImporter
     {
         $result = new OperationResult(true);
 
+        if (!fn_is_numeric($order->id->local_id)) {
+            $result->setSuccess(false);
+            $result->addMessage('order.not_updated', __('commerceml.import.error.order.local_order_not_found'));
+
+            return $result;
+        }
+
         $current_order_data = $this->order_storage->getOrderData((int) $order->id->local_id);
 
         if (empty($current_order_data)) {
@@ -231,7 +238,7 @@ class OrderImporter
     {
         $products = [];
 
-        foreach ($order->products as $product) {
+        foreach ((array) $order->products as $product) {
             $local_id = $import_storage->findEntityLocalId(ProductDto::REPRESENT_ENTITY_TYPE, $product->id)->asInt();
 
             if (empty($local_id)) {

@@ -20,8 +20,8 @@
     {strip}
         <div class="link">
             {if $category.subcategories}
-                <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="cm-combination{if $expanded} hidden{/if}" ><span class="icon-caret-right"> </span></span>
-                <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_{$comb_id}" class="cm-combination{if !$expanded} hidden{/if}" ><span class="icon-caret-down"> </span></span>
+                <span alt="{__("expand_sublist_of_items")}" title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="cm-combination{if $expanded} hidden{/if}" ><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                <span alt="{__("collapse_sublist_of_items")}" title="{__("collapse_sublist_of_items")}" id="off_{$comb_id}" class="cm-combination{if !$expanded} hidden{/if}" ><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
             {/if}
             {$smarty.capture.category_subtitle nofilter}
         </div>

@@ -49,6 +49,8 @@ class CombinationsGeneratorTest extends ATestCase
         $this->combinations_generator = new CombinationsGenerator(
             $this->product_repository
         );
+
+        $this->requireMockFunction('fn_set_hook');
     }
 
     public function testGeneral()

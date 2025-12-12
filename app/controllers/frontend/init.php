@@ -133,7 +133,7 @@ if (!empty($_REQUEST['dynamic_object'])) {
 }
 
 $dynamic_object_scheme = SchemesManager::getDynamicObject($dispatch, AREA, $_REQUEST);
-if (!empty($dynamic_object_scheme) && !empty($_REQUEST[$dynamic_object_scheme['key']])) {
+if (!empty($dynamic_object_scheme) && !empty($_REQUEST[$dynamic_object_scheme['key']]) && !is_array($_REQUEST[$dynamic_object_scheme['key']])) {
     $dynamic_object['object_type'] = $dynamic_object_scheme['object_type'];
     $dynamic_object['object_id'] = $_REQUEST[$dynamic_object_scheme['key']];
     $dispatch = $dynamic_object_scheme['customer_dispatch'];

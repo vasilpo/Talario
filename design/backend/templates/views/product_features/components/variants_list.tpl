@@ -51,7 +51,7 @@
         <tr class="cm-first-sibling">
             {hook name="product_features:variants_list_head"}
                 <th class="cm-extended-feature {if $feature_type != "ProductFeatures::EXTENDED"|enum}hidden{/if}">
-                    <div name="plus_minus" id="on_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combinations-features-{$id} icon-caret-right"></div><div name="minus_plus" id="off_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-features-{$id} icon-caret-down"></div>
+                    <div name="plus_minus" id="on_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combinations-features-{$id} icon-caret-right cs-dark-theme-invert"></div><div name="minus_plus" id="off_st_{$id}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combinations-features-{$id} icon-caret-down cs-dark-theme-invert"></div>
                 </th>
                 <th width="5%">{__("position_short")}</th>
                 <th width="50%">{__("variant")}</th>
@@ -73,8 +73,8 @@
         <tr>
             {hook name="product_features:variants_list_body"}
                 <td width="2%" class="cm-extended-feature {if $feature_type != "ProductFeatures::EXTENDED"|enum}hidden{/if}" data-th="&nbsp;">
-                    <span id="on_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combination-features-{$id}"><span class="icon-caret-right"></span></span>
-                    <span id="off_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combination-features-{$id}"><span class="icon-caret-down"></span></span>
+                    <span id="on_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand hidden cm-combination-features-{$id}"><span class="icon-caret-right cs-dark-theme-invert"></span></span>
+                    <span id="off_extra_feature_{$id}_{$num}" alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="hand cm-combination-features-{$id}"><span class="icon-caret-down cs-dark-theme-invert"></span></span>
                 </td>
                 <td width="5%" data-th="{__("position_short")}">
                     <input type="hidden" name="feature_data[variants][{$num}][variant_id]" value="{$var.variant_id}">

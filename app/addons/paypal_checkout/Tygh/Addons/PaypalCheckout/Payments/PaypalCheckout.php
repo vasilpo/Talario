@@ -35,8 +35,60 @@ class PaypalCheckout
     /** @var string */
     protected static $payment_name = 'paypal_checkout';
 
-    /** @var array<string, int|float|string|array> */
-    protected $order_info = [];
+    /**
+     * @var array<string, int|float|string|array>
+     *
+     * @psalm-var array{
+     *     total: float,
+     *     subtotal: float,
+     *     tax_subtotal: float,
+     *     order_id: int,
+     *     company_id: int,
+     *     shipping_cost: float,
+     *     payment_id: int,
+     *     use_gift_certificates?: bool,
+     *     subtotal_discount: float,
+     *     points_info?: array{
+     *       in_use: int,
+     *     },
+     *     products: array{
+     *       array{
+     *         subtotal: float,
+     *         amount: int,
+     *         product_code: string,
+     *         product: string,
+     *       },
+     *     },
+     *     gift_certificates?: array{
+     *       array{
+     *         extra: array{
+     *           exclude_from_calculate: bool,
+     *         },
+     *         amount: float,
+     *         gift_cert_code: string,
+     *       },
+     *     },
+     *     payment_surcharge?: float,
+     *     s_firstname: string,
+     *     b_firstname: string,
+     *     firstname: string,
+     *     s_lastname: string,
+     *     b_lastname: string,
+     *     lastname: string,
+     *     s_address: string,
+     *     s_country: string,
+     *     s_address_2?: string,
+     *     s_city?: string,
+     *     s_zipcode?: string,
+     *     s_state?: string,
+     *     shipping: array{
+     *       array{
+     *         shipping: string,
+     *       },
+     *     },
+     *   }
+     */
+    protected $order_info;
 
     /**
      * @var array<string, string|int>
@@ -181,8 +233,54 @@ class PaypalCheckout
      * @param array<string, int|float|string|array> $order_info Order to pay for.
      *
      * @psalm-param array{
-     *   order_id: int
-     * } $order_info
+     *    total: float,
+     *    subtotal: float,
+     *    tax_subtotal: float,
+     *    order_id: int,
+     *    company_id: int,
+     *    shipping_cost: float,
+     *    payment_id: int,
+     *    use_gift_certificates?: bool,
+     *    subtotal_discount: float,
+     *    points_info?: array{
+     *      in_use: int,
+     *    },
+     *    products: array{
+     *      array{
+     *        subtotal: float,
+     *        amount: int,
+     *        product_code: string,
+     *        product: string,
+     *      },
+     *    },
+     *    gift_certificates?: array{
+     *      array{
+     *        extra: array{
+     *          exclude_from_calculate: bool,
+     *        },
+     *        amount: float,
+     *        gift_cert_code: string,
+     *      },
+     *    },
+     *    payment_surcharge?: float,
+     *    s_firstname: string,
+     *    b_firstname: string,
+     *    firstname: string,
+     *    s_lastname: string,
+     *    b_lastname: string,
+     *    lastname: string,
+     *    s_address: string,
+     *    s_country: string,
+     *    s_address_2?: string,
+     *    s_city?: string,
+     *    s_zipcode?: string,
+     *    s_state?: string,
+     *    shipping: array{
+     *      array{
+     *        shipping: string,
+     *      },
+     *    },
+     *  } $order_info
      *
      * @return array<string, string> Payment processor response
      *
@@ -198,8 +296,6 @@ class PaypalCheckout
 
         $this->order_info = $order_info;
 
-        $orders_queue = $this->getOrdersToCharge($order_info);
-
         try {
             $order_specification = [
                 'intent'              => CheckoutPaymentIntent::CAPTURE,
@@ -212,17 +308,10 @@ class PaypalCheckout
                 ],
             ];
 
-            foreach (array_keys($orders_queue) as $suborder_id) {
-                $suborder_info = fn_get_order_info($suborder_id);
-                if (!$suborder_info) {
-                    continue;
-                }
+            $order_specification['purchase_units'][] = $this->buildPurchaseUnit($order_info);
 
-                $order_specification['purchase_units'][] = $this->buildPurchaseUnit($suborder_info);
-
-                if (!$this->getShippingMethod($suborder_info)) {
-                    $order_specification['application_context']['shipping_preference'] = 'NO_SHIPPING';
-                }
+            if (!$this->getShippingMethod($order_info)) {
+                $order_specification['application_context']['shipping_preference'] = 'NO_SHIPPING';
             }
 
             /** @psalm-suppress InvalidArgument */
@@ -320,39 +409,6 @@ class PaypalCheckout
         }
 
         return $order;
-    }
-
-    /**
-     * Gets orders that should be paid.
-     *
-     * @param array<string, int> $order Parent order info
-     *
-     * @psalm-param {
-     *   order_id: int,
-     *   company_id: int,
-     *   status: string
-     * } $order
-     *
-     * @return array<int, int> Order queue
-     *
-     * @psalm-suppress InvalidReturnType
-     */
-    protected function getOrdersToCharge(array $order)
-    {
-        if ($order['status'] === OrderStatuses::PARENT) {
-            $queue = $this->db->getSingleHash(
-                'SELECT order_id, company_id FROM ?:orders WHERE parent_order_id = ?i',
-                ['order_id', 'company_id'],
-                $order['order_id']
-            );
-        } else {
-            $queue = [
-                $order['order_id'] => $order['company_id'],
-            ];
-        }
-
-        /** @psalm-suppress InvalidReturnStatement */
-        return $queue;
     }
 
     /**
@@ -875,8 +931,8 @@ class PaypalCheckout
         }
 
         $amount_value = 0;
-        foreach ($amount['breakdown'] as $breakdown) {
-            $amount_value += $breakdown['value'];
+        foreach ($amount['breakdown'] as $type => $breakdown) {
+            $amount_value += $type === 'discount' ? -$breakdown['value'] : $breakdown['value'];
         }
         $amount_value = $this->formatAmount($amount_value, $amount['currency_code'])['value'];
 

@@ -11,14 +11,14 @@
             <span class="nowrap" style="padding-{$direction}: {$_shift}px;">
             {if $cur_cat.has_children || $cur_cat.subcategories}
                 {if $show_all}
-                    <span title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="hand cm-combination-cat cm-uncheck {if isset($path.$cat_id) || $expand_all}hidden{/if}"><span class="icon-caret-right"></span></span>
+                    <span title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="hand cm-combination-cat cm-uncheck {if isset($path.$cat_id) || $expand_all}hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"></span></span>
                 {else}
                     {if $except_id}
                         {assign var="_except_id" value="&except_id=`$except_id`"}
                     {/if}
-                    <span title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="hand cm-combination-cat cm-uncheck {if (isset($path.$cat_id))}hidden{/if}" onclick="if (!$('#{$comb_id}').children().length) Tygh.$.ceAjax('request', '{"categories.picker?category_id=`$cur_cat.category_id`&random=`$random`&display=`$display`&checkbox_name=`$checkbox_name``$_except_id`"|fn_url nofilter}', {$ldelim}result_ids: '{$comb_id}'{$rdelim})"><span class="icon-caret-right"> </span></span>
+                    <span title="{__("expand_sublist_of_items")}" id="on_{$comb_id}" class="hand cm-combination-cat cm-uncheck {if (isset($path.$cat_id))}hidden{/if}" onclick="if (!$('#{$comb_id}').children().length) Tygh.$.ceAjax('request', '{"categories.picker?category_id=`$cur_cat.category_id`&random=`$random`&display=`$display`&checkbox_name=`$checkbox_name``$_except_id`"|fn_url nofilter}', {$ldelim}result_ids: '{$comb_id}'{$rdelim})"><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
                 {/if}
-                <span title="{__("collapse_sublist_of_items")}" id="off_{$comb_id}" class="hand cm-combination-cat cm-uncheck {if !isset($path.$cat_id) && (!$expand_all || !$show_all)}hidden{/if}"><span class="icon-caret-down"></span></span>
+                <span title="{__("collapse_sublist_of_items")}" id="off_{$comb_id}" class="hand cm-combination-cat cm-uncheck {if !isset($path.$cat_id) && (!$expand_all || !$show_all)}hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"></span></span>
             {/if}
             <span id="category_{$cur_cat.category_id}">{$cur_cat.category}</span>{if $cur_cat.status == "N"}&nbsp;<span class="small-note">-&nbsp;[{__("disabled")}]</span>{/if}
             </span>

@@ -3544,17 +3544,11 @@ function fn_update_shipping($shipping_data, $shipping_id, $lang_code = DESCR_SL)
 
         if ($shipping_id) {
             fn_attach_image_pairs('shipping', 'shipping', $shipping_id, $lang_code);
-            $destination_deliveries = isset($shipping_data['rates']['delivery_time'])
-                ? $shipping_data['rates']['delivery_time']
-                : [];
-            unset($shipping_data['rates']['delivery_time']);
 
             if (isset($shipping_data['rates'])) {
                 $shipping_data['rates'] = array_filter($shipping_data['rates']);
-                fn_update_shipping_rates($shipping_data, $shipping_id);
+                fn_update_shipping_rates($shipping_data, $shipping_id, $lang_code);
             }
-
-            fn_update_shipping_destination_delivery_time($shipping_id, $destination_deliveries, $lang_code);
 
             if (isset($shipping_data['storefront_ids'])) {
                 /** @var \Tygh\Storefront\Repository $repository */
@@ -3650,10 +3644,15 @@ function fn_get_shipping_destination_delivery_time($shipping_id, $destination_id
 /**
  * Update shipping rates
  *
- * @param array $shipping_data shipping info
- * @param int   $shipping_id   shipping identifier
+ * @param array  $shipping_data Shipping info
+ * @param int    $shipping_id   Shipping identifier
+ * @param string $lang_code     Language code
+ *
+ * @return void
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
  */
-function fn_update_shipping_rates($shipping_data, $shipping_id)
+function fn_update_shipping_rates(array $shipping_data, $shipping_id, $lang_code)
 {
     if (!empty($shipping_id)) {
         db_query('DELETE FROM ?:shipping_rates WHERE shipping_id = ?i', $shipping_id);
@@ -3662,10 +3661,15 @@ function fn_update_shipping_rates($shipping_data, $shipping_id)
             return;
         }
 
+        $destination_deliveries = [];
         foreach ($shipping_data['rates'] as $destination_id => $rate) {
 
             if (!empty($rate['destination_id'])) {
                 $destination_id = $rate['destination_id'];
+            }
+
+            if (!empty($rate['delivery_time'])) {
+                $destination_deliveries[$destination_id] = $rate['delivery_time'];
             }
 
             $rate_types = ShippingRateTypes::getAll();
@@ -3697,8 +3701,11 @@ function fn_update_shipping_rates($shipping_data, $shipping_id)
                 ]);
             }
         }
-    }
 
+        if (!empty($destination_deliveries)) {
+            fn_update_shipping_destination_delivery_time($shipping_id, $destination_deliveries, $lang_code);
+        }
+    }
 }
 
 /**
@@ -5776,6 +5783,16 @@ function fn_get_product_taxes($idx, $cart, $cart_products)
         $taxes = fn_get_set_taxes($cart_products[$idx]['tax_ids']);
     }
 
+    /**
+     * Executes after receiving taxes on products.
+     *
+     * @param int   $idx           Cart ID.
+     * @param array $cart          Cart data.
+     * @param array $cart_products Destination data.
+     * @param array $taxes         Product taxes.
+     */
+    fn_set_hook('get_product_taxes_post', $idx, $cart, $cart_products, $taxes);
+
     return $taxes;
 }
 
@@ -7006,6 +7023,32 @@ function fn_calculate_tax_rates($taxes, $price, $amount, $auth, &$cart)
 
     $taxed_price = $price;
 
+    /**
+     * Actions before calculating the tax rate.
+     *
+     * @param array           $taxes          Taxes
+     * @param int|float       $price          Price
+     * @param int             $amount         Item amount
+     * @param array           $auth           Auth data
+     * @param array           $cart           Cart data
+     * @param null|bool|array $destination_id Destination data
+     * @param string|null     $tax_description
+     * @param array|null      $user_data      User data
+     * @param float|int       $taxed_price
+     */
+    fn_set_hook(
+        'calculate_tax_rates_pre',
+        $taxes,
+        $price,
+        $amount,
+        $auth,
+        $cart,
+        $destination_id,
+        $tax_description,
+        $user_data,
+        $taxed_price
+    );
+
     if (!empty($cart['user_data']) && !fn_is_empty($cart['user_data'])) {
         $profile_fields = fn_get_profile_fields('O', $auth);
         $billing_population = fn_check_profile_fields_population($cart['user_data'], 'B', $profile_fields);
@@ -7649,7 +7692,8 @@ function fn_get_orders(array $params, $items_per_page = 0, $get_totals = false, 
         '?:orders.company',
         '?:orders.phone',
         '?:orders.status',
-        '?:orders.total'
+        '?:orders.total',
+        '?:orders.storefront_id'
     ];
 
     // Define sort fields
@@ -10273,7 +10317,7 @@ function fn_checkout_place_order(&$cart, &$auth, $params)
     if (!empty($cart['payment_id'])) {
         $payment_method_data = fn_get_payment_method_data($cart['payment_id']);
 
-        if (empty($payment_method_data) || $payment_method_data['status'] != 'A') {
+        if (empty($payment_method_data) || $payment_method_data['status'] !== ObjectStatuses::ACTIVE) {
             fn_set_notification('E', __('notice'), __('payment_method_not_found'));
 
             return PLACE_ORDER_STATUS_TO_CART;

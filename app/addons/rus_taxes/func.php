@@ -34,8 +34,8 @@ function fn_rus_taxes_install()
 
     $destinations = fn_get_destinations();
 
-    $taxes = array(
-        array(
+    $taxes = [
+        [
             'tax' => __('rus_taxes.tax.vat20'),
             'regnumber' => '',
             'priority' => 0,
@@ -45,8 +45,8 @@ function fn_rus_taxes_install()
             'tax_type' => TaxType::VAT_20,
             'rate_value' => '20',
             'rate_type' => 'P'
-        ),
-        array(
+        ],
+        [
             'tax' => __('rus_taxes.tax.vat10'),
             'regnumber' => '',
             'priority' => 0,
@@ -56,8 +56,30 @@ function fn_rus_taxes_install()
             'tax_type' => TaxType::VAT_10,
             'rate_value' => '10',
             'rate_type' => 'P'
-        ),
-        array(
+        ],
+        [
+            'tax' => __('rus_taxes.tax.vat7'),
+            'regnumber' => '',
+            'priority' => 0,
+            'address_type' => 'S',
+            'status' => 'D',
+            'price_includes_tax' => 'Y',
+            'tax_type' => TaxType::VAT_7,
+            'rate_value' => '7',
+            'rate_type' => 'P'
+        ],
+        [
+            'tax' => __('rus_taxes.tax.vat5'),
+            'regnumber' => '',
+            'priority' => 0,
+            'address_type' => 'S',
+            'status' => 'D',
+            'price_includes_tax' => 'Y',
+            'tax_type' => TaxType::VAT_5,
+            'rate_value' => '5',
+            'rate_type' => 'P'
+        ],
+        [
             'tax' => __('rus_taxes.tax.vat0'),
             'regnumber' => '',
             'priority' => 0,
@@ -67,17 +89,17 @@ function fn_rus_taxes_install()
             'tax_type' => TaxType::VAT_0,
             'rate_value' => '0',
             'rate_type' => 'P'
-        ),
-    );
+        ],
+    ];
 
     foreach ($taxes as $tax) {
-        $tax['rates'] = array();
+        $tax['rates'] = [];
 
         foreach ($destinations as $destination) {
-            $tax['rates'][$destination['destination_id']] = array(
+            $tax['rates'][$destination['destination_id']] = [
                 'rate_value' => $tax['rate_value'],
                 'rate_type' => $tax['rate_type']
-            );
+            ];
         }
 
         fn_update_tax($tax, 0);

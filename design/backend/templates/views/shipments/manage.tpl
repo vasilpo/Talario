@@ -11,8 +11,8 @@
 <div id="shipments_content">
     {capture name="shipments_table"}
         <div class="table-responsive-wrapper longtap-selection">
-            <table width="100%" class="table table-middle table--relative table-responsive table--overflow-hidden">
-            <thead data-ca-bulkedit-default-object="true">
+            <table width="100%" class="table table-middle table--relative table-responsive">
+            <thead class="thead--overflow-hidden" data-ca-bulkedit-default-object="true">
             <tr>
                 <th class="center mobile-hide table__check-items-column">
                     {include file="common/check_items.tpl"

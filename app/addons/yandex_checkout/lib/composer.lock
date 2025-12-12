@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0bf12cd0fc4bda006b70f37dfa668f8",
+    "content-hash": "5ac37e24a5a172604db0be8aecc94712",
     "packages": [
         {
             "name": "yoomoney/yookassa-sdk-php",
-            "version": "2.9.1",
+            "version": "2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://git.yoomoney.ru/scm/sdk/yookassa-sdk-php.git",
-                "reference": "4c6cb47590cf9a1f52974cfe852cc045fa2bae7f"
+                "reference": "61ac9c7ebdf60f28b58e64cc0fc86283687d937f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://git.yoomoney.ru/rest/api/latest/projects/SDK/repos/yookassa-sdk-php/archive?at=refs%2Ftags%2F2.9.1&format=zip"
+                "url": "https://git.yoomoney.ru/rest/api/latest/projects/SDK/repos/yookassa-sdk-php/archive?at=refs%2Ftags%2F2.12.0&format=zip"
             },
             "require": {
                 "ext-curl": "*",
@@ -27,11 +27,10 @@
             },
             "require-dev": {
                 "ext-xml": "*",
-                "mockery/mockery": "^0.9.9",
+                "mockery/mockery": "^0.9 || ^1.6",
                 "php-parallel-lint/php-parallel-lint": "^1.0",
                 "phpmd/phpmd": "^2.13",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^4.8.35 || ^5.7",
+                "phpunit/phpunit": "^4.8 || ^5.7",
                 "squizlabs/php_codesniffer": "*"
             },
             "type": "library",
@@ -59,7 +58,7 @@
                 "yookassa",
                 "yoomoney"
             ],
-            "time": "2023-08-02T08:07:04+00:00"
+            "time": "2025-01-17T12:54:00+00:00"
         }
     ],
     "packages-dev": [],
@@ -70,5 +69,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

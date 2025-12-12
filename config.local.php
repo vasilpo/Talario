@@ -183,5 +183,5 @@ if (PRODUCT_STATUS != '' && !defined('DEVELOPMENT')) {
     ini_set('display_errors', 'on');
     ini_set('display_startup_errors', true);
 
-    define('DEVELOPMENT', true);
 }
+define('DEVELOPMENT', true);

@@ -12,9 +12,10 @@ CancellationDetailsPartyCode - Возможные инициаторы отме�
 ### Constants
 | Visibility | Name | Flag | Summary |
 | ----------:| ---- | ---- | ------- |
-| public | [MERCHANT](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_MERCHANT) |  | Продавец товаров и услуг |
-| public | [YOO_KASSA](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_YOO_KASSA) |  | ЮKassa |
-| public | [PAYMENT_NETWORK](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_PAYMENT_NETWORK) |  | «Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис) |
+| public | [MERCHANT](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_MERCHANT) |  | Продавец товаров и услуг. |
+| public | [YOO_MONEY](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_YOO_MONEY) |  | ЮKassa. |
+| public | [YANDEX_CHECKOUT](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_YANDEX_CHECKOUT) | *deprecated* |  |
+| public | [PAYMENT_NETWORK](../classes/YooKassa-Model-CancellationDetailsPartyCode.md#constant_PAYMENT_NETWORK) |  | «Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис). |
 
 ---
 ### Properties
@@ -42,25 +43,34 @@ CancellationDetailsPartyCode - Возможные инициаторы отме�
 ## Constants
 <a name="constant_MERCHANT" class="anchor"></a>
 ###### MERCHANT
-Продавец товаров и услуг
+Продавец товаров и услуг.
 
 ```php
 MERCHANT = 'merchant'
 ```
 
 
-<a name="constant_YOO_KASSA" class="anchor"></a>
-###### YOO_KASSA
-ЮKassa
+<a name="constant_YOO_MONEY" class="anchor"></a>
+###### YOO_MONEY
+ЮKassa.
 
 ```php
-YOO_KASSA = 'yoo_kassa'
+YOO_MONEY = 'yoo_money'
 ```
 
 
+<a name="constant_YANDEX_CHECKOUT" class="anchor"></a>
+###### ~~YANDEX_CHECKOUT~~
+```php
+YANDEX_CHECKOUT = 'yandex_checkout'
+```
+
+**deprecated**
+Устарел. Оставлен для обратной совместимости
+
 <a name="constant_PAYMENT_NETWORK" class="anchor"></a>
 ###### PAYMENT_NETWORK
-«Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис)
+«Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис).
 
 ```php
 PAYMENT_NETWORK = 'payment_network'
@@ -149,10 +159,10 @@ Static public valueExists(mixed $value) : bool
 ### Reports
 * [Errors - 0](../reports/errors.md)
 * [Markers - 1](../reports/markers.md)
-* [Deprecated - 35](../reports/deprecated.md)
+* [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2023-08-02 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
 
-&copy; 2023 YooMoney
+&copy; 2025 YooMoney

@@ -15,6 +15,7 @@
 defined('BOOTSTRAP') or die('Access denied');
 
 use Tygh\Enum\YesNo;
+use Tygh\Registry;
 
 if ($mode === 'checkout') {
     /** @var \Tygh\SmartyEngine\Core $view */
@@ -34,17 +35,33 @@ if ($mode === 'checkout') {
         && YesNo::toBool($payment_method['processor_params']['is_paypal_checkout'])
     ) {
         $processor_params = $payment_method['processor_params'];
+        $total = $cart['total'] + $cart['payment_surcharge'];
 
         $payment_method['processor_params']
             = $payment_info['processor_params']
             = $cart['payment_method_data']['processor_params']
             = $processor_params;
 
+        if (CART_PRIMARY_CURRENCY !== $processor_params['currency']) {
+            $total = fn_format_price_by_currency($cart['total'], CART_PRIMARY_CURRENCY, $processor_params['currency']);
+        }
+        $currency_data = Registry::get('currencies.' . $processor_params['currency']);
+
+        /** @var float $total */
+        $total = fn_format_rate_value(
+            $total,
+            'F',
+            $currency_data['decimals'],
+            '.',
+            ''
+        );
+
         $view->assign(
             [
-                'cart'           => $cart,
-                'payment_info'   => $payment_info,
-                'payment_method' => $payment_method,
+                'cart'                       => $cart,
+                'payment_info'               => $payment_info,
+                'payment_method'             => $payment_method,
+                'paypal_checkout_cart_total' => $total,
             ]
         );
     }

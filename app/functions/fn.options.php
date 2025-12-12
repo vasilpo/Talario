@@ -14,7 +14,6 @@
 
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\ProductOptionTypes;
-use Tygh\Enum\ProductTracking;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\YesNo;
 use Tygh\Languages\Languages;
@@ -929,7 +928,7 @@ function fn_get_default_product_options($product_id, $get_all = false, array $pr
             $get_allowed_combinations = true;
             foreach ($exceptions as $forbidden_combination) {
                 $unique_combination_values = array_unique($forbidden_combination);
-                if (!in_array((string) OPTION_EXCEPTION_VARIANT_ANY, $unique_combination_values)) {
+                if (!in_array(OPTION_EXCEPTION_VARIANT_ANY, $unique_combination_values)) {
                     continue;
                 }
 
@@ -937,7 +936,9 @@ function fn_get_default_product_options($product_id, $get_all = false, array $pr
                     $get_allowed_combinations = false;
                 } elseif (count($unique_combination_values) === 2) {
                     foreach ($unique_combination_values as $_option_id => $_variant) {
-                        if ($_variant === (string) OPTION_EXCEPTION_VARIANT_ANY) {
+
+                        //phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
+                        if ($_variant == OPTION_EXCEPTION_VARIANT_ANY) {
                             continue;
                         }
 
@@ -1748,9 +1749,12 @@ function fn_get_allowed_options_combination($options, $variants, $string, $itera
 
                     } else {
                         foreach ($res as $option_id => $variant_id) {
-                            if ((int) $variant_id === OPTION_EXCEPTION_VARIANT_ANY) {
+
+                            //phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
+                            if ($variant_id == OPTION_EXCEPTION_VARIANT_ANY) {
                                 unset($res[$option_id]);
-                            } elseif ((int) $variant_id === OPTION_EXCEPTION_VARIANT_NOTHING) {
+                            //phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
+                            } elseif ($variant_id == OPTION_EXCEPTION_VARIANT_NOTHING) {
                                 $res = array_intersect($exception, $combination);
                             }
                         }

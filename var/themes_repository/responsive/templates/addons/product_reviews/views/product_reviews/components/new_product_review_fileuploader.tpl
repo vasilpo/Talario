@@ -1,5 +1,5 @@
 {$post_max_size = $server_env->getIniVar("post_max_size")}
-{$upload_max_filesize = $server_env->getIniVar("upload_max_filesize")}
+{$upload_max_filesize = (empty($upload_max_filesize_mb)) ? $server_env->getIniVar("upload_max_filesize") : "{$upload_max_filesize_mb}M"}
 
 {if $max_upload_filesize}
     {if $post_max_size > $max_upload_filesize}
@@ -31,7 +31,7 @@
 {script src="js/tygh/fileuploader_scripts.js"}
 {script src="js/tygh/node_cloning.js"}
 
-<div class="ty-nowrap" id="file_uploader_{$id_var_name}">
+<div id="file_uploader_{$id_var_name}">
     <div class="ty-fileuploader__file-section" id="message_{$id_var_name}" title="">
         <p class="cm-fu-file hidden">
             {include_ext file="common/icon.tpl"

@@ -4099,15 +4099,15 @@ function fn_substr_in_array($what_str, $where_arr)
 /**
  * Converts string representation of size to bytes.
  *
- * @param string|int $val Size as specified in php.ini.
+ * @param string|int|float $val Size as specified in php.ini.
  *
- * @return int Size in bytes
+ * @return int|float|string Size in bytes
  */
 function fn_return_bytes($val)
 {
     if ($val) {
         $suffix = fn_strtolower($val[fn_strlen($val) - 1]);
-        $val = (int)$val;
+        $val = (float) $val;
 
         switch ($suffix) {
             case 'g':
@@ -6477,21 +6477,36 @@ function fn_merge_styles(array $files, $styles = '', $prepend_prefix = '', array
     if (Development::isEnabled('compile_check') || Debugger::isActive()) {
         $dir_root = Registry::get('config.dir.root');
 
-        $css_files = $theme->getDirContents(array(
-            'dir' => 'css',
-            'get_dirs' => false,
+        $css_files = $theme->getDirContents([
+            'dir'       => 'css',
+            'get_dirs'  => false,
             'get_files' => true,
-            'extension' => array('.css', '.less'),
-            'prefix' => '',
+            'extension' => ['.css', '.less'],
+            'prefix'    => '',
             'recursive' => true,
-        ));
+        ]);
+
+        if ($parent_theme = $theme->getParent()) {
+            $parent_theme_css_files = $parent_theme->getDirContents([
+                'dir'       => 'css',
+                'get_dirs'  => false,
+                'get_files' => true,
+                'extension' => ['.css', '.less'],
+                'prefix'    => '',
+                'recursive' => true,
+            ]);
+
+            foreach ($parent_theme_css_files as $key => $file) {
+                $css_files[$parent_theme->getThemeName() . '/' . $css_suffix . $key] = $file;
+            }
+        }
 
         $tracked_files = array_combine(
             array_keys($css_files),
             array_column($css_files, Themes::PATH_ABSOLUTE)
         );
 
-        foreach ($names as $index => $name) {
+        foreach ($names as $name) {
             if (file_exists($dir_root . '/' . $name)) {
                 $tracked_files[$name] = $dir_root . '/' . $name;
             }

@@ -63,8 +63,8 @@
                     <tr>
                         <td colspan="{$_colspan}" class="row-header">
                             <h5>
-                                <span alt="{__("expand_section")}" title="{__("expand_section")}" id="on_section_fields_{$section}" class="cm-combination {if !$is_deprecated}hidden{/if}"><span class="icon-caret-right"> </span></span>
-                                <span alt="{__("collapse_section")}" title="{__("collapse_section")}" id="off_section_fields_{$section}" class="cm-combination{if $is_deprecated} hidden{/if}"><span class="icon-caret-down"> </span></span>
+                                <span alt="{__("expand_section")}" title="{__("expand_section")}" id="on_section_fields_{$section}" class="cm-combination {if !$is_deprecated}hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
+                                <span alt="{__("collapse_section")}" title="{__("collapse_section")}" id="off_section_fields_{$section}" class="cm-combination{if $is_deprecated} hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
                                 {$profile_fields_sections[$section]["section_name"]}
                                 {if $is_deprecated}
                                     ({__("deprecated")|lower})

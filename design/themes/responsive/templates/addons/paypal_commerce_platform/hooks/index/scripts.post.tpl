@@ -1,5 +1,3 @@
-{script src="js/addons/paypal_commerce_platform/checkout.js" cookie-name="paypal"}
-
 <script>
     (function(_, $) {
         _.tr({

@@ -6,7 +6,7 @@
             {include file="addons/gift_certificates/views/gift_certificates/components/gift_certificates_cart_icon.tpl" width="40" height="40"}
         </div>
         {/if}
-        <div class="ty-cart-items__list-item-desc">
+        <div class="ty-cart-items__list-item-desc ty-cart-items__list-item-desc--{$block.properties.products_links_type}">
             {if !$gift.extra.exclude_from_calculate}
                 <a href="{"gift_certificates.update?gift_cert_id=`$gift_key`"|fn_url}">{__("gift_certificate")}</a>
             {else}

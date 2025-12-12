@@ -24,7 +24,7 @@
             {/if}
 
             {capture name="static_data_table"}
-                <div class="items-container multi-level longtap-selection">
+                <div class="items-container multi-level longtap-selection cs-scroll-horizontal">
                     {if $static_data}
                         {include file="views/static_data/components/multi_list.tpl"
                             items=$static_data

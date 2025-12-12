@@ -207,7 +207,7 @@ class Styles
             $less_var = Less::arrayToLessVars(array($var_name => $value));
 
             if (preg_match('/@' . $var_name . ':.*?;/m', $less)) {
-                $less = preg_replace('/(*ANYCRLF)@' . $var_name . ':.*?;$/m', str_replace("\n", '', $less_var), $less);
+                $less = preg_replace('/(*ANYCRLF)@' . $var_name . ':.*?;\s*(\/\/.*)?$/m', str_replace("\n", '', $less_var), $less);
             } else {
                 $less .= $less_var;
             }

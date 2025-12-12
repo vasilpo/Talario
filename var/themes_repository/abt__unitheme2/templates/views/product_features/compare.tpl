@@ -1,4 +1,5 @@
 {$tmpl='products_scroller'}
+{$continue_url = $continue_url|default:""}
 
 {$show_list_discount = $settings.abt__ut2.product_list.show_you_save[$settings.ab__device] !== "none"}
 

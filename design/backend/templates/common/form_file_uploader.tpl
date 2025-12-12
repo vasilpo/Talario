@@ -79,7 +79,7 @@
                         <a class="btn file-uploader__pickers-buttons-select dropdown-toggle" data-toggle="dropdown" data-ca-fileupload-picker-btn href="#"><span class="caret"></span></a>
                         <ul class="dropdown-menu file-uploader__pickers-menu" data-ca-fileupload-picker-menu>
                             {if $breadcrumbs|sizeof >= 1}
-                                {if !$hide_server}
+                                {if !$hide_server && fn_check_user_access($auth.user_id, "edit_files")}
                                     <li><a data-ca-fileupload-picker-server>{__("add_image_from_server")}</a></li>
                                 {/if}
                                 <li><a data-ca-fileupload-picker-url>{__("add_image_from_url")}</a></li>

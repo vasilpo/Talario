@@ -25,6 +25,7 @@
 {/if}
 
 {$show_old_price = true}
+{$show_product_amount = $show_product_amount|default:false}
 {$show_list_discount = $settings.abt__ut2.product_list.show_you_save[$settings.ab__device] !== "none"}
 {$show_labels_in_title = false}
 

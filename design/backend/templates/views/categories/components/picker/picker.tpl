@@ -47,6 +47,7 @@
 {$is_tristate_checkbox = $is_tristate_checkbox|default:false}
 {$no_items_text = $no_items_text|default:__("no_data")}
 {$query_params = $query_params|default:[]}
+{$no_container = $no_container|default:true}
 
 {if $show_empty_variant}
     {$predefined_variants["0"] = $empty_variant_text}
@@ -75,6 +76,7 @@
                     multiple=$multiple
                     is_tristate_checkbox=$is_tristate_checkbox
                     extra_url="&`$query_params|http_build_query`"
+                    no_container=$no_container
                 }
             </div>
         {/if}

@@ -478,6 +478,12 @@ if (fn_allowed_for('ULTIMATE')) {
         'import_only' => true,
     ];
 
+    $schema['post_processing']['prepare_shared_products'] = [
+        'function'    => 'fn_ult_import_check_and_update_products_sharing',
+        'args'        => ['$primary_object_ids'],
+        'import_only' => true,
+    ];
+
     $schema['references']['product_prices']['import_skip_db_processing'] = true;
 
     $schema['export_fields']['Store'] = $company_schema;

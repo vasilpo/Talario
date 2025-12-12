@@ -33,6 +33,12 @@ $customer_auth = & Tygh::$app['session']['customer_auth'];
 Tygh::$app['session']['shipping_rates'] = isset(Tygh::$app['session']['shipping_rates']) ? Tygh::$app['session']['shipping_rates'] : array();
 $shipping_rates = & Tygh::$app['session']['shipping_rates'];
 
+/** @var \Tygh\Storefront\Repository $storefront_repository */
+$storefront_repository = Tygh::$app['storefront.repository'];
+
+/** @var \Tygh\Storefront\Storefront $storefront */
+$storefront = Tygh::$app['storefront'];
+
 if (empty($customer_auth)) {
     $customer_auth = fn_fill_auth(array(), array(), false, 'C');
 }
@@ -56,6 +62,24 @@ if (fn_allowed_for('ULTIMATE') && $mode != 'edit' && $mode != 'new') {
 
     } elseif (empty($cart['order_company_id']) && Registry::get('runtime.company_id')) {
         $cart['order_company_id'] = Registry::get('runtime.company_id');
+    }
+}
+
+if (fn_allowed_for('MULTIVENDOR:ULTIMATE')) {
+    if (($mode === 'add' || $mode === 'update') && !fn_cart_is_empty($cart) && empty($cart['order_id'])) {
+        if (
+            isset($_REQUEST['s_storefront']) && isset($cart['new_order_selected_storefront_id'])
+            && $_REQUEST['s_storefront'] !== (string) $cart['new_order_selected_storefront_id']
+        ) {
+            /** @psalm-suppress PossiblyInvalidOperand */
+            $url_change_storefront = fn_url('order_management.new' . '&s_storefront=' . $_REQUEST['s_storefront']);
+            $url_redirect = fn_url('order_management.add' . '&s_storefront=' . $cart['new_order_selected_storefront_id']);
+            fn_set_notification('W', __('warning'), __('orders_not_allow_to_change_storefront', ['[link]' => $url_change_storefront]));
+
+            return [CONTROLLER_STATUS_REDIRECT, $url_redirect];
+        } elseif (!isset($cart['new_order_selected_storefront_id'])) {
+            $cart['new_order_selected_storefront_id'] = $storefront->storefront_id;
+        }
     }
 }
 
@@ -337,7 +361,15 @@ if ($mode == 'edit' && !empty($_REQUEST['order_id'])) {
         return array(CONTROLLER_STATUS_DENIED, '');
     }
 
-    return array(CONTROLLER_STATUS_REDIRECT, 'order_management.update');
+    if (fn_allowed_for('MULTIVENDOR:ULTIMATE') && (isset($cart['order_id']) || isset($_REQUEST['order_id']))) {
+        $order_id = $cart['order_id'] ?? $_REQUEST['order_id'];
+        /** @psalm-suppress RiskyCast */
+        $order_info = fn_get_order_short_info((int) $order_id);
+
+        return [CONTROLLER_STATUS_REDIRECT, 'order_management.update&s_storefront=' . $order_info['storefront_id']];
+    }
+
+    return [CONTROLLER_STATUS_REDIRECT, 'order_management.update'];
 
 //
 // Create new order
@@ -347,12 +379,18 @@ if ($mode == 'edit' && !empty($_REQUEST['order_id'])) {
     fn_clear_cart($cart, true);
     $customer_auth = fn_fill_auth(array(), array(), false, 'C');
 
-    return array(CONTROLLER_STATUS_REDIRECT, 'order_management.add');
+    if (fn_allowed_for('MULTIVENDOR:ULTIMATE') && isset($_REQUEST['s_storefront']) && empty($_REQUEST['s_storefront'])) {
+        $view = Tygh::$app['view'];
+        $view->assign('content_tpl', 'common/select_company.tpl');
+
+        return [CONTROLLER_STATUS_OK];
+    }
+
+    return [CONTROLLER_STATUS_REDIRECT, 'order_management.add'];
 //
 // Update order page
 //
 } elseif ($mode == 'update' || $mode == 'add') {
-
     //
     // Prepare order status info
     //
@@ -433,7 +471,16 @@ if ($mode == 'edit' && !empty($_REQUEST['order_id'])) {
     //
     //Get payment methods
     //
-    $payment_methods = fn_get_payments(array('usergroup_ids' => $customer_auth['usergroup_ids']));
+
+    $payment_params = [
+        'usergroup_ids' => $customer_auth['usergroup_ids']
+    ];
+
+    if (fn_allowed_for('MULTIVENDOR:ULTIMATE') && $storefront_repository->getCount() > 1) {
+        $payment_params['storefront_id'] = $storefront->storefront_id;
+    }
+
+    $payment_methods = fn_get_payments($payment_params);
 
     // Check if payment method has surcharge rates
     foreach ($payment_methods as $k => $v) {
@@ -483,17 +530,17 @@ if ($mode == 'edit' && !empty($_REQUEST['order_id'])) {
     } elseif (!empty($_REQUEST['storefront_id'])) {
         Tygh::$app['view']->assign('selected_storefront_id', $_REQUEST['storefront_id']);
     } else {
-        /** @var \Tygh\Storefront\Repository $repository */
-        $repository = Tygh::$app['storefront.repository'];
         $runtime_company_id = fn_get_runtime_company_id();
 
         if ($runtime_company_id) {
             /** @var \Tygh\Storefront\Storefront $storefronts_available */
-            $storefronts_available = $repository->findAvailableForCompanyId($runtime_company_id);
+            $storefronts_available = $storefront_repository->findAvailableForCompanyId($runtime_company_id);
             $storefront_id = empty($storefronts_available) ? 0 : $storefronts_available->storefront_id;
         } else {
-            $storefront_id = $repository->findDefault()->storefront_id;
+            /** @psalm-suppress PossiblyNullPropertyFetch */
+            $storefront_id = $storefront_repository->findDefault()->storefront_id;
         }
+
         Tygh::$app['view']->assign('selected_storefront_id', $storefront_id);
     }
 

@@ -68,6 +68,7 @@ fn_register_hooks(
     ['get_discussion_pre', 500],
     ['master_products_create_vendor_product', '', 'product_variations'],
     ['master_products_actualize_master_product_quantity', '', 'product_variations'],
+    ['render_block_content_pre', '', 'product_variations'],
     'seo_get_schema_org_markup_items_post',
     'after_options_calculation',
     'discussion_is_user_eligible_to_write_review_for_product_post',

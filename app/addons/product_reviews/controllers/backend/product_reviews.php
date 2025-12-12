@@ -285,6 +285,7 @@ if ($mode === 'manage') {
         'is_allowed_update_reply'               => true,
         'total_product_reviews'                 => $total_product_reviews,
         'product_data'                          => $product_data,
+        'upload_max_filesize_mb'               => fn_get_allowed_image_file_size(true),
     ]);
 }
 

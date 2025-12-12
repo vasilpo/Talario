@@ -59,13 +59,14 @@ if ($mode == 'add') {
         $index = (int) array_search('options', array_keys($tabs));
     }
     $index++;
+    $tab_url = 'product_variations.manage?product_id=' . $product_data['product_id'];
 
     $tabs = array_merge(
         array_slice($tabs, 0, $index, true),
         [
             'variations' => [
                 'title' => __('product_variations.variations'),
-                'href'  => 'product_variations.manage?product_id=' . $product_data['product_id'],
+                'href'  => $tab_url,
                 'ajax'  => true
             ]
         ],
@@ -90,6 +91,7 @@ if ($mode == 'add') {
         }
     }
 
+    $view->assign('product_variations_tab_url', fn_url($tab_url));
     $view->assign('product_type', Type::createByProduct($product_data));
     $view->assign('product_data', $product_data);
 

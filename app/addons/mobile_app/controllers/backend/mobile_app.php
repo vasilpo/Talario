@@ -49,16 +49,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
         }
 
-        if (GoogleServicesConfig::isExist($storefront_id)) {
-            $g_config_file_path = GoogleServicesConfig::getFilePath($storefront_id);
-            Storage::instance('custom_files')->put(
-                implode(DIRECTORY_SEPARATOR, [$working_dir, 'android', 'app', 'google-services.json']),
-                [
-                    'file'         => $g_config_file_path,
-                    'keep_origins' => true,
-                    'overwrite'    => true,
-                ]
-            );
+        $types_to_subdir = [
+            GoogleServicesConfig::ANROID_OS => 'app',
+            GoogleServicesConfig::IOS => '',
+        ];
+
+        foreach ($types_to_subdir as $type => $subdir) {
+            if (GoogleServicesConfig::isExist($type, $storefront_id)) {
+                $g_config_file_path = GoogleServicesConfig::getFilePath($type, $storefront_id);
+                $file_name = GoogleServicesConfig::getFileNameByType($type);
+                Storage::instance('custom_files')->put(
+                    implode(DIRECTORY_SEPARATOR, [$working_dir, $type, $subdir, $file_name]),
+                    [
+                        'file'         => $g_config_file_path,
+                        'keep_origins' => true,
+                        'overwrite'    => true,
+                    ]
+                );
+            }
         }
 
         $schema = fn_get_schema('mobile_app', 'app_settings');
@@ -123,8 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return [CONTROLLER_STATUS_REDIRECT, 'addons.update&addon=mobile_app'];
     }
 
-    if ($mode === 'delete_google_config_file') {
-        GoogleServicesConfig::deleteFile($storefront_id);
+    if ($mode === 'delete_google_config_file' && !empty($_REQUEST['type']) && is_string($_REQUEST['type'])) {
+        GoogleServicesConfig::deleteFile($_REQUEST['type'], $storefront_id);
+
         return [CONTROLLER_STATUS_REDIRECT, 'addons.update&addon=mobile_app&storefront_id=' . $storefront_id];
     }
 
@@ -137,6 +146,6 @@ if ($mode === 'get_file') {
     if (file_exists($archive_path)) {
         fn_get_file($archive_path, '', true);
     }
-} elseif ($mode === 'get_google_config_file') {
-    GoogleServicesConfig::getFile($storefront_id);
+} elseif ($mode === 'get_google_config_file' && !empty($_REQUEST['type']) && is_string($_REQUEST['type'])) {
+    GoogleServicesConfig::getFile($_REQUEST['type'], $storefront_id);
 }

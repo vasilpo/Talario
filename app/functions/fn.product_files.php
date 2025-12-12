@@ -15,6 +15,7 @@
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Languages\Languages;
 use Tygh\Storage;
+use Tygh\Tools\SecurityHelper;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -37,10 +38,10 @@ function fn_copy_product_files($file_id, $file, $product_id, $var_prefix = 'file
 
     $_data = array();
 
-    list($_data[$var_prefix . '_size'], $_data[$var_prefix . '_path']) = Storage::instance('downloads')->put($filename, array(
+    [$_data[$var_prefix . '_size'], $_data[$var_prefix . '_path']] = Storage::instance('downloads')->put($filename, [
         'file' => $file['path'],
         'overwrite' => true
-    ));
+    ]);
 
     $_data[$var_prefix . '_path'] = fn_basename($_data[$var_prefix . '_path']);
     db_query('UPDATE ?:product_files SET ?u WHERE file_id = ?i', $_data, $file_id);
@@ -217,7 +218,7 @@ function fn_update_product_file_folder($product_file_folder, $folder_id, $lang_c
     }
 
     if ($folder_id && !empty($product_file_folder['product_id'])) {
-        list($previous_folder,) = fn_get_product_file_folders([
+        [$previous_folder,] = fn_get_product_file_folders([
             'folder_ids' => $folder_id,
             'product_id' => $product_file_folder['product_id']
         ]);
@@ -281,12 +282,14 @@ function fn_update_product_file($product_file, $file_id, $lang_code = DESCR_SL)
      */
     fn_set_hook('update_product_file_pre', $product_file, $file_id, $lang_code);
 
+    SecurityHelper::sanitizeObjectData('product_file', $product_file);
+
     if (!fn_company_products_check($product_file['product_id'], true)) {
         return false;
     }
 
     if ($file_id && !empty($product_file['product_id'])) {
-        list($previous_file,) = fn_get_product_files([
+        [$previous_file,] = fn_get_product_files([
             'file_ids'   => $file_id,
             'product_id' => $product_file['product_id'],
         ]);

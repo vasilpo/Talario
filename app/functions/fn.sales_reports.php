@@ -35,7 +35,15 @@ function fn_get_order_reports($view = false, $report_id = 0, $table_id = 0, $par
 {
     $status = (empty($view)) ? "" : "AND status = 'A'";
 
-    $data = db_get_hash_array("SELECT a.*, b.description FROM ?:sales_reports as a LEFT JOIN ?:sales_reports_descriptions as b ON a.report_id = b.report_id AND lang_code = ?s WHERE type = 'O' $status ORDER BY position", 'report_id', CART_LANGUAGE);
+    $data = db_get_hash_array(
+        'SELECT a.*, b.description FROM ?:sales_reports as a'
+        . ' LEFT JOIN ?:sales_reports_descriptions as b ON a.report_id = b.report_id AND lang_code = ?s WHERE type = ?s ?p'
+        . ' ORDER BY position',
+        'report_id',
+        DESCR_SL,
+        'O',
+        $status
+    );
 
     if (empty($data)) {
         return array();
@@ -61,7 +69,15 @@ function fn_get_order_reports($view = false, $report_id = 0, $table_id = 0, $par
 
     list($data[$k]['time_from'], $data[$k]['time_to']) = fn_create_periods($data[$k]);
 
-    $data[$k]['tables'] = db_get_hash_array("SELECT a.*, b.description FROM ?:sales_reports_tables as a LEFT JOIN ?:sales_reports_table_descriptions as b ON a.table_id = b.table_id AND lang_code = ?s WHERE a.report_id = ?i ?p ORDER BY position", 'table_id', CART_LANGUAGE, $report_id, $condition);
+    $data[$k]['tables'] = db_get_hash_array(
+        'SELECT a.*, b.description FROM ?:sales_reports_tables as a'
+        . ' LEFT JOIN ?:sales_reports_table_descriptions as b ON a.table_id = b.table_id AND lang_code = ?s WHERE a.report_id = ?i ?p'
+        . ' ORDER BY position',
+        'table_id',
+        DESCR_SL,
+        $report_id,
+        $condition
+    );
 
     if (isset($params['load_report_table_data'])) {
         return $data;
@@ -734,19 +750,19 @@ function fn_get_report_data($id, $table_id = 0)
 {
     // Get Data of Specific Table
     if (!empty($table_id)) {
-        $data = db_get_row("SELECT a.*, b.description FROM ?:sales_reports_tables as a LEFT JOIN ?:sales_reports_table_descriptions as b ON a.table_id = b.table_id AND lang_code = ?s WHERE a.report_id = ?i AND a.table_id = ?i", CART_LANGUAGE, $id, $table_id);
-        $data['elements'] = db_get_array("SELECT a.* FROM ?:sales_reports_table_elements as a WHERE a.report_id = ?i AND a.table_id = ?i ORDER BY a.position", $id, $table_id);
-        $data['intervals'] = db_get_array("SELECT a.interval_id FROM ?:sales_reports_tables as a WHERE a.report_id = ?i AND a.table_id = ?i", $id, $table_id);
+        $data = db_get_row('SELECT a.*, b.description FROM ?:sales_reports_tables as a LEFT JOIN ?:sales_reports_table_descriptions as b ON a.table_id = b.table_id AND lang_code = ?s WHERE a.report_id = ?i AND a.table_id = ?i', DESCR_SL, $id, $table_id);
+        $data['elements'] = db_get_array('SELECT a.* FROM ?:sales_reports_table_elements as a WHERE a.report_id = ?i AND a.table_id = ?i ORDER BY a.position', $id, $table_id);
+        $data['intervals'] = db_get_array('SELECT a.interval_id FROM ?:sales_reports_tables as a WHERE a.report_id = ?i AND a.table_id = ?i', $id, $table_id);
 
         return $data;
 
     // Get Data of the whole report
     } else {
-        $data = db_get_row("SELECT a.*, b.description FROM ?:sales_reports as a LEFT JOIN ?:sales_reports_descriptions as b ON a.report_id = b.report_id AND lang_code = ?s WHERE a.report_id = ?i", CART_LANGUAGE, $id);
-        $data['tables'] = db_get_array("SELECT a.*, b.description FROM ?:sales_reports_tables as a LEFT JOIN ?:sales_reports_table_descriptions as b ON a.table_id = b.table_id AND lang_code = ?s WHERE report_id = ?i ORDER BY position", CART_LANGUAGE, $id);
+        $data = db_get_row('SELECT a.*, b.description FROM ?:sales_reports as a LEFT JOIN ?:sales_reports_descriptions as b ON a.report_id = b.report_id AND lang_code = ?s WHERE a.report_id = ?i', DESCR_SL, $id);
+        $data['tables'] = db_get_array('SELECT a.*, b.description FROM ?:sales_reports_tables as a LEFT JOIN ?:sales_reports_table_descriptions as b ON a.table_id = b.table_id AND lang_code = ?s WHERE report_id = ?i ORDER BY position', DESCR_SL, $id);
         foreach ($data['tables'] as $k => $v) {
-            $data['tables'][$k]['elements'] = db_get_array("SELECT a.* FROM ?:sales_reports_table_elements as a WHERE a.report_id = ?i AND a.table_id = ?i ORDER BY a.position", $id, $v['table_id']);
-            $data['tables'][$k]['intervals'] = db_get_array("SELECT a.interval_id FROM ?:sales_reports_tables as a WHERE a.report_id = ?i AND a.table_id = ?i", $id, $v['table_id']);
+            $data['tables'][$k]['elements'] = db_get_array('SELECT a.* FROM ?:sales_reports_table_elements as a WHERE a.report_id = ?i AND a.table_id = ?i ORDER BY a.position', $id, $v['table_id']);
+            $data['tables'][$k]['intervals'] = db_get_array('SELECT a.interval_id FROM ?:sales_reports_tables as a WHERE a.report_id = ?i AND a.table_id = ?i', $id, $v['table_id']);
         }
 
         return $data;

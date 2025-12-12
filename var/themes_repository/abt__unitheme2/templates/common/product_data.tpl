@@ -186,13 +186,12 @@
                     <button disabled class="ty-btn ty-btn__tertiary" id="out_of_stock_info_{$obj_prefix}{$obj_id}"><span><i class="ut2-icon-use_icon_cart"></i><bdi>{$out_of_stock_text}</bdi></span></button>
                 {/if}
             {elseif ($product.out_of_stock_actions == "OutOfStockActions::SUBSCRIBE"|enum)}
-                <div id="subscribe_form_wrapper"><!--subscribe_form_wrapper--></div>
-
+                <div id="subscribe_form_wrapper_{$obj_prefix}{$obj_id}"><!--subscribe_form_wrapper_{$obj_prefix}{$obj_id}--></div>
                 <script>
                     (function(_, $) {
-                        $.ceAjax('request', fn_url('products.subscription_form?product_id={$product.product_id}'), {
+                        $.ceAjax('request', fn_url('products.subscription_form?product_id={$product.product_id}&obj_id={$obj_id}{($obj_prefix) ? "&obj_prefix=`$obj_prefix`" : "" nofilter}'), {
                             hidden: true,
-                            result_ids: 'subscribe_form_wrapper'
+                            result_ids: 'subscribe_form_wrapper_{$obj_prefix}{$obj_id}'
                         });
                     }(Tygh, Tygh.$));
                 </script>
@@ -382,7 +381,7 @@
                             class="ty-price-curency__input cm-numeric"
                             title="{__("enter_your_price")}"
                             data-a-sign="{$base_currency.symbol nofilter}"
-                            data-a-dec="{if $base_currency.decimal_separator}{$base_currency.decimal_separator nofilter}{else}.{/if}"
+                            data-a-dec="{if $base_currency.decimals_separator}{$base_currency.decimals_separator nofilter}{else}.{/if}"
                             data-a-sep="{if $base_currency.thousands_separator}{$base_currency.thousands_separator nofilter}{else},{/if}"
                             data-p-sign="{if $base_currency.after === "YesNo::YES"|enum}s{else}p{/if}"
                             data-m-dec="{$base_currency.decimals}"

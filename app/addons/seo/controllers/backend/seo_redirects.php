@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($mode == 'delete') {
         if (!empty($_REQUEST['redirect_id'])) {
+            /** @psalm-suppress InvalidArgument */
             fn_delete_seo_redirect($_REQUEST['redirect_id']);
         }
     }
@@ -102,9 +103,4 @@ function fn_get_seo_redirects($params = array(), $items_per_page = 0, $lang_code
     }
 
     return array($seo_redirects, $params);
-}
-
-function fn_delete_seo_redirect($redirect_id)
-{
-    db_query("DELETE FROM ?:seo_redirects WHERE redirect_id = ?i", $redirect_id);
 }

@@ -1,9 +1,9 @@
 <?php
 
-/**
+/*
  * The MIT License
  *
- * Copyright (c) 2023 "YooMoney", NBСO LLC
+ * Copyright (c) 2025 "YooMoney", NBСO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -122,7 +122,7 @@ class Client extends BaseClient
     /**
      * Текущая версия библиотеки
      */
-    const SDK_VERSION = '2.9.1';
+    const SDK_VERSION = '2.12.0';
 
     /**
      * Получить список платежей магазина
@@ -234,7 +234,7 @@ class Client extends BaseClient
 
         $serializer     = new CreatePaymentRequestSerializer();
         $serializedData = $serializer->serialize($payment);
-        $httpBody       = $this->encodeData($serializedData);
+        $httpBody       = $this->encodeData($this->addDefaultCmsName($serializedData));
 
         $response = $this->execute($path, HttpVerb::POST, null, $httpBody, $headers);
 
@@ -1470,5 +1470,19 @@ class Client extends BaseClient
         }
 
         return $result;
+    }
+
+    /**
+     * Добавляет в metadata метку cms_name, если она не была установлена
+     *
+     * @param array $requestArray
+     * @return array
+     */
+    private function addDefaultCmsName(array $requestArray)
+    {
+        $defaultMetadata = array('cms_name' => 'yookassa_sdk_php_2');
+        $requestArray['metadata'] = array_merge($defaultMetadata, isset($requestArray['metadata']) ? $requestArray['metadata'] : array());
+
+        return $requestArray;
     }
 }

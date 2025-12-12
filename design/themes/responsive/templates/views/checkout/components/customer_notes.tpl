@@ -10,7 +10,7 @@
                           data-ca-lite-checkout-auto-save="true"
                           aria-label="{__("lite_checkout.delivery_note")}"
                 >{$cart.notes}</textarea>
-            <label class="litecheckout__label" for="litecheckout_comment_to_shipping"
+            <label class="litecheckout__label cm-required" for="litecheckout_comment_to_shipping"
             >{$field_name|default:__("lite_checkout.delivery_note")} </label>
         </div>
     </div>

@@ -21,6 +21,12 @@ $schema = [
     TaxType::VAT_0   => [
         'name' => __('rus_taxes.tax.vat0'),
     ],
+    TaxType::VAT_5   => [
+        'name' => __('rus_taxes.tax.vat5'),
+    ],
+    TaxType::VAT_7   => [
+        'name' => __('rus_taxes.tax.vat7'),
+    ],
     TaxType::VAT_10  => [
         'name' => __('rus_taxes.tax.vat10'),
     ],
@@ -30,6 +36,12 @@ $schema = [
     ],
     TaxType::VAT_20  => [
         'name' => __('rus_taxes.tax.vat20'),
+    ],
+    TaxType::VAT_105 => [
+        'name' => __('rus_taxes.tax.vat105'),
+    ],
+    TaxType::VAT_107 => [
+        'name' => __('rus_taxes.tax.vat107'),
     ],
     TaxType::VAT_110 => [
         'name' => __('rus_taxes.tax.vat110'),

@@ -34,6 +34,9 @@ $schema = [
     'packages/prices_types/price_type' => static function (SimpleXmlElement $xml, ImportStorage $import_storage) {
         return ServiceProvider::getPriceTypeConvertor()->convert($xml, $import_storage);
     },
+    'classifier/prices_types/price_type' => static function (SimpleXmlElement $xml, ImportStorage $import_storage) {
+        return ServiceProvider::getPriceTypeConvertor()->convert($xml, $import_storage);
+    },
     'packages/offers/offer'            => static function (SimpleXmlElement $xml, ImportStorage $import_storage) {
         return ServiceProvider::getProductConvetor()->convert($xml, $import_storage, false);
     },

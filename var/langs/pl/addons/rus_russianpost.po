@@ -584,6 +584,10 @@ msgctxt "Languages::addons.rus_russianpost.blank_7p"
 msgid "Form 7p"
 msgstr "Form 7p"
 
+msgctxt "Languages::addons.rus_russianpost.blank_7b"
+msgid "Form 7b"
+msgstr "Form 7b"
+
 msgctxt "Languages::addons.rus_russianpost.blank_112ep"
 msgid "Form 112ep"
 msgstr "Form 112ep"

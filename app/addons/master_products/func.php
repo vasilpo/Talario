@@ -73,7 +73,8 @@ function fn_master_products_install()
 
         $block_description = [
             'lang_code' => DEFAULT_LANGUAGE,
-            'name'      => __('master_products.vendor_products_block_name', [], DEFAULT_LANGUAGE),
+            'name'      => __('master_products.vendor_products_block_name'),
+            'lang_var'  => 'master_products.vendor_products_block_name',
         ];
 
         $block_id = $block->update($block_data, $block_description);
@@ -90,7 +91,8 @@ function fn_master_products_install()
             'company_id'    => $company_id,
             'show_in_popup' => 'N',
             'lang_code'     => DEFAULT_LANGUAGE,
-            'name'          => __('master_products.vendor_products_tab_name', [], DEFAULT_LANGUAGE),
+            'name'          => __('master_products.vendor_products_tab_name'),
+            'lang_var'  => 'master_products.vendor_products_block_name',
         ];
 
         $product_tabs->update($tab_data);
@@ -190,7 +192,7 @@ function fn_master_products_get_products(
         SiteArea::isStorefront($params['area'])
         || !empty($params['selecting_for_customer_area'])
     ) {
-        $condition .= db_quote(' AND products.master_product_status IN (?a)', ['A']);
+        $condition .= db_quote(' AND products.master_product_status IN (?a)', [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN]);
 
         if (isset($params['company_status']) && !empty($params['company_status'])) {
             $search = db_quote('AND companies.status IN (?a)', $params['company_status']);
@@ -219,6 +221,58 @@ function fn_master_products_get_products(
                 : Tygh::$app['storefront'];
 
             [$vendor_filter_join, $vendor_filter_condition] = fn_master_products_filter_master_products_by_vendor($params);
+
+            // FIXME Dirty hack
+            if (
+                mb_strpos($vendor_filter_join, ' AS master_products ') !== false
+                && mb_strpos($join, ' AS warehouses_destination_products_amount ') !== false
+            ) {
+                $vendor_filter_join .= db_quote(
+                    ' LEFT JOIN ?:warehouses_destination_products_amount AS master_products_warehouses_destination_products_amount'
+                    . ' ON master_products_warehouses_destination_products_amount.product_id = master_products.product_id'
+                        . ' AND master_products_warehouses_destination_products_amount.destination_id = warehouses_destination_products_amount.destination_id'
+                        . ' AND master_products_warehouses_destination_products_amount.storefront_id = warehouses_destination_products_amount.storefront_id'
+                );
+
+                $cases = <<<CASES
+(CASE WHEN master_products_warehouses_destination_products_amount.amount IS NOT NULL
+    THEN master_products_warehouses_destination_products_amount.amount
+    ELSE 
+        (CASE WHEN products.is_stock_split_by_warehouses = ?s
+            THEN 
+                (CASE WHEN master_products.is_stock_split_by_warehouses = ?s
+                    THEN warehouses_destination_products_amount.amount 
+                    ELSE master_products.amount
+                END)
+            ELSE 
+                (CASE WHEN master_products.amount IS NOT NULL
+                    THEN master_products.amount
+                    ELSE products.amount
+                END)
+        END)
+END)
+CASES;
+                $condition = str_replace(
+                    db_quote(
+                        '(CASE products.is_stock_split_by_warehouses WHEN ?s'
+                        . ' THEN warehouses_destination_products_amount.amount'
+                        . ' ELSE products.amount END)',
+                        YesNo::YES
+                    ),
+                    db_quote($cases, YesNo::YES, YesNo::YES),
+                    $condition
+                );
+            } elseif (mb_strpos($vendor_filter_join, ' AS master_products ') !== false) {
+                $condition = str_replace(
+                    'products.amount',
+                    db_quote(
+                        '(CASE WHEN master_products.amount IS NOT NULL'
+                        . ' THEN master_products.amount'
+                        . ' ELSE products.amount END)'
+                    ),
+                    $condition
+                );
+            }
 
             $join .= db_quote(
                 ' LEFT JOIN ?:master_products_storefront_offers_count AS master_products_storefront_offers_count '
@@ -341,7 +395,7 @@ function fn_master_products_get_products_post(array &$products, array &$params)
         ) {
             [$product['best_product_offer_id'], $best_product_offer_price, $best_product_offer] = fn_master_products_get_best_product_offer($product['product_id']);
 
-            if ($best_product_offer_price === 0) {
+            if ($best_product_offer_price === 0 || !$best_product_offer) {
                 continue;
             }
 
@@ -941,7 +995,7 @@ function fn_master_products_get_product_data_post(&$product_data, $auth, $previe
 
     [$product_data['best_product_offer_id'], $best_product_offer_price, $best_product_offer] = fn_master_products_get_best_product_offer($product_data['product_id']);
 
-    if ($best_product_offer_price === 0) {
+    if ($best_product_offer_price === 0 || !$best_product_offer) {
         return;
     }
 
@@ -2073,6 +2127,7 @@ function fn_master_products_get_best_product_offer($master_product_id, array $ve
     }
 
     $vendor_product_offers = $product_repository->findProducts($vendor_product_ids);
+
     fn_gather_additional_products_data($vendor_product_offers, []);
 
     $best_product_offer_id = null;
@@ -2107,7 +2162,7 @@ function fn_master_products_get_best_product_offer($master_product_id, array $ve
      */
     fn_set_hook('get_best_product_offer_post', $master_product_id, $best_product_offer_id, $best_product_offer_price, $vendor_product_offers);
 
-    return [(int) $best_product_offer_id, $best_product_offer_price, $vendor_product_offers[$best_product_offer_id]];
+    return [(int) $best_product_offer_id, $best_product_offer_price, $vendor_product_offers[$best_product_offer_id] ?? []];
 }
 
 /**
@@ -3245,8 +3300,15 @@ function fn_master_products_promotion_apply_post(array $promotions, $zone, array
     $master_product = $repository->findProduct(
         $master_product_id,
         ['product_name'],
-        ['master_products_skip_get_best_product_offer' => true]
+        [
+            'master_products_skip_get_best_product_offer' => true,
+            'storefront_statuses'                         => [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN],
+        ]
     );
+
+    if (!$master_product) {
+        return;
+    }
 
     $price_data = [
         'price'        => $data['price'],
@@ -3271,4 +3333,43 @@ function fn_master_products_promotion_apply_post(array $promotions, $zone, array
 
     $data = array_merge($data, $price_data);
     $applied_promotions = $master_product_applied_promotions;
+}
+
+/**
+ * The `render_block_content_pre` hook handler.
+ *
+ * Action performed:
+ *    - When viewing a product offer, changes the "variations_by_product_id" parameter to the master product ID.
+ *
+ * @param string $template_variable Name of current block content variable
+ * @param array  $field             Scheme of this content variable from block scheme content section
+ * @param array  $block_schema      Block scheme
+ * @param array  $block             Block data
+ *
+ * @return void
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
+ */
+function fn_product_variations_render_block_content_pre($template_variable, array $field, array &$block_schema, array $block)
+{
+    $filling = 'product_variations.variations_filling';
+    $param_name = 'variations_by_product_id';
+
+    if (
+        !isset($block['content']['items']['filling'])
+        || $block['content']['items']['filling'] !== $filling
+        || !isset($block_schema['content']['items']['fillings'][$filling]['params']['request'][$param_name])
+        || !isset($_REQUEST['product_id'])
+    ) {
+        return;
+    }
+
+    $master_product_id = ServiceProvider::getProductIdMap()->getMasterProductId((int) $_REQUEST['product_id']);
+
+    if (!$master_product_id) {
+        return;
+    }
+
+    unset($block_schema['content']['items']['fillings'][$filling]['params']['request'][$param_name]);
+    $block_schema['content']['items']['fillings'][$filling]['params'][$param_name] = $master_product_id;
 }

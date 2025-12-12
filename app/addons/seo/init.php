@@ -23,6 +23,7 @@ fn_register_hooks(
     'init_language_post',
     'compare_dispatch',
 
+    'update_category_pre',
     'update_category_post',
     'get_category_data',
     'get_category_data_post',
@@ -30,7 +31,6 @@ fn_register_hooks(
     'get_categories_post',
     'delete_category_before',
     'delete_category_after',
-    'update_category_parent_pre',
     'update_category_parent_post',
 
     'update_product_post',

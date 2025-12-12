@@ -15,7 +15,7 @@ return array(
     'Metadata\\' => array($vendorDir . '/jms/metadata/src'),
     'JMS\\Serializer\\' => array($vendorDir . '/jms/serializer/src'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
-    'Doctrine\\Deprecations\\' => array($vendorDir . '/doctrine/deprecations/lib/Doctrine/Deprecations'),
+    'Doctrine\\Deprecations\\' => array($vendorDir . '/doctrine/deprecations/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/src'),
     'Doctrine\\Common\\Annotations\\' => array($vendorDir . '/doctrine/annotations/lib/Doctrine/Common/Annotations'),
     'CdekSDK2\\' => array($vendorDir . '/cdek-it/sdk2.0/src'),

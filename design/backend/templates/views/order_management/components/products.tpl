@@ -141,6 +141,7 @@
     {if fn_allowed_for("MULTIVENDOR")}
         {$company_id_for_picker = $order_company_id}
     {/if}
+
     <td colspan="7" class="mixed-controls">
         <div class="form-inline object-product-add cm-object-product-add-container">
             {include file="views/products/components/picker/picker.tpl"
@@ -154,6 +155,7 @@
                 company_id=$order_company_id
                 dialog_opener_meta="cm-dialog-destroy-on-close cm-dialog-destroy-nested-on-close"
                 additional_query_params="company_id=`$company_id_for_picker`"
+                for_current_storefront=true
             }
         </div>
     </td>

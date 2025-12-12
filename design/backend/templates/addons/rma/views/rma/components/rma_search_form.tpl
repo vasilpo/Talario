@@ -37,9 +37,9 @@
 
         {if $actions}
             <div class="control-group">
-                <label class="control-label" for="action">{__("action")}:</label>
+                <label class="control-label" for="return_action">{__("action")}:</label>
                 <div class="controls">
-                    <select name="action" id="action">
+                    <select name="return_action" id="return_action">
                         <option value="0">{__("all_actions")}</option>
                         {foreach from=$actions item="action" key="action_id"}
                             <option value="{$action_id}" {if $search.action == $action_id}selected="selected"{/if}>{$action.property}</option>

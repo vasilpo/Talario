@@ -2,6 +2,7 @@
 
 <div class="ty-search-block">
     <form action="{""|fn_url}" name="search_form" method="get">
+        <input type="hidden" name="match" value="all" />
         <input type="hidden" name="subcats" value="Y" />
         <input type="hidden" name="pcode_from_q" value="Y" />
         <input type="hidden" name="status" value="A" />
@@ -17,9 +18,7 @@
 
         {strip}
             <input type="text" name="q" value="{$search.q}" title="{__("block_vendor_search")}" class="ty-search-block__input cm-hint" />
-            
             {include file="buttons/magnifier.tpl" but_name="companies.products" alt=__("storefront_search_button")}
-            
         {/strip}
     </form>
 </div>

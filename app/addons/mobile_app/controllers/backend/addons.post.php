@@ -145,7 +145,8 @@ if ($mode === 'update') {
 
         list($setting_id, $settings) = fn_mobile_app_extract_settings_from_options($options);
         $settings['bundle_id'] = fn_mobile_app_generate_bundle_id(Registry::get('config.http_location'));
-        $settings['google_config_file_uploaded'] = GoogleServicesConfig::isExist($storefront_id);
+        $settings['google_config_file_uploaded_android'] = GoogleServicesConfig::isExist(GoogleServicesConfig::ANROID_OS, $storefront_id);
+        $settings['google_config_file_uploaded_ios'] = GoogleServicesConfig::isExist(GoogleServicesConfig::IOS, $storefront_id);
 
         $images = fn_mobile_app_get_mobile_app_images($storefront_id);
         $schema = fn_get_schema('mobile_app', 'app_settings');

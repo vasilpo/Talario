@@ -16,6 +16,7 @@ use Tygh\Addons\PaypalCheckout\Enum\WebhookEventType;
 use Tygh\Addons\PaypalCheckout\Payments\PaypalCheckout;
 use Tygh\Addons\PaypalCheckout\ServiceProvider;
 use Tygh\Addons\PaypalCheckout\Webhook\PaymentFinishedEvent;
+use Tygh\Registry;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -66,6 +67,8 @@ if ($mode === 'webhook') {
 
     fn_update_order_payment_info($capture->getOrderId(), $pp_response);
     fn_change_order_status($capture->getOrderId(), $pp_response['order_status']);
+} elseif ($mode === 'well-known') {
+    fn_get_file(Registry::get('config.dir.addons') . 'paypal_checkout/files/apple-developer-merchantid-domain-association');
 }
 
 return [CONTROLLER_STATUS_NO_CONTENT];

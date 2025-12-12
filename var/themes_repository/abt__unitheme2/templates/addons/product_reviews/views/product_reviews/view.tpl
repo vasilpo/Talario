@@ -75,5 +75,4 @@
     {/if}
 </div>
 
-{script src="js/addons/product_reviews/fallback.js"}
 {script src="js/addons/product_reviews/index.js"}

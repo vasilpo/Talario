@@ -9,7 +9,7 @@
                     <label>{__("shipping_time")}:</label>
                     <input type="text" 
                         class="input-small input-hidden"
-                        name="shipping_data[rates][delivery_time][{$destination_id}]" 
+                        name="shipping_data[rates][{$destination_id}][delivery_time]"
                         value="${$ldelim}data.delivery_time{$rdelim}"
                         {literal}${data.is_disabled ? 'readonly': ''}{/literal}
                     />             

@@ -138,9 +138,10 @@
                 <div class="items-container {if ""|fn_check_form_permissions} cm-hide-inputs{/if}" id="product_options_list">
                     {if $product_options}
                         <div class="table-responsive-wrapper longtap-selection">
-                            <table width="100%" class="table table-middle table--relative table-objects table-responsive table--overflow-hidden">
+                            <table width="100%" class="table table-middle table--relative table-objects table-responsive">
                                 {if $is_global}
                                     <thead
+                                            class="thead--overflow-hidden"
                                             data-ca-bulkedit-default-object="true"
                                             data-ca-bulkedit-component="defaultObject"
                                         >

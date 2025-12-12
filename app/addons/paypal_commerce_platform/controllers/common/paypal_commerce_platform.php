@@ -17,6 +17,7 @@ use Tygh\Addons\PaypalCommercePlatform\Payments\PaypalCommercePlatform;
 use Tygh\Addons\PaypalCommercePlatform\ServiceProvider;
 use Tygh\Addons\PaypalCommercePlatform\Webhook\PaymentFinishedEvent;
 use Tygh\Addons\PaypalCommercePlatform\Webhook\PaymentRefundedEvent;
+use Tygh\Registry;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -67,6 +68,8 @@ if ($mode === 'webhook') {
 
     fn_update_order_payment_info($capture->getOrderId(), $pp_response);
     fn_change_order_status($capture->getOrderId(), (string) $pp_response['order_status']);
+} elseif ($mode === 'well-known') {
+    fn_get_file(Registry::get('config.dir.addons') . 'paypal_commerce_platform/files/apple-developer-merchantid-domain-association');
 }
 
 return [CONTROLLER_STATUS_NO_CONTENT];

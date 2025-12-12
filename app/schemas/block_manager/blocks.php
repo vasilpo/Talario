@@ -382,6 +382,7 @@ $schema = array(
                 'product_option_variants_descriptions',
                 'product_global_option_links',
                 'storefronts_companies',
+                'currencies',
             ),
             'request_handlers' => array('current_category_id' => '%CATEGORY_ID%'),
             'cookie_handlers' => array('%ALL%'),
@@ -405,6 +406,7 @@ $schema = array(
                 'items_function' => 'fn_get_categories',
                 'remove_indent' => true,
                 'hide_label' => true,
+                'contains_id_keys' => true,
                 'fillings' => array(
                     'manually' => array(
                         'params' => array(
@@ -510,6 +512,7 @@ $schema = array(
                 'items_function' => 'fn_get_pages',
                 'remove_indent' => true,
                 'hide_label' => true,
+                'contains_id_keys' => true,
                 'fillings' => array(
                     'manually' => array(
                         'picker' => 'pickers/pages/picker.tpl',
@@ -1008,6 +1011,7 @@ if (fn_allowed_for('MULTIVENDOR')) {
                 'remove_indent' => true,
                 'hide_label' => true,
                 'items_function' => 'fn_blocks_get_vendors',
+                'contains_id_keys' => true,
                 'fillings' => array(
                     'all' => array(),
                     'manually' => array(
@@ -1222,6 +1226,8 @@ if (fn_allowed_for('MULTIVENDOR')) {
         = $schema['product_filters_home']['cache']['update_handlers'][]
         = 'storefronts_companies';
 
+    $schema['main']['cache_overrides_by_dispatch']['companies.products']['update_handlers'][] = 'currencies';
+
     $schema['lite_checkout_shipping_methods']['settings'] = [
         'show_vendor_info_if_shipping_no_required' => [
             'type' => 'checkbox',
@@ -1247,6 +1253,10 @@ if (fn_allowed_for('ULTIMATE')) {
     $schema['products']['cache']['update_handlers'][] = 'ult_product_descriptions';
     $schema['products']['cache']['update_handlers'][] = 'ult_product_option_variants';
 }
+
+$schema['main']['cache_overrides_by_dispatch']['categories.view']['update_handlers'][]
+        = $schema['main']['cache_overrides_by_dispatch']['products.view']['update_handlers'][]
+        = 'currencies';
 
 if (Registry::get('config.tweaks.disable_localizations') != true) {
     $schema['localizations'] = array(

@@ -16,6 +16,7 @@
 {/if}
 
 {$show_old_price = true}
+{$show_product_amount = $show_product_amount|default:false}
 
 {$obj_prefix="`$block.block_id`000"}
 {$block.block_id = "{$block.block_id}_{uniqid()}"}

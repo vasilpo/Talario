@@ -57,17 +57,18 @@ class PaymentIntentSucceeded implements Handler
 
             foreach ($orders as $order) {
                 $order_id = (int) $order['order_id'];
-                /** @var array $order */
-                $order = fn_get_order_info($order_id);
 
                 /** @var \Tygh\Lock\Factory $lock_factory */
                 $lock_factory = Tygh::$app['lock.factory'];
-                $lock = $lock_factory->createLock('stripe_webhook_handle_order_status_' . $order_id, 60.0, false);
+                $lock = $lock_factory->createLock('stripe_connect_handle_order_status_' . $order_id, 60.0);
                 if (!$lock->acquire()) {
                     do {
                         $lock->wait();
                     } while (!$lock->acquire());
                 }
+
+                /** @var array $order */
+                $order = fn_get_order_info($order_id);
 
                 if (
                     !in_array($order['status'], fn_get_settled_order_statuses())

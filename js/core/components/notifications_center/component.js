@@ -394,7 +394,7 @@ class Notifications extends Component {
                     e.stopPropagation();
                     e.preventDefault();
 
-                    if ($(e.target).closest('.cc-delete')) {
+                    if ($(e.target).closest('.cc-delete').length > 0) {
                       dismissNotifications([notification.notification_id])
                         .then(({ result }) => {
                           if (result) {
