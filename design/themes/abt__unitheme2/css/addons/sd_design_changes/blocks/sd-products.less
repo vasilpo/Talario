@@ -82,8 +82,26 @@
     border-radius: var(--border-radius);
     margin-left: 2px;
     margin-bottom: 4px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     line-height: 1;
+
+    @media (max-width: @mq-tablet - 1) {
+        display: none;
+    }
+
+    &--mobile-view {
+        justify-content: center;
+        margin-top: var(--gap-sm);
+
+        @media (max-width: @mq-tablet - 1) {
+            display: inline-flex;
+        }
+
+        @media (min-width: @mq-tablet) {
+            display: none;
+        }
+    }
 
     .ut2-pb__sticky-add-to-cart_block & {
         display: none;
