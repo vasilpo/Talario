@@ -18,6 +18,10 @@ msgctxt "SettingsOptions::sd_design_changes::metro_profile_field_id"
 msgid "Metro profile field"
 msgstr "Поле метро"
 
+msgctxt "SettingsOptions::sd_design_changes::apply_vendor_page_id"
+msgid "Apply vendor page"
+msgstr "Страница \"Стать партнером\""
+
 msgctxt "Languages::block_sd_cta_block"
 msgid "SD: CTA block"
 msgstr "SD: Блок CTA"
@@ -139,6 +143,10 @@ msgstr "Стать партнером"
 msgctxt "Languages::sd_design_changes.trial_lesson"
 msgid "Trial lesson"
 msgstr "Пробное занятие"
+
+msgctxt "Languages::sd_design_changes.provide_child_name"
+msgid "Please provide the child's name, age and characteristics"
+msgstr "Укажите имя, возраст и особенности ребенка"
 
 msgctxt "Languages::sd_design_changes.cancel_text"
 msgid "All changes (cancellation, transfer) are made through the Personal Account on the website no later than the established deadlines."

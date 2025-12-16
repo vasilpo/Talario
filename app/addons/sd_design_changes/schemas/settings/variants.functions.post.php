@@ -35,3 +35,37 @@ function fn_settings_variants_addons_sd_design_changes_metro_profile_field_id():
 
     return $variants;
 }
+
+/**
+ * @return array
+ */
+function fn_settings_variants_addons_sd_design_changes_apply_vendor_page_id(): array
+{
+    $variants = [
+        0 => __('none')
+    ];
+
+    $params = [
+        'simple' => true,
+        'get_tree' => 'plain',
+        'status' => ['A', 'H'],
+        'page_type' => 'F',
+    ];
+
+    list($pages) = fn_get_pages($params, 0, CART_LANGUAGE);
+
+    if (!empty($pages)) {
+        foreach ($pages as $page) {
+            $page_title = !empty($page['page']) ? $page['page'] : "Page #{$page['page_id']}";
+
+            $status_info = '';
+            if ($page['status'] !== 'A') {
+                $status_info = " [{$page['status']}]";
+            }
+
+            $variants[$page['page_id']] = "{$page_title}{$status_info} (#{$page['page_id']})";
+        }
+    }
+
+    return $variants;
+}
