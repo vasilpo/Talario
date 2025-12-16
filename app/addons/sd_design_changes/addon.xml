@@ -28,6 +28,10 @@
                     <item id="metro_profile_field_id">
                         <type>selectbox</type>
                     </item>
+
+                    <item id="apply_vendor_page_id">
+                        <type>selectbox</type>
+                    </item>
                 </items>
             </section>
         </sections>
