@@ -27,6 +27,10 @@ ul, ol {
     <div class="ty-control-group">
         <strong class="ty-control-group__label">{__('ec_table_booking_system.booking_info')}:</strong>
         <span class="ty-control-group__item">
+            {if $oi.extra.booking_info.address}
+                <br/>
+                {__('ec_table_booking_system.booking_address')}: {$oi.extra.booking_info.address}
+            {/if}
             {if $oi.extra.booking_info.booking_type == "T"}
                 <br>
                 {__('ec_table_booking_system.booking_date')}: {$oi.extra.booking_info.booking_date|date_format:"`$settings.Appearance.date_format`"}

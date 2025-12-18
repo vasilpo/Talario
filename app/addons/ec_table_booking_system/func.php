@@ -472,16 +472,9 @@ function fn_ec_table_booking_system_get_cart_product_data($product_id, &$_pdata,
                 $_pdata['price'] = $price;
             }
         }
-
-        if (!empty($_pdata['company_id'])) {
-            $company_address = db_get_row('SELECT city, address FROM ?:companies WHERE company_id = ?i', $_pdata['company_id']);
-            if (!empty($company_address['city']) || !empty($company_address['address'])) {
-                $product['extra']['booking_info']['address'] = trim(implode(' ', $company_address));
-            }
-        }
     }
-
 }
+
 /**
  * Product data updation before adding product to cart
  *

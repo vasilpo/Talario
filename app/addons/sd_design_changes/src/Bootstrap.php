@@ -33,9 +33,21 @@ class Bootstrap implements BootstrapInterface, HookHandlerProviderInterface
     public function getHookHandlerMap()
     {
         return [
-            'get_products_post' => [
+            'get_cart_product_data' => [
+                'addons.sd_design_changes.hook_handlers.cart',
+                'getCartProductData',
+            ],
+            'get_order_items_info_post' => [
+                'addons.sd_design_changes.hook_handlers.cart',
+                'getOrderItemsInfoPost',
+            ],
+            'pre_get_cart_product_data' => [
+                'addons.sd_design_changes.hook_handlers.cart',
+                'getCartProductDataPre',
+            ],
+            'get_products' => [
                 'addons.sd_design_changes.hook_handlers.products',
-                'getProductsPost',
+                'getProducts',
             ],
         ];
     }

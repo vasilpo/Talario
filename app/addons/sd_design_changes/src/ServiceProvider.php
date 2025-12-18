@@ -10,6 +10,7 @@
 
 namespace Tygh\Addons\SdDesignChanges;
 
+use Tygh\Addons\SdDesignChanges\HookHandlers\CartHookHandler;
 use Tygh\Addons\SdDesignChanges\HookHandlers\ProductsHookHandler;
 use Tygh\Application;
 use Pimple\Container;
@@ -31,6 +32,10 @@ class ServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $app)
     {
+        $app['addons.sd_design_changes.hook_handlers.cart'] = static function (Application $app) {
+            return new CartHookHandler();
+        };
+
         $app['addons.sd_design_changes.hook_handlers.products'] = static function (Application $app) {
             return new ProductsHookHandler();
         };

@@ -19,3 +19,7 @@ msgstr "Vendors"
 msgctxt "SettingsOptions::sd_design_changes::metro_profile_field_id"
 msgid "Metro profile field"
 msgstr "Metro profile field"
+
+msgctxt "Languages::sd_design_changes.product_address"
+msgid "Lesson address"
+msgstr "Lesson address"
