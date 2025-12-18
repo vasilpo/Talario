@@ -1,12 +1,23 @@
 <!-- The "{$smarty.template}" template was overriden by the "sd_design_changes" add-on -->
 {$check_storefront_passed=isset($sd_check_storefront)}
 {if (!$check_storefront_passed) || ($check_storefront_passed && $sd_check_storefront && $field.storefront_show == "YesNo::YES"|enum)}
-    <div class="ty-control-group ty-profile-field__item ty-{$field.class} {if $field.field_type == "ProfileFieldTypes::PHONE"|enum || $field.autocomplete_type == "phone-full"}cm-mask-phone-group{/if}" {if $field.field_type == "ProfileFieldTypes::PHONE"|enum || $field.autocomplete_type == "phone-full"}data-ca-phone-mask-group-id="{$element_id}"{/if}>
+    <div class="ty-control-group ty-profile-field__item ty-{$field.class}{if $field.wrapper_class} {$field.wrapper_class}{/if}{if $field.field_type == "ProfileFieldTypes::PHONE"|enum || $field.autocomplete_type == "phone-full"} cm-mask-phone-group{/if}"{if $field.field_type == "ProfileFieldTypes::PHONE"|enum || $field.autocomplete_type == "phone-full"} data-ca-phone-mask-group-id="{$element_id}"{/if}>
         {if $sd_label_position != "after" && ($pref_field_name != $field.description || $required == "Y") && $field.field_type != "ProfileFieldTypes::VENDOR_TERMS"|enum}
+            {strip}
             <label
                 for="{$element_id}"
                 class="ty-control-group__title cm-profile-field {if $field.autocomplete_type == "phone-full" || $field.field_type == "ProfileFieldTypes::PHONE"|enum}cm-mask-phone-label{/if} {if $required == "Y"}cm-required cm-trim{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}"
-            >{$field.description}</label>
+            >
+                {if $field.field_type == "ProfileFieldTypes::CHECKBOX"|enum && $field.link}
+                    <a href="{$field.link|fn_url}" class="cm-dialog-opener cm-dialog-auto-size"
+                    data-ca-dialog-title="{$field.description}">
+                {/if}
+                    {$field.description}
+                {if $field.field_type == "ProfileFieldTypes::CHECKBOX"|enum && $field.link}
+                    </a>
+                {/if}
+            </label>
+            {/strip}
         {/if}
 
             {if $field.field_type == "ProfileFieldTypes::STATE"|enum}
