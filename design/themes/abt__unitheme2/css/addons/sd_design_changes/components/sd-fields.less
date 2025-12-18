@@ -4,10 +4,10 @@
 
 .sd-fields {
     select,
-    input[type="tel"],
-    input[type="text"],
-    input[type="number"],
-    input[type="password"] {
+    input[type='tel'],
+    input[type='text'],
+    input[type='number'],
+    input[type='password'] {
         height: 56px;
         padding: 15px 20px 2px;
         width: 100%;
@@ -74,5 +74,32 @@
         left: 20px;
         padding: 0;
         transition: all .2s;
+    }
+}
+
+.sd-field-checkbox {
+    .no-pseudo();
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-xxs);
+
+    a {
+        text-decoration: underline;
+    }
+
+    input[type='checkbox'] {
+        order: -1;
+
+        body[class*=screen] & {
+            margin-right: 3px;
+        }
+    }
+
+    .ty-control-group__title {
+        padding: 0;
+    }
+
+    .help-inline {
+        width: 100%;
     }
 }
