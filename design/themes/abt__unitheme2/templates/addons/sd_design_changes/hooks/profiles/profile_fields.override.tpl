@@ -9,7 +9,7 @@
                 class="ty-control-group__title cm-profile-field {if $field.autocomplete_type == "phone-full" || $field.field_type == "ProfileFieldTypes::PHONE"|enum}cm-mask-phone-label{/if} {if $required == "Y"}cm-required cm-trim{/if}{if $field.field_type == "Z"} cm-zipcode{/if}{if $field.field_type == "E"} cm-email{/if} {if $field.field_type == "Z"}{if $section == "S"}cm-location-shipping{else}cm-location-billing{/if}{/if}"
             >
                 {if $field.field_type == "ProfileFieldTypes::CHECKBOX"|enum && $field.link}
-                    <a href="{$field.link|fn_url}" class="cm-dialog-opener cm-dialog-auto-size"
+                    <a href="{$field.link|fn_url}" class="cm-dialog-opener cm-dialog-auto-size cm-dialog-destroy-on-close"
                     data-ca-dialog-title="{$field.description}">
                 {/if}
                     {$field.description}
