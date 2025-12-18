@@ -28,6 +28,10 @@
                     <item id="metro_profile_field_id">
                         <type>selectbox</type>
                     </item>
+
+                    <item id="apply_vendor_page_id">
+                        <type>selectbox</type>
+                    </item>
                 </items>
             </section>
         </sections>
@@ -36,4 +40,8 @@
         <psr4 prefix="Tygh\Addons\SdDesignChanges\">src</psr4>
     </autoload>
     <bootstrap>\Tygh\Addons\SdDesignChanges\Bootstrap</bootstrap>
+    <queries>
+        <item>ALTER TABLE ?:profile_fields ADD link TEXT NOT NULL DEFAULT ''</item>
+        <item for="uninstall">ALTER TABLE ?:profile_fields DROP link</item>
+    </queries>
 </addon>

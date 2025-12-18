@@ -67,3 +67,43 @@
         top: 4px;
     }
 }
+
+@sd-price-trial-label-color: @color-pink-fe;
+
+.sd-price-trial-label {
+    padding: 2px var(--gap-xs);
+    text-transform: uppercase;
+    position: relative;
+    top: -2px;
+    border: 2px solid;
+    color: @sd-price-trial-label-color;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    margin-left: 2px;
+    margin-bottom: 4px;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+
+    @media (max-width: @mq-tablet - 1) {
+        display: none;
+    }
+
+    &--mobile-view {
+        justify-content: center;
+        margin-top: var(--gap-sm);
+
+        @media (max-width: @mq-tablet - 1) {
+            display: inline-flex;
+        }
+
+        @media (min-width: @mq-tablet) {
+            display: none;
+        }
+    }
+
+    .ut2-pb__sticky-add-to-cart_block & {
+        display: none;
+    }
+}

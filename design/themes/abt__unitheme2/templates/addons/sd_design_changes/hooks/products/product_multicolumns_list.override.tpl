@@ -3,7 +3,7 @@
     product=$product
     product_labels_position="left-top"
     show_labels_in_title=false
-    show_price_prefix=true
+    show_price_prefix=false
 }
 {assign var="form_open" value="form_open_{$obj_id}"}
 {$smarty.capture.$form_open nofilter}
@@ -171,6 +171,8 @@
                 {/if}
             </div>
         {/if}
+
+        {hook name="products:sd__price_wrap"}{/hook}
 
         <div class="ut2-gl__price-wrap">
             {if $settings.abt__ut2.product_list.price_position_top === "YesNo::NO"|enum && ($button_type_add_to_cart === 'icon' || $button_type_add_to_cart === 'icon_button')}

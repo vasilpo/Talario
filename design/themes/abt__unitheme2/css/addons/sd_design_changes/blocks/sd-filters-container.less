@@ -31,6 +31,14 @@
 
     .ty-search-block__input {
         font-size: var(--font-size-normal);
+
+        &#search_input {
+            scroll-margin-top: var(--container-padding);
+
+            @media (max-width: @mq-large) {
+                scroll-margin-top: 30px;
+            }
+        }
     }
 
     .ty-horizontal-product-filters {
