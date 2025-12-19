@@ -128,6 +128,10 @@ msgctxt "Languages::sd_design_changes.step_title_4"
 msgid "Manage the process"
 msgstr "Управляйте процессом"
 
+msgctxt "Languages::sd_design_changes.provide_child_name_text"
+msgid "Our partners strive to ensure the comfort and safety of all children. The administrator may need to confirm details before the lesson."
+msgstr "Наши партнёры стараются обеспечить комфорт и безопасность всех детей. Возможно, администратор уточнит детали перед занятием"
+
 msgctxt "Languages::sd_design_changes.step_text_4"
 msgid "Use Talario tools for schedule and appointment management"
 msgstr "Используйте инструменты Talario для управления расписанием и записями"
@@ -151,7 +155,3 @@ msgstr "Укажите имя, возраст и особенности ребе
 msgctxt "Languages::sd_design_changes.cancel_text"
 msgid "All changes (cancellation, transfer) are made through the Personal Account on the website no later than the established deadlines."
 msgstr "Все изменения (отмена, перенос) осуществляются через Личный кабинет на сайте не позднее установленных сроков"
-
-msgctxt "Languages::sd_design_changes.provide_child_name_text"
-msgid "Our partners strive to ensure the comfort and safety of all children. The administrator may need to confirm details before the lesson."
-msgstr "Наши партнёры стараются обеспечить комфорт и безопасность всех детей. Возможно, администратор уточнит детали перед занятием"
