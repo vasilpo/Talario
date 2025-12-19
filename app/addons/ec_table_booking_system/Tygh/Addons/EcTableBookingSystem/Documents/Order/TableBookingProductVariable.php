@@ -29,21 +29,29 @@ class TableBookingProductVariable implements IVariable
 
     /**
      * TableBookingProductVariable Variable constructor.
-     * 
+     *
      * @param ItemContext   $context    Instance of table column context.
-     * @param Formatter     $formatter  Instance of 
+     * @param Formatter     $formatter  Instance of
      */
     public function __construct(ItemContext $context, Formatter $formatter)
     {
         $product = $context->getItem();
         if (!empty($product['extra']['booking_info'])) {
-            if($product['extra']['booking_info']['booking_type'] == 'T') {
-                $this->booking_info =  __("ec_table_booking.booking_date") .':'.date('Y-m-d',$product['extra']['booking_info']['booking_date']).'<br />'.__('ec_table_booking.booking_slot').':'.$product['extra']['booking_info']['booking_slot'].'<br />'.__('ec_table_booking.booking_slot_amount').':'.$product['extra']['booking_info']['booking_slot_amount'];
+            $booking_info = [
+                '<b>' . __('ec_table_booking_system.booking_info') . ':</b>',
+            ];
+            if (!empty($product['extra']['booking_info']['address'])) {
+                $booking_info[] = __('ec_table_booking_system.booking_address') . ': ' . $product['extra']['booking_info']['address'];
             }
-            else {
-                $this->booking_info =  __("ec_table_booking.booking_date") .':'.$product['extra']['booking_info']['from'] .'-'.$product['extra']['booking_info']['to'];
+            if ($product['extra']['booking_info']['booking_type'] == 'T') {
+                $booking_info[] = __('ec_table_booking_system.booking_date') . ': ' . date('Y-m-d',$product['extra']['booking_info']['booking_date']);
+                $booking_info[] = __('ec_table_booking_system.booking_slot') . ': ' . $product['extra']['booking_info']['booking_slot'];
+                $booking_info[] = __('ec_table_booking_system.booking_table_amount') . ': ' . $product['extra']['booking_info']['booking_slot_amount'];
+            } else {
+                $booking_info[] = __('ec_table_booking_system.booking_date') . ': ' . $product['extra']['booking_info']['from'] . '-' . $product['extra']['booking_info']['to'];
+            }
 
-            }
+            $this->booking_info = implode('<br/>', $booking_info);
         }
     }
 }

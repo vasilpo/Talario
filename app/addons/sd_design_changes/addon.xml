@@ -43,5 +43,8 @@
     <queries>
         <item>ALTER TABLE ?:profile_fields ADD link TEXT NOT NULL DEFAULT ''</item>
         <item for="uninstall">ALTER TABLE ?:profile_fields DROP link</item>
+
+        <item for="install">ALTER TABLE ?:product_descriptions ADD address varchar(255) NOT NULL DEFAULT '';</item>
+        <item for="uninstall">ALTER TABLE ?:product_descriptions DROP address;</item>
     </queries>
 </addon>

@@ -54,6 +54,10 @@ msgctxt "Languages::sd_categories_list"
 msgid "SD: Categroies list"
 msgstr "SD: Список категорий"
 
+msgctxt "Languages::sd_design_changes.product_address"
+msgid "Lesson address"
+msgstr "Адрес занятия"
+
 msgctxt "Languages::sd_design_changes.metro"
 msgid "Metro"
 msgstr "Метро"
