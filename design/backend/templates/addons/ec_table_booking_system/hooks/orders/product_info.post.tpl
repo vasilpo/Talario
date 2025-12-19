@@ -39,6 +39,7 @@ ul, ol {
                 <br>
                 {__('ec_table_booking_system.booking_table_amount')}: {$oi.extra.booking_info.booking_slot_amount}
             {else}
+                <br/>
                 {__('ec_table_booking_system.booking_date')}: {$oi.extra.booking_info.from} - {$oi.extra.booking_info.to}
             {/if}
         </span>
