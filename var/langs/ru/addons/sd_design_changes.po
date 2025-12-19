@@ -151,3 +151,7 @@ msgstr "Укажите имя, возраст и особенности ребе
 msgctxt "Languages::sd_design_changes.cancel_text"
 msgid "All changes (cancellation, transfer) are made through the Personal Account on the website no later than the established deadlines."
 msgstr "Все изменения (отмена, перенос) осуществляются через Личный кабинет на сайте не позднее установленных сроков"
+
+msgctxt "Languages::sd_design_changes.provide_child_name_text"
+msgid "Our partners strive to ensure the comfort and safety of all children. The administrator may need to confirm details before the lesson."
+msgstr "Наши партнёры стараются обеспечить комфорт и безопасность всех детей. Возможно, администратор уточнит детали перед занятием"
