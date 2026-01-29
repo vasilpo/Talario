@@ -10,10 +10,6 @@ msgctxt "Addons::name::exikane_changes"
 msgid "Exikane changes"
 msgstr "Exikane changes"
 
-msgctxt "Addons::description::exikane_changes"
-msgid "Custom storefront tweaks"
-msgstr "Custom storefront tweaks"
-
 msgctxt "Languages::reward_points_tooltip"
 msgid "Details about bonus points."
 msgstr "Details about bonus points."

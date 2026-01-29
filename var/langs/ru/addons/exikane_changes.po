@@ -8,11 +8,7 @@ msgstr ""
 
 msgctxt "Addons::name::exikane_changes"
 msgid "Exikane changes"
-msgstr "Изменения Exikane"
-
-msgctxt "Addons::description::exikane_changes"
-msgid "Custom storefront tweaks"
-msgstr "Пользовательские изменения для витрины"
+msgstr "Exikane changes"
 
 msgctxt "Languages::reward_points_tooltip"
 msgid "Details about bonus points."
