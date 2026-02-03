@@ -1,4 +1,11 @@
-{if "MULTIVENDOR"|fn_allowed_for && ($company_name || $company_id) && $settings.Vendors.display_vendor == "Y"}
+{assign var="partner_vendor_id" value=$addons.exikane_changes.partner_vendor_id|default:32}
+{assign var="current_vendor_id" value=$company_id|default:$product.company_id}
+
+{if "MULTIVENDOR"|fn_allowed_for && $current_vendor_id|intval == $partner_vendor_id|intval && !$auth.user_id}
+    {if $settings.abt__device != "mobile"}
+        {include file="addons/exikane_changes/components/partner_banner.tpl"}
+    {/if}
+{elseif "MULTIVENDOR"|fn_allowed_for && ($company_name || $company_id) && $settings.Vendors.display_vendor == "Y"}
     <!-- The "{$smarty.template}" template was overriden by the "sd_design_changes" add-on -->
     <div class="ut2-vendor-block">
         {if $settings.abt__ut2.products.vendor.show_logo[$settings.abt__device] == "Y"}
@@ -24,6 +31,14 @@
 	        <div class="ut2-vendor-block__contacts">
 				{if $settings.abt__ut2.products.vendor.show_phone[$settings.abt__device] == "Y" && $company_data.phone}<div class="ut2-vendor-block__phone"><i class="ut2-icon-outline-headset_mic"></i> {if $settings.abt__device == "mobile"}<a href="tel:{$company_data.phone nofilter}">{/if}{$company_data.phone nofilter}{if $settings.abt__device == "mobile"}</a>{/if}</div>{/if}
 				{if $settings.abt__ut2.products.vendor.show_ask_question_link[$settings.abt__device] == "Y"}{hook name="companies:product_company_data"}{/hook}{/if}
+                {if $product.exikane_partner_site}
+                    <div class="ut2-vendor-block__site">
+                        <label>{__("exikane_changes.partner_site")}:</label>
+                        <a href="{"exikane_changes.partner_site_click?product_id=`$product.product_id`"|fn_url}" target="_blank" rel="nofollow">
+                            {$product.exikane_partner_site|escape}
+                        </a>
+                    </div>
+                {/if}
 			</div>
         </div>
     </div>

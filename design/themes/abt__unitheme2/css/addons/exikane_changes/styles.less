@@ -1,0 +1,169 @@
+.exikane-partner-banner {
+    background: #fff8f1;
+    border: 1px solid #eadfcf;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 24px 28px;
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.exikane-partner-banner__content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 75%;
+    min-width: 100%;
+}
+
+.exikane-partner-banner__title {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c2c2c;
+}
+
+.exikane-partner-banner__icon {
+    color: #8d6a2f;
+    background: #f4e7d6;
+    border: 1px solid #e2c9a6;
+    border-radius: 10px;
+    padding: 6px 7px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.exikane-partner-banner__text {
+    font-size: 16px;
+    color: #6a6a6a;
+    line-height: 1.4;
+}
+
+.exikane-partner-banner__site {
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.exikane-partner-banner__site-label {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.exikane-partner-banner__site-link {
+    color: #4f46e5;
+    word-break: break-all;
+}
+
+.exikane-partner-banner__login {
+    font-size: 14px;
+    color: #8b8b8b;
+    min-width: 0;
+}
+
+.exikane-partner-banner__login a {
+    color: #6b5aa5;
+    text-decoration: none;
+}
+
+.exikane-partner-banner__action {
+    flex: 0 0 auto;
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+.exikane-partner-banner__button {
+    background: #c58b2d;
+    border: 1px solid #b07a24;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-weight: 600;
+    box-shadow: none;
+    height: auto;
+}
+
+.exikane-partner-banner__button:hover {
+    background: #b98027;
+    color: #ffffff;
+}
+
+.exikane-partner-banner__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .exikane-partner-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .exikane-partner-banner__content {
+        min-width: 0;
+    }
+
+    .exikane-partner-banner__title {
+        font-size: 18px;
+    }
+
+    .exikane-partner-banner__text {
+        font-size: 14px;
+    }
+
+    .exikane-partner-banner__footer {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .exikane-partner-banner__button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (min-width: 769px) {
+    .exikane-partner-banner__footer {
+        flex-wrap: nowrap;
+        gap: 16px;
+    }
+
+    .exikane-partner-banner__login {
+        flex: 0 0 40%;
+        max-width: 40%;
+    }
+
+    .exikane-partner-banner__button {
+        flex: 0 0 60%;
+        max-width: 60%;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.exikane-partner-banner--mobile {
+    margin: 12px 0;
+}
+
+.ut2-vendor-block__site {
+    font-size: 13px;
+}
+
+.ut2-vendor-block__site label {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.ut2-vendor-block__site a {
+    color: #4f46e5;
+    word-break: break-all;
+}
