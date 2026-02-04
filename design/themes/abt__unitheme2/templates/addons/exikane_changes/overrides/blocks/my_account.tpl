@@ -2,8 +2,8 @@
 
 <div class="ty-dropdown-box" id="account_info_{$block.snapping_id}">
     {if $auth.user_id}
-        {if $user_info.firstname || $user_info.lastname}
-            <div class="user_account_name">{$user_info.firstname} {$user_info.lastname}</div>
+        {if $user_info.firstname}
+            <div class="user_account_name">{$user_info.firstname}</div>
         {/if}
     {/if}
     <div id="sw_dropdown_{$block.block_id}" class="ty-dropdown-box__title cm-combination">
