@@ -1,0 +1,77 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::exikane_changes"
+msgid "Exikane changes"
+msgstr "Exikane changes"
+
+msgctxt "Addons::description::exikane_changes"
+msgid "Custom changes for partner flows"
+msgstr "Custom changes for partner flows"
+
+msgctxt "SettingsOptions::exikane_changes::partner_vendor_id"
+msgid "Partner vendor ID"
+msgstr "Partner vendor ID"
+
+msgctxt "SettingsOptions::exikane_changes::welcome_bonus_enabled"
+msgid "Add welcome bonuses"
+msgstr "Add welcome bonuses"
+
+msgctxt "SettingsOptions::exikane_changes::welcome_bonus_amount"
+msgid "Welcome bonus amount"
+msgstr "Welcome bonus amount"
+
+msgctxt "Languages::exikane_changes.partner_banner_title"
+msgid "Get partner contacts and 200 bonuses from Talario"
+msgstr "Get partner contacts and 200 bonuses from Talario"
+
+msgctxt "Languages::exikane_changes.partner_banner_text"
+msgid "Bonuses can be used to pay for lessons from verified partners on the platform."
+msgstr "Bonuses can be used to pay for lessons from verified partners on the platform."
+
+msgctxt "Languages::exikane_changes.partner_banner_have_account"
+msgid "Already have an account?"
+msgstr "Already have an account?"
+
+msgctxt "Languages::exikane_changes.partner_banner_login"
+msgid "Sign in"
+msgstr "Sign in"
+
+msgctxt "Languages::exikane_changes.partner_banner_button"
+msgid "Get bonuses"
+msgstr "Get bonuses"
+
+msgctxt "Languages::exikane_changes.partner_site"
+msgid "Website"
+msgstr "Website"
+
+msgctxt "Languages::exikane_changes.partner_site_clicks_menu"
+msgid "Partner site clicks"
+msgstr "Partner site clicks"
+
+msgctxt "Languages::exikane_changes.partner_site_clicks_title"
+msgid "Partner site clicks"
+msgstr "Partner site clicks"
+
+msgctxt "Languages::exikane_changes.partner_site_clicks_export"
+msgid "Generate report"
+msgstr "Generate report"
+
+msgctxt "Languages::exikane_changes.partner_site_clicks_user_id"
+msgid "Customer ID"
+msgstr "Customer ID"
+
+msgctxt "Languages::exikane_changes.partner_site_clicks_email"
+msgid "Email"
+msgstr "Email"
+
+msgctxt "Languages::exikane_changes.partner_site_clicks_product_id"
+msgid "Product ID"
+msgstr "Product ID"
+
+msgctxt "Languages::exikane_changes.welcome_bonus_reason"
+msgid "Welcome bonus"
+msgstr "Welcome bonus"
