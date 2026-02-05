@@ -34,9 +34,9 @@ if (!defined('CONSOLE')) {
  * Database connection options
  */
 $config['db_host'] = 'localhost';
-$config['db_name'] = 'tyman5tb_talario';
-$config['db_user'] = 'tyman5tb_talario';
-$config['db_password'] = 'BZYoKh2QfQ!U';
+$config['db_name'] = 'tyman5tb_copy';
+$config['db_user'] = 'tyman5tb_copy';
+$config['db_password'] = '95vZQiinMY!b';
 
 $config['database_backend'] = 'mysqli';
 
@@ -59,11 +59,11 @@ $config['table_prefix'] = 'cscart_';
 
 // Host and directory where software is installed on no-secure server
 $config['http_host'] = 'talario.ru';
-$config['http_path'] = '';
+$config['http_path'] = '/dev_copy';
 
 // Host and directory where software is installed on secure server
 $config['https_host'] = 'talario.ru';
-$config['https_path'] = '';
+$config['https_path'] = '/dev_copy';
 
 /*
  * Misc options
