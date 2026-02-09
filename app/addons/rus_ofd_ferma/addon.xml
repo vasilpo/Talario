@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>rus_ofd_ferma</id>
+    <version>1.0</version>
+    <priority>1000</priority>
+    <position>100</position>
+    <status>active</status>
+    <default_language>ru</default_language>
+    
+    <compatibility>
+        <core_version>
+            <min>4.3.9</min>
+        </core_version>
+        <dependencies>rus_taxes</dependencies>
+    </compatibility>
+
+    <settings>
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="setting_login">
+                        <type>text</type>
+                    </item>
+                    <item id="setting_password">
+                        <type>password</type>
+                    </item>
+                    <item id="setting_inn">
+                        <type>text</type>
+                    </item>
+                    <item id="setting_nalog">
+                        <type>selectbox</type>
+                    </item>
+                    <item id="setting_nds">
+                        <type>selectbox</type>
+                    </item>
+                    <item id="setting_collapse">
+                        <type>checkbox</type>
+                        <default_value>N</default_value>
+                        <variants/>
+                    </item>
+                    <item id="setting_collapse_name">
+                        <type>text</type>
+                    </item>
+                    <item id="setting_email">
+                        <type>text</type>
+                    </item>
+                    <item id="setting_status">
+                        <type>multiple select</type>
+                    </item>
+                    <item id="setting_api_url">
+                        <type>hidden</type>
+                        <default_value>https://ferma.ofd.ru/api/kkt/cloud</default_value>
+                    </item>
+                    <item id="setting_auth_url">
+                        <type>hidden</type>
+                        <default_value>https://ferma.ofd.ru/api/Authorization/CreateAuthToken</default_value>
+                    </item>
+                    <item id="setting_check_url">
+                        <type>hidden</type>
+                        <default_value>https://check.ofd.ru/rec/</default_value>
+                    </item>
+                    <item id="setting_check_url_demo">
+                        <type>hidden</type>
+                    </item>
+                    <item id="setting_token">
+                        <type>hidden</type>
+                    </item>
+                    <item id="setting_token_exp_date">
+                        <type>hidden</type>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+    <queries>
+        <item for="install">
+            CREATE TABLE `?:rus_ofd_ferma_receipts` (
+            `id` varchar(36) NOT NULL,
+            `type` varchar(100) DEFAULT NULL,
+            `inn` varchar(100) DEFAULT NULL,
+            `status` varchar(100) DEFAULT NULL,
+            `status_message` varchar(100) DEFAULT NULL,
+            `order_id` int(11) DEFAULT NULL,
+            `total` decimal(8,2) DEFAULT NULL,
+            `FN` varchar(100) DEFAULT NULL,
+            `RNM` varchar(100) DEFAULT NULL,
+            `FDN` varchar(100) DEFAULT NULL,
+            `FPD` varchar(100) DEFAULT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
+        <item for="uninstall">DROP TABLE IF EXISTS `?:rus_ofd_ferma_receipts`;</item>
+    </queries>
+</addon>
