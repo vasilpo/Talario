@@ -1,0 +1,374 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Crowdin-Project: cs-cart-ru\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /release-4.7.3/addons/rus_ofd_ferma.po\n"
+"Last-Translator: cscart <translations@cs-cart.com>\n"
+"PO-Revision-Date: 2018-06-14 12:17+0300\n"
+"POT-Creation-Date: \n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgctxt "Addons::name::rus_ofd_ferma"
+msgid "Ferma OFD.ru"
+msgstr "Ferma OFD.ru"
+
+msgctxt "Addons::description::rus_ofd_ferma"
+msgid "Integrates your store with Ferma OFD.ru"
+msgstr "Интеграция с сервисом онлайн касс Ferma OFD.ru"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_login"
+msgid "Login"
+msgstr "Логин"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_password"
+msgid "Password"
+msgstr "Пароль"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_inn"
+msgid "Inn"
+msgstr "ИНН"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_nalog"
+msgid "Taxation system"
+msgstr "Система налогообложения"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_nds"
+msgid "Default VAT Rate"
+msgstr "Ставка НДС по умолчанию"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_collapse"
+msgid "Forced convolution of order items"
+msgstr "Принудительная свертка позиций заказа"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_collapse_name"
+msgid "Text title for this position"
+msgstr "Текстовое название для такой позиции"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_email"
+msgid "Email for notifications"
+msgstr "E-mail для уведомлений"
+
+msgctxt "SettingsOptions::rus_ofd_ferma::setting_status"
+msgid "Statuses orders"
+msgstr "Статусы заказов, для которых формировать чек автоматически"
+
+msgctxt "SettingsTooltips::rus_ofd_ferma::setting_status"
+msgid "When an order gets one of these statuses, a sales receipt is issued."
+msgstr "Когда заказ получает один из этих статусов, пробивается чек прихода."
+
+msgctxt "Languages::rus_ofd_ferma.setting_nalog.common"
+msgid "General taxation system"
+msgstr "Общая система налогообложения"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nalog.simple_in"
+msgid "Simplified (revenue)"
+msgstr "Упрощенная система налогообложения (доход)"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nalog.simple_in_out"
+msgid "Simplified (revenue minus expenses)"
+msgstr "Упрощенная система налогообложения (доход минус расход)"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nalog.unified"
+msgid "Unified tax on imputed income"
+msgstr "Единый налог на вмененный доход"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nalog.unified_agricultural"
+msgid "Unified agricultural tax"
+msgstr "Единый сельскохозяйственный налог"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nalog.patent"
+msgid "Patent taxation system"
+msgstr "Патентная система налогообложения"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nds.vat0"
+msgid "vat0"
+msgstr "Без НДС"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nds.vat10"
+msgid "vat10"
+msgstr "10%"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nds.vat18"
+msgid "vat18"
+msgstr "18%"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nds.vat10110"
+msgid "vat110"
+msgstr "10/110"
+
+msgctxt "Languages::rus_ofd_ferma.setting_nds.vat18118"
+msgid "vat118"
+msgstr "18/118"
+
+msgctxt "Languages::ofd_ferma"
+msgid "Ferma OFD.ru:languages"
+msgstr "Ferma OFD.ru"
+
+msgctxt "Languages::ofd_ferma.receipts"
+msgid "Receipts"
+msgstr "Чеки"
+
+msgctxt "Languages::ofd_ferma.manual"
+msgid "Receipts"
+msgstr "Документация"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.type.income"
+msgid "Sales receipt"
+msgstr "Приход"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.type.income_return"
+msgid "Refund receipt"
+msgstr "Возврат"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.order_id"
+msgid "Order ID"
+msgstr "ID заказа"
+
+msgctxt "Languages::rus_ofd_ferma.status.fail"
+msgid "Error"
+msgstr "Ошибка"
+
+msgctxt "Languages::rus_ofd_ferma.status.notify"
+msgid "Notify"
+msgstr "Уведомление"
+
+msgctxt "Languages::btn_order_income"
+msgid "Ferma OFD.ru:languages"
+msgstr "Сформировать чек прихода"
+
+msgctxt "Languages::btn_order_income_return"
+msgid "Ferma OFD.ru:languages"
+msgstr "Сформировать чек возврата"
+
+
+
+msgctxt "Languages::rus_ofd_ferma.payment_use_ofd_ferma"
+msgid "Send receipt data to Ferma OFD.ru"
+msgstr "Отправлять данные для чеков в Ferma OFD.ru"
+
+msgctxt "Languages::rus_ofd_ferma.tax_use_ofd_ferma"
+msgid "Tax type in Ferma OFD.ru"
+msgstr "Тип НДС в Ferma OFD.ru"
+
+msgctxt "Languages::rus_ofd_ferma.uuid"
+msgid "Unique document identifier (UUID)"
+msgstr "Уникальный идентификатор документа (UUID)"
+
+msgctxt "Languages::rus_ofd_ferma.status"
+msgid "Status"
+msgstr "Статус"
+
+msgctxt "Languages::rus_ofd_ferma.total"
+msgid "total"
+msgstr "Сумма"
+
+msgctxt "Languages::rus_ofd_ferma.fns_site"
+msgid "fns_site"
+msgstr "Сайт"
+
+msgctxt "Languages::rus_ofd_ferma.receipt_datetime"
+msgid "Date print"
+msgstr "Время печати"
+
+msgctxt "Languages::rus_ofd_ferma.fiscal_receipt_number"
+msgid "Receipt number in a shift"
+msgstr "Номер чека в смене"
+
+msgctxt "Languages::rus_ofd_ferma.shift_number"
+msgid "Shift number"
+msgstr "Номер смены"
+
+msgctxt "Languages::rus_ofd_ferma.fn_number"
+msgid "Number of fiscal storage unit"
+msgstr "Номер ФН"
+
+msgctxt "Languages::rus_ofd_ferma.ecr_registration_number"
+msgid "Registration number of the cash register"
+msgstr "Регистрационный номер ККТ"
+
+msgctxt "Languages::rus_ofd_ferma.fiscal_document_number"
+msgid "Fiscal number of the document"
+msgstr "Фискальный номер документа"
+
+msgctxt "Languages::rus_ofd_ferma.fiscal_document_attribute"
+msgid "Fiscal attribute of the document"
+msgstr "Фискальный признак документа"
+
+msgctxt "Languages::rus_ofd_ferma.information"
+msgid "Fiscal documents"
+msgstr "Фискальные документы"
+
+msgctxt "Languages::rus_ofd_ferma.status.wait"
+msgid "To be processed"
+msgstr "Ожидает обработки"
+
+msgctxt "Languages::rus_ofd_ferma.status.done"
+msgid "Done"
+msgstr "Готово"
+
+msgctxt "Languages::rus_ofd_ferma.refresh_receipt"
+msgid "Refresh"
+msgstr "Обновить"
+
+msgctxt "Languages::rus_ofd_ferma.tax.none"
+msgid "No VAT"
+msgstr "Без НДС"
+
+msgctxt "Languages::rus_ofd_ferma.tax.vat0"
+msgid "VAT 0%"
+msgstr "Нулевая ставка (0%)"
+
+msgctxt "Languages::rus_ofd_ferma.tax.vat10"
+msgid "VAT 10%"
+msgstr "Ставка 10%"
+
+msgctxt "Languages::rus_ofd_ferma.tax.vat18"
+msgid "VAT 18%"
+msgstr "Ставка 18%"
+
+msgctxt "Languages::rus_ofd_ferma.tax.vat110"
+msgid "VAT 10/110"
+msgstr "Расчётная ставка 10/110"
+
+msgctxt "Languages::rus_ofd_ferma.tax.vat118"
+msgid "VAT 18/118"
+msgstr "Расчётная ставка 18/118"
+
+msgctxt "Languages::rus_ofd_ferma.payment.cash"
+msgid "Cash"
+msgstr "Наличные"
+
+msgctxt "Languages::rus_ofd_ferma.payment.digicash"
+msgid "Electronic cash"
+msgstr "Электронная наличность"
+
+msgctxt "Languages::rus_ofd_ferma.settings.test_connect"
+msgid "Test connection to SCHETMASH"
+msgstr "Проверить соединение со Счётмаш"
+
+msgctxt "Languages::rus_ofd_ferma.settings.receipt_status.title"
+msgid "Receipt status"
+msgstr "Статус чека"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.title"
+msgid "Receipts list"
+msgstr "Список чеков"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.title_manual"
+msgid "Manual"
+msgstr "Документация"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.create_test_receipt"
+msgid "Issue a test receipt"
+msgstr ""
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.id"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.source"
+msgid "Source"
+msgstr "Источник"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.uuid"
+msgid "Unique document identifier (UUID)"
+msgstr "Уникальный идентификатор документа (UUID)"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.date"
+msgid "Date"
+msgstr "Дата"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.status"
+msgid "Status"
+msgstr "Статус"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.type"
+msgid "Type"
+msgstr "Тип"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.status.wait"
+msgid "To be processed"
+msgstr "Ожидает обработки"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.status.done"
+msgid "Done"
+msgstr "Готов"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.status.fail"
+msgid "Error"
+msgstr "Ошибка"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.total"
+msgid "Total"
+msgstr "Итого"
+
+msgctxt "Languages::rus_ofd_ferma.test_receipt_created"
+msgid "Receipt successfully created"
+msgstr "Чек пробит успешно"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.source.order"
+msgid "Order #[order_id]"
+msgstr "Заказ #[order_id]"
+
+msgctxt "Languages::rus_ofd_ferma.receipts_list.source.test"
+msgid "Test receipt"
+msgstr "Тестовый чек"
+
+msgctxt "Languages::rus_ofd_ferma.receipt.item.name"
+msgid "Item"
+msgstr "Наименование товара"
+
+msgctxt "Languages::rus_ofd_ferma.receipt.item.price"
+msgid "Price"
+msgstr "Цена"
+
+msgctxt "Languages::rus_ofd_ferma.receipt.item.quantity"
+msgid "Quantity"
+msgstr "Количество"
+
+msgctxt "Languages::rus_ofd_ferma.receipt.item.discount"
+msgid "Discount"
+msgstr "Скидка"
+
+msgctxt "Languages::rus_ofd_ferma.receipt.item.tax"
+msgid "Tax"
+msgstr "Налог"
+
+msgctxt "Languages::rus_ofd_ferma.receipt.item.total"
+msgid "Total"
+msgstr ""
+
+msgctxt "Languages::rus_ofd_ferma.logs.status"
+msgid "Status"
+msgstr "Статус"
+
+msgctxt "Languages::rus_ofd_ferma.logs.date"
+msgid "Date"
+msgstr "Дата"
+
+msgctxt "Languages::rus_ofd_ferma.logs.response"
+msgid "Response"
+msgstr "Ответ"
+
+msgctxt "Languages::rus_ofd_ferma.logs.status.send"
+msgid "Sent"
+msgstr "Отправлен"
+
+msgctxt "Languages::rus_ofd_ferma.logs.status.success"
+msgid "Processed"
+msgstr "Выполнен"
+
+msgctxt "Languages::rus_ofd_ferma.logs.status.fail"
+msgid "Error"
+msgstr "Ошибка"
+
+msgctxt "Languages::ofd_ferma.logs"
+msgid "Logs"
+msgstr ""
