@@ -83,7 +83,10 @@ class OfdFerma {
         $receipt_factory = new ReceiptFactory( 'RUB', TaxType::getMap(), false );        
         $receipt = $receipt_factory->createReceiptFromOrder($order_data, 'RUB', false);
         
-        
+        if (is_null($receipt)) {
+            return [];
+        }
+
         // Get Order
         $id = $order_data['order_id'];
         $customer_phone = $receipt->getPhone(); 
@@ -472,12 +475,17 @@ class OfdFerma {
         } else {
             //Формируем чек
             $data = $this->prepareData($order_data, $type);
+
+            if (empty($data)) {
+                return [];
+            }
+
             if (isset($data['status']) && !$data['status']) {
                 return $data;
             }
 
             $ans = $this->sendDataToOFD($data);
-            if ($ans['check_id']) {
+            if (isset($ans['check_id']) && !empty($ans['check_id'])) {
                 $save = $this->saveCheckInDB($ans['check_id'], $order_id, $data, $order_data['total']);
                 if (!$save['check_item_id']) {
                     return $this->log_msg("Ошибка сохранения чека {$temptype} для заказа #{$order_id}");
