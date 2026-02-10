@@ -133,3 +133,4 @@ dev_copy*
 index_.php
 index1.php
 config.local.php
+mariadb/
