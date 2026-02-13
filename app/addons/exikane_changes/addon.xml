@@ -23,6 +23,10 @@
                         <type>input</type>
                         <default_value>200</default_value>
                     </item>
+                    <item id="max_points_percent">
+                        <type>input</type>
+                        <default_value>50</default_value>
+                    </item>
                 </items>
             </section>
         </sections>
