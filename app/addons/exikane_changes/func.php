@@ -74,6 +74,79 @@ function fn_exikane_changes_update_profile($action, $user_data, $current_user_da
 }
 
 /**
+ * The `set_point_payment` hook handler.
+ *
+ * Limits the maximum reward points that can be applied to the order total.
+ *
+ * @param array $cart                           Array of cart data.
+ * @param array $cart_products                  List of cart products.
+ * @param array $auth                           Array of user authentication data (e.g. uid, usergroup_ids, etc.).
+ * @param array $user_info                      Array of user data.
+ * @param float $cost_covered_by_applied_points Total sum of products covered by previously applied points.
+ * @param float $point_exchange_rate            The number of points equal to 1 conventional unit.
+ * @param float $user_points                    Total sum of points available for user.
+ *
+ * @return void
+ */
+function fn_exikane_changes_set_point_payment(
+    &$cart,
+    &$cart_products,
+    &$auth,
+    &$user_info,
+    &$cost_covered_by_applied_points,
+    &$point_exchange_rate,
+    &$user_points
+) {
+    $addons = Registry::get('addons.exikane_changes');
+    $max_percent = isset($addons['max_points_percent']) ? (float) $addons['max_points_percent'] : 0.0;
+    if ($max_percent <= 0) {
+        return;
+    }
+
+    if (empty($cart['points_info']['in_use']['points'])) {
+        return;
+    }
+
+    if ($point_exchange_rate <= 0) {
+        return;
+    }
+
+    $base_total = isset($cart['subtotal']) ? (float) $cart['subtotal'] : 0.0;
+
+    if (!empty($cart['shipping_cost'])) {
+        $base_total += (float) $cart['shipping_cost'];
+    }
+
+    if (!empty($cart['tax_subtotal'])) {
+        $base_total += (float) $cart['tax_subtotal'];
+    }
+
+    if (!empty($cart['subtotal_discount'])) {
+        $discount_without_points = (float) $cart['subtotal_discount'] - (float) $cost_covered_by_applied_points;
+        if ($discount_without_points > 0) {
+            $base_total -= $discount_without_points;
+        }
+    }
+
+    if ($base_total <= 0) {
+        return;
+    }
+
+    $max_cost = $base_total * ($max_percent / 100);
+    $max_points = (int) floor($max_cost * $point_exchange_rate);
+    $points_in_use = (int) $cart['points_info']['in_use']['points'];
+
+    if ($points_in_use > $max_points) {
+        fn_set_notification(
+            'E',
+            __('error'),
+            __('exikane_changes.reward_points_limit_exceeded', ['[points]' => $max_points])
+        );
+        unset($cart['points_info']['in_use']);
+    }
+}
+
+/**
  * The `update_product_post` hook handler.
  *
  * @param array  $product_data Product data

@@ -6,5 +6,6 @@ fn_register_hooks(
     'get_product_data_post',
     'update_profile',
     'update_product_post',
-    'delete_product_post'
+    'delete_product_post',
+    'set_point_payment'
 );
