@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>extended_social_buttons</id>
+    <version>1.0</version>
+    <priority>4294967294</priority>
+    <status>active</status>
+    <supplier>CS-Cart Support | alarionov</supplier>
+    <default_language>en</default_language>
+    <settings edition_type="ROOT,STOREFRONT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="social_pages">
+                        <type>multiple checkboxes</type>
+                        <variants>
+                            <item id="pages"></item>
+                            <item id="products"></item>
+                        </variants>
+                        <default_value>#M#products=Y</default_value>
+                    </item>
+                    <item id="social_settings">
+                        <type>multiple checkboxes</type>
+                        <variants>
+                            <item id="telegram"></item>
+                            <item id="viber"></item>
+                            <item id="twitter"></item>
+                            <item id="odnoklassniki"></item>
+                            <item id="linkedin"></item>
+                            <item id="facebook"></item>
+                            <item id="skype"></item>
+                            <item id="vk"></item>
+                            <item id="pinterest"></item>
+                            <item id="whatsapp"></item>
+                        </variants>
+                        <default_value>telegram</default_value>
+                    </item>
+                    <item id="telegram_settings">
+                        <type>header</type>
+                    </item>
+                    <item id="telegram_comment_text">
+                        <type>input</type>
+                    </item>
+                    <item id="viber_settings">
+                        <type>header</type>
+                    </item>
+                    <item id="viber_text">
+                        <type>input</type>
+                    </item>
+                    <item id="twitter_settings">
+                        <type>header</type>
+                    </item>
+                    <item id="twitter_hashtags">
+                        <type>input</type>
+                    </item>
+                    <item id="twitter_text">
+                        <type>input</type>
+                    </item>
+                    <item id="twitter_via">
+                        <type>input</type>
+                    </item>
+                    <item id="odnoklassniki_settings">
+                        <type>header</type>
+                    </item>
+                    <item id="odnoklassniki_text">
+                        <type>input</type>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>
