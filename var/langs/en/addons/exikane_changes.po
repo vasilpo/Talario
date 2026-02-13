@@ -52,6 +52,14 @@ msgctxt "Languages::exikane_changes.reward_points_limit_exceeded"
 msgid "Maximum points you can apply: [points]."
 msgstr "Maximum points you can apply: [points]."
 
+msgctxt "Languages::exikane_changes.show_password"
+msgid "Show password"
+msgstr "Show password"
+
+msgctxt "Languages::exikane_changes.hide_password"
+msgid "Hide password"
+msgstr "Hide password"
+
 msgctxt "Languages::exikane_changes.guest_banner_title"
 msgid "200 bonuses for new users"
 msgstr "200 bonuses for new users"
