@@ -174,3 +174,108 @@
     color: #4f46e5;
     word-break: break-all;
 }
+
+.exikane-guest-banner {
+    background: #fff8f1;
+    border: 1px solid #eadfcf;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 24px 28px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.exikane-guest-banner:hover,
+.exikane-guest-banner:focus {
+    text-decoration: none;
+    color: inherit;
+}
+
+.exikane-guest-banner__content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.exikane-guest-banner__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c2c2c;
+}
+
+.exikane-guest-banner__text {
+    font-size: 16px;
+    color: #6a6a6a;
+    line-height: 1.4;
+}
+
+.exikane-guest-banner__action {
+    flex: 0 0 auto;
+}
+
+.exikane-guest-banner__button {
+    background: #c58b2d;
+    border: 1px solid #b07a24;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.exikane-guest-banner__action--link {
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+.exikane-guest-banner__button--link {
+    background: transparent;
+    border: 0;
+    color: #be8e0c;
+    padding: 0;
+}
+
+.exikane-guest-banner--compact {
+    padding: 20px 24px;
+}
+
+@media (max-width: 768px) {
+    .exikane-guest-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .exikane-guest-banner__title {
+        font-size: 16px;
+    }
+
+    .exikane-guest-banner__text {
+        font-size: 14px;
+    }
+
+    .exikane-guest-banner__action {
+        width: 100%;
+    }
+
+    .exikane-guest-banner__button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .exikane-guest-banner__action--link {
+        width: auto;
+        margin-left: 0;
+    }
+
+    .exikane-guest-banner__button--link {
+        width: auto;
+        text-align: left;
+    }
+}

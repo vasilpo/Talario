@@ -44,6 +44,18 @@ msgctxt "Languages::exikane_changes.partner_banner_button"
 msgid "Get bonuses"
 msgstr "Получить бонусы"
 
+msgctxt "Languages::exikane_changes.guest_banner_title"
+msgid "200 bonuses for new users"
+msgstr "200 бонусов для новых пользователей"
+
+msgctxt "Languages::exikane_changes.guest_banner_text"
+msgid "Pay up to 50% of lesson cost with verified Talario partners."
+msgstr "Оплатите до 50% стоимости занятий у проверенных партнеров Talario"
+
+msgctxt "Languages::exikane_changes.guest_banner_button"
+msgid "Get bonuses"
+msgstr "Получить бонусы →"
+
 msgctxt "Languages::exikane_changes.partner_site"
 msgid "Website"
 msgstr "Сайт"
