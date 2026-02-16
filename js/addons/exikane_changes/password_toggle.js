@@ -1,6 +1,6 @@
 (function (_, $) {
     'use strict';
-console.log(123);
+
     function getLabels() {
         return {
             show: _.tr('exikane_changes.show_password') || 'Show password',
