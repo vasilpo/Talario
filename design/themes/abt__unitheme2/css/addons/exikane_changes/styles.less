@@ -205,13 +205,29 @@
 }
 
 .exikane-guest-banner__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     font-size: 20px;
     font-weight: 700;
     color: #2c2c2c;
 }
 
+.exikane-guest-banner__title-image {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.exikane-guest-banner__title-text {
+    min-width: 0;
+    font-weight: 700;
+    font-size: 20px;
+}
+
 .exikane-guest-banner__text {
     font-size: 16px;
+    font-weight: 700;
     color: #6a6a6a;
     line-height: 1.4;
 }
@@ -254,6 +270,10 @@
 
     .exikane-guest-banner__title {
         font-size: 16px;
+    }
+
+    .exikane-guest-banner__title-text {
+        font-size: 18px;
     }
 
     .exikane-guest-banner__text {
