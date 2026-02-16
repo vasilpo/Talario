@@ -4,7 +4,12 @@
 <a class="exikane-guest-banner{if $banner_class} {$banner_class}{/if}" href="{"auth.login_form"|fn_url}">
     <div class="exikane-guest-banner__content">
         {if $banner_title}
-            <div class="exikane-guest-banner__title">{$banner_title}</div>
+            <div class="exikane-guest-banner__title">
+                <div class="exikane-guest-banner__title-image">
+                    <img width="80px" src="{$images_dir}/addons/exikane_changes/gift-415536.png" />
+                </div>
+                <div class="exikane-guest-banner__title-text">{$banner_title}</div>
+            </div>
         {/if}
         {if $banner_text}
             <div class="exikane-guest-banner__text">{$banner_text}</div>
