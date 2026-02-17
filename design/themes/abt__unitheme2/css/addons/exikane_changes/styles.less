@@ -178,13 +178,10 @@
 .exikane-guest-banner {
     background: #fff8f1;
     border: 1px solid #eadfcf;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    padding: 14px 24px;
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    justify-content: space-between;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    padding: 10px 20px;
+    display: block;
     text-decoration: none;
     color: inherit;
     cursor: pointer;
@@ -196,44 +193,59 @@
     color: inherit;
 }
 
+.exikane-guest-banner__main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.exikane-guest-banner__image {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+}
+
+.exikane-guest-banner__image img {
+    width: 44px;
+    height: auto;
+}
+
 .exikane-guest-banner__content {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 2px;
     flex: 1 1 auto;
     min-width: 0;
 }
 
 .exikane-guest-banner__title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     font-size: 20px;
-    font-weight: 700;
-    color: #2c2c2c;
+    font-weight: 400;
+    color: #111111;
+    line-height: 1.25;
 }
 
-.exikane-guest-banner__title-image {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-}
-
-.exikane-guest-banner__title-text {
-    min-width: 0;
+.exikane-guest-banner__title strong {
     font-weight: 700;
-    font-size: 20px;
 }
 
 .exikane-guest-banner__text {
-    font-size: 16px;
-    font-weight: 700;
-    color: #6a6a6a;
+    font-size: 14px;
+    font-weight: 400;
+    color: #111111;
     line-height: 1.4;
+}
+
+.exikane-guest-banner__text strong {
+    font-weight: 700;
 }
 
 .exikane-guest-banner__action {
     flex: 0 0 auto;
+    margin-top: 6px;
 }
 
 .exikane-guest-banner__button {
@@ -242,61 +254,53 @@
     color: #ffffff;
     border-radius: 12px;
     padding: 12px 22px;
-    font-weight: 600;
+    font-weight: 400;
     display: inline-block;
 }
 
 .exikane-guest-banner__action--link {
-    margin-left: auto;
-    align-self: flex-end;
+    text-align: right;
 }
 
 .exikane-guest-banner__button--link {
     background: transparent;
     border: 0;
-    color: #be8e0c;
+    color: #9b750e;
     padding: 0;
 }
 
 .exikane-guest-banner--compact {
-    padding: 12px 20px;
+    padding: 14px 8px;
 }
 
 @media (max-width: 768px) {
-    .exikane-guest-banner {
-        flex-direction: column;
-        align-items: flex-start;
+    .exikane-guest-banner__main {
+        gap: 10px;
     }
 
     .exikane-guest-banner__title {
         font-size: 16px;
     }
 
-    .exikane-guest-banner__title-text {
-        font-size: 18px;
-    }
-
     .exikane-guest-banner__text {
-        font-size: 14px;
+        font-size: 12px;
     }
 
-    .exikane-guest-banner__action {
+    .exikane-guest-banner__image {
+        width: 40px;
+    }
+
+    .exikane-guest-banner__image img {
         width: 100%;
     }
 
     .exikane-guest-banner__button {
-        width: 100%;
-        text-align: center;
-    }
-
-    .exikane-guest-banner__action--link {
-        width: auto;
-        margin-left: 0;
+        white-space: nowrap;
     }
 
     .exikane-guest-banner__button--link {
         width: auto;
-        text-align: left;
+        text-align: right;
     }
 }
 
