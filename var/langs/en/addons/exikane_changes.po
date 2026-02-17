@@ -62,15 +62,19 @@ msgstr "Hide password"
 
 msgctxt "Languages::exikane_changes.guest_banner_title"
 msgid "200 bonuses for new users"
-msgstr "200 bonuses for new users"
+msgstr "<strong>200</strong> points for registration"
 
 msgctxt "Languages::exikane_changes.guest_banner_text"
 msgid "Pay up to 50% of lesson cost with verified Talario partners."
-msgstr "Pay up to 50% of lesson cost with verified Talario partners."
+msgstr "you can pay up to <strong>50%</strong> of lesson cost with points at verified partners. 1 point = 1 ₽."
 
 msgctxt "Languages::exikane_changes.guest_banner_button"
 msgid "Get bonuses"
 msgstr "Get bonuses →"
+
+msgctxt "Languages::exikane_changes.guest_banner_icon_alt"
+msgid "Gift icon"
+msgstr "Gift icon"
 
 msgctxt "Languages::exikane_changes.partner_site"
 msgid "Website"

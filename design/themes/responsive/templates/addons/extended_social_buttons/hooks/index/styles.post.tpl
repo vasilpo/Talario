@@ -1,1 +1,0 @@
-{style src="addons/extended_social_buttons/styles.less"}

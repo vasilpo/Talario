@@ -62,15 +62,23 @@ msgstr "Скрыть пароль"
 
 msgctxt "Languages::exikane_changes.guest_banner_title"
 msgid "200 bonuses for new users"
-msgstr "200 бонусов для новых пользователей"
+msgstr "<strong>200</strong> баллов за регистрацию"
 
 msgctxt "Languages::exikane_changes.guest_banner_text"
 msgid "Pay up to 50% of lesson cost with verified Talario partners."
-msgstr "Оплатите до 50% стоимости занятий у проверенных партнеров Talario"
+msgstr "можно оплатить до <strong>50%</strong> стоимости занятия бонусами у проверенных партнёров. 1 балл = 1 ₽."
 
 msgctxt "Languages::exikane_changes.guest_banner_button"
 msgid "Get bonuses"
 msgstr "Получить бонусы →"
+
+msgctxt "Languages::exikane_changes.guest_banner_title_product_page"
+msgid "200 bonuses for new users"
+msgstr "<strong>200</strong> баллов за регистрацию. 1 балл = 1 ₽"
+
+msgctxt "Languages::exikane_changes.guest_banner_icon_alt"
+msgid "Gift icon"
+msgstr "Иконка подарка"
 
 msgctxt "Languages::exikane_changes.partner_site"
 msgid "Website"

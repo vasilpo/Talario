@@ -4,7 +4,7 @@
 
 {if !$auth.user_id && !$is_partner_vendor}
     {include file="addons/exikane_changes/components/guest_banner.tpl"
-        banner_title=__("exikane_changes.guest_banner_title")
+        banner_title=__("exikane_changes.guest_banner_title_product_page")
         banner_class="exikane-guest-banner--compact"
     }
 {/if}
