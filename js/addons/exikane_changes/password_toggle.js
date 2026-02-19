@@ -1,63 +1,23 @@
 (function (_, $) {
     'use strict';
 
-    function getLabels() {
-        return {
-            show: _.tr('exikane_changes.show_password') || 'Show password',
-            hide: _.tr('exikane_changes.hide_password') || 'Hide password'
-        };
-    }
+    $(document).on('click', '.cm-exikane-password-toggle', function () {
+        // Toggle only the password field that belongs to the clicked eye button.
+        var $toggle = $(this);
+        var $password_input = $toggle.siblings('[data-ca-password-toggle-field]').first();
+        var show_label = _.tr('exikane_changes.show_password') || $toggle.attr('aria-label');
+        var hide_label = _.tr('exikane_changes.hide_password') || $toggle.attr('aria-label');
+        var is_password;
 
-    function wrapInput($input) {
-        if ($input.data('exikanePasswordToggle')) {
+        if (!$password_input.length) {
             return;
         }
 
-        $input.data('exikanePasswordToggle', true);
-        $input.wrap('<div class="exikane-password-wrap"></div>');
+        is_password = $password_input.prop('type') === 'password';
+        $password_input.prop('type', is_password ? 'text' : 'password');
 
-        var labels = getLabels();
-        var $toggle = $(
-            '<button type="button" class="exikane-password-toggle" aria-label="' + labels.show + '" aria-pressed="false">' +
-                '<i class="ty-icon-eye-open"></i>' +
-            '</button>'
-        );
-
-        $input.after($toggle);
-
-        $toggle.on('click', function () {
-            var isPassword = $input.attr('type') === 'password';
-            var iconClass = isPassword ? 'ty-icon-eye-close' : 'ty-icon-eye-open';
-            var label = isPassword ? labels.hide : labels.show;
-
-            $input.attr('type', isPassword ? 'text' : 'password');
-            $toggle.attr('aria-pressed', isPassword ? 'true' : 'false');
-            $toggle.attr('aria-label', label);
-            $toggle.find('i').attr('class', iconClass);
-        });
-    }
-
-    function init(context) {
-        var $context = $(context || document);
-
-        $context.find('form').each(function () {
-            var $form = $(this);
-            var hasLogin = $form.find('input[name="user_login"]').length > 0;
-            var isOrderRegister = $form.attr('name') === 'order_register_form';
-            var isProfileRegister = $form.attr('name') === 'profiles_register_form';
-            var isProfileUpdate = $form.attr('name') === 'profile_form';
-
-            if (!hasLogin && !isOrderRegister && !isProfileRegister && !isProfileUpdate) {
-                return;
-            }
-
-            $form.find('input[type="password"]').each(function () {
-                wrapInput($(this));
-            });
-        });
-    }
-
-    $.ceEvent('on', 'ce.commoninit', function (context) {
-        init(context);
+        // Keep accessibility state in sync with the current visibility mode.
+        $toggle.attr('aria-pressed', is_password ? 'true' : 'false');
+        $toggle.attr('aria-label', is_password ? hide_label : show_label);
     });
 }(Tygh, Tygh.$));
