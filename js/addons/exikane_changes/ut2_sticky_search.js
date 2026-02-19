@@ -31,6 +31,9 @@
         if (!flag) {
             var $input = $container.find('input.ty-search-block__input').first();
             if ($input.length) {
+                // Always reset the mobile sticky search input on open
+                // to avoid persisting the previous query across toggles/page reloads.
+                $input.val('').attr('value', '').trigger('input').trigger('change');
                 setTimeout(function () {
                     $input.trigger('focus');
                 }, 0);
