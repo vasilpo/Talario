@@ -1,4 +1,6 @@
-{if $block.content.text}
+{$excluded_dispatches = ['profiles.update', 'orders.search', 'product_features.compare', 'vendor_communication.threads', 'reward_points.userlog', 'wishlist.view']}
+
+{if $block.content.text && !in_array($smarty.request.dispatch, $excluded_dispatches)}
     <div class="sd-cta sd-cta-version-2">
         <div class="sd-cta__description">
             {$block.content.text nofilter}
