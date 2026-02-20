@@ -7,4 +7,9 @@
         banner_title=__("exikane_changes.guest_banner_title_product_page")
         banner_class="exikane-guest-banner--compact"
     }
+{elseif
+    $current_vendor_id|intval == $partner_vendor_id|intval
+    && !$auth.user_id
+    && ($settings.ab__device == "mobile" || $settings.abt__device == "mobile")}
+        {include file="addons/exikane_changes/components/partner_banner.tpl" banner_class="exikane-partner-banner--mobile"}
 {/if}
