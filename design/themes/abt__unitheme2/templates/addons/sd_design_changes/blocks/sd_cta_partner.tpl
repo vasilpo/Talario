@@ -1,4 +1,4 @@
-{$excluded_dispatches = ['profiles.update', 'orders.search', 'product_features.compare', 'vendor_communication.threads', 'reward_points.userlog', 'wishlist.view']}
+{$excluded_dispatches = ['profiles.update', 'orders.search', 'product_features.compare', 'vendor_communication.threads', 'reward_points.userlog', 'wishlist.view', 'orders.details']}
 
 {if $block.content.text && !in_array($smarty.request.dispatch, $excluded_dispatches)}
     <div class="sd-cta sd-cta-version-2">
