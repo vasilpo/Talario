@@ -67,9 +67,10 @@
                     {if $order_info.notes}
                         <div class="ty-booking-details__meta-item">
                             <i class="ut2-icon-article ty-booking-details__meta-icon"></i>
-                            <span>{__("customer_notes")}</span>
+                                <span style="color: #d29815">{$order_info.notes}</span>
                         </div>
                     {/if}
+                    <p class="ty-muted">{__("exikane_changes.booking_number")}: #{$order_info.order_id}</p>
                 </div>
             </div>
 
