@@ -111,3 +111,135 @@ msgstr "ID товара"
 msgctxt "Languages::exikane_changes.welcome_bonus_reason"
 msgid "Welcome bonus"
 msgstr "Приветственные бонусы"
+
+msgctxt "Languages::exikane_changes.my_bookings"
+msgid "My bookings"
+msgstr "Мои занятия"
+
+msgctxt "Languages::exikane_changes.bookings_subtitle"
+msgid "All your lesson bookings are shown here"
+msgstr "Здесь отображаются все ваши бронирования"
+
+msgctxt "Languages::exikane_changes.sort_nearest_first"
+msgid "Nearest first"
+msgstr "Сначала ближайшие"
+
+msgctxt "Languages::exikane_changes.sort_latest_first"
+msgid "Latest first"
+msgstr "Сначала новые"
+
+msgctxt "Languages::exikane_changes.sort_total_desc"
+msgid "Price: high to low"
+msgstr "Цена: по убыванию"
+
+msgctxt "Languages::exikane_changes.sort_total_asc"
+msgid "Price: low to high"
+msgstr "Цена: по возрастанию"
+
+msgctxt "Languages::exikane_changes.sort_id_desc"
+msgid "ID: descending"
+msgstr "ID: по убыванию"
+
+msgctxt "Languages::exikane_changes.open_details"
+msgid "Open details"
+msgstr "Открыть детали"
+
+msgctxt "Languages::exikane_changes.sorting"
+msgid "Sorting"
+msgstr "Сортировка"
+
+msgctxt "Languages::exikane_changes.booking_label"
+msgid "Booking"
+msgstr "Бронирование"
+
+msgctxt "Languages::exikane_changes.booking_address"
+msgid "Address"
+msgstr "Адрес"
+
+msgctxt "Languages::exikane_changes.booking_age"
+msgid "Age"
+msgstr "Возраст"
+
+msgctxt "Languages::exikane_changes.booking_type"
+msgid "Type"
+msgstr "Тип"
+
+msgctxt "Languages::exikane_changes.booking_cost"
+msgid "Cost"
+msgstr "Стоимость"
+
+msgctxt "Languages::exikane_changes.points_spent"
+msgid "Points spent"
+msgstr "Списано баллов"
+
+msgctxt "Languages::exikane_changes.total_paid"
+msgid "Total paid"
+msgstr "Итого оплачено"
+
+msgctxt "Languages::exikane_changes.search_booking_placeholder"
+msgid "Search by lesson name"
+msgstr "Поиск по названию занятия"
+
+msgctxt "Languages::exikane_changes.lesson_information"
+msgid "Lesson information"
+msgstr "Информация о занятии"
+
+msgctxt "Languages::exikane_changes.open_lesson_card"
+msgid "Open lesson card"
+msgstr "Открыть карточку занятия"
+
+msgctxt "Languages::exikane_changes.booking_date_time"
+msgid "Date and time"
+msgstr "Дата и время"
+
+msgctxt "Languages::exikane_changes.lesson_format"
+msgid "Format"
+msgstr "Формат"
+
+msgctxt "Languages::exikane_changes.payment_block_title"
+msgid "Payment"
+msgstr "Оплата"
+
+msgctxt "Languages::exikane_changes.total_amount"
+msgid "Total amount"
+msgstr "Итоговая сумма"
+
+msgctxt "Languages::exikane_changes.qr_code_title"
+msgid "Your QR code for lesson attendance"
+msgstr "Ваш QR-код для посещения занятия"
+
+msgctxt "Languages::exikane_changes.qr_code_note"
+msgid "Show this QR code to the administrator at the lesson entrance."
+msgstr "Покажите этот QR-код администратору при входе на занятие."
+
+msgctxt "Languages::exikane_changes.download_qr_code"
+msgid "Download QR code"
+msgstr "Скачать QR-код"
+
+msgctxt "Languages::exikane_changes.qr_code_alt"
+msgid "Lesson QR code"
+msgstr "QR-код занятия"
+
+msgctxt "Languages::exikane_changes.booking_time_prefix"
+msgid "at"
+msgstr "в"
+
+msgctxt "Languages::exikane_changes.actions_title"
+msgid "Actions"
+msgstr "Действия"
+
+msgctxt "Languages::exikane_changes.contact_support_to_cancel"
+msgid "Contact support to cancel"
+msgstr "Для отмены свяжитесь с поддержкой"
+
+msgctxt "Languages::exikane_changes.cancellation_terms_prefix"
+msgid "You can review cancellation terms in the"
+msgstr "С условиями отмены вы можете ознакомиться в разделе"
+
+msgctxt "Languages::exikane_changes.cancellation_terms_highlight"
+msgid "questions and answers"
+msgstr "вопрос/ответ"
+
+msgctxt "Languages::exikane_changes.add_to_calendar"
+msgid "Add to calendar"
+msgstr "Добавить в календарь"

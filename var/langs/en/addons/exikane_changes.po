@@ -107,3 +107,135 @@ msgstr "Product ID"
 msgctxt "Languages::exikane_changes.welcome_bonus_reason"
 msgid "Welcome bonus"
 msgstr "Welcome bonus"
+
+msgctxt "Languages::exikane_changes.my_bookings"
+msgid "My bookings"
+msgstr "My lessons"
+
+msgctxt "Languages::exikane_changes.bookings_subtitle"
+msgid "All your lesson bookings are shown here"
+msgstr "All your bookings are shown here"
+
+msgctxt "Languages::exikane_changes.sort_nearest_first"
+msgid "Nearest first"
+msgstr "Nearest first"
+
+msgctxt "Languages::exikane_changes.sort_latest_first"
+msgid "Latest first"
+msgstr "Latest first"
+
+msgctxt "Languages::exikane_changes.sort_total_desc"
+msgid "Price: high to low"
+msgstr "Price: high to low"
+
+msgctxt "Languages::exikane_changes.sort_total_asc"
+msgid "Price: low to high"
+msgstr "Price: low to high"
+
+msgctxt "Languages::exikane_changes.sort_id_desc"
+msgid "ID: descending"
+msgstr "ID: descending"
+
+msgctxt "Languages::exikane_changes.open_details"
+msgid "Open details"
+msgstr "Open details"
+
+msgctxt "Languages::exikane_changes.sorting"
+msgid "Sorting"
+msgstr "Sorting"
+
+msgctxt "Languages::exikane_changes.booking_label"
+msgid "Booking"
+msgstr "Booking"
+
+msgctxt "Languages::exikane_changes.booking_address"
+msgid "Address"
+msgstr "Address"
+
+msgctxt "Languages::exikane_changes.booking_age"
+msgid "Age"
+msgstr "Age"
+
+msgctxt "Languages::exikane_changes.booking_type"
+msgid "Type"
+msgstr "Type"
+
+msgctxt "Languages::exikane_changes.booking_cost"
+msgid "Cost"
+msgstr "Cost"
+
+msgctxt "Languages::exikane_changes.points_spent"
+msgid "Points spent"
+msgstr "Points spent"
+
+msgctxt "Languages::exikane_changes.total_paid"
+msgid "Total paid"
+msgstr "Total paid"
+
+msgctxt "Languages::exikane_changes.search_booking_placeholder"
+msgid "Search by lesson name"
+msgstr "Search by lesson name"
+
+msgctxt "Languages::exikane_changes.lesson_information"
+msgid "Lesson information"
+msgstr "Lesson information"
+
+msgctxt "Languages::exikane_changes.open_lesson_card"
+msgid "Open lesson card"
+msgstr "Open lesson card"
+
+msgctxt "Languages::exikane_changes.booking_date_time"
+msgid "Date and time"
+msgstr "Date and time"
+
+msgctxt "Languages::exikane_changes.lesson_format"
+msgid "Format"
+msgstr "Format"
+
+msgctxt "Languages::exikane_changes.payment_block_title"
+msgid "Payment"
+msgstr "Payment"
+
+msgctxt "Languages::exikane_changes.total_amount"
+msgid "Total amount"
+msgstr "Total amount"
+
+msgctxt "Languages::exikane_changes.qr_code_title"
+msgid "Your QR code for lesson attendance"
+msgstr "Your QR code for lesson attendance"
+
+msgctxt "Languages::exikane_changes.qr_code_note"
+msgid "Show this QR code to the administrator at the lesson entrance."
+msgstr "Show this QR code to the administrator at the lesson entrance."
+
+msgctxt "Languages::exikane_changes.download_qr_code"
+msgid "Download QR code"
+msgstr "Download QR code"
+
+msgctxt "Languages::exikane_changes.qr_code_alt"
+msgid "Lesson QR code"
+msgstr "Lesson QR code"
+
+msgctxt "Languages::exikane_changes.booking_time_prefix"
+msgid "at"
+msgstr "at"
+
+msgctxt "Languages::exikane_changes.actions_title"
+msgid "Actions"
+msgstr "Actions"
+
+msgctxt "Languages::exikane_changes.contact_support_to_cancel"
+msgid "Contact support to cancel"
+msgstr "Contact support to cancel"
+
+msgctxt "Languages::exikane_changes.cancellation_terms_prefix"
+msgid "You can review cancellation terms in the"
+msgstr "You can review cancellation terms in the"
+
+msgctxt "Languages::exikane_changes.cancellation_terms_highlight"
+msgid "questions and answers"
+msgstr "questions and answers"
+
+msgctxt "Languages::exikane_changes.add_to_calendar"
+msgid "Add to calendar"
+msgstr "Add to calendar"
