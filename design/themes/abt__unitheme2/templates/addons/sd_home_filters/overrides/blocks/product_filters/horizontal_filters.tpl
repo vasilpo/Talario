@@ -190,11 +190,12 @@
         (function(_, $) {
             $(document).ready(function() {
                 var $container = $('#product_filters_{$block.block_id}');
-                $container.find('.cm-product-filters-checkbox, .cm-product-filters-select').off('change');
+                var $search_form = $('form[name="search_form"]').first();
+                var filter_selector = '.cm-product-filters-checkbox, .cm-product-filters-select';
 
-                $('#apply_filters_btn_{$block.block_id}').on('click', function() {
-                    var url = $container.data('caBaseUrl');
+                function get_features_hash() {
                     var features = {};
+
                     $container.find('.cm-product-filters-checkbox:checked, .cm-product-filters-select').each(function() {
                         var filter_id = $(this).data('caFilterId'),
                             variant_id = $(this).val();
@@ -204,18 +205,102 @@
                             $.merge(features[filter_id], $.makeArray(variant_id));
                         }
                     });
-                    var features_hash_parts = $.map(features, function(variants, filter_id) {
+
+                    return $.map(features, function(variants, filter_id) {
                         return filter_id + '-' + variants.join('-');
+                    }).join('_');
+                }
+
+                function get_search_params() {
+                    var search_params = {};
+                    var search_query = '';
+
+                    if (!$search_form.length) {
+                        return search_params;
+                    }
+
+                    // Reuse all active search form params to keep search behavior consistent.
+                    $.each($search_form.serializeArray(), function(index, field) {
+                        if (!field.name || field.name === 'dispatch' || field.name === 'features_hash') {
+                            return;
+                        }
+
+                        search_params[field.name] = field.value;
                     });
 
-                    if (features_hash_parts.length) {
-                        url += (url.indexOf('?') === -1 ? '?' : '&') + 'features_hash=' + features_hash_parts.join('_');
+                    search_query = $.trim(search_params.q || '');
+
+                    if (!search_query.length) {
+                        return {};
+                    }
+
+                    search_params.q = search_query;
+                    search_params.search_performed = 'Y';
+
+                    return search_params;
+                }
+
+                function attach_params(url, params) {
+                    $.each(params, function(name, value) {
+                        if (typeof value === 'undefined' || value === null) {
+                            return;
+                        }
+
+                        url = $.attachToUrl(url, name + '=' + encodeURIComponent(value));
+                    });
+
+                    return url;
+                }
+
+                function sync_search_form_features_hash() {
+                    var features_hash = get_features_hash();
+                    var $features_hash_input = $search_form.find('input[name="features_hash"]');
+
+                    if (!$search_form.length) {
+                        return;
+                    }
+
+                    // Keep the search form aligned with the currently selected filter state.
+                    if (features_hash.length) {
+                        if (!$features_hash_input.length) {
+                            $features_hash_input = $('<input />', {
+                                type: 'hidden',
+                                name: 'features_hash'
+                            }).appendTo($search_form);
+                        }
+
+                        $features_hash_input.val(features_hash);
+                    } else {
+                        $features_hash_input.remove();
+                    }
+                }
+
+                $container.off('change.sd_home_filters_sync', filter_selector);
+                $container.on('change.sd_home_filters_sync', filter_selector, function() {
+                    sync_search_form_features_hash();
+                });
+
+                $('#apply_filters_btn_{$block.block_id}').off('click.sd_home_filters_apply').on('click.sd_home_filters_apply', function() {
+                    var url = $container.data('caBaseUrl');
+                    var features_hash = get_features_hash();
+                    var search_params = get_search_params();
+
+                    if (features_hash.length) {
+                        url = $.attachToUrl(url, 'features_hash=' + encodeURIComponent(features_hash));
                     } else {
                         url += (url.indexOf('?') === -1 ? '?' : '&') + 'q=&search_performed=Y';
                     }
 
+                    url = attach_params(url, search_params);
+
                     window.location.href = fn_url(url);
                 });
+
+                $search_form.off('submit.sd_home_filters_sync').on('submit.sd_home_filters_sync', function() {
+                    sync_search_form_features_hash();
+                });
+
+                sync_search_form_features_hash();
             });
             }(Tygh, Tygh.$));
     </script>
@@ -228,6 +313,7 @@
             var $container = $('#product_filters_' + block_id, context);
             var $products_container = $('#sd_home_filters_products_' + block_id, context);
             var request_endpoint = fn_url('sd_home_filters.get_products');
+            var filter_selector = '.cm-product-filters-checkbox, .cm-product-filters-select';
             var city_filter_id = '{$sd_home_filters_city_filter_id|escape:javascript}';
             var age_filter_id = '{$sd_home_filters_age_filter_id|escape:javascript}';
             var category_filter_id = '{$sd_home_filters_category_filter_id|escape:javascript}';
@@ -334,7 +420,7 @@
             }
 
             function update_filter_highlight(filter_id) {
-                var $filter_switch = $('#sw_elm_filter_' + block_id + '_' + filter_id, context);
+                var $filter_switch = $container.find('#sw_elm_filter_' + block_id + '_' + filter_id);
                 var has_selected_values = collect_filter_values(filter_id).length > 0;
 
                 if (!$filter_switch.length) {
@@ -378,16 +464,16 @@
                 var features_hash = get_features_hash();
 
                 if (!city_filter_id || !age_filter_id || !category_filter_id) {
-                    set_placeholder(default_text, true);
+                    set_placeholder(default_text);
                     return;
                 }
 
                 if (!features_hash) {
-                    set_placeholder(default_text, true);
+                    set_placeholder(default_text);
                     return;
                 }
 
-                set_placeholder(loading_text, true);
+                set_placeholder(loading_text);
 
                 $.ceAjax('request', request_endpoint, {
                     method: 'get',
@@ -401,7 +487,7 @@
                         var products = response && response.sd_home_filters_products ? response.sd_home_filters_products : [];
 
                         if (!products.items || !products.items.length) {
-                            set_placeholder(empty_text, true);
+                            set_placeholder(empty_text);
                             return;
                         }
 
@@ -410,9 +496,16 @@
                 });
             }
 
-            $container.off('change.sd_home_products', '.cm-product-filters-checkbox, .cm-product-filters-select');
-            $container.on('change.sd_home_products', '.cm-product-filters-checkbox, .cm-product-filters-select', function () {
-                update_filters_highlight();
+            $container.off('change.sd_home_products', filter_selector);
+            $container.on('change.sd_home_products', filter_selector, function () {
+                var filter_id = String($(this).data('caFilterId') || '');
+
+                if (filter_id) {
+                    update_filter_highlight(filter_id);
+                } else {
+                    update_filters_highlight();
+                }
+
                 load_products();
             });
 
