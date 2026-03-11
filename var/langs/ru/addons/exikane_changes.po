@@ -80,6 +80,30 @@ msgctxt "Languages::exikane_changes.guest_banner_icon_alt"
 msgid "Gift icon"
 msgstr "Иконка подарка"
 
+msgctxt "Languages::exikane_changes.login_popup_title"
+msgid "You are almost booked for a lesson"
+msgstr "Вы почти записались на занятие"
+
+msgctxt "Languages::exikane_changes.login_popup_subtitle"
+msgid "Sign in or create a profile to complete your booking."
+msgstr "Войдите или создайте профиль, чтобы завершить бронирование."
+
+msgctxt "Languages::exikane_changes.login_popup_bonus_title"
+msgid "200 bonuses for registration"
+msgstr "200 баллов за регистрацию"
+
+msgctxt "Languages::exikane_changes.login_popup_email_placeholder"
+msgid "Enter your email"
+msgstr "Введите ваш email"
+
+msgctxt "Languages::exikane_changes.login_popup_password_placeholder"
+msgid "Enter your password"
+msgstr "Введите пароль"
+
+msgctxt "Languages::exikane_changes.create_profile"
+msgid "Create profile"
+msgstr "Создать профиль"
+
 msgctxt "Languages::exikane_changes.partner_site"
 msgid "Website"
 msgstr "Сайт"
@@ -243,3 +267,7 @@ msgstr "вопрос/ответ"
 msgctxt "Languages::exikane_changes.add_to_calendar"
 msgid "Add to calendar"
 msgstr "Добавить в календарь"
+
+msgctxt "Languages::exikane_changes.booking_number"
+msgid "Booking number"
+msgstr "Номер бронирования"

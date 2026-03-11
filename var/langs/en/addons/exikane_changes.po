@@ -239,3 +239,7 @@ msgstr "questions and answers"
 msgctxt "Languages::exikane_changes.add_to_calendar"
 msgid "Add to calendar"
 msgstr "Add to calendar"
+
+msgctxt "Languages::exikane_changes.booking_number"
+msgid "Booking number"
+msgstr "Booking number"
