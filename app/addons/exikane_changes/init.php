@@ -7,5 +7,9 @@ fn_register_hooks(
     'update_profile',
     'update_product_post',
     'delete_product_post',
-    'set_point_payment'
+    'set_point_payment',
+    'get_order_info',
+    'pre_get_orders',
+    'get_orders',
+    'get_orders_post'
 );

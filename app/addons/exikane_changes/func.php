@@ -1,11 +1,15 @@
 <?php
 
 use Tygh\Enum\ObjectStatuses;
-use Tygh\Enum\YesNo;
 use Tygh\Enum\UserTypes;
+use Tygh\Enum\YesNo;
 use Tygh\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('BOOTSTRAP') or die('Access denied');
+
+require_once __DIR__ . '/helpers.php';
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
 
 /**
  * The `get_product_data_post` hook handler.
@@ -80,7 +84,7 @@ function fn_exikane_changes_update_profile($action, $user_data, $current_user_da
  *
  * @param array $cart                           Array of cart data.
  * @param array $cart_products                  List of cart products.
- * @param array $auth                           Array of user authentication data (e.g. uid, usergroup_ids, etc.).
+ * @param array $auth                           Array of user authentication data.
  * @param array $user_info                      Array of user data.
  * @param float $cost_covered_by_applied_points Total sum of products covered by previously applied points.
  * @param float $point_exchange_rate            The number of points equal to 1 conventional unit.
@@ -99,27 +103,13 @@ function fn_exikane_changes_set_point_payment(
 ) {
     $addons = Registry::get('addons.exikane_changes');
     $max_percent = isset($addons['max_points_percent']) ? (float) $addons['max_points_percent'] : 0.0;
-    if ($max_percent <= 0) {
-        return;
-    }
-
-    if (empty($cart['points_info']['in_use']['points'])) {
-        return;
-    }
-
-    if ($point_exchange_rate <= 0) {
+    if ($max_percent <= 0 || empty($cart['points_info']['in_use']['points']) || $point_exchange_rate <= 0) {
         return;
     }
 
     $base_total = isset($cart['subtotal']) ? (float) $cart['subtotal'] : 0.0;
-
-    if (!empty($cart['shipping_cost'])) {
-        $base_total += (float) $cart['shipping_cost'];
-    }
-
-    if (!empty($cart['tax_subtotal'])) {
-        $base_total += (float) $cart['tax_subtotal'];
-    }
+    $base_total += !empty($cart['shipping_cost']) ? (float) $cart['shipping_cost'] : 0.0;
+    $base_total += !empty($cart['tax_subtotal']) ? (float) $cart['tax_subtotal'] : 0.0;
 
     if (!empty($cart['subtotal_discount'])) {
         $discount_without_points = (float) $cart['subtotal_discount'] - (float) $cost_covered_by_applied_points;
@@ -132,8 +122,7 @@ function fn_exikane_changes_set_point_payment(
         return;
     }
 
-    $max_cost = $base_total * ($max_percent / 100);
-    $max_points = (int) floor($max_cost * $point_exchange_rate);
+    $max_points = (int) floor(($base_total * ($max_percent / 100)) * $point_exchange_rate);
     $points_in_use = (int) $cart['points_info']['in_use']['points'];
 
     if ($points_in_use > $max_points) {
@@ -170,7 +159,7 @@ function fn_exikane_changes_update_product_post($product_data, $product_id, $lan
 
     db_query('REPLACE INTO ?:exikane_partner_product_sites ?e', [
         'product_id' => (int) $product_id,
-        'site'       => $site
+        'site'       => $site,
     ]);
 }
 
@@ -193,84 +182,229 @@ function fn_exikane_changes_delete_product_post($product_id, $product_deleted)
 }
 
 /**
- * Gets partner website URL by product identifier.
+ * The `get_order_info` hook handler.
  *
- * @param int $product_id Product identifier
+ * Enriches storefront order details with booking-related data for the first product.
  *
- * @return string
+ * @param array $order           Order information
+ * @param array $additional_data Additional order data
+ *
+ * @return void
  */
-function fn_exikane_changes_get_partner_site($product_id)
+function fn_exikane_changes_get_order_info(&$order, &$additional_data)
 {
-    $site = (string) db_get_field(
-        'SELECT site FROM ?:exikane_partner_product_sites WHERE product_id = ?i',
-        $product_id
-    );
-
-    return trim($site);
-}
-
-/**
- * Normalizes website URL by prepending protocol when needed.
- *
- * @param string $url Website URL
- *
- * @return string
- */
-function fn_exikane_changes_normalize_site_url($url)
-{
-    $url = trim((string) $url);
-    if ($url === '') {
-        return '';
+    /** @phpstan-ignore-next-line Runtime CS-Cart area constant. */
+    if (AREA !== 'C' || empty($order) || empty($order['products'])) {
+        return;
     }
 
-    if (!preg_match('~^https?://~i', $url)) {
-        $url = 'http://' . $url;
+    $first_product = reset($order['products']);
+    if (empty($first_product['product_id'])) {
+        return;
     }
 
-    return $url;
+    $product_id = (int) $first_product['product_id'];
+    /** @phpstan-ignore-next-line Runtime CS-Cart language constant. */
+    $feature_values = fn_exikane_changes_get_booking_feature_values([$product_id], CART_LANGUAGE);
+    $points_cost = !empty($order['points_info']['in_use']['cost'])
+        ? (float) $order['points_info']['in_use']['cost']
+        : 0.0;
+    $products_total = !empty($first_product['display_subtotal'])
+        ? (float) $first_product['display_subtotal']
+        : (float) $order['subtotal'];
+
+    $order = array_merge($order, fn_exikane_changes_build_booking_payload(
+        $order['order_id'],
+        [
+            'product_id'   => $product_id,
+            'product_name' => !empty($first_product['product']) ? (string) $first_product['product'] : '',
+            'booking_info' => fn_exikane_changes_get_product_booking_info($first_product),
+        ],
+        $feature_values,
+        $products_total,
+        $points_cost,
+        (float) $order['total']
+    ));
+
+    $order['exikane_calendar_event_available'] = fn_exikane_changes_get_calendar_event_data($order) !== null;
 }
 
 /**
- * Appends fixed UTM parameters to partner website URL.
+ * The `pre_get_orders` hook handler.
  *
- * @param string $url Website URL
+ * Normalizes storefront booking filter inputs into core order search parameters.
  *
- * @return string
+ * @param array  $params      Search parameters
+ * @param array  $fields      Selected fields
+ * @param array  $sortings    Available sortings
+ * @param bool   $get_totals  Totals calculation flag
+ * @param string $lang_code   Current language code
+ *
+ * @return void
  */
-function fn_exikane_changes_attach_partner_utm($url)
+function fn_exikane_changes_pre_get_orders(&$params, &$fields, &$sortings, &$get_totals, &$lang_code)
 {
-    $utm = 'utm_source=talario&utm_medium=partner&utm_campaign=partner_site';
+    /** @phpstan-ignore-next-line Runtime CS-Cart area constant. */
+    if (AREA !== 'C') {
+        return;
+    }
 
-    return fn_link_attach($url, $utm);
-}
-
-/**
- * Logs partner website click.
- *
- * @param int   $product_id Product identifier
- * @param array $auth       Authorization data
- *
- * @return int|string Query result identifier
- */
-function fn_exikane_changes_log_partner_click($product_id, array $auth)
-{
-    $user_id = isset($auth['user_id']) ? (int) $auth['user_id'] : 0;
-    $email = '';
-
-    if ($user_id > 0) {
-        $email = !empty($auth['email']) ? (string) $auth['email'] : '';
-        if ($email === '') {
-            $user_data = fn_get_user_info($user_id);
-            if (!empty($user_data['email'])) {
-                $email = (string) $user_data['email'];
-            }
+    if (isset($params['status_filter'])) {
+        $status_filter = trim((string) $params['status_filter']);
+        if ($status_filter !== '') {
+            $params['status'] = [$status_filter];
+        } else {
+            unset($params['status']);
         }
     }
 
-    return db_query('INSERT INTO ?:exikane_partner_site_clicks ?e', [
-        'user_id'   => $user_id,
-        'email'     => $email,
-        'product_id' => (int) $product_id,
-        'timestamp' => TIME
-    ]);
+    if (!empty($params['sort_token'])) {
+        $sort_parts = explode('_', (string) $params['sort_token']);
+        $sort_order = array_pop($sort_parts);
+        $sort_by = implode('_', $sort_parts);
+
+        if (isset($sortings[$sort_by]) && in_array($sort_order, ['asc', 'desc'], true)) {
+            $params['sort_by'] = $sort_by;
+            $params['sort_order'] = $sort_order;
+        }
+    }
+
+    if (isset($params['query'])) {
+        $params['query'] = trim((string) $params['query']);
+    }
+}
+
+/**
+ * The `get_orders` hook handler.
+ *
+ * Extends storefront order search with filtering by the first product name in the order.
+ *
+ * @param array  $params    Search parameters
+ * @param array  $fields    Selected fields
+ * @param array  $sortings  Available sortings
+ * @param string $condition SQL conditions
+ * @param string $join      SQL joins
+ * @param string $group     SQL grouping
+ *
+ * @return void
+ */
+function fn_exikane_changes_get_orders(&$params, &$fields, &$sortings, &$condition, &$join, &$group)
+{
+    /** @phpstan-ignore-next-line Runtime CS-Cart area constant. */
+    if (AREA !== 'C' || empty($params['query'])) {
+        return;
+    }
+
+    $query = trim((string) $params['query']);
+    if ($query === '') {
+        return;
+    }
+
+    $join .= ' LEFT JOIN ?:order_details AS exikane_order_details'
+        . ' ON exikane_order_details.order_id = ?:orders.order_id';
+    $join .= db_quote(
+        ' LEFT JOIN ?:product_descriptions AS exikane_product_descriptions'
+        . ' ON exikane_product_descriptions.product_id = exikane_order_details.product_id'
+        . ' AND exikane_product_descriptions.lang_code = ?s',
+        /** @phpstan-ignore-next-line Runtime CS-Cart language constant. */
+        CART_LANGUAGE
+    );
+
+    $condition .= db_quote(
+        ' AND exikane_product_descriptions.product LIKE ?l',
+        '%' . $query . '%'
+    );
+    $group = ' GROUP BY ?:orders.order_id ';
+}
+
+/**
+ * The `get_orders_post` hook handler.
+ *
+ * Enriches storefront order list items with booking-related data for the first product in each order.
+ *
+ * @param array $params Search parameters
+ * @param array $orders Found orders
+ *
+ * @return void
+ */
+function fn_exikane_changes_get_orders_post($params, &$orders)
+{
+    /** @phpstan-ignore-next-line Runtime CS-Cart area constant. */
+    if (AREA !== 'C' || empty($orders)) {
+        return;
+    }
+
+    $order_ids = array_values(array_filter(array_map('intval', array_column($orders, 'order_id'))));
+    if (!$order_ids) {
+        return;
+    }
+
+    $order_items = db_get_array(
+        'SELECT order_id, item_id, product_id, extra, price, amount'
+        . ' FROM ?:order_details'
+        . ' WHERE order_id IN (?n)'
+        . ' ORDER BY order_id ASC, item_id ASC',
+        $order_ids
+    );
+
+    $orders_meta = [];
+    $product_ids = [];
+
+    foreach ($order_items as $order_item) {
+        $order_id = (int) $order_item['order_id'];
+
+        if (!isset($orders_meta[$order_id])) {
+            $orders_meta[$order_id] = [
+                'product_id'     => (int) $order_item['product_id'],
+                'booking_info'   => fn_exikane_changes_unserialize_order_extra($order_item['extra']),
+                'products_total' => 0.0,
+            ];
+            $orders_meta[$order_id]['booking_info'] = !empty($orders_meta[$order_id]['booking_info']['booking_info'])
+                && is_array($orders_meta[$order_id]['booking_info']['booking_info'])
+                ? $orders_meta[$order_id]['booking_info']['booking_info']
+                : [];
+
+            if (!empty($order_item['product_id'])) {
+                $product_ids[] = (int) $order_item['product_id'];
+            }
+        }
+
+        $orders_meta[$order_id]['products_total'] += (float) $order_item['price'] * (float) $order_item['amount'];
+    }
+
+    $product_ids = array_values(array_unique($product_ids));
+    /** @phpstan-ignore-next-line Runtime CS-Cart language constant. */
+    $product_names = fn_exikane_changes_get_product_names($product_ids, CART_LANGUAGE);
+    /** @phpstan-ignore-next-line Runtime CS-Cart language constant. */
+    $feature_values = fn_exikane_changes_get_booking_feature_values($product_ids, CART_LANGUAGE);
+    $points_costs = fn_exikane_changes_get_orders_points_costs($order_ids);
+
+    foreach ($orders as &$order) {
+        $order_id = (int) $order['order_id'];
+        $product_id = !empty($orders_meta[$order_id]['product_id']) ? (int) $orders_meta[$order_id]['product_id'] : 0;
+        $products_total = isset($orders_meta[$order_id]['products_total'])
+            ? (float) $orders_meta[$order_id]['products_total']
+            : (float) $order['total'];
+        $points_cost = !empty($points_costs[$order_id]) ? (float) $points_costs[$order_id] : 0.0;
+
+        $booking_payload = fn_exikane_changes_build_booking_payload(
+            $order_id,
+            [
+                'product_id'   => $product_id,
+                'product_name' => !empty($product_names[$product_id]) ? $product_names[$product_id] : '',
+                'booking_info' => !empty($orders_meta[$order_id]['booking_info'])
+                    ? $orders_meta[$order_id]['booking_info']
+                    : [],
+            ],
+            $feature_values,
+            $products_total,
+            $points_cost,
+            max(0, $products_total - $points_cost)
+        );
+
+        foreach ($booking_payload as $payload_key => $payload_value) {
+            $order[$payload_key] = $payload_value;
+        }
+    }
+    unset($order);
 }
