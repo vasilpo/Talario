@@ -217,6 +217,10 @@ msgctxt "Languages::rus_ofd_ferma.refresh_receipt"
 msgid "Refresh"
 msgstr "Обновить"
 
+msgctxt "Languages::rus_ofd_ferma.invalid_token_expiration_date"
+msgid "Invalid token expiration date"
+msgstr "Некорректная дата истечения токена"
+
 msgctxt "Languages::rus_ofd_ferma.tax.none"
 msgid "No VAT"
 msgstr "Без НДС"
