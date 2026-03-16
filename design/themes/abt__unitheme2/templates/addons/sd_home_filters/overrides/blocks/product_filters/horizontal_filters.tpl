@@ -20,6 +20,7 @@
 {$sd_home_filters_age_filter_id = $addons.sd_home_filters.age_filter_id|default:""}
 {$sd_home_filters_category_filter_id = $addons.sd_home_filters.category_filter_id|default:""}
 {$sd_home_filters_products_filter_uid = "`$block.block_id`_products"}
+{$sd_home_filters_products_dropdown_inserted = false}
 
 <div class="ty-horizontal-product-filters cm-product-filters cm-horizontal-filters ut2-scroll-container ut2-filters"
      data-ca-target-id="{$ajax_div_ids}"
@@ -74,32 +75,61 @@
                     {/if}
                 </div>
 
-            {/foreach}
+                {if !$sd_home_filters_products_dropdown_inserted && $filter.filter_id == $sd_home_filters_category_filter_id}
+                    {$sd_home_filters_products_dropdown_inserted = true}
+                    <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
+                        <div id="sw_elm_filter_{$sd_home_filters_products_filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination">{"sd_home_filters.products_filter_title"|__}<i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
+                        {if $settings.ab__device !== 'mobile'}
+                            <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content custom-content cm-horizontal-filters-content cm-smart-position-h">
 
-            <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
-                <div id="sw_elm_filter_{$sd_home_filters_products_filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination">{"sd_home_filters.products_filter_title"|__}<i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
-                {if $settings.ab__device !== 'mobile'}
-                    <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content custom-content cm-horizontal-filters-content cm-smart-position-h">
-
-                        <div id="sd_home_filters_products_{$block.block_id}"
-                            class="cm-sd-home-filters-products"
-                            data-ca-default-text='{"sd_home_filters.apply_filters_placeholder"|__}'
-                            data-ca-empty-text='{"sd_home_filters.no_products"|__}'
-                            data-ca-loading-text='{"sd_home_filters.loading_products"|__}'
-                            data-ca-view-all-text='{"sd_home_filters.view_all_products"|__}'>
-                            <div class="ty-product-filters__item-more">
-                                <ul class="ty-product-filters__variants">
-                                    <li class="ty-product-filters__group">
-                                        <span>{"sd_home_filters.apply_filters_placeholder"|__}</span>
-                                    </li>
-                                </ul>
+                                <div id="sd_home_filters_products_{$block.block_id}"
+                                    class="cm-sd-home-filters-products"
+                                    data-ca-default-text='{"sd_home_filters.apply_filters_placeholder"|__}'
+                                    data-ca-empty-text='{"sd_home_filters.no_products"|__}'
+                                    data-ca-loading-text='{"sd_home_filters.loading_products"|__}'
+                                    data-ca-view-all-text='{"sd_home_filters.view_all_products"|__}'>
+                                    <div class="ty-product-filters__item-more">
+                                        <ul class="ty-product-filters__variants">
+                                            <li class="ty-product-filters__group">
+                                                <span>{"sd_home_filters.apply_filters_placeholder"|__}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        {/if}
                     </div>
                 {/if}
-            </div>
+
+            {/foreach}
+
+            {if !$sd_home_filters_products_dropdown_inserted}
+                <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
+                    <div id="sw_elm_filter_{$sd_home_filters_products_filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination">{"sd_home_filters.products_filter_title"|__}<i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
+                    {if $settings.ab__device !== 'mobile'}
+                        <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content custom-content cm-horizontal-filters-content cm-smart-position-h">
+
+                            <div id="sd_home_filters_products_{$block.block_id}"
+                                class="cm-sd-home-filters-products"
+                                data-ca-default-text='{"sd_home_filters.apply_filters_placeholder"|__}'
+                                data-ca-empty-text='{"sd_home_filters.no_products"|__}'
+                                data-ca-loading-text='{"sd_home_filters.loading_products"|__}'
+                                data-ca-view-all-text='{"sd_home_filters.view_all_products"|__}'>
+                                <div class="ty-product-filters__item-more">
+                                    <ul class="ty-product-filters__variants">
+                                        <li class="ty-product-filters__group">
+                                            <span>{"sd_home_filters.apply_filters_placeholder"|__}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+            {/if}
 
             {if $settings.ab__device === "mobile"}
+                {$sd_home_filters_products_dropdown_inserted = false}
                 {capture name="products_horizontal_filters_content"}
                     {foreach from=$items item="filter" name="filters"}
 
@@ -137,28 +167,54 @@
                             {/strip}
                         </div>
 
+                        {if !$sd_home_filters_products_dropdown_inserted && $filter.filter_id == $sd_home_filters_category_filter_id}
+                            {$sd_home_filters_products_dropdown_inserted = true}
+                            <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content">
+                                <div class="ty-horizontal-product-filters-dropdown__title">
+                                    <span>{"sd_home_filters.products_filter_title"|__}</span>
+                                    <button type="button" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$sd_home_filters_products_filter_uid}"><i class="ut2-icon-baseline-close"></i></button>
+                                </div>
+                                <div id="sd_home_filters_products_{$block.block_id}"
+                                    class="cm-sd-home-filters-products"
+                                    data-ca-default-text='{"sd_home_filters.apply_filters_placeholder"|__}'
+                                    data-ca-empty-text='{"sd_home_filters.no_products"|__}'
+                                    data-ca-loading-text='{"sd_home_filters.loading_products"|__}'
+                                    data-ca-view-all-text='{"sd_home_filters.view_all_products"|__}'>
+                                    <div class="ty-product-filters__item-more">
+                                        <ul class="ty-product-filters__variants">
+                                            <li class="ty-product-filters__group">
+                                                <span>{"sd_home_filters.apply_filters_placeholder"|__}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
+
                     {/foreach}
 
-                    <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content">
-                        <div class="ty-horizontal-product-filters-dropdown__title">
-                            <span>{"sd_home_filters.products_filter_title"|__}</span>
-                            <button type="button" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$sd_home_filters_products_filter_uid}"><i class="ut2-icon-baseline-close"></i></button>
-                        </div>
-                        <div id="sd_home_filters_products_{$block.block_id}"
-                            class="cm-sd-home-filters-products"
-                            data-ca-default-text='{"sd_home_filters.apply_filters_placeholder"|__}'
-                            data-ca-empty-text='{"sd_home_filters.no_products"|__}'
-                            data-ca-loading-text='{"sd_home_filters.loading_products"|__}'
-                            data-ca-view-all-text='{"sd_home_filters.view_all_products"|__}'>
-                            <div class="ty-product-filters__item-more">
-                                <ul class="ty-product-filters__variants">
-                                    <li class="ty-product-filters__group">
-                                        <span>{"sd_home_filters.apply_filters_placeholder"|__}</span>
-                                    </li>
-                                </ul>
+                    {if !$sd_home_filters_products_dropdown_inserted}
+                        <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content">
+                            <div class="ty-horizontal-product-filters-dropdown__title">
+                                <span>{"sd_home_filters.products_filter_title"|__}</span>
+                                <button type="button" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$sd_home_filters_products_filter_uid}"><i class="ut2-icon-baseline-close"></i></button>
+                            </div>
+                            <div id="sd_home_filters_products_{$block.block_id}"
+                                class="cm-sd-home-filters-products"
+                                data-ca-default-text='{"sd_home_filters.apply_filters_placeholder"|__}'
+                                data-ca-empty-text='{"sd_home_filters.no_products"|__}'
+                                data-ca-loading-text='{"sd_home_filters.loading_products"|__}'
+                                data-ca-view-all-text='{"sd_home_filters.view_all_products"|__}'>
+                                <div class="ty-product-filters__item-more">
+                                    <ul class="ty-product-filters__variants">
+                                        <li class="ty-product-filters__group">
+                                            <span>{"sd_home_filters.apply_filters_placeholder"|__}</span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {/if}
                 {/capture}
             {/if}
         {/if}
@@ -347,23 +403,23 @@
                 var $wrapper = $('<div/>', {
                     'class': 'ty-product-filters__item-more'
                 });
-                var products = products_response && products_response.items ? products_response.items : [];
-                var has_more_products = products_response && products_response.has_more;
+                var items = products_response && products_response.items ? products_response.items : [];
+                var has_more_items = products_response && products_response.has_more;
                 var search_url = products_response && products_response.search_url ? products_response.search_url : '';
                 var view_all_text = $products_container.data('caViewAllText');
 
-                $.each(products, function (_, product) {
-                    if (!product.product_url || !product.product) {
+                $.each(items, function (_, item) {
+                    if (!item.item_url || !item.item) {
                         return;
                     }
 
                     $list.append(
                         $('<a/>', {
                             'class': 'sd-home-filters-products-item',
-                            href: product.product_url
+                            href: item.item_url
                         }).append(
                             $('<span/>', {
-                                text: product.product
+                                text: item.item
                             }),
                             $('<span/>', {
                                 'class': 'sd-home-filters-products-item-arrow ut2-icon-right-sight'
@@ -374,7 +430,7 @@
 
                 $wrapper.append($list);
 
-                if (has_more_products && search_url) {
+                if (has_more_items && search_url) {
                     $wrapper.append(
                         $('<div/>', {
                             'class': 'ty-product-filters__tools'
@@ -457,18 +513,51 @@
                 }).join('_');
             }
 
+            function get_category_names() {
+                var category_names = [];
+
+                $container.find('.cm-product-filters-checkbox[data-ca-filter-id="' + category_filter_id + '"]:checked').each(function () {
+                    var category_name = $.trim($(this).closest('.cm-product-filters-checkbox-container').find('label').text());
+
+                    if (category_name.length) {
+                        category_names.push(category_name);
+                    }
+                });
+
+                $container.find('.cm-product-filters-select[data-ca-filter-id="' + category_filter_id + '"]').each(function () {
+                    var value = $(this).val();
+
+                    if (value === null || value === '' || typeof value === 'undefined') {
+                        return;
+                    }
+
+                    $(this).find('option:selected').each(function () {
+                        var category_name = $.trim($(this).text());
+
+                        if (category_name.length) {
+                            category_names.push(category_name);
+                        }
+                    });
+                });
+
+                return $.grep(category_names, function (category_name, index) {
+                    return $.inArray(category_name, category_names) === index;
+                });
+            }
+
             function load_products() {
                 var default_text = $products_container.data('caDefaultText');
                 var empty_text = $products_container.data('caEmptyText');
                 var loading_text = $products_container.data('caLoadingText');
                 var features_hash = get_features_hash();
+                var category_names = get_category_names();
 
                 if (!city_filter_id || !age_filter_id || !category_filter_id) {
                     set_placeholder(default_text);
                     return;
                 }
 
-                if (!features_hash) {
+                if (!features_hash || !category_names.length) {
                     set_placeholder(default_text);
                     return;
                 }
@@ -481,7 +570,9 @@
                     caching: false,
                     result_ids: '',
                     data: {
-                        features_hash: features_hash
+                        features_hash: features_hash,
+                        category_names: category_names,
+                        category_filter_id: category_filter_id
                     },
                     callback: function (response) {
                         var products = response && response.sd_home_filters_products ? response.sd_home_filters_products : [];
