@@ -16,4 +16,28 @@
             MULTIVENDOR
         </core_edition>
     </compatibility>
+    <settings layout="separate" edition_type="ROOT">
+        <sections>
+            <section id="settings">
+                <items>
+                    <item id="city_filter_id">
+                        <type>input</type>
+                        <default_value>321</default_value>
+                    </item>
+                    <item id="age_filter_id">
+                        <type>input</type>
+                        <default_value>318</default_value>
+                    </item>
+                    <item id="category_filter_id">
+                        <type>input</type>
+                        <default_value>316</default_value>
+                    </item>
+                    <item id="products_dropdown_limit">
+                        <type>input</type>
+                        <default_value>10</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
 </addon>

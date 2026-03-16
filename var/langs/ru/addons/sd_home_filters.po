@@ -23,3 +23,47 @@ msgstr "Показать результат"
 msgctxt "Languages::sd_home_filters.apply_button_tooltip"
 msgid "This setting only applies to the horizontal filter template"
 msgstr "Данная настройка применяется только к шаблону с горизонтальным расположением фильтра"
+
+msgctxt "Languages::sd_home_filters.products_filter_title"
+msgid "Products"
+msgstr "Занятия"
+
+msgctxt "Languages::sd_home_filters.apply_filters_placeholder"
+msgid "Apply filters"
+msgstr "Примините фильтры"
+
+msgctxt "Languages::sd_home_filters.choose_product"
+msgid "Choose product"
+msgstr "Выберите занятие"
+
+msgctxt "Languages::sd_home_filters.no_products"
+msgid "No products found"
+msgstr "Занятия не найдены"
+
+msgctxt "Languages::sd_home_filters.loading_products"
+msgid "Loading products"
+msgstr "Загрузка занятий"
+
+msgctxt "Languages::sd_home_filters.view_all_products"
+msgid "View all"
+msgstr "Посмотреть все"
+
+msgctxt "SettingsSections::sd_home_filters::settings"
+msgid "Settings"
+msgstr "Настройки"
+
+msgctxt "SettingsOptions::sd_home_filters::city_filter_id"
+msgid "City filter ID"
+msgstr "ID фильтра Город"
+
+msgctxt "SettingsOptions::sd_home_filters::age_filter_id"
+msgid "Age filter ID"
+msgstr "ID фильтра Возраст"
+
+msgctxt "SettingsOptions::sd_home_filters::category_filter_id"
+msgid "Category filter ID"
+msgstr "ID фильтра Категория"
+
+msgctxt "SettingsOptions::sd_home_filters::products_dropdown_limit"
+msgid "Products dropdown limit"
+msgstr "Кол-во занятий в выпадающем списке"

@@ -24,7 +24,7 @@
     gap: 10px;
     align-items: flex-start;
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 400;
     color: #2c2c2c;
 }
 
@@ -234,7 +234,7 @@
 }
 
 .exikane-guest-banner__title strong {
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .exikane-guest-banner__text {
@@ -245,7 +245,7 @@
 }
 
 .exikane-guest-banner__text strong {
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .exikane-guest-banner__action {
@@ -317,6 +317,13 @@
 .exikane-password-wrap .ty-input-text {
     padding-right: 44px;
 }
+.ui-dialog.ui-widget:not(:is(.ty-login-popup)) {
+  min-inline-size: unset !important;
+}
+
+.ui-dialog-title:not(:is(.ty-login-popup)) {
+  display: none !important;
+}
 
 .exikane-password-toggle {
     position: absolute;
@@ -335,4 +342,173 @@
 .exikane-password-toggle:hover,
 .exikane-password-toggle:focus {
     color: #6b5aa5;
+}
+
+.exikane-login-popup {
+    max-width: 380px;
+
+}
+
+.exikane-login-popup__header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.exikane-login-popup__title {
+    margin: 0 0 12px;
+    color: #132946;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.exikane-login-popup__subtitle {
+    margin: 0;
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.exikane-guest-banner--login-popup {
+    background: linear-gradient(180deg, #e6b439 0%, #d9a021 100%);
+    border: 0;
+    box-shadow: none;
+    border-radius: 20px;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+}
+
+.exikane-guest-banner--login-popup .exikane-guest-banner__main {
+    justify-content: center;
+    gap: 14px;
+}
+
+.exikane-guest-banner--login-popup .exikane-guest-banner__title {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.exikane-guest-banner--login-popup .exikane-guest-banner__image {
+    width: 34px;
+}
+
+.exikane-guest-banner--login-popup .exikane-guest-banner__image img {
+    width: 100%;
+}
+
+.exikane-login-popup__error {
+    margin-bottom: 16px;
+}
+
+.exikane-login-popup__control-group {
+    margin-bottom: 18px;
+}
+
+.exikane-login-popup__control-group .ty-control-group__label {
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.exikane-login-popup__control-group .ty-login__input {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid #d7dce3;
+    border-radius: 12px;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    color: #132946;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.exikane-login-popup__control-group .ty-login__input::placeholder {
+    color: #a0a7b4;
+    opacity: 1;
+}
+
+.exikane-login-popup__remember-me {
+    margin: 8px 0 22px;
+}
+
+.exikane-login-popup__remember-me .ty-login__remember-me-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.exikane-login-popup__submit,
+.exikane-login-popup__register {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 56px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 16px;
+}
+
+.exikane-login-popup__submit.ty-btn__secondary {
+    background: #ffffff;
+    border: 1px solid #d7dce3;
+    color: #132946;
+}
+
+.exikane-login-popup__register.ty-btn__secondary {
+    background: #f3f4f6;
+    border: 1px solid #f3f4f6;
+    color: #132946;
+  margin-left: unset !important;
+}
+
+.exikane-login-popup__register:hover,
+.exikane-login-popup__register:focus {
+    color: #132946;
+    text-decoration: none;
+}
+
+.exikane-login-popup__forgot {
+    margin-top: 8px;
+}
+
+.exikane-login-popup__forgot .ty-login-reglink__a {
+    color: #6b5aa5;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+@media (max-width: 767px) {
+    .exikane-login-popup__title {
+        font-size: 21px;
+    }
+
+    .exikane-login-popup__subtitle {
+        font-size: 13px;
+    }
+
+    .exikane-guest-banner--login-popup {
+        padding: 16px 20px;
+        border-radius: 18px;
+    }
+
+    .exikane-guest-banner--login-popup .exikane-guest-banner__title {
+        font-size: 16px;
+    }
+}
+[class*="control"].icon_button .ty-btn bdi {
+  display: block;
+  font-size: 14px;
 }

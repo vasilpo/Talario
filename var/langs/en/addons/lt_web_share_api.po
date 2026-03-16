@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"PO-Revision-Date: 2026-03-12 00:00+0000\n"
+
+msgctxt "Addons::name::lt_web_share_api"
+msgid "Web Share API for product share button"
+msgstr "Web Share API for product share button"
+
+msgctxt "Addons::description::lt_web_share_api"
+msgid "Adds Web Share API support to the Unitheme2 product share button with clipboard fallback."
+msgstr "Adds Web Share API support to the Unitheme2 product share button with clipboard fallback."
+
+msgctxt "Languages::lt_web_share_api.link_copied"
+msgid "Link copied"
+msgstr "Link copied"
+
+msgctxt "Languages::lt_web_share_api.copy_failed"
+msgid "Failed to copy the link"
+msgstr "Failed to copy the link"

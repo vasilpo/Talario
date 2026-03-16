@@ -1,0 +1,45 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::partner_sites"
+msgid "Partner sites"
+msgstr "Сайты партнеров"
+
+msgctxt "Addons::description::partner_sites"
+msgid "Partner site links and click tracking"
+msgstr "Ссылки на сайты партнеров и учет переходов"
+
+msgctxt "SettingsOptions::partner_sites::partner_vendor_id"
+msgid "Partner vendor ID"
+msgstr "ID продавца партнера"
+
+msgctxt "Languages::partner_sites.partner_site"
+msgid "Website"
+msgstr "Сайт"
+
+msgctxt "Languages::partner_sites.partner_site_clicks_menu"
+msgid "Partner site clicks"
+msgstr "Переходы на сайт партнёров"
+
+msgctxt "Languages::partner_sites.partner_site_clicks_title"
+msgid "Partner site clicks"
+msgstr "Переходы на сайт партнёров"
+
+msgctxt "Languages::partner_sites.partner_site_clicks_export"
+msgid "Generate report"
+msgstr "Сформировать отчет"
+
+msgctxt "Languages::partner_sites.partner_site_clicks_user_id"
+msgid "Customer ID"
+msgstr "ID клиента"
+
+msgctxt "Languages::partner_sites.partner_site_clicks_email"
+msgid "Email"
+msgstr "Email"
+
+msgctxt "Languages::partner_sites.partner_site_clicks_product_id"
+msgid "Product ID"
+msgstr "ID товара"

@@ -2,17 +2,19 @@
 
 use Tygh\Addons\OfdFerma\OfdFerma;
 use Tygh\Settings;
+use Tygh\Tygh;
 
+if (!defined('BOOTSTRAP')) {
+    die('Access denied');
+}
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
-
-if($mode === 'cron') {
-
+/** @var string $mode */
+if ($mode === 'cron') {
     $ofdferma = Tygh::$app['addons.rus_ofd_ferma.ofd_ferma'];
 
     $ofdferma->setDebug(1);
-    $ofdferma->UpdateChecksStatus(); 
+    $ofdferma->updateChecksStatus();
     $ofdferma->setDebug(0);
-    
+
     exit;
 }
