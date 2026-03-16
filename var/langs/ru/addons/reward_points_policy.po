@@ -1,0 +1,33 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::reward_points_policy"
+msgid "Reward points policy"
+msgstr "Политика бонусных баллов"
+
+msgctxt "Addons::description::reward_points_policy"
+msgid "Welcome bonuses and order payment limits for reward points"
+msgstr "Приветственные бонусы и лимиты оплаты заказа баллами"
+
+msgctxt "SettingsOptions::reward_points_policy::welcome_bonus_enabled"
+msgid "Add welcome bonuses"
+msgstr "Добавлять приветственные бонусы"
+
+msgctxt "SettingsOptions::reward_points_policy::welcome_bonus_amount"
+msgid "Welcome bonus amount"
+msgstr "Количество приветственных бонусов"
+
+msgctxt "SettingsOptions::reward_points_policy::max_points_percent"
+msgid "Maximum order payment with points, %"
+msgstr "Максимальная оплата заказа баллами, %"
+
+msgctxt "Languages::reward_points_policy.reward_points_limit_exceeded"
+msgid "Maximum points you can apply: [points]."
+msgstr "Максимально допустимое количество бонусов для применения: [points]."
+
+msgctxt "Languages::reward_points_policy.welcome_bonus_reason"
+msgid "Welcome bonus"
+msgstr "Приветственные бонусы"

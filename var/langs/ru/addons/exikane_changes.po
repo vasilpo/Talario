@@ -10,23 +10,12 @@ msgstr "Exikane changes"
 
 msgctxt "Addons::description::exikane_changes"
 msgid "Custom changes for partner flows"
-msgstr "Кастомные доработки для партнерских сценариев"
-
-msgctxt "SettingsOptions::exikane_changes::partner_vendor_id"
-msgid "Partner vendor ID"
-msgstr "ID продавца партнера"
-
-msgctxt "SettingsOptions::exikane_changes::welcome_bonus_enabled"
-msgid "Add welcome bonuses"
-msgstr "Добавлять приветственные бонусы"
-
-msgctxt "SettingsOptions::exikane_changes::welcome_bonus_amount"
-msgid "Welcome bonus amount"
-msgstr "Количество приветственных бонусов"
-
-msgctxt "SettingsOptions::exikane_changes::max_points_percent"
-msgid "Maximum order payment with points, %"
-msgstr "Максимальная оплата заказа баллами, %"
+msgstr ""
+"Модуль UI-доработок:\n"
+"1. Гостевые и партнерские баннеры на витрине.\n"
+"2. Улучшения UX авторизации, регистрации и показа пароля.\n"
+"3. Theme-specific overrides для ABT Unitheme2.\n"
+"4. Небольшие кастомизации интерфейса витрины и админки."
 
 msgctxt "Languages::exikane_changes.partner_banner_title"
 msgid "Get partner contacts and 200 bonuses from Talario"
@@ -47,10 +36,6 @@ msgstr "Войти"
 msgctxt "Languages::exikane_changes.partner_banner_button"
 msgid "Get bonuses"
 msgstr "Получить бонусы"
-
-msgctxt "Languages::exikane_changes.reward_points_limit_exceeded"
-msgid "Maximum points you can apply: [points]."
-msgstr "Максимально допустимое количество бонусов для применения: [points]."
 
 msgctxt "Languages::exikane_changes.show_password"
 msgid "Show password"
@@ -103,171 +88,3 @@ msgstr "Введите пароль"
 msgctxt "Languages::exikane_changes.create_profile"
 msgid "Create profile"
 msgstr "Создать профиль"
-
-msgctxt "Languages::exikane_changes.partner_site"
-msgid "Website"
-msgstr "Сайт"
-
-msgctxt "Languages::exikane_changes.partner_site_clicks_menu"
-msgid "Partner site clicks"
-msgstr "Переходы на сайт партнёров"
-
-msgctxt "Languages::exikane_changes.partner_site_clicks_title"
-msgid "Partner site clicks"
-msgstr "Переходы на сайт партнёров"
-
-msgctxt "Languages::exikane_changes.partner_site_clicks_export"
-msgid "Generate report"
-msgstr "Сформировать отчет"
-
-msgctxt "Languages::exikane_changes.partner_site_clicks_user_id"
-msgid "Customer ID"
-msgstr "ID клиента"
-
-msgctxt "Languages::exikane_changes.partner_site_clicks_email"
-msgid "Email"
-msgstr "Email"
-
-msgctxt "Languages::exikane_changes.partner_site_clicks_product_id"
-msgid "Product ID"
-msgstr "ID товара"
-
-msgctxt "Languages::exikane_changes.welcome_bonus_reason"
-msgid "Welcome bonus"
-msgstr "Приветственные бонусы"
-
-msgctxt "Languages::exikane_changes.my_bookings"
-msgid "My bookings"
-msgstr "Мои занятия"
-
-msgctxt "Languages::exikane_changes.bookings_subtitle"
-msgid "All your lesson bookings are shown here"
-msgstr "Здесь отображаются все ваши бронирования"
-
-msgctxt "Languages::exikane_changes.sort_nearest_first"
-msgid "Nearest first"
-msgstr "Сначала ближайшие"
-
-msgctxt "Languages::exikane_changes.sort_latest_first"
-msgid "Latest first"
-msgstr "Сначала новые"
-
-msgctxt "Languages::exikane_changes.sort_total_desc"
-msgid "Price: high to low"
-msgstr "Цена: по убыванию"
-
-msgctxt "Languages::exikane_changes.sort_total_asc"
-msgid "Price: low to high"
-msgstr "Цена: по возрастанию"
-
-msgctxt "Languages::exikane_changes.sort_id_desc"
-msgid "ID: descending"
-msgstr "ID: по убыванию"
-
-msgctxt "Languages::exikane_changes.open_details"
-msgid "Open details"
-msgstr "Открыть детали"
-
-msgctxt "Languages::exikane_changes.sorting"
-msgid "Sorting"
-msgstr "Сортировка"
-
-msgctxt "Languages::exikane_changes.booking_label"
-msgid "Booking"
-msgstr "Бронирование"
-
-msgctxt "Languages::exikane_changes.booking_address"
-msgid "Address"
-msgstr "Адрес"
-
-msgctxt "Languages::exikane_changes.booking_age"
-msgid "Age"
-msgstr "Возраст"
-
-msgctxt "Languages::exikane_changes.booking_type"
-msgid "Type"
-msgstr "Тип"
-
-msgctxt "Languages::exikane_changes.booking_cost"
-msgid "Cost"
-msgstr "Стоимость"
-
-msgctxt "Languages::exikane_changes.points_spent"
-msgid "Points spent"
-msgstr "Списано баллов"
-
-msgctxt "Languages::exikane_changes.total_paid"
-msgid "Total paid"
-msgstr "Итого оплачено"
-
-msgctxt "Languages::exikane_changes.search_booking_placeholder"
-msgid "Search by lesson name"
-msgstr "Поиск по названию занятия"
-
-msgctxt "Languages::exikane_changes.lesson_information"
-msgid "Lesson information"
-msgstr "Информация о занятии"
-
-msgctxt "Languages::exikane_changes.open_lesson_card"
-msgid "Open lesson card"
-msgstr "Открыть карточку занятия"
-
-msgctxt "Languages::exikane_changes.booking_date_time"
-msgid "Date and time"
-msgstr "Дата и время"
-
-msgctxt "Languages::exikane_changes.lesson_format"
-msgid "Format"
-msgstr "Формат"
-
-msgctxt "Languages::exikane_changes.payment_block_title"
-msgid "Payment"
-msgstr "Оплата"
-
-msgctxt "Languages::exikane_changes.total_amount"
-msgid "Total amount"
-msgstr "Итоговая сумма"
-
-msgctxt "Languages::exikane_changes.qr_code_title"
-msgid "Your QR code for lesson attendance"
-msgstr "Ваш QR-код для посещения занятия"
-
-msgctxt "Languages::exikane_changes.qr_code_note"
-msgid "Show this QR code to the administrator at the lesson entrance."
-msgstr "Покажите этот QR-код администратору при входе на занятие."
-
-msgctxt "Languages::exikane_changes.download_qr_code"
-msgid "Download QR code"
-msgstr "Скачать QR-код"
-
-msgctxt "Languages::exikane_changes.qr_code_alt"
-msgid "Lesson QR code"
-msgstr "QR-код занятия"
-
-msgctxt "Languages::exikane_changes.booking_time_prefix"
-msgid "at"
-msgstr "в"
-
-msgctxt "Languages::exikane_changes.actions_title"
-msgid "Actions"
-msgstr "Действия"
-
-msgctxt "Languages::exikane_changes.contact_support_to_cancel"
-msgid "Contact support to cancel"
-msgstr "Для отмены свяжитесь с поддержкой"
-
-msgctxt "Languages::exikane_changes.cancellation_terms_prefix"
-msgid "You can review cancellation terms in the"
-msgstr "С условиями отмены вы можете ознакомиться в разделе"
-
-msgctxt "Languages::exikane_changes.cancellation_terms_highlight"
-msgid "questions and answers"
-msgstr "вопрос/ответ"
-
-msgctxt "Languages::exikane_changes.add_to_calendar"
-msgid "Add to calendar"
-msgstr "Добавить в календарь"
-
-msgctxt "Languages::exikane_changes.booking_number"
-msgid "Booking number"
-msgstr "Номер бронирования"
