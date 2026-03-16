@@ -54,7 +54,7 @@ class OfdFerma
      *
      * @return array<string, mixed>
      */
-    public function logMsg(string $mess, bool $status = false, array $params = array()): array
+    public function logMsg(string $mess, bool $status = false, array $params = []): array
     {
         if (!$status && $this->debug && $mess) {
             file_put_contents(
@@ -69,10 +69,10 @@ class OfdFerma
             }
         }
 
-        return array_merge(array(
+        return array_merge([
             'status'    => $status,
             'mess'      => $mess
-        ), $params);
+        ], $params);
     }
 
     /**
@@ -120,11 +120,11 @@ class OfdFerma
     private function buildTransferAgentAddress(): string
     {
         // The OFD payload expects a single transfer agent address line.
-        $address_parts = array_filter(array(
+        $address_parts = array_filter([
             Registry::get('settings.Company.company_country'),
             Registry::get('settings.Company.company_city'),
             Registry::get('settings.Company.company_address'),
-        ));
+        ]);
 
         return implode(', ', $address_parts);
     }
@@ -137,11 +137,10 @@ class OfdFerma
     private function getMarketplaceSupplierData(): array
     {
         // Marketplace details are used as a fallback when vendor requisites are incomplete.
-        return array(
+        return [
             'SupplierInn' => Registry::get('addons.rus_ofd_ferma.setting_inn'),
             'SupplierName' => Registry::get('settings.Company.company_name'),
-            'SupplierPhone' => Registry::get('settings.Company.company_phone'),
-        );
+        ];
     }
 
     /**
@@ -188,15 +187,14 @@ class OfdFerma
 
         // Vendor fiscal requisites are stored in companies table and merged with marketplace fallback.
         $company_data = db_get_row(
-            'SELECT company_id, tax_number, phone FROM ?:companies WHERE company_id = ?i',
+            'SELECT company_id, tax_number FROM ?:companies WHERE company_id = ?i',
             $company_id
         );
 
-        $supplier_data = array(
+        $supplier_data = [
             'SupplierInn' => !empty($company_data['tax_number']) ? $company_data['tax_number'] : '',
             'SupplierName' => fn_get_company_name($company_id),
-            'SupplierPhone' => !empty($company_data['phone']) ? $company_data['phone'] : '',
-        );
+        ];
 
         foreach ($supplier_data as $key => $value) {
             if ($value === '' || $value === null) {
@@ -217,13 +215,12 @@ class OfdFerma
     private function buildPaymentAgentInfo(array $order_data): array
     {
         // Marketplace company settings are the source of payment agent attributes.
-        return array_merge(array(
+        return array_merge([
             'AgentType' => self::PAYMENT_AGENT_TYPE,
-            'TransferAgentPhone' => Registry::get('settings.Company.company_phone'),
             'TransferAgentName' => Registry::get('settings.Company.company_name'),
             'TransferAgentAddress' => $this->buildTransferAgentAddress(),
             'TransferAgentINN' => Registry::get('addons.rus_ofd_ferma.setting_inn'),
-        ), $this->getSupplierData($order_data));
+        ], $this->getSupplierData($order_data));
     }
 
     /**
@@ -272,18 +269,18 @@ class OfdFerma
         }
 
         //Формируем данные
-        $data = array();
+        $data = [];
         $data['Request']['Inn'] = $ofd_inn;
         $data['Request']['Type'] = $type;
         $data['Request']['InvoiceId'] = $prefix . $id . '-' . $type;
         $data['Request']['LocalDate'] = date('Y-m-d\TH:i:s');
-        $data['Request']['CustomerReceipt'] = array(
+        $data['Request']['CustomerReceipt'] = [
             'TaxationSystem' => $ofd_nalog,
             'Email' => $customer_email,
             'Phone' => $customer_phone,
             'PaymentAgentInfo' => $payment_agent_info,
-            'Items' => array(),
-        );
+            'Items' => [],
+        ];
 
         // Get Items: Price / Sold / Email
         foreach ($products as $item) {
@@ -314,7 +311,7 @@ class OfdFerma
                     $vat = $ofd_nds;
             }
 
-            $data['Request']['CustomerReceipt']['Items'][] = array(
+            $data['Request']['CustomerReceipt']['Items'][] = [
                 'Label' => $item->getName(),
                 'Price' => $this->formatFloat($item->getPrice()),
                 'Quantity' => $this->formatFloat($item->getQuantity(), 3),
@@ -323,7 +320,7 @@ class OfdFerma
                 ),
                 'Vat' => $vat,
                 'PaymentAgentInfo' => $payment_agent_info,
-            );
+            ];
         }
 
         //Если включена свертка
@@ -334,14 +331,14 @@ class OfdFerma
             foreach ($data['Request']['CustomerReceipt']['Items'] as $item) {
                 $sum += $item['Amount'];
             }
-            $data['Request']['CustomerReceipt']['Items'] = array(array(
+            $data['Request']['CustomerReceipt']['Items'] = [[
                 'Label' => $pos_name,
                 'Price' => $sum,
                 'Quantity' => 1,
                 'Amount' => $sum,
                 'Vat' => $ofd_nds,
                 'PaymentAgentInfo' => $payment_agent_info,
-            ));
+            ]];
         }
 
         return $data;
@@ -422,12 +419,12 @@ class OfdFerma
      */
     private function getHTTPOpt(array $data): array
     {
-        $options = array(
-            "ssl" => array(
+        $options = [
+            "ssl" => [
                 "verify_peer" => false,
                 "verify_peer_name" => false,
-            ),
-            'http' => array(
+            ],
+            'http' => [
                 'timeout' => 10,
                 'ignore_errors' => true,
                 'content' => json_encode($data),
@@ -435,8 +432,8 @@ class OfdFerma
                     "Accept: application/json" . "\r\n",
                 "Content-Length: " . strlen(json_encode($data)) . "\r\n",
                 'method' => 'POST',
-            )
-        );
+            ]
+        ];
 
         return $options;
     }
@@ -448,11 +445,11 @@ class OfdFerma
      *
      * @return array<string, mixed>|null
      */
-    public function updateChecksStatus(array $ids = array()): ?array
+    public function updateChecksStatus(array $ids = []): ?array
     {
         $sWhere = '';
         if ($ids) {
-            $aWhere = array();
+            $aWhere = [];
             foreach ($ids as $id) {
                 $aWhere[] = "'" . addslashes($id) . "'";
             }
@@ -467,7 +464,7 @@ class OfdFerma
 
         $res = null;
         foreach ($results as $result) {
-            $data = array();
+            $data = [];
             $data['Request']['ReceiptId'] = $result['id'];
 
             $data_ins = $this->updateNewCheckStatus($data);
@@ -580,7 +577,7 @@ class OfdFerma
     private function updateNewCheckInDb(int|string $check_id, object $data): array
     {
 
-        $aDataSave = array(
+        $aDataSave = [
             "status" => $data->StatusName,
             "status_message" => $data->StatusMessage,
             "FN" => $data->Device->FN,
@@ -588,9 +585,9 @@ class OfdFerma
             "FDN" => $data->Device->FDN,
             "FPD" => $data->Device->FPD,
             "updated_at" => gmdate('Y-m-d H:i:s'),
-        );
+        ];
 
-        $aDataUpdate = array();
+        $aDataUpdate = [];
         foreach ($aDataSave as $key => $value) {
             $aDataUpdate[] = "`$key` = '" . addslashes($value) . "'";
         }
@@ -650,10 +647,10 @@ class OfdFerma
         $ofd_login     = Registry::get('addons.rus_ofd_ferma.setting_login');
         $ofd_pass      = Registry::get('addons.rus_ofd_ferma.setting_password');
 
-        $data = array(
+        $data = [
             "Login"     => $ofd_login,
             "Password"  => $ofd_pass,
-        );
+        ];
 
         $options = $this->getHTTPOpt($data);
         $context = stream_context_create($options);
@@ -749,7 +746,7 @@ class OfdFerma
         $result = json_decode($result, false, 512, JSON_THROW_ON_ERROR);
 
         if (isset($result->Status) && ($result->Status === 'Success')) {
-            return $this->logMsg('', true, array('check_id' => $result->Data->ReceiptId));
+            return $this->logMsg('', true, ['check_id' => $result->Data->ReceiptId]);
         }
 
         if (isset($result->Status) && ($result->Status === 'Failed')) {
@@ -786,7 +783,7 @@ class OfdFerma
 
             $check_item_id = db_query($sql);
 
-            return $this->logMsg('', true, array('check_item_id' => $check_item_id));
+            return $this->logMsg('', true, ['check_item_id' => $check_item_id]);
         } catch (Exception $e) {
             return $this->logMsg($e->getMessage() . 'saveCheckInDB');
         }
@@ -850,7 +847,7 @@ class OfdFerma
      *
      * @return int
      */
-    public function getCount(array $where = array()): int
+    public function getCount(array $where = []): int
     {
 
         if (empty($where)) {
@@ -869,7 +866,7 @@ class OfdFerma
      *
      * @return array<int, array<string, mixed>>
      */
-    public function getList(int $offset = 0, int $countPage = 30, array $where = array()): array
+    public function getList(int $offset = 0, int $countPage = 30, array $where = []): array
     {
         if (!empty($where)) {
             $list = db_get_array(

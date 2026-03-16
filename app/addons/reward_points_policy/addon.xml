@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>reward_points_policy</id>
+    <version>1.0</version>
+    <priority>31000</priority>
+    <position>96</position>
+    <status>active</status>
+    <default_language>en</default_language>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <has_icon>Y</has_icon>
+    <supplier>Larionov.tech</supplier>
+    <supplier_link>https://larionov.tech</supplier_link>
+    <email>support@larionov.tech</email>
+    <settings edition_type="ROOT,STOREFRONT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="welcome_bonus_enabled">
+                        <type>checkbox</type>
+                        <default_value>Y</default_value>
+                    </item>
+                    <item id="welcome_bonus_amount">
+                        <type>input</type>
+                        <default_value>200</default_value>
+                    </item>
+                    <item id="max_points_percent">
+                        <type>input</type>
+                        <default_value>50</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>

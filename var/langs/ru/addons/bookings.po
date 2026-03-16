@@ -1,0 +1,141 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::bookings"
+msgid "Bookings"
+msgstr "Расширение функционала бронирования"
+
+msgctxt "Languages::bookings.my_bookings"
+msgid "My bookings"
+msgstr "Мои занятия"
+
+msgctxt "Languages::bookings.bookings_subtitle"
+msgid "All your lesson bookings are shown here"
+msgstr "Здесь отображаются все ваши бронирования"
+
+msgctxt "Languages::bookings.sort_nearest_first"
+msgid "Nearest first"
+msgstr "Сначала ближайшие"
+
+msgctxt "Languages::bookings.sort_latest_first"
+msgid "Latest first"
+msgstr "Сначала новые"
+
+msgctxt "Languages::bookings.sort_total_desc"
+msgid "Price: high to low"
+msgstr "Цена: по убыванию"
+
+msgctxt "Languages::bookings.sort_total_asc"
+msgid "Price: low to high"
+msgstr "Цена: по возрастанию"
+
+msgctxt "Languages::bookings.sort_id_desc"
+msgid "ID: descending"
+msgstr "ID: по убыванию"
+
+msgctxt "Languages::bookings.open_details"
+msgid "Open details"
+msgstr "Открыть детали"
+
+msgctxt "Languages::bookings.sorting"
+msgid "Sorting"
+msgstr "Сортировка"
+
+msgctxt "Languages::bookings.booking_address"
+msgid "Address"
+msgstr "Адрес"
+
+msgctxt "Languages::bookings.booking_age"
+msgid "Age"
+msgstr "Возраст"
+
+msgctxt "Languages::bookings.booking_type"
+msgid "Type"
+msgstr "Тип"
+
+msgctxt "Languages::bookings.booking_cost"
+msgid "Cost"
+msgstr "Стоимость"
+
+msgctxt "Languages::bookings.points_spent"
+msgid "Points spent"
+msgstr "Списано баллов"
+
+msgctxt "Languages::bookings.total_paid"
+msgid "Total paid"
+msgstr "Итого оплачено"
+
+msgctxt "Languages::bookings.search_booking_placeholder"
+msgid "Search by lesson name"
+msgstr "Поиск по названию занятия"
+
+msgctxt "Languages::bookings.lesson_information"
+msgid "Lesson information"
+msgstr "Информация о занятии"
+
+msgctxt "Languages::bookings.open_lesson_card"
+msgid "Open lesson card"
+msgstr "Открыть карточку занятия"
+
+msgctxt "Languages::bookings.booking_date_time"
+msgid "Date and time"
+msgstr "Дата и время"
+
+msgctxt "Languages::bookings.lesson_format"
+msgid "Format"
+msgstr "Формат"
+
+msgctxt "Languages::bookings.payment_block_title"
+msgid "Payment"
+msgstr "Оплата"
+
+msgctxt "Languages::bookings.total_amount"
+msgid "Total amount"
+msgstr "Итоговая сумма"
+
+msgctxt "Languages::bookings.qr_code_title"
+msgid "Your QR code for lesson attendance"
+msgstr "Ваш QR-код для посещения занятия"
+
+msgctxt "Languages::bookings.qr_code_note"
+msgid "Show this QR code to the administrator at the lesson entrance."
+msgstr "Покажите этот QR-код администратору при входе на занятие."
+
+msgctxt "Languages::bookings.download_qr_code"
+msgid "Download QR code"
+msgstr "Скачать QR-код"
+
+msgctxt "Languages::bookings.qr_code_alt"
+msgid "Lesson QR code"
+msgstr "QR-код занятия"
+
+msgctxt "Languages::bookings.booking_time_prefix"
+msgid "at"
+msgstr "в"
+
+msgctxt "Languages::bookings.actions_title"
+msgid "Actions"
+msgstr "Действия"
+
+msgctxt "Languages::bookings.contact_support_to_cancel"
+msgid "Contact support to cancel"
+msgstr "Для отмены свяжитесь с поддержкой"
+
+msgctxt "Languages::bookings.cancellation_terms_prefix"
+msgid "You can review cancellation terms in the"
+msgstr "Условия отмены можно посмотреть в разделе"
+
+msgctxt "Languages::bookings.cancellation_terms_highlight"
+msgid "questions and answers"
+msgstr "вопросы и ответы"
+
+msgctxt "Languages::bookings.add_to_calendar"
+msgid "Add to calendar"
+msgstr "Добавить в календарь"
+
+msgctxt "Languages::bookings.booking_number"
+msgid "Booking number"
+msgstr "Номер бронирования"
