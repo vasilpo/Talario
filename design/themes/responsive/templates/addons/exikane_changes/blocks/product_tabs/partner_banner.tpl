@@ -1,4 +1,4 @@
-{assign var="partner_vendor_id" value=$addons.exikane_changes.partner_vendor_id|default:32}
+{assign var="partner_vendor_id" value=$addons.partner_sites.partner_vendor_id|default:$addons.exikane_changes.partner_vendor_id|default:32}
 {assign var="current_vendor_id" value=$product.company_id|default:$company_id}
 
 {if "MULTIVENDOR"|fn_allowed_for

@@ -1,0 +1,145 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::bookings"
+msgid "Bookings"
+msgstr "Bookings"
+
+msgctxt "Addons::description::bookings"
+msgid "Booking order data enrichment and calendar export"
+msgstr "Booking order data enrichment and calendar export"
+
+msgctxt "Languages::bookings.my_bookings"
+msgid "My bookings"
+msgstr "My lessons"
+
+msgctxt "Languages::bookings.bookings_subtitle"
+msgid "All your lesson bookings are shown here"
+msgstr "All your bookings are shown here"
+
+msgctxt "Languages::bookings.sort_nearest_first"
+msgid "Nearest first"
+msgstr "Nearest first"
+
+msgctxt "Languages::bookings.sort_latest_first"
+msgid "Latest first"
+msgstr "Latest first"
+
+msgctxt "Languages::bookings.sort_total_desc"
+msgid "Price: high to low"
+msgstr "Price: high to low"
+
+msgctxt "Languages::bookings.sort_total_asc"
+msgid "Price: low to high"
+msgstr "Price: low to high"
+
+msgctxt "Languages::bookings.sort_id_desc"
+msgid "ID: descending"
+msgstr "ID: descending"
+
+msgctxt "Languages::bookings.open_details"
+msgid "Open details"
+msgstr "Open details"
+
+msgctxt "Languages::bookings.sorting"
+msgid "Sorting"
+msgstr "Sorting"
+
+msgctxt "Languages::bookings.booking_address"
+msgid "Address"
+msgstr "Address"
+
+msgctxt "Languages::bookings.booking_age"
+msgid "Age"
+msgstr "Age"
+
+msgctxt "Languages::bookings.booking_type"
+msgid "Type"
+msgstr "Type"
+
+msgctxt "Languages::bookings.booking_cost"
+msgid "Cost"
+msgstr "Cost"
+
+msgctxt "Languages::bookings.points_spent"
+msgid "Points spent"
+msgstr "Points spent"
+
+msgctxt "Languages::bookings.total_paid"
+msgid "Total paid"
+msgstr "Total paid"
+
+msgctxt "Languages::bookings.search_booking_placeholder"
+msgid "Search by lesson name"
+msgstr "Search by lesson name"
+
+msgctxt "Languages::bookings.lesson_information"
+msgid "Lesson information"
+msgstr "Lesson information"
+
+msgctxt "Languages::bookings.open_lesson_card"
+msgid "Open lesson card"
+msgstr "Open lesson card"
+
+msgctxt "Languages::bookings.booking_date_time"
+msgid "Date and time"
+msgstr "Date and time"
+
+msgctxt "Languages::bookings.lesson_format"
+msgid "Format"
+msgstr "Format"
+
+msgctxt "Languages::bookings.payment_block_title"
+msgid "Payment"
+msgstr "Payment"
+
+msgctxt "Languages::bookings.total_amount"
+msgid "Total amount"
+msgstr "Total amount"
+
+msgctxt "Languages::bookings.qr_code_title"
+msgid "Your QR code for lesson attendance"
+msgstr "Your QR code for lesson attendance"
+
+msgctxt "Languages::bookings.qr_code_note"
+msgid "Show this QR code to the administrator at the lesson entrance."
+msgstr "Show this QR code to the administrator at the lesson entrance."
+
+msgctxt "Languages::bookings.download_qr_code"
+msgid "Download QR code"
+msgstr "Download QR code"
+
+msgctxt "Languages::bookings.qr_code_alt"
+msgid "Lesson QR code"
+msgstr "Lesson QR code"
+
+msgctxt "Languages::bookings.booking_time_prefix"
+msgid "at"
+msgstr "at"
+
+msgctxt "Languages::bookings.actions_title"
+msgid "Actions"
+msgstr "Actions"
+
+msgctxt "Languages::bookings.contact_support_to_cancel"
+msgid "Contact support to cancel"
+msgstr "Contact support to cancel"
+
+msgctxt "Languages::bookings.cancellation_terms_prefix"
+msgid "You can review cancellation terms in the"
+msgstr "You can review cancellation terms in the"
+
+msgctxt "Languages::bookings.cancellation_terms_highlight"
+msgid "questions and answers"
+msgstr "questions and answers"
+
+msgctxt "Languages::bookings.add_to_calendar"
+msgid "Add to calendar"
+msgstr "Add to calendar"
+
+msgctxt "Languages::bookings.booking_number"
+msgid "Booking number"
+msgstr "Booking number"

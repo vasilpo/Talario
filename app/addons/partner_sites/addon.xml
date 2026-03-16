@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>partner_sites</id>
+    <version>1.0</version>
+    <priority>31000</priority>
+    <position>96</position>
+    <status>active</status>
+    <default_language>en</default_language>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <has_icon>Y</has_icon>
+    <supplier>Larionov.tech</supplier>
+    <supplier_link>https://larionov.tech</supplier_link>
+    <email>support@larionov.tech</email>
+    <settings edition_type="ROOT,STOREFRONT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="partner_vendor_id">
+                        <type>input</type>
+                        <default_value>32</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+    <queries>
+        <item>
+            CREATE TABLE IF NOT EXISTS `?:exikane_partner_product_sites` (
+                `product_id` int(11) unsigned NOT NULL,
+                `site` varchar(255) NOT NULL DEFAULT '',
+                PRIMARY KEY (`product_id`)
+            ) Engine=MyISAM DEFAULT CHARSET UTF8;
+        </item>
+        <item>
+            CREATE TABLE IF NOT EXISTS `?:exikane_partner_site_clicks` (
+                `click_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+                `email` varchar(255) NOT NULL DEFAULT '',
+                `product_id` int(11) unsigned NOT NULL DEFAULT '0',
+                `timestamp` int(11) unsigned NOT NULL DEFAULT '0',
+                PRIMARY KEY (`click_id`),
+                KEY `product_id` (`product_id`)
+            ) Engine=MyISAM DEFAULT CHARSET UTF8;
+        </item>
+    </queries>
+</addon>
