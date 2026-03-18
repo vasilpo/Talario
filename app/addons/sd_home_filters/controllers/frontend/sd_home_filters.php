@@ -22,11 +22,12 @@ if (!defined('BOOTSTRAP')) {
  * - features_hash: currently selected filters hash
  * - category_names: selected parent category names from the category filter UI
  * - category_filter_id: filter identifier that should be removed from the final search hash
+ * - selected_category_ids: selected subcategory identifiers for the final search URL
+ * - search_params: active search form params that should be preserved in the result URL
  *
  * Response payload:
- * - items: list of subcategory links
- * - has_more: whether the full subcategory list exceeds the configured limit
- * - search_url: fallback link for the "view all" button
+ * - items: list of subcategories for the custom dropdown
+ * - search_url: final search URL for the selected subcategories
  *
  * @var string $mode
  */
@@ -35,11 +36,22 @@ if ($mode === 'get_products') {
     $features_hash = isset($_REQUEST['features_hash']) ? (string) $_REQUEST['features_hash'] : '';
     $category_names = isset($_REQUEST['category_names']) ? (array) $_REQUEST['category_names'] : [];
     $category_filter_id = isset($_REQUEST['category_filter_id']) ? (int) $_REQUEST['category_filter_id'] : 0;
+    $selected_category_ids = isset($_REQUEST['selected_category_ids'])
+        ? (array) $_REQUEST['selected_category_ids']
+        : [];
+    $search_params = isset($_REQUEST['search_params']) ? (array) $_REQUEST['search_params'] : [];
     $products_dropdown_limit = (int) Registry::get('addons.sd_home_filters.products_dropdown_limit');
     $products_dropdown_limit = $products_dropdown_limit > 0 ? $products_dropdown_limit : 10;
-    $has_more_items = false;
     $search_url = '';
     $category_names = array_values(array_unique(array_filter(array_map('trim', $category_names))));
+    $selected_category_ids = array_values(array_unique(array_filter(array_map('intval', $selected_category_ids))));
+    $search_params = array_filter($search_params, static function ($value, $key) {
+        if (in_array($key, ['dispatch', 'features_hash', 'cid', 'category_id', 'search_performed'], true)) {
+            return false;
+        }
+
+        return $value !== '' && $value !== null;
+    }, ARRAY_FILTER_USE_BOTH);
 
     if ($features_hash !== '' && $category_names && $category_filter_id > 0) {
         // CART_LANGUAGE is a CS-Cart bootstrap constant available in controller runtime.
@@ -83,17 +95,17 @@ if ($mode === 'get_products') {
                 'A'
             );
 
-            $subcategories = array_values(array_reduce($subcategories, function (array $result, array $subcategory) {
+            $unique_subcategories = [];
+
+            foreach ($subcategories as $subcategory) {
                 if (empty($subcategory['category_id'])) {
-                    return $result;
+                    continue;
                 }
 
-                $result[(int) $subcategory['category_id']] = $subcategory;
+                $unique_subcategories[(int) $subcategory['category_id']] = $subcategory;
+            }
 
-                return $result;
-            }, []));
-
-            $has_more_items = count($subcategories) > $products_dropdown_limit;
+            $subcategories = array_values($unique_subcategories);
             $subcategories = array_slice($subcategories, 0, $products_dropdown_limit);
 
             foreach ($subcategories as $subcategory) {
@@ -101,28 +113,25 @@ if ($mode === 'get_products') {
                     continue;
                 }
 
-                $item_url = 'products.search?cid=' . (int) $subcategory['category_id'] . '&search_performed=Y';
-
-                if ($remaining_features_hash !== '') {
-                    $item_url .= '&features_hash=' . urlencode($remaining_features_hash);
-                }
-
                 $items[] = [
                     'item_id'   => (int) $subcategory['category_id'],
                     'item'      => (string) $subcategory['category'],
-                    'item_url'  => fn_url($item_url),
                 ];
             }
 
-            if (count($category_names) === 1) {
-                $search_url = 'products.search?search_performed=Y';
+            if ($selected_category_ids) {
+                $search_url = 'products.search?search_performed=Y&cid=' . implode(',', $selected_category_ids);
+            } elseif (count($category_names) === 1 && !empty($parent_category_ids[0])) {
+                $search_url = 'products.search?search_performed=Y&cid=' . (int) $parent_category_ids[0];
+            }
 
-                if (!empty($parent_category_ids[0])) {
-                    $search_url .= '&cid=' . (int) $parent_category_ids[0];
-                }
-
+            if ($search_url !== '') {
                 if ($remaining_features_hash !== '') {
                     $search_url .= '&features_hash=' . urlencode($remaining_features_hash);
+                }
+
+                if ($search_params) {
+                    $search_url .= '&' . http_build_query($search_params);
                 }
 
                 $search_url = fn_url($search_url);
@@ -131,7 +140,6 @@ if ($mode === 'get_products') {
     }
     Tygh::$app['ajax']->assign('sd_home_filters_products', [
         'items'      => $items,
-        'has_more'   => $has_more_items,
         'search_url' => $search_url,
     ]);
 
