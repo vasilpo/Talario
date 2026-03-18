@@ -12,10 +12,10 @@
     {if "MULTIVENDOR"|fn_allowed_for && ($product.master_product_id || !$product.company_id)}{$is_add_to_cart_mv=false}{/if}
 
     {hook name="products:ab__product_images_count"}
-        {$product_images_count = $product.image_pairs|@count}
+    {$product_images_count = $product.image_pairs|@count}
     {/hook}
 
-    <div class="ut2-pb ty-product-block ty-product-detail ut2-big-image ut2-cascade-gallery {if $product_images_count < 1}--single{/if}" style="--pd-image-gallery-width: {$pd_image_gallery_width};--pd-image-gallery-height: {$pd_image_gallery_height}">
+    <div class="ut2-pb ty-product-block ut2-big-image --cascade-gallery{if $product_images_count < 1} --single{/if}" style="--pd-image-gallery-width: {$pd_image_gallery_width};--pd-image-gallery-height: {$pd_image_gallery_height}">
 
         <div class="ut2-breadcrumbs__wrapper">
             {hook name="products:ut2_main_info_breadcrumbs"}
@@ -23,23 +23,16 @@
             {/hook}
         </div>
 
+        {hook name="products:view_main_info"}
         {if $product}
+            {assign var="obj_id" value=$product.product_id}
+            {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") product_labels_position="right-top" hide_qty_label=true}
 
-            {hook name="products:view_main_info"}
             <div class="ut2-pb__wrapper{if $product_images_count < 1} ut2-pb__single-image{/if} {if $settings.abt__ut2.products[$settings.abt__details_layout].formation_multiple_product_images[$settings.ab__device]}formation-{$settings.abt__ut2.products[$settings.abt__details_layout].formation_multiple_product_images[$settings.ab__device]}{/if} clearfix">
-
-                {assign var="obj_id" value="`$product.product_id`"}
-                {include file="common/product_data.tpl" product=$product but_role="big" but_text=__("add_to_cart") product_labels_position="right-top" hide_qty_label=true}
-
-                <div class="ut2-pb__right-wrapper {if $settings.abt__ut2.products.custom_block_id|intval}ut2-pb__custom-block-active{/if}">
-
-                    <div class="ut2-pb__main-content">
+                <div class="ut2-pb__right-wrapper">
+                    <div class="ut2-pb__main-content-box">
                         {assign var="form_open" value="form_open_`$obj_id`"}
                         {$smarty.capture.$form_open nofilter}
-
-                        {if $smarty.capture.hide_form_changed == "YesNo::YES"|enum}
-                            {assign var="hide_form" value=$smarty.capture.orig_val_hide_form}
-                        {/if}
 
                         {assign var="old_price" value="old_price_`$obj_id`"}
                         {assign var="price" value="price_`$obj_id`"}
@@ -47,7 +40,17 @@
                         {assign var="list_discount" value="list_discount_`$obj_id`"}
                         {assign var="discount_label" value="discount_label_`$obj_id`"}
 
-                        <div class="ut2-pb__title">
+                        <div class="ut2-pb__title ut2-pb__title-wrap">
+
+                            <div class="ut2-pb__top-ss">
+                                {if $show_sku == "true" && $product.product_code|trim}
+                                    <div class="ut2-pb__sku">
+                                        {assign var="sku" value="sku_`$obj_id`"}
+                                        {$smarty.capture.$sku nofilter}
+                                    </div>
+                                {/if}
+                            </div>
+
                             {if $settings.abt__ut2.general.brand_feature_id && $settings.abt__ut2.products.view.show_brand_format[$settings.ab__device] === "name"}
                                 {include file="blocks/product_templates/components/product_brand_logo_prepare.tpl"}
                                 {if $brand_feature}
@@ -60,20 +63,15 @@
                             {/if}
 
                             {if !$hide_title}
-                                <h1 {live_edit name="product:product:{$product.product_id}"}><bdi>{$product.product nofilter}</bdi></h1>
+                                <h1 {live_edit name="product:product:{$product.product_id}"}>{$product.product nofilter}</h1>
                             {/if}
 
-                            <div class="ut2-pb__inner-elements-wrap space-between ut2-pb__top-ss">
-                                {include file="blocks/product_templates/components/product_rating.tpl"}
-
-                                {if $show_sku == "true" && $product.product_code|trim}
-                                    <div class="ut2-pb__sku">
-                                        {assign var="sku" value="sku_`$obj_id`"}
-                                        {$smarty.capture.$sku nofilter}
-                                    </div>
-                                {/if}
-                            </div>
+                            <div class="ut2-pb__rating">{include file="blocks/product_templates/components/product_rating.tpl"}</div>
                         </div>
+
+                        {if $settings.abt__ut2.general.brand_feature_id}
+                            {include file="blocks/product_templates/components/product_brand_logo_prepare.tpl"}
+                        {/if}
 
                         {include file="blocks/product_templates/components/product_price.tpl"}
 
@@ -94,7 +92,7 @@
                         </div>
                         {if $capture_options_vs_qty}{/capture}{/if}
 
-                        <div class="ut2-pb__advanced-options clearfix">
+                        <div class="ut2-pb__advanced-options">
                             {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                             {assign var="advanced_options" value="advanced_options_`$obj_id`"}
                             {$smarty.capture.$advanced_options nofilter}
@@ -129,37 +127,31 @@
                         </div>
                         {if $capture_buttons}{/capture}{/if}
 
-                        {strip}
-                            {hook name="products:ab__s_pictograms_pos_2"}{/hook}
+                        {* Remove if using hook in motivation block *}
+                        {hook name="products:geo_maps"}{/hook}
 
-                            {hook name="products:geo_maps"}{/hook}{* Remove if using hook in motivation block *}
-                        {/strip}
+                        {hook name="products:ab__s_pictograms_pos_2"}{/hook}
+
+                        {if $settings.abt__ut2.products.view.show_features[$settings.ab__device] === "YesNo::YES"|enum && $product.header_features}
+                            <div class="ut2-pb__short-features">{include file="views/products/components/product_features_short_list.tpl" features=$product.header_features}</div>
+                        {/if}
 
                         {if $show_short_descr && strlen(trim($product.short_description))}
                             <div class="ut2-pb__short-descr" {live_edit name="product:short_description:{$product.product_id}"}>{$product.short_description nofilter}</div>
                         {/if}
 
-                        {if $settings.abt__ut2.products.view.show_features[$settings.ab__device] === "YesNo::YES"|enum && $product.header_features}
-                            <div class="ut2-pb__short-features">
-                                {include file="views/products/components/product_features_short_list.tpl" features=$product.header_features}
-                            </div>
-                        {/if}
-
-                        {hook name="products:product_detail_bottom"}{/hook}
-
                         {hook name="products:product_form_close_tag"}
                         {$form_close="form_close_`$obj_id`"}
                         {$smarty.capture.$form_close nofilter}
                         {/hook}
-
-                        {if $show_product_tabs}
-                            {include file="views/tabs/components/product_popup_tabs.tpl"}
-                            {$smarty.capture.popupsbox_content nofilter}
-                        {/if}
                     </div>
 
-                    {hook name="products:ab__vendor_block"}{/hook}
+                    {if $show_product_tabs}
+                        {include file="views/tabs/components/product_popup_tabs.tpl"}
+                        {$smarty.capture.popupsbox_content nofilter}
+                    {/if}
 
+                    {hook name="products:ab__vendor_block"}{/hook}
                     {hook name="products:ab__motivation_block"}{/hook}
 
                     {if $settings.abt__ut2.products.custom_block_id|intval}
@@ -167,14 +159,13 @@
                             {render_block block_id=$settings.abt__ut2.products.custom_block_id|intval dispatch="products.view" use_cache=false parse_js=false}
                         </div>
                     {/if}
-
                 </div>
                 <div class="ut2-pb__img-wrapper">
                     {hook name="products:image_wrap"}
                     {if !$no_images}
                         <div class="ut2-pb__img cm-reload-{$product.product_id}" data-ca-previewer="true" id="product_images_{$product.product_id}_update">
 
-    						{include file="views/products/components/product_images.tpl" nocarousel=$nocarousel image_width=$pd_image_gallery_width image_height=$pd_image_gallery_height product=$product show_detailed_link="YesNo::YES"|enum }
+                            {include file="views/products/components/product_images.tpl" nocarousel=$nocarousel image_width=$pd_image_gallery_width image_height=$pd_image_gallery_height product=$product show_detailed_link="YesNo::YES"|enum }
 
                             {hook name="products:ab__s_pictograms_pos_1"}{/hook}
                             <!--product_images_{$product.product_id}_update--></div>
@@ -183,41 +174,41 @@
                     {/if}
                     {/hook}
 
-                    {hook name="products:product_tabs_pre"}
-                        <div class="ut2-pb__tabs{if $settings.Appearance.product_details_in_tab === "YesNo::NO"|enum} tabs-list{/if}">
-                            {if $show_product_tabs}
-                                {hook name="products:product_tabs"}
-                                    {include file="views/tabs/components/product_tabs.tpl"}
+                    <div class="ut2-pb__tabs-wrapper">
+                        {hook name="products:buy_together"}{/hook}
 
-                                {if $blocks.$tabs_block_id.properties.wrapper}
-                                    {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
-                                {else}
-                                    {$smarty.capture.tabsbox_content nofilter}
+                        {hook name="products:product_tabs_pre"}
+                            <div class="ut2-pb__tabs{if $settings.Appearance.product_details_in_tab === "YesNo::NO"|enum} tabs-list{/if}">
+                                {if $show_product_tabs}
+                                    {hook name="products:product_tabs"}
+                                        {include file="views/tabs/components/product_tabs.tpl"}
+
+                                    {if $blocks.$tabs_block_id.properties.wrapper}
+                                        {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
+                                    {else}
+                                        {$smarty.capture.tabsbox_content nofilter}
+                                    {/if}
+                                    {/hook}
                                 {/if}
-                                {/hook}
-                            {/if}
-                        </div>
-                    {/hook}
+                            </div>
+                        {/hook}
+                    </div>
                 </div>
+                {hook name="products:product_detail_bottom"}{/hook}
             </div>
-            {/hook}
-            
-            {hook name="products:buy_together"}{/hook}
-
         {/if}
+        {/hook}
 
-        {if $smarty.capture.hide_form_changed == "YesNo::YES"|enum}
+        {if $smarty.capture.hide_form_changed == "Y"}
             {assign var="hide_form" value=$smarty.capture.orig_val_hide_form}
         {/if}
 
         {hook name="products:bottom_product_layer"}{/hook}
     </div>
 
-    <div class="product-details">
-    </div>
+    <div class="product-details"></div>
 
     {capture name="mainbox_title"}{assign var="details_page" value=true}{/capture}
-
 {else}
     {include file="blocks/product_templates/components/abt__ut2_mobile_template.tpl" features=$product.header_features}
 {/if}

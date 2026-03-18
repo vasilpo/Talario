@@ -30,7 +30,10 @@
 	    }
 	}
 	.ty-vendor-communication__post-write {
-		margin-top: 0;
+		margin: 0;
+	}
+	.ut2-vendor-block__content {
+		gap: var(--gap-xxs);
 	}
 }
 
@@ -46,7 +49,7 @@
 	}
     
     > i {
-	    color: @links;
+	    color: var(--color-links);
 	    font-size: 20px;
     }
 
@@ -59,7 +62,7 @@
 .ty-vendor-communication-new-message {
     padding: var(--gap-s);
     background: var(--fill-gray);
-	border: 1px solid @base;
+	border: 1px solid var(--color-base);
 	border-width: 0 1px 1px 1px;
     
     &__message {
@@ -96,7 +99,6 @@
 	&-container {
 	    display: flex;
 	    flex-wrap: wrap;
-	    align-items: center;
 	}
 	&-header {
 		flex: 1;
@@ -109,9 +111,9 @@
 	}
 	&-image {
 		flex: 0 0 auto;
-		padding-top: 0;
-		padding-right: var(--gap-s);
-		padding-bottom: var(--gap-xs);
+		padding: 0;
+		margin-right: var(--gap-s);
+		margin-bottom: var(--gap-xs);
 	}
 }
 

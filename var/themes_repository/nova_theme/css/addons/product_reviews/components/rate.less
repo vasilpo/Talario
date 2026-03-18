@@ -1,0 +1,21 @@
+@import "../../responsive/css/addons/product_reviews/components/rate.less";
+
+/*
+    templates/addons/product_reviews/views/product_reviews/components/rate.tpl
+*/
+
+/** Selected stars **/
+.ty-product-review-rate__stars-radio:checked ~ .ty-product-review-rate__stars-label:before,
+.ty-product-review-rate__stars-radio:focus ~ .ty-product-review-rate__stars-label:before {
+    font-variation-settings: var(--ty-product-reviews-stars-font-variation-settings-full);
+}
+
+/** Highlight hover star **/
+.ty-product-review-rate__stars-label:hover:before {
+    font-variation-settings: var(--ty-product-reviews-stars-font-variation-settings-full);
+}
+
+/** Highlight other stars when hovering a star **/
+.ty-product-review-rate__stars-label:hover ~ .ty-product-review-rate__stars-label:before {
+    font-variation-settings: var(--ty-product-reviews-stars-font-variation-settings-full);
+}

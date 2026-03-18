@@ -34,7 +34,7 @@
     url = url || 'companies.switch_storefront_status';
     var d = $.Deferred();
     if (request_data['result_ids'] == undefined) {
-      request_data['result_ids'] = 'top_bar,header_subnav,header_navbar,actions_panel,storefront_url_*';
+      request_data['result_ids'] = 'top_bar,header_subnav,header_navbar,actions_panel,storefront_url_*,companies_manage_name_*';
     }
     request_data['full_render'] = true;
     $.ceAjax('request', fn_url(url), {

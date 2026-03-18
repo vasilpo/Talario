@@ -4,7 +4,7 @@
         <input type="hidden" name="dispatch" value="debugger.sql_parse">
         <table width="100%" style="height:50px;">
             <tr>
-                <td style="width: 100px; vertical-top: top;">{include file="backend:buttons/button.tpl" but_text="Send" but_id="DebugToolbarSubTabSQLParseSubmit" id="DebugToolbarSubTabSQLParseSubmit" but_name="submit" but_role="submit" but_meta="btn-primary"}</td>
+                <td style="width: 100px; vertical-align: top;">{include file="backend:buttons/button.tpl" but_text="Send" but_id="DebugToolbarSubTabSQLParseSubmit" id="DebugToolbarSubTabSQLParseSubmit" but_name="submit" but_role="submit" but_meta="btn-primary"}</td>
                 <td valign="top">
                     <label><input type="checkbox" name="exec" value="Y" checked="checked" /> Sandbox</label>
                 </td>

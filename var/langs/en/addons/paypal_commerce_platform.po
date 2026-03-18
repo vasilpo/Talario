@@ -16,18 +16,6 @@ msgctxt "SettingsSections::paypal_commerce_platform::general"
 msgid "General"
 msgstr "General"
 
-msgctxt "SettingsOptions::paypal_commerce_platform::collect_payouts"
-msgid "Commission includes"
-msgstr "Commission includes"
-
-msgctxt "SettingsVariants::paypal_commerce_platform::collect_payouts::N"
-msgid "Order commission"
-msgstr "Order commission"
-
-msgctxt "SettingsVariants::paypal_commerce_platform::collect_payouts::Y"
-msgid "Order commission and unpaid payouts"
-msgstr "Order commission and unpaid payouts"
-
 msgctxt "SettingsOptions::paypal_commerce_platform::rma_refunded_order_status"
 msgid "Order status on refund"
 msgstr "Order status on refund"
@@ -64,10 +52,6 @@ msgctxt "Languages::paypal_commerce_platform.paypal_account"
 msgid "PayPal account"
 msgstr "PayPal account"
 
-msgctxt "Languages::paypal_commerce_platform.paypal_account_short"
-msgid "PP a/c"
-msgstr "PP a/c"
-
 msgctxt "Languages::paypal_commerce_platform.connected"
 msgid "Connected"
 msgstr "Connected"
@@ -75,6 +59,14 @@ msgstr "Connected"
 msgctxt "Languages::paypal_commerce_platform.not_connected"
 msgid "Not connected"
 msgstr "Not connected"
+
+msgctxt "Languages::paypal_commerce_platform.ppcp_connectivity.description"
+msgid "Whether or not a vendor has connected their PayPal account to the marketplace."
+msgstr "Whether or not a vendor has connected their PayPal account to the marketplace."
+
+msgctxt "Languages::paypal_commerce_platform.ppcp_multiparty"
+msgid "PPCP (Multiparty)"
+msgstr "PPCP (Multiparty)"
 
 msgctxt "Languages::paypal_commerce_platform.account_connected"
 msgid "Your PayPal account has been successfully connected to the store"

@@ -19,7 +19,15 @@
 {$is_selected_filters = $smarty.request.features_hash}
 
 {if $layouts.$selected_layout.template}
-    {include file="`$layouts.$selected_layout.template`" columns=$product_columns}
+    {include file="`$layouts.$selected_layout.template`"
+        columns=$product_columns
+        show_add_to_cart=$show_add_to_cart
+        show_quick_view_for_options=$show_quick_view_for_options
+        show_add_to_cart_secondary=$show_add_to_cart_secondary
+        show_list_buttons=$show_list_buttons
+        show_features=$show_features
+        show_total_product_reviews=$show_total_product_reviews
+    }
 {/if}
 
 {elseif !$show_not_found_notification && $is_selected_filters}

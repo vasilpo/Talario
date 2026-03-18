@@ -1,22 +1,23 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\VendorPanelConfigurator;
 
 use Tygh\Addons\VendorPanelConfigurator\Enum\ColorSchemas;
 use Tygh\Addons\VendorPanelConfigurator\Enum\ImagePairObjectIds;
 use Tygh\Enum\ImagePairTypes;
+use Tygh\Registry;
 use Tygh\Settings;
 
 class SettingsService
@@ -319,8 +320,22 @@ class SettingsService
         }
 
         fn_attach_image_pairs('vendor_panel_background', 'vendor_panel', ImagePairObjectIds::BACKGROUD_IMAGE);
-        fn_attach_image_pairs('logo', 'vendor_panel', ImagePairObjectIds::LOGO);
-        fn_attach_image_pairs('logo_dark', 'vendor_panel', ImagePairObjectIds::LOGO_DARK);
+        fn_attach_image_pairs(
+            'logo',
+            'vendor_panel',
+            ImagePairObjectIds::LOGO,
+            CART_LANGUAGE,
+            [],
+            Registry::ifGet('config.tweaks.logo_max_upload_filesize_in_bytes', null)
+        );
+        fn_attach_image_pairs(
+            'logo_dark',
+            'vendor_panel',
+            ImagePairObjectIds::LOGO_DARK,
+            CART_LANGUAGE,
+            [],
+            Registry::ifGet('config.tweaks.logo_max_upload_filesize_in_bytes', null)
+        );
     }
 
     /**

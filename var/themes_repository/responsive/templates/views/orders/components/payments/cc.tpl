@@ -7,7 +7,7 @@
     {assign var="id_suffix" value=""}
 {/if}
 
-<div class="litecheckout__item">
+<div class="litecheckout__item litecheckout__payments-cc">
     <div class="clearfix">
         <div class="ty-credit-card cm-cc_form_{$id_suffix}">
             <div class="ty-credit-card__control-group ty-control-group">

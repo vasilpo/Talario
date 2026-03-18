@@ -10,7 +10,7 @@
                     {/if}
                     <div class="ty-cart-items__list-item-desc ty-cart-items__list-item-desc--{$block.properties.products_links_type}">
                         <a href="{"products.view?product_id=`$_product.product_id`"|fn_url}"
-                           class="ty-buy-together-cart__item-link">{$_product.product|default:fn_get_product_name($_product.product_id) nofilter}</a>
+                           class="ty-cart-items__list-item-link ty-buy-together-cart__item-link">{$_product.product|default:fn_get_product_name($_product.product_id) nofilter}</a>
                         <p>
                             <span>{$_product.amount}</span><span dir="{$language_direction}">&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$_product.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}</p>
                     </div>

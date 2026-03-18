@@ -1,31 +1,45 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 /**
  * Describes a way to describe grids
  *
  * Structure:
  *
- * 'wrappers' => array(
- *     'wrapper_name' => 'template_name', // the list of "name -> template" pairs that will wrap blocks content inside grid
- * )
+ * 'wrappers' => [
+ *      'wrapper_name' => [
+ *          'name' => __('wrapper_name_langvar'),
+ *          'template' => 'template_name.tpl',
+ *          'allowed_locations' => [
+ *              'location1',
+ *              'location2',
+ *              ... // list of location dispatches (ex. 'checkout' for Checkout location)
+ *          ]
+ *      ]
+ *  ]
  */
 
 /** @var array<string, array> $schema */
 $schema = [
     'wrappers' => [
-        __('block_manager.wrappers.lite_checkout') => 'blocks/grid_wrappers/lite_checkout.tpl',
+        'lite_checkout' => [
+            'name' => __('block_manager.wrappers.lite_checkout'),
+            'template' => 'blocks/grid_wrappers/lite_checkout.tpl',
+            'allowed_locations' => [
+                'checkout'
+            ],
+        ]
     ],
 ];
 

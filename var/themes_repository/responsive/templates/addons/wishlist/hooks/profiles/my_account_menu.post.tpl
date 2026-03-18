@@ -1,1 +1,2 @@
-<li class="ty-account-info__item ty-dropdown-box__item"><a class="ty-account-info__a" href="{"wishlist.view"|fn_url}" rel="nofollow">{__("wishlist")}{if $wishlist_count > 0} ({$wishlist_count}){/if}</a></li>
+{$dropdown_box_item_class = ($block.wrapper === "blocks/wrappers/onclick_dropdown.tpl") ? "ty-dropdown-box__item" : ""}
+<li class="ty-account-info__item {$dropdown_box_item_class}"><a class="ty-account-info__a" href="{"wishlist.view"|fn_url}" rel="nofollow">{__("wishlist")}{if $wishlist_count > 0} ({$wishlist_count}){/if}</a></li>

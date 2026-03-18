@@ -33,7 +33,7 @@
 <!--ab__am_tools_change_licenses--></div>
 {elseif $runtime.action == 'fix_licenses'}
 <div id="ab__am_tools_fix_licenses">
-<form action="{""|fn_url}" method="post" name="ab__am_change_licenses_form" class="cm-disable-empty form-horizontal form-edit ">
+<form action="{""|fn_url}" method="post" name="ab__am_fix_licenses_form" class="cm-disable-empty form-horizontal form-edit ">
 <table class="table ab-am-table">
 <thead>
 <tr>
@@ -75,4 +75,36 @@ Build: {$addon.db.b}
 </div>
 </form>
 <!--ab__am_tools_fix_licenses--></div>
+{elseif $runtime.action == 'run_migration'}
+<div id="ab__am_tools_run_migration">
+<form action="{""|fn_url}" method="post" name="ab__am_run_migration_form" class="cm-disable-empty form-horizontal form-edit ">
+<div class="control-group">
+<label class="control-label cm-required" for="function">Function:</label>
+<div class="controls">
+<input type="text" name="ab__am[function]" id="function" value="">
+</div>
+</div>
+<div class="buttons-container">
+{include file="buttons/button.tpl" but_text=__("ab__am.tools.run_migration.btn") but_name="dispatch[ab__am.tools.run_migration]" but_meta="btn btn-primary"}
+</div>
+</form>
+<!--ab__am_tools_run_migration--></div>
+{elseif $runtime.action == 'server'}
+<div id="ab__am_tools_server">
+<form action="{""|fn_url}" method="post" name="ab__am_servers_form" class="cm-disable-empty form-horizontal form-edit ">
+<div class="control-group">
+<label class="control-label cm-required" for="server">Server:</label>
+<div class="controls">
+<select name="ab__am[server]" id="server">
+{foreach $servers as $s}
+<option value="{$s@key}"{if $s == $current_server} selected="selected"{/if}>{$s}</option>
+{/foreach}
+</select>
+</div>
+</div>
+<div class="buttons-container">
+{include file="buttons/button.tpl" but_text=__("update") but_name="dispatch[ab__am.tools.server]" but_meta="btn btn-primary"}
+</div>
+</form>
+<!--ab__am_tools_server--></div>
 {/if}

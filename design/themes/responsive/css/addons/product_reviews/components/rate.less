@@ -40,6 +40,7 @@
 .ty-product-review-rate__stars-radio:checked ~ .ty-product-review-rate__stars-label:before,
 .ty-product-review-rate__stars-radio:focus ~ .ty-product-review-rate__stars-label:before {
     content: var(--ty-product-reviews-stars-full);
+    font-variation-settings: var(--ty-product-reviews-stars-font-variation-settings-full);
 }
 
 // Highlight a focused star
@@ -50,9 +51,11 @@
 // Highlight hover star
 .ty-product-review-rate__stars-label:hover:before {
     content: var(--ty-product-reviews-stars-full);
+    font-variation-settings: var(--ty-product-reviews-stars-font-variation-settings-full);
 }
 
 // Highlight other stars when hovering a star
 .ty-product-review-rate__stars-label:hover ~ .ty-product-review-rate__stars-label:before {
     content: var(--ty-product-reviews-stars-full);
+    font-variation-settings: var(--ty-product-reviews-stars-font-variation-settings-full);
 }

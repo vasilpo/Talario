@@ -74,7 +74,7 @@
                     <textarea name="product_review_data[{$message_type}]"
                         id="product_review_data_{$message_type}"
                         class="input-full cs-textarea-adaptive cs-textarea-adaptive--with-sidebar"
-                        style="--text-length: {$product_review.message.$message_type|count_characters:true};"
+                        style="--text-length: {$product_review.message.$message_type|default:0|count_characters:true};"
                     >{$product_review.message.$message_type}</textarea>
                 </div>
             </div>

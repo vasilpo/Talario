@@ -55,7 +55,8 @@ $is_group = function ($i) {
 return (!empty($i['is_group']) && $i['is_group'] == 'Y' && !empty($i['items']));
 };
 if (empty($settings[$key])) {
-if ($cache = Registry::get($key) && !empty($cache) && is_array($cache) && $from_cache) {
+$from_cache && $cache = Registry::get($key);
+if (!empty($cache) && is_array($cache)) {
 $settings[$key] = $cache;
 } else {
 $schema_settings = fn_get_schema('abt__ut2_settings', ($type == 'less' ? 'less_' : '') . 'objects');

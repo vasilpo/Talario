@@ -13,7 +13,7 @@
         <core_edition>
             ULTIMATE,MULTIVENDOR
         </core_edition>
-        <dependencies>rus_cities</dependencies>
+        <dependencies>cities</dependencies>
     </compatibility>
     <queries>
         <item for="install">

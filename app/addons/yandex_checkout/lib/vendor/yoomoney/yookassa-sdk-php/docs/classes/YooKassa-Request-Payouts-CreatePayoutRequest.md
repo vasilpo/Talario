@@ -9,6 +9,35 @@
 
 
 ---
+### Examples
+Пример использования билдера
+
+```php
+try {
+    $payoutBuilder = \YooKassa\Request\Payouts\CreatePayoutRequest::builder();
+    $payoutBuilder
+        ->setAmount(new \YooKassa\Model\MonetaryAmount(80))
+        ->setPayoutDestinationData(
+            new \YooKassa\Request\Payouts\PayoutDestinationData\PayoutDestinationDataYooMoney()
+        )
+        ->setDeal(new \YooKassa\Model\Deal\PayoutDealInfo(array('id' => 'dl-2909e77d-0022-5000-8000-0c37205b3208')))
+        ->setDescription('Выплата по заказу №37')
+    ;
+
+    // Создаем объект запроса
+    $request = $payoutBuilder->build();
+
+    $idempotenceKey = uniqid('', true);
+    $response = $client->createPayout($request, $idempotenceKey);
+} catch (Exception $e) {
+    $response = $e;
+}
+
+var_dump($response);
+
+```
+
+---
 ### Constants
 * No constants found
 
@@ -96,12 +125,6 @@
   * \YooKassa\Request\Payouts\CreatePayoutRequest
 * Implements:
   * [\YooKassa\Request\Payouts\CreatePayoutRequestInterface](../classes/YooKassa-Request-Payouts-CreatePayoutRequestInterface.md)
-
----
-### Tags
-| Tag | Version | Description |
-| --- | ------- | ----------- |
-| todo: |  | @example 02-builder.php 11 78 Пример использования билдера |
 
 ---
 ## Properties
@@ -1261,11 +1284,11 @@ protected setValidationError(string $value) : mixed
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

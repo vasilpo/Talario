@@ -19,11 +19,25 @@
 */
 
 .ty-product-reviews-view__main {
-    display: grid;
-    grid-gap: var(--gap-s);
+    @media (min-width: 577px) {
+        display: grid;
+        grid-gap: var(--gap-s);
+        max-width: 100%;
+    }
+    @media (max-width: 576px) {
+        display: flex;
+        flex-flow: column;
+        gap: var(--gap-m);
+    }
+
+    &.no-reviews {
+        grid-gap: var(--gap-s) 0;
+    }
+    &:has(.ty-no-items) > * {
+        grid-column: span 2;
+    }
     
     &-content {
-        overflow: hidden;
 
         > .ty-pagination-container {
             display: flex;
@@ -32,24 +46,12 @@
         }
     }
 
-    .container-width-from-reviews() when (@fluidContainerMaxWidth < 1241) {
-        @media (min-width: 1446px) {
-            grid-template-columns: minmax(var(--ty-product-reviews-sidebar-width), 2.4fr) 
-                minmax(var(--ty-product-reviews-sidebar-min-width), 1fr);
-        }
-    }
     .container-width-from-reviews() when (@fluidContainerMaxWidth > 1240) {
         @media (min-width: 1446px) {
-            grid-template-columns: minmax(var(--ty-product-reviews-sidebar-width), 2.8fr) 
-                minmax(var(--ty-product-reviews-sidebar-min-width), 1fr);
+            grid-template-columns: 100%;
         }
     }
     .container-width-from-reviews();
-    
-    @media (min-width: 1024px) and (max-width: 1445px) {
-        grid-template-columns: minmax(var(--ty-product-reviews-sidebar-width), 3fr) 
-            minmax(var(--ty-product-reviews-sidebar-min-width), 1.25fr);
-    }
 }
 
 .ty-product-review-view__posts {
@@ -85,14 +87,7 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            
-            .ut2_round(@round: 4px) when (@abt__ut2_general_use_rounding = little) {
-            	border-radius: @round;
-            }
-            .ut2_round(@round: 4px) when (@abt__ut2_general_use_rounding = full) {
-            	border-radius: @round;
-            }
-            .ut2_round();
+            border-radius: var(--border-radius);
     
             .ty-fileuploader__drop-zone-text {
                 color: var(--ty-product-reviews-dropzone-color);

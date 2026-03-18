@@ -392,6 +392,10 @@ Responsive: Landscape phone to desktop/tablet
         overflow: scroll;
     }
 
+    html.dialog-is-open.dialog--no-scroll {
+        overflow: hidden;
+    }
+
 /* Menu
     ========================================================================== */
 
@@ -1592,3 +1596,6 @@ Responsive: Phone
         }
     }
 }
+
+// (5) Responsive index post hook
+@import "hooks/responsive/index.post.less";

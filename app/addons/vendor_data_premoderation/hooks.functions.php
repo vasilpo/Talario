@@ -1,17 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+//phpcs:ignore
+use Smarty\Exception as SmartyException;
+use Smarty\Template;
 use Tygh\Addons\VendorDataPremoderation\ServiceProvider;
 use Tygh\Addons\VendorDataPremoderation\State;
 use Tygh\Addons\VendorDataPremoderation\StateFactory;
@@ -703,7 +706,7 @@ function fn_vendor_data_premoderation_change_company_status_pre($company_id, &$s
  * @param array<string, string|bool|int|array<string, string|callable|array<string, string|int>>> $field_config Field configuration
  * @param array<string, string>                                                                   $params       Component parameters
  * @param string                                                                                  $content      Output field content
- * @param \Smarty_Internal_Template                                                               $template     Template instance
+ * @param Template                                                                                $template     Template instance
  *
  * @throws Exception Exception.
  * @throws SmartyException Smarty exception.
@@ -720,7 +723,7 @@ function fn_vendor_data_premoderation_smarty_component_configurable_page_field_b
     array $field_config,
     array $params,
     &$content,
-    Smarty_Internal_Template $template
+    Template $template
 ) {
     if ($entity !== 'products') {
         return;
@@ -731,8 +734,11 @@ function fn_vendor_data_premoderation_smarty_component_configurable_page_field_b
     static $diffs;
     static $premoderation;
 
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
     /** @var array{product_id?: int, status?: string} $product_data */
-    $product_data = $template->getTemplateVars('product_data');
+    $product_data = $smarty->getTemplateVars('product_data');
 
     if (empty($product_data['product_id'])) {
         return;
@@ -780,7 +786,7 @@ function fn_vendor_data_premoderation_smarty_component_configurable_page_field_b
         'premoderation_data' => $premoderation,
     ]);
 
-    $content = $template->fetch('addons/vendor_data_premoderation/components/product_page/field_content.tpl');
+    $content = $smarty->fetch('addons/vendor_data_premoderation/components/product_page/field_content.tpl', null, null, $template);
 
     if (
         !isset($fields_diff[$field_config['source']['table']][$field_config['source']['field']])
@@ -796,7 +802,7 @@ function fn_vendor_data_premoderation_smarty_component_configurable_page_field_b
             $field_config,
             $initial_product_states[$product_id],
             $current_product_states[$product_id],
-            $template
+            $smarty
         );
     } else {
         $old_value = false;
@@ -844,5 +850,5 @@ function fn_vendor_data_premoderation_smarty_component_configurable_page_field_b
         'premoderation_data' => $premoderation,
     ]);
 
-    $content = $template->fetch('addons/vendor_data_premoderation/components/product_page/field_content.tpl');
+    $content = $smarty->fetch('addons/vendor_data_premoderation/components/product_page/field_content.tpl', null, null, $template);
 }

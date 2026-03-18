@@ -24,25 +24,31 @@ export const methods = {
                     var positions = [],
                         ids = [];
                     var container = $(ui.item).closest('.cm-sortable');
+                    var non_zero_position = container.data('caSortableNonZeroPosition');
 
                     $('.cm-row-item', container).each(function () { // FIXME: replace with data -attribute
                         var matched = $(this).prop('class').match(/cm-sortable-id-([^\s]+)/i);
                         var index = $(this).index();
 
-                        positions[index] = index;
+                        if (non_zero_position) {
+                            positions[index] = index + 1;
+                        } else {
+                            positions[index] = index;
+                        }
+
                         ids[index] = matched[1];
                     });
 
-                    var data_obj = {
-                        positions: positions.join(','),
-                        ids: ids.join(',')
-                    };
-
-                    $.ceAjax('request', fn_url('tools.update_position?table=' + table + '&id_name=' + id_name), {
-                        method: 'get',
+                    $.ceAjax('request', fn_url('tools.update_position'), {
+                        method: 'post',
                         caching: false,
                         message: update_text,
-                        data: data_obj
+                        data: {
+                            table: table,
+                            id_name: id_name,
+                            positions: positions.join(','),
+                            ids: ids.join(',')
+                        }
                     });
 
                     return true;

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\YesNo;
 use Tygh\Registry;
@@ -1353,26 +1353,4 @@ function fn_reward_points_vendor_payout_details_builder_create_updated_details_p
     if (isset($old_details['points_used'])) {
         $updated_details['points_used'] -= $old_details['points_used'];
     }
-}
-
-/**
- * The `rus_boxberry_create_parsel` hook handler.
- *
- * Action performed:
- *     - Reduces the payment amount when using reward points when placing an order.
- *
- * @param array<string, string|int|array<string|int>>                                                                             $shipment_data Shipment data
- * @param array<array-key, string|float|null|int|array<array-key, string|float|null|int|array<array-key, string|float|null|int>>> $order_info    Order data
- * @param int                                                                                                                     $group_key     Products group key
- * @param float                                                                                                                   $total         Payment amount
- *
- * @return void
- */
-function fn_reward_points_rus_boxberry_create_parsel(array $shipment_data, array $order_info, $group_key, &$total)
-{
-    if (empty($order_info['points_info']['in_use']['cost'])) {
-        return;
-    }
-
-    $total -= $order_info['points_info']['in_use']['cost'];
 }

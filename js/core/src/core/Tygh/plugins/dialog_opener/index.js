@@ -358,6 +358,17 @@ export const methods = {
                     dialogTitle.html(dialogTitleString);
                 }
 
+                // Scroll to the bottom of the dialog when clicking on the overlay
+                d.data('ui-dialog').overlay.on('click', function (e) {
+                    const dialogHeight = Math.ceil(w.outerHeight(true));
+                    const dialogBottom = Math.ceil(w.position().top) + dialogHeight;
+                    const windowHeight = window.innerHeight; // iOS optimization
+                    if ($(window).width() > 767 || dialogHeight >= windowHeight && e.pageY <= dialogBottom) {
+                        return;
+                    }
+                    $('html, body').scrollTop(dialogBottom - windowHeight);
+                })
+
                 var _zindex = zindex;
                 if (stack.length) {
                     var prev        = stack.pop(),
@@ -512,10 +523,22 @@ export const methods = {
             }
         } else {
             if (buttonsElm && _.area == "A") {
+                let buttonsElmBottom = 0;
                 containerHeight = containerHeight - buttonsHeight;
+
+                if (!$.matchScreenSize(['xs', 'xs-large', 'sm']) && d.hasClass('cm-dialog-auto-height')) {
+                    d.toggleClass('cs-dialog-auto-height--visible', dialogHeight >= max_height);
+                    container.toggleClass('cs-dialog-auto-height-remove-extra-padding', dialogHeight >= max_height);
+                    buttonsElmBottom = dialogHeight >= max_height ? -buttonsHeight : 0;
+
+                    if (dialogHeight >= max_height && $('video', d).length > 0) {
+                        d.dialog('option', 'position', d.dialog('option', 'position'));
+                    }
+                }
+
                 buttonsElm.css({
                     position: 'absolute',
-                    bottom: 0,
+                    bottom: buttonsElmBottom,
                     left: 0,
                     right: 0
                 });
@@ -644,6 +667,9 @@ export const ceDialogInit = function ($) {
                 dialog_params['width'] = 'auto';
             } else if (params.hasClass('cm-dialog-auto-height')) {
                 dialog_params['height'] = 'auto';
+                dialog_params['dialogClass'] = typeof dialog_params['dialogClass'] === 'undefined'
+                    ? 'cs-dialog-auto-height'
+                    : `${dialog_params['dialogClass']} cs-dialog-auto-height`;
             }
 
             if (params.data('caMaxWidth')) {
@@ -673,7 +699,9 @@ export const ceDialogInit = function ($) {
             }
 
             if (params.data('caDialogClass')) {
-                dialog_params['dialogClass'] = params.data('caDialogClass');
+                dialog_params['dialogClass'] = typeof dialog_params['dialogClass'] === 'undefined'
+                    ? params.data('caDialogClass')
+                    : `${dialog_params['dialogClass']} ${params.data('caDialogClass')}`;
             }
 
             if (params.data('caDialogContentRequestForm')) {

@@ -13,7 +13,8 @@
 {assign scope='parent' var='show_qty' value=$settings.abt__ut2.product_list.$tmpl.show_qty[$settings.ab__device] === "YesNo::YES"|enum}
 {assign scope='parent' var='show_features' value=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_variations"}
 {assign scope='parent' var='show_descr' value=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_variations"}
-{assign scope='parent' var='show_brand_logo' value=$settings.abt__ut2.product_list.$tmpl.show_brand_logo[$settings.ab__device] === "YesNo::YES"|enum}
+{assign scope='parent' var='show_brand_name' value=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "name"}
+{assign scope='parent' var='show_brand_logo' value=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "logo"}
 {assign scope='parent' var='show_list_buttons' value=false}
 {assign scope='parent' var='but_role' value="action"}
 {assign scope='parent' var='is_category' value=true}

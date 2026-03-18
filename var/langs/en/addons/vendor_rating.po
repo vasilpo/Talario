@@ -40,9 +40,9 @@ msgctxt "Languages::vendor_rating.absolute_vendor_rating"
 msgid "Overall rating"
 msgstr "Overall rating"
 
-msgctxt "Languages::vendor_rating.absolute_vendor_rating_short"
-msgid "OA rating"
-msgstr "OA rating"
+msgctxt "Languages::vendor_rating.absolute_vendor_rating_short_2"
+msgid "Rating"
+msgstr "Rating"
 
 msgctxt "Languages::vendor_rating.manual_vendor_rating"
 msgid "Manual vendor rating"

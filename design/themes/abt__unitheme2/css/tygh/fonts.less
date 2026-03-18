@@ -16,206 +16,192 @@
 *******************************************************************************************/
 /* Override load font from responsive theme */
 
-@museo_font_default_old: MuseoSansBlack,Arial,sans-serif;
-@museo_font_default: 'MuseoSansBlack','Helvetica Neue','Arial',-apple-system,sans-serif;
-@open_sans_font_default: "Open Sans",-apple-system,BlinkMacSystemFont,sans-serif;
-@inter_font_default: "Inter",-apple-system, BlinkMacSystemFont,sans-serif;
-@roboto_font_default: "Roboto",-apple-system, BlinkMacSystemFont,sans-serif;
-@cofo_font_default: "CoFoSans",-apple-system, BlinkMacSystemFont,sans-serif;
+@font_heading_default_museo: 'MuseoSansBlack','Helvetica Neue','Arial',-apple-system,sans-serif;
 
-.ut2-change-font-face() when (@headings_font = @museo_font_default) or (@museo_font_default_old),
-    (@price_font = @museo_font_default) or (@museo_font_default_old) {
+.ut2-change-font-face() when (@headings_font = @font_heading_default_museo) {
+    /* montserrat-900 */
     @font-face {
-        font-family: "MuseoSansBlack";
         font-display: swap;
-        src: url('../../../media/custom_fonts/MuseoSansBlack.eot');
-        src: url('../../../media/custom_fonts/MuseoSansBlack.eot') format('embedded-opentype'),
-        url('../../../media/custom_fonts/MuseoSansBlack.woff') format('woff'),
-        url('../../../media/custom_fonts/MuseoSansBlack.ttf') format('truetype');
-        font-style: normal;
-        font-weight: normal;
-        letter-spacing: 0.03em;
-    }
-}
-
-.ut2-change-font-face() when (@headings_font = @inter_font_default) {
-    @font-face {
-        font-family: "Inter";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Light.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 300;
-        font-optical-sizing: auto;
-        font-variation-settings: "slnt" 0;
-    }
-    @font-face {
-        font-family: "Inter";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Regular.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 400;
-        font-optical-sizing: auto;
-        font-variation-settings: "slnt" 0;
-    }
-    @font-face {
-        font-family: "Inter";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-SemiBold.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 600;
-        font-optical-sizing: auto;
-        font-variation-settings: "slnt" 0;
-    }
-    @font-face {
-        font-family: "Inter";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Bold.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 700;
-        font-optical-sizing: auto;
-        font-variation-settings: "slnt" 0;
-    }
-    @font-face {
-        font-family: "Inter";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Black.ttf') format('truetype');
+        font-family: 'MuseoSansBlack';
         font-style: normal;
         font-weight: 900;
-        font-optical-sizing: auto;
-        font-variation-settings: "slnt" 0;
+        src: url('../../../media/custom_fonts/montserrat/inter-900.woff2') format('woff2');
     }
 }
 
-.ut2-change-font-face() when (@headings_font = @open_sans_font_default) {
+@font_heading_default_inter: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
+@font_regular_default_inter: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
+
+.ut2-change-font-face() when (@headings_font = @font_heading_default_inter) {
+    /* inter-500 */
     @font-face {
-        font-family: "Open Sans", sans-serif;
         font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Regular.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 400;
-        font-optical-sizing: auto;
-        font-variation-settings: "wdth" 100;
-    }
-    @font-face {
-        font-family: "Open Sans", sans-serif;
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Medium.ttf') format('truetype');
+        font-family: 'Inter';
         font-style: normal;
         font-weight: 500;
-        font-optical-sizing: auto;
-        font-variation-settings: "wdth" 100;
+        src: url('../../../media/custom_fonts/inter/inter-500.woff2') format('woff2');
     }
+    /* inter-600 */
     @font-face {
-        font-family: "Open Sans", sans-serif;
         font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-SemiBold.ttf') format('truetype');
+        font-family: 'Inter';
         font-style: normal;
         font-weight: 600;
-        font-optical-sizing: auto;
-        font-variation-settings: "wdth" 100;
+        src: url('../../../media/custom_fonts/inter/inter-600.woff2') format('woff2');
     }
+    /* inter-700 */
     @font-face {
-        font-family: "Open Sans", sans-serif;
         font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-Bold.ttf') format('truetype');
+        font-family: 'Inter';
         font-style: normal;
         font-weight: 700;
-        font-optical-sizing: auto;
-        font-variation-settings: "wdth" 100;
+        src: url('../../../media/custom_fonts/inter/inter-700.woff2') format('woff2');
     }
+    /* inter-800 */
     @font-face {
-        font-family: "Open Sans", sans-serif;
         font-display: swap;
-        src: url('../../../media/custom_fonts/Inter-ExtraBold.ttf') format('truetype');
+        font-family: 'Inter';
         font-style: normal;
         font-weight: 800;
-        font-optical-sizing: auto;
-        font-variation-settings: "wdth" 100;
+        src: url('../../../media/custom_fonts/inter/inter-800.woff2') format('woff2');
+    }
+    /* inter-900 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 900;
+        src: url('../../../media/custom_fonts/inter/inter-900.woff2') format('woff2');
+    }
+}
+.ut2-change-font-face() when (@body_font = @font_regular_default_inter) {
+    /* inter-regular */
+    @font-face {
+        font-display: swap;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        src: url('../../../media/custom_fonts/inter/inter-regular.woff2') format('woff2');
+    }
+    /* inter-500 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        src: url('../../../media/custom_fonts/inter/inter-500.woff2') format('woff2');
+    }
+    /* inter-600 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        src: url('../../../media/custom_fonts/inter/inter-600.woff2') format('woff2');
     }
 }
 
-.ut2-change-font-face() when (@headings_font = @roboto_font_default) {
+@font_heading_default_montserrat: 'Montserrat','Helvetica Neue','Arial',-apple-system,sans-serif;
+@font_regular_default_montserrat: 'Montserrat',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Arial',sans-serif;
+
+.ut2-change-font-face() when (@headings_font = @font_heading_default_montserrat) {
+    /* montserrat-500 */
     @font-face {
-        font-family: "Roboto";
         font-display: swap;
-        src: url('../../../media/custom_fonts/Roboto-Light.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 200;
-    }
-    @font-face {
-        font-family: "Roboto";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Roboto-Regular.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 400;
-    }
-    @font-face {
-        font-family: "Roboto";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/Roboto-Medium.ttf') format('truetype');
+        font-family: 'Montserrat';
         font-style: normal;
         font-weight: 500;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-500.woff2') format('woff2');
     }
+    /* montserrat-600 */
     @font-face {
-        font-family: "Roboto";
         font-display: swap;
-        src: url('../../../media/custom_fonts/Roboto-Bold.ttf') format('truetype');
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-600.woff2') format('woff2');
+    }
+    /* montserrat-700 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Montserrat';
         font-style: normal;
         font-weight: 700;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-700.woff2') format('woff2');
     }
+    /* montserrat-900 */
     @font-face {
-        font-family: "Roboto";
         font-display: swap;
-        src: url('../../../media/custom_fonts/Roboto-Black.ttf') format('truetype');
+        font-family: 'Montserrat';
         font-style: normal;
         font-weight: 900;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-900.woff2') format('woff2');
+    }
+}
+.ut2-change-font-face() when (@body_font = @font_regular_default_montserrat) {
+    /* montserrat-regular */
+    @font-face {
+        font-display: swap;
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 400;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-regular.woff2') format('woff2');
+    }
+    /* montserrat-500 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 500;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-500.woff2') format('woff2');
+    }
+    /* montserrat-600 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        src: url('../../../media/custom_fonts/montserrat/montserrat-600.woff2') format('woff2');
     }
 }
 
-.ut2-change-font-face() when (@headings_font = @cofo_font_default) {
+@font_heading_default_opensans: 'Open Sans','Helvetica Neue','Arial',-apple-system,sans-serif;
+@font_regular_default_opensans: 'Open Sans',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Arial',sans-serif;
+
+.ut2-change-font-face() when (@headings_font = @font_heading_default_opensans) {
+    /* montserrat-900 */
     @font-face {
-        font-family: "CoFoSans";
         font-display: swap;
-        src: url('../../../media/custom_fonts/CoFoSans-Regular.eot');
-        src: url('../../../media/custom_fonts/CoFoSans-Regular.eot') format('embedded-opentype'),
-        url('../../../media/custom_fonts/CoFoSans-Regular.woff') format('woff'),
-        url('../../../media/custom_fonts/CoFoSans-Regular.woff2') format('woff2'),
-        url('../../../media/custom_fonts/CoFoSans-Regular.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 400;
-    }
-    @font-face {
-        font-family: "CoFoSans";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/CoFoSans-Medium.eot');
-        src: url('../../../media/custom_fonts/CoFoSans-Medium.eot') format('embedded-opentype'),
-        url('../../../media/custom_fonts/CoFoSans-Medium.woff') format('woff'),
-        url('../../../media/custom_fonts/CoFoSans-Medium.woff2') format('woff2'),
-        url('../../../media/custom_fonts/CoFoSans-Medium.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 500;
-    }
-    @font-face {
-        font-family: "CoFoSans";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/CoFoSans-Bold.eot');
-        src: url('../../../media/custom_fonts/CoFoSans-Bold.eot') format('embedded-opentype'),
-        url('../../../media/custom_fonts/CoFoSans-Bold.woff') format('woff'),
-        url('../../../media/custom_fonts/CoFoSans-Bold.woff2') format('woff2'),
-        url('../../../media/custom_fonts/CoFoSans-Bold.ttf') format('truetype');
-        font-style: normal;
-        font-weight: 700;
-    }
-    @font-face {
-        font-family: "CoFoSans";
-        font-display: swap;
-        src: url('../../../media/custom_fonts/CoFoSans-Black.eot');
-        src: url('../../../media/custom_fonts/CoFoSans-Black.eot') format('embedded-opentype'),
-        url('../../../media/custom_fonts/CoFoSans-Black.woff') format('woff'),
-        url('../../../media/custom_fonts/CoFoSans-Black.woff2') format('woff2'),
-        url('../../../media/custom_fonts/CoFoSans-Black.ttf') format('truetype');
+        font-family: 'Open Sans';
         font-style: normal;
         font-weight: 900;
+        src: url('../../../media/custom_fonts/open-sans/open-sans-800.woff2') format('woff2');
+    }
+}
+.ut2-change-font-face() when (@body_font = @font_regular_default_opensans) {
+    /* open-sans-regular */
+    @font-face {
+        font-display: swap;
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 400;
+        src: url('../../../media/custom_fonts/open-sans/open-sans-regular.woff2') format('woff2');
+    }
+    /* open-sans-500 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 500;
+        src: url('../../../media/custom_fonts/open-sans/open-sans-500.woff2') format('woff2');
+    }
+    /* open-sans-600 */
+    @font-face {
+        font-display: swap;
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 600;
+        src: url('../../../media/custom_fonts/open-sans/open-sans-600.woff2') format('woff2');
     }
 }
 

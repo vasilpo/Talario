@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\TinkoffMultiparty\HookHandlers;
 
@@ -48,7 +48,9 @@ class PaymentsHookHandler
      * The "get_payments" hook handler.
      *
      * Actions performed:
-     *     - Excludes T-Bank Multiparty from payments selection when products vendor has no T-Bank Multiparty ShopCode
+     *     - Excludes T-Bank Multiparty from payments selection when:
+     *          - Products vendor has no T-Bank Multiparty ShopCode
+     *          - One of cart products belongs to marketplace
      *
      * @param array<string, string|int> $params    Array of flags/data which determines which data should be gathered
      * @param array<string>             $fields    List of fields for retrieving
@@ -66,29 +68,45 @@ class PaymentsHookHandler
         if (
             $params['area'] !== SiteArea::STOREFRONT
             && !defined('ORDER_MANAGEMENT')
-            || empty(Tygh::$app['session']['cart']['product_groups'])
         ) {
             return;
         }
 
-        foreach (Tygh::$app['session']['cart']['product_groups'] as $product_group) {
-            if (!$product_group['company_id']) {
-                continue;
+        $exclude_payment = false;
+
+        // Exclude payment for buying gift certificates
+        if (!empty(Tygh::$app['session']['cart']['gift_certificates'])) {
+            $exclude_payment = true;
+        }
+
+        if (!empty(Tygh::$app['session']['cart']['product_groups'])) {
+            foreach (Tygh::$app['session']['cart']['product_groups'] as $product_group) {
+                // Exclude payment if cart has products that belong to marketplace or company_id is not set
+                if (empty($product_group['company_id'])) {
+                    $exclude_payment = true;
+                    break;
+                }
+
+                // Exclude payment if vendor has no shopcode
+                $company_data = fn_get_company_data($product_group['company_id']);
+                if ($company_data['tinkoff_multiparty_shopcode']) {
+                    continue;
+                }
+
+                $exclude_payment = true;
+                break;
             }
+        }
 
-            $company_data = fn_get_company_data($product_group['company_id']);
-            if ($company_data['tinkoff_multiparty_shopcode']) {
-                continue;
-            }
-
-            $condition[] = db_quote(
-                '(?:payment_processors.processor_script IS NULL'
-                . ' OR ?:payment_processors.processor_script <> ?s)',
-                'tinkoff_multiparty.php'
-            );
-
+        if (!$exclude_payment) {
             return;
         }
+
+        $condition[] = db_quote(
+            '(?:payment_processors.processor_script IS NULL'
+            . ' OR ?:payment_processors.processor_script <> ?s)',
+            'tinkoff_multiparty.php'
+        );
     }
 
     /**

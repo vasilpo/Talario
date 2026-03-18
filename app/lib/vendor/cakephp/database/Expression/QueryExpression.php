@@ -23,6 +23,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 use Countable;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Represents a SQL Query expression. Internally it stores a tree of
@@ -51,7 +52,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
     /**
      * Constructor. A new expression object can be created without any params and
-     * be built dynamically. Otherwise it is possible to pass an array of conditions
+     * be built dynamically. Otherwise, it is possible to pass an array of conditions
      * containing either a tree-like array structure to be parsed and/or other
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
@@ -111,20 +112,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * be added. When using an array and the key is 'OR' or 'AND' a new expression
      * object will be created with that conjunction and internal array value passed
      * as conditions.
-     * @param array<string, string> $types Associative array of fields pointing to the type of the
+     * @param array<int|string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @see \Cake\Database\Query::where() for examples on conditions
      * @return $this
      */
     public function add($conditions, array $types = [])
     {
-        if (is_string($conditions)) {
-            $this->_conditions[] = $conditions;
-
-            return $this;
-        }
-
-        if ($conditions instanceof ExpressionInterface) {
+        if (is_string($conditions) || $conditions instanceof ExpressionInterface) {
             $this->_conditions[] = $conditions;
 
             return $this;
@@ -702,7 +697,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * representation is wrapped around an adequate instance or of this class.
      *
      * @param array $conditions list of conditions to be stored in this object
-     * @param array<string, string> $types list of types associated on fields referenced in $conditions
+     * @param array<int|string, string> $types list of types associated on fields referenced in $conditions
      * @return void
      */
     protected function _addConditions(array $conditions, array $types): void

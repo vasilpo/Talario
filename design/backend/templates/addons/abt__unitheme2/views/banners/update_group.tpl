@@ -20,10 +20,16 @@ enctype="multipart/form-data"
 <div class="control-group">
 <label class="control-label" for="elm__group_name_{$id}">{__("title")}</label>
 <div class="controls">
-<input type="text" name="banner_group_name" value="{$group_name}" class="input-large" id="elm__group_name_{$id}" />
+<input type="text" name="banner_group_name" value="{$group_name}" class="input-large" id="elm__group_name_{$id}" style="min-width:min(100%, 760px)" />
 </div>
 </div>
+{include file="addons/banners/pickers/banners/picker.tpl" input_name="banner_ids"}
 <div class="buttons-container">
 {include file="buttons/save_cancel.tpl" but_name="dispatch[banners.update_group]" cancel_action="close" hide_second_button=$hide_first_button save=$id cancel_meta="bulkedit-unchanged"}
 </div>
 </form>
+<script>
+(function(_, $){
+$(`form[name="update_banner_group_form_{$id}"]`).find('table').removeClass('table-responsive');
+})(Tygh, Tygh.$)
+</script>

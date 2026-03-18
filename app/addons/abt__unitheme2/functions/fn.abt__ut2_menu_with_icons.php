@@ -41,26 +41,28 @@ $fields[] = 'sd.abt__ut2_mwi__dropdown';
 }
 function fn_abt__unitheme2_top_menu_form_post(&$top_menu, $level, $active)
 {
-static $abt__ut2_mwi_icon_get = 'N';
-static $abt__ut2_mwi_icon_ids = [];
-if ($abt__ut2_mwi_icon_get == 'N') {
-$abt__ut2_mwi_icon_get = 'Y';
-$abt__ut2_mwi_icon_ids = db_get_fields('SELECT object_id FROM ?:images_links WHERE object_type = \'abt__ut2/menu-with-icon\'');
-}
-if ($abt__ut2_mwi_icon_get == 'Y'
-&& !empty($abt__ut2_mwi_icon_ids) && is_array($abt__ut2_mwi_icon_ids)
-&& !empty($top_menu) && is_array($top_menu)) {
+static $images_cache = [];
+if (!empty($top_menu) && is_array($top_menu)) {
 $ids = [];
+$get_images_ids = [];
 foreach ($top_menu as $i => $m) {
-if (in_array($i, $abt__ut2_mwi_icon_ids) && !empty($m['abt__ut2_mwi__status']) && $m['abt__ut2_mwi__status'] == 'Y') {
+if (!empty($m['abt__ut2_mwi__status']) && $m['abt__ut2_mwi__status'] === 'Y') {
 $ids[] = $i;
+if(!isset($images_cache[$i])){
+$get_images_ids[] = $i;
 }
 }
-if (!empty($ids) && is_array($ids)) {
-$images = fn_get_image_pairs($ids, 'abt__ut2/menu-with-icon', 'M', true, false);
-foreach ($images as $i => $image) {
-$img = reset($image);
-$top_menu[$i]['abt__ut2_mwi__icon'] = $img;
+}
+if (!empty($ids)) {
+$images = $get_images_ids ? fn_get_image_pairs($get_images_ids, 'abt__ut2/menu-with-icon', 'M', true, false) : [];
+foreach ($ids as $i) {
+if(!isset($images_cache[$i])) {
+if(!isset($images[$i])) {
+continue;
+}
+$images_cache[$i] = reset($images[$i]);
+}
+$top_menu[$i]['abt__ut2_mwi__icon'] = $images_cache[$i];
 }
 }
 }

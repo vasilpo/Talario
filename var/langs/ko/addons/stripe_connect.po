@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: ko\n"
-"X-Crowdin-File: /release-4.18.4/addons/stripe_connect.po\n"
-"X-Crowdin-File-ID: 9687\n"
-"PO-Revision-Date: 2025-05-26 13:31\n"
+"X-Crowdin-File: /release-4.20.1/addons/stripe_connect.po\n"
+"X-Crowdin-File-ID: 10267\n"
+"PO-Revision-Date: 2026-02-05 12:42\n"
 
 msgctxt "Addons::name::stripe_connect"
 msgid "Stripe Connect payments"
@@ -23,18 +23,6 @@ msgstr "마켓플레이스를 위한 Stripe 솔루션입니다. Stripe 및 기�
 msgctxt "SettingsSections::stripe_connect::general"
 msgid "General"
 msgstr "일반적인"
-
-msgctxt "SettingsOptions::stripe_connect::collect_payouts"
-msgid "Commission includes"
-msgstr "수수료 포함"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::N"
-msgid "Order commission"
-msgstr "주문 수수료"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::Y"
-msgid "[Deprecated] Order commission and unpaid payouts"
-msgstr ""
 
 msgctxt "Languages::stripe_connect.stripe_connect"
 msgid "Stripe Connect"
@@ -87,6 +75,10 @@ msgstr "연결됨"
 msgctxt "Languages::stripe_connect.not_connected"
 msgid "Not connected"
 msgstr "연결되지 않은"
+
+msgctxt "Languages::stripe_connect.stripe_connectivity.description"
+msgid "Whether or not a vendor has connected their Stripe account to the marketplace."
+msgstr ""
 
 msgctxt "Languages::stripe_connect.account_connected"
 msgid "Your Stripe account has been successfully connected to the store"
@@ -219,10 +211,6 @@ msgstr "스트라이프 프로세서 매개변수 누락"
 msgctxt "Languages::stripe_connect.account_was_deauthorized"
 msgid "Account of company \"[company]\" (company ID = [company_id]) was deauthorized"
 msgstr "회사 \"[company]\"(회사 ID = [company_id])의 계정이 승인 취소되었습니다."
-
-msgctxt "Languages::stripe_connect.on"
-msgid "On"
-msgstr "에"
 
 msgctxt "Languages::stripe_connect.delay_transfer_of_funds"
 msgid "Delay transfer of funds"

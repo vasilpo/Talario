@@ -1,0 +1,1 @@
+<a class="btn btn-add" name="add" id="{$item_id}" onclick="$(`#${ Tygh.$('#box_' + this.id).cloneNode(2, undefined, undefined, true) } [data-type]`).attr('data-type','default');">{__("add")}</a>&nbsp;

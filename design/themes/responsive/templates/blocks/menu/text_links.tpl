@@ -11,7 +11,7 @@
     <div class="ty-text-links-wrapper">
         <span id="sw_text_links_{$text_links_id}" class="ty-text-links-btn cm-combination visible-phone">
             {include_ext file="common/icon.tpl"
-                class="ty-icon-short-list"
+                class="ty-icon-short-list ty-text-links-btn__icon"
             }
             {include_ext file="common/icon.tpl"
                 class="ty-icon-down-micro ty-text-links-btn__arrow"

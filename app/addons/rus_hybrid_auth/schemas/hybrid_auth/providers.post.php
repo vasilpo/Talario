@@ -1,129 +1,125 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Registry;
 
-$path = Registry::get('config.dir.addons') . 'rus_hybrid_auth/lib/Hybrid/Providers/';
-
-$schema['vkontakte'] = array(
+$schema['vkontakte'] = [
     'provider' => 'Vkontakte',
-    'keys' => array(
-        'id' => array(
+    'keys' => [
+        'id' => [
             'db_field' => 'app_id',
             'type' => 'input',
             'label' => 'id',
             'required' => true
-        ),
-        'secret' => array(
+        ],
+        'secret' => [
             'db_field' => 'app_secret_key',
             'type' => 'input',
             'label' => 'secret_key',
             'required' => true
-        )
-    ),
-    'wrapper' => array(
-        'path' => $path . 'Vkontakte.php',
-        'class' => 'Hybrid_Providers_Vkontakte',
-    ),
+        ]
+    ],
+    'adapter' => 'Tygh\Addons\RusHybridAuth\Providers\Vkontakte',
     'instruction' => 'rus_hybrid_auth.instruction_vkontakte'
-);
+];
 
-$schema['mailru'] = array(
+$schema['mailru'] = [
     'provider' => 'Mailru',
-    'keys' => array(
-        'id' => array(
+    'keys' => [
+        'id' => [
             'db_field' => 'app_id',
             'type' => 'input',
-            'label' => 'id',
+            'label' => 'client_id',
             'required' => true
-        ),
-        'secret' => array(
+        ],
+        'secret' => [
             'db_field' => 'app_secret_key',
             'type' => 'input',
-            'label' => 'secret_key',
+            'label' => 'client_secret',
             'required' => true
-        )
-    ),
-    'wrapper' => array(
-        'path' => $path . 'Mailru.php',
-        'class' => 'Hybrid_Providers_Mailru',
-    ),
-    'instruction' => 'rus_hybrid_auth.instruction_mailru'
-);
-
-$schema['yandex'] = array(
-    'provider' => 'Yandex',
-    'keys' => array(
-        'id' => array(
-            'db_field' => 'app_id',
-            'type' => 'input',
-            'label' => 'id',
-            'required' => true
-        ),
-        'secret' => array(
-            'db_field' => 'app_secret_key',
-            'type' => 'input',
-            'label' => 'secret_key',
-            'required' => true
-        ),
-    ),
-    'params' => array(
-        'yandex_callback' => array(
+        ]
+    ],
+    'params' => [
+        'mailru_callback' => [
             'type' => 'template',
             'template' => 'addons/hybrid_auth/components/callback_url.tpl',
-        )
-    ),
-    'wrapper' => array(
-        'path' => $path . 'Yandex.php',
-        'class' => '\Tygh\HybridProvidersYandex',
-    ),
-    'instruction' => 'rus_hybrid_auth.instruction_yandex'
-);
+        ]
+    ],
+    'adapter' => 'Tygh\Addons\RusHybridAuth\Providers\Mailru',
+    'instruction' => 'rus_hybrid_auth.instruction_mailru_new'
+];
 
-$schema['odnoklassniki'] = array(
-    'provider' => 'Odnoklassniki',
-    'keys' => array(
-        'id' => array(
+$schema['yandex'] = [
+    'provider' => 'Yandex',
+    'callback' => fn_url('auth.process?hauth_done=Yandex'), // For backward compatibility
+    'keys' => [
+        'id' => [
             'db_field' => 'app_id',
             'type' => 'input',
             'label' => 'id',
             'required' => true
-        ),
-        'key' => array(
+        ],
+        'secret' => [
+            'db_field' => 'app_secret_key',
+            'type' => 'input',
+            'label' => 'secret_key',
+            'required' => true
+        ],
+    ],
+    'params' => [
+        'yandex_callback' => [
+            'type' => 'template',
+            'template' => 'addons/hybrid_auth/components/callback_url.tpl',
+            'callback_url' => '/' . Registry::get('config.customer_index') . '?dispatch=auth.process&hauth_done=Yandex',
+        ]
+    ],
+    'adapter' => 'Tygh\Addons\RusHybridAuth\Providers\Yandex',
+    'instruction' => 'rus_hybrid_auth.instruction_yandex'
+];
+
+$schema['odnoklassniki'] = [
+    'provider' => 'Odnoklassniki',
+    'callback' => fn_url('auth.process?hauth_done=Odnoklassniki'), // For backward compatibility
+    'keys' => [
+        'id' => [
+            'db_field' => 'app_id',
+            'type' => 'input',
+            'label' => 'id',
+            'required' => true
+        ],
+        'key' => [
             'db_field' => 'app_public_key',
             'type' => 'input',
             'label' => 'public_key',
             'required' => true
-        ),
-        'secret' => array(
+        ],
+        'secret' => [
             'db_field' => 'app_secret_key',
             'type' => 'input',
             'label' => 'secret_key',
             'required' => true
-        ),
-    ),
-    'params' => array(
-        'odnoklassniki_callback' => array(
+        ],
+    ],
+    'params' => [
+        'odnoklassniki_callback' => [
             'type' => 'template',
             'template' => 'addons/hybrid_auth/components/callback_url.tpl',
-        )
-    ),
-    'wrapper' => array(
-        'path' => $path . 'Odnoklassniki.php',
-        'class' => '\Tygh\HybridProvidersOdnoklassniki',
-    ),
+            'callback_url' => '/' . Registry::get('config.customer_index') . '?dispatch=auth.process&hauth_done=Odnoklassniki',
+        ]
+    ],
+    'adapter' => 'Tygh\Addons\RusHybridAuth\Providers\Odnoklassniki',
     'instruction' => 'rus_hybrid_auth.instruction_odnoklassniki'
-);
+];
 
 return $schema;

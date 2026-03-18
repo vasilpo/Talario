@@ -206,6 +206,5 @@
         {/capture}
         {dropdown content=$smarty.capture.tools_list class="mobile-hide"}
     {/capture}
-
 {/capture}
 {include file="common/mainbox.tpl" title=__("features") content=$smarty.capture.mainbox select_languages=true buttons=$smarty.capture.buttons adv_buttons=$smarty.capture.adv_buttons sidebar=$smarty.capture.sidebar}

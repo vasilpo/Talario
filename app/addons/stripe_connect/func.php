@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -269,26 +269,38 @@ function fn_stripe_connect_rma_update_details_post(
 /**
  * Hook handler: adds stripe_connect_account_id into the list of selected from ?:companies table fields.
  *
- * @param array  $params
- * @param array  $fields
- * @param array  $sortings
- * @param string $condition
- * @param string $join
- * @param array  $auth
- * @param string $lang_code
- * @param string $group
+ * @param array<string, string> $params    Search params
+ * @param array<string>         $fields    Fields to get from the database
+ * @param array<string, string> $sortings  Available sortings
+ * @param string                $condition SQL query conditions
+ * @param string                $join      JOIN SQL query part
+ * @param array<string, string> $auth      Current user auth data
+ * @param string                $lang_code Two-letter language code
+ * @param string                $group     GROUP BY SQL query part
  */
 function fn_stripe_connect_get_companies(
-    &$params,
+    $params,
     &$fields,
-    &$sortings,
+    $sortings,
     &$condition,
-    &$join,
-    &$auth,
-    &$lang_code,
-    &$group
+    $join,
+    $auth,
+    $lang_code,
+    $group
 ) {
     $fields[] = db_quote('?:companies.stripe_connect_account_id');
+
+    if (empty($params['stripe_connectivity'])) {
+        return;
+    }
+
+    $stripe_values = (array) $params['stripe_connectivity'];
+
+    if (in_array('connected', $stripe_values) && !in_array('not_connected', $stripe_values)) {
+        $condition .= db_quote(" AND ?:companies.stripe_connect_account_id != ''");
+    } elseif (!in_array('connected', $stripe_values) && in_array('not_connected', $stripe_values)) {
+        $condition .= db_quote(" AND ?:companies.stripe_connect_account_id = ''");
+    }
 }
 
 /**

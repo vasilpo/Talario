@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 
 namespace Tygh\Addons\CommerceML\Importers;
@@ -60,8 +60,18 @@ class ProductFeatureImporter
         $main_result = new OperationResult(true);
 
         $product_feature_id = $import_storage->findEntityLocalId(ProductFeatureDto::REPRESENT_ENTITY_TYPE, $product_feature->id);
+        $sync_feature_names = $import_storage->getSetting('catalog_importer.sync_feature_names', 'no');
 
-        if ($product_feature_id->hasNotValue()) {
+        if ($product_feature_id->hasValue()) {
+            $feature = $this->product_storage->findProductFeature($product_feature_id->asInt());
+
+            if ($feature && (int) $feature['company_id'] !== $import_storage->getImport()->company_id) {
+                $main_result->setData($product_feature->id->local_id);
+                return $main_result;
+            }
+        }
+
+        if ($product_feature_id->hasNotValue() || $sync_feature_names !== 'no') {
             $result = $this->importProductFeature($product_feature, $import_storage);
 
             $main_result->merge($result);
@@ -119,11 +129,19 @@ class ProductFeatureImporter
                     $product_feature_value->feature_id->getId()
                 );
 
-                if ($product_feature && $product_feature instanceof ProductFeatureDto) {
-                    /** @var \Tygh\Addons\CommerceML\Dto\ProductFeatureDto $product_feature */
-                    $product_feature->getEntityId()->local_id = $product_feature_value->feature_id->local_id;
+                if (!$product_feature || !$product_feature instanceof ProductFeatureDto) {
+                    return $main_result;
+                }
 
-                    $this->importProductFeatureVariants($main_result, $product_feature, $import_storage);
+                $product_feature->getEntityId()->local_id = $product_feature_value->feature_id->local_id;
+
+                $result = $this->import($product_feature, $import_storage);
+
+                $main_result->merge($result);
+
+                if ($result->isFailure()) {
+                    $main_result->setSuccess(false);
+                    return $main_result;
                 }
             }
         } else {
@@ -134,7 +152,7 @@ class ProductFeatureImporter
                 return $main_result;
             }
 
-            if ($allow_manage_features && $product_feature_id->isCreateValue()) {
+            if ($allow_manage_features) {
                 $product_feature = $import_storage->findEntity(
                     ProductFeatureDto::REPRESENT_ENTITY_TYPE,
                     $product_feature_value->feature_id->getId()
@@ -203,10 +221,17 @@ class ProductFeatureImporter
             'feature_type' => $this->getFeatureType($product_feature),
             'feature_code' => 'commerceml_' . $product_feature->id->external_id
         ]);
+        $feature_data['internal_name'] = $feature_data['description'];
+
+        $sync_feature_names = $import_storage->getSetting('catalog_importer.sync_feature_names', 'no');
+
+        if ($sync_feature_names === 'internal') {
+            unset($feature_data['description']);
+        }
 
         $result = $this->product_storage->updateProductFeature(
             $feature_data,
-            0,
+            $product_feature->id->hasLocalId() ? (int) $product_feature->id->local_id : 0,
             null,
             sprintf('Creating product feature %s failed', $product_feature->getEntityId()->getId())
         );
@@ -227,12 +252,27 @@ class ProductFeatureImporter
     private function importProductFeatureTranslations(ProductFeatureDto $product_feature, ImportStorage $import_storage)
     {
         $lang_codes = (array) $import_storage->getSetting('lang_codes', []);
+        $sync_feature_names = $import_storage->getSetting('catalog_importer.sync_feature_names', 'no');
 
         foreach ($lang_codes as $lang_code) {
-            $description_data = array_merge($product_feature->properties->getTranslatableValueMap($lang_code), [
-                'description'  => $product_feature->name ? $product_feature->name->getTranslate($lang_code) : '',
-            ]);
+            $description_data = ['description' => ''];
+
+            if ($product_feature->name && $product_feature->name->hasTraslate($lang_code)) {
+                $description_data['description'] = $product_feature->name->getTranslate($lang_code);
+            } elseif ($product_feature->name) {
+                $description_data['description'] = $product_feature->name->default_value;
+            }
+
+            $description_data = array_merge(
+                $product_feature->properties->getTranslatableValueMap($lang_code),
+                $description_data
+            );
+            $description_data['internal_name'] = $description_data['description'];
             $description_data = array_filter($description_data);
+
+            if ($sync_feature_names === 'internal') {
+                unset($description_data['description']);
+            }
 
             if (empty($description_data)) {
                 continue;
@@ -261,6 +301,7 @@ class ProductFeatureImporter
             return;
         }
         $lang_codes = (array) $import_storage->getSetting('lang_codes', []);
+        $sync_feature_variant_names = $import_storage->getSetting('catalog_importer.sync_feature_variant_names', 'no');
         $variants = [];
 
         /** @var \Tygh\Addons\CommerceML\Dto\ProductFeatureVariantDto $variant */
@@ -274,6 +315,12 @@ class ProductFeatureImporter
                 $variant->id,
                 $import_storage->getSetting('mapping.feature_variant.default_variant', LocalIdDto::VALUE_CREATE)
             );
+
+            if ($variant_id->hasValue() && $sync_feature_variant_names === 'no') {
+                $variant->id->local_id = $variant_id->asInt();
+                $import_storage->removeEntity($variant);
+                continue;
+            }
 
             if ($variant_id->isSkipValue()) {
                 $main_result->addError('product_feature.variant_skipped', __('commerceml.import.message.product_feature.variant_skipped', [

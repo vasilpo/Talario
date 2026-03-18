@@ -9,7 +9,10 @@
             {foreach $providers_list as $provider_data}
                 {if $provider_data.status === "ObjectStatuses::ACTIVE"|enum}
                     <a class="cm-login-provider ty-hybrid-auth__icon" data-idp="{$provider_data.provider_id}" data-provider="{$provider_data.provider}">
-                        <img src="{$provider_data.icon}" title="{$provider_data.provider}" alt="{$provider_data.provider}" />
+                        <img src="{$provider_data.icon}"
+                             title="{if $provider_data.display_name && $provider_data.display_name|strtolower !== $provider_data.provider}{$provider_data.display_name|strtolower}{else}{$provider_data.provider}{/if}"
+                             alt="{if $provider_data.display_name && $provider_data.display_name|strtolower !== $provider_data.provider}{$provider_data.display_name|strtolower}{else}{$provider_data.provider}{/if}"
+                        />
                     </a>
                 {/if}
             {/foreach}

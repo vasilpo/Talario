@@ -1,21 +1,23 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
 use Illuminate\Support\Collection;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\OrderDataTypes;
+use Tygh\Enum\UserTypes;
 use Tygh\Enum\YesNo;
 use Tygh\Languages\Languages;
 use Tygh\Registry;
@@ -484,6 +486,65 @@ function fn_get_store_location_name($store_location_id, $lang_code = CART_LANGUA
 }
 
 /**
+ * Checks whether update is allowed.
+ *
+ * @param int $store_location_id Store location identifier
+ *
+ * @return bool
+ */
+function fn_check_store_location_update_allowed($store_location_id)
+{
+    $result = true;
+
+    /**
+     * Executes before rules for restricting access to store location update,
+     * allows changing current result or runtime params before the rules are applied.
+     *
+     * @param int  $store_location_id Store location identifier
+     * @param bool $result            Whether store location update is allowed
+     */
+    fn_set_hook('check_store_location_update_allowed_pre', $store_location_id, $result);
+
+    if (fn_allowed_for('MULTIVENDOR') && !empty($store_location_id)) {
+        $auth = Tygh::$app['session']['auth'];
+
+        if (
+            !empty($auth['user_type']) && $auth['user_type'] === UserTypes::VENDOR && !empty($auth['company_id'])
+        ) {
+            $store_company_id = fn_get_store_location_company_id($store_location_id);
+
+            $result = $store_company_id && (int) $auth['company_id'] === $store_company_id;
+        }
+    }
+
+    /**
+     * Executes afters rules for restricting access to store location update, allows changing result.
+     *
+     * @param int  $store_location_id Store location identifier
+     * @param bool $result            Whether store location update is allowed
+     */
+    fn_set_hook('check_store_location_update_allowed_post', $store_location_id, $result);
+
+    return $result;
+}
+
+/**
+ * Fetches store location owner ID.
+ *
+ * @param int $store_location_id Store location identifier
+ *
+ * @return int|false
+ */
+function fn_get_store_location_company_id($store_location_id)
+{
+    if (empty($store_location_id)) {
+        return false;
+    }
+
+    return (int) db_get_field('SELECT company_id FROM ?:store_locations WHERE store_location_id = ?i', $store_location_id);
+}
+
+/**
  * Creates or updates a store location.
  *
  * @param array  $store_location_data Store location data
@@ -495,6 +556,13 @@ function fn_get_store_location_name($store_location_id, $lang_code = CART_LANGUA
 function fn_update_store_location($store_location_data, $store_location_id, $lang_code = DESCR_SL)
 {
     SecurityHelper::sanitizeObjectData('store_location', $store_location_data);
+
+    $allow_update = fn_check_store_location_update_allowed($store_location_id);
+
+    if (!$allow_update) {
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), __('access_denied'));
+        return $store_location_id;
+    }
 
     $store_location_data['localization'] = !empty($store_location_data['localization']) ? fn_implode_localizations($store_location_data['localization']) : '';
     $store_location_data['main_destination_id'] = !empty($store_location_data['main_destination_id']) && is_numeric($store_location_data['main_destination_id'])

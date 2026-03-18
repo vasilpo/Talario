@@ -8,29 +8,31 @@
         </div>
     </div>
 {/if}
-<div class="ty-cart-total">
-    <div class="ty-cart-total__wrapper clearfix" id="checkout_totals">
-        {if $cart_products}
-            <div class="ty-coupons__container">
-                {include file="views/checkout/components/promotion_coupon.tpl"}
-                {hook name="checkout:payment_extra"}
-                {/hook}
+<div class="ut2-cart-total">
+    <div class="ut2-cart-total__wrapper" id="checkout_totals">
+        <div class="ut2-cart-total__body">
+            {if $cart_products}
+                <div class="ty-coupons__container">
+                    {include file="views/checkout/components/promotion_coupon.tpl"}
+                    {hook name="checkout:payment_extra"}
+                    {/hook}
                 </div>
-        {/if}
+            {/if}
 
-        {hook name="checkout:payment_options"}
-        {/hook}
+            {hook name="checkout:payment_options"}
+            {/hook}
 
-        {include file="views/checkout/components/checkout_totals_info.tpl"}
+            {include file="views/checkout/components/checkout_totals_info.tpl"}
+        </div>
 
-        <div class="clearfix"></div>
-
-        <div class="ut2-cart-total-statistic">
-            <div class="ut2-cart-total-statistic__item">
-                <span class="ut2-cart-total-statistic__title">{__("total_cost")}</span>
-                <span class="ut2-cart-total-statistic__value">
+        <div class="ut2-cart-total__footer">
+            <div class="ut2-cart-total__statistic">
+                <div class="ut2-cart-total__statistic__item">
+                    <span class="ut2-cart-total__statistic__title">{__("total_cost")}</span>
+                    <span class="ut2-cart-total__statistic__value">
                     {include file="common/price.tpl" value=$_total|default:$smarty.capture._total|default:$cart.total span_id="cart_total" class="ty-price"}
                 </span>
+                </div>
             </div>
         </div>
     <!--checkout_totals--></div>

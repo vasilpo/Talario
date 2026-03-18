@@ -21,7 +21,7 @@ export const methods = {
                     const placeholderEmail = $emailFiled.attr('placeholder'),
                           emailVal         = $emailFiled.val();
                           
-                    email = (emailVal.length && (emailVal !== placeholderEmail)) ? '&email=' + emailVal : email;
+                    email = (emailVal.length && (emailVal !== placeholderEmail)) ? emailVal : email;
 
                     if (!email.length) {
                         return;
@@ -34,7 +34,13 @@ export const methods = {
                       checked = isChecked ? 'Y' : 'N';
 
                 if (isValidForm) {
-                    $.ceAjax('request', fn_url(`products.product_notifications?enable=${checked}&product_id=${objId}${email}`), {
+                    $.ceAjax('request', fn_url('products.product_notifications'), {
+                        method: 'post',
+                        data: {
+                            enable: checked,
+                            product_id: objId,
+                            email: email
+                        },
                         caching: false,
                     });
                 } else {

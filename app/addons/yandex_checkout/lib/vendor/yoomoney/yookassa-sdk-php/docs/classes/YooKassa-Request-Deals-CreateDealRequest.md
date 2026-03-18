@@ -9,6 +9,33 @@
 
 
 ---
+### Examples
+Пример использования билдера
+
+```php
+try {
+    $dealBuilder = \YooKassa\Request\Deals\CreateDealRequest::builder();
+    $dealBuilder
+        ->setType(\YooKassa\Model\Deal\DealType::SAFE_DEAL)
+        ->setFeeMoment(\YooKassa\Model\Deal\FeeMoment::PAYMENT_SUCCEEDED)
+        ->setDescription('SAFE_DEAL 123554642-2432FF344R')
+        ->setMetadata(array('order_id' => '37'))
+    ;
+
+    // Создаем объект запроса
+    $request = $dealBuilder->build();
+
+    $idempotenceKey = uniqid('', true);
+    $response = $client->createDeal($request, $idempotenceKey);
+} catch (Exception $e) {
+    $response = $e;
+}
+
+var_dump($response);
+
+```
+
+---
 ### Constants
 * No constants found
 
@@ -67,12 +94,6 @@
   * \YooKassa\Request\Deals\CreateDealRequest
 * Implements:
   * [\YooKassa\Request\Deals\CreateDealRequestInterface](../classes/YooKassa-Request-Deals-CreateDealRequestInterface.md)
-
----
-### Tags
-| Tag | Version | Description |
-| --- | ------- | ----------- |
-| todo: |  | @example 02-builder.php 11 78 Пример использования билдера |
 
 ---
 ## Properties
@@ -761,11 +782,11 @@ protected setValidationError(string $value) : mixed
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

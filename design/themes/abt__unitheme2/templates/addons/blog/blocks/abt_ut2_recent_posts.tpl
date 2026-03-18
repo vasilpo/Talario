@@ -27,7 +27,7 @@
                         {/if}
 
                     <div class="ut2-blog__recent-posts--img cover {if !$page.main_pair}no-image{/if}{if $data_backgroud_url} lazyload{/if}"{if $data_backgroud_url} data-background-url="{$image_data.image_path}"{/if}{if $background_url} style="background-image: url('{$background_url}')"{/if}>
-                        <div class="ut2-blog__date">{$page.timestamp|date_format:"%d.%m.%Y"}</div>
+                        <div class="ut2-blog__date">{$page.timestamp|date_format:"`$settings.Appearance.date_format`"}</div>
                     </div>
                     <div class="ut2-blog__recent-posts--title">{$page.page}</div>
                 </a>

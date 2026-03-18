@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Google\Auth\CredentialsLoader;
 use Google\Auth\FetchAuthTokenCache;
@@ -195,9 +195,11 @@ function fn_mobile_app_get_mobile_app_settings($storefront_id = 0)
     $settings['app_settings']['utility']['username'] = $root_user_email;
     $settings['app_settings']['utility']['apiKey'] = Registry::get('addons.storefront_rest_api.access_key');
 
-    list($storefront_url, $api_url) = fn_mobile_app_get_store_urls($storefront_id);
+    list($storefront_url, $api_url, $api_url_non_versioned) = fn_mobile_app_get_store_urls($storefront_id);
     $settings['app_settings']['utility']['siteUrl'] = $storefront_url;
     $settings['app_settings']['utility']['baseUrl'] = $api_url;
+    $settings['app_settings']['utility']['baseUrlNonVersioned'] = $api_url_non_versioned;
+    $settings['app_settings']['utility']['apiVersions'] = ['4.0', '4.1'];
 
     $settings['app_settings']['utility']['version'] = fn_allowed_for('ULTIMATE') ? 'ULT' : 'MVE';
 
@@ -222,10 +224,10 @@ function fn_mobile_app_get_mobile_app_settings($storefront_id = 0)
 function fn_mobile_app_get_store_urls($storefront_id = 0)
 {
     $store_url = fn_get_storefront_url('current', $storefront_id) . '/';
-    $api_url = str_replace(Registry::get('config.customer_index'), '', $store_url);
-    $api_url .= 'api/4.0/';
+    $api_url = str_replace(Registry::get('config.customer_index'), '', $store_url) . 'api/4.0/';
+    $api_url_non_versioned = str_replace(Registry::get('config.customer_index'), '', $store_url) . 'api/';
 
-    return [$store_url, $api_url];
+    return [$store_url, $api_url, $api_url_non_versioned];
 }
 
 /**
@@ -271,12 +273,6 @@ function fn_mobile_app_compile_app_styles(array $styles)
  */
 function fn_mobile_app_install_layout()
 {
-    if (fn_allowed_for('MULTIVENDOR')) {
-        $layout_path = Registry::get('config.dir.addons') . 'mobile_app/resources/layouts_mve.xml';
-    } else {
-        $layout_path = Registry::get('config.dir.addons') . 'mobile_app/resources/layouts.xml';
-    }
-
     /** @var \Tygh\Storefront\Repository $storefront_repository */
     $storefront_repository = Tygh::$app['storefront.repository'];
     list($storefronts) = $storefront_repository->find();
@@ -936,11 +932,7 @@ function fn_mobile_app_storefront_repository_save_post(Storefront $storefront, O
  */
 function fn_mobile_app_create_mobile_layout(Storefront $storefront)
 {
-    if (fn_allowed_for('MULTIVENDOR')) {
-        $layout_path = Registry::get('config.dir.addons') . 'mobile_app/resources/layouts_mve.xml';
-    } else {
-        $layout_path = Registry::get('config.dir.addons') . 'mobile_app/resources/layouts.xml';
-    }
+    $layout_path = Registry::get('config.dir.addons') . 'mobile_app/resources/layouts.xml';
 
     $theme_name = $storefront->theme_name;
     $storefront_id = $storefront->storefront_id;

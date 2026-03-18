@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\StripeConnect\Payments;
 
@@ -320,11 +320,6 @@ class StripeConnect
                 }
 
                 $payouts_manager->createWithdrawal($withdrawal, $order_id, $this->getWithdrawalDescription($order_id, $company_id, $charge->metadata['stripe_fee']));
-
-                if (!$this->addon_settings['collect_payouts']) {
-                    continue;
-                }
-                $payouts_manager->acceptPayouts();
             }
 
             foreach ($charges_to_capture as $charge) {
@@ -423,12 +418,6 @@ class StripeConnect
     protected function getWithdrawalAmount(array $order_info, PayoutsManager $payouts_manager, Charge $charge = null)
     {
         $application_fee = $payouts_manager->getOrderFee($order_info['order_id']);
-
-        // hold back vendor payouts
-        if ($this->addon_settings['collect_payouts']) {
-            $application_fee += $payouts_manager->getPendingPayoutsFee();
-        }
-
         $application_fee = min($application_fee, $order_info['total']);
 
         // the withdrawal that will be displayed in the Accounting
@@ -749,6 +738,9 @@ class StripeConnect
         return $description;
     }
 
+    /**
+     * @throws \Stripe\Exception\ApiErrorException Stripe exception.
+     */
     protected function getChargeByPaymentIntent(PaymentIntent $payment_intent)
     {
         if (!isset($this->charges_cache[$payment_intent->id])) {
@@ -1048,11 +1040,6 @@ class StripeConnect
             }
 
             $payouts_manager->createWithdrawal($withdrawal, $order_id, $this->getWithdrawalDescription($order_id, $company_id, $transfer->metadata['stripe_fee']));
-            if (!$this->addon_settings['collect_payouts']) {
-                continue;
-            }
-
-            $payouts_manager->acceptPayouts();
         }
 
         return $transfers;

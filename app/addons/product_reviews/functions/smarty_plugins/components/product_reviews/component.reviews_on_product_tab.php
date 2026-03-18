@@ -1,17 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+//phpcs:ignore
+use Smarty\Exception as SmartyException;
+use Smarty\Template;
 use Tygh\Addons\ProductReviews\ServiceProvider as ProductReviewsProvider;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Registry;
@@ -21,14 +24,14 @@ defined('BOOTSTRAP') or die('Access denied');
 /**
  * @param array{product: array<string, string|int>, request: array<string, string|int>, title: string, quicklink: string, container_id:string, locate_to_product_review_tab: bool} $params  Block params
  * @param string                                                                                                                                                                   $content Block content
- * @param \Smarty_Internal_Template                                                                                                                                                $tempale Smarty template
+ * @param Template                                                                                                                                                                 $template Smarty template
  *
  * @throws Exception       Internal smarty rendering error.
  * @throws SmartyException If unable to load template.
  *
  * @return string
  */
-function smarty_component_product_reviews_reviews_on_product_tab(array $params, $content, Smarty_Internal_Template $tempale)
+function smarty_component_product_reviews_reviews_on_product_tab(array $params, $content, Template $template)
 {
     $product = $params['product'];
     $search_params = $params['request'];
@@ -53,7 +56,7 @@ function smarty_component_product_reviews_reviews_on_product_tab(array $params, 
         $search_params['storefront_id']
     );
 
-    $tempale->assign([
+    $template->assign([
         'product'                        => $product,
         'product_id'                     => $search_params['product_id'],
         'product_reviews'                => $product['product_reviews'],
@@ -67,5 +70,8 @@ function smarty_component_product_reviews_reviews_on_product_tab(array $params, 
         'locate_to_product_review_tab'   => $params['locate_to_product_review_tab'],
     ]);
 
-    return $tempale->fetch('addons/product_reviews/views/product_reviews/view.tpl');
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
+    return $smarty->fetch('addons/product_reviews/views/product_reviews/view.tpl', null, null, $template);
 }

@@ -1,24 +1,23 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Gdpr\DataModifier;
 
 use Tygh\Gdpr\SchemaManager;
-use Faker\Generator;
 
 /**
- * Modifies user data specified in schema using Faker library.
+ * Modifies user data specified in schema.
  *
  * @package Tygh\Gdpr\DataModifier
  */
@@ -27,19 +26,15 @@ class UserPersonalDataAnonymizer implements IDataModifier
     /** @var SchemaManager $schema_manager Schema manager */
     protected $schema_manager;
 
-    /** @var Generator $faker Fake data generator */
-    protected $faker;
-
-    /** @var array $fakes Fake data array */
-    protected $fakes = [];
-
     /** @var array $fields_list Fields names list of values to be modified */
     protected $fields_list;
 
-    public function __construct(SchemaManager $schema_manager, Generator $faker)
+    /**
+     * @param SchemaManager $schema_manager Schema manager
+     */
+    public function __construct(SchemaManager $schema_manager)
     {
         $this->schema_manager = $schema_manager;
-        $this->faker = $faker;
     }
 
     /**
@@ -105,13 +100,14 @@ class UserPersonalDataAnonymizer implements IDataModifier
         $schema = $this->getAnonymizerSchema();
 
         if (isset($schema[$pattern])) {
-
             if ($schema[$pattern] === '') {
                 $value = '';
-            } elseif (isset($this->fakes[$schema[$pattern]])) {
-                $value = $this->fakes[$schema[$pattern]];
-            } else {
-                $this->fakes[$schema[$pattern]] = $value = str_replace(array("\n","\r"), '', $this->faker->{$schema[$pattern]});
+            } elseif ($schema[$pattern] === '*') {
+                $value = str_repeat('*', mb_strlen((string) $value));
+            } elseif (!empty($schema[$pattern])) {
+                $rand = bin2hex(random_bytes(8));
+
+                $value = str_replace('%rand%', $rand, $schema[$pattern]);
             }
         }
 

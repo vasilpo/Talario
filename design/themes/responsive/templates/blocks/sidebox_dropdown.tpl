@@ -21,7 +21,7 @@
 
         {assign var="item_url" value=$item|fn_form_dropdown_object_link:$block.type}
         <div class="ty-menu__submenu-item-header">
-            <a{if $item_url} href="{$item_url}"{/if} {if $item.new_window}target="_blank"{/if} class="ty-menu__item-link">{$item.$name}</a>
+            <a{if $item_url} href="{$item_url}"{/if} {if $item.new_window}target="_blank"{/if} class="ty-menu__item-link ty-menu__item-link--vertical {if $item.active || $item|fn_check_is_active_menu_item:$block.type}ty-menu__item-link-active{/if}">{$item.$name}</a>
         </div>
 
         {if $item.$childs}

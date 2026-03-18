@@ -33,7 +33,7 @@
                 </div>
             {/if}
 
-            <div class="ty-login-reglink ty-center">
+            <div class="ty-login-reglink">
                 <a class="ty-login-reglink__a" href="{"profiles.add"|fn_url}" rel="nofollow">{__("register_new_account")}</a>
             </div>
         {/if}

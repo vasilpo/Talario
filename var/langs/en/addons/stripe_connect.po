@@ -16,18 +16,6 @@ msgctxt "SettingsSections::stripe_connect::general"
 msgid "General"
 msgstr "General"
 
-msgctxt "SettingsOptions::stripe_connect::collect_payouts"
-msgid "Commission includes"
-msgstr "Commission includes"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::N"
-msgid "Order commission"
-msgstr "Order commission"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::Y"
-msgid "[Deprecated] Order commission and unpaid payouts"
-msgstr "[Deprecated] Order commission and unpaid payouts"
-
 msgctxt "Languages::stripe_connect.stripe_connect"
 msgid "Stripe Connect"
 msgstr "Stripe Connect"
@@ -79,6 +67,10 @@ msgstr "Connected"
 msgctxt "Languages::stripe_connect.not_connected"
 msgid "Not connected"
 msgstr "Not connected"
+
+msgctxt "Languages::stripe_connect.stripe_connectivity.description"
+msgid "Whether or not a vendor has connected their Stripe account to the marketplace."
+msgstr "Whether or not a vendor has connected their Stripe account to the marketplace."
 
 msgctxt "Languages::stripe_connect.account_connected"
 msgid "Your Stripe account has been successfully connected to the store"
@@ -211,10 +203,6 @@ msgstr "Stripe processor params missing"
 msgctxt "Languages::stripe_connect.account_was_deauthorized"
 msgid "Account of company \"[company]\" (company ID = [company_id]) was deauthorized"
 msgstr "Account of company \"[company]\" (company ID = [company_id]) was deauthorized"
-
-msgctxt "Languages::stripe_connect.on"
-msgid "On"
-msgstr "On"
 
 msgctxt "Languages::stripe_connect.delay_transfer_of_funds"
 msgid "Delay transfer of funds"

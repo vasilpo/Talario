@@ -38,7 +38,7 @@
                     <input type="text" name="license_number" class="{if $store_mode_errors} type-error{/if}" value="{$store_mode_license}" placeholder="{__("please_enter_license_here")}">
                     {if $store_mode_license && !$store_mode_errors && $store_mode != "trial"}
                         <p>
-                            {__("licensed_product")}: {$store_mode|fn_get_licensed_mode_name}
+                            {__("licensed_product")}: {$license_plan|fn_get_licensed_plan_name}
                         </p>
                     {/if}
                 </li>

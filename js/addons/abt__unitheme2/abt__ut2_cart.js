@@ -14,7 +14,12 @@
 * website: https://cs-cart.alexbranding.com                                                *
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
-const ITEM_SELECTORS = ['form[name^="product_form_"]','form[name^="variations_list_form"]','.ut2-pb__sticky-add-to-cart_block'];
+const ITEM_SELECTORS = [
+'form[name^="product_form_"]',
+'form[name^="vendor_products_form_"]',
+'form[name^="variations_list_form"]',
+'.ut2-pb__sticky-add-to-cart_block'
+];
 (function (_, $) {
 let isAjax = false;
 let isDesktop;

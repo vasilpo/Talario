@@ -1,42 +1,43 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2009-2019, HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
-// ----------------------------------------------------------------------------------------
-//	HybridAuth Config file: http://hybridauth.sourceforge.net/userguide/Configuration.html
-// ----------------------------------------------------------------------------------------
+use Tygh\Enum\ObjectStatuses;
+use Tygh\Registry;
 
-use \Tygh\Registry;
-
-$config = array(
-    'base_url' => fn_url('auth.process'),
+$config = [
+    'callback' => fn_url('auth.process'),
 
     // if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
     'debug_mode' => false,
     'debug_file' => Registry::get('config.dir.var') . 'oauth.log',
-);
+];
 
 $providers_schema = fn_get_schema('hybrid_auth', 'providers');
 $available_providers = fn_hybrid_auth_get_providers_list();
 foreach ($available_providers as $provider_data) {
     $provider_name = $providers_schema[$provider_data['provider']]['provider'];
     $config['providers'][$provider_name] = array(
-        'enabled' => $provider_data['status'] == 'A' ? true : false,
+        'enabled' => $provider_data['status'] === ObjectStatuses::ACTIVE,
     );
 
     if (isset($providers_schema[$provider_data['provider']])) {
 
-        $provider_keys = isset($providers_schema[$provider_data['provider']]['keys']) ? $providers_schema[$provider_data['provider']]['keys'] : array();
+        $provider_keys = $providers_schema[$provider_data['provider']]['keys'] ?? [];
         foreach ($provider_keys as $key => $key_data) {
             if (isset($key_data['db_field']) && isset($provider_data[$key_data['db_field']])) {
                 $config['providers'][$provider_name]['keys'][$key] = $provider_data[$key_data['db_field']];
             }
         }
 
-        $provider_params = isset($providers_schema[$provider_data['provider']]['params']) ? $providers_schema[$provider_data['provider']]['params'] : array();
+        if (isset($providers_schema[$provider_data['provider']]['callback'])) {
+            $config['providers'][$provider_name]['callback'] = $providers_schema[$provider_data['provider']]['callback'];
+        }
+
+        $provider_params = $providers_schema[$provider_data['provider']]['params'] ?? [];
         foreach ($provider_params as $param_id => $param_data) {
             if (isset($provider_data['params'][$param_id])) {
                 $config['providers'][$provider_name][$param_id] = $provider_data['params'][$param_id];
@@ -47,11 +48,11 @@ foreach ($available_providers as $provider_data) {
         }
         if (isset($config['providers'][$provider_name]['version']) && isset($providers_schema[$provider_data['provider']]['versions'])) {
             $version = $config['providers'][$provider_name]['version'];
-            if (isset($providers_schema[$provider_data['provider']]['versions'][$version]['wrapper'])) {
-                $config['providers'][$provider_name]['wrapper'] = $providers_schema[$provider_data['provider']]['versions'][$version]['wrapper'];
+            if (isset($providers_schema[$provider_data['provider']]['versions'][$version]['adapter'])) {
+                $config['providers'][$provider_name]['adapter'] = $providers_schema[$provider_data['provider']]['versions'][$version]['adapter'];
             }
-        } elseif (isset($providers_schema[$provider_data['provider']]['wrapper'])) {
-            $config['providers'][$provider_name]['wrapper'] = $providers_schema[$provider_data['provider']]['wrapper'];
+        } elseif (isset($providers_schema[$provider_data['provider']]['adapter'])) {
+            $config['providers'][$provider_name]['adapter'] = $providers_schema[$provider_data['provider']]['adapter'];
         }
     }
 }

@@ -1,22 +1,23 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BlockManager\Block;
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\UserTypes;
 use Tygh\Languages\Languages;
+use Tygh\Licensing\Features;
 use Tygh\Navigation\LastView;
 use Tygh\Providers\StorefrontProvider;
 use Tygh\Registry;
@@ -756,13 +757,6 @@ function fn_get_categories_list_with_parents(array $category_ids, $lang_code = C
  */
 function fn_get_category_data($category_id = 0, $lang_code = CART_LANGUAGE, $field_list = '', $get_main_pair = true, $skip_company_condition = false, $preview = false, $get_full_path = false)
 {
-    // @TODO: remove in 4.3.2, this line is needed for backward compatibility since 4.3.1
-    $field_list = str_replace(
-        array('selected_layouts', 'default_layout', 'product_details_layout'),
-        array('selected_views', 'default_view', 'product_details_view'),
-        $field_list
-    );
-
     /**
      * Changes select category data conditions
      *
@@ -828,17 +822,6 @@ function fn_get_category_data($category_id = 0, $lang_code = CART_LANGUAGE, $fie
             $category_data['selected_views'] = unserialize($category_data['selected_views']);
         } else {
             $category_data['selected_views'] = array();
-        }
-
-        // @TODO: remove in 4.3.2 - these three (3) conditions are needed for backward compatibility since 4.3.1
-        if (isset($category_data['selected_views'])) {
-            $category_data['selected_layouts'] = $category_data['selected_views'];
-        }
-        if (isset($category_data['default_view'])) {
-            $category_data['default_layout'] = $category_data['default_view'];
-        }
-        if (isset($category_data['product_details_view'])) {
-            $category_data['product_details_layout'] = $category_data['product_details_view'];
         }
 
         if ($get_full_path) {
@@ -1168,6 +1151,57 @@ function fn_update_product_count($category_ids = array())
     return true;
 }
 
+
+/**
+ * Checks if categories create/update actions allowed for current user with specified params.
+ *
+ * @param array  $category_data Category data
+ * @param int    $category_id   Category identifier
+ * @param string $lang_code     Two-letter language code (e.g. 'en', 'ru', etc.)
+ *
+ * @return bool
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
+ */
+function fn_is_category_update_allowed(array $category_data, $category_id, $lang_code)
+{
+    $result = true;
+    $auth = Tygh::$app['session']['auth'];
+
+    /**
+     * Executes before category update permissions check. Allows changing check params.
+     *
+     * @param array  $category_data Category data
+     * @param int    $category_id   Category identifier
+     * @param string $lang_code     Two-letter language code (e.g. 'en', 'ru', etc.)
+     * @param array  $auth          Array with authorization data
+     * @param bool   $result        Whether category creation/update is allowed
+     */
+    fn_set_hook('is_category_update_allowed_pre', $category_data, $category_id, $lang_code, $auth, $result);
+
+    if (
+        fn_allowed_for('MULTIVENDOR')
+        && !empty($auth['user_type'])
+        && UserTypes::isVendor($auth['user_type'])
+        && (!isset($category_data['is_default']) || !YesNo::toBool($category_data['is_default']))
+    ) {
+        $result = false;
+    }
+
+    /**
+     * Executes after category update permissions check. Allows changing result.
+     *
+     * @param array  $category_data Category data
+     * @param int    $category_id   Category identifier
+     * @param string $lang_code     Two-letter language code (e.g. 'en', 'ru', etc.)
+     * @param array  $auth          Array with authorization data
+     * @param bool   $result        Whether category creation/update is allowed
+     */
+    fn_set_hook('is_category_update_allowed_post', $category_data, $category_id, $lang_code, $auth, $result);
+
+    return $result;
+}
+
 /**
  * Adds or updates category
  *
@@ -1178,20 +1212,6 @@ function fn_update_product_count($category_ids = array())
  */
 function fn_update_category($category_data, $category_id = 0, $lang_code = CART_LANGUAGE)
 {
-    // @TODO: remove in 4.3.2 - these three (3) conditions are needed for backward compatibility since 4.3.1
-    if (isset($category_data['selected_layouts'])) {
-        $category_data['selected_views'] = $category_data['selected_layouts'];
-        unset($category_data['selected_layouts']);
-    }
-    if (isset($category_data['default_layout'])) {
-        $category_data['default_view'] = $category_data['default_layout'];
-        unset($category_data['default_layout']);
-    }
-    if (isset($category_data['product_details_layout'])) {
-        $category_data['product_details_view'] = $category_data['product_details_layout'];
-        unset($category_data['product_details_layout']);
-    }
-
     $default_params = [
         'category_id' => $category_id
     ];
@@ -1209,11 +1229,17 @@ function fn_update_category($category_data, $category_id = 0, $lang_code = CART_
      */
     fn_set_hook('update_category_pre', $category_data, $category_id, $lang_code);
 
+    if (!fn_is_category_update_allowed($category_data, $category_id, $lang_code)) {
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), __('no_permissions_to_create_update_categories'));
+
+        return false;
+    }
+
     SecurityHelper::sanitizeObjectData('category', $category_data);
 
     $category_info_fields = ['company_id', 'id_path'];
 
-    if (fn_allowed_for('MULTIVENDOR:ULTIMATE')) {
+    if (fn_allowed_for('MULTIVENDOR') && fn_is_allowed(Features::MULTIPLE_STOREFRONTS)) {
         $category_info_fields[] = 'storefront_id';
     }
 
@@ -1253,6 +1279,8 @@ function fn_update_category($category_data, $category_id = 0, $lang_code = CART_
 
     if (isset($_data['selected_views'])) {
         $_data['selected_views'] = serialize($_data['selected_views']);
+    } else {
+        $_data['selected_views'] = '';
     }
 
     if (isset($_data['use_custom_templates']) && $_data['use_custom_templates'] == 'N') {

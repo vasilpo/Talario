@@ -1,30 +1,31 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Smarty\Template;
 use Tygh\Settings;
 use Tygh\Tools\Url;
 
 defined('BOOTSTRAP') or die('Access denied');
 
 /**
- * @param array<string, string>     $params   Block params
- * @param string                    $content  Block content
- * @param \Smarty_Internal_Template $template Smarty template
+ * @param array<string, string> $params   Block params
+ * @param string                $content  Block content
+ * @param Template              $template Smarty template
  *
  * @return string
  */
-function smarty_component_product_layout_input(array $params, $content, Smarty_Internal_Template $template)
+function smarty_component_product_layout_input(array $params, $content, Template $template)
 {
     $object_type = isset($params['object']) ? (string) $params['object'] : 'product';
     $object_id = isset($params['id']) ? (int) $params['id'] : 0;
@@ -115,7 +116,10 @@ function smarty_component_product_layout_input(array $params, $content, Smarty_I
         'show_custom'  => false
     ]);
 
-    $input = $template->fetch('components/default_custom.tpl');
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
+    $input = $smarty->fetch('components/default_custom.tpl', null, null, $template);
 
     if ($content && strpos($content, '#INPUT#') !== false) {
         return str_replace('#INPUT#', $input, $content);

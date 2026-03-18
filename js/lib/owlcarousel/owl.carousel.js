@@ -918,6 +918,40 @@ if (typeof Object.create !== "function") {
                 }
             }
 
+            // Fix old-owlcarousel non-adaptive for RTL
+            function isWebKitBasedBrowser() {
+                const ua = navigator.userAgent;
+                return ua.includes("AppleWebKit")
+                    && !ua.includes("Chrome")
+                    && !ua.includes("Chromium")
+                    && !ua.includes("Edg")
+                    && !ua.includes("OPR");
+            }
+
+            function isNewSafariMarginRtlBug() {
+                const testElement = document.createElement('div');
+
+                Object.assign(testElement.style, {
+                    border: '0px',
+                    fontSize: '0px',
+                    height: '0px',
+                    lineHeight: '0',
+                    opacity: '0',
+                    overflow: 'hidden',
+                    padding: '0px',
+                    pointerEvents: 'none',
+                    visibility: 'hidden',
+                    width: `${window.innerWidth + 1}px`
+                });
+
+                document.body.appendChild(testElement);
+                const marginLeft = window.getComputedStyle(testElement).marginLeft;
+                document.body.removeChild(testElement);
+
+                return marginLeft !== '0px';
+            }
+            // /Fix old-owlcarousel non-adaptive for RTL
+
             function dragStart(event) {
                 var ev = event.originalEvent || event || window.event,
                     position;
@@ -951,9 +985,9 @@ if (typeof Object.create !== "function") {
                 position = $(this).position();
 
                 // Fix old-owlcarousel non-adaptive for RTL
-				if (base.userOptions.direction === 'rtl') {
-				    position.left = position.left + $(this).width() - $(this).parent().width();
-				}
+                if (base.userOptions.direction === 'rtl' && (!isWebKitBasedBrowser() || !isNewSafariMarginRtlBug())) {
+                    position.left = position.left + $(this).width() - $(this).parent().width();
+                }
                 // /Fix old-owlcarousel non-adaptive for RTL
 
                 locals.relativePos = position.left;

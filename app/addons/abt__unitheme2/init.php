@@ -22,6 +22,7 @@ Tygh::$app->register(new \Tygh\Addons\Abt_unitheme2\ServiceProvider());
 fn_register_hooks(// define settings
 'dispatch_assign_template'
 , 'render_block_pre'
+, 'install_addon_post'
 , 'render_blocks', 'render_block_content_after', 'render_block_post'
 , 'get_banners'
 , 'get_banners_post'
@@ -52,4 +53,11 @@ fn_register_hooks(// define settings
 ,'generate_thumbnail_post'
 ,'get_image_pairs_post'
 ,'get_products_layout_post'
+,'render_block_register_cache'
+,'get_filters_products_count_post'
+,'get_product_features_list_before_select'
+,'get_product_features_list_post'
+,'product_reviews_find_pre'
+,'product_reviews_get_product_ratings_stats'
+,'product_reviews_create_pre'
 );

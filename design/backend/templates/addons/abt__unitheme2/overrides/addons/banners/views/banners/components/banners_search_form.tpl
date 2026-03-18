@@ -27,7 +27,7 @@
 <div class="sidebar-field">
 <label for="elm_type">{__("type")}</label>
 <div class="controls">
-<select name="type" id="elm_type">
+<select name="type" id="elm_type" style="max-width: 220px">
 {hook name="banners:search_form_banner_type"}
 <option value="">{__("all")}</option>
 <option {if $search.type == "G"}selected="selected"{/if} value="G">{__("graphic_banner")}</option>

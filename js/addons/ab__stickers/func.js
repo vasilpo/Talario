@@ -79,8 +79,11 @@ const calculate_size = function () {
 wrappers.each(function(i, wrapper) {
 wrapper = $(wrapper);
 const owlItem = context.find('.ty-product-img .owl-item:first-child, .ty-product-img .ty-pict').first(),
-image = owlItem.hasClass('ty-pict') ? owlItem : owlItem.find('.ty-pict'),
 is_pictograms_wrapper = wrapper.hasClass('ab-s-pictograms-wrapper');
+let image = owlItem.hasClass('ty-pict') || owlItem.find('.ty-no-image').length ? owlItem : owlItem.find('.ty-pict').first();
+if (owlItem.find('.ab__vg-image_gallery_video') && !image.length) {
+image = owlItem.find('.ab__vg-image_gallery_video').first();
+}
 if (
 is_pictograms_wrapper ||
 owlItem.find('.ty-no-image').length ||
@@ -148,27 +151,16 @@ setTimeout(function () { resize() }, resize_timeout);
 $.ceEvent('on', 'ab__vg.on_state_change', (info, player, player_state) => {
 if (info.video_id && _.ab__video_gallery.settings.on_thumbnail_click === 'image_replace') {
 const video_elem = $('#' + (info.video_id));
-const stickers = video_elem.parents('.ab_vg-images-wrapper').find('.ab-stickers-wrapper');
 const event = info.event ?? 'pause';
-if (stickers.length) {
+let stickers_wrapper = video_elem.parents('.ab_vg-images-wrapper').find('.ab-stickers-wrapper');
+if (!stickers_wrapper.length) {
+stickers_wrapper = video_elem.parents('.ty-product-bigpicture__img').find('.ab-stickers-wrapper');
+}
+if (stickers_wrapper.length) {
 if (event === 'play' && !video_elem.hasClass('ab__vg-image_gallery_video-autoplay')) {
-stickers.addClass('hidden');
+stickers_wrapper.addClass('hidden');
 } else {
-stickers.removeClass('hidden');
-}
-}
-}
-});
-$.ceEvent('on', 'ab__vg.on_state_change', (info, player, player_state) => {
-if (info.video_id && _.ab__video_gallery.settings.on_thumbnail_click === 'image_replace') {
-const video_elem = $('#' + (info.video_id));
-const stickers = video_elem.parents('.ab_vg-images-wrapper').find('.ab-stickers-wrapper');
-const event = info.event ?? 'pause';
-if (stickers.length) {
-if (event === 'play' && !video_elem.hasClass('ab__vg-image_gallery_video-autoplay')) {
-stickers.addClass('hidden');
-} else {
-stickers.removeClass('hidden');
+stickers_wrapper.removeClass('hidden');
 }
 }
 }

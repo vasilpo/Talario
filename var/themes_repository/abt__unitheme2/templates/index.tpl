@@ -40,7 +40,7 @@
 <html {hook name="index:html_tag"}{/hook}
     lang="{$smarty.const.CART_LANGUAGE}"
     dir="{$language_direction}"
-    class="{hook name="index:abt_ut2_html_class"}{/hook} {if $pb_is_bottom_panel_open}bp-panel-active{/if} {if $is_theme_editor_open}te-theme-editor-active{/if}"
+    class="{hook name="index:abt_ut2_html_class"}{/hook}{if $pb_is_bottom_panel_open} bp-panel-active{/if}{if $is_theme_editor_open} te-theme-editor-active{/if}"
 >
 <head>
 {capture name="page_title"}

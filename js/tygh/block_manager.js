@@ -121,6 +121,7 @@ function BlockManager_Class() {
           href += '&grid_data[min_width]=' + min_width;
           href += '&grid_data[container_id]=' + _hover_element.parents('.container').prop('id').replace('container_', '');
           href += '&grid_data[max_offset]=' + max_offset;
+          href += '&selected_location=' + (typeof selected_location === 'undefined' ? 0 : selected_location);
           if ($('#' + prop_container).length == 0) {
             // Create properties container
 
@@ -152,6 +153,7 @@ function BlockManager_Class() {
         href = 'block_manager.update_grid?';
         href += 'grid_data[max_width]=' + max_width;
         href += 'grid_data[min_width]=' + min_width;
+        href += '&selected_location=' + (typeof selected_location === 'undefined' ? 0 : selected_location);
         if (element_type == 'container') {
           container_id = _hover_element.prop('id').replace('container_', '');
           href += '&grid_data[container_id]=' + container_id;

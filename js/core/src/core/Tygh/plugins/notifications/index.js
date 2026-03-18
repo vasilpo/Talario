@@ -112,7 +112,7 @@ export const methods = {
             );
 
             var $notification = $('<div class="cm-notification-content cm-notification-content-extended notification-content-extended ' + (data.message_state == "I" ? ' cm-auto-hide' : '') + '" data-ca-notification-key="' + key + '">' +
-                '<h1>' + data.title + '<span class="cm-notification-close close"></span></h1>' +
+                '<h1 class="cm-notification-content-extended-title">' + data.title + '<span class="cm-notification-close close"></span></h1>' +
                 '<div class="notification-body-extended">' +
                 data.message +
                 '</div>' +
@@ -215,16 +215,42 @@ export const methods = {
 
     position: ($notification, is_append) => {
         is_append = (is_append === false) ? false : true;
+        const view_height = $.getWindowSizes().view_height;
+        const window_height = $(window).height();
+        const is_notification_mobile_bottom = $(window).width() > 767 ? false : $('html').hasClass('dialog-mobile-bottom');
+        const notification_offset = is_notification_mobile_bottom ? 20 : 300;
+        const notification_without_body_height = $.contains(document, $notification[0])
+            ? Math.ceil(
+                ($notification.outerHeight() - $notification.innerHeight())
+                + ($('.cm-notification-content-extended-title', $notification).outerHeight())
+                + ($('.cm-product-notification-buttons', $notification).outerHeight())
+                + ($('.cm-product-notification-body', $notification).innerHeight()
+                    - $('.cm-product-notification-body', $notification).height()
+                )
+            ) : 143;
+        const bottomPanelHeight = (parseInt($('html').css('--bp-bottom-panel-height'), 10) || 0);
+        const maxHeight = view_height
+                - notification_offset
+                - (is_notification_mobile_bottom ? notification_without_body_height : 0)
+                - bottomPanelHeight;
 
-        let w = $.getWindowSizes(),
-            notificationMaxHeight = w.view_height - 300;
-        $notification.find('.cm-notification-max-height').css({
-            'max-height': notificationMaxHeight
+        // .ty-product-notification__body: min-height: 72px;
+        $('.cm-notification-max-height', $notification).css({
+            'max-height': maxHeight < 72 ? 72 : maxHeight,
         });
+
         if (is_append) {
             $(_.body).append($notification);
         }
-        $notification.css('top', w.view_height / 2 - ($notification.height() / 2));
+
+        const notification_with_margin_height = Math.floor($notification.outerHeight(true))
+            + bottomPanelHeight;
+
+        $notification.css('top', is_notification_mobile_bottom
+            ? (notification_with_margin_height < window_height
+                ? window_height - notification_with_margin_height
+                : notification_offset)
+            : (view_height - bottomPanelHeight) / 2 - ($notification.height() / 2));
     }
 };
 

@@ -68,14 +68,14 @@ data-ca-id="{$banner.banner_id}"
 <td id="sw_banner{$key}" class="cm-combination cm-save-state {if $smarty.cookies["banner`$key`"]}open{/if}">
 <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="{if $expand_all} hidden{/if}"><span class="icon-caret-right cs-dark-theme-invert"> </span></span>
 <span alt="{__("expand_collapse_list")}" title="{__("expand_collapse_list")}" class="{if !$expand_all} hidden{/if}"><span class="icon-caret-down cs-dark-theme-invert"> </span></span>
-<a>{$banner.group_name}</a>
+<a>{$banner.group_name} ({__('abt__ut2.banner.banner_counter', [count($banner.items)])})</a>
 </td>
 <td width="30%" class="left" >{__('group')}</td>
 <td class="left" >&nbsp;</td>
 <td class="left" >
 {capture name="tools_list"}
 {hook name="banner_groups:list_extra_links"}
-<li>{include file="common/popupbox.tpl" id="group`$p_feature.feature_id`" text="{__('group')} '`$banner.group_name`'" act="edit" text="{__('edit')}" href=$href_edit no_icon_link=true link_class="cm-dialog-destroy-on-close"}</li>
+<li>{include file="common/popupbox.tpl" id="group`$p_feature.feature_id`" act="edit" text={__('edit')} href=$href_edit no_icon_link=true link_class="cm-dialog-destroy-on-close"}</li>
 <li>{btn type="list" class="cm-confirm" text=__("abt__ut2.banner.disband") href="banners.delete_group?group_id=`$key`&return_url=`$r_url`" method="POST"}</li>
 {/hook}
 {/capture}

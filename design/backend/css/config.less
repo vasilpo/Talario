@@ -308,6 +308,13 @@
 
 
 // CS-Cart custom variables
+
+// Override: local_conf.php
+// $config['tweaks']['html_styles'] = [
+//     "--main-menu-width" => "150px",
+//     "--cs-checkbox-size-wo-unit" => "26",
+// ];
+
 :root {
     --content-width: ~"calc(100vw - 16px * 4)";
     --content-offset: 0px;
@@ -315,8 +322,18 @@
     // Header and sidebar
     --top-bar-height: 56px;
     --main-menu-width: 200px;
+    --main-menu-button-size: 50px;
+    --main-menu-dropdown-width: 200px;
     --sidebar-width: 290px;
     --scrollbar-width: 20px;
+
+    // Components
+    --cs-checkbox-size-wo-unit: 20; // 16...30 (without unit)
+    --cs-checkbox-size: ~"calc(var(--cs-checkbox-size-wo-unit) * 1px)";
+    --cs-checkbox-clickable-size: 34px;
+
+    // 30px - label height:
+    --cs-checkbox-padding: ~"calc( (30px - var(--cs-checkbox-size) ) / 2)";
 }
 
 // var(--cs-tablet-breakpoint) + 1px
@@ -337,6 +354,10 @@
     :root {
         --sidebar-width: 240px;
     }
+}
+
+:root.cs-main-menu-dropdown {
+    --main-menu-width: ~"calc(var(--main-menu-button-size) + 8px * 2)";
 }
 
 // SIZES
@@ -376,6 +397,8 @@
 @btnInverseBorderMore: darken(@btnInverseBackgroundHighlight, 10%);
 
 @textMutedColorMore: lighten(@textMutedColor, 20%);
+@menuSidebarBottomToolbarColor: @menuSidebarColor;
+@menuSidebarBottomToolbarBg: @menuSidebarBg;
 
 // MEDIA QUERIES BREAKPOINTS
 @LargeDesktopBreakpoint: 1339px;

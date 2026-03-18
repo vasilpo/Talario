@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Shippings\Services;
 
@@ -35,7 +35,12 @@ class Usps implements IService
      * @var boolean $_is_domestic
      */
     private $_is_domestic = true;
-
+    /**
+     * Stored shipping information
+     *
+     * @var array<string, array<string, string>> $shipping_info
+     */
+    private $shipping_info = [];
     /**
      * Gets Country name by 2-letter code
      *
@@ -355,7 +360,7 @@ class Usps implements IService
      */
     public function prepareData($shipping_info)
     {
-        $this->_shipping_info = $shipping_info;
+        $this->shipping_info = $shipping_info;
     }
 
     /**
@@ -372,10 +377,11 @@ class Usps implements IService
             'delivery_time' => false,
         );
 
-        $code = $this->_shipping_info['service_code'];
+        /** @var string $code */
+        $code = $this->shipping_info['service_code'];
         $code = $this->_prepareServiceName($code);
 
-        $rates = $this->processRates($response, $this->_is_domestic, $this->_shipping_info['service_params']);
+        $rates = $this->processRates($response, $this->_is_domestic, $this->shipping_info['service_params']);
 
         if (isset($rates[$code])) {
             $return['cost'] = $rates[$code];
@@ -546,11 +552,10 @@ class Usps implements IService
      */
     public function getRequestData()
     {
-        $code = $this->_shipping_info['service_code'];
-        $weight_data = fn_convert_weight_to_imperial_units($this->_shipping_info['package_info']['W']);
-        $package_cost = $this->_shipping_info['package_info']['C'];
+        $weight_data = fn_convert_weight_to_imperial_units($this->shipping_info['package_info']['W']);
+        $package_cost = $this->shipping_info['package_info']['C'];
 
-        $shipping_settings = $this->_shipping_info['service_params'];
+        $shipping_settings = $this->shipping_info['service_params'];
 
         if (!empty($shipping_settings['test_mode']) && $shipping_settings['test_mode'] == 'Y') {
             $url = 'https://stg-production.shippingapis.com/ShippingAPI.dll';
@@ -571,8 +576,12 @@ class Usps implements IService
         $pounds = $weight_data['pounds'];
         $ounces = $weight_data['ounces'];
 
-        $origination = $this->prepareAddress($this->_shipping_info['package_info']['origination']);
-        $location = $this->prepareAddress($this->_shipping_info['package_info']['location']);
+        /** @var array $origination */
+        $origination = $this->shipping_info['package_info']['origination'];
+        $origination = $this->prepareAddress($origination);
+        /** @var array $location */
+        $location = $this->shipping_info['package_info']['location'];
+        $location = $this->prepareAddress($location);
 
         $size_parameters = '';
         if ($package_size == 'Large') {

@@ -192,6 +192,10 @@ msgctxt "Languages::promo_code_or_certificate"
 msgid "Gift certificate or promo code"
 msgstr "Gift certificate or promo code"
 
+msgctxt "Languages::promo_code_or_certificate_short"
+msgid "Certificate or promo code"
+msgstr "Certificate or promo code"
+
 msgctxt "Languages::gift_certificate_added_to_cart"
 msgid "Gift certificate was added to your cart"
 msgstr "Gift certificate was added to your cart"

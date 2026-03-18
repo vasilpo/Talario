@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Dashboard\DashboardBlocks;
 use Tygh\Enum\CustomBlockSections;
@@ -129,7 +129,6 @@ if ($mode == 'index') {
     $timestamp_to = $time_period['to']->getTimestamp();
 
     $time_difference = $timestamp_to - $timestamp_from;
-    $stats = base64_decode('PGltZyBjbGFzcz0ib25lLXBpeGVsLWJhY2tncm91bmQiIHNyYz0iaHR0cHM6Ly93d3cuY3MtY2FydC5jb20vaW1hZ2VzL2JhY2tncm91bmQuZ2lmIiBoZWlnaHQ9IjEiIHdpZHRoPSIxIiBhbHQ9IiIgLz4=');
 
     $show_dashboard_preloader = true;
     if (defined('AJAX_REQUEST')) {
@@ -298,13 +297,7 @@ if ($mode == 'index') {
         Tygh::$app['view']->assign($dashboard_data);
     }
 
-    if (!empty(Tygh::$app['session']['stats'])) {
-        $stats .= implode('', Tygh::$app['session']['stats']);
-        unset(Tygh::$app['session']['stats']);
-    }
-
     Tygh::$app['view']->assign([
-        'stats'                    => $stats,
         'time_from'                => $timestamp_from,
         'time_to'                  => $timestamp_to,
         'show_dashboard_preloader' => $show_dashboard_preloader,

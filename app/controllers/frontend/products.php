@@ -1,21 +1,50 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Tygh\Enum\NotificationSeverity;
+use Tygh\Enum\YesNo;
 use Tygh\Registry;
 use Tygh\BlockManager\ProductTabs;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($mode === 'product_notifications') {
+        $email = '';
+
+        if (!empty(Tygh::$app['session']['cart']['user_data']['email'])) {
+            $email = Tygh::$app['session']['cart']['user_data']['email'];
+        } elseif (!empty($_REQUEST['email'])) {
+            $email = $_REQUEST['email'];
+        }
+
+        if ($email && !empty($_REQUEST['product_id'])) {
+            $subscription_data = [
+                'product_id' => $_REQUEST['product_id'],
+                'user_id' => Tygh::$app['session']['auth']['user_id'],
+                'email' => $email,
+                'enable' => !empty($_REQUEST['enable']) ? $_REQUEST['enable'] : YesNo::YES,
+            ];
+
+            fn_update_product_notifications($subscription_data);
+        } else {
+            fn_set_notification(NotificationSeverity::ERROR, __('error'), __('product_notification_subscription_error'));
+        }
+
+        exit;
+    }
+}
 
 //
 // Search products
@@ -91,6 +120,8 @@ if ($mode == 'search') {
     if (fn_allowed_for('MULTIVENDOR')) {
         $product_params['use_i18n_fields'] = true;
     }
+
+    $product_params['get_videos'] = true;
 
     $product = fn_get_product_data(
         $_REQUEST['product_id'],
@@ -172,6 +203,9 @@ if ($mode == 'search') {
     Tygh::$app['view']->assign('product', $product);
     Tygh::$app['view']->assign('product_id', $_REQUEST['product_id']);
 
+    $video_sources = fn_get_schema('video', 'available_providers');
+    Tygh::$app['view']->assign('video_sources', $video_sources);
+
     // If page title for this product is exist than assign it to template
     if (!empty($product['page_title'])) {
         Tygh::$app['view']->assign('page_title', $product['page_title']);
@@ -211,6 +245,9 @@ if ($mode == 'search') {
             if (!empty($_REQUEST['is_microstore'])) {
                 Tygh::$app['view']->assign('is_microstore', 'Y');
             }
+            if (!empty($_REQUEST['show_quick_view_for_options']) && $_REQUEST['show_quick_view_for_options'] === 'Y') {
+                Tygh::$app['view']->assign('show_quick_view_for_options', true);
+            }
 
             Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
         } else {
@@ -227,29 +264,6 @@ if ($mode == 'search') {
 
         return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $product_id);
     }
-} elseif ($mode == 'product_notifications') {
-    $email = '';
-
-    if (!empty(Tygh::$app['session']['cart']['user_data']['email'])) {
-        $email = Tygh::$app['session']['cart']['user_data']['email'];
-    } elseif (!empty($_REQUEST['email'])) {
-        $email = $_REQUEST['email'];
-    }
-
-    if ($email && !empty($_REQUEST['product_id'])) {
-        $subscription_data = array(
-            'product_id' => $_REQUEST['product_id'],
-            'user_id' => Tygh::$app['session']['auth']['user_id'],
-            'email' => $email,
-            'enable' => !empty($_REQUEST['enable']) ? $_REQUEST['enable'] : 'Y',
-        );
-
-        fn_update_product_notifications($subscription_data);
-    } else {
-        fn_set_notification('E', __('error'), __('product_notification_subscription_error'));
-    }
-
-    exit;
 } elseif ($mode === 'subscription_form') {
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
     $_REQUEST['obj_id'] = empty($_REQUEST['obj_id']) ? 0 : $_REQUEST['obj_id'];

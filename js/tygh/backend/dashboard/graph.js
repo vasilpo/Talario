@@ -145,4 +145,8 @@
     const $graph = $('[data-ca-analytics-card="graph"]');
     drawAnalyticsCardGraph($graph.data('caAnalyticsCardGraphIsDay'), $graph);
   });
+  $.ceEvent('on', 'ce.main_menu.toggle', function ($menuContainer, $mainMenus, isDropdown) {
+    const $graph = $('[data-ca-analytics-card="graph"]');
+    drawAnalyticsCardGraph($graph.data('caAnalyticsCardGraphIsDay'), $graph);
+  });
 })(Tygh, Tygh.$);

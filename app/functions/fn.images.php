@@ -1,20 +1,21 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Imagine\Image\Metadata\ExifMetadataReader;
 use Tygh\Enum\ImagePairTypes;
 use Tygh\Enum\MultiQueryTypes;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Registry;
 use Tygh\Storage;
 use Tygh\Settings;
@@ -1059,25 +1060,82 @@ function fn_get_image_subdir($image_id = 0)
 /**
  * Attaches image pair to a specified object
  *
- * @param string $name        Name of image to search for inside global $_REQUEST array
- * @param string $object_type The type of object
- * @param int    $object_id   Object identifier
- * @param string $lang_code   Two-letters languag code
- * @param int[]  $object_ids  Array of object identifiers
+ * @param string $name                    Name of image to search for inside global $_REQUEST array
+ * @param string $object_type             The type of object
+ * @param int    $object_id               Object identifier
+ * @param string $lang_code               Two-letters languag code
+ * @param int[]  $object_ids              Array of object identifiers
+ * @param int    $allowed_file_size_bytes Allowed image file size in bytes
  *
  * @return int[]
  */
-function fn_attach_image_pairs($name, $object_type, $object_id = 0, $lang_code = CART_LANGUAGE, array $object_ids = [])
+function fn_attach_image_pairs($name, $object_type, $object_id = 0, $lang_code = CART_LANGUAGE, array $object_ids = [], $allowed_file_size_bytes = null)
 {
     // @TODO: get rid of direct $_REQUEST array usage inside this function and fn_filter_uploaded_data too
     $allowed_extensions = ImageHelper::getSupportedFormats($object_type);
-    $allowed_file_size_bytes = fn_get_allowed_image_file_size();
+    $allowed_file_size_bytes = $allowed_file_size_bytes ?? fn_get_allowed_image_file_size();
     $icons = fn_filter_uploaded_data($name . '_image_icon', $allowed_extensions, true, true, $allowed_file_size_bytes);
     $show_default_error_notifications = $name === 'import' ? false : true;
     $detailed = fn_filter_uploaded_data($name . '_image_detailed', $allowed_extensions, $show_default_error_notifications, true, $allowed_file_size_bytes);
+
+    $icons = fn_filter_by_image_resolution($icons);
+    $detailed = fn_filter_by_image_resolution($detailed);
+
     $pairs_data = !empty($_REQUEST[$name . '_image_data']) ? $_REQUEST[$name . '_image_data'] : [];
 
     return fn_update_image_pairs($icons, $detailed, $pairs_data, $object_id, $object_type, $object_ids, true, $lang_code);
+}
+
+/**
+ * Attaches image pair to a specified object
+ *
+ * @param array $images_data List of images data
+ *
+ * @return array
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
+ */
+function fn_filter_by_image_resolution(array $images_data)
+{
+    if (empty($images_data)) {
+        return $images_data;
+    }
+
+    $max_allowed_dimension = Registry::ifGet('config.tweaks.max_uploaded_image_dimension', null);
+
+    if ($max_allowed_dimension === null) {
+        return $images_data;
+    }
+
+    foreach ($images_data as $key => $data) {
+        if (empty($data['path'])) {
+            continue;
+        }
+
+        $image_size = fn_get_image_size($data['path']);
+
+        if (!$image_size) {
+            continue;
+        }
+
+        [$width, $height, , ] = $image_size;
+
+        if (
+            $width <= $max_allowed_dimension
+            && $height <= $max_allowed_dimension
+        ) {
+            continue;
+        }
+
+        unset($images_data[$key]);
+
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), __('text_not_allowed_to_upload_image_with_dimensions', [
+            '[dimension]' => $max_allowed_dimension
+        ]));
+    }
+
+    return $images_data;
 }
 
 /**
@@ -1240,13 +1298,18 @@ function fn_image_to_display($images, $image_width = 0, $image_height = 0, $url 
         $relative_path = $images['relative_path'];
     }
 
-    $is_image_a_vector = strtolower(fn_get_file_ext($absolute_path)) === 'svg';
-
     list($image_width, $image_height) = ImageHelper::originalProportionsFallback(
         $original_width, $original_height, $image_width, $image_height
     );
 
-    if (!empty($image_width) && !empty($relative_path) && !empty($absolute_path) && !$is_image_a_vector) {
+    $is_image_a_vector = false;
+
+    if (
+        !empty($absolute_path)
+        && false === ($is_image_a_vector = strtolower(fn_get_file_ext($absolute_path)) === 'svg')
+        && !empty($image_width)
+        && !empty($relative_path)
+    ) {
         $image_path = fn_generate_thumbnail(
             $relative_path,
             $image_width,

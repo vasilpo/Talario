@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Shippings;
 
@@ -94,7 +94,7 @@ class RusSdek
     {
         $cities = db_get_hash_array(
             'SELECT a.city, b.sdek_city_code '
-            . 'FROM ?:rus_city_descriptions as a '
+            . 'FROM ?:city_descriptions as a '
             . 'LEFT JOIN ?:rus_sdek_cities_link as b '
                 . 'ON a.city_id=b.city_id ',
             'sdek_city_code'
@@ -203,7 +203,7 @@ class RusSdek
             $state = fn_rus_sdek_check_state_code($location['state'], $country_code) ? $location['state'] : '';
         }
 
-        $data_cities = fn_rus_cities_get_city_ids($location['city'], $state, $country_code);
+        $data_cities = fn_cities_get_city_ids($location['city'], $state, $country_code);
 
         if (empty($data_cities)) {
             if (AREA != 'C') {

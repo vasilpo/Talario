@@ -1,19 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\BlockManager;
 
+use Smarty\Runtime\CaptureRuntime;
 use Tygh\Lock\Factory;
 use Tygh\Debugger;
 use Tygh\Development;
@@ -482,6 +483,7 @@ class RenderManager
     public static function renderBlock($block, $parent_grid = array(), $area = 'C', $params = array())
     {
         if (SchemesManager::isBlockExist($block['type'])) {
+            /** @var Core $view */
             $view = \Tygh::$app['view'];
 
             $view->assign('parent_grid', $parent_grid);
@@ -528,7 +530,7 @@ class RenderManager
 
         $params = array_merge($default_params, $params);
 
-        $block_schema = SchemesManager::getBlockScheme($block['type'], array());
+        $block_schema = SchemesManager::getBlockScheme($block['type']);
 
         $block_content = null;
 
@@ -628,8 +630,7 @@ class RenderManager
 
             if (!empty($cached_content['javascript'])) {
                 $repeat = false;
-                $smarty->loadPlugin('smarty_block_inline_script');
-                smarty_block_inline_script(array(), $cached_content['javascript'], $smarty, $repeat);
+                smarty_block_inline_script([], $cached_content['javascript'], $repeat);
             }
             Debugger::blockFoundAtCache($block['block_id']);
         }
@@ -691,13 +692,20 @@ class RenderManager
                 $smarty->assign('wrapper', $block['wrapper']);
 
                 if ($block['type'] == Block::TYPE_MAIN) {
-                    $smarty->assign(
-                        'title',
-                        !empty($smarty->ext->_capture->namedBuffer['mainbox_title'])
-                            ? $smarty->ext->_capture->namedBuffer['mainbox_title']
-                            : '',
-                        false
-                    );
+                    $smarty->assign('title', '');
+
+                    $mainbox_title = '';
+                    $capture = $smarty->getRuntime('Capture');
+
+                    if ($capture instanceof CaptureRuntime) {
+                        $ref_object = new \ReflectionObject($capture);
+                        $runtimes = $ref_object->getProperty('namedBuffer');
+                        $runtimes->setAccessible(true);
+                        $named_buffer = $runtimes->getValue($capture);
+                        $mainbox_title = $named_buffer['mainbox_title'] ?? '';
+                    }
+
+                    $smarty->assign('title', $mainbox_title);
                 }
                 $block_content = $smarty->fetch('views/block_manager/render/wrapper.tpl');
             } else {
@@ -737,8 +745,17 @@ class RenderManager
 
         $smarty->clearAllAssign();
         $smarty->assign($smarty_original_vars); // restore original vars
-        $smarty->ext->_capture->namedBuffer['title'] = null;
-        $smarty->ext->_capture->namedBuffer['mainbox_title'] = null;
+        $capture = $smarty->getRuntime('Capture');
+
+        if ($capture instanceof CaptureRuntime) {
+            $ref_object = new \ReflectionObject($capture);
+            $runtimes = $ref_object->getProperty('namedBuffer');
+            $runtimes->setAccessible(true);
+            $named_buffer = $runtimes->getValue($capture);
+            $named_buffer['title'] = null;
+            $named_buffer['mainbox_title'] = null;
+            $runtimes->setValue($capture, $named_buffer);
+        }
 
         if (!empty($wrap_id)) {
             $block_content = '<div id="' . $wrap_id . '">' . $block_content . '<!--' . $wrap_id . '--></div>';

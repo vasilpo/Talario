@@ -1,38 +1,44 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\SmartyEngine;
 
-class FileResource extends \Smarty_Internal_Resource_File
+use Smarty\Resource\FilePlugin;
+use Smarty\Template;
+use Smarty\Template\Source;
+
+class FileResource extends FilePlugin
 {
     /**
      * Allows to override template source with addons
-     * @param \Smarty_Template_Source   $source
-     * @param \Smarty_Internal_Template $_template
+     *
+     * @param Source        $source    Source
+     * @param Template|null $_template Template
      */
-    public function populate(\Smarty_Template_Source $source, \Smarty_Internal_Template $_template=null)
+    public function populate(Source $source, Template $_template = null)
     {
         if ($_template !== null) {
-            $overridden_resource = fn_addon_template_overrides($source->resource, $_template);
+            /** @var Core $smarty */
+            $smarty = $_template->getSmarty();
+            $overridden_resource = fn_addon_template_overrides($source->resource, $smarty);
 
             if ($overridden_resource != $source->resource) {
-                //$source->unique_resource = str_replace($source->resource, $overridden_resource, $source->unique_resource);
                 $source->name = $overridden_resource;
                 $source->resource = $overridden_resource;
             }
         }
 
-        return parent::populate($source, $_template);
+        parent::populate($source, $_template);
     }
 }

@@ -392,6 +392,14 @@ msgctxt "Languages::ab__am.tools.fix_licenses.empty"
 msgid "No fixing required!"
 msgstr "No fixing required!"
 
+msgctxt "Languages::ab__am.tools.run_migration"
+msgid "Run migration"
+msgstr "Run migration"
+
+msgctxt "Languages::ab__am.tools.run_migration.btn"
+msgid "Run"
+msgstr "Run"
+
 msgctxt "Languages::ab__am.available_sets"
 msgid "List of available AB: Sets"
 msgstr "List of available AB: Sets"

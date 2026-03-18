@@ -21,8 +21,7 @@
                 {$product.image_pairs = []}
             {/if}
 
-            {$_junk = array_unshift($product.image_pairs, $product.main_pair)}
-            {$product.image_pairs = $product.image_pairs scope="parent"}
+            {$product.image_pairs = fn_ab__vg_array_unshift($product.image_pairs, $product.main_pair) scope="parent"}
         {/if}
     </div>
 {/if}

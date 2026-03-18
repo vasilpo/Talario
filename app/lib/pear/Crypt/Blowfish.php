@@ -245,7 +245,7 @@ class Crypt_Blowfish
         for ($i = 0; $i < $len; $i += 8) {
             list(,$Xl,$Xr) = unpack("N2",substr($cipherText,$i,8));
             $this->_decipher($Xl, $Xr);
-            $plainText .= pack("N2", $Xl, $Xr);
+            $plainText .= trim(pack("N2", $Xl, $Xr), "\x0");
         }
         return $plainText;
     }
@@ -318,7 +318,7 @@ class Crypt_Blowfish
             $this->_S[3][$i] = $datal;
             $this->_S[3][$i+1] = $datar;
         }
-        
+
         return true;
     }
     

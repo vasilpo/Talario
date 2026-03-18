@@ -1,0 +1,50 @@
+@import "../../responsive/css/addons/blog/styles.less";
+
+/* ==========================================================================
+Blog
+========================================================================== */
+.ty-blog * {
+    font-size: 16px;
+}
+
+/* Template: templates/addons/blog/blocks/recent_posts.tpl */
+.ty-blog-sidebox__item {
+    border-bottom-color: transparent;
+}
+
+.ty-blog-sidebox__item-link {
+    color: var(--cs-btn-link-color);
+}
+
+.ty-blog-sidebox__item-link:hover {
+    color: var(--cs-btn-link-color-highlight);
+}
+
+/* Recent Posts Scroller */
+.ty-blog-recent-posts-scroller__item .ty-blog__date {
+    color: var(--cs-secondary-text);
+    font-size: var(--cs-font-size-small);
+}
+
+.ty-blog-recent-posts-scroller__img-block {
+    max-height: 200px;
+    min-height: 200px;
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.ty-blog-recent-posts-scroller__title {
+    font-size: var(--cs-font-size-large);
+    font-weight: 700;
+    color: var(--cs-font);
+}
+
+.ty-blog-recent-posts-scroller__title:hover {
+    color: var(--cs-font-hover);
+}
+
+.ty-blog__img-block {
+    border-radius: var(--cs-base-rounded-corners-radius);
+    overflow: hidden;
+}
+
+/* /Blog */

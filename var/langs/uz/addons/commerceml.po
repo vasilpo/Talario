@@ -1000,3 +1000,55 @@ msgstr "To connect your CRMs to CS-Cart, go to <b>Administration → <a href=\"[
 msgctxt "Languages::commerceml.the_file_does_not_exist"
 msgid "The file [file] does not exist."
 msgstr "The file [file] does not exist."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names"
+msgid "Names of product features"
+msgstr "Names of product features"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.internal"
+msgid "Use names from CRM in CS-Cart admin panel"
+msgstr "Use names from CRM in CS-Cart admin panel"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.internal.tooltip"
+msgid "Internal feature names in CS-Cart will always change match those in your CRM. You can safely edit display names for the storefront."
+msgstr "Internal feature names in CS-Cart will always change match those in your CRM. You can safely edit display names for the storefront."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.both"
+msgid "Use names from CRM everywhere in CS-Cart"
+msgstr "Use names from CRM everywhere in CS-Cart"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.both.tooltip"
+msgid "Feature names in CS-Cart will change to match the names in your CRM. Any changes to feature names on the CS-Cart end will be lost."
+msgstr "Feature names in CS-Cart will change to match the names in your CRM. Any changes to feature names on the CS-Cart end will be lost."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.no"
+msgid "Do not use names from CRM"
+msgstr "Do not use names from CRM"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.no.tooltip"
+msgid "Feature names will come from CRM only on first import. Subsequent changes in the CRM won't affect existing feature names in CS-Cart."
+msgstr "Feature names will come from CRM only on first import. Subsequent changes in the CRM won't affect existing feature names in CS-Cart."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names"
+msgid "Names of feature variants"
+msgstr "Names of feature variants"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.yes"
+msgid "Use names from CRM"
+msgstr "Use names from CRM"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.yes.tooltip"
+msgid "Feature variant names will always be updated from the CRM. Your edits will be lost on import."
+msgstr "Feature variant names will always be updated from the CRM. Your edits will be lost on import."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.no"
+msgid "Do not use names from CRM"
+msgstr "Do not use names from CRM"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.no.tooltip"
+msgid "Feature variant names will come from CRM only on first import. Useful if you plan to change their names in CS-Cart."
+msgstr "Feature variant names will come from CRM only on first import. Useful if you plan to change their names in CS-Cart."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature.vendor_notice"
+msgid "The settings about the names of product features and their variants only affect the product features that belong to you, not to the marketplace."
+msgstr "The settings about the names of product features and their variants only affect the product features that belong to you, not to the marketplace."

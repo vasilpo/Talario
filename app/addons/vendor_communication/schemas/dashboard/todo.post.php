@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\Addons\VendorCommunication\CommunicationTypes;
 use Tygh\Enum\NotificationSeverity;
@@ -43,9 +43,20 @@ $schema['vendor_communication_admin_to_vendor_messages'] = [
 
         $threads_count = count($thread_ids);
 
+        $action_url = fn_vendor_communitcation_generate_dashboard_action_url(
+            'vendor_communication',
+            'threads',
+            CommunicationTypes::VENDOR_TO_ADMIN,
+            $auth
+        );
+
+        if (!$action_url) {
+            return false;
+        }
+
         return [
             'text' => __('vendor_communication.dashboard.todo.messages_from_administrator', [$threads_count]),
-            'action_url' => Url::buildUrn(['vendor_communication', 'threads'], ['communication_type' => CommunicationTypes::VENDOR_TO_ADMIN])
+            'action_url' => $action_url,
         ];
     }
 ];
@@ -69,9 +80,20 @@ $schema['vendor_communication_customer_to_vendor_messages'] = [
 
         $threads_count = count($thread_ids);
 
+        $action_url = fn_vendor_communitcation_generate_dashboard_action_url(
+            'vendor_communication',
+            'threads',
+            CommunicationTypes::VENDOR_TO_CUSTOMER,
+            $auth
+        );
+
+        if (!$action_url) {
+            return false;
+        }
+
         return [
             'text' => __('vendor_communication.dashboard.todo.messages_from_customers', [$threads_count]),
-            'action_url' => Url::buildUrn(['vendor_communication', 'threads'], ['communication_type' => CommunicationTypes::VENDOR_TO_CUSTOMER])
+            'action_url' => $action_url,
         ];
     }
 ];
@@ -94,9 +116,20 @@ $schema['vendor_communication_vendor_to_admin_messages'] = [
 
         $threads_count = count($thread_ids);
 
+        $action_url = fn_vendor_communitcation_generate_dashboard_action_url(
+            'vendor_communication',
+            'threads',
+            CommunicationTypes::VENDOR_TO_ADMIN,
+            $auth
+        );
+
+        if (!$action_url) {
+            return false;
+        }
+
         return [
             'text' => __('vendor_communication.dashboard.todo.messages_from_vendors', [$threads_count]),
-            'action_url' => Url::buildUrn(['vendor_communication', 'threads'], ['communication_type' => CommunicationTypes::VENDOR_TO_ADMIN])
+            'action_url' => $action_url,
         ];
     }
 ];
@@ -123,11 +156,59 @@ $schema['vendor_communication_customer_to_admin_messages'] = [
 
         $threads_count = count($thread_ids);
 
+        $action_url = fn_vendor_communitcation_generate_dashboard_action_url(
+            'vendor_communication',
+            'threads',
+            CommunicationTypes::VENDOR_TO_CUSTOMER,
+            $auth
+        );
+
+        if (!$action_url) {
+            return false;
+        }
+
         return [
             'text' => __('vendor_communication.dashboard.todo.messages_from_customers', [$threads_count]),
-            'action_url' => Url::buildUrn(['vendor_communication', 'threads'], ['communication_type' => CommunicationTypes::VENDOR_TO_CUSTOMER])
+            'action_url' => $action_url,
         ];
     }
 ];
 
 return $schema;
+
+/**
+ * Generate action url for dasboard.
+ *
+ * @param string                                           $controller Dispatch controller.
+ * @param string                                           $mode       Dispatch mode.
+ * @param string                                           $type       Query param.
+ * @param array<string, string|int|array<string|int, int>> $auth       Authentication data
+ *
+ * @return string|bool
+ *
+ * @psalm-suppress PossiblyInvalidArgument
+ */
+function fn_vendor_communitcation_generate_dashboard_action_url($controller, $mode, $type, $auth)
+{
+    $is_available = fn_check_permissions(
+        $controller,
+        $mode,
+        'admin',
+        '',
+        [
+            'dispatch' => $controller . '.' . $mode,
+            'communication_type' => $type
+        ],
+        $auth['area'],
+        $auth['user_id']
+    );
+
+    if ($is_available) {
+        return Url::buildUrn(
+            [$controller, $mode],
+            ['communication_type' => $type]
+        );
+    }
+
+    return false;
+}

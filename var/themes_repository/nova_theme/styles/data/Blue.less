@@ -1,0 +1,185 @@
+// Nova theme variables
+// - Convert Less to CSS variables: css/tygh/less_functions.less
+// - Email variables (email_templates.xml): @links, @base, @font, @general_bg_color, @body_font, @body_font_size
+
+@rounded_corners:           true;                                                                                           // var(--cs-rounded-corners)
+@links:                     #1693e9;                                                                                        // var(--cs-links)
+@links_hover:               #1276ba;                                                                                        // var(--cs-links-hover)
+@menu_links:                #fff;                                                                                           // var(--cs-menu-links)
+@menu:                      #1976d2;                                                                                        // var(--cs-menu)
+@menu_hover:                darken(@menu, 5%);                                                                              // var(--cs-menu-hover)
+@base:                      #e1e5ec;                                                                                        // var(--cs-base)
+@font:                      #23252b;                                                                                        // var(--cs-font)
+@secondary_text:            #929ba8;                                                                                        // var(--cs-secondary-text)
+@primary_button:            #1976d2;                                                                                        // var(--cs-primary-button)
+@primary_button_hover:      contrast(@primary_button, darken(@primary_button, 15%), lighten(@primary_button, 10%));         // var(--cs-primary-button-hover)
+@secondary_button:          #8d97a4;                                                                                        // var(--cs-secondary-button)
+@secondary_button_hover:    contrast(@secondary_button, darken(@secondary_button, 15%), lighten(@secondary_button, 10%));   // var(--cs-secondary-button-hover)
+@tertiary_button:           #f5f5f5;                                                                                        // var(--cs-tertiary-button)
+@tertiary_button_hover:     contrast(@tertiary_button, darken(@tertiary_button, 15%), lighten(@tertiary_button, 10%));      // var(--cs-tertiary-button-hover)
+@sidebar:                   #fff;                                                                                           // var(--cs-sidebar)
+@price:                     #23252b;                                                                                        // var(--cs-price)
+@discount_label:            #f4867e;                                                                                        // var(--cs-discount-label)
+@product_label:             @discount_label;                                                                                // var(--cs-product-label)
+@shipping_label:            #ffb527;                                                                                        // var(--cs-shipping-label)
+@in_stock:                  #6bc93e;                                                                                        // var(--cs-in-stock)
+@out_of_stock:              #e34649;                                                                                        // var(--cs-out-of-stock)
+@top_panel_links:           #23252b;                                                                                        // var(--cs-top-panel-links)
+@top_panel_links_hover:     contrast(@top_panel_links, darken(@top_panel_links, 30%), lighten(@top_panel_links, 30%));      // var(--cs-top-panel-links-hover)
+@top_panel_text:            #555;                                                                                           // var(--cs-top-panel-text)
+@footer_text:               #23252b;                                                                                        // var(--cs-footer-text)
+@footer_text_hover:         contrast(@footer_text, darken(@footer_text, 30%), lighten(@footer_text, 30%));                  // var(--cs-footer-text-hover)
+@decorative:                #46aaf2;                                                                                        // var(--cs-decorative)
+
+@general_bg_color:          #fff;                               // var(--cs-general-bg-color)
+@general_bg_image:          false;                              // var(--cs-general-bg-image)
+@general_bg_repeat:         repeat;                             // var(--cs-general-bg-repeat)
+@general_bg_scroll:         scroll;                             // var(--cs-general-bg-scroll)
+
+@top_panel_bg:              #e3f2fd;                            // var(--cs-top-panel-bg)
+@top_panel_bg_full:         true;                               // var(--cs-top-panel-bg-full)
+@top_panel_bg_transparent:  false;                              // var(--cs-top-panel-bg-transparent)
+@top_panel_bg_grad_stop:    #e3f2fd;                            // var(--cs-top-panel-bg-grad-stop)
+
+@header_bg:                 #fff;                               // var(--cs-header-bg)
+@header_bg_full:            false;                              // var(--cs-header-bg-full)
+@header_bg_transparent:     false;                              // var(--cs-header-bg-transparent)
+@header_bg_grad_stop:       #fff;                               // var(--cs-header-bg-grad-stop)
+
+@content_bg:                #fff;                               // var(--cs-content-bg)
+@content_bg_full:           false;                              // var(--cs-content-bg-full)
+@content_bg_transparent:    false;                              // var(--cs-content-bg-transparent)
+
+@footer_bg:                 #fff;                            // var(--cs-footer-bg)
+@footer_bg_full:            true;                               // var(--cs-footer-bg-full)
+@footer_bg_transparent:     false;                              // var(--cs-footer-bg-transparent)
+@footer_bg_grad_stop:       #e3f2fd;                               // var(--cs-footer-bg-grad-stop)
+
+@body_font:                 Inter,'Helvetica Neue',-apple-system,sans-serif;    // var(--cs-body-font)
+@body_font_size:            16px;                                               // var(--cs-body-font-size)
+@body_font_style:           normal;                                             // var(--cs-body-font-style)
+@body_font_weight:          normal;                                             // var(--cs-body-font-weight)
+@headings_font:             Inter,'Helvetica Neue',-apple-system,sans-serif;    // var(--cs-headings-font)
+@headings_font_size:        28px;                                               // var(--cs-headings-font-size)
+@headings_font_decoration:  none;                                               // var(--cs-headings-font-decoration)
+@headings_font_style:       normal;                                             // var(--cs-headings-font-style)
+@headings_font_weight:      bold;                                               // var(--cs-headings-font-weight)
+@links_font:                Inter,'Helvetica Neue',-apple-system,sans-serif;    // var(--cs-links-font)
+@links_font_size:           16px;                                               // var(--cs-links-font-size)
+@links_font_decoration:     none;                                               // var(--cs-links-font-decoration)
+@links_font_style:          normal;                                             // var(--cs-links-font-style)
+@links_font_weight:         normal;                                             // var(--cs-links-font-weight)
+@price_font:                Inter,'Helvetica Neue',-apple-system,sans-serif;    // var(--cs-price-font)
+@price_font_size:           28px;                                               // var(--cs-price-font-size)
+@price_font_decoration:     none;                                               // var(--cs-price-font-decoration)
+@price_font_style:          normal;                                             // var(--cs-price-font-style)
+@price_font_weight:         bold;                                               // var(--cs-price-font-weight)
+@buttons_font:              Inter,'Helvetica Neue',-apple-system,sans-serif;    // var(--cs-buttons-font)
+@buttons_font_size:         16px;                                               // var(--cs-buttons-font-size)
+@buttons_font_decoration:   none;                                               // var(--cs-buttons-font-decoration)
+@buttons_font_style:        normal;                                             // var(--cs-buttons-font-style)
+@buttons_font_weight:       bold;                                               // var(--cs-buttons-font-weight)
+
+@checkout_selected_control_border:      #1976d2;                // var(--cs-checkout-selected-control-border)
+@checkout_control_border:               #e1e5ec;                // var(--cs-checkout-control-border)
+@checkout_input_border:                 #e1e5ec;                // var(--cs-checkout-input-border)
+@checkout_selected_input_border:        #1976d2;                // var(--cs-checkout-selected-input-border)
+@checkout_step_title:                   #23252b;                // var(--cs-checkout-step-title)
+@checkout_input_text:                   #23252b;                // var(--cs-checkout-input-text)
+@checkout_input_label:                  #929ba8;                // var(--cs-checkout-input-label)
+@checkout_control_background:           #fff;                   // var(--cs-checkout-control-background)
+@checkout_selected_control_background:  #e3f2fd;                // var(--cs-checkout-selected-control-background)
+@checkout_control_title:                #262831;                // var(--cs-checkout-control-title)
+@checkout_control_description:          #929ba8;                // var(--cs-checkout-control-description)
+@checkout_control_label:                #23252b;                // var(--cs-checkout-control-label)
+@checkout_terms_background:             #ffffff;                // var(--cs-checkout-terms-background)
+@checkout_error:                        #e34649;                // var(--cs-checkout-error)
+@checkout_highlight:                    #fcf8e3;                // var(--cs-checkout-highlight)
+@checkout_link:                         #1693e9;                // var(--cs-checkout-link)
+
+
+
+// // Bootstrap variables
+
+// //
+// // Variables
+// // --------------------------------------------------
+
+
+// Component sizing
+// -------------------------
+// Based on 14px font-size and 20px line-height
+
+@fontSizeLarge:         round(@body_font_size * 1.25); // 20px  // var(--cs-font-size-large)
+@fontSizeSmall:         round(@body_font_size * 0.85); // 14px  // var(--cs-font-size-small)
+@fontSizeMini:          round(@body_font_size * 0.75); // 12px  // var(--cs-font-size-mini)
+
+// Use var(--cs-base-rounded-corners-radius) and var(--cs-rounded-corners-radius-small) instead
+@baseBorderRadius:      12px;                                   // var(--cs-base-border-radius)
+@borderRadiusSmall:     8px;                                    // var(--cs-border-radius-small)
+
+
+// Tables
+// -------------------------
+@tableBackgroundAccent:             #f5f5f5; // for striping                    // var(--cs-table-background-accent)
+
+// Buttons
+// -------------------------
+@btnColor:                          #23252b;                    // var(--cs-btn-color)
+@btnColorHighlight:                 #23252b;                    // var(--cs-btn-color-highlight)
+@btnBackground:                     #f5f5f5;                    // var(--cs-btn-background)
+
+@btnPrimaryColor:                   contrast(darken(@primary_button, 10%), #000, #fff);         // var(--cs-btn-primary-color)
+@btnPrimaryColorHighlight:          contrast(darken(@primary_button_hover, 10%), #000, #fff);   // var(--cs-btn-primary-color-highlight)
+
+@btnSecondaryColor:                 contrast(darken(@secondary_button, 10%), #000, #fff);          // var(--cs-btn-secondary-color)
+@btnSecondaryColorHighlight:        contrast(darken(@secondary_button_hover, 10%), #000, #fff);    // var(--cs-btn-secondary-color-highlight)
+
+@btnTertiaryColor:                  contrast(darken(@tertiary_button, 10%), #23252b, #d4d6dc);          // var(--cs-btn-tertiary-color)
+@btnTertiaryColorHighlight:         contrast(darken(@tertiary_button_hover, 10%), #23252b, #d4d6dc);    // var(--cs-btn-tertiary-color-highlight)
+
+@btnLinkColor:                    #23252b;                                                                                          // var(--cs-btn-link-color)
+@btnLinkColorHighlight:           contrast(darken(@btnLinkColor, 10%), darken(@btnLinkColor, 15%), lighten(@btnLinkColor, 10%));    // var(--cs-btn-link-color-highlight)
+@btnLinkBackground:               rgba(255, 255, 255, 255);                                                                         // var(--cs-btn-link-background)
+@btnLinkBackgroundHighlight:      rgba(255, 255, 255, 255);                                                                         // var(--cs-btn-link-background-highlight)
+@btnLinkBorder:                   rgba(255, 255, 255, 255);                                                                         // var(--cs-btn-link-border)
+
+
+// Forms
+// -------------------------
+@inputBackground:               #fff;                           // var(--cs-input-background)
+@inputBorder:                   #e1e5ec;                        // var(--cs-input-border)
+@inputBorderHighlight:          #1976d2;                        // var(--cs-input-border-highlight)
+@inputPlaceholder:              #929ba8;                        // var(--cs-input-placeholder)
+@inputMutedText:                #e1e5ec;                        // var(--cs-input-muted-text)
+// Use var(--cs-input-rounded-corners-radius) instead
+@inputBorderRadius:             @borderRadiusSmall;             // var(--cs-input-border-radius)
+
+
+// Dropdowns
+// -------------------------
+@dropdownLinkColor:             @font;                          // var(--cs-dropdown-link-color)
+@dropdownLinkColorHover:        @font;                          // var(--cs-dropdown-link-color-hover)
+@dropdownLinkBackgroundHover:   #e3f2fd;                        // var(--cs-dropdown-link-background-hover)
+@dropdownTitleLinkColor:        @font;                          // var(--cs-dropdown-title-link-color)
+@dropdownTitleLinkStyle2Color:  @font;                          // var(--cs-dropdown-title-link-style2-color)
+
+
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+
+// Form states and alerts
+// -------------------------
+@successText:             #409945;                                      // var(--cs-success-text)
+@successBackground:       #e8f5e9;                                      // var(--cs-success-background)
+
+
+// Tooltips and popovers
+// -------------------------
+@modalFontFamily:         Inter,'Helvetica Neue',-apple-system,sans-serif;  // var(--cs-modal-font-family)
+
+
+// New variables
+@shadow:                    ~"0px calc(8px * 2) calc(8px * 6) rgba(0, 0, 0, 0.15), 0px 0px calc(8px * 2) rgba(0, 0, 0, 0.025)";   // var(--cs-shadow)

@@ -1,17 +1,19 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Hybridauth\HttpClient\Util;
+use Hybridauth\Hybridauth;
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\SiteArea;
@@ -79,12 +81,10 @@ function fn_hybrid_auth_init()
     $config = Registry::get('config.dir.addons') . 'hybrid_auth/' . 'process_config.php';
 
     try {
-        $hybridauth = new Hybrid_Auth($config);
-    }
-        // if sometin bad happen
-    catch( Exception $e ){
+        $hybridauth = new Hybridauth($config);
 
-        switch ( $e->getCode() ) {
+    } catch (Exception $e) {
+        switch ($e->getCode()) {
             case 0 : $message = __('hybrid_auth.unspecified_error'); break;
             case 1 : $message = __('hybrid_auth.configuration_error'); break;
             case 2 : $message = __('hybrid_auth.provider_error_configuration'); break;
@@ -197,8 +197,20 @@ function fn_hybrid_auth_get_providers_list($active = true)
             $available_providers = fn_get_schema('hybrid_auth', 'providers');
 
             foreach ($providers_list as $provider_id => $provider) {
-                $providers_list[$provider_id]['params'] = unserialize($provider['app_params']);
-                $providers_list[$provider_id]['icon'] = fn_get_hybrid_auth_provider_icon($provider['provider']);
+                $providers_list[$provider_id]['params'] =
+                    $provider['app_params']
+                        ? unserialize($provider['app_params'])
+                        : '';
+
+                // FIXME: this code is used because hybrid_auth lib still didn't update Twitter provider. Remove when lib is updated.
+                if (isset($available_providers[$provider['provider']]['icon_name'])) {
+                    $icon_name = $available_providers[$provider['provider']]['icon_name'];
+                }
+                if (isset($available_providers[$provider['provider']]['display_name'])) {
+                    $providers_list[$provider_id]['display_name'] = $available_providers[$provider['provider']]['display_name'];
+                }
+
+                $providers_list[$provider_id]['icon'] = fn_get_hybrid_auth_provider_icon($provider['provider'], $icon_name ?? null);
                 $providers_list[$provider_id]['storefront_ids'] = fn_hybrid_auth_get_storefront_ids($provider_id);
 
                 if (!SiteArea::isStorefront(AREA)) {
@@ -356,7 +368,7 @@ function fn_hybrid_auth_create_user($auth_data, $provider)
      */
     fn_set_hook('hybrid_auth_create_user', $auth_data, $provider, $user_data);
 
-    list($user_data['user_id'], $profile_id) = fn_update_user('', $user_data, $auth, true, false, false);
+    [$user_data['user_id'],] = fn_update_user('', $user_data, $auth, true, false);
 
     if (!empty($user_data['email'])) {
         /** @var \Tygh\Mailer\Mailer $mailer */
@@ -412,6 +424,10 @@ function fn_hybrid_auth_process($action, &$redirect_url = '')
         $provider_data = fn_hybrid_auth_get_provider_data($provider_id);
         $provider = empty($provider_data['provider']) ? '' : $provider_data['provider'];
 
+        if (!empty($provider)) {
+            Tygh::$app['session']['hybrid_auth']['provider'] = $provider;
+        }
+
         if (!empty($provider) && $hybridauth->isConnectedWith($provider)) {
 
             $auth_data = fn_hybrid_auth_get_auth_data($hybridauth, $provider);
@@ -420,7 +436,6 @@ function fn_hybrid_auth_process($action, &$redirect_url = '')
                 return HYBRID_AUTH_ERROR_AUTH_DATA;
             }
 
-            fn_hybrid_auth_fix_old_user($auth_data, $provider_id); // linked users without providers. for compatibility with the old version of the add-on
             $user_data = fn_hybrid_auth_get_user_data($auth_data);
 
             if ($action === 'login_provider') {
@@ -437,22 +452,11 @@ function fn_hybrid_auth_process($action, &$redirect_url = '')
 
         } else {
 
-            if (!empty($provider)) {
-                $params = [];
-
-                if ($provider === 'OpenID') {
-                    $params['openid_identifier'] = @ $_REQUEST['openid_identifier'];
-                }
-
-                if ($provider === 'twitter') {
-                    $params['login_done'] = fn_url('/auth/twitter');
-                }
-            }
-
             if (!empty($_REQUEST['redirect_to_idp'])) {
+                Tygh::$app['session']['hybrid_auth']['return_to_url'] = Util::getCurrentUrl(true);
 
                 try {
-                    $adapter = $hybridauth->authenticate($provider, $params);
+                    $hybridauth->authenticate($provider);
                     $status = HYBRID_AUTH_OK;
 
                 } catch (Exception $e) {
@@ -643,30 +647,19 @@ function fn_hybrid_auth_is_exist($auth_data)
 }
 
 /**
- * @param object $auth_data   Auth data
- * @param int    $provider_id Provider identifier
- */
-function fn_hybrid_auth_fix_old_user($auth_data, $provider_id)
-{
-    $user_data = db_get_row('SELECT user_id FROM ?:hybrid_auth_users WHERE identifier = ?s AND provider_id = 0', $auth_data->identifier);
-
-    if (!empty($user_data)) {
-        db_query('UPDATE ?:hybrid_auth_users SET provider_id = ?i WHERE user_id = ?i', $provider_id, $user_data['user_id']);
-    }
-}
-
-/**
  * Gets path to provider's icon.
  *
- * @param string $provider_id Provide identifier
+ * @param string      $provider_id Provide identifier
+ * @param string|null $icon_name   Forced icon name
  *
  * @return string Path to icon
  */
-function fn_get_hybrid_auth_provider_icon($provider_id)
+function fn_get_hybrid_auth_provider_icon($provider_id, $icon_name = null)
 {
     $theme = Themes::areaFactory();
     $icons_pack = Registry::ifGet('addons.hybrid_auth.icons_pack', '');
-    if ($file_info = $theme->getContentPath("media/images/addons/hybrid_auth/icons/{$icons_pack}/{$provider_id}.png")) {
+    $icon_name = $icon_name ?? $provider_id;
+    if ($file_info = $theme->getContentPath("media/images/addons/hybrid_auth/icons/{$icons_pack}/{$icon_name}.png")) {
         return Registry::get('config.current_location') . '/' . $file_info[Themes::PATH_RELATIVE];
     }
 

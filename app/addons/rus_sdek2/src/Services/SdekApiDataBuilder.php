@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\RusSdek2\Services;
 
@@ -438,13 +438,13 @@ class SdekApiDataBuilder
             ];
 
             foreach ($receipt->getItems() as $item) {
-                if ($item->getType() !== ReceiptItem::TYPE_PRODUCT || !isset($shipment_package['products'][$item->getId()])) {
+                $item_id = $item->getId();
+
+                if ($item->getType() !== ReceiptItem::TYPE_PRODUCT || !isset($shipment_package['products'][$item_id])) {
                     continue;
                 }
 
-                $item_id = $item->getId();
-                $amount = $item->getQuantity();
-
+                $amount = $shipment_package['products'][$item_id];
                 $data_product = $order_info['products'][$item_id];
 
                 $ware_key = !empty($data_product['product_code']) ? $data_product['product_code'] : $data_product['product_id'];
@@ -533,10 +533,12 @@ class SdekApiDataBuilder
             TaxType::VAT_7 => 7,
             TaxType::VAT_10 => 10,
             TaxType::VAT_20 => 20,
+            TaxType::VAT_22 => 22,
             TaxType::VAT_105 => 5,
             TaxType::VAT_107 => 7,
             TaxType::VAT_110 => 10,
             TaxType::VAT_120 => 20,
+            TaxType::VAT_122 => 22,
         ];
 
         if ($tax_type === TaxType::NONE) {
@@ -570,6 +572,9 @@ class SdekApiDataBuilder
                 break;
             case 20:
                 $result = $price * 20 / 120;
+                break;
+            case 22:
+                $result = $price * 22 / 122;
                 break;
             default:
                 $result = 0;

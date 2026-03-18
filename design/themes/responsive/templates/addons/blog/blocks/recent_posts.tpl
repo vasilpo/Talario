@@ -6,7 +6,7 @@
     <ul class="ty-blog-sidebox__list">
 {foreach from=$items item="page"}
         <li class="ty-blog-sidebox__item">
-            <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}">{$page.page}</a>
+            <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}" class="ty-blog-sidebox__item-link">{$page.page}</a>
         </li>
 {/foreach}
     </ul>

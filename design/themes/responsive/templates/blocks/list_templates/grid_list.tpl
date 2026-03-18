@@ -25,9 +25,13 @@
     {* FIXME: Don't move this file *}
     {script src="js/tygh/product_image_gallery.js"}
 
-    {if $settings.Appearance.enable_quick_view == 'Y'}
+    {if $settings.Appearance.enable_quick_view === "YesNo::YES"|enum}
         {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
     {/if}
+    {$price_first = $price_first|default:false}
+    {$enable_quick_view_on_product_image = $enable_quick_view_on_product_image|default:false}
+    {$enable_quick_view_on_product_list_control = $enable_quick_view_on_product_list_control|default:true}
+
     <div class="grid-list">
         {strip}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
@@ -37,9 +41,9 @@
                             {assign var="obj_id" value=$product.product_id}
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data.tpl" product=$product}
-                            
-                            <div class="ty-grid-list__item ty-quick-view-button__wrapper 
-                                {if $settings.Appearance.enable_quick_view == 'Y' || $show_features} ty-grid-list__item--overlay{/if}">
+
+                            <div class="ty-grid-list__item ty-quick-view-button__wrapper
+                                {if $settings.Appearance.enable_quick_view === "YesNo::YES"|enum || $show_add_to_cart || $show_list_buttons || $show_features} ty-grid-list__item--overlay{/if}">
                                 {assign var="form_open" value="form_open_`$obj_id`"}
                                 {$smarty.capture.$form_open nofilter}
                                 {hook name="products:product_multicolumns_list"}
@@ -48,6 +52,13 @@
 
                                             {assign var="product_labels" value="product_labels_`$obj_prefix``$obj_id`"}
                                             {$smarty.capture.$product_labels nofilter}
+
+                                            {if $settings.Appearance.enable_quick_view === "YesNo::YES"|enum && $enable_quick_view_on_product_image}
+                                                {include file="views/products/components/quick_view_link.tpl"
+                                                    quick_nav_ids=$quick_nav_ids
+                                                    quick_view_link_class=$quick_view_link_class
+                                                }
+                                            {/if}
                                         </div>
 
                                         <div class="ty-grid-list__item-name">
@@ -69,11 +80,18 @@
 
                                         {hook name="products:list_price_block"}
                                             <div class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
+                                                {if $price_first}
+                                                    {assign var="price" value="price_`$obj_id`"}
+                                                    {$smarty.capture.$price nofilter}
+                                                {/if}
+
                                                 {assign var="old_price" value="old_price_`$obj_id`"}
                                                 {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
 
-                                                {assign var="price" value="price_`$obj_id`"}
-                                                {$smarty.capture.$price nofilter}
+                                                {if !$price_first}
+                                                    {assign var="price" value="price_`$obj_id`"}
+                                                    {$smarty.capture.$price nofilter}
+                                                {/if}
 
                                                 {assign var="clean_price" value="clean_price_`$obj_id`"}
                                                 {$smarty.capture.$clean_price nofilter}
@@ -87,8 +105,11 @@
                                             <div class="ty-grid-list__control">
                                                 {capture name="product_multicolumns_list_control_data"}
                                                     {hook name="products:product_multicolumns_list_control"}
-                                                        {if $settings.Appearance.enable_quick_view == 'Y'}
-                                                            {include file="views/products/components/quick_view_link.tpl" quick_nav_ids=$quick_nav_ids}
+                                                        {if $settings.Appearance.enable_quick_view === "YesNo::YES"|enum && $enable_quick_view_on_product_list_control}
+                                                            {include file="views/products/components/quick_view_link.tpl"
+                                                                quick_nav_ids=$quick_nav_ids
+                                                                quick_view_link_class=$quick_view_link_class
+                                                            }
                                                         {/if}
 
                                                         {if $show_add_to_cart}

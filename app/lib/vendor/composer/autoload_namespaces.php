@@ -6,11 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Twig_Extensions_' => array($vendorDir . '/twig/extensions/lib'),
-    'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Text' => array($baseDir . '/pear'),
-    'Symfony\\Component\\Filesystem\\' => array($vendorDir . '/symfony/filesystem'),
-    'Symfony\\Component\\Config\\' => array($vendorDir . '/symfony/config'),
     'Pimple' => array($vendorDir . '/pimple/pimple/src'),
     'PEAR' => array($baseDir . '/pear'),
     'Net' => array($baseDir . '/pear'),

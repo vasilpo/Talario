@@ -1,5 +1,6 @@
-<div class="litecheckout__group">
-    <div class="litecheckout__item litecheckout__item--fill">
+{$is_checkout_customer_title_fill = $is_checkout_customer_title_fill|default:true}
+<div class="litecheckout__group ty-litecheckout__customer-title">
+    <div class="litecheckout__item {if $is_checkout_customer_title_fill}litecheckout__item--fill{/if}">
         <h2 class="litecheckout__step-title">{$block_title|default:__("lite_checkout.customer_information")}</h2>
     </div>
 

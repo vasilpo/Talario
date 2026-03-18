@@ -32,7 +32,8 @@ show_sku=$settings.abt__ut2.product_list.$tmpl.show_sku[$settings.ab__device]|de
 show_qty=$settings.abt__ut2.product_list.$tmpl.show_qty[$settings.ab__device]|default:{"YesNo::NO"|enum} === "YesNo::YES"|enum
 show_features=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_variations"
 show_descr=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_variations"
-show_brand_logo=$settings.abt__ut2.product_list.$tmpl.show_brand_logo[$settings.ab__device]|default:{"YesNo::NO"|enum} === "YesNo::YES"|enum
+show_brand_name=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "name"
+show_brand_logo=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "logo"
 show_list_buttons=false
 show_add_to_cart=$_show_add_to_cart
 but_role="action"

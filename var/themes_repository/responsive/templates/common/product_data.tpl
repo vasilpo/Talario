@@ -15,6 +15,7 @@
 {$product_amount = $product.inventory_amount|default:$product.amount}
 {$show_sku_label = $show_sku_label|default:true}
 {$show_amount_label = $show_amount_label|default:true}
+{$show_in_stock_label = $show_in_stock_label|default:true}
 {$show_out_of_stock_block = $show_out_of_stock_block|default:true}
 {$show_add_to_cart_block = $show_add_to_cart_block|default:true}
 {if !$config.tweaks.disable_dhtml && !$no_ajax}
@@ -82,29 +83,83 @@
 <input type="hidden" name="appearance[show_list_buttons]" value="{$show_list_buttons}" />
 <input type="hidden" name="appearance[but_role]" value="{$but_role}" />
 <input type="hidden" name="appearance[quick_view]" value="{$quick_view}" />
+<input type="hidden" name="appearance[show_quick_view_for_options]" value="{$show_quick_view_for_options}" >
 
 {strip}
 {capture name="buttons_product"}
+    {* Backward compatibility *}
+    {if $but_text}
+        {$add_to_cart_text = $but_text}
+    {/if}
+    {if $but_role}
+        {$add_to_cart_role = $but_role}
+    {/if}
+
+    {$add_to_cart_type = $add_to_cart_type|default:"text"}
+    {$select_options_text = $select_options_text|default:__("select_options")}
+    {if $add_to_cart_type === "icon"}
+        {if !isset($add_to_cart_icon)}
+            {$add_to_cart_icon = "ty-icon-cart ty-icon--no-margin"}
+        {/if}
+        {$add_to_cart_text = " "}
+        {$select_options_text = " "}
+    {/if}
     {hook name="products:add_to_cart"}
-        {if $product.has_options && !$show_product_options && !$details_page}
-            {if $but_role == "text"}
+        {if $product.has_options && !$show_product_options && !$details_page && $show_quick_view_for_options}
+            {include file="views/products/components/quick_view_for_options_link.tpl"
+                quick_nav_ids=false
+                quick_view_icon=$add_to_cart_icon
+                quick_view_text=$add_to_cart_text
+                quick_view_for_options_link_class=$quick_view_for_options_link_class
+            }
+        {elseif $product.has_options && !$show_product_options && !$details_page}
+            {if $add_to_cart_role == "text"}
                 {$opt_but_role="text"}
             {else}
                 {$opt_but_role="action"}
             {/if}
 
-            {include file="buttons/button.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_text=__("select_options") but_href="products.view?product_id=`$product.product_id`" but_role=$opt_but_role but_name="" but_meta="ty-btn__primary ty-btn__big"}
+            {include file="buttons/button.tpl" but_id="button_cart_`$obj_prefix``$obj_id`" but_text=$select_options_text but_href="products.view?product_id=`$product.product_id`" but_role=$opt_but_role but_name="" but_meta="ty-btn__primary ty-btn__big" but_icon=$add_to_cart_icon}
         {else}
             {hook name="products:add_to_cart_but_id"}
                 {$_but_id="button_cart_`$obj_prefix``$obj_id`"}
             {/hook}
 
             {if $extra_button}{$extra_button nofilter}&nbsp;{/if}
-            {include file="buttons/add_to_cart.tpl" but_id=$_but_id but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta}
+            {include file="buttons/add_to_cart.tpl" but_id=$_but_id but_name="dispatch[checkout.add..`$obj_id`]" but_role=$add_to_cart_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta but_text=$add_to_cart_text but_icon=$add_to_cart_icon}
+
+            {* Display as buttons_product capture *}
+            {capture name="add_to_cart_button_secondary_temp_`$obj_id`" assign="add_to_cart_button_secondary_temp_`$obj_id`"}
+                <div class="cm-reload-{$obj_prefix}{$obj_id}" id="add_to_cart_update_secondary_{$obj_prefix}{$obj_id}">
+                    {include file="buttons/add_to_cart.tpl"
+                        but_id="`$_but_id`_secondary"
+                        but_name="dispatch[checkout.add..`$obj_id`]"
+                        but_role=$add_to_cart_role
+                        block_width=$block_width
+                        obj_id=$obj_id
+                        product=$product
+                        but_meta=$add_to_cart_meta
+                        but_text=($add_to_cart_text|default:__("add_to_cart_short"))
+                        but_icon=$add_to_cart_icon
+                        add_to_cart_meta="`$add_to_cart_meta` ty-btn__add-to-cart--secondary"
+                    }
+                <!--add_to_cart_update_secondary_{$obj_prefix}{$obj_id}--></div>
+            {/capture}
+            {* Unset temp capture *}
+            {capture name="add_to_cart_button_secondary_temp_`$obj_id`"}{/capture}
 
             {$cart_button_exists = true}
         {/if}
     {/hook}
+
+    {* Override add_to_cart_button_secondary_temp capture by hook *}
+    {if $obj_id_override && $add_to_cart_button_secondary_temp_override_{$obj_id_override}|trim}
+        {$add_to_cart_button_secondary_temp_{$obj_id} = $add_to_cart_button_secondary_temp_override_{$obj_id_override}}
+        {$add_to_cart_button_secondary_temp_override_{$obj_id_override} = ""}
+    {elseif $add_to_cart_button_secondary_temp_override_{$obj_id}|trim}
+        {$add_to_cart_button_secondary_temp_{$obj_id} = $add_to_cart_button_secondary_temp_override_{$obj_id}}
+        {$add_to_cart_button_secondary_temp_override_{$obj_id} = ""}
+    {/if}
 {/capture}
 {hook name="products:buttons_block"}
     {if $show_add_to_cart_block
@@ -133,6 +188,9 @@
                 $product.avail_since > $smarty.const.TIME && $product.out_of_stock_actions == "OutOfStockActions::BUY_IN_ADVANCE"|enum
             )}
                 {$smarty.capture.buttons_product nofilter}
+
+                {capture name="add_to_cart_button_secondary_`$obj_id`"}{$add_to_cart_button_secondary_temp_{$obj_id} nofilter}{/capture}
+                {$add_to_cart_button_secondary_temp_{$obj_id} = ""}
             {/if}
         {/if}
 
@@ -170,9 +228,10 @@
     {if $show_list_buttons}
         {capture name="product_buy_now_`$obj_id`"}
             {$compare_product_id = $product.product_id}
+            {$show_add_to_compare_list = $show_add_to_compare_list|default:true}
 
             {hook name="products:buy_now"}
-            {if $settings.General.enable_compare_products == "Y"}
+            {if $show_add_to_compare_list && $settings.General.enable_compare_products === "Y"}
                 {include file="buttons/add_to_compare_list.tpl" product_id=$compare_product_id}
             {/if}
             {/hook}
@@ -207,6 +266,22 @@
     {$smarty.capture.$capture_name nofilter}
 {/if}
 
+{capture name="add_to_compare_list_`$obj_id`"}
+    {$show_add_to_compare_list = $show_add_to_compare_list|default:true}
+    {if $show_add_to_compare_list && $settings.General.enable_compare_products === "YesNo::YES"|enum}
+        <div class="ty-product-data-add-to-compare-list cm-reload-{$obj_prefix}{$obj_id}" id="product_data_add_to_compare_list_update_{$obj_prefix}{$obj_id}">
+            {$compare_product_id = $product.product_id}
+            {hook name="products:add_to_compare_list"}
+                {include file="buttons/add_to_compare_list.tpl" product_id=$compare_product_id}
+            {/hook}
+        <!--product_data_add_to_compare_list_update_{$obj_prefix}{$obj_id}--></div>
+    {/if}
+{/capture}
+{if $no_capture}
+    {$capture_name = "add_to_compare_list_`$obj_id`"}
+    {$smarty.capture.$capture_name nofilter}
+{/if}
+
 {capture name="product_features_`$obj_id`"}
 {hook name="products:product_features"}
     {if $show_features}
@@ -238,21 +313,40 @@
 
 {********************** Old Price *****************}
 {capture name="old_price_`$obj_id`"}
+    {$show_old_price_label = $show_old_price_label|default:true}
     {if $show_price_values && $show_old_price}
         <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_{$obj_prefix}{$obj_id}">
             {hook name="products:old_price"}
             {if $product.discount}
                 {if !$product.included_tax}
-                    <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price - $product.tax_value span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $show_old_price_label && $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price - $product.tax_value span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
                 {else}
-                    <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $show_old_price_label && $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
                 {/if}
             {elseif $product.list_discount}
                 {if !$product.included_tax}
-                    <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price - $product.tax_value span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $show_old_price_label && $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price - $product.tax_value span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
                 {else}
-                    <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $show_old_price_label && $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
                 {/if}
+
+                {capture name="old_price_only_secondary_`$obj_id`"}
+                    <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_secondary_{$obj_prefix}{$obj_id}">
+                        {if !$product.included_tax}
+                            <span class="ty-list-price ty-nowrap" id="line_list_price_secondary_{$obj_prefix}{$obj_id}">{if $show_old_price_label && $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl"
+                                value=$product.list_price - $product.tax_value
+                                span_id="list_price_secondary_`$obj_prefix``$obj_id`"
+                                class="ty-list-price ty-nowrap"
+                            }</span></span>
+                        {else}
+                            <span class="ty-list-price ty-nowrap" id="line_list_price_secondary_{$obj_prefix}{$obj_id}">{if $show_old_price_label && $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl"
+                                value=$product.list_price
+                                span_id="list_price_secondary_`$obj_prefix``$obj_id`"
+                                class="ty-list-price ty-nowrap"
+                            }</span></span>
+                        {/if}
+                    <!--old_price_update_secondary_{$obj_prefix}{$obj_id}--></span>
+                {/capture}
             {/if}
             {/hook}
         <!--old_price_update_{$obj_prefix}{$obj_id}--></span>
@@ -278,6 +372,18 @@
                 {/if}
                 {if $price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                     <span class="ty-price{if !$price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{include file="common/price.tpl" value=$price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num" live_editor_name="product:price:{$product.product_id}" live_editor_phrase=$product.base_price}</span>
+
+                    {capture name="price_only_secondary_`$obj_id`"}
+                        <span class="{if $product.zero_price_action !== "A"}cm-reload-{$obj_prefix}{$obj_id}{/if} ty-price-update" id="price_update_secondary_{$obj_prefix}{$obj_id}">
+                            <span class="ty-price{if !$price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_secondary_{$obj_prefix}{$obj_id}">{include file="common/price.tpl"
+                                value=$price
+                                span_id="discounted_price_secondary_`$obj_prefix``$obj_id`"
+                                class="ty-price-num"
+                                live_editor_name="product:price:{$product.product_id}"
+                                live_editor_phrase=$product.base_price
+                            }</span>
+                        <!--price_update_secondary_{$obj_prefix}{$obj_id}--></span>
+                    {/capture}
                 {elseif $product.zero_price_action == "A" && $show_add_to_cart}
                     {$base_currency = $currencies[$smarty.const.CART_PRIMARY_CURRENCY]}
                     <span class="ty-price-curency"><span class="ty-price-curency__title">{__("enter_your_price")}:</span>
@@ -302,6 +408,14 @@
                     {$show_qty = false}
                 {/if}
             {/hook}
+
+            {* Override price_only_secondary capture by hook *}
+            {if $price_only_secondary_override_{$obj_id}|trim}
+                {capture name="price_only_secondary_`$obj_id`"}
+                {$price_only_secondary_override_{$obj_id} nofilter}
+                {/capture}
+                {$price_only_secondary_override_{$obj_id} = ""}
+            {/if}
             {/if}
         {elseif $settings.Checkout.allow_anonymous_shopping == "hide_price_and_add_to_cart" && !$auth.user_id}
             <span class="ty-price">{__("sign_in_to_view_price")}</span>
@@ -329,6 +443,20 @@
             {elseif $product.clean_price != $product.taxed_price && !$product.included_tax}
                 <span class="ty-list-price ty-nowrap ty-tax-include">({__("including_tax")})</span>
             {/if}
+
+            {capture name="clean_price_only_secondary_`$obj_id`"}
+                <span class="cm-reload-{$obj_prefix}{$obj_id}" id="clean_price_update_secondary_{$obj_prefix}{$obj_id}">
+                    {if $product.clean_price != $product.taxed_price && $product.included_tax}
+                        <span class="ty-list-price ty-nowrap" id="line_product_price_secondary_{$obj_prefix}{$obj_id}">({include file="common/price.tpl"
+                            value=$product.taxed_price
+                            span_id="product_price_secondary_`$obj_prefix``$obj_id`"
+                            class="ty-list-price ty-nowrap"
+                        } {__("inc_tax")})</span>
+                    {elseif $product.clean_price != $product.taxed_price && !$product.included_tax}
+                        <span class="ty-list-price ty-nowrap ty-tax-include">({__("including_tax")})</span>
+                    {/if}
+                <!--clean_price_update_secondary_{$obj_prefix}{$obj_id}--></span>
+            {/capture}
         <!--clean_price_update_{$obj_prefix}{$obj_id}--></span>
     {/if}
 {/capture}
@@ -339,14 +467,15 @@
 
 {********************** You Save ******************}
 {capture name="list_discount_`$obj_id`"}
+    {$show_save_price_percent = $show_save_price_percent|default:true}
     {if $show_price_values && $show_list_discount && $details_page}
-        <span class="cm-reload-{$obj_prefix}{$obj_id}" id="line_discount_update_{$obj_prefix}{$obj_id}">
+        <span class="cm-reload-{$obj_prefix}{$obj_id} ty-list-discount" id="line_discount_update_{$obj_prefix}{$obj_id}">
             <input type="hidden" name="appearance[show_price_values]" value="{$show_price_values}" />
             <input type="hidden" name="appearance[show_list_discount]" value="{$show_list_discount}" />
             {if $product.discount}
-                <span class="ty-list-price ty-save-price ty-nowrap" id="line_discount_value_{$obj_prefix}{$obj_id}">{__("you_save")}: {include file="common/price.tpl" value=$product.discount span_id="discount_value_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}<span class="ty-save-price__percent">&nbsp;(<span id="prc_discount_value_{$obj_prefix}{$obj_id}" class="ty-list-price ty-nowrap">{$product.discount_prc}</span>%)</span></span>
+                <span class="ty-list-price ty-save-price ty-nowrap" id="line_discount_value_{$obj_prefix}{$obj_id}">{__("you_save")}: {include file="common/price.tpl" value=$product.discount span_id="discount_value_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}{if $show_save_price_percent}<span class="ty-save-price__percent">&nbsp;(<span id="prc_discount_value_{$obj_prefix}{$obj_id}" class="ty-list-price ty-nowrap">{$product.discount_prc}</span>%)</span>{/if}</span>
             {elseif $product.list_discount}
-                <span class="ty-list-price ty-save-price ty-nowrap" id="line_discount_value_{$obj_prefix}{$obj_id}"> {__("you_save")}: {include file="common/price.tpl" value=$product.list_discount span_id="discount_value_`$obj_prefix``$obj_id`"}<span class="ty-save-price__percent">&nbsp;(<span id="prc_discount_value_{$obj_prefix}{$obj_id}">{$product.list_discount_prc}</span>%)</span></span>
+                <span class="ty-list-price ty-save-price ty-nowrap" id="line_discount_value_{$obj_prefix}{$obj_id}"> {__("you_save")}: {include file="common/price.tpl" value=$product.list_discount span_id="discount_value_`$obj_prefix``$obj_id`"}{if $show_save_price_percent}<span class="ty-save-price__percent">&nbsp;(<span id="prc_discount_value_{$obj_prefix}{$obj_id}">{$product.list_discount_prc}</span>%)</span>{/if}</span>
             {/if}
         <!--line_discount_update_{$obj_prefix}{$obj_id}--></span>
     {/if}
@@ -448,7 +577,7 @@
                             </div>
                         {elseif $allow_negative_amount !== "YesNo::YES"|enum}
                             <div class="ty-control-group product-list-field">
-                                {if $show_amount_label}
+                                {if $show_amount_label && $show_in_stock_label}
                                     <label class="ty-control-group__label">{__("in_stock")}:</label>
                                 {/if}
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
@@ -476,7 +605,9 @@
                         {/if}
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">
                             {if $product_amount > 0}
-                                {__("in_stock")}
+                                {if $show_in_stock_label}
+                                    {__("in_stock")}
+                                {/if}
                             {else}
                                 {__("on_backorder")}
                             {/if}
@@ -529,9 +660,13 @@
 {/if}
 
 {capture name="advanced_options_`$obj_id`"}
+    {$show_product_company_data = $show_product_company_data|default:true}
+    {$show_product_company_data_in_advanced_options = $show_product_company_data_in_advanced_options|default:true}
     {if $show_product_options}
         <div class="cm-reload-{$obj_prefix}{$obj_id}" id="advanced_options_update_{$obj_prefix}{$obj_id}">
-            {include file="views/companies/components/product_company_data.tpl" company_name=$product.company_name company_id=$product.company_id}
+            {if $show_product_company_data && $show_product_company_data_in_advanced_options}
+                {include file="views/companies/components/product_company_data.tpl" company_name=$product.company_name company_id=$product.company_id}
+            {/if}
             {hook name="products:options_advanced"}
             {/hook}
         <!--advanced_options_update_{$obj_prefix}{$obj_id}--></div>
@@ -539,6 +674,19 @@
 {/capture}
 {if $no_capture}
     {$capture_name = "advanced_options_`$obj_id`"}
+    {$smarty.capture.$capture_name nofilter}
+{/if}
+
+{capture name="product_company_data_`$obj_id`"}
+    {$show_product_company_data = $show_product_company_data|default:true}
+    {if $show_product_company_data}
+        <div class="cm-reload-{$obj_prefix}{$obj_id}" id="product_company_data_update_{$obj_prefix}{$obj_id}">
+            {include file="views/companies/components/product_company_data.tpl" company_name=$product.company_name company_id=$product.company_id}
+        <!--product_company_data_update_{$obj_prefix}{$obj_id}--></div>
+    {/if}
+{/capture}
+{if $no_capture}
+    {$capture_name = "product_company_data_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
 

@@ -3,7 +3,9 @@
         {foreach from=$added_products item=product key="key"}
             {hook name="products:notification_product"}
             <div class="ty-product-notification__item">
+                <div class="ut2-product-notification__image">
                 {include file="common/image.tpl" image_width="80" image_height="80" images=$product.main_pair no_ids=true class="ty-product-notification__image"}
+                </div>
                 <div class="ty-product-notification__content">
                     <div class="ut2-product-notification__head">
                         <div class="ut2-product-notification__head__title">

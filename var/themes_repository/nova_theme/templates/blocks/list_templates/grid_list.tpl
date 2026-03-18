@@ -1,0 +1,24 @@
+{include file="design/themes/responsive/templates/blocks/list_templates/grid_list.tpl"
+    products=$products
+    no_pagination=$no_pagination
+    no_sorting=$no_sorting
+    show_empty=$show_empty
+    item_number=$item_number
+    columns=$columns
+    obj_prefix=$obj_prefix
+    title=$title
+    settings=$settings
+    smarty=$smarty
+    show_add_to_cart=true
+    show_quick_view_for_options=true
+    show_add_to_cart_secondary=false
+    show_list_buttons=true
+    show_features=false
+    show_total_product_reviews=true
+    show_empty_rating=true
+    price_first=true
+    enable_quick_view_on_product_list_control=false
+    enable_quick_view_on_product_image=true
+    hide_wishlist_button=$is_wishlist
+    quick_view_link_class="`$quick_view_link_class` cm-dialog-destroy-on-close"
+}

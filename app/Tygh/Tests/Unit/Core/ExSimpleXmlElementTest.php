@@ -40,43 +40,57 @@ class ExSimpleXmlElementTest extends TestCase
         $this->assertEquals($expected_data, $xml->toArray());
     }
 
+    /**
+     * @param $expected_data
+     * @param $xpath
+     * @param $xml
+     * @dataProvider dpRemoveXml
+     */
+    public function testRemove($expected_data, $xpath, $xml)
+    {
+        /** @var ExSimpleXmlElement $xml */
+        $xml = simplexml_load_string($xml, '\Tygh\ExSimpleXmlElement');
+
+        $this->assertEquals($expected_data, $xml->remove($xpath)->toArray());
+    }
+
     public function dpArrayXml()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => '100g pants', 'code' => 'QWERTY109',
-                    'options' => array(
-                        array('option_id' => 10, 'value' => 100, 'name' => 'Color'),
-                        array('option_id' => 20, 'value' => 200, 'name' => 'Size'),
-                    )
-                ),
+                    'options' => [
+                        ['option_id' => 10, 'value' => 100, 'name' => 'Color'],
+                        ['option_id' => 20, 'value' => 200, 'name' => 'Size'],
+                    ]
+                ],
                 "<?xml version=\"1.0\"?>\n<root><name><![CDATA[100g pants]]></name><code><![CDATA[QWERTY109]]></code>"
                 . '<options>'
                 . '<item><option_id>10</option_id><value>100</value><name><![CDATA[Color]]></name></item>'
                 . '<item><option_id>20</option_id><value>200</value><name><![CDATA[Size]]></name></item>'
                 . '</options>'
                 . "</root>\n"
-            ),
-            array(
-                array(
-                    'name' => array('en' => 'Page', 'ru' => 'Страница'),
-                    'params' => array(
-                        array(
+            ],
+            [
+                [
+                    'name' => ['en' => 'Page', 'ru' => 'Страница'],
+                    'params' => [
+                        [
                             'title' => 'Тип страницы',
                             'type' => 'selectbox',
-                            'variants' => array(
-                                array('name' => 'Обычная', 'value' => 'base'),
-                                array('name' => 'Расширенная', 'value' => 'advanced'),
-                                array('name' => 'Другая', 'value' => 'other'),
-                            )
-                        ),
-                        array(
+                            'variants' => [
+                                ['name' => 'Обычная', 'value' => 'base'],
+                                ['name' => 'Расширенная', 'value' => 'advanced'],
+                                ['name' => 'Другая', 'value' => 'other'],
+                            ]
+                        ],
+                        [
                             'title' => 'Размер баннера',
                             'type' => 'input',
-                        )
-                    )
-                ),
+                        ]
+                    ]
+                ],
                 "<?xml version=\"1.0\"?>\n<root><name><en><![CDATA[Page]]></en><ru><![CDATA[Страница]]></ru></name>"
                 . '<params>'
                 . '<item><title><![CDATA[Тип страницы]]></title><type><![CDATA[selectbox]]></type><variants>'
@@ -87,7 +101,100 @@ class ExSimpleXmlElementTest extends TestCase
                 . '<item><title><![CDATA[Размер баннера]]></title><type><![CDATA[input]]></type></item>'
                 . '</params>'
                 . "</root>\n"
-            )
-        );
+            ]
+        ];
+    }
+
+    public function dpRemoveXml()
+    {
+        $xml = <<<XML
+<?xml version="1.0"?>
+<root>
+    <name build="en"><![CDATA[100g pants]]></name>
+    <name build="ru"><![CDATA[100г брюки]]></name>
+    <code><![CDATA[QWERTY109]]></code>
+    <options build="en">
+        <item edition="ULTIMATE">
+            <option_id>10</option_id>
+            <value>100</value>
+            <name><![CDATA[Color]]></name>
+        </item>
+        <item>
+            <option_id>20</option_id>
+            <value>200</value>
+            <name><![CDATA[Size]]></name>
+        </item>
+        <item edition="MULTIVENDOR">
+            <option_id>30</option_id>
+            <value>300</value>
+            <name><![CDATA[Model]]></name>
+        </item>
+    </options>
+    <options build="ru">
+        <item edition="ULTIMATE">
+            <option_id>10</option_id>
+            <value>100</value>
+            <name><![CDATA[Цвет]]></name>
+        </item>
+        <item>
+            <option_id>20</option_id>
+            <value>200</value>
+            <name><![CDATA[Размер]]></name>
+        </item>
+        <item edition="MULTIVENDOR">
+            <option_id>30</option_id>
+            <value>300</value>
+            <name><![CDATA[Модель]]></name>
+        </item>
+    </options>
+</root>
+XML;
+
+        return [
+            [
+                [
+                    'name' => '100g pants', 'code' => 'QWERTY109',
+                    'options' => [
+                        ['option_id' => 10, 'value' => 100, 'name' => 'Color'],
+                        ['option_id' => 20, 'value' => 200, 'name' => 'Size'],
+                    ]
+                ],
+                "//*[@build and not(contains(@build,'en')) or @edition and not(contains(@edition,'ULTIMATE'))]",
+                $xml
+            ],
+            [
+                [
+                    'name' => '100g pants', 'code' => 'QWERTY109',
+                    'options' => [
+                        ['option_id' => 20, 'value' => 200, 'name' => 'Size'],
+                        ['option_id' => 30, 'value' => 300, 'name' => 'Model'],
+                    ]
+                ],
+                "//*[@build and not(contains(@build,'en')) or @edition and not(contains(@edition,'MULTIVENDOR'))]",
+                $xml
+            ],
+            [
+                [
+                    'name' => '100г брюки', 'code' => 'QWERTY109',
+                    'options' => [
+                        ['option_id' => 10, 'value' => 100, 'name' => 'Цвет'],
+                        ['option_id' => 20, 'value' => 200, 'name' => 'Размер'],
+                    ]
+                ],
+                "//*[@build and not(contains(@build,'ru')) or @edition and not(contains(@edition,'ULTIMATE'))]",
+                $xml
+            ],
+            [
+                [
+                    'name' => '100г брюки', 'code' => 'QWERTY109',
+                    'options' => [
+                        ['option_id' => 20, 'value' => 200, 'name' => 'Размер'],
+                        ['option_id' => 30, 'value' => 300, 'name' => 'Модель'],
+                    ]
+                ],
+                "//*[@build and not(contains(@build,'ru')) or @edition and not(contains(@edition,'MULTIVENDOR'))]",
+                $xml
+            ],
+        ];
     }
 }

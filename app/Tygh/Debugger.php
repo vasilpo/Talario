@@ -1,18 +1,20 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh;
+
+use Smarty\Template;
 
 class Debugger
 {
@@ -226,27 +228,36 @@ class Debugger
 
         $ch_p = array_values(self::$checkpoints);
 
-        $included_templates = array();
-        $depth = array();
-        //phpcs:ignore
-        foreach (\Smarty_Internal_Template::$tplObjCache as $k => $v) {
+        $included_templates = [];
+        $depth = [];
+        $view = Tygh::$app['view'];
+
+        $ref_object = new \ReflectionObject($view);
+        $ref_object = $ref_object->getParentClass();
+        $smarty = $ref_object->getProperty('templates');
+        $smarty->setAccessible(true);
+        $templates = $smarty->getValue($view);
+
+        foreach ($templates as $k => $v) {
             if (count(explode('#', $k)) == 1) {
                 continue;
             }
 
-            list(, $tpl) = explode('#', $k);
+            [$tpl, ] = explode('#', $k);
             $depth[$tpl] = 0;
 
-            if (isset($v->parent) && $v->parent instanceof \Smarty_Internal_Template) {
-                if (isset($depth[$v->parent->template_resource])) {
-                    $depth[$tpl] = $depth[$v->parent->template_resource] + 1;
-                }
-
-                $included_templates[] = array(
-                    'filename' => $tpl,
-                    'depth' => $depth[$tpl]
-                );
+            if (!isset($v->parent) || !($v->parent instanceof Template)) {
+                continue;
             }
+
+            if (isset($depth[$v->parent->template_resource])) {
+                $depth[$tpl] = $depth[$v->parent->template_resource] + 1;
+            }
+
+            $included_templates[] = [
+                'filename' => $tpl,
+                'depth'    => $depth[$tpl]
+            ];
         }
 
         $assigned_vars = \Tygh::$app['view']->tpl_vars;

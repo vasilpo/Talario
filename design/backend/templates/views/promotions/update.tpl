@@ -230,18 +230,20 @@ function fn_promotion_rebuild_mixed_data(items, value, id, element_id, condition
                         </div>
 
                         {if "ULTIMATE"|fn_allowed_for || !$runtime.company_id}
-                            {if "MULTIVENDOR"|fn_allowed_for}
-                                {$zero_company_id_name_lang_var="marketplace"}
-                                {$company_field_name = __("owner")}
-                            {/if}
-                            {include file="views/companies/components/company_field.tpl"
-                                name="promotion_data[company_id]"
-                                id="elm_promotion_data_`$id`"
-                                selected=$promotion_data.company_id
-                                disable_company_picker="MULTIVENDOR"|fn_allowed_for
-                                company_field_name=$company_field_name
-                                zero_company_id_name_lang_var=$zero_company_id_name_lang_var
-                            }
+                            {hook name="promotions:company_id"}
+                                {if "MULTIVENDOR"|fn_allowed_for}
+                                    {$zero_company_id_name_lang_var="marketplace"}
+                                    {$company_field_name = __("owner")}
+                                {/if}
+                                {include file="views/companies/components/company_field.tpl"
+                                    name="promotion_data[company_id]"
+                                    id="elm_promotion_data_`$id`"
+                                    selected=$promotion_data.company_id
+                                    disable_company_picker="MULTIVENDOR"|fn_allowed_for
+                                    company_field_name=$company_field_name
+                                    zero_company_id_name_lang_var=$zero_company_id_name_lang_var
+                                }
+                            {/hook}
                         {/if}
 
                         <div class="control-group" id="promo_image">
@@ -341,7 +343,7 @@ function fn_promotion_rebuild_mixed_data(items, value, id, element_id, condition
 
             <!--content_bonuses--></div>
 
-            {if fn_allowed_for("MULTIVENDOR:ULTIMATE")|| $is_sharing_enabled}
+            {if fn_is_allowed(constant("\Tygh\Licensing\Features::MULTIPLE_STOREFRONTS")) || $is_sharing_enabled}
                 <div class="hidden" id="content_storefronts">
                     {$add_storefront_text = __("add_storefronts")}
                     {include file="pickers/storefronts/picker.tpl"

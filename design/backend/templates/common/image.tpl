@@ -22,7 +22,7 @@
 
 {hook name="common:image"}
     {if $show_detailed_link && ($image || $href)}
-        <a class="{$link_css_class}" href="{$href|default:$image.image_path}" {if !$href}target="_blank"{/if}>
+        <a class="{$link_css_class}" href="{$href|default:$image.image_path}" {if !$href || $blank}target="_blank"{/if}>
     {/if}
     {if $image_data.image_path}
         <img {$image_attributes|render_tag_attrs nofilter} />

@@ -13,16 +13,13 @@
     margin: 0;
 }
 
-.main-menu-1__accordion-body,
-.main-menu-2__accordion-body,
-.main-menu-3__accordion-body {
+.main-menu-2,
+.main-menu-3 {
     // Out - Cubic
     transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
     transition-duration: 0.1s;
 }
 
-.main-menu-1__accordion-inner,
-.main-menu-2__accordion-inner,
 .main-menu-1__item,
 .main-menu-2__item,
 .main-menu-3__item {
@@ -42,6 +39,7 @@
 .main-menu-3__link-wrapper {
     margin-left: 8px;
     margin-right: 8px;
+    border-radius: var(--cs-base-border-radius);
 }
 
 .main-menu-1__link-content,
@@ -92,7 +90,14 @@
 
 // var(--cs-tablet-breakpoint) + 1px
 @media (min-width: 768px) {
-    .main-menu-1__link.main-menu-1__link,
+    .main-menu-1__link.main-menu-1__link {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) {
     .main-menu-2__link.main-menu-2__link,
     .main-menu-3__link.main-menu-3__link {
         padding-top: 6px;
@@ -100,9 +105,18 @@
     }
 }
 
+// Small screen
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) and (max-height: 800px) {
+    .main-menu-1__link.main-menu-1__link {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+}
+
 // Useful for open developer tools
 // var(--cs-tablet-breakpoint) + 1px
-@media (min-width: 768px) and (max-height: 700px) {
+@media (min-width: 768px) and (max-height: 750px) {
     .main-menu-1__link.main-menu-1__link,
     .main-menu-2__link.main-menu-2__link,
     .main-menu-3__link.main-menu-3__link {
@@ -112,9 +126,9 @@
 }
 
 @media (min-width: 768px) and (max-width: 1440px) {
-    .main-menu-1__link.main-menu-1__link,
-    .main-menu-2__link.main-menu-2__link,
-    .main-menu-3__link.main-menu-3__link {
+    html.cs-main-menu-collapse .main-menu-1__link.main-menu-1__link,
+    html.cs-main-menu-collapse .main-menu-2__link.main-menu-2__link,
+    html.cs-main-menu-collapse .main-menu-3__link.main-menu-3__link {
         --cs-main-menu-link-padding-left: 8px;
         --cs-main-menu-link-padding-right: 2px;
     }
@@ -148,9 +162,9 @@
 }
 
 @media (min-width: 768px) and (max-width: 1440px) {
-    .main-menu-1__link,
-    .main-menu-2__link,
-    .main-menu-3__link {
+    html.cs-main-menu-collapse .main-menu-1__link,
+    html.cs-main-menu-collapse .main-menu-2__link,
+    html.cs-main-menu-collapse .main-menu-3__link {
         --cs-main-menu-link-gap: 8px;
     }
 }
@@ -169,17 +183,7 @@
     font-weight: 400;
 }
 
-.main-menu-1__icon:not(.main-menu-1__icon--active):not(:hover):not(:focus),
-.main-menu-2__icon:not(.main-menu-1__icon--active) {
-    opacity: 0.7;
-}
-
 // Level 2 and level 3
-.main-menu-2__link:not(.main-menu-2__link--active):not(:hover),
-.main-menu-3__link:not(.main-menu-2__link--active):not(:hover) {
-    opacity: 0.7;
-}
-
 // Block manager
 .main-menu-1__link:not(.main-menu-1__link--icon).main-menu-1__link--root-hidden:after,
 .main-menu-1__link:not(.main-menu-1__link--icon).main-menu-1__link--hidden-by-permissions:after,
@@ -199,6 +203,10 @@
 
 .main-menu-1__link--icon {
     width: auto;
+}
+
+.main-menu-1__link-icon .cs-icon__svg {
+    vertical-align: text-bottom;
 }
 
 .main-menu-1__link--icon.main-menu-1__link--icon {
@@ -223,7 +231,7 @@
 }
 
 @media (min-width: 768px) and (max-width: 1440px) {
-    .main-menu-2__link.main-menu-2__link {
+    html.cs-main-menu-collapse .main-menu-2__link.main-menu-2__link {
         --cs-main-menu-2-link-padding-left: ~"calc(var(--cs-main-menu-link-padding-left) + (var(--cs-icon-size) / 5))";
     }
 }
@@ -236,7 +244,7 @@
 }
 
 @media (min-width: 768px) and (max-width: 1440px) {
-    .main-menu-3__link.main-menu-3__link {
+    html.cs-main-menu-collapse .main-menu-3__link.main-menu-3__link {
         --cs-main-menu-3-link-padding-left: ~"calc(var(--cs-main-menu-link-padding-left) + (var(--cs-icon-size) / 2) + var(--cs-main-menu-link-gap))";
     }
 }
@@ -254,15 +262,26 @@
     text-decoration: none;
 }
 
-.main-menu-2__link:hover,
-.main-menu-2__link:focus,
-.main-menu-3__link:hover,
-.main-menu-3__link:focus {
+.main-menu__link--simple-link:hover,
+.main-menu__link--simple-link:focus,
+.main-menu-1__accordion-heading:hover,
+.main-menu-1__accordion-heading:focus {
     background: linear-gradient(var(--cs-inverse-shadow50-color), var(--cs-inverse-shadow50-color)), var(--cs-menu-sidebar-color-active);
 }
 
-.main-menu-1__accordion-heading:hover {
-    background: linear-gradient(var(--cs-inverse-shadow50-color), var(--cs-inverse-shadow50-color)), var(--cs-menu-sidebar-color-active);
+html.cs-main-menu-collapse .main-menu__link--simple-link:not(:hover):not(:focus) .main-menu-1__link-icon,
+html.cs-main-menu-collapse .main-menu-1__accordion-heading:not(:hover):not(:focus) .main-menu-1__link-icon {
+    opacity: 0.7;
+}
+
+// Hide the scrollbar during the main menu transition
+html.cs-main-menu-is-animated.cs-main-menu-collapse .main-menu-1__link-wrapper,
+html.cs-main-menu-is-animated.cs-main-menu-collapse .main-menu-2__link-wrapper,
+html.cs-main-menu-is-animated.cs-main-menu-collapse .main-menu-3__link-wrapper,
+html.cs-main-menu-is-animated.cs-main-menu-collapse .main-menu-1__accordion-heading,
+html.cs-main-menu-is-animated.cs-main-menu-collapse .main-menu-2__accordion-heading,
+html.cs-main-menu-is-animated.cs-main-menu-collapse .main-menu-3__accordion-heading {
+    overflow: hidden;
 }
 
 .main-menu-1__link--active,
@@ -315,6 +334,7 @@
 .main-menu-2__link--title-divider:hover,
 .main-menu-3__link--title-divider:hover {
     background: transparent;
+    color: var(--cs-text-muted-color);
     cursor: default;
 }
 

@@ -1,3 +1,14 @@
 // COLORS
 @mainColor: #258d78;
 @btnPrimaryBackground: @mainColor;
+
+// If the sidebar menu background is enabled, disable the sidebar bottom toolbar background to prevent the visual glitch
+.setMenuSidebarBottomToolbarColor(@bg) when not (@bg = none) {
+    @media (min-width: 768px) and (min-height: 460px) {
+        :root {
+            --cs-menu-sidebar-bottom-toolbar-color: transparent;
+            --cs-menu-sidebar-bottom-toolbar-bg: none;
+        }
+    }
+}
+.setMenuSidebarBottomToolbarColor(@menuSidebarBg);

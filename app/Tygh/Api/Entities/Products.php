@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Api\Entities;
 
@@ -135,6 +135,7 @@ class Products extends AEntity
 
             $this->prepareFeature($params);
             $this->prepareImages($params);
+            $this->prepareVideos($params);
             $product_id = fn_update_product($params);
 
             if ($product_id) {
@@ -169,6 +170,7 @@ class Products extends AEntity
         $lang_code = $this->getLanguageCode($params);
         $this->prepareFeature($params);
         $this->prepareImages($params, $id);
+        $this->prepareVideos($params);
 
         $product_id = fn_update_product($params, $id, $lang_code);
 
@@ -344,6 +346,38 @@ class Products extends AEntity
                     $params['product_features'][$feature_id] = $feature;
                 }
             }
+        }
+    }
+
+    /**
+     * Prepare video data for saving.
+     *
+     * phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint
+     * phpcs:disable Squiz.Commenting.FunctionComment.IncorrectTypeHint
+     *
+     * @param array<string, string|array<string, string>> $params Array of parameters
+     *
+     * @psalm-suppress ReferenceConstraintViolation
+     *
+     * @return void
+     */
+    public function prepareVideos(array &$params)
+    {
+        if (isset($params['videos']) && is_array($params['videos'])) {
+            /** @var \Tygh\Video\VideoManager $video_manager */
+            $video_manager = Tygh::$app['video.video_manager'];
+            $video_data = [
+                'video_data' => [],
+            ];
+
+            foreach ($params['videos'] as $video) {
+                $video_data['video_data'][] = [
+                    'video_url_id' => $video,
+                    'source'       => $video_manager->getSourceNameByVideoUrl($video),
+                ];
+            }
+
+            $params['videos'] = $video_data;
         }
     }
 

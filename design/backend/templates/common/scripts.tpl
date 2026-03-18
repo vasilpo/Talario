@@ -20,6 +20,7 @@
 {script src="js/tygh/ajax.js"}
 
 {script src="js/tygh/backend/header.js"}
+{script src="js/tygh/backend/components/main_menu.js"}
 {script src="js/tygh/backend/components/dropdown.js"}
 {script src="js/tygh/quick_menu.js"}
 {script src="js/tygh/backend/storefront_switcher.js"}

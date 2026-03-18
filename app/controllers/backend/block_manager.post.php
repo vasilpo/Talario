@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BackendCustomMenu;
 use Tygh\BlockManager\Block;
@@ -699,6 +699,20 @@ if ($mode == 'manage' || $mode == 'manage_in_tab') {
     }
 
     $grids_schema = fn_get_schema('block_manager', 'grids');
+    $selected_location = fn_get_selected_location($_REQUEST);
+
+    // Filter grid wrappers by locations
+    if (!empty($grids_schema['wrappers'])) {
+        foreach ($grids_schema['wrappers'] as $name => $wrapper) {
+            if (
+                !empty($selected_location['dispatch'])
+                && !empty($wrapper['allowed_locations'])
+                && !in_array($selected_location['dispatch'], $wrapper['allowed_locations'])
+            ) {
+                unset($grids_schema['wrappers'][$name]);
+            }
+        }
+    }
 
     Tygh::$app['view']->assign([
         'grid'                       => $grid,
@@ -758,9 +772,43 @@ if ($mode == 'manage' || $mode == 'manage_in_tab') {
     }
 
     $unique_blocks = SchemesManager::filterByLocation(Block::instance()->getAllUnique(DESCR_SL), $selected_location);
-    array_walk($unique_blocks, function (&$block) {
+
+    $theme_layout_block_map = [];
+    $unlinked_blocks = [];
+    foreach ($unique_blocks as &$block) {
         $block['unique_id'] = Block::getUniqueIdByData($block);
-    });
+
+        if (!empty($block['locations'])) {
+            $locations_map = [];
+            foreach ($block['locations'] as $location) {
+                $key = $location['theme_id'] . '-' . $location['layout_id'];
+
+                if (!isset($theme_layout_block_map[$key])) {
+                    $theme = Themes::factory($location['theme_id']);
+                    $manifest = $theme->getManifest();
+
+                    $theme_layout_block_map[$key] = [
+                        'name' => ($manifest['title'] ?? $location['theme_id']) . ' - ' . $location['layout_name'],
+                        'blocks' => [],
+                    ];
+                }
+
+                $theme_layout_block_map[$key]['blocks'][$block['block_id']] = $block;
+            }
+
+            $block['locations'] = $locations_map;
+        } else {
+            $unlinked_blocks[$block['block_id']] = $block;
+        }
+    }
+
+    if ($unlinked_blocks) {
+        $theme_layout_block_map[0] = [
+            'name'   => __('unlinked_blocks'),
+            'blocks' => $unlinked_blocks,
+        ];
+    }
+
     $block_types = SchemesManager::filterByLocation(SchemesManager::getBlockTypes(DESCR_SL), $selected_location);
     unset($block_types['smarty_block']);
 
@@ -775,9 +823,11 @@ if ($mode == 'manage' || $mode == 'manage_in_tab') {
     $block_types = SchemesManager::getBlockDescriptions($block_types, DESCR_SL);
 
     Tygh::$app['view']->assign([
-        'block_types'   => $block_types,
-        'unique_blocks' => $unique_blocks,
-        'purpose'       => $purpose,
+        'block_types'            => $block_types,
+        'unique_blocks'          => $unique_blocks,
+        'purpose'                => $purpose,
+        'theme_layout_block_map' => $theme_layout_block_map,
+        'unlinked_blocks'        => $unlinked_blocks,
     ]);
 
 } elseif ($mode == 'block_type_list') {

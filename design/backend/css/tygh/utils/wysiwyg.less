@@ -29,3 +29,113 @@
 [aria-describedby="wysiwyg_bm_picker"] {
     min-width: 990px;
 }
+
+// TinyMCE override
+.tox-tinymce.tox-tinymce {
+    border-radius: var(--cs-base-border-radius);
+}
+
+.input-append--wysiwyg .tox-tinymce.tox-tinymce {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+// TinyMCE width for small screen adaptation
+
+// TinyMCE buttons
+.tox-tbtn.tox-tbtn.tox-tbtn {
+    --cs-tox-tbtn-width: 34px;
+
+    width: var(--cs-tox-tbtn-width);
+}
+
+// TinyMCE align button
+.tox-tbtn.tox-tbtn.tox-tbtn--select {
+    --cs-tox-tbtn-select-width: 48px;
+
+    width: var(--cs-tox-tbtn-select-width);
+}
+
+// TinyMCE blocks, fontfamily, fontsize buttons
+.tox-tbtn.tox-tbtn.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke {
+    --cs-tox-tbtn-select-bespoke-width: 130px;
+
+    width: var(--cs-tox-tbtn-select-bespoke-width);
+}
+
+// TinyMCE fontsize button
+.tox-tbtn.tox-tbtn.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
+    --cs-tox-tbtn-select-fontsize-width: 70px;
+
+    width: var(--cs-tox-tbtn-select-fontsize-width);
+}
+
+// TinyMCE fontfamily, fontsize buttons
+.tox.tox.tox .tox-tbtn--bespoke+.tox-tbtn--bespoke {
+    --cs-tox-tbtn-bespoke-bespoke-width: 4px;
+
+    margin-inline-start: var(--cs-tox-tbtn-bespoke-bespoke-width);
+}
+
+// TinyMCE dropdown arrow button
+.tox-tbtn.tox-tbtn.tox-tbtn.tox-split-button__chevron {
+    --cs-tox-tbtn-button-chevron-width: 16px;
+
+    width: var(--cs-tox-tbtn-button-chevron-width);
+}
+
+// TinyMCE groups
+.tox.tox.tox .tox-toolbar__group {
+    --cs-tox-toolbar-group-padding-left: 12px;
+    --cs-tox-toolbar-group-padding-right: 11px;
+
+    padding-left: var(--cs-tox-toolbar-group-padding-left);
+    padding-right: var(--cs-tox-toolbar-group-padding-right);
+}
+
+@media (min-width: 1440px) and (max-width: 2200px) {
+    .tox.tox.tox .tox-tbtn--bespoke+.tox-tbtn--bespoke {
+        --cs-tox-tbtn-bespoke-bespoke-width: 2px;
+    }
+
+    .tox.tox.tox .tox-toolbar__group {
+        --cs-tox-toolbar-group-padding-left: 4px;
+        --cs-tox-toolbar-group-padding-right: 3px;
+    }
+}
+
+// TinyMCE width for small screen adaptation (page without sidebar)
+@media (min-width: 1440px) and (max-width: 1899px) {
+    .no-sidebar .tox-tbtn.tox-tbtn.tox-tbtn {
+        --cs-tox-tbtn-width: 28px;
+    }
+
+    .no-sidebar .tox-tbtn.tox-tbtn.tox-tbtn--select {
+        --cs-tox-tbtn-select-width: 34px;
+    }
+
+    .no-sidebar .tox-tbtn.tox-tbtn.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke {
+        --cs-tox-tbtn-select-bespoke-width: 120px;
+    }
+
+    .no-sidebar .tox-tbtn.tox-tbtn.tox-tbtn.tox-split-button__chevron {
+        --cs-tox-tbtn-button-chevron-width: 12px;
+    }
+}
+
+@media (min-width: 1512px) and (max-width: 1599px) {
+    .no-sidebar .tox-tbtn.tox-tbtn.tox-tbtn {
+        --cs-tox-tbtn-width: 30px;
+    }
+}
+
+@media (min-width: 1900px) and (max-width: 2200px) {
+    .no-sidebar .tox.tox.tox .tox-tbtn--bespoke+.tox-tbtn--bespoke {
+        --cs-tox-tbtn-bespoke-bespoke-width: 4px;
+    }
+
+    .no-sidebar .tox.tox.tox .tox-toolbar__group {
+        --cs-tox-toolbar-group-padding-left: 12px;
+        --cs-tox-toolbar-group-padding-right: 11px;
+    }
+}

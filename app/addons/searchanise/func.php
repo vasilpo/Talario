@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BlockManager\Block;
 use Tygh\Enum\ProductTracking;
@@ -52,7 +52,7 @@ fn_define('SE_MEMORY_LIMIT', 512);
 fn_define('SE_MAX_ERROR_COUNT', 15);
 fn_define('SE_MAX_PROCESSING_TIME', 720);
 fn_define('SE_MAX_SEARCH_REQUEST_LENGTH', '8000');
-fn_define('SE_SERVICE_URL', 'https://searchserverapi.com');
+fn_define('SE_SERVICE_URL', 'https://searchserverapi1.com');
 fn_define('SE_PLATFORM', 'cs-cart4');
 fn_define('SE_CONTACT_EMAIL', 'feedback@searchanise.com');
 

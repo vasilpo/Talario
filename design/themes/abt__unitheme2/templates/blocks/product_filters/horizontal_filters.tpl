@@ -40,29 +40,31 @@
                     {/if}
                 {/if}
 
-                <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
+                <div class="ut2-horizontal-product-filters-dropdown ut2-scroll-item">
                     <div id="sw_elm_filter_{$filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination {if $filter.selected_variants || $filter.selected_range}active{/if}{if $filter.selected_variants|sizeof > 0} selected{/if}">{$filter.filter}{if $filter.selected_variants}<span>{$filter.selected_variants|sizeof}</span>{/if}<i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
                     {if $settings.ab__device !== 'mobile'}
                         <div id="elm_filter_{$filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content cm-smart-position-h">
                             <div class="ty-horizontal-product-filters-dropdown__title">
                                 <a href="javascript:void(0);" rel="nofollow" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$filter_uid}"><i class="ut2-icon-baseline-close"></i></span></a>
                             </div>
-                            {hook name="blocks:product_filters_variants_element"}
-                            {if $filter.slider}
-                                {if $filter.feature_type == "ProductFeatures::DATE"|enum}
-                                    {include file="blocks/product_filters/components/product_filter_datepicker.tpl" filter_uid=$filter_uid filter=$filter}
+                            <div class="ut2-horizontal-product-filters-dropdown__stuffing">
+                                {hook name="blocks:product_filters_variants_element"}
+                                {if $filter.slider}
+                                    {if $filter.feature_type == "ProductFeatures::DATE"|enum}
+                                        {include file="blocks/product_filters/components/product_filter_datepicker.tpl" filter_uid=$filter_uid filter=$filter}
+                                    {else}
+                                        {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
+                                    {/if}
                                 {else}
-                                    {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
+                                    {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
                                 {/if}
-                            {else}
-                                {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
-                            {/if}
-                            {/hook}
-                            {strip}
-                                <div class="ty-product-filters__tools">
-                                    {if $reset_url}<a class="ty-btn ty-btn__primary outline ty-product-filters__reset-button  cm-ajax cm-ajax-full-render cm-history" href="{$reset_url|fn_url}" data-ca-event="ce.filtersinit" data-ca-target-id="{$ajax_div_ids}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i>{__("reset")}</a>{/if}
-                                </div>
-                            {/strip}
+                                {/hook}
+                                {strip}
+                                    <div class="ty-product-filters__tools">
+                                        {if $reset_url}<a class="ty-btn ty-btn__primary outline ty-product-filters__reset-button  cm-ajax cm-ajax-full-render cm-history" href="{$reset_url|fn_url}" data-ca-event="ce.filtersinit" data-ca-target-id="{$ajax_div_ids}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i>{__("reset")}</a>{/if}
+                                    </div>
+                                {/strip}
+                            </div>
                         </div>
                     {/if}
                 </div>
@@ -89,22 +91,24 @@
                                 <span>{$filter.filter}</span>
                                 <a href="javascript:void(0);" rel="nofollow" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$filter_uid}"><i class="ut2-icon-baseline-close"></i></span></a>
                             </div>
-                            {hook name="blocks:product_filters_variants_element"}
-                            {if $filter.slider}
-                                {if $filter.feature_type == "ProductFeatures::DATE"|enum}
-                                    {include file="blocks/product_filters/components/product_filter_datepicker.tpl" filter_uid=$filter_uid filter=$filter}
+                            <div class="ut2-horizontal-product-filters-dropdown__stuffing">
+                                {hook name="blocks:product_filters_variants_element"}
+                                {if $filter.slider}
+                                    {if $filter.feature_type == "ProductFeatures::DATE"|enum}
+                                        {include file="blocks/product_filters/components/product_filter_datepicker.tpl" filter_uid=$filter_uid filter=$filter}
+                                    {else}
+                                        {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
+                                    {/if}
                                 {else}
-                                    {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
+                                    {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
                                 {/if}
-                            {else}
-                                {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
-                            {/if}
-                            {/hook}
-                            {strip}
-                                <div class="ty-product-filters__tools">
-                                    {if $reset_url}<a class="ty-btn ty-btn__primary outline ty-product-filters__reset-button  cm-ajax cm-ajax-full-render cm-history" href="{$reset_url|fn_url}" data-ca-event="ce.filtersinit" data-ca-target-id="{$ajax_div_ids}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i>{__("reset")}</a>{/if}
-                                </div>
-                            {/strip}
+                                {/hook}
+                                {strip}
+                                    <div class="ty-product-filters__tools">
+                                        {if $reset_url}<a class="ty-btn ty-btn__primary outline ty-product-filters__reset-button  cm-ajax cm-ajax-full-render cm-history" href="{$reset_url|fn_url}" data-ca-event="ce.filtersinit" data-ca-target-id="{$ajax_div_ids}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i>{__("reset")}</a>{/if}
+                                    </div>
+                                {/strip}
+                            </div>
                         </div>
 
                     {/foreach}

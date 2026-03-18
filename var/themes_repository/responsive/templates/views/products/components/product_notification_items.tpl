@@ -1,9 +1,11 @@
+{$notification_image_width = $notification_image_width|default:"50"}
+{$notification_image_height = $notification_image_height|default:"50"}
 {hook name="products:notification_items"}
     {if $added_products}
         {foreach from=$added_products item=product key="key"}
             {hook name="products:notification_product"}
             <div class="ty-product-notification__item clearfix">
-                {include file="common/image.tpl" image_width="50" image_height="50" images=$product.main_pair no_ids=true class="ty-product-notification__image"}
+                {include file="common/image.tpl" image_width=$notification_image_width image_height=$notification_image_height images=$product.main_pair no_ids=true class="ty-product-notification__image"}
                 <div class="ty-product-notification__content clearfix">
                     <a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="ty-product-notification__product-name">{$product.product_id|fn_get_product_name nofilter}</a>
                     {if !($settings.Checkout.allow_anonymous_shopping == "hide_price_and_add_to_cart" && !$auth.user_id)}

@@ -1,0 +1,45 @@
+.notification-content-extended {
+    --cs-notification-padding: 16px;
+
+    border-color: transparent;
+    overflow: hidden;
+    box-shadow: var(--cs-shadow);
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.notification-content {
+    border-radius: var(--cs-rounded-corners-radius-small);
+}
+
+.notification-content-extended h1 {
+    /** Tip for padding-right: Dialog close width (36px) + Margin (8px) **/
+    /** var(--cs-notification-padding) calc(var(--cs-notification-padding) + 36px + 8px) calc(var(--cs-notification-padding) / 2) var(--cs-notification-padding) **/
+    padding: var(--cs-notification-padding) calc(var(--cs-notification-padding) + 44px) calc(var(--cs-notification-padding) / 2) var(--cs-notification-padding);
+    margin: 0;
+    border-bottom-width: 0;
+    background: transparent;
+    font-weight: var(--cs-headings-font-weight);
+    font-size: var(--cs-headings-font-size);
+    white-space: normal;
+}
+
+.notification-content-extended h1 span {
+    top: var(--cs-notification-padding);
+    right: var(--cs-notification-padding);
+    width: 36px;
+    height: 36px;
+    color: var(--cs-btn-link-color);
+    font-size: 28px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.notification-content-extended h1 span:before {
+    content: "\e5cd";
+}
+
+.notification-content-extended h1 span:hover {
+    color: var(--cs-btn-link-color);
+    opacity: 0.7;
+}

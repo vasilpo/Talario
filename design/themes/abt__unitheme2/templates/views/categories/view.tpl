@@ -1,9 +1,9 @@
 {hook name="categories:view"}
-    <div class="ut2-cat-container{if $settings.abt__ut2.category.description_position == 'bottom'} reverse{/if}">
-	    {if $settings.abt__ut2.category.description_position != 'none'}
+    <div class="ut2-cat-container">
+	    {if $settings.abt__ut2.category.description_position[$settings.ab__device] == 'top'}
         {hook name="categories:view_description"}
         {if ($category_data.description || $runtime.customization_mode.live_editor)}
-            <div class="ty-wysiwyg-content ty-mb-s" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
+            <div class="ty-wysiwyg-content ty-mb-m {if $settings.ab__device=="mobile"}ty-mt-m{/if}" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
         {/if}
         {/hook}
         {/if}
@@ -38,6 +38,13 @@
                     <div class="cm-pagination-container"></div>
             {/if}
         <!--category_products_{$block.block_id}--></div>
+        {if $settings.abt__ut2.category.description_position[$settings.ab__device] == 'bottom'}
+            {hook name="categories:view_description"}
+            {if ($category_data.description || $runtime.customization_mode.live_editor)}
+                <div class="ty-wysiwyg-content ty-mt-m" {live_edit name="category:description:{$category_data.category_id}"}>{$category_data.description nofilter}</div>
+            {/if}
+            {/hook}
+        {/if}
     </div>
 {capture name="mainbox_title"}<span {live_edit name="category:category:{$category_data.category_id}"}>{$category_data.category}</span>{/capture}
 {/hook}

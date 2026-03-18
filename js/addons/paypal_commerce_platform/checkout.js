@@ -112,33 +112,35 @@
           console.error(applePayConfigError);
         });
       }).catch(error => console.error(error));
-      googlePayDeffered.done(() => {
-        googlePayClient = new google.payments.api.PaymentsClient({
-          environment: options.debug ? 'TEST' : 'PRODUCTION',
-          paymentDataCallbacks: {
-            onPaymentAuthorized: methods.googlePayPaymentAuthed
-          }
-        });
-        paypal.Googlepay().config().then(config => {
-          googlePayConfig = config;
-          googlePayClient.isReadyToPay({
-            apiVersion: googlePayConfig.apiVersion,
-            apiVersionMinor: googlePayConfig.apiVersionMinor,
-            allowedPaymentMethods: googlePayConfig.allowedPaymentMethods
-          }).then(function (response) {
-            if (!response.result) {
-              return;
+      if (typeof googlePayDeffered !== 'undefined') {
+        googlePayDeffered.done(() => {
+          googlePayClient = new google.payments.api.PaymentsClient({
+            environment: options.debug ? 'TEST' : 'PRODUCTION',
+            paymentDataCallbacks: {
+              onPaymentAuthorized: methods.googlePayPaymentAuthed
             }
-            const button = googlePayClient.createButton({
-              buttonType: 'pay',
-              buttonSizeMode: 'fill',
-              allowedPaymentMethods: googlePayConfig.allowedPaymentMethods,
-              onClick: methods.googlePayHandleClicked
-            });
-            $('#' + submitButtonId + '_googlepay-container').html(button);
+          });
+          paypal.Googlepay().config().then(config => {
+            googlePayConfig = config;
+            googlePayClient.isReadyToPay({
+              apiVersion: googlePayConfig.apiVersion,
+              apiVersionMinor: googlePayConfig.apiVersionMinor,
+              allowedPaymentMethods: googlePayConfig.allowedPaymentMethods
+            }).then(function (response) {
+              if (!response.result) {
+                return;
+              }
+              const button = googlePayClient.createButton({
+                buttonType: 'pay',
+                buttonSizeMode: 'fill',
+                allowedPaymentMethods: googlePayConfig.allowedPaymentMethods,
+                onClick: methods.googlePayHandleClicked
+              });
+              $('#' + submitButtonId + '_googlepay-container').html(button);
+            }).catch(error => console.error(error));
           }).catch(error => console.error(error));
-        }).catch(error => console.error(error));
-      }).fail(error => console.error(error));
+        }).fail(error => console.error(error));
+      }
     },
     /**
      * Gets PayPal Smart Buttons script load options.
@@ -415,7 +417,9 @@
       } else {
         options = methods.getSmartButtonsLoadOptions($payment);
         var url = methods.getSmartButtonsLoadUrl(options);
-        methods.loadApplePayScript();
+        if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
+          methods.loadApplePayScript();
+        }
         methods.loadPayPalScript(url, options.merchantIds, checkoutScriptLoadCallback);
         googlePayDeffered = methods.loadGooglePayScript();
       }
@@ -545,5 +549,12 @@
   $.ceEvent('on', 'ce.commoninit', function (context) {
     $.cePaypalCommercePlatformCheckout('setup', context);
   });
-  $.cePaypalCommercePlatformCheckout('setup', document);
+  $.ceEvent('on', 'ce.gdpr_cookie_init', function (context) {
+    $.cePaypalCommercePlatformCheckout('setup', context);
+  });
+  $.ceEvent('on', 'ce.gdpr_cookie_ajaxdone', function (context) {
+    if (!isCheckoutScriptLoaded) {
+      $.cePaypalCommercePlatformCheckout('setup', context);
+    }
+  });
 })(Tygh, Tygh.$);

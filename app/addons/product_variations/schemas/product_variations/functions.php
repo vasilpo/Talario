@@ -1,19 +1,18 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * 'copyright.txt' FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\ProductVariations\ServiceProvider;
-
 
 function fn_product_variations_get_product_sync_feature_conditions($product_id)
 {
@@ -207,5 +206,31 @@ function fn_product_variations_sync_delete_variation_images($source_product_id, 
 {
     foreach($delete_pk_list as $deleted_image) {
         fn_delete_image_file($deleted_image['detailed_id'], 'detailed');
+    }
+}
+
+/**
+ * Modifies deletion results of video pairs.
+ *
+ * @param int                            $source_product_id       Parent product ID.
+ * @param array<int, int>                $destination_product_ids Child products ids.
+ * @param array<int, array<string, int>> $source_data_list        Parent product data.
+ * @param array<int, array<string, int>> $update_pk_list          Parent product data have been updated.
+ * @param array<int, array<string, int>> $insert_pk_list          Parent product data have been added.
+ * @param array<int, array<string, int>> $delete_pk_list          Parent product data have been deleted.
+ *
+ * @return void
+ */
+function fn_product_variations_sync_delete_variation_videos(
+    $source_product_id,
+    array $destination_product_ids,
+    array $source_data_list,
+    array $update_pk_list,
+    array $insert_pk_list,
+    array $delete_pk_list
+) {
+    foreach ($delete_pk_list as $deleted_video) {
+        $video_manager = Tygh::$app['video.video_manager'];
+        $video_manager->deleteVideoData($deleted_video['video_id']);
     }
 }

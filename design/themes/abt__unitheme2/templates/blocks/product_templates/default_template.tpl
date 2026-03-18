@@ -13,7 +13,7 @@
         {$product_images_count = $product.image_pairs|@count}
     {/hook}
 
-    <div class="ut2-pb ty-product-block ty-product-detail{if $product_images_count < 1} --single{/if}" style="--pd-image-gallery-width: {$pd_image_gallery_width};--pd-image-gallery-height: {$pd_image_gallery_height}">
+    <div class="ut2-pb ty-product-block{if $product_images_count < 1} --single{/if}" style="--pd-image-gallery-width: {$pd_image_gallery_width};--pd-image-gallery-height: {$pd_image_gallery_height}">
         <div class="ut2-breadcrumbs__wrapper">
             {hook name="products:ut2_main_info_breadcrumbs"}
                 {include file="common/breadcrumbs.tpl"}
@@ -21,7 +21,7 @@
         </div>
         <div class="ut2-pb__title ut2-pb__title-wrap">
             {if !$hide_title}
-                <h1 {live_edit name="product:product:{$product.product_id}"}><bdi>{$product.product nofilter}</bdi></h1>
+                <h1 {live_edit name="product:product:{$product.product_id}"}>{$product.product nofilter}</h1>
             {/if}
             <div class="ut2-pb__top-ss">
                 {hook name="products:top_ss"}{/hook}
@@ -57,15 +57,11 @@
 
                     {hook name="products:ab__s_pictograms_pos_1"}{/hook}
 
-                    {if $settings.abt__ut2.products.custom_block_id|intval}
-                        <div class="ut2-pb__custom-block">
-                            {render_block block_id=$settings.abt__ut2.products.custom_block_id|intval dispatch="products.view" use_cache=false parse_js=false}
-                        </div>
-                    {/if}
+                    {hook name="products:ab__vendor_block"}{/hook}
                 </div>
 
                 <div class="ut2-pb__right-wrapper">
-                    <div class="ut2-pb__main-content-box">
+                    <div class="ut2-pb__main-content-box shaded">
                         <div class="top-product-layer">
                             {include file="blocks/product_templates/components/product_rating.tpl"}
 
@@ -76,7 +72,10 @@
                                 </div>
                             {/if}
                         </div>
-                        <div class="ut2-pb__content-wrapper">
+
+                        {hook name="products:ab__deal_of_the_day_product_view"}{/hook}
+
+                        <div class="ut2-pb__content-wrapper columns-combined">
                             <div class="ut2-pb__first">
                                 {assign var="form_open" value="form_open_`$obj_id`"}
                                 {$smarty.capture.$form_open nofilter}
@@ -104,28 +103,25 @@
                                 </div>
                                 {if $capture_options_vs_qty}{/capture}{/if}
 
-                                <div class="ut2-pb__advanced-options clearfix">
+                                <div class="ut2-pb__advanced-options">
                                     {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                                     {assign var="advanced_options" value="advanced_options_`$obj_id`"}
                                     {$smarty.capture.$advanced_options nofilter}
                                     {if $capture_options_vs_qty}{/capture}{/if}
                                 </div>
 
-                                {assign var="product_edp" value="product_edp_`$obj_id`"}
-                                {$smarty.capture.$product_edp nofilter}
-
                                 {if $capture_buttons}{capture name="buttons"}{/if}
                                 <div class="ut2-pb__button ty-product-block__button">
                                     {if $show_qty}
-                                    <div class="ut2-qty__wrap {if $min_qty && $product.min_qty}min-qty{/if}">
-                                        {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
+                                        <div class="ut2-qty__wrap {if $min_qty && $product.min_qty}min-qty{/if}">
+                                            {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
                                             {assign var="qty" value="qty_`$obj_id`"}
                                             {$smarty.capture.$qty nofilter}
 
                                             {assign var="min_qty" value="min_qty_`$obj_id`"}
                                             {$smarty.capture.$min_qty nofilter}
-                                        {if $capture_options_vs_qty}{/capture}{/if}
-                                    </div>
+                                            {if $capture_options_vs_qty}{/capture}{/if}
+                                        </div>
                                     {/if}
                                     {if $show_details_button}
                                         {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
@@ -141,42 +137,38 @@
 
                                 {hook name="products:ab__s_pictograms_pos_2"}{/hook}
 
+                                {if $settings.abt__ut2.products.view.show_features[$settings.ab__device] === "YesNo::YES"|enum && $product.header_features}
+                                    <div class="ut2-pb__short-features">{include file="views/products/components/product_features_short_list.tpl" features=$product.header_features}</div>
+                                {/if}
+
+                                {assign var="product_edp" value="product_edp_`$obj_id`"}
+                                {$smarty.capture.$product_edp nofilter}
+
                                 {* Remove if using hook in motivation block *}
                                 {hook name="products:geo_maps"}{/hook}
+
+                                {if $show_short_descr && strlen(trim($product.short_description))}
+                                    <div class="ut2-pb__short-descr" {live_edit name="product:short_description:{$product.product_id}"}>{$product.short_description nofilter}</div>
+                                {/if}
 
                                 {hook name="products:product_form_close_tag"}
                                 {$form_close="form_close_`$obj_id`"}
                                 {$smarty.capture.$form_close nofilter}
                                 {/hook}
 
-                                {if $show_short_descr && strlen(trim($product.short_description))}
-                                    <div class="ut2-pb__short-descr" {live_edit name="product:short_description:{$product.product_id}"}>{$product.short_description nofilter}</div>
-                                {/if}
-
-                                {if $settings.abt__ut2.products.view.show_features[$settings.ab__device] === "YesNo::YES"|enum && $product.header_features}
-                                    <div>
-                                        {include file="views/products/components/product_features_short_list.tpl" features=$product.header_features}
-                                    </div>
-                                {/if}
-
-                            </div>
-                            <div class="ut2-pb__second">
-
-                                {hook name="products:ab__deal_of_the_day_product_view"}{/hook}
-                                {hook name="products:ab__vendor_block"}{/hook}
-                                {hook name="products:ab__motivation_block"}{/hook}
-
                                 {if $show_product_tabs}
                                     {include file="views/tabs/components/product_popup_tabs.tpl"}
                                     {$smarty.capture.popupsbox_content nofilter}
                                 {/if}
-
+                            </div>
+                            <div class="ut2-pb__last">
+                                {hook name="products:ab__motivation_block"}{/hook}
                                 {hook name="products:product_detail_bottom"}{/hook}
-
                             </div>
                         </div>
                     </div>
                 </div>
+
             {/if}
 
         </div>
@@ -187,7 +179,14 @@
         {/if}
 
         <div class="ut2-pb__tabs-wrapper">
+
             {hook name="products:buy_together"}{/hook}
+
+            {if $settings.abt__ut2.products.custom_block_id|intval}
+                <div class="ut2-pb__custom-block">
+                    {render_block block_id=$settings.abt__ut2.products.custom_block_id|intval dispatch="products.view" use_cache=false parse_js=false}
+                </div>
+            {/if}
 
             {hook name="products:product_tabs_pre"}
                 <div class="ut2-pb__tabs{if $settings.Appearance.product_details_in_tab === "YesNo::NO"|enum} tabs-list{/if}">

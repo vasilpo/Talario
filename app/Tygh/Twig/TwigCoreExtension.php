@@ -1,19 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Twig;
 
+use Twig\Environment;
 use Tygh\Registry;
 use Tygh\Template\Collection;
 use Tygh\Template\Document\Service;
@@ -40,7 +41,8 @@ class TwigCoreExtension extends AbstractExtension
             new TwigFilter('date', [$this, 'dateFilter']),
             new TwigFilter('price', [$this, 'priceFilter']),
             new TwigFilter('filesize', [$this, 'filesizeFilter']),
-            new TwigFilter('puny_decode', [$this, 'punyDecodeFilter'])
+            new TwigFilter('puny_decode', [$this, 'punyDecodeFilter']),
+            new TwigFilter('wordwrap', [$this, 'wordwrap'], ['needs_environment' => true]),
         );
     }
 
@@ -212,5 +214,37 @@ class TwigCoreExtension extends AbstractExtension
         } catch (\Exception $e) {}
 
         return '';
+    }
+
+    /**
+     * @param Environment $env       Twig environment
+     * @param string      $value     Value
+     * @param int         $length    Length
+     * @param string      $separator Separator
+     * @param bool        $preserve  Preserve
+     *
+     * @return string
+     */
+    public function wordwrap(Environment $env, $value, $length = 80, $separator = "\n", $preserve = false)
+    {
+        $sentences = [];
+
+        /** @var string $previous */
+        $previous = mb_regex_encoding();
+        mb_regex_encoding($env->getCharset());
+
+        $pieces = mb_split($separator, $value);
+        mb_regex_encoding($previous);
+
+        foreach ($pieces as $piece) {
+            while (!$preserve && mb_strlen($piece, $env->getCharset()) > $length) {
+                $sentences[] = mb_substr($piece, 0, $length, $env->getCharset());
+                $piece = mb_substr($piece, $length, 2048, $env->getCharset());
+            }
+
+            $sentences[] = $piece;
+        }
+
+        return implode($separator, $sentences);
     }
 }

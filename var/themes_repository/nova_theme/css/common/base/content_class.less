@@ -1,0 +1,89 @@
+/** Styles for layout content CSS classes **/
+
+.ty-footer-menu__item a,
+.ty-footer-general__body .ty-text-links__a {
+    color: var(--cs-footer-text);
+}
+
+.ty-footer-menu__item a:hover,
+.ty-footer-general__body .ty-text-links__a:hover {
+    color: var(--cs-footer-text-hover);
+}
+
+.ty-social-link a {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.ty-social-link i,
+.ty-social-link .ty-icon {
+    --cs-ty-social-link-size: 28px;
+
+    padding-right: 0;
+    font-size: var(--cs-ty-social-link-size);
+}
+
+.ty-social-link-container {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+h3.ty-social-link__title {
+    font-size: 20px;
+}
+
+.ty-social-link__text.ty-license-agreement__link,
+.ty-social-link__text.ty-license-agreement__link:hover {
+    color: #fff;
+}
+
+/** =========================================================== Social links **/
+
+.ty-social-link {
+    vertical-align: middle;
+}
+
+.ty-social-link [class*="ty-icon-moon-"] {
+    margin-right: 10px;
+    padding: 5px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.ty-social-link [class*="ty-icon-moon-"]:hover {
+    --ty-subscribe-button: var(--cs-tertiary-button);
+    color: #ffffff;
+    border-color: var(--ty-subscribe-button);
+}
+
+.ty-social-link .ty-icon-moon-vk {
+    padding: 8px;
+    font-size: 12px;
+}
+
+.ty-social-link:last-child i,
+.ty-social-link:last-child .ty-icon {
+    margin-right: 0;
+}
+
+.ty-social-link-block {
+    margin: 38px 15px 38px 0;
+}
+
+h3.ty-social-link__title {
+    font-weight: bold;
+    line-height: 58px;
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 1120px) {
+    h3.ty-social-link__title {
+        line-height: 44px;
+    }
+}
+
+.ty-social-link {
+    top: 0;
+}

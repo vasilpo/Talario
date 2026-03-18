@@ -1,7 +1,7 @@
 // Flame.less
 
 .ty-discount-label {
-	background: @links;
+	background: var(--color-links);
 }
 
 // Remove this code to change the color of the icons in the menu
@@ -48,7 +48,7 @@
 @sidebar: #ffffff;
 @price: #1e1e1e;
 @discount_label: #be0318;
-@in_stock: #008300;
+@in_stock: #1e905d;
 @out_of_stock: #808080;
 @top_panel_links: #808080;
 @top_panel_text: #808080;
@@ -79,30 +79,37 @@
 @footer_bg_transparent: false;
 @footer_bg_grad_stop: #1e1e1e;
 
-@body_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+// Font - Open Sans for heading: 'Open Sans','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Open Sans for regular text: -apple-system,BlinkMacSystemFont,'Open Sans','Helvetica Neue','Arial',sans-serif;
+// Font - Inter for heading: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Inter for regular text: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
+// Font - Montserrat for heading: 'Montserrat','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Montserrat for regular text: -apple-system,BlinkMacSystemFont,'Montserrat','Helvetica Neue','Arial',sans-serif;
+
+@body_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
 @body_font_size: 14px;
 @body_font_style: normal;
 @body_font_weight: normal;
-@headings_font: 'MuseoSansBlack','Helvetica Neue','Arial',-apple-system,sans-serif;
+@headings_font: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
 @headings_font_size: 24px;
 @headings_font_decoration: none;
 @headings_font_style: normal;
-@headings_font_weight: normal;
-@links_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@headings_font_weight: 900;
+@links_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
 @links_font_size: 14px;
 @links_font_decoration: none;
 @links_font_style: normal;
-@links_font_weight: normal;
-@price_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@links_font_weight: 400;
+@price_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
 @price_font_size: 18px;
 @price_font_decoration: none;
 @price_font_style: normal;
-@price_font_weight: bold;
-@buttons_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
-@buttons_font_size: 14px;
+@price_font_weight: 700;
+@buttons_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
+@buttons_font_size: 15px;
 @buttons_font_decoration: none;
 @buttons_font_style: normal;
-@buttons_font_weight: normal;
+@buttons_font_weight: 600;
 
 // Only this style ------------------------------------
 
@@ -133,7 +140,7 @@
 @abt__ut2_general_use_titles_uppercase: false;
 @abt__ut2_general_style_tabs: type1;
 @abt__ut2_general_stars_rating_color: #be0219;
-@abt__ut2_general_browser_interface_bg: @top_panel_bg;
+@abt__ut2_general_browser_interface_bg: #ffffff;
 @abt__ut2_general_buttons_use_icon_cart: type3;
 
 @abt__ut2_general_labels_style: as_rectangle;
@@ -161,9 +168,9 @@
 @abt__ut2_product_list_grid-list_product_name_font_weight: normal;
 
 // Products
-@abt__ut2_products_mask_images_gallery: false;
+@abt__ut2_products_mask_images_gallery: true;
 @abt__ut2_products_bordered_images_gallery: false;
-@abt__ut2_products_sticky_columns: false;
+@abt__ut2_products_sticky_columns: true;
 
 // Checkout
 @checkout_link: #00a3cb;
@@ -190,7 +197,6 @@
 @abt__ut2_addons_ab__deal_of_the_day_bright_color_promotion_title: true;
 @abt__ut2_addons_ab__deal_of_the_day_bordered_block: false;
 @abt__ut2_addons_ab__deal_of_the_day_shadow_block: true;
-@abt__ut2_addons_ab__deal_of_the_day_rounded_corners_blocks: true;
 
 // Vendor colors
 @abt__ut2_vendor_vendor_info_background: #f6f6f6;

@@ -37,7 +37,7 @@
         <div class="ty-control-group">
             <label class="ty-control-group__label" for="{$prefix}elm_city{$id_suffix}">{__("city")}</label>
             <select class="cm-location-estimation{$class_suffix} ty-input-text-medium" id="{$prefix}elm_city{$id_suffix}" name="customer_location[city]">
-                <option label="" value="">-- {__("select_city")} --</option>
+                <option label="" value="">-- {__("cities.select_city")} --</option>
                 {foreach $cities as $city}
                     {$city_found = $city_found|default:false || $city.city == $_city}
                     <option value="{$city.city}"
@@ -46,7 +46,7 @@
                 {/foreach}
                 <option value="client_city"
                     {if !$city_found}selected="selected"{/if}
-                    >-- {__("other_town")} --
+                    >-- {__("cities.other_town")} --
                 </option>
             </select>
         </div>
@@ -54,7 +54,7 @@
         <div id="client_city" class="ty-control-group {if $city_found}hidden{/if}">
             <label class="ty-control-group__label"
                    for="{$prefix}elm_city_text{$id_suffix}"
-            >{__("other_town")}</label>
+            >{__("cities.other_town")}</label>
             <input type="text"
                    class="ty-input-text-medium"
                    id="{$prefix}elm_city_text{$id_suffix}"

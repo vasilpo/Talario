@@ -5,5 +5,24 @@
 	"logo":"media\/images\/cart.png",
 	"mail":"media\/images\/invoice_logo.png",
 	"favicon":"media\/images\/favicon.ico",
-	"developer": "CS-Cart"
+	"developer": "CS-Cart",
+    "settings_overrides": {
+        "Appearance": {
+            "products_per_page": 12,
+            "columns_in_products_list": 3,
+            "default_product_details_view": "default_template",
+            "default_products_view_templates": [
+                "products_multicolumns",
+                "products_without_options",
+                "short_list"
+            ]
+        },
+        "Thumbnails": {
+            "product_lists_thumbnail_width": 150,
+            "product_lists_thumbnail_height": 150,
+            "product_details_thumbnail_width": 280,
+            "product_cart_thumbnail_height": "",
+            "product_quick_view_thumbnail_width": 220
+        }
+    }
 }

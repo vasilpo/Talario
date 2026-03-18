@@ -16,24 +16,24 @@
     </div>
 {/if}
 
-<div class="ut2-blog__recent-posts-scroller">
-    <div id="scroll_list_{$block.block_id}" class="owl-carousel ty-scroller-list ty-scroller owl-theme">
+<div class="ut2-blog__recent-posts-scroller" style="--blog-recent-posts: {$block.properties.item_quantity};">
+    <div id="scroll_list_{$block.block_id}" class="owl-carousel ty-scroller-list ty-scroller active-scroll">
 
     {foreach from=$items item="page"}
         <div class="ut2-blog__recent-posts-scroller--item">
 
             <div class="ut2-blog__recent-posts-scroller--img">
-                <div class="ut2-blog__date">{$page.timestamp|date_format:"%d.%m.%Y"}</div>
+                <div class="ut2-blog__date">{$page.timestamp|date_format:"`$settings.Appearance.date_format`"}</div>
                 <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}">
                     {if $page.main_pair}
-                        {include file="common/image.tpl" obj_id=$page.page_id images=$page.main_pair}
+                        {include file="common/image.tpl" obj_id=$page.page_id images=$page.main_pair lazy_load=false}
                     {else}
                         <div class="ut2-blog__recent-posts--img cover no-image"></div>
                     {/if}
                 </a>
             </div>
 
-            <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}">{$page.page}</a>
+            <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}" class="ut2-blog__recent-posts--title">{$page.page}</a>
 
         </div>
     {/foreach}

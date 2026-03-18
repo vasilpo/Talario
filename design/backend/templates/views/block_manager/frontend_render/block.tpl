@@ -11,12 +11,12 @@
             {if $content_alignment == "RIGHT"} ty-float-right
             {elseif $content_alignment == "LEFT"} ty-float-left{/if}"
             data-ca-block-manager-snapping-id="{$snapping_id}"
-        >
+            {if $block.snapping_id} id="snapping_id_{$block.snapping_id}"{/if}>
             {include file="backend:views/block_manager/frontend_render/components/block_menu.tpl"}
             <div class="bm-block-manager__block-content {$is_clearfix_class}">
                 {$content nofilter}
             </div>
-        </{$tag}>
+        {if $block.snapping_id}<!--snapping_id_{$block.snapping_id}-->{/if}</{$tag}>
     {else}
         {$content nofilter}
     {/if}

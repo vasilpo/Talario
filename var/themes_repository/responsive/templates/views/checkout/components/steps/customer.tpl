@@ -2,7 +2,9 @@
     <div class="litecheckout__container litecheckout__step">
         <div class="litecheckout__section">
             {if $show_title}
-                {include file="views/checkout/components/customer/title.tpl"}
+                {include file="views/checkout/components/customer/title.tpl"
+                    is_checkout_customer_title_fill=$is_checkout_customer_title_fill
+                }
             {/if}
 
             {if $show_address}

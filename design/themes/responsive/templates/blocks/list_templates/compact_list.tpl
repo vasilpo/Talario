@@ -47,12 +47,21 @@
                                     {hook name="products:list_price_block"}
                                         <div class="ty-compact-list__price">
                                             {$old_price="old_price_`$obj_id`"}
-                                            {if $smarty.capture.$old_price|trim}
-                                                {$smarty.capture.$old_price nofilter}
+
+                                            {if $price_first}
+                                                {if $smarty.capture.$old_price|trim}
+                                                    {$smarty.capture.$old_price nofilter}
+                                                {/if}
                                             {/if}
 
                                             {$price="price_`$obj_id`"}
                                             {$smarty.capture.$price nofilter}
+
+                                            {if !$price_first}
+                                                {if $smarty.capture.$old_price|trim}
+                                                    {$smarty.capture.$old_price nofilter}
+                                                {/if}
+                                            {/if}
 
                                             {$clean_price="clean_price_`$obj_id`"}
                                             {$smarty.capture.$clean_price nofilter}

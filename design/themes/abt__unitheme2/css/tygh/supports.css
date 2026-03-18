@@ -15,6 +15,54 @@
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
 /*==============================================================================
+   [[[ BEGIN ]]] stretch only-child button to full width in search-filter form footer
+==============================================================================*/
+@container qc_search-filter-form-footer (max-width: 480px) {
+    .ty-search-form__buttons-container .ty-btn:only-child {
+        flex-grow: 1;
+    }
+}
+/* [[[ END ]]] stretch only-child button to full width in search-filter form footer
+==============================================================================*/
+
+
+/*==============================================================================
+   [[[ BEGIN ]]] google captcha shrinkage
+==============================================================================*/
+@container qc_captcha (max-width: 298px) { /*captcha width - 6px*/
+    .captcha.ty-control-group iframe[src*="size=normal"] {
+        transform: scale(0.7);
+        margin-inline-start: -46px;
+        margin-block-start: -13px;
+        margin-block-end: -13px;
+    }
+}
+
+@container qc_captcha (max-width: 200px) {
+    .captcha.ty-control-group iframe[src*="size=normal"] {
+        margin-inline-start: -53px;
+    }
+}
+
+@container qc_captcha (max-width: 194px) {
+    .captcha.ty-control-group iframe[src*="size=normal"] {
+        margin-inline-start: -58px;
+    }
+}
+/* [[[ END ]]] google captcha shrinkage
+==============================================================================*/
+
+
+/*target Chromium*/
+@supports (contain: paint) and (not (-moz-appearance: none)) {
+    /*fix bug of random element twitching when when checkbox state changes*/
+    .ui-dialog-content#content_free_products :where(input, select, button, textarea) {
+        transition: none !important;
+    }
+}
+
+
+/*==============================================================================
    [[[ BEGIN ]]] gift certificate
 ==============================================================================*/
 @container qc_gift-certificate-buttons (max-width: 360px) {
@@ -140,5 +188,114 @@
     .ut2-banner .mask-full-height .ut2-a__content {
         background-image: var(--ab-banner-mask-background-gradient);
         background-color: var(--ab-banner-mask-background-color);
+    }
+}
+@container intcont (max-width: 400px) {
+    .ut2-banner .ut2-a__content.width-half.align-left .ut2-a__img:not(.ut2-a__products) {
+        max-width: calc(100% - 200px);
+        margin-left: auto;
+
+        html[dir="rtl"] & {
+            margin-inline: auto 0;
+        }
+    }
+    .ut2-banner .ut2-a__content.width-half.align-right .ut2-a__img:not(.ut2-a__products) {
+        max-width: calc(100% - 200px);
+        margin-right: auto;
+
+        html[dir="rtl"] & {
+            margin-inline: 0 auto;
+        }
+    }
+}
+
+#content_product_reviews_block {
+    container: reviews_block / inline-size;
+}
+
+.ut2-gl__item {
+    container: lv_block / inline-size;
+}
+@container lv_block (min-width: 261px) {
+    .ut2-gl__item .ut2-lv__features-item[data-display="thumbnails"] {
+        grid-template-columns: repeat(6, 1fr) !important;
+    }
+}
+@container lv_block (max-width: 260px) {
+    .ut2-gl__item .ut2-lv__features-item[data-display="thumbnails"] {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+    .ut2-lv__more {
+        position: absolute;
+        right: 0;
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 100%;
+            width: 15px;
+            height: 100%;
+        }
+    }
+}
+@container lv_block (max-width: 210px) {
+    .ut2-gl__item .ut2-lv__features-item[data-display="thumbnails"] {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+}
+
+@container reviews_block (min-width: 1199px) {
+    section.ty-product-reviews-view__main {
+        grid-template-columns: 1fr minmax(400px, 500px);
+        gap: var(--gap-s) var(--gap-l);
+    }
+    #content_product_reviews_block .ty-product-reviews-view__main-content {
+        display: contents;
+    }
+    #content_product_reviews.ab-smc-description:not(.ab-smc-opened) .ty-product-reviews-view__main-content-left {
+        position: static;
+    }
+    section.ty-product-review-product-rating {
+        flex-direction: column;
+    }
+    .ty-product-reviews-view__main-content .ty-product-review-write-review {
+        padding-top: var(--gap-s);
+        padding-inline: initial;
+        border-width: 1px 0 0 0;
+    }
+    .ty-product-reviews-view__main-content-left {
+        align-self: start;
+        position: sticky;
+        top: calc(var(--js_rt_overall-top_-stuck-_height) + var(--gap-s));
+        order: 2;
+    }
+    .ty-product-reviews-view__main-content-right .ty-product-review-reviews-navigation {
+        align-self: start;
+        position: sticky;
+        z-index: 1;
+        top: calc(var(--js_rt_overall-top_-stuck-_height) + var(--gap-s));
+        background: rgba(255,255,255,0.75);
+        box-shadow: inset 0 0 100px var(--fill-gray);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+    .ty-product-reviews-view__main-content-left .ty-tabs {
+        order: -1;
+    }
+    .ty-product-reviews-view__main-content-right {
+        display: grid;
+        gap: var(--gap-s) 0;
+
+    }
+}
+
+@container reviews_block (max-width: 1200px) {
+    .ut2-pb .ty-product-reviews-view__main-content-left,
+    .ut2-pb .ty-product-reviews-view__main-content-right {
+        display: contents;
+    }
+    .ty-product-reviews-view__main-content-right > .ty-subheader:first-child {
+        flex-basis: 100%;
     }
 }

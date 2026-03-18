@@ -1,4 +1,6 @@
 {if $wishlist.gift_certificates}
+{$enable_quick_view_on_product_image = $enable_quick_view_on_product_image|default:false}
+{$enable_quick_view_on_product_list_control = $enable_quick_view_on_product_list_control|default:true}
 
 {foreach from=$wishlist.gift_certificates item="gift" key="gift_key" name="gift_certificates"}
 {math equation="it + 1" assign="iteration" it=$iteration}
@@ -11,6 +13,12 @@
                 </div>
                 <div class="ty-grid-list__image">
                     <a href="{"gift_certificates.update?gift_cert_wishlist_id=`$gift_key`"|fn_url}">{include file="addons/gift_certificates/views/gift_certificates/components/gift_certificates_cart_icon.tpl" width=$settings.Thumbnails.product_lists_thumbnail_width height=$settings.Thumbnails.product_lists_thumbnail_height}</a>
+
+                    {if $enable_quick_view_on_product_image}
+                        <div class="ty-quick-view-button">
+                            <a id="opener_gift_cert_picker_{$gift_key}" class="ty-btn ty-btn__secondary ty-btn__big ty-quick-view-link cm-dialog-opener cm-dialog-auto-size" data-ca-target-id="gift_cert_quick_view_{$gift_key}" href="{"gift_certificates.update?gift_cert_wishlist_id=`$gift_key`"|fn_url}" rel="nofollow">{__("quick_view")}</a>
+                        </div>
+                    {/if}
                 </div>
                 <div class="ty-grid-list__item-name">
                     <a href="{"gift_certificates.update?gift_cert_wishlist_id=`$gift_key`"|fn_url}">{__("gift_certificate")}{if $gift.products} + {__("free_products")}{/if}</a>
@@ -20,9 +28,11 @@
                 </div>
 
                 <div class="ty-grid-list__control">
-                    <div class="ty-quick-view-button">
-                        <a id="opener_gift_cert_picker_{$gift_key}" class="ty-btn ty-btn__secondary ty-btn__big cm-dialog-opener cm-dialog-auto-size" data-ca-target-id="gift_cert_quick_view_{$gift_key}" href="{"gift_certificates.update?gift_cert_wishlist_id=`$gift_key`"|fn_url}" rel="nofollow">{__("quick_view")}</a>
-                    </div>
+                    {if $enable_quick_view_on_product_list_control}
+                        <div class="ty-quick-view-button">
+                            <a id="opener_gift_cert_picker_{$gift_key}" class="ty-btn ty-btn__secondary ty-btn__big ty-quick-view-link cm-dialog-opener cm-dialog-auto-size" data-ca-target-id="gift_cert_quick_view_{$gift_key}" href="{"gift_certificates.update?gift_cert_wishlist_id=`$gift_key`"|fn_url}" rel="nofollow">{__("quick_view")}</a>
+                        </div>
+                    {/if}
                 </div>
             </div>
 

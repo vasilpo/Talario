@@ -38,13 +38,13 @@
     {/hook}
 {elseif !$is_storefront_admin}
     {* Get addon license required text *}
-    {include file="views/addons/components/addons/addon_license_required.tpl"
-        key=$_addon
-    }
+    {$license_required_popup_id="license_required_popup_$_addon"}
+    {include file="views/addons/components/addons/addon_license_required.tpl" addon=$_addon popup_id=$license_required_popup_id}
+
     {hook name="addons:action_buttons"}
-        <a href={$license_required.href}
-            class="btn btn-primary cm-post cm-dialog-opener cm-dialog-auto-size"
-            data-ca-target-id={$license_required.target_id}
+        <a href="{$license_required.href}"
+            class="btn btn-primary cm-post cm-dialog-opener cm-dialog-auto-height"
+            data-ca-target-id="{$license_required_popup_id}"
             data-ca-dialog-title="{$license_required.promo_popup_title}"
         >
             {if $addon_install_datetime}

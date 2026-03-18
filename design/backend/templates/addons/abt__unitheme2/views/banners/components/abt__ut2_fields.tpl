@@ -51,7 +51,7 @@
 {$field="padding"}{$elm="abt__ut2`$device_prefix`_`$field`"}{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
 <div class="control-group">
 <label for="elm_banner_{$elm}" class="control-label">{__("abt__ut2.banner.params.{$field}")}{include file="common/tooltip.tpl" tooltip=__("abt__ut2.banner.params.{$field}.tooltip")}</label>
-{$explode_pd = explode(" ",$banner.$elm)}
+{$explode_pd = explode(" ", $banner.$elm|default:"")}
 {include file="addons/abt__unitheme2/views/banners/components/use_own.tpl"}
 <div id="overlay_{$elm}" class="controls cm-trim abt-ut2-overlay{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">
 <span style="opacity: 0.5">{__("abt__ut2.banner.params.padding.label.top")}:</span>
@@ -106,7 +106,7 @@ updateHiddenInput();
 as $classes}
 <input type="checkbox"
 id="{$name}_{$classes@key}"
-{if $banner.$elm|strpos:$classes !== false}checked="checked"{/if}
+{if $banner.$elm && $banner.$elm|strpos:$classes !== false}checked="checked"{/if}
 class="cm-text-toggle btn-group-checkbox__checkbox"
 data-ca-toggle-text="{$classes}"
 data-ca-toggle-text-target-elem-id="elm_banner_{$elm}"
@@ -372,6 +372,39 @@ input_name="banner_data[{$elm}]"
 </div>
 <hr>
 </div>
+<div class="control-group">
+{$field="image_v_position"}
+{$elm="abt__ut2`$device_prefix`_`$field`"}
+{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
+<div class="control-group abt__ut2_vertical_image_align">
+{if !$banner.$elm}
+{$banner.$elm = "center"}
+{/if}
+<label for="elm_banner_{$elm}" class="control-label{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">{__("abt__ut2.banner.params.{$field}")}{include file="common/tooltip.tpl" tooltip=__("abt__ut2.banner.params.{$field}.tooltip")}</label>
+{include file="addons/abt__unitheme2/views/banners/components/use_own.tpl"}
+<div id="overlay_{$elm}" class="controls btn-group abt-ut2-overlay{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">
+{foreach ['top', 'center', 'bottom'] as $e}
+{assign var="radio_id" value="elm_banner_{$elm}_{$e}"}
+<label for="{$radio_id}" class="btn"><i class="ut2-icon-align-vertical-{$e} cm-tooltip" title="{__("abt__ut2.banner.params.{$field}.variants.{$e}")}"></i><input type="radio" name="banner_data[{$elm}]" id="{$radio_id}" value="{$e}" {if $banner.$elm == $e}checked="checked"{/if} /></label>
+{/foreach}
+</div>
+</div>
+{$field="image_h_position"}
+{$elm="abt__ut2`$device_prefix`_`$field`"}
+{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
+<div class="control-group abt__ut2_horizontal_image_align">
+{if !$banner.$elm}
+{$banner.$elm = "center"}
+{/if}
+{include file="addons/abt__unitheme2/views/banners/components/use_own.tpl"}
+<div id="overlay_{$elm}" class="controls btn-group abt-ut2-overlay{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">
+{foreach ['left', 'center', 'right'] as $e}
+{assign var="radio_id" value="elm_banner_{$elm}_{$e}"}
+<label for="{$radio_id}" class="btn"><i class="ut2-icon-align-horizontal-{$e} cm-tooltip" title="{__("abt__ut2.banner.params.{$field}.variants.{$e}")}"></i><input type="radio" name="banner_data[{$elm}]" id="{$radio_id}" value="{$e}" {if $banner.$elm == $e}checked="checked"{/if} /></label>
+{/foreach}
+</div>
+</div>
+</div>
 <h4 class="ty-subheader">{__("abt__ut2.banner.background")}</h4>
 {** Control the type of background image **}
 {$field="background_type"}{$elm="abt__ut2`$device_prefix`_`$field`"}{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
@@ -437,7 +470,7 @@ $('.object-products.' + changes[val]).addClass('hidden');
 <div style="width: 100%;" class="upload-file-section">
 <p>
 {$video_path = urlencode($banner.$elm)}
-<a href="{"banners.delete_ut2_video?video_path=$video_path&banner_id=`$banner.banner_id`&type=$elm&redirect_url={$config.current_url|urlencode}"|fn_url}" class="image-delete cm-confirm cm-post delete cm-delete-image-link cm-tooltip" title="{__("delete")}"><span class="cs-icon icon-remove-sign"></span></a>
+<a href="{"banners.delete_ut2_video?video_path=$video_path&banner_id=`$banner.banner_id`&type=$elm&redirect_url={$config.current_url|urlencode}"|fn_url}" class="image-delete cm-confirm cm-post delete cm-delete-image-link cm-tooltip" title="{__("delete")}"><span class="ty-icon ty-icon-cancel-circle"></span></a>
 <span class="upload-filename">{$banner.$elm}</span>
 </p>
 </div>
@@ -465,17 +498,37 @@ $('.object-products.' + changes[val]).addClass('hidden');
 {include file="addons/abt__unitheme2/views/banners/components/colorpicker.tpl"}
 </div>
 </div>
-<hr>
-{$field="image_position"}{$elm="abt__ut2`$device_prefix`_`$field`"}{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
 <div class="control-group">
-<label for="elm_banner_{$elm}" class="control-label">{__("abt__ut2.banner.params.{$field}")}</label>
+{$field="background_v_position"}
+{$elm="abt__ut2`$device_prefix`_`$field`"}
+{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
+<div class="control-group abt__ut2_vertical_background_align">
+{if !$banner.$elm}
+{$banner.$elm = "center"}
+{/if}
+<label for="elm_banner_{$elm}" class="control-label{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">{__("abt__ut2.banner.params.{$field}")}{include file="common/tooltip.tpl" tooltip=__("abt__ut2.banner.params.{$field}.tooltip")}</label>
 {include file="addons/abt__unitheme2/views/banners/components/use_own.tpl"}
-<div id="overlay_{$elm}" class="controls abt-ut2-overlay{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">
-<select name="banner_data[{$elm}]" id="elm_banner_{$elm}">
+<div id="overlay_{$elm}" class="controls btn-group abt-ut2-overlay{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">
 {foreach ['top', 'center', 'bottom'] as $e}
-<option value="{$e}" {if $banner.$elm == $e}selected="selected"{/if}>{__("abt__ut2.banner.params.{$field}.variants.{$e}")}</option>
+{assign var="radio_id" value="elm_banner_{$elm}_{$e}"}
+<label for="{$radio_id}" class="btn"><i class="ut2-icon-align-vertical-{$e} cm-tooltip" title="{__("abt__ut2.banner.params.{$field}.variants.{$e}")}"></i><input type="radio" name="banner_data[{$elm}]" id="{$radio_id}" value="{$e}" {if $banner.$elm == $e}checked="checked"{/if} /></label>
 {/foreach}
-</select>
+</div>
+</div>
+{$field="background_h_position"}
+{$elm="abt__ut2`$device_prefix`_`$field`"}
+{$disabled=$field|fn_abt__ut2_is_disabled_field:$enabled_fields}
+<div class="control-group abt__ut2_horizontal_background_align">
+{if !$banner.$elm}
+{$banner.$elm = "center"}
+{/if}
+{include file="addons/abt__unitheme2/views/banners/components/use_own.tpl"}
+<div id="overlay_{$elm}" class="controls btn-group abt-ut2-overlay{if $disabled || $banner["`$elm`_use_own"] == 'N'} active{/if}">
+{foreach ['left', 'center', 'right'] as $e}
+{assign var="radio_id" value="elm_banner_{$elm}_{$e}"}
+<label for="{$radio_id}" class="btn"><i class="ut2-icon-align-horizontal-{$e} cm-tooltip" title="{__("abt__ut2.banner.params.{$field}.variants.{$e}")}"></i><input type="radio" name="banner_data[{$elm}]" id="{$radio_id}" value="{$e}" {if $banner.$elm == $e}checked="checked"{/if} /></label>
+{/foreach}
+</div>
 </div>
 </div>
 <hr>
@@ -659,7 +712,7 @@ __("abt__ut2.banner.column_reverse") => 'b--column-reverse'
 <input type="checkbox"
 id="{$name}_{$classes@key}"
 class="cm-text-toggle btn-group-checkbox__checkbox"
-{if $banner.$elm|strpos:$classes !== false}checked="checked"{/if}
+{if $banner.$elm && $banner.$elm|strpos:$classes !== false}checked="checked"{/if}
 data-ca-toggle-text="{$classes}"
 data-ca-toggle-text-target-elem-id="elm_banner_{$elm}"
 />

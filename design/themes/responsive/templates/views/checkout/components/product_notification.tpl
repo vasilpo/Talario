@@ -4,7 +4,14 @@
 
 {capture name="buttons"}
     <div class="ty-float-left">
-        {include file="buttons/button.tpl" but_text=__("continue_shopping") but_meta="ty-btn__secondary cm-notification-close"}
+        {if $continue_shopping_button}
+            {$continue_shopping_button nofilter}
+        {else}
+            {include file="buttons/button.tpl"
+                but_text=__("continue_shopping")
+                but_meta="ty-btn__secondary cm-notification-close"
+            }
+        {/if}
     </div>
 
     <div class="ty-float-right">

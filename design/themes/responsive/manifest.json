@@ -6,25 +6,23 @@
     "developer": "CS-Cart",
     "favicon": "media/images/icons/favicon.ico",
     "parent_theme": "responsive",
-    "EXAMPLE_settings_overrides": {
-        "General": {
-            "enable_compare_products": false
-        },
+    "settings_overrides": {
         "Appearance": {
-            "default_products_view": "products_without_options",
-            "default_product_details_view": "bigpicture_template",
-            "thumbnails_gallery": true,
-            "enable_quick_view": false,
-            "available_product_list_sortings": [
-                "product-asc",
-                "product-desc",
-                "price-asc",
-                "price-desc"
+            "products_per_page": 12,
+            "columns_in_products_list": 3,
+            "default_product_details_view": "default_template",
+            "default_products_view_templates": [
+                "products_multicolumns",
+                "products_without_options",
+                "short_list"
             ]
         },
         "Thumbnails": {
-            "product_lists_thumbnail_width": 300,
-            "product_lists_thumbnail_height": 300
+            "product_lists_thumbnail_width": 150,
+            "product_lists_thumbnail_height": 150,
+            "product_details_thumbnail_width": 280,
+            "product_cart_thumbnail_height": "",
+            "product_quick_view_thumbnail_width": 220
         }
     }
 }

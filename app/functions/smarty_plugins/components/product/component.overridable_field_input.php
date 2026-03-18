@@ -1,31 +1,32 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
+use Smarty\Template;
 use Tygh\Registry;
 use Tygh\Settings;
 use Tygh\Enum\SettingTypes;
 
 /**
- * @param array<string, string>     $params   Block params
- * @param string                    $content  Block content
- * @param \Smarty_Internal_Template $template Smarty template
+ * @param array<string, string> $params   Block params
+ * @param string                $content  Block content
+ * @param Template              $template Smarty template
  *
  * @return string|null
  */
-function smarty_component_product_overridable_field_input(array $params, $content, Smarty_Internal_Template $template)
+function smarty_component_product_overridable_field_input(array $params, $content, Template $template)
 {
     $allow_global_individual_settings = Registry::ifGet('config.tweaks.allow_global_individual_settings', false);
     $schema = fn_get_product_overridable_fields_schema();
@@ -106,7 +107,10 @@ function smarty_component_product_overridable_field_input(array $params, $conten
         'disable_inputs'          => isset($params['disable_inputs']) ? (bool) $params['disable_inputs'] : false,
     ]));
 
-    $input = $template->fetch('components/default_custom.tpl');
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
+    $input = $smarty->fetch('components/default_custom.tpl', null, null, $template);
 
     if ($content && strpos($content, '#INPUT#') !== false) {
         return str_replace('#INPUT#', $input, $content);

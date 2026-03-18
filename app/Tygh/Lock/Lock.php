@@ -1,21 +1,22 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 
 
 namespace Tygh\Lock;
 
+use Symfony\Component\Lock\BlockingStoreInterface;
 use Symfony\Component\Lock\Exception\InvalidArgumentException;
 use Symfony\Component\Lock\Exception\LockAcquiringException;
 use Symfony\Component\Lock\Exception\LockConflictedException;
@@ -89,11 +90,23 @@ class Lock implements LockInterface
      */
     public function acquire($blocking = false)
     {
+        $this->key->resetLifetime();
         try {
-            if (!$blocking) {
-                $this->store->save($this->key);
+            if ($blocking) {
+                if (!$this->store instanceof BlockingStoreInterface) {
+                    while (true) {
+                        try {
+                            $this->store->save($this->key);
+                            break;
+                        } catch (LockConflictedException $e) {
+                            usleep((100 + random_int(-10, 10)) * 1000);
+                        }
+                    }
+                } else {
+                    $this->store->waitAndSave($this->key);
+                }
             } else {
-                $this->store->waitAndSave($this->key);
+                $this->store->save($this->key);
             }
 
             $this->dirty = true;
@@ -123,7 +136,7 @@ class Lock implements LockInterface
     /**
      * {@inheritdoc}
      */
-    public function refresh()
+    public function refresh($ttl = null)
     {
         if (!$this->ttl) {
             throw new InvalidArgumentException('You have to define an expiration duration.');

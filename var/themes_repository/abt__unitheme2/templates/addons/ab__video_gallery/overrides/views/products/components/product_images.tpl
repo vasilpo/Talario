@@ -2,7 +2,7 @@
 
 {if $thumbnails_size}
     {assign var="th_size" value=$thumbnails_size|default:50}
-{elseif $settings.abt__device == "desktop"}
+{elseif $settings.abt__device === 'desktop'}
     {assign var="th_size" value=$addons.ab__video_gallery.th_size|default:60}
 {else}
     {assign var="th_size" value=50}
@@ -10,17 +10,21 @@
 
 {assign var="th_sum_size" value=$settings.Thumbnails.product_details_thumbnail_height|default:$pd_image_gallery_height / $th_size}
 
-{$ab__vg_videos = $product.product_id|fn_ab__vg_get_videos}
-{$ab__vg_settings = $product.product_id|fn_ab__vg_get_setting}
-{$is_vertical = (($runtime.mode !== 'quick_view') && ($addons.ab__video_gallery.vertical === "YesNo::YES"|enum)) && $settings.abt__device !== "mobile"}
-{$is_thumbnails_gallery = $settings.Appearance.thumbnails_gallery === "YesNo::YES"|enum}
-{$total_count = ($product.image_pairs|count + $ab__vg_videos|count + 1)}
-{$total_images = $product.image_pairs|count}
 {$product_pos_enum = "Addons\Ab_videoGallery\VideoProductPositionTypes"}
 
-{capture name="abt__ut2_vertical_gallery_width"}
-    {if $total_count > $th_sum_size && !$is_thumbnails_gallery}{$th_size * 2 + 5}{elseif $total_count > 1}{$th_size}{/if}
-{/capture}
+{$core_videos = []}
+
+{if fn_ab__vg_core_is_allowed('product_videos')}
+    {$core_videos = $product.videos|default:[]}
+{/if}
+
+{$ab__vg_videos = $product.product_id|fn_ab__vg_get_videos}
+{$ab__vg_settings = $product.product_id|fn_ab__vg_get_setting}
+{$total_images = $product.image_pairs|count + $core_videos|count}
+{$total_count = ($product.image_pairs|count + $ab__vg_videos|count + $core_videos|count)}
+{$is_thumbnails_gallery = $settings.Appearance.thumbnails_gallery === "YesNo::YES"|enum}
+{$replace_image = $ab__vg_settings.replace_image === 'YesNo::YES'|enum && $ab__vg_videos}
+{$is_vertical = (($runtime.mode !== 'quick_view') && ($addons.ab__video_gallery.vertical === 'YesNo::YES'|enum)) && $settings.abt__device !== 'mobile'}
 
 {if $product.main_pair.icon || $product.main_pair.detailed}
     {assign var="image_pair_var" value=$product.main_pair}
@@ -35,12 +39,17 @@
 {/if}
 
 {if $image_pair_var || empty($ab__vg_videos)}
+    {$total_count = $total_count + 1}
     {$total_images = $total_images + 1}
 {/if}
 
 {if !$preview_id}
     {assign var="preview_id" value=$product.product_id|uniqid}
 {/if}
+
+{capture name="abt__ut2_vertical_gallery_width"}
+    {if $total_count > $th_sum_size && !$is_thumbnails_gallery}{$th_size * 2 + 5}{elseif $total_count > 1}{$th_size}{/if}
+{/capture}
 
 {$image_height_block = $image_height|default:$settings.Thumbnails.product_details_thumbnail_height}
 
@@ -65,7 +74,10 @@
     {$wrapper_styles = ""}
     {$wrapper_class = "ty-product-img"}
 
-    {if !$nopreviewer}{$wrapper_class = "`$wrapper_class` cm-preview-wrapper"}{/if}
+    {if !$nopreviewer}
+        {$wrapper_class = "`$wrapper_class` cm-preview-wrapper"}
+    {/if}
+
     {if !$nocarousel}
         {if $is_vertical && $total_count > 1}
             {if $settings.abt__ut2.products.multiple_product_images === 1}
@@ -86,38 +98,82 @@
         {/if}
     {/if}
 
-    <div id="product_images_{$preview_id}" class="{$wrapper_class}"{if $wrapper_styles} style="{$wrapper_styles}"{/if}>
-        {$videos = $ab__vg_videos}
-        {$image_iterator = 0}
+    <div id="product_images_{$obj_prefix}{$preview_id}" class="{$wrapper_class}"{if $wrapper_styles} style="{$wrapper_styles}"{/if}>
+        {fn_ab__vg_set_template_videos($ab__vg_videos)}
+        {fn_ab__vg_set_template_iterator('image_iterator')}
+        {fn_ab__vg_set_template_iterator('video_iterator')}
+        {fn_ab__vg_set_template_iterator('image_counter', -1)}
 
         {call name=fn_ab__vg_get_videos_by_pos position="$product_pos_enum::TOP"|enum}
         {call name=fn_ab__vg_get_videos_by_pos position="$product_pos_enum::CUSTOM"|enum}
 
-        {if $image_pair_var || empty($ab__vg_videos)}
-            {$image_iterator = $image_iterator + 1}
+        {$_link_class = "cm-image-previewer"}
 
-            {include file="common/image.tpl" obj_id="`$preview_id`_`$image_id`" images=$image_pair_var
-                     link_class="cm-image-previewer{if $nopreviewer} cm-previewer-only{/if}{if $ab__vg_videos && $ab__vg_settings.replace_image === "YesNo::YES"|enum} hidden{/if}"
-                     image_width=$image_width image_height=$image_height image_id="preview[product_images_`$preview_id`]"}
+        {if $replace_image || fn_ab__vg_get_template_iterator('image_iterator')}
+            {$_link_class = "`$_link_class` hidden"}
+        {/if}
+
+        {if $nopreviewer}
+            {$_link_class = "`$_link_class` cm-previewer-only"}
+        {/if}
+
+        {if $core_videos && $product.show_videos_before_images === 'YesNo::YES'|enum}
+            {call name=fn_ab__vg_get_core_videos}
+        {/if}
+
+        {if $image_pair_var || (empty($ab__vg_videos) && empty($core_videos))}
+            {fn_ab__vg_increase_template_iterator('image_counter')}
+            {fn_ab__vg_increase_template_iterator('image_iterator')}
+
+            {include file="common/image.tpl"
+                images=$image_pair_var
+                obj_id="`$obj_prefix``$preview_id`_`$image_id`"
+                image_id="preview[product_images_`$obj_prefix``$preview_id`]"
+                image_width=$image_width
+                image_height=$image_height
+                link_class=$_link_class
+                image_link_additional_attrs=[
+                    "data-ca-image-order" => fn_ab__vg_get_template_iterator('image_counter') - 1
+                ]
+            }
 
             {call name=fn_ab__vg_get_videos_by_pos position="$product_pos_enum::CUSTOM"|enum}
         {/if}
 
         {foreach from=$product.image_pairs item="image_pair"}
-            {$image_iterator = $image_iterator + 1}
-
             {if $image_pair.image_id}
                 {assign var="img_id" value=$image_pair.image_id}
             {else}
                 {assign var="img_id" value=$image_pair.detailed_id}
             {/if}
 
-            {include file="common/image.tpl" images=$image_pair link_class="{if $nopreviewer}cm-previewer-only {/if}cm-image-previewer hidden"
-                     obj_id="`$preview_id`_`$img_id`" image_width=$image_width image_height=$image_height
-                     image_id="preview[product_images_`$preview_id`]" image_link_additional_attrs=["data-ca-image-order"=>$image_iterator-1]}
+            {fn_ab__vg_increase_template_iterator('image_counter')}
+            {fn_ab__vg_increase_template_iterator('image_iterator')}
+
+            {include file="common/image.tpl"
+                images=$image_pair
+                obj_id="`$obj_prefix``$preview_id`_`$img_id`"
+                image_id="preview[product_images_`$obj_prefix``$preview_id`]"
+                image_width=$image_width
+                image_height=$image_height
+                link_class="{if $nopreviewer}cm-previewer-only {/if}cm-image-previewer hidden"
+                image_link_additional_attrs=[
+                    "data-ca-image-order" => fn_ab__vg_get_template_iterator('image_counter') - 1
+                ]
+            }
 
             {call name=fn_ab__vg_get_videos_by_pos position="$product_pos_enum::CUSTOM"|enum}
         {/foreach}
+
+        {$_link_class = "cm-image-previewer"}
+
+        {if $replace_image || fn_ab__vg_get_template_iterator('image_iterator')}
+            {$_link_class = "`$_link_class` hidden"}
+        {/if}
+
+        {if $core_videos && $product.show_videos_before_images === 'YesNo::NO'|enum}
+            {call name=fn_ab__vg_get_core_videos}
+        {/if}
 
         {call name=fn_ab__vg_get_videos_by_pos position="$product_pos_enum::CUSTOM"|enum}
         {call name=fn_ab__vg_get_videos_by_pos position="$product_pos_enum::BOTTOM"|enum}
@@ -129,12 +185,13 @@
     {if !$nocarousel}
         {$custom_thumbnails = $settings.abt__ut2.products.view.thumbnails_gallery_format[$settings.abt__device] !== "default"}
 
-        {if ($product.image_pairs || $ab__vg_videos) && !$custom_thumbnails}
-            {$image_counter = -1}
-            {$videos = $ab__vg_videos}
-            {$image_iterator = 0}
-            {$video_iterator = 0}
+        {if ($product.image_pairs || $ab__vg_videos || $core_videos) && !$custom_thumbnails}
             {$image_classes="ty-product-thumbnails__item cm-thumbnails-mini"}
+
+            {fn_ab__vg_set_template_videos($ab__vg_videos)}
+            {fn_ab__vg_set_template_iterator('video_iterator')}
+            {fn_ab__vg_set_template_iterator('image_iterator')}
+            {fn_ab__vg_set_template_iterator('image_counter', -1)}
 
             {if $is_thumbnails_gallery}
                 {$image_classes="`$image_classes` cm-gallery-item gallery"}
@@ -148,10 +205,10 @@
                     {$product_thumbnails_classes = "ty-product-thumbnails"}
 
                     {if $is_thumbnails_gallery}
-                        {$is_vertical_char = "YesNo::NO"|enum}
+                        {$is_vertical_char = 'YesNo::NO'|enum}
 
                         {if $is_vertical}
-                            {$is_vertical_char = "YesNo::YES"|enum}
+                            {$is_vertical_char = 'YesNo::YES'|enum}
                         {/if}
 
                         {$product_thumbnails_data = "`$product_thumbnails_data` data-ca-cycle=`$addons.ab__video_gallery.cycle`"}
@@ -170,23 +227,31 @@
                         {/if}
                     {/if}
 
-                    <div class="{$product_thumbnails_classes}" {$product_thumbnails_data} id="images_preview_{$preview_id}">
+                    <div class="{$product_thumbnails_classes}" {$product_thumbnails_data} id="images_preview_{$obj_prefix}{$preview_id}">
                         {call name=fn_ab__vg_get_videos_thumbs_by_pos position="$product_pos_enum::TOP"|enum}
                         {call name=fn_ab__vg_get_videos_thumbs_by_pos position="$product_pos_enum::CUSTOM"|enum}
 
-                        {if $image_pair_var}
-                            {$image_counter = $image_counter + 1}
-                            {$image_iterator = $image_iterator + 1}
+                        {if $core_videos && $product.show_videos_before_images === 'YesNo::YES'|enum}
+                            {call name=fn_ab__vg_get_core_videos_thumbs}
+                        {/if}
 
-                            {include file="addons/ab__video_gallery/components/product_thumbnail.tpl" image=$image_pair_var image_id=$image_pair_var.image_id|default:$image_pair_var.detailed_id thumbnail_type="image"}
+                        {if $image_pair_var}
+                            {fn_ab__vg_increase_template_iterator('image_counter')}
+                            {fn_ab__vg_increase_template_iterator('image_iterator')}
+
+                            {include file="addons/ab__video_gallery/components/product_thumbnail.tpl"
+                                image=$image_pair_var
+                                image_id=$image_pair_var.image_id|default:$image_pair_var.detailed_id
+                                thumbnail_type="image"
+                            }
 
                             {call name=fn_ab__vg_get_videos_thumbs_by_pos position="$product_pos_enum::CUSTOM"|enum}
                         {/if}
 
                         {if $product.image_pairs}
                             {foreach from=$product.image_pairs item="image_pair"}
-                                {$image_counter = $image_counter + 1}
-                                {$image_iterator = $image_iterator + 1}
+                                {fn_ab__vg_increase_template_iterator('image_counter')}
+                                {fn_ab__vg_increase_template_iterator('image_iterator')}
 
                                 {if $image_pair.image_id}
                                     {assign var="img_id" value=$image_pair.image_id}
@@ -194,10 +259,18 @@
                                     {assign var="img_id" value=$image_pair.detailed_id}
                                 {/if}
 
-                                {include file="addons/ab__video_gallery/components/product_thumbnail.tpl" image=$image_pair image_id=$img_id thumbnail_type="image"}
+                                {include file="addons/ab__video_gallery/components/product_thumbnail.tpl"
+                                    image=$image_pair
+                                    image_id=$img_id
+                                    thumbnail_type="image"
+                                }
 
                                 {call name=fn_ab__vg_get_videos_thumbs_by_pos position="$product_pos_enum::CUSTOM"|enum}
                             {/foreach}
+                        {/if}
+
+                        {if $core_videos && $product.show_videos_before_images === 'YesNo::NO'|enum}
+                            {call name=fn_ab__vg_get_core_videos_thumbs}
                         {/if}
 
                         {call name=fn_ab__vg_get_videos_thumbs_by_pos position="$product_pos_enum::CUSTOM"|enum}
@@ -210,7 +283,7 @@
                 {capture name="product_thumbnails"}
                     {$thumbnails_styles = ""}
 
-                    {if $is_vertical && $settings.abt__device !== "mobile"}
+                    {if $is_vertical && $settings.abt__device !== 'mobile'}
                         {$thumbnails_styles = "`$thumbnails_styles`width: `$smarty.capture.abt__ut2_vertical_gallery_width`px;"}
 
                         {if $image_height_block}
@@ -220,7 +293,7 @@
                         {$thumbnails_styles = "`$thumbnails_styles`height: `$th_size`px;"}
                     {/if}
 
-                    <div class="ty-product-thumbnails_gallery{if $is_vertical && $settings.abt__device !== "mobile"} ab-vg-vertical-thumbnails{else} ab-vg-horizontal-thumbnails{/if}"{if $thumbnails_styles} style="{$thumbnails_styles}"{/if}>
+                    <div class="ty-product-thumbnails_gallery{if $is_vertical && $settings.abt__device !== 'mobile'} ab-vg-vertical-thumbnails{else} ab-vg-horizontal-thumbnails{/if}"{if $thumbnails_styles} style="{$thumbnails_styles}"{/if}>
                         <div class="cm-image-gallery-wrapper ty-thumbnails_gallery ty-inline-block">
                             {$smarty.capture.product_thumbnails nofilter}
                         </div>

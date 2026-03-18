@@ -1,6 +1,8 @@
 {if $product.extra.buy_together}
+{$notification_image_width = $notification_image_width|default:"50"}
+{$notification_image_height = $notification_image_height|default:"50"}
 <div class="ty-buy-together-notification ty-product-notification__item clearfix">
-{include file="common/image.tpl" image_width="50" image_height="50" images=$product.main_pair no_ids=true class="ty-product-notification__image"}
+{include file="common/image.tpl" image_width=$notification_image_width image_height=$notification_image_height images=$product.main_pair no_ids=true class="ty-product-notification__image"}
     <div class="clearfix">
         <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{$product.product_id|fn_get_product_name}</a>
         <div class="ty-product-notification__price">

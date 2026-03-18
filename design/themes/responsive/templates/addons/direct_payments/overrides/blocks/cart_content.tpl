@@ -1,22 +1,41 @@
 {assign var="dropdown_id" value=$block.snapping_id}
 {assign var="r_url" value=$config.current_url|escape:url}
+{$cart_items_list_item_image_size = $cart_items_list_item_image_size|default:40}
 {hook name="checkout:cart_content"}
     <div class="ty-dropdown-box" id="cart_status_{$dropdown_id}">
-         <div id="sw_dropdown_{$dropdown_id}" class="ty-dropdown-box__title cm-combination">
-        <a href="{"checkout.cart"|fn_url}">
+         <div id="sw_dropdown_{$dropdown_id}" class="ty-dropdown-box__title ty-minicart__link-wrapper cm-combination">
+        <a href="{"checkout.cart"|fn_url}" class="ty-minicart__link">
             {hook name="checkout:dropdown_title"}
                 {if $cart.amount}
                     {include_ext file="common/icon.tpl"
-                        class="ty-icon-cart ty-minicart__icon filled"
+                        class="ty-icon-cart ty-minicart__icon ty-minicart__icon--filled filled"
                     }
-                    <span class="ty-minicart-title ty-hand">{$cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;{include file="common/price.tpl" value=$cart.display_subtotal}</span>
-                    {include_ext file="common/icon.tpl" class="ty-icon-down-micro"}
+                    <span class="ty-minicart-title ty-hand {if $is_show_minicart_title_header}ty-minicart-title--with-header{/if}">{strip}
+                        {if $is_show_minicart_title_header}
+                            <span class="ty-minicart-title__header">{__("my_cart")}</span>
+                            <span class="ty-minicart-title__body">
+                        {/if}
+                        {/strip}{$cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;{include file="common/price.tpl" value=$cart.display_subtotal}{strip}
+                        {if $is_show_minicart_title_header}
+                            </span>
+                        {/if}
+                    {/strip}</span>
+                    {include_ext file="common/icon.tpl" class="ty-icon-down-micro ty-minicart__caret"}
                 {else}
                     {include_ext file="common/icon.tpl"
-                        class="ty-icon-cart ty-minicart__icon empty"
+                        class="ty-icon-cart ty-minicart__icon ty-minicart__icon--empty empty"
                     }
-                    <span class="ty-minicart-title empty-cart ty-hand">{__("cart_is_empty")}</span>
-                    {include_ext file="common/icon.tpl" class="ty-icon-down-micro"}
+                    <span class="ty-minicart-title empty-cart ty-hand {if $is_show_minicart_title_header}ty-minicart-title--with-header{/if}">{strip}
+                        {if $is_show_minicart_title_header}
+                            <span class="ty-minicart-title__header">{__("my_cart")}</span>
+                            <span class="ty-minicart-title__body">
+                        {/if}
+                        {/strip}{__("cart_is_empty")}{strip}
+                        {if $is_show_minicart_title_header}
+                            </span>
+                        {/if}
+                    {/strip}</span>
+                    {include_ext file="common/icon.tpl" class="ty-icon-down-micro ty-minicart__caret"}
                 {/if}
             {/hook}
         </a>
@@ -36,19 +55,19 @@
                                                     {hook name="checkout:minicart_product_info"}
                                                     {if $block.properties.products_links_type == "thumb"}
                                                         <div class="ty-cart-items__list-item-image">
-                                                            {include file="common/image.tpl" image_width="40" image_height="40" images=$product.main_pair no_ids=true}
+                                                            {include file="common/image.tpl" image_width=$cart_items_list_item_image_size image_height=$cart_items_list_item_image_size images=$product.main_pair no_ids=true}
                                                         </div>
                                                     {/if}
                                                     <div class="ty-cart-items__list-item-desc ty-cart-items__list-item-desc--{$block.properties.products_links_type}">
-                                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{$product.product|default:fn_get_product_name($product.product_id) nofilter}</a>
-                                                    <p>
-                                                        <span>{$product.amount}</span><span dir="{$language_direction}">&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$product.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
+                                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="ty-cart-items__list-item-link">{$product.product|default:fn_get_product_name($product.product_id) nofilter}</a>
+                                                    <p class="ty-cart-items__list-item-price-amount">
+                                                        <span>{$product.amount}</span><span dir="{$language_direction}">&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$product.display_price span_id="price_`$key`_`$dropdown_id`" class="ty-cart-items__list-item-price none"}
                                                     </p>
                                                     </div>
                                                     {if $block.properties.display_delete_icons == "Y"}
                                                         <div class="ty-cart-items__list-item-tools cm-cart-item-delete">
                                                             {if (!$runtime.checkout || $force_items_deletion) && !$product.extra.exclude_from_calculate}
-                                                                {include file="buttons/button.tpl" but_href="checkout.delete.from_status?vendor_id=`$product.company_id`&cart_id=`$key`&redirect_url=`$r_url`" but_meta="cm-ajax cm-ajax-full-render" but_target_id="cart_status*" but_role="delete" but_name="delete_cart_item"}
+                                                                {include file="buttons/button.tpl" but_href="checkout.delete.from_status?vendor_id=`$product.company_id`&cart_id=`$key`&redirect_url=`$r_url`" but_meta="cm-ajax cm-ajax-full-render ty-cart-items__list-item-tools-btn" but_target_id="cart_status*" but_role="delete" but_name="delete_cart_item"}
                                                             {/if}
                                                         </div>
                                                     {/if}
@@ -66,16 +85,17 @@
 
                         {if $block.properties.display_bottom_buttons == "Y"}
                         <div class="cm-cart-buttons ty-cart-content__buttons buttons-container{if $cart.amount} full-cart{else} hidden{/if}">
-                            <div class="ty-float-left">
-                                <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__secondary">{__("view_cart")}</a>
+                            <div class="ty-float-left ty-cart-content__view-cart-wrapper">
+                                <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__secondary ty-cart-content__view-cart">{__("view_cart")}</a>
                             </div>
                             {if $settings.Checkout.checkout_redirect != "Y"}
                             {$vendor_id = $cart.vendor_ids|reset}
-                            <div class="ty-float-right">
+                            <div class="ty-float-right ty-cart-content__checkout-wrapper">
                                 {include
                                     file="buttons/proceed_to_checkout.tpl"
                                     but_text=__("checkout")
                                     but_href="checkout.checkout?vendor_id=`$vendor_id`"|fn_url
+                                    but_meta="ty-btn__primary ty-cart-content__checkout"
                                 }
                             </div>
                             {/if}

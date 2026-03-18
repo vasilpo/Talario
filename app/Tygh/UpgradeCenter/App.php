@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\UpgradeCenter;
 
@@ -342,15 +342,23 @@ class App
     public function getUpgradePackagesWithCache()
     {
         $cache_key = 'upgrade_packages';
-        Registry::registerCache($cache_key, ['addons'], Registry::cacheLevel('static'));
+
+        Registry::registerCache(
+            $cache_key,
+            [
+                'is_empty_allowed' => true,
+                'ttl'              => Registry::get('config.tweaks.upgrade_center_package_cache_ttl'),
+            ],
+            Registry::cacheLevel('time')
+        );
 
         if (Registry::isExist($cache_key)) {
-            return Registry::get($cache_key);
+            $upgrade_packages = Registry::get($cache_key);
+        } else {
+            $this->checkUpgrades(false);
+            $upgrade_packages = $this->getPackagesList();
+            Registry::set($cache_key, $upgrade_packages);
         }
-
-        $this->checkUpgrades(false);
-        $upgrade_packages = $this->getPackagesList();
-        Registry::set($cache_key, $upgrade_packages);
 
         return $upgrade_packages;
     }
@@ -1361,10 +1369,6 @@ class App
                 $connector = class_exists($class_name) ? new $class_name() : null;
 
                 if ($connector === null) {
-                    if (fn_allowed_for('ULTIMATE:FREE') && YesNo::isFalse(fn_get_storage_data('free_mode', false))) {
-                        continue;
-                    }
-
                     $addon_data = db_get_row(
                         'SELECT `a`.*, `ad`.`name` FROM ?:addons AS `a`'
                         . ' LEFT JOIN ?:addon_descriptions AS `ad` USING(`addon`)'

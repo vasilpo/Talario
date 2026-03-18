@@ -1,4 +1,5 @@
-{$tabs_count = (fn_allowed_for("MULTIVENDOR:ULTIMATE")) ? 3 : 2}
+{$is_multiple_storefronts_allowed = fn_allowed_for('MULTIVENDOR') && fn_is_allowed(constant("\Tygh\Licensing\Features::MULTIPLE_STOREFRONTS"))}
+{$tabs_count = $is_multiple_storefronts_allowed ? 3 : 2}
 
 <div id="content_group_{$id}">
 
@@ -8,7 +9,7 @@
         <div class="tabs cm-j-tabs tabs--enable-fill tabs--count-{$tabs_count}">
             <ul class="nav nav-tabs">
                 <li id="tab_general_{$id}" class="cm-js active"><a>{__("general")}</a></li>
-                {if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
+                {if $is_multiple_storefronts_allowed}
                     <li id="tab_storefronts_{$id}" class="cm-js"><a>{__("storefronts")}</a></li>
                 {/if}
                 <li id="tab_callback_urls_{$id}" class="cm-js"><a>{__('hybrid_auth.callback_url')}</a></li>
@@ -23,7 +24,13 @@
                     <div class="controls">
                         <select name="provider_data[provider]" id="provider" class="cm-select-provider">
                             {foreach $available_providers as $provider_code}
-                            <option value="{$provider_code}"{if $provider_code == $provider_data.provider} selected="selected"{/if} data-id="{$id}" data-provider="{$provider_code}">{$providers_schema.$provider_code.provider}</option>
+                                <option value="{$provider_code}"{if $provider_code == $provider_data.provider} selected="selected"{/if} data-id="{$id}" data-provider="{$provider_code}">
+                                    {if $providers_schema.$provider_code.display_name}
+                                        {$providers_schema.$provider_code.display_name}
+                                    {else}
+                                        {$providers_schema.$provider_code.provider}
+                                    {/if}
+                                </option>
                             {/foreach}
                         </select>
                     </div>
@@ -39,12 +46,8 @@
                 {include file="addons/hybrid_auth/views/hybrid_auth/provider_params.tpl" provider=$provider}
                 {include file="common/select_status.tpl" input_name="provider_data[status]" id="provider_status" obj=$section}
             </div>
-            {if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
+            {if $is_multiple_storefronts_allowed}
                 <div class="hidden" id="content_tab_storefronts_{$id}">
-                    {$add_storefront_text = __("add_storefronts")}
-                    {if fn_allowed_for("ULTIMATE")}
-                        {$add_storefront_text = __("add_companies")}
-                    {/if}
                     {include file="pickers/storefronts/picker.tpl"
                         multiple=true
                         input_name="provider_data[storefront_ids]"
@@ -52,7 +55,7 @@
                         data_id="storefront_ids"
                         but_meta="pull-right"
                         no_item_text=__("all_storefronts")
-                        but_text=$add_storefront_text
+                        but_text=__("add_storefronts")
                         view_only=($is_sharing_enabled && $runtime.company_id)
                     }
                 </div>

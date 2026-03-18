@@ -1,0 +1,12 @@
+{
+    "require": {
+        "google/auth": "1.26.0",
+        "guzzlehttp/promises": "2.0.3",
+        "symfony/deprecation-contracts": "v2.5.4"
+    },
+    "config": {
+        "platform": {
+            "php": "7.2.5"
+        }
+    }
+}

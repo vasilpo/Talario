@@ -27,7 +27,8 @@
 {/if}
 
 {* Get addon license required text *}
-{include file="views/addons/components/addons/addon_license_required.tpl"}
+{$license_required_popup_id="license_required_popup_$key"}
+{include file="views/addons/components/addons/addon_license_required.tpl" addon=$key popup_id=$license_required_popup_id}
 
 <div>
     <div class="hidden">
@@ -35,10 +36,10 @@
     </div>
 
     {if !$a.snapshot_correct}
-        <a href={$license_required.href}
-            class="btn cm-post cm-dialog-opener cm-dialog-auto-size"
-            data-ca-target-id={$license_required.target_id}
-            data-ca-dialog-title="{$license_required.promo_popup_title}"
+        {hook name="addons:snapshot_incorrect"}
+        <a class="btn cm-dialog-opener cm-dialog-auto-height"
+            data-ca-target-id="{$license_required_popup_id}"
+            data-ca-dialog-class="left wrap-normal"
         >
             {if $a.status === "ObjectStatuses::DISABLED"|enum}
                 {__("addons.activate")}
@@ -46,18 +47,22 @@
                 {__("addons.install")}
             {/if}
         </a>
+        {/hook}
     {elseif $a.status === "ObjectStatuses::NEW_OBJECT"|enum}
         {if !$hide_for_vendor}
             <div>
+                {hook name="addons:install"}
                 <a href="{"addons.install?addon=`$key`&return_url=`$c_url|escape:url`"|fn_url}"
                     class="btn cm-post cm-ajax cm-ajax-full-render"
-                    data-ca-target-id={$target_id}
+                    data-ca-target-id="{$target_id}"
                 >
                     {__("addons.install")}
                 </a>
+                {/hook}
             </div>
             {/if}
     {elseif $a.status === "ObjectStatuses::DISABLED"|enum}
+        {hook name="addons:activate"}
         {if $a.is_disabled === true || $is_storefront_admin}
             <span class="shift-right"> {__("addons.disabled")} </span>
         {else}
@@ -69,7 +74,7 @@
                 {__("addons.activate")}
             </a>
         {/if}
-
+        {/hook}
     {elseif $a.status === "ObjectStatuses::ACTIVE"|enum && $a.menu_items}
         {if $a.upgrade_available}
             <span class="shift-right muted" title="{__("active")}. {__("addons.upgrade_available")}">

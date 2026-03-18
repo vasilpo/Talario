@@ -147,7 +147,13 @@
                 {if $field != "localization" || $field == "localization" && $localizations}
                     <table class="no-border">
                     <tr>
-                        <td valign="top" class="pad">{if $field != "main_pair" && $field != "features"}<input type="checkbox" name="" value="Y" id="elements-switcher-{$field}__" />{else}&nbsp;{/if}</td>
+                        <td valign="top" class="pad">
+                            {if $field != "main_pair" && $field != "features" && $field !== "videos"}
+                                <input type="checkbox" name="" value="Y" id="elements-switcher-{$field}__" />
+                            {else}
+                                &nbsp;
+                            {/if}
+                        </td>
                         <td valign="top" class="pad">
                         {if $field == "main_pair"}
                             <table width="420">
@@ -203,6 +209,16 @@
                                 {include file="views/products/components/products_m_update_company.tpl" override_box="Y"}
                                 </div>
                             </div>
+                        {elseif $field == "videos"}
+                            {include "views/videos/picker/items.tpl"
+                                items                    = $product.videos
+                                object_id                = $product.product_id
+                                object_data              = "override_products_data"
+                                no_hide_input            =  $no_hide_input_if_shared_product
+                                object_item_id_tag_level = 3
+                                allow_update             = !$is_shared_product && $allow_update_files|default:true
+                                override                 = true
+                            }
                         {else}
                             {hook name="products:update_fields"}
                                 {hook name="products:update_fields_inner"}
@@ -225,7 +241,7 @@
 </div>
 
 <div class="buttons-container">
-    {include file="buttons/button.tpl" but_text=__("apply") but_name="dispatch[products.m_override]" but_role="button_main"}
+    {include file="buttons/button.tpl" but_meta="cm-ajax" but_text=__("apply") but_name="dispatch[products.m_override]" but_role="button_main"}
 </div>
 
 </form>
@@ -441,6 +457,15 @@
                             }
                         {elseif $field == "company_id"}
                             {include file="views/products/components/products_m_update_company.tpl"}
+                        {elseif $field == "videos"}
+                            {include "views/videos/picker/items.tpl"
+                                items                    = $product.videos
+                                object_id                = $product.product_id
+                                object_data              = "products_data[{$product.product_id}]"
+                                no_hide_input            =  $no_hide_input_if_shared_product
+                                object_item_id_tag_level = 3
+                                allow_update             = !$is_shared_product && $allow_update_files|default:true
+                            }
                         {else}
                             {hook name="products:update_fields_extra"}
                                 {hook name="products:update_fields_inner_extra"}
@@ -463,7 +488,7 @@
 </form>
 {/capture}
 {capture name="buttons"}
-    {include file="buttons/save.tpl" but_name="dispatch[products.m_update]" but_role="submit-link" but_target_form="products_m_update_form"}
+    {include file="buttons/save.tpl" but_meta="cm-ajax" but_name="dispatch[products.m_update]" but_role="submit-link" but_target_form="products_m_update_form"}
 {/capture}
 
 {include file="common/mainbox.tpl" title=__("update_products") content=$smarty.capture.mainbox select_languages=true extra_tools=$smarty.capture.extra_tools buttons=$smarty.capture.buttons}

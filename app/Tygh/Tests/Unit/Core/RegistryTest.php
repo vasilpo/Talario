@@ -37,7 +37,7 @@ class RegistryTest extends ATestCase
             ),
             'settings' => array(
                 'Company' => array(
-                    'company_name' => 'Simtech',
+                    'company_name' => 'Acme',
                 ),
                 'Image_verification' => array(
                     'use_for' => array(

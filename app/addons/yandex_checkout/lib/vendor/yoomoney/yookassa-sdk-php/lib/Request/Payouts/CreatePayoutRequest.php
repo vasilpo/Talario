@@ -43,7 +43,7 @@ use YooKassa\Request\Payouts\PayoutDestinationData\PayoutDestinationDataFactory;
 /**
  * Класс объекта запроса к API на проведение новой выплаты
  *
- * @todo: @example 02-builder.php 11 78 Пример использования билдера
+ * @example 02-builder.php 206 21 Пример использования билдера
  *
  * @package YooKassa
  *

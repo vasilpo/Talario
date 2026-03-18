@@ -75,7 +75,7 @@
 
     {foreach from=$countries item="country" key="code"}
         {if $code == $search.country_code}
-            {assign var="title" value="{__("new_city")} (`$country`)"}
+            {assign var="title" value="{__("cities.new_city")} (`$country`)"}
             {assign var="country_name" value=$country}
         {/if}
     {/foreach}
@@ -151,8 +151,8 @@
             action="cities.add"
             text=$title
             content=$smarty.capture.add_new_picker
-            title=__("add_city")
-            link_text=__("add_city")
+            title=__("cities.add_city")
+            link_text=__("cities.add_city")
             act="general"
             icon="icon-plus"
             link_class="btn-primary"
@@ -188,11 +188,11 @@
 			{/if}
 		</select>
 		<div class="hidden"><input type="text" id="sd_elm_states_d" name="state_code" size="32" maxlength="64" value="{$_state}" disabled="disabled" readonly="readonly" class="cm-state cm-location-states input-large hidden cm-skip-avail-switch" style="border:0px; background-color: transparent;"/></div>
-        <span id="elm_states_empty" {if !empty($states.$_country)}class="hidden"{/if}>{__("empty_state")}</br><a href="admin.php?dispatch=states.manage">{__("new_city_state")}</a></span>
+        <span id="elm_states_empty" {if !empty($states.$_country)}class="hidden"{/if}>{__("cities.empty_state")}</br><a href="admin.php?dispatch=states.manage">{__("cities.new_city_state")}</a></span>
 </div>
     {include file="buttons/search.tpl" but_name="dispatch[cities.manage]"}
     <hr/>
-    {__("select_state_instruction")}
+    {__("cities.select_state_instruction")}
 
 </form>
 </div>

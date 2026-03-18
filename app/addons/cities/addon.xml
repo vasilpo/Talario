@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
-	<id>cities</id>
-	<version>1.0</version>
+    <id>cities</id>
+    <version>1.0</version>
     <default_language>en</default_language>
-	<priority>4600</priority>
+    <priority>4600</priority>
     <status>active</status>
-    <unmanaged>1</unmanaged>
     <queries>
         <item>DROP TABLE IF EXISTS ?:cities;</item>
         <item>DROP TABLE IF EXISTS ?:city_descriptions;</item>
@@ -34,9 +33,9 @@
         <item for="uninstall">DELETE FROM ?:privileges WHERE privilege = 'view_cities'</item>
         <item for="uninstall">DROP TABLE IF EXISTS `?:cities`</item>
         <item for="uninstall">DROP TABLE IF EXISTS `?:city_descriptions`</item>
-	</queries>
-	<functions>
+    </queries>
+    <functions>
         <item for="install">fn_cities_install</item>
-		<item for="uninstall">fn_cities_uninstall</item>
+        <item for="uninstall">fn_cities_uninstall</item>
     </functions>
 </addon>

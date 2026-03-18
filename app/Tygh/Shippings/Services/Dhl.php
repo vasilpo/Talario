@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Shippings\Services;
 
@@ -59,6 +59,12 @@ class Dhl implements IService
     private $_allow_multithreading = true;
 
     public $calculation_currency;
+    /**
+     * Stored shipping information
+     *
+     * @var array<string, array<string, string>|string> $shipping_info
+     */
+    private $shipping_info = [];
 
     public function __construct($calculation_currency = null)
     {
@@ -134,7 +140,7 @@ class Dhl implements IService
      */
     public function prepareData($shipping_info)
     {
-        $this->_shipping_info = $shipping_info;
+        $this->shipping_info = $shipping_info;
     }
 
     /**
@@ -153,11 +159,13 @@ class Dhl implements IService
 
         $rates = $this->_getRates($response);
 
-        if (!empty($rates[$this->_shipping_info['service_code']])) {
-            $return['cost'] = $rates[$this->_shipping_info['service_code']]['rate'];
+        if (!empty($rates[$this->shipping_info['service_code']])) {
+            /** @var string $service_code */
+            $service_code = $this->shipping_info['service_code'];
+            $return['cost'] = $rates[$service_code]['rate'];
 
-            if (isset($rates[$this->_shipping_info['service_code']]['delivery_time'])) {
-                $return['delivery_time'] = $rates[$this->_shipping_info['service_code']]['delivery_time'];
+            if (isset($rates[$service_code]['delivery_time'])) {
+                $return['delivery_time'] = $rates[$service_code]['delivery_time'];
             }
         } else {
             $return['error'] = $this->processErrors($response);
@@ -229,7 +237,7 @@ class Dhl implements IService
      */
     public function getRequestData()
     {
-        $params = $this->_shipping_info['service_params'];
+        $params = $this->shipping_info['service_params'];
 
         // Account information
         $site_id = !empty($params['system_id']) ? $params['system_id'] : '';
@@ -238,19 +246,21 @@ class Dhl implements IService
         $system_of_measurement = !empty($params['system_of_measurement']) ? $params['system_of_measurement'] : self::IMPERIAL_UNITS;
 
         // Sender and receiver
-        $shipper = $this->prepareAddress($this->_shipping_info['package_info']['origination']);
-        $consignee = $this->prepareAddress($this->_shipping_info['package_info']['location']);
+        /** @var array $package_info */
+        $package_info = $this->shipping_info['package_info'];
+        $shipper = $this->prepareAddress($package_info['origination']);
+        $consignee = $this->prepareAddress($package_info['location']);
 
         $account_country = !empty($params['account_country']) ? $params['account_country'] : $shipper['country'];
-
-        $service_type = $this->_shipping_info['service_code'];
+        /** @var string $service_type */
+        $service_type = $this->shipping_info['service_code'];
 
         // Weight of package
         if ($system_of_measurement === self::IMPERIAL_UNITS) {
-            $weight_data = fn_convert_weight_to_imperial_units($this->_shipping_info['package_info']['W']);
+            $weight_data = fn_convert_weight_to_imperial_units($package_info['W']);
             $shipment_weight = $weight_data['full_pounds'];
         } else {
-            $weight_data = fn_convert_weight_to_metric_units($this->_shipping_info['package_info']['W']);
+            $weight_data = fn_convert_weight_to_metric_units($package_info['W']);
             $shipment_weight = $weight_data['full_kilograms'];
         }
 
@@ -268,7 +278,8 @@ XML;
 
         // Pieces
         $cost = 0;
-        $packages = $this->_shipping_info['package_info']['packages'];
+        /** @var array $packages */
+        $packages = $package_info['packages'];
         if ($packages) {
             $pieces = <<<XML
             <Pieces>

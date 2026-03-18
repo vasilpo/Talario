@@ -1,9 +1,10 @@
 {ab__hide_content bot_type="ALL"}
+    {$element = $element|default:'elm_sort_fields'}
 <div class="ty-sort-dropdown">
 	<div class="ut2-sort-label">{__('sort_by')}:</div>
-    <a id="sw_elm_sort_fields" class="ty-sort-dropdown__wrapper cm-combination"><span>{__("abt__ut2.sort_by_`$search.sort_by`_`$search.sort_order`")}</span><i class="ut2-icon-outline-expand_more"></i></a>
-    <div id="elm_sort_fields" class="ty-sort-dropdown__content cm-smart-position-h cm-popup-box hidden">
-        <div class="ut2-popup-box-title">{__("sort_by")}<div class="cm-external-click ut2-btn-close" data-ca-external-click-id="sw_elm_sort_fields"><i class="ut2-icon-baseline-close"></i></div></div>
+    <a id="sw_{$element}" class="ty-sort-dropdown__wrapper cm-combination"><span>{__("abt__ut2.sort_by_`$search.sort_by`_`$search.sort_order`")}</span><i class="ut2-icon-outline-expand_more"></i></a>
+    <div id="{$element}" class="ty-sort-dropdown__content cm-popup-box hidden">
+        <div class="ut2-popup-box-title">{__("sort_by")}<div class="cm-external-click ut2-btn-close" data-ca-external-click-id="sw_{$element}"><i class="ut2-icon-baseline-close"></i></div></div>
         <ul>
             {foreach from=$sorting key="option" item="value"}
                 {if $search.sort_by == $option}

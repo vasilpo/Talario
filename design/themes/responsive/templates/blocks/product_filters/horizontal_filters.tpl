@@ -49,7 +49,7 @@
                         {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
                     {/if}
                 {else}
-                    {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
+                    {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter type="horizontal"}
                 {/if}
             {/hook}
             <div class="ty-product-filters__tools clearfix">

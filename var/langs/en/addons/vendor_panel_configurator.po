@@ -101,8 +101,8 @@ msgid "Logo"
 msgstr "Logo"
 
 msgctxt "Languages::vendor_panel_configurator.logo_description"
-msgid "We recommend a PNG image no smaller than 68x68px, and with transparent background. The best aspect ratio is between 3.5:1 (for example, 245x70px) and 6.1:1 (for example, 610x100px)."
-msgstr "We recommend a PNG image no smaller than 68x68px, and with transparent background. The best aspect ratio is between 3.5:1 (for example, 245x70px) and 6.1:1 (for example, 610x100px)."
+msgid "We recommend a PNG image no smaller than 68x68px, and with transparent background. The best aspect ratio is between 3.5:1 (for example, 245x70px) and 6.1:1 (for example, 610x100px). The maximum file size is [filesize] Mb."
+msgstr "We recommend a PNG image no smaller than 68x68px, and with transparent background. The best aspect ratio is between 3.5:1 (for example, 245x70px) and 6.1:1 (for example, 610x100px). The maximum file size is [filesize] Mb."
 
 msgctxt "Languages::vendor_panel_configurator.logo_dark"
 msgid "Logo (dark theme)"

@@ -38,12 +38,12 @@ _rebuild_horizontal_menu(context);
 function _rebuild_horizontal_menu(context) {
 var items_wrapper = context.find('.ut2-h__menu .ut2-menu__list');
 if (items_wrapper.length) {
-var available_space = items_wrapper.outerWidth();
+var available_space = items_wrapper.width();
 var subitems = items_wrapper.find('> .ut2-menu__item');
 var items_width = get_elements_width(subitems);
 if (available_space < items_width) {
 items_wrapper.css('visibility', 'hidden');
-available_space -= 25 * 2;
+available_space -= 25 * 2 + 70;
 var slides_count = Math.ceil(items_width / available_space);
 var elems_arr = [];
 var subitems_wrap_collection = [];

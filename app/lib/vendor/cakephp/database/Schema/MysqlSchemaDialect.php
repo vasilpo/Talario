@@ -238,7 +238,9 @@ class MysqlSchemaDialect extends SchemaDialect
             $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
 
-        $columns[] = $row['Column_name'];
+        if (!empty($row['Column_name'])) {
+            $columns[] = $row['Column_name'];
+        }
 
         if ($row['Index_type'] === 'FULLTEXT') {
             $type = TableSchema::INDEX_FULLTEXT;
@@ -660,6 +662,8 @@ class MysqlSchemaDialect extends SchemaDialect
 }
 
 // phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\MysqlSchemaDialect', 'Cake\Database\Schema\MysqlSchema');
+class_alias(
+    'Cake\Database\Schema\MysqlSchemaDialect',
+    'Cake\Database\Schema\MysqlSchema'
+);
 // phpcs:enable

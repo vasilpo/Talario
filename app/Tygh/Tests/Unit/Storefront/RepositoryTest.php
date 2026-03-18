@@ -3,6 +3,7 @@
 namespace Tygh\Tests\Unit\Storefront;
 
 use Tygh\Common\Robots;
+use Tygh\Common\Llms;
 use Tygh\Database\Connection;
 use Tygh\Enum\StorefrontStatuses;
 use Tygh\Storefront\Factory;
@@ -24,7 +25,8 @@ class RepositoryTest extends ATestCase
             $this->createMock(Factory::class),
             $this->createMock(Normalizer::class),
             $this->createMock(RelationsManager::class),
-            $this->createMock(Robots::class)
+            $this->createMock(Robots::class),
+            $this->createMock(Llms::class)
         );
     }
 

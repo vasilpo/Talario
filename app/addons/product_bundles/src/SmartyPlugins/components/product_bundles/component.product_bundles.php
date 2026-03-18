@@ -1,17 +1,18 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Smarty\Template;
 use Tygh\Addons\ProductBundles\ServiceProvider;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Registry;
@@ -21,14 +22,14 @@ defined('BOOTSTRAP') or die('Access denied');
 /**
  * @param array{product: array{product_id: int}} $params   Block params
  * @param string                                 $content  Block content
- * @param \Smarty_Internal_Template              $template Smarty template
+ * @param Template                               $template Smarty template
  *
  * @return string
  */
 function smarty_component_product_bundles_product_bundles(
     array $params,
     $content,
-    Smarty_Internal_Template $template
+    Template $template
 ) {
     $bundles_params = [
         'full_info'             => true,
@@ -100,8 +101,11 @@ function smarty_component_product_bundles_product_bundles(
 
     $template->assign($bundles_params);
 
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
     try {
-        return $template->fetch('addons/product_bundles/components/common/product_bundles.tpl');
+        return $smarty->fetch('addons/product_bundles/components/common/product_bundles.tpl', null, null, $template);
     } catch (Exception $e) {
         return '';
     }

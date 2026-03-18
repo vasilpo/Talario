@@ -1,19 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
+use Smarty\Template;
 use Tygh\Enum\Addons\VendorDebtPayout\CategoryTypes;
 use Tygh\Enum\Addons\VendorDebtPayout\ProductTypes;
 use Tygh\Enum\Addons\VendorDebtPayout\VendorDebtStatuses;
@@ -1903,7 +1904,7 @@ function fn_vendor_debt_payout_pre_get_cart_product_data(
  */
 function fn_vendor_debt_payout_init_templater_post(SmartyCore &$view)
 {
-    $view->addPluginsDir(Registry::get('config.dir.addons') . 'vendor_debt_payout/functions/smarty_plugins');
+    $view->addComponentDir(Registry::get('config.dir.addons') . 'vendor_debt_payout/functions/smarty_plugins/components');
 }
 
 /**
@@ -2135,7 +2136,7 @@ function fn_vendor_debt_payout_get_available_company_statuses_post(array &$statu
  * @param array<string, string|bool|int> $field_config Field configuration
  * @param array<string, string>          $params       Component parameters
  * @param string                         $content      Output field content
- * @param \Smarty_Internal_Template      $template     Template instance
+ * @param Template                       $template     Template instance
  *
  * @return void
  *
@@ -2149,7 +2150,7 @@ function fn_vendor_debt_payout_smarty_component_configurable_page_field_before_o
     array &$field_config,
     array $params,
     $content,
-    Smarty_Internal_Template $template
+    Template $template
 ) {
     if ($entity === 'products') {
         /** @var array<string, string> $product_data */
@@ -2193,7 +2194,7 @@ function fn_vendor_debt_payout_smarty_component_configurable_page_field_before_o
  * @param array<string, string|bool|int> $section_config Section configuration
  * @param array<string, string>          $params         Component parameters
  * @param string                         $content        Output section content
- * @param \Smarty_Internal_Template      $template       Template instance
+ * @param Template                       $template       Template instance
  *
  * @return void
  *
@@ -2206,11 +2207,13 @@ function fn_vendor_debt_payout_smarty_component_configurable_page_section_before
     array &$section_config,
     array $params,
     $content,
-    Smarty_Internal_Template $template
+    Template $template
 ) {
+    $smarty = $template->getSmarty();
+
     if ($entity === 'products') {
         /** @var array<string, string> $product_data */
-        $product_data = $template->getTemplateVars('product_data');
+        $product_data = $smarty->getTemplateVars('product_data');
         if (
             empty($product_data['product_id'])
             || (int) $product_data['product_id'] !== fn_vendor_debt_payout_get_payout_product()
@@ -2225,7 +2228,7 @@ function fn_vendor_debt_payout_smarty_component_configurable_page_section_before
     // phpcs:ignore
     if ($entity === 'categories') {
         /** @var array<string, string> $category_data */
-        $category_data = $template->getTemplateVars('category_data');
+        $category_data = $smarty->getTemplateVars('category_data');
         if (
             empty($category_data['category_id'])
             || (int) $category_data['category_id'] !== fn_vendor_debt_payout_get_payout_category()

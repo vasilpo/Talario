@@ -1,0 +1,70 @@
+@media (min-width: 768px) {
+    .ty-menu-vertical .ty-menu__submenu [class*="menu-level-"].ty-menu__item-active > .ty-menu__submenu-item-header .ty-menu__item-link {
+        background: var(--cs-menu-hover);
+        color: var(--cs-btn-link-color);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu [class*="menu-level-"].ty-menu__item-active i,
+    .ty-menu-vertical .ty-menu__submenu [class*="menu-level-"].ty-menu__item-active .ty-icon {
+        color: var(--cs-btn-link-color);
+    }
+}
+
+@media (max-width: 767px) {
+    .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item-link {
+        background: none;
+        color: var(--cs-btn-link-color);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu .ty-menu__submenu-item-header .ty-menu__item-link {
+        color: var(--cs-btn-link-color);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu .menu-level-2.ty-menu__item-active .ty-menu__item-link {
+        background: var(--cs-menu-hover);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu .menu-level-2.ty-menu__item-active .ty-menu__item-link {
+        color: var(--cs-btn-link-color-highlight);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu-items .dropdown-vertical__dir .ty-menu__item-toggle {
+        background: none;
+        color: var(--cs-btn-link-color);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu-items .dropdown-vertical__dir .ty-menu__item-toggle.ty-menu__item-toggle-active {
+        background: var(--cs-table-background-accent);
+        color: var(--cs-btn-link-color);
+    }
+
+    .ty-menu-vertical .ty-menu__submenu-item-header .ty-menu__submenu-item-header .ty-menu__item-link {
+        color: var(--cs-btn-link-color);
+    }
+
+    .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item:hover i,
+    .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__item:hover .ty-icon {
+        color: var(--cs-btn-link-color) !important;
+    }
+
+    .ty-menu-vertical .ty-menu__item .ty-menu__submenu .ty-menu__submenu-items {
+        border-color: transparent;
+    }
+
+    .ty-menu-vertical .ty-menu__submenu-items .ty-menu__item {
+        border-top: 1px solid transparent;
+    }
+
+    .ty-menu-vertical .ty-menu__submenu-items .ty-menu__item-active {
+        background: var(--cs-menu-hover);
+    }
+
+    .no-touch .ty-menu-vertical .ty-menu__submenu .ty-menu__item:hover > .ty-menu__submenu-item-header .ty-menu__item-link {
+        background: none;
+        color: var(--cs-btn-link-color-highlight);
+    }
+
+    .ty-menu-vertical .menu-level-1.ty-menu__item-active > .ty-menu__submenu-item-header {
+        background: var(--cs-menu-hover);
+    }
+}

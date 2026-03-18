@@ -17,6 +17,28 @@
             {if $extra_button}{$extra_button nofilter}&nbsp;{/if}
             {include file="buttons/add_to_cart.tpl" but_id=$_but_id but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id product=$product but_meta=$add_to_cart_meta}
 
+            {capture name="add_to_cart_button_secondary_temp_`$obj_id`" assign="add_to_cart_button_secondary_temp_`$obj_id`"}
+                <div class="cm-reload-{$obj_prefix}{$obj_id}" id="add_to_cart_update_secondary_{$obj_prefix}{$obj_id}">
+                    {include file="buttons/add_to_cart.tpl"
+                        but_id="`$_but_id`_secondary"
+                        but_name="dispatch[checkout.add..`$obj_id`]"
+                        but_role=$but_role
+                        block_width=$block_width
+                        obj_id=$obj_id
+                        product=$product
+                        add_to_cart_meta="`$add_to_cart_meta` ty-btn__add-to-cart--secondary"
+                        but_text=__("add_to_cart_short")
+                    }
+                <!--add_to_cart_update_secondary_{$obj_prefix}{$obj_id}--></div>
+            {/capture}
+            {* Unset temp capture *}
+            {capture name="add_to_cart_button_secondary_temp_`$obj_id`"}{/capture}
+
+            {* Export *}
+            {$add_to_cart_button_secondary_temp_override_{$obj_id} = $add_to_cart_button_secondary_temp_{$obj_id} scope=parent}
+            {$obj_id_override = $obj_id scope=parent}
+            {* /Export *}
+
             {assign var="cart_button_exists" value=true}
         {/if}
 

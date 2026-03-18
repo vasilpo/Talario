@@ -1,3 +1,6 @@
+// Responsive theme variables
+// - Email variables (email_templates.xml): @links, @base, @font, @general_bg_color, @body_font, @body_font_size
+
 @rounded_corners: false;
 @links: #1ABC9C;
 @menu_links: #ffffff;
@@ -6,8 +9,11 @@
 @font: #333333;
 @secondary_text: #A3AAAF;
 @primary_button: #EA621F;
+@primary_button_hover: lighten(@primary_button, 6%);
 @secondary_button: #1ABC9C;
+@secondary_button_hover: lighten(@secondary_button, 10%);
 @tertiary_button: #BDC3C7;
+@tertiary_button_hover: lighten(@tertiary_button, 10%);
 @sidebar: #fff;
 @price: #343434;
 @discount_label: #ff9900;
@@ -16,8 +22,10 @@
 @in_stock: #2ECC71;
 @out_of_stock: #a80006;
 @top_panel_links: #1ABC9C;
+@top_panel_links_hover: darken(@top_panel_links, 10%);
 @top_panel_text: #555555;
 @footer_text: #A3AAAF;
+@footer_text_hover: @links;
 @decorative: #e3e3e3;
 
 :root {
@@ -137,3 +145,61 @@
 @checkout_error: #b94a48;
 @checkout_highlight: #fcf8e3;
 @checkout_link: #4fbe31;
+
+
+
+// Bootstrap variables
+
+//
+// Variables
+// --------------------------------------------------
+
+
+// Component sizing
+// -------------------------
+// Based on 14px font-size and 20px line-height
+
+@baseBorderRadius:                  2px;
+
+
+// Buttons
+// -------------------------
+@btnColor:                          #fff;
+@btnColorHighlight:                 #fff;
+@btnBackground:                     #BDC3C7;
+
+@btnPrimaryColor:                   #fff;
+@btnPrimaryColorHighlight:          #fff;
+
+@btnSecondaryColor:                 #fff;
+@btnSecondaryColorHighlight:        #fff;
+
+@btnTertiaryColor:                  #fff;
+@btnTertiaryColorHighlight:         #fff;
+
+
+// Forms
+// -------------------------
+@inputBackground:                   #fff;
+@inputBorder:                       darken(@base, 15%);
+@inputMutedText:                    darken(@base, 15%);
+@inputBorderRadius:                 4px;
+
+
+// Dropdowns
+// -------------------------
+@dropdownLinkColor:                 @grayDark;
+@dropdownLinkColorHover:            white;
+@dropdownLinkBackgroundHover:       @links;
+@dropdownTitleLinkColor:            darken(@base, 40%);
+@dropdownTitleLinkStyle2Color:      darken(@base, 45%);
+
+
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+
+// Tooltips and popovers
+// -------------------------
+@modalFontFamily:                   'Open Sans', 'Helvetica Neue', -apple-system, sans-serif;

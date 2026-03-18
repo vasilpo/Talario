@@ -18,7 +18,7 @@
         {$hide_inputs=true}
     {/if}
 
-    {if "ULTIMATE"|fn_allowed_for && !$user_data|fn_allow_save_object:"users" && $id && !$id|fn_ult_check_users_usergroup_companies && $user_data.user_id != $auth.user_id}
+    {if "ULTIMATE"|fn_allowed_for && !$user_data|fn_allow_save_object:"users" && $id && !$ult_check_users_usergroup_companies && $user_data.user_id != $auth.user_id}
         {$hide_inputs=true}
     {/if}
 
@@ -79,50 +79,30 @@
                 && $user_data.user_type === "UserTypes::ADMIN"|enum
                 && $id == $auth.user_id
             }
-                {if "ULTIMATE:FREE"|fn_allowed_for && $is_activated_free !== "YesNo::YES"|enum}
-                    {if
-                        $auth.is_root === "YesNo::YES"|enum
-                        && !$auth.company_id
-                        && $settings.Upgrade_center.license_number
-                    }
-                        <div class="control-group">
-                            <label for="helpdesk_account_{$id}" class="control-label">{__("helpdesk_account.helpdesk_account")}</label>
-                            <div class="controls">
-                                <p>{__("helpdesk_account.activate_free_license_message")}</p>
-                                {include file="buttons/helpdesk.tpl"
-                                    btn_href="helpdesk_connector.activate_license_mail_request"
-                                    btn_text=__("activate")
-                                    btn_class="cm-ajax"
+                <div class="control-group">
+                    <label for="helpdesk_account_{$id}" class="control-label">{__("helpdesk_account.helpdesk_account")}</label>
+                    {if $user_data.helpdesk_user_id}
+                        <div class="controls">
+                            <p>{__("helpdesk_account.signed_in_message")}</p>
+                            <p>
+                                {include file = "buttons/helpdesk.tpl"
+                                    btn_href = fn_url($helpdesk_disconnect_url)
+                                    btn_text = __("helpdesk_account.sign_out")
                                 }
-                            </div>
+                            </p>
+                        </div>
+                    {else}
+                        <div class="controls">
+                            <p>{__("helpdesk_account.signed_out_message")}</p>
+                            <p>
+                                {include file = "buttons/helpdesk.tpl"
+                                    btn_href = fn_url($helpdesk_connect_url)
+                                    btn_text = __("helpdesk_account.sign_in")
+                                }
+                            </p>
                         </div>
                     {/if}
-                {else}
-                    <div class="control-group">
-                        <label for="helpdesk_account_{$id}" class="control-label">{__("helpdesk_account.helpdesk_account")}</label>
-                        {if $user_data.helpdesk_user_id}
-                            <div class="controls">
-                                <p>{__("helpdesk_account.signed_in_message")}</p>
-                                <p>
-                                    {include file = "buttons/helpdesk.tpl"
-                                        btn_href = fn_url($helpdesk_disconnect_url)
-                                        btn_text = __("helpdesk_account.sign_out")
-                                    }
-                                </p>
-                            </div>
-                        {else}
-                            <div class="controls">
-                                <p>{__("helpdesk_account.signed_out_message")}</p>
-                                <p>
-                                    {include file = "buttons/helpdesk.tpl"
-                                        btn_href = fn_url($helpdesk_connect_url)
-                                        btn_text = __("helpdesk_account.sign_in")
-                                    }
-                                </p>
-                            </div>
-                        {/if}
-                    </div>
-                {/if}
+                </div>
             {/if}
         {/hook}
 

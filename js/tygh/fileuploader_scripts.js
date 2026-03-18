@@ -58,6 +58,7 @@
       }
     },
     show_loader: function (elm_id) {
+      const self = this;
       var suffix = elm_id.str_replace('local_', '').str_replace('server_', '').str_replace('url_', '');
       var max_file_size_bytes;
       var max_file_size_mbytes;
@@ -100,6 +101,19 @@
               this.clean_form(suffix);
             }
           }
+          const virtualImage = new Image();
+          virtualImage.onload = function () {
+            if (this.width <= _.max_uploaded_image_dimension && this.height <= _.max_uploaded_image_dimension) {
+              return;
+            }
+            $.ceNotification('show', {
+              type: 'E',
+              title: _.tr('error'),
+              message: _.tr('text_not_allowed_to_upload_image_with_dimensions').replaceAll('[dimension]', _.max_uploaded_image_dimension)
+            });
+            self.clean_form(suffix);
+          };
+          virtualImage.src = window.URL.createObjectURL(native_file_holder.files[0]);
         }
       }
       if (elm_id.indexOf('server') != -1) {

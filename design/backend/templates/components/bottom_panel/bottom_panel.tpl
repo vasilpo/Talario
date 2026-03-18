@@ -33,6 +33,28 @@
     || ($is_demo_mode && $smarty.const.AREA === "SiteArea::STOREFRONT"|enum)
 )}
 
+{$bp_nav_item_class = ""}
+{$bp_nav_item_size = ""}
+{$bp_nav_item_sm_length = 40}
+{$bp_nav_item_xs_length = 50}
+{$bp_nav_item_full_text_array = []}
+{$bp_nav_item_full_text_array[] = __("bottom_panel.storefront")}
+{$bp_nav_item_full_text_array[] = __("bottom_panel.admin_panel")}
+
+{if "MULTIVENDOR"|fn_allowed_for && ("THEMES_PANEL"|defined || $auth.user_type === "UserTypes::VENDOR"|enum)}
+    {$bp_nav_item_full_text_array[] = __("bottom_panel.vendor_panel")}
+{/if}
+
+{$bp_nav_item_full_text = ''|implode:$bp_nav_item_full_text_array}
+
+{if $bp_nav_item_full_text|count_characters:true > $bp_nav_item_xs_length}
+    {$bp_nav_item_size = "xs"}
+    {$bp_nav_item_class = "bp-nav__item--xs"}
+{elseif $bp_nav_item_full_text|count_characters:true > $bp_nav_item_sm_length}
+    {$bp_nav_item_size = "sm"}
+    {$bp_nav_item_class = "bp-nav__item--sm"}
+{/if}
+
 {capture name="settings_menu_main_links"}
     {if fn_check_permissions("themes", "manage", "admin", "", [], $smarty.const.AREA, $auth.user_id)
         && ($auth.user_type !== "UserTypes::VENDOR"|enum || $settings.Vendors.can_edit_styles === "YesNo::YES"|enum)
@@ -101,7 +123,7 @@
 {if $runtime.is_multiple_storefronts}
     {if $smarty.request.storefront_id}
         {$storefront_id=$smarty.request.storefront_id}
-    {elseif (fn_allowed_for('MULTIVENDOR:ULTIMATE'))}
+    {elseif (fn_allowed_for('MULTIVENDOR'))}
         {$storefront_id=$selected_storefront_id|default:$app["storefront"]->storefront_id}
     {else}
         {$storefront_id=$selected_storefront_id|default:$app["storefront.switcher.selected_storefront_id"]}
@@ -135,7 +157,7 @@
         <div class="bp-nav">
             {$redirect_area = ($auth.user_type === "UserTypes::VENDOR"|enum) ? "V" : "A"}
             <a href="{"bottom_panel.redirect?url=`$config.current_url|urlencode`&area=`$smarty.const.AREA`&to_area=C{if $storefront_id}&storefront_id=`$storefront_id`{/if}"|fn_url:$redirect_area}"
-                class="bp-nav__item cm-no-ajax
+                class="bp-nav__item cm-no-ajax {$bp_nav_item_class}
                 {if $smarty.const.ACCOUNT_TYPE === "customer"}
                     bp-nav__item--active
                 {/if}"
@@ -143,9 +165,12 @@
                 <span class="bp-nav__item-text">{__("bottom_panel.storefront")}</span>
             </a>
             {if "THEMES_PANEL"|defined || $auth.user_type === "UserTypes::ADMIN"|enum}
-                <a href="{fn_url("bottom_panel.login_as_admin?url=`$config.current_url|urlencode`&area=`$smarty.const.AREA`&user_id=`$auth.user_id`", "C")}" class="bp-nav__item cm-no-ajax cm-post
+                <a href="{if $smarty.const.ACCOUNT_TYPE === "admin"}{fn_url('index.index', "SiteArea::ADMIN_PANEL"|enum)}{else}{fn_url("bottom_panel.login_as_admin?url=`$config.current_url|urlencode`&area=`$smarty.const.AREA`", "C")}{/if}"
+                    class="bp-nav__item {$bp_nav_item_class}
                     {if $smarty.const.ACCOUNT_TYPE === "admin"}
                         bp-nav__item--active
+                    {else}
+                        cm-no-ajax cm-post
                     {/if}"
                     data-bp-nav-item="admin">
                     <span class="bp-nav__item-text">{__("bottom_panel.admin_panel")}</span>
@@ -153,19 +178,18 @@
             {/if}
             {if "MULTIVENDOR"|fn_allowed_for}
                 {if "THEMES_PANEL"|defined || $auth.user_type === "UserTypes::VENDOR"|enum}
-                    <a href="{fn_url("bottom_panel.login_as_vendor?url=`$config.current_url|urlencode`&area=`$smarty.const.AREA`&user_id=`$auth.user_id`", "C")}" class="bp-nav__item cm-no-ajax cm-post
+                    <a href="{if $smarty.const.ACCOUNT_TYPE === "vendor"}{fn_url('index.index', "SiteArea::VENDOR_PANEL"|enum)}{else}{fn_url("bottom_panel.login_as_vendor?url=`$config.current_url|urlencode`&area=`$smarty.const.AREA`", "C")}{/if}"
+                        class="bp-nav__item {$bp_nav_item_class}
                         {if $smarty.const.ACCOUNT_TYPE === "vendor"}
                             bp-nav__item--active
+                        {else}
+                            cm-no-ajax cm-post
                         {/if}"
                         data-bp-nav-item="vendor">
                         <span class="bp-nav__item-text">{__("bottom_panel.vendor_panel")}</span>
                     </a>
                 {/if}
             {/if}
-            <div id="bp-nav__active" class="bp-nav__active
-                {if $smarty.const.ACCOUNT_TYPE === "customer"}
-                    bp-nav__active--activated
-                {/if}"></div>
         </div>
 
         {hook name="bottom_panel:bp_modes"}
@@ -265,11 +289,6 @@
                             </div>
                         </a>
                     {/if}
-                    <div id="bp-modes__active" class="bp-modes__active
-                        {if $active_mode === "preview"}
-                            bp-modes__active--preview
-                        {/if}"
-                    ></div>
                 </div>
             {/if}
         {/hook}

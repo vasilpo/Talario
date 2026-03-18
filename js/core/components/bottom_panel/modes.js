@@ -7,7 +7,6 @@ export const modes = {
             state.modesActive = elem.data('bpModesItem');
         }
         $(state.bottomPanel).data('modesActive', state.modesActive);
-        modes._setPosition();
         modes._setClass(elem);
     },
 
@@ -17,23 +16,7 @@ export const modes = {
         });
     },
 
-    _setPosition: function () {
-        let position = $(state.bottomPanel)
-            .find(params.modesItemSpecificSelector.replace('{placeholder}', state.modesActive))
-            .position().left;
-
-        if (Tygh.language_direction === 'rtl' && state.modes.length > 0) {
-            position -= $(state.modes[0]).position().left;
-        }
-
-        $(params.modesActiveSelector).css('transform', 'translate(' + position + 'px)');
-    },
-
     _setClass: function (elem) {
-
-        $(params.modesActiveSelector)
-            .removeClass(params.modesActiveClasses.join(' '))
-            .addClass(params.modesActiveClass.replace('{placeholder}', state.modesActive));
 
         if (elem) {
             $(state.modes).each(function () {

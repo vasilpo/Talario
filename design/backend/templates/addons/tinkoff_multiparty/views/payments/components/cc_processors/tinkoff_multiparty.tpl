@@ -21,6 +21,9 @@
 />
 {include file="common/subheader.tpl" title=__("settings") target="#tinkoff_multiparty_payment_settings_`$payment_id`"}
 <div id="tinkoff_multiparty_payment_settings_{$payment_id}" class="in collapse">
+    <div class="alert alert-info">
+        {__("addons.tinkoff_multiparty.settings_instruction") nofilter}
+    </div>
     <div class="control-group">
         <label class="control-label cm-required" for="terminal_key_{$payment_id}">{__("addons.tinkoff_multiparty.terminal_key")}:</label>
         <div class="controls">
@@ -72,6 +75,58 @@
             <p class="muted description">{__("addons.tinkoff_multiparty.marketplace_inn.description")}</p>
         </div>
     </div>
+
+    <div id="certificate_file{$payment_id}">
+        <div class="control-group {if $processor_params.certificate_filename}cm-skip-validation{/if}">
+            {$cert_var_name = "payment_certificate[]"}
+            <label class="control-label cm-required" for="type_{$cert_var_name|md5}">{__("addons.tinkoff_multiparty.mtls_certificate")}:</label>
+            <div class="controls">
+
+                {if $processor_params.certificate_filename}
+                    <div class="text-type-value pull-left">
+                        {$processor_params.certificate_filename}
+                        <a href="{'payments.delete_certificate?payment_id='|cat:$payment_id|fn_url}" class="cm-ajax cm-post" data-ca-target-id="certificate_file{$payment_id}">
+                            {include_ext file="common/icon.tpl"
+                            class="icon-remove-sign cm-tooltip hand"
+                            title=__('remove')
+                            }
+                        </a>
+                    </div>
+                {/if}
+
+                <div {if $processor_params.certificate_filename}class="clear"{/if}>{include file="common/fileuploader.tpl" var_name=$cert_var_name}</div>
+            </div>
+            <div class="controls">
+                <p class="muted description">{__("addons.tinkoff_multiparty.mtls_certificate.description")}</p>
+            </div>
+        </div>
+    <!--certificate_file{$payment_id}--></div>
+
+    <div id="certificate_key_file{$payment_id}">
+        <div class="control-group {if $processor_params.certificate_key_filename}cm-skip-validation{/if}">
+            {$cert_key_var_name = "payment_certificate_key[]"}
+            <label class="control-label cm-required" for="type_{$cert_key_var_name|md5}">{__("addons.tinkoff_multiparty.private_key")}:</label>
+            <div class="controls">
+
+                {if $processor_params.certificate_key_filename}
+                    <div class="text-type-value pull-left">
+                        {$processor_params.certificate_key_filename}
+                        <a href="{'payments.delete_certificate_key?payment_id='|cat:$payment_id|fn_url}" class="cm-ajax cm-post" data-ca-target-id="certificate_key_file{$payment_id}">
+                            {include_ext file="common/icon.tpl"
+                            class="icon-remove-sign cm-tooltip hand"
+                            title=__('remove')
+                            }
+                        </a>
+                    </div>
+                {/if}
+
+                <div {if $processor_params.certificate_key_filename}class="clear"{/if}>{include file="common/fileuploader.tpl" var_name=$cert_key_var_name}</div>
+            </div>
+            <div class="controls">
+                <p class="muted description">{__("addons.tinkoff_multiparty.private_key.description")}</p>
+            </div>
+        </div>
+    <!--certificate_key_file{$payment_id}--></div>
 
     <div class="control-group">
         <label class="control-label" for="pay_type_{$payment_id}">

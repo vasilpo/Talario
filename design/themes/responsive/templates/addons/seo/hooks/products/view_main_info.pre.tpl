@@ -1,6 +1,6 @@
 {** FIXME: Deprecated since 4.11.4. Use the "seo_get_schema_org_markup_items_post" PHP hook to extend your product markup **}
 {if !$is_json_schema_org_markup_displayed}
-    <div itemscope itemtype="http://schema.org/Product">
+    <div itemscope itemtype="http://schema.org/Product" class="hidden">
         <meta itemprop="sku" content="{$product.seo_snippet.sku}" />
         <meta itemprop="name" content="{$product.seo_snippet.name}" />
         <meta itemprop="description" content="{$product.seo_snippet.description}" />

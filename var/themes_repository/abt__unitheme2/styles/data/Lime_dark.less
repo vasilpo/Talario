@@ -61,7 +61,7 @@ body.sticky-fc-panel .top-sticky-panel__filters {
 .litecheckout__submit-btn,
 .top-logo .ty-dropdown-box__title[id],
 .top-search .ty-dropdown-box__title[id],
-.header-grid .container-fluid-row:not(.top-menu-grid) .top-menu-grid-vetrtical.ty-dropdown-box .ty-dropdown-box__title[id] {
+.header-grid .container-fluid-row:not(.top-menu-grid) .top-menu-grid-vertical.ty-dropdown-box .ty-dropdown-box__title[id] {
     &:hover {
         box-shadow: 0 0 10px fade(@primary_button, 50%);
     }
@@ -82,7 +82,7 @@ body.sticky-fc-panel .top-sticky-panel__filters {
 
 // Vendor block Legacy
 .ut2-vendor-block {
-    background: @general_bg_color;
+    background: var(--color-general);
 
     .image_bg_picker() when (@general_bg_image = #ffffff) {
         img {
@@ -94,17 +94,9 @@ body.sticky-fc-panel .top-sticky-panel__filters {
     .image_bg_picker();
 }
 
-// Motivation block Legacy
-.ab__mb_items .ab__mb_item {
-    background-color: @general_bg_color;
-}
-.ab__mb_items.framed.colored .ab__mb_item {
-    box-shadow: inset 0 0 0 1px @base;
-}
-
 // Stickers
 .ab-sticker__tooltip {
-    background: @general_bg_color;
+    background: var(--color-general);
     box-shadow: inset 0 0 0 1px @base, 0 5px 15px @content_bg;
 }
 
@@ -119,10 +111,10 @@ body.sticky-fc-panel .top-sticky-panel__filters {
 
 // Deal of the Day
 .js-counter {
-    background: @general_bg_color;
+    background: var(--color-general);
 
     > div > span {
-        color: @font;
+        color: var(--color-font);
     }
 }
 
@@ -181,27 +173,34 @@ body.sticky-fc-panel .top-sticky-panel__filters {
 @footer_bg_transparent: false;
 @footer_bg_grad_stop: #191919;
 
-@body_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+// Font - Open Sans for heading: 'Open Sans','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Open Sans for regular text: -apple-system,BlinkMacSystemFont,'Open Sans','Helvetica Neue','Arial',sans-serif;
+// Font - Inter for heading: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Inter for regular text: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
+// Font - Montserrat for heading: 'Montserrat','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Montserrat for regular text: -apple-system,BlinkMacSystemFont,'Montserrat','Helvetica Neue','Arial',sans-serif;
+
+@body_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
 @body_font_size: 14px;
 @body_font_style: normal;
 @body_font_weight: normal;
-@headings_font: 'MuseoSansBlack','Helvetica Neue','Arial',-apple-system,sans-serif;
+@headings_font: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
 @headings_font_size: 24px;
 @headings_font_decoration: none;
 @headings_font_style: normal;
-@headings_font_weight: normal;
-@links_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@headings_font_weight: 900;
+@links_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
 @links_font_size: 14px;
 @links_font_decoration: none;
 @links_font_style: normal;
-@links_font_weight: normal;
-@price_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@links_font_weight: 400;
+@price_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
 @price_font_size: 18px;
 @price_font_decoration: none;
 @price_font_style: normal;
-@price_font_weight: bold;
-@buttons_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
-@buttons_font_size: 14px;
+@price_font_weight: 700;
+@buttons_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
+@buttons_font_size: 15px;
 @buttons_font_decoration: none;
 @buttons_font_style: normal;
 @buttons_font_weight: 600;
@@ -265,7 +264,7 @@ body.sticky-fc-panel .top-sticky-panel__filters {
 // Products
 @abt__ut2_products_mask_images_gallery: true;
 @abt__ut2_products_bordered_images_gallery: false;
-@abt__ut2_products_sticky_columns: false;
+@abt__ut2_products_sticky_columns: true;
 
 // Checkout
 @checkout_link: #8ba470;
@@ -292,7 +291,7 @@ body.sticky-fc-panel .top-sticky-panel__filters {
 @abt__ut2_addons_ab__deal_of_the_day_bright_color_promotion_title: false;
 @abt__ut2_addons_ab__deal_of_the_day_bordered_block: false;
 @abt__ut2_addons_ab__deal_of_the_day_shadow_block: false;
-@abt__ut2_addons_ab__deal_of_the_day_rounded_corners_blocks: true;
+
 
 // Vendor colors
 @abt__ut2_vendor_vendor_info_background: #2e2e2b;

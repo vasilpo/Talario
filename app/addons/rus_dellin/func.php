@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Registry;
 use Tygh\Languages\Languages;
@@ -36,7 +36,7 @@ function fn_rus_dellin_install()
     }
 
     $path = Registry::get('config.dir.root') . '/app/addons/rus_dellin/database/dellin_cities.csv';
-    fn_rus_cities_read_cities_by_chunk($path, RUS_CITIES_FILE_READ_CHUNK_SIZE, 'fn_rus_dellin_add_cities_in_table');
+    fn_cities_read_cities_by_chunk($path, CITIES_FILE_READ_CHUNK_SIZE, 'fn_rus_dellin_add_cities_in_table');
 
     $dellin_demo = Registry::get('config.dir.addons') . 'rus_dellin/database/dellin_demo.sql';
     if (file_exists($dellin_demo)) {
@@ -134,7 +134,7 @@ function fn_rus_dellin_calculate_cart_taxes_pre(&$cart, $cart_products, &$produc
  */
 function fn_rus_dellin_add_cities_in_table($rows)
 {
-    $cities_hash = fn_rus_cities_get_all_cities($rows);
+    $cities_hash = fn_cities_get_all_cities($rows);
 
     foreach ($rows as $city_data) {
         $city_data['City'] = fn_strtolower($city_data['City']);
@@ -179,12 +179,12 @@ function fn_rus_dellin_get_code_city($params, $lang_code = CART_LANGUAGE)
     }
 
     $code_kladr = db_get_field(
-        'SELECT code_kladr FROM ?:rus_city_descriptions'
-        . ' LEFT JOIN ?:rus_cities'
-        . ' ON ?:rus_city_descriptions.city_id = ?:rus_cities.city_id'
+        'SELECT code_kladr FROM ?:city_descriptions'
+        . ' LEFT JOIN ?:cities'
+        . ' ON ?:city_descriptions.city_id = ?:cities.city_id'
         . ' LEFT JOIN ?:rus_dellin_cities_link'
-        . ' ON ?:rus_cities.city_id = ?:rus_dellin_cities_link.city_id'
-        . ' WHERE ?:rus_cities.status = ?s AND lang_code = ?s ?p',
+        . ' ON ?:cities.city_id = ?:rus_dellin_cities_link.city_id'
+        . ' WHERE ?:cities.status = ?s AND lang_code = ?s ?p',
         'A',
         $lang_code,
         $condition

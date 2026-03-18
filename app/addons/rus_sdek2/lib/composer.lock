@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a47b3b344b23377dd83c248f24725e1",
+    "content-hash": "87f8403e6a7e4207f7f526bc2842700d",
     "packages": [
         {
             "name": "cdek-it/sdk2.0",
@@ -908,7 +908,7 @@
     "platform": [],
     "platform-dev": [],
     "platform-overrides": {
-        "php": "7.2.5"
+        "php": "7.4.0"
     },
     "plugin-api-version": "2.6.0"
 }

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
 <id>ab__addons_manager</id>
-<version>2.5.6</version>
+<version>2.5.9</version>
 <priority>10</priority>
 <position>0</position>
 <status>active</status>
 <default_language>en</default_language>
 <ab>
-<hash>8cdc87270f98932dacf7f46e26c8594d8d23e99c, 2025-04-01 21:32:40</hash></ab>
+<hash>06a402395f98932abc2a8395ba6c367475031a1c, 2026-02-09 09:59:22</hash></ab>
 <authors>
 <author>
 <name>AlexBranding</name>
@@ -28,7 +28,7 @@
 <items>
 <item id="show_subscription"><type>checkbox</type><default_value>Y</default_value></item>
 <item id="code"><type>hidden</type><default_value>ABM-LZEsebeXn0L498z7FMKJW</default_value></item>
-<item id="build"><type>hidden</type><default_value>1211</default_value></item>
+<item id="build"><type>hidden</type><default_value>1278</default_value></item>
 </items>
 </section>
 </sections>

@@ -37,17 +37,17 @@ class MessageBuilderTest extends ATestCase
         $message_builder = $this->getMessageBuilder();
 
         $this->assertEquals(
-            array('company_users_department@example.com' => 'Simtech'),
+            array('company_users_department@example.com' => 'Acme'),
             $message_builder->getMessageFrom('company_users_department', 0, 'en')
         );
 
         $this->assertEquals(
-            array('company_newsletter_email1@example.com' => 'Simtech1'),
+            array('company_newsletter_email1@example.com' => 'Acme1'),
             $message_builder->getMessageFrom('company_newsletter_email', 1, 'en')
         );
 
         $this->assertEquals(
-            array('default_company_orders_department@example.com' => 'Default Simtech'),
+            array('default_company_orders_department@example.com' => 'Default Acme'),
             $message_builder->getMessageFrom('default_company_orders_department', 0, 'en')
         );
 
@@ -62,7 +62,7 @@ class MessageBuilderTest extends ATestCase
         );
 
         $this->assertEquals(
-            array('default_company_orders_department@example.com' => 'Default Simtech'),
+            array('default_company_orders_department@example.com' => 'Default Acme'),
             $message_builder->getMessageFrom(array('email' => 'default_company_orders_department'), 0, 'en')
         );
 
@@ -87,7 +87,7 @@ class MessageBuilderTest extends ATestCase
         );
 
         $this->assertEquals(
-            array('default_company_orders_department@example.com' => 'Default Simtech'),
+            array('default_company_orders_department@example.com' => 'Default Acme'),
             $message_builder->getMessageFrom(array('email' => 'default_company_orders_department', 'name' => 'default_company_name'), 0, 'en')
         );
     }
@@ -297,7 +297,7 @@ class MessageBuilderTest extends ATestCase
                     'company_id' => 0
                 ),
                 array(
-                    'from' => array('test_empty_email@example.com' => 'Simtech1'), //If email from default company empty, should be get email from first company
+                    'from' => array('test_empty_email@example.com' => 'Acme1'), //If email from default company empty, should be get email from first company
                     'is_html' => true
                 ),
             )

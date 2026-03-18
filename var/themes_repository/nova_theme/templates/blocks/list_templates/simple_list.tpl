@@ -1,0 +1,26 @@
+{include file="design/themes/responsive/templates/blocks/list_templates/simple_list.tpl"
+    product=$product
+    obj_id=$obj_id
+    obj_prefix=$obj_prefix
+    smarty=$smarty
+    item_number=$item_number
+    hide_price=$hide_price
+    show_old_price=$show_old_price
+    show_clean_price=$show_clean_price
+    show_list_discount=$show_list_discount
+    capture_options_vs_qty=$capture_options_vs_qty
+    show_features=$show_features
+    show_descr=$show_descr
+    hide_qty=$hide_qty
+    capture_buttons=$capture_buttons
+    show_add_to_cart=$show_add_to_cart
+    show_space_after_old_price=false
+    show_empty_rating=true
+    show_quick_view_for_options=true
+    show_add_to_cart_secondary=false
+    show_list_buttons=true
+    show_rating=true
+    show_total_product_reviews=true
+    price_first=true
+    product_labels_position="top-left"
+}

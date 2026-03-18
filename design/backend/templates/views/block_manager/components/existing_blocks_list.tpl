@@ -1,22 +1,28 @@
-{foreach from=$unique_blocks item="block"}
-    {if $block_types[$block.type]}
-        <div class="select-block {if $purpose === "wysiwyg"}cm-select-bm-block{else}cm-add-block bm-action-existing-block{/if} {if $manage == "Y"}bm-manage{/if} {if $block.single_for_location}bm-block-single-for-location{/if}"
-             data-ca-block-uid="{$block.unique_id}"
-             data-ca-block-name="{$block.name}"
-        >
-            <input type="hidden" name="block_id" value="{$block.block_id}" />
-            <input type="hidden" name="grid_id" value="{$grid_id|default:"0"}" />
-            <input type="hidden" name="type" value="{$block.type}" />
-            {if $purpose !== "wysiwyg"}
-                <a class="icon-remove-circle cm-tooltip cm-remove-block" title="{__("delete_block")}"></a>
-            {/if}
-            <div class="select-block-box">
-                <div class="bmicon-{$block.type|replace:"_":"-"}"></div>
-            </div>
-            <div class="select-block-description">
-                <strong title="{$block.name}">{$block.name|truncate:20:"...":true|escape:html|replace:'...':'&hellip;' nofilter}</strong>
-                <p>{$block_types[$block.type].description}</p>
-            </div>
+<div id="block_selection_themes_{$grid_id}{$extra_id}">
+    {$tabs_count=count($theme_layout_block_map)}
+    {if $tabs_count > 1}
+        <div class="tabs cm-j-tabs tabs--enable-fill tabs--count-{$tabs_count}">
+            <ul class="nav nav-tabs hidden">
+                {foreach $theme_layout_block_map as $key => $data}
+                    <li id="theme_layout_blocks_{$key}{$extra_id}" class="cm-js"></li>
+                {/foreach}
+            </ul>
+            <select onchange="Tygh.$('#' + this.value).click();">
+                {foreach $theme_layout_block_map as $key => $data}
+                    <option value="theme_layout_blocks_{$key}{$extra_id}">{$data.name}</option>
+                {/foreach}
+            </select>
         </div>
     {/if}
-{/foreach}
+
+    {foreach $theme_layout_block_map as $key => $data}
+        {$blocks=$data.blocks}
+        <div id="content_theme_layout_blocks_{$key}{$extra_id}">
+            {foreach $blocks as $block}
+                {if $block_types[$block.type]}
+                    {include file="views/block_manager/components/existing_block.tpl"}
+                {/if}
+            {/foreach}
+        <!--content_theme_layout_blocks_{$key}{$extra_id}--></div>
+    {/foreach}
+</div>

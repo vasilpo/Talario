@@ -29,28 +29,6 @@
                     .text-button:hover {
                         text-decoration: underline
                     }
-                    .icon-print:before {
-                        content: "\e716";
-                    }
-                    [class^="icon-"]:before, [class*=" icon-"]:before {
-                        font-family: 'glyphs';
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 1;
-                    }
-                    @font-face {
-                        font-family: 'glyphs';
-                        {/literal}
-                        src:url('{$fonts_path}/glyphs.eot');
-                        src:url('{$fonts_path}/glyphs.eot?#iefix') format('embedded-opentype'),
-                        url('{$fonts_path}/glyphs.svg#glyphs') format('svg'),
-                        url('{$fonts_path}/glyphs.woff') format('woff'),
-                        url('{$fonts_path}/glyphs.ttf') format('truetype');
-                        {literal}
-                        font-weight: normal;
-                        font-style: normal;
-                        font-display: swap;
-                    }
                 {/literal}
             </style>
     </head>
@@ -70,7 +48,7 @@
                         <li><strong>{__("in")}: </strong> {$sbrf_settings.sbrf_bank|unescape}</li>
                         <li><strong>{__("sbrf_bik")}: </strong>{$sbrf_settings.sbrf_bik|unescape}&nbsp;<strong>{__("sbrf_cor_account")}: </strong>{$sbrf_settings.sbrf_cor_account|unescape}</li>
                         <li><strong>{__("sbrf_kbk")}: </strong> {$sbrf_settings.sbrf_kbk|unescape}</li>
-                        <li><strong>{__("sbrf_payment")}: </strong> {$sbrf_settings.sbrf_prefix|unescape} #{$order_info.order_id}</li>
+                        <li><strong>{__("sbrf_payment")}: </strong> {$sbrf_settings.sbrf_prefix|default:''|unescape} #{$order_info.order_id}</li>
                         <li><strong>{__("sbrf_payer")}: </strong>{$order_info.firstname}&nbsp;{$order_info.lastname}</li>
                         <li><strong>{__("sbrf_payer_address")}: </strong> {if $order_info.b_zipcode}{$order_info.b_zipcode},&nbsp;{/if}{if $order_info.b_country_descr}{$order_info.b_country_descr},&nbsp;{/if}{if $order_info.b_state_descr}{$order_info.b_state_descr}, &nbsp;{/if}{if $order_info.b_city}{$order_info.b_city}, &nbsp;{/if}{if $order_info.b_address}{$order_info.b_address}{/if}{if $order_info.b_address_2},&nbsp;{$order_info.b_address_2}{/if}</li>
                         <li><strong>{__("sbrf_payer_inn")}: </strong>____________&nbsp;&nbsp;&nbsp;&nbsp; <strong>{__("sbrf_payer_account_id")}: </strong> ______________</li>
@@ -91,7 +69,7 @@
                         <li><strong>{__("in")}: </strong> {$sbrf_settings.sbrf_bank|unescape}</li>
                         <li><strong>{__("sbrf_bik")}: </strong>{$sbrf_settings.sbrf_bik|unescape}&nbsp;<strong>{__("sbrf_cor_account")}: </strong>{$sbrf_settings.sbrf_cor_account|unescape}</li>
                         <li><strong>{__("sbrf_kbk")}: </strong> {$sbrf_settings.sbrf_kbk|unescape}</li>
-                        <li><strong>{__("sbrf_payment")}: </strong> {$sbrf_settings.sbrf_prefix|unescape} #{$order_info.order_id}</li>
+                        <li><strong>{__("sbrf_payment")}: </strong> {$sbrf_settings.sbrf_prefix|default:''|unescape} #{$order_info.order_id}</li>
                         <li><strong>{__("sbrf_payer")}: </strong>{$order_info.firstname}&nbsp;{$order_info.lastname}</li>
                         <li><strong>{__("sbrf_payer_address")}: </strong> {if $order_info.b_zipcode}{$order_info.b_zipcode},&nbsp;{/if}{if $order_info.b_country_descr}{$order_info.b_country_descr},&nbsp;{/if}{if $order_info.b_state_descr}{$order_info.b_state_descr}, &nbsp;{/if}{if $order_info.b_city}{$order_info.b_city}, &nbsp;{/if}{if $order_info.b_address}{$order_info.b_address}{/if}{if $order_info.b_address_2},&nbsp;{$order_info.b_address_2}{/if}</li>
                         <li><strong>{__("sbrf_payer_inn")}: </strong>____________&nbsp;&nbsp;&nbsp;&nbsp; <strong>{__("sbrf_payer_account_id")}: </strong> ______________</li>

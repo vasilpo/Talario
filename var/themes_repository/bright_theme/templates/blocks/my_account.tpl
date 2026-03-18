@@ -66,7 +66,7 @@
         {if $auth.user_id}
             {$is_vendor_with_active_company="MULTIVENDOR"|fn_allowed_for && ($user_info.user_type == "V") && ($user_info.company_status == "A")}
             {if $is_vendor_with_active_company}
-                <a href="{fn_url("bottom_panel.login_as_vendor?url=`$config.current_url|urlencode`&area={"SiteArea::STOREFRONT"|enum}&user_id=`$auth.user_id`")}" rel="nofollow" class="ty-btn ty-btn__primary cm-post" target="_blank">{__("go_to_admin_panel")}</a>
+                <a href="{fn_url("bottom_panel.login_as_vendor?url=`$config.current_url|urlencode`&area={"SiteArea::STOREFRONT"|enum}")}" rel="nofollow" class="ty-btn ty-btn__primary cm-post" target="_blank">{__("go_to_admin_panel")}</a>
             {/if}
             <a href="{"auth.logout?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="ty-btn {if $is_vendor_with_active_company}ty-btn__tertiary{else}ty-btn__primary{/if}">{__("sign_out")}</a>
         {else}

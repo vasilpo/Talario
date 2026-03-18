@@ -90,7 +90,7 @@ Vendor communication
 
     .ty-vendor-communication-post {
         background-color: lighten(@base, 3%);
-        border: 1px solid darken(@base, 15%);
+        border: 1px solid @inputBorder; // border: 1px solid darken(@base, 15%);
 
         &__author {
             text-align: right;
@@ -101,7 +101,7 @@ Vendor communication
         right: 20px;
 
         &-outer {
-            border-right-color: darken(@base, 15%);
+            border-right-color: @inputBorder; // border-right-color: darken(@base, 15%);
             transform: scaleX(-1);
         }
         &-inner {
@@ -218,9 +218,14 @@ Vendor communication
 // Contact vendor button
 .ty-vendor-communication__post-write {
     white-space: nowrap;
+    vertical-align: middle;
 
     i, .ty-icon {
+        --ty-vendor-communication-post-write-icon-line-height: 1.365;
+
         padding-right: 5px;
+        line-height: var(--ty-vendor-communication-post-write-icon-line-height);
+        vertical-align: text-bottom;
     }
 }
 

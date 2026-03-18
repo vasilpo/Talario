@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /release-4.18.4/core.po\n"
-"X-Crowdin-File-ID: 9747\n"
-"PO-Revision-Date: 2025-06-04 11:25\n"
+"X-Crowdin-File: /release-4.20.1/core.po\n"
+"X-Crowdin-File-ID: 10313\n"
+"PO-Revision-Date: 2026-02-16 12:11\n"
 
 msgctxt "LanguageName"
 msgid "Localized language name"
@@ -525,6 +525,10 @@ msgid "Add tax"
 msgstr "Добавить налог"
 
 msgctxt "Languages::add_to_cart"
+msgid "Add to cart"
+msgstr "В корзину"
+
+msgctxt "Languages::add_to_cart_short"
 msgid "Add to cart"
 msgstr "В корзину"
 
@@ -1808,9 +1812,17 @@ msgctxt "Languages::tools_carrier_upsdeprecated_msg"
 msgid "This shipping method will stop working in June 2024. To keep using UPS, please set up a shipping method that uses \"UPS\" rather than \"UPS [Deprecated]\" for rate calculation."
 msgstr "Этот способ доставки прекратит работу в июне 2024 г. Чтобы продолжить использовать UPS, настройте способ доставки, где для расчёта тарифа используется не \"UPS [Deprecated]\", а \"UPS\"."
 
-msgctxt "Languages::carrier_usps"
+msgctxt "Languages::carrier_uspsv2"
 msgid "USPS"
 msgstr "USPS"
+
+msgctxt "Languages::tools_carrier_usps_msg"
+msgid "To get Client ID and Client secret, <a target=\"_blank\" href=\"[url]\">create an app in your USPS business account</a>."
+msgstr "Чтобы получить ИД клиента и секретный ключ, <a target=\"_blank\" href=\"[url]\">создайте приложение в вашей учётной записи USPS</a>."
+
+msgctxt "Languages::carrier_usps"
+msgid "USPS [Deprecated]"
+msgstr "USPS [Старая версия]"
 
 msgctxt "Languages::cart"
 msgid "Cart"
@@ -1823,6 +1835,10 @@ msgstr "Корзина"
 msgctxt "Languages::cart_contents"
 msgid "Cart contents"
 msgstr "Содержимое корзины"
+
+msgctxt "Languages::cart_contents_title"
+msgid "Cart"
+msgstr "Корзина"
 
 msgctxt "Languages::cart_info"
 msgid "Site info"
@@ -2164,6 +2180,10 @@ msgctxt "Languages::actions.seo_robots"
 msgid "Robots.txt"
 msgstr "Robots.txt"
 
+msgctxt "Languages::actions.seo_llms"
+msgid "Llms.txt"
+msgstr "Llms.txt"
+
 msgctxt "Languages::actions.shipment_statuses"
 msgid "Shipment statuses"
 msgstr "Статусы отгрузок"
@@ -2501,6 +2521,10 @@ msgid "Continue"
 msgstr "Продолжить"
 
 msgctxt "Languages::continue_shopping"
+msgid "Continue shopping"
+msgstr "Продолжить покупки"
+
+msgctxt "Languages::continue_shopping_short"
 msgid "Continue shopping"
 msgstr "Продолжить покупки"
 
@@ -3216,6 +3240,42 @@ msgctxt "Languages::default_product_details_view"
 msgid "Parent ([default])"
 msgstr "Родительский ([default])"
 
+msgctxt "Languages::default_show_videos_before_images"
+msgid "Global ([default])"
+msgstr "Глобальное ([default])"
+
+msgctxt "Languages::default_autoplay_videos"
+msgid "Global ([default])"
+msgstr "([default])"
+
+msgctxt "Languages::hosting"
+msgid "Video hosting"
+msgstr "Хостинг видео"
+
+msgctxt "Languages::videos"
+msgid "Videos"
+msgstr "Видео"
+
+msgctxt "Languages::show_videos_before_images"
+msgid "Show videos before images"
+msgstr "Показывать видео перед изображениями"
+
+msgctxt "Languages::autoplay_videos"
+msgid "Autoplay videos"
+msgstr "Автовоспроизведение видео"
+
+msgctxt "Languages::insert_video_link_tooltip"
+msgid "Copy a link to your video here"
+msgstr "Скопируйте ссылку на ваше видео сюда"
+
+msgctxt "Languages::choose_video_hosting_tooltip"
+msgid "Choose a video hosting"
+msgstr "Выберите хостинг видео"
+
+msgctxt "Languages::show_videos_before_images_tooltip"
+msgid "By default, videos appear after product images"
+msgstr "По умолчанию, видео появляются после изображений товаров"
+
 msgctxt "Languages::default_template"
 msgid "Default template"
 msgstr "Стандартный шаблон"
@@ -3639,6 +3699,10 @@ msgstr "Элементы третьего уровня"
 msgctxt "Languages::dropdown_vertical"
 msgid "Dropdown vertical"
 msgstr "Вертикальный выпадающий список"
+
+msgctxt "Languages::tree_menu"
+msgid "Tree menu"
+msgstr "Древовидное меню"
 
 msgctxt "Languages::drop_existing_data"
 msgid "Delete all existing product files before import"
@@ -4088,6 +4152,22 @@ msgctxt "Languages::error_exim_get_images_for_products"
 msgid "Could not import images for some of the products. Either those images don't exist (or can't be accessed), or the paths to those images in the imported file are incorrect."
 msgstr "Не удалось импортировать изображения некоторых товаров. Данные изображения либо не существуют (или недоступны), либо путь к данным изображениям в файле импорта указан неверно."
 
+msgctxt "Languages::error_exim_get_videos"
+msgid "Could not import some videos. Either those videos don't exist (or can't be accessed), or the videos links in the imported file are incorrect."
+msgstr "Не удалось импортировать некоторые видео. Данные видео либо не существуют (либо недоступны), либо ссылки на эти видео в файле импорта указаны неверно."
+
+msgctxt "Languages::error_save_videos"
+msgid "Could not save some videos. Either those videos don't exist (or can't be accessed), or the videos links are incorrect."
+msgstr "Не удалось сохранить некоторые вдиео. Либо эти видео не существуют (либо недоступны), либо ссылки на эти видео указаны неверно."
+
+msgctxt "Languages::error_get_videos"
+msgid "Sorry, this doesn’t look like a video link, or this platform is not supported. It might also be offline or unreachable at the moment."
+msgstr "Похоже, что это ссылка не на видео, либо этот видеохостинг ещё не поддерживается. Также проблема может быть вызвана недоступностью видеохостинга."
+
+msgctxt "Languages::error_exim_export_videos"
+msgid "Something went wrong and some videos links were not exported."
+msgstr "Что-то пошло не так, и некоторые ссылки на видео не были экспортированы."
+
 msgctxt "Languages::error_exim_cant_open_file"
 msgid "Cannot open uploaded file"
 msgstr "Не могу открыть загруженный файл"
@@ -4299,6 +4379,22 @@ msgstr "Код CVV/CVC слишком короткий."
 msgctxt "Languages::error_validator_ccv_long"
 msgid "CVV/CVC is too long."
 msgstr "Код CVV/CVC слишком длинный."
+
+msgctxt "Languages::validator_not_valid_text_field"
+msgid "<b>[field]</b> field is not valid. Only letters, apostrophes and dashes allowed."
+msgstr "Поле <b>[field]</b> заполнено некорректно. В нём разрешены только буквы, апострофы и дефисы."
+
+msgctxt "Languages::js_validator_not_valid_text_field"
+msgid "Only letters, spaces, apostrophes and dashes allowed."
+msgstr "Разрешены только буквы, пробелы, апострофы и дефисы."
+
+msgctxt "Languages::firstname"
+msgid "First name"
+msgstr "Имя"
+
+msgctxt "Languages::lastname"
+msgid "Last name"
+msgstr "Фамилия"
 
 msgctxt "Languages::error_change_admin_data_in_frontend"
 msgid "It's forbidden to change the admin email or password in the customer area. Please sign in using a customer account."
@@ -4613,6 +4709,10 @@ msgid "Filter"
 msgstr "Фильтр"
 
 msgctxt "Languages::filters"
+msgid "Filters"
+msgstr "Фильтры"
+
+msgctxt "Languages::storefront_filters"
 msgid "Filters"
 msgstr "Фильтры"
 
@@ -6016,6 +6116,14 @@ msgctxt "Languages::menu"
 msgid "Menu"
 msgstr "Меню"
 
+msgctxt "Languages::main_menu"
+msgid "Main menu"
+msgstr "Главное меню"
+
+msgctxt "Languages::open_main_menu"
+msgid "Open main menu"
+msgstr "Открыть главное меню"
+
 msgctxt "Languages::menus"
 msgid "Menus"
 msgstr "Меню"
@@ -6651,6 +6759,10 @@ msgstr "Включить ссылку"
 msgctxt "Languages::no_categories_available"
 msgid "No categories available"
 msgstr "Нет доступных категорий"
+
+msgctxt "Languages::no_permissions_to_create_update_categories"
+msgid "You have no permissions to create or update categories."
+msgstr "У вас нет прав на создание или редактирование категорий."
 
 msgctxt "Languages::no_data"
 msgid "No data found"
@@ -7889,6 +8001,10 @@ msgctxt "Languages::proceed_to_checkout"
 msgid "Proceed to checkout"
 msgstr "Оформить заказ"
 
+msgctxt "Languages::proceed_to_checkout_short"
+msgid "Checkout"
+msgstr "Оформление заказа"
+
 msgctxt "Languages::proceed_to_the_next_step"
 msgid "Proceed to the next step"
 msgstr "Перейти к следующему шагу"
@@ -7976,6 +8092,14 @@ msgstr "Найдено товаров"
 msgctxt "Languages::n_products_found"
 msgid "[n] product found|[n] products found"
 msgstr "[n] товар найден|[n] товара найдено|[n] товаров найдено"
+
+msgctxt "Languages::show_products"
+msgid "Show products"
+msgstr "Показать товары"
+
+msgctxt "Languages::show_n_products"
+msgid "Show [n] product|Show [n] products"
+msgstr "Показать [n] товар|Показать [n] товара|Показать [n] товаров"
 
 msgctxt "Languages::products_grid"
 msgid "Products grid"
@@ -8429,6 +8553,22 @@ msgctxt "Languages::quick_menu"
 msgid "Quick start menu"
 msgstr "Быстрый старт"
 
+msgctxt "Languages::main_menu_type.dropdown"
+msgid "Collapsed menu"
+msgstr "Свернутое меню"
+
+msgctxt "Languages::main_menu_type.collapse"
+msgid "Normal menu"
+msgstr "Обычное меню"
+
+msgctxt "Languages::main_menu_type.switch_to_dropdown"
+msgid "Collapse menu"
+msgstr "Свернуть меню"
+
+msgctxt "Languages::main_menu_type.switch_to_collapse"
+msgid "Expand menu"
+msgstr "Развернуть меню"
+
 msgctxt "Languages::admin_menu.add_item"
 msgid "Add item"
 msgstr "Добавить элемент"
@@ -8640,6 +8780,10 @@ msgstr "Регистрация"
 msgctxt "Languages::registered"
 msgid "Registered"
 msgstr "Зарегистрирован"
+
+msgctxt "Languages::registered_short"
+msgid "Register."
+msgstr "Зарегистр."
 
 msgctxt "Languages::registered_customers"
 msgid "Registered customers"
@@ -10209,6 +10353,614 @@ msgctxt "Languages::ship_usps_username"
 msgid "User ID"
 msgstr "ID пользователя"
 
+msgctxt "Languages::ship_usps_client_id"
+msgid "Client ID"
+msgstr "Идентификатор клиента"
+
+msgctxt "Languages::ship_usps_client_secret"
+msgid "Client secret"
+msgstr "Секретный ключ клиента"
+
+msgctxt "Languages::ship_usps_price_type"
+msgid "Price type"
+msgstr "Тип цены"
+
+msgctxt "Languages::ship_usps_package_weight"
+msgid "Package weight"
+msgstr "Вес упаковки"
+
+msgctxt "Languages::ship_usps_package_width"
+msgid "Package width (in inches)"
+msgstr "Ширина упаковки (в дюймах)"
+
+msgctxt "Languages::ship_usps_package_length"
+msgid "Package length (in inches)"
+msgstr "Длина упаковки (в дюймах)"
+
+msgctxt "Languages::ship_usps_package_height"
+msgid "Package height (in inches)"
+msgstr "Высота упаковки (в дюймах)"
+
+msgctxt "Languages::ship_usps_package_girth"
+msgid "Package girth (in inches)"
+msgstr "Обхват упаковки (в дюймах)"
+
+msgctxt "Languages::ship_usps_package_cost"
+msgid "Package cost (USD)"
+msgstr "Стоимость упаковки (в долларах США)"
+
+msgctxt "Languages::ship_usps_cost_description"
+msgid "The merchandise package value in US dollars. Used to calculate Insurance Fees if requested. Set to 0 by default."
+msgstr "Стоимость упаковки товара в долларах США. Используется для расчёта страховых взносов по запросу. По умолчанию равна 0."
+
+msgctxt "Languages::ship_usps_processing_category"
+msgid "Processing category"
+msgstr "Категория обработки"
+
+msgctxt "Languages::ship_usps_rate_indicator"
+msgid "Rate indicator"
+msgstr "Код тарифа"
+
+msgctxt "Languages::ship_usps_destination_entry_type"
+msgid "Destination entry type"
+msgstr "Тип пункта назначения"
+
+msgctxt "Languages::ship_usps_rate_indicator_3d"
+msgid "3D - 3-Digit"
+msgstr "3D - 3-Digit (Сортировка по первым трем цифрам ZIP-кода)"
+
+msgctxt "Languages::ship_usps_rate_indicator_3n"
+msgid "3N - 3-Digit Dimensional Rectangular"
+msgstr "3N - 3-Digit Dimensional Rectangular (Прямоугольная посылка; стоимость зависит от размеров; размеры указаны трехзначными числами)"
+
+msgctxt "Languages::ship_usps_rate_indicator_3r"
+msgid "3R - 3-Digit Dimensional Nonrectangular"
+msgstr "3R - 3-Digit Dimensional Nonrectangular (Непрямоугольная посылка; стоимость зависит от размеров; размеры указаны трехзначными числами)"
+
+msgctxt "Languages::ship_usps_rate_indicator_5d"
+msgid "5D - 5-Digit"
+msgstr "5D - 5-Digit (Сортировка по первым пяти цифрам ZIP-кода)"
+
+msgctxt "Languages::ship_usps_rate_indicator_ba"
+msgid "BA - Basic"
+msgstr "BA - Basic (Базовая обработка отправления)"
+
+msgctxt "Languages::ship_usps_rate_indicator_bb"
+msgid "BB - Mixed NDC"
+msgstr "BB - Mixed NDC (Отправка в один сетевой распределительный центр с отправлениями разного типа)"
+
+msgctxt "Languages::ship_usps_rate_indicator_bm"
+msgid "BM - NDC"
+msgstr "BM - NDC (Отправка в один сетевой распределительный центр с отправлениями одного типа)"
+
+msgctxt "Languages::ship_usps_rate_indicator_c1"
+msgid "C1 - Cubic Pricing Tier 1"
+msgstr "C1 - Cubic Pricing Tier 1 (Объем уровня 1; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_c2"
+msgid "C2 - Cubic Pricing Tier 2"
+msgstr "C2 - Cubic Pricing Tier 2 (Объем уровня 2; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_c3"
+msgid "C3 - Cubic Pricing Tier 3"
+msgstr "C3 - Cubic Pricing Tier 3 (Объем уровня 3; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_c4"
+msgid "C4 - Cubic Pricing Tier 4"
+msgstr "C4 - Cubic Pricing Tier 4 (Объем уровня 4; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_c5"
+msgid "C5 - Cubic Pricing Tier 5"
+msgstr "C5 - Cubic Pricing Tier 5 (Объем уровня 5; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_cp"
+msgid "CP - Cubic Parcel"
+msgstr "CP - Cubic Parcel (Посылка, стоимость которой зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_cm"
+msgid "CM - USPS Connect Local® Mail"
+msgstr "CM - USPS Connect Local® Mail (Ускоренная доставка в пределах одного города/региона с помощью USPS Connect Local®)"
+
+msgctxt "Languages::ship_usps_rate_indicator_dc"
+msgid "DC - NDC"
+msgstr "DC - NDC (Отправка в крупный сетевой распределительный центр)"
+
+msgctxt "Languages::ship_usps_rate_indicator_de"
+msgid "DE - SCF"
+msgstr "DE - SCF (Поступление в центр назначения - региональный сортировочный центр)"
+
+msgctxt "Languages::ship_usps_rate_indicator_df"
+msgid "DF - 5-Digit"
+msgstr "DF - 5-Digit (Поступление в центр назначения - сортировка по первым пяти цифрам ZIP-кода)"
+
+msgctxt "Languages::ship_usps_rate_indicator_dn"
+msgid "DN - Dimensional Nonrectangular"
+msgstr "DN - Dimensional Nonrectangular (Непрямоугольная посылка; стоимость зависит от размеров)"
+
+msgctxt "Languages::ship_usps_rate_indicator_dr"
+msgid "DR - Dimensional Rectangular"
+msgstr "DR - Dimensional Rectangular (Прямоугольная посылка; стоимость зависит от размеров)"
+
+msgctxt "Languages::ship_usps_rate_indicator_e4"
+msgid "E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee"
+msgstr "E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee (Ускоренная доставка Priority Mail Express: конверт с фиксированным тарифом; доставка от почтового отделения к адресату)"
+
+msgctxt "Languages::ship_usps_rate_indicator_e6"
+msgid "E6 - Priority Mail Express Legal Flat Rate Envelope"
+msgstr "E6 - Priority Mail Express Legal Flat Rate Envelope (Ускоренная доставка Priority Mail Express: конверт с фиксированным тарифом; для юридических документов)"
+
+msgctxt "Languages::ship_usps_rate_indicator_e7"
+msgid "E7 - Priority Mail Express Legal Flat Rate Envelope Sunday / Holiday"
+msgstr "E7 - Priority Mail Express Legal Flat Rate Envelope Sunday / Holiday (Ускоренная доставка Priority Mail Express: конверт с фиксированным тарифом; для юридических документов; доставка в воскресенье / праздничный день)"
+
+msgctxt "Languages::ship_usps_rate_indicator_fa"
+msgid "FA - Legal Flat Rate Envelope"
+msgstr "FA - Legal Flat Rate Envelope (Конверт с фиксированным тарифом; для юридических документов)"
+
+msgctxt "Languages::ship_usps_rate_indicator_fb"
+msgid "FB - Medium Flat Rate Box/Large Flat Rate Bag"
+msgstr "FB - Medium Flat Rate Box/Large Flat Rate Bag (Коробка среднего размера / Пакет большого размера с фиксированным тарифом)"
+
+msgctxt "Languages::ship_usps_rate_indicator_fe"
+msgid "FE - Flat Rate Envelope"
+msgstr "FE - Flat Rate Envelope (Конверт с фиксированным тарифом)"
+
+msgctxt "Languages::ship_usps_rate_indicator_fp"
+msgid "FP - Padded Flat Rate Envelope"
+msgstr "FP - Padded Flat Rate Envelope (Конверт с воздушной подушкой с фиксированным тарифом)"
+
+msgctxt "Languages::ship_usps_rate_indicator_fs"
+msgid "FS - Small Flat Rate Box"
+msgstr "FS - Small Flat Rate Box (Коробка малого размера с фиксированным тарифом)"
+
+msgctxt "Languages::ship_usps_rate_indicator_lc"
+msgid "LC - USPS Connect® Local Single Piece"
+msgstr "LC - USPS Connect® Local Single Piece (Локальная доставка отдельного отправления через USPS Connect®)"
+
+msgctxt "Languages::ship_usps_rate_indicator_lf"
+msgid "LF - USPS Connect® Local Flat Rate Box"
+msgstr "LF - USPS Connect® Local Flat Rate Box (Локальная доставка коробки с фиксированным тарифом через USPS Connect®)"
+
+msgctxt "Languages::ship_usps_rate_indicator_ll"
+msgid "LL - USPS Connect® Local Large Flat Rate Bag"
+msgstr "LL - USPS Connect® Local Large Flat Rate Bag (Локальная доставка крупного пакета с фиксированным тарифом через USPS Connect®)"
+
+msgctxt "Languages::ship_usps_rate_indicator_lo"
+msgid "LO - USPS Connect® Local Oversized"
+msgstr "LO - USPS Connect® Local Oversized (Локальная доставка крупногабаритного отправления через USPS Connect®)"
+
+msgctxt "Languages::ship_usps_rate_indicator_ls"
+msgid "LS - USPS Connect® Local Small Flat Rate Bag"
+msgstr "LS - USPS Connect® Local Small Flat Rate Bag (Локальная доставка мелкого пакета с фиксированным тарифом через USPS Connect®)"
+
+msgctxt "Languages::ship_usps_rate_indicator_np"
+msgid "NP - Non-Presorted"
+msgstr "NP - Non-Presorted (Без предварительной сортировки)"
+
+msgctxt "Languages::ship_usps_rate_indicator_o1"
+msgid "O1 - Full Tray Box"
+msgstr "O1 - Full Tray Box (Коробка на лотке с полным заполнением)"
+
+msgctxt "Languages::ship_usps_rate_indicator_o2"
+msgid "O2 - Half Tray Box"
+msgstr "O2 - Half Tray Box (Коробка на лотке с частичным заполнением)"
+
+msgctxt "Languages::ship_usps_rate_indicator_o3"
+msgid "O3 - EMM Tray Box"
+msgstr "O3 - EMM Tray Box (Коробка на увеличенном лотке (EMM))"
+
+msgctxt "Languages::ship_usps_rate_indicator_o4"
+msgid "O4 - Flat Tub Tray Box"
+msgstr "O4 - Flat Tub Tray Box (Коробка на плоском лотке)"
+
+msgctxt "Languages::ship_usps_rate_indicator_o5"
+msgid "O5 - Surface Transported Pallet"
+msgstr "O5 - Surface Transported Pallet (Поддон для наземной транспортировки)"
+
+msgctxt "Languages::ship_usps_rate_indicator_o6"
+msgid "O6 - Full Pallet Box"
+msgstr "O6 - Full Pallet Box (Коробка на поддоне с полным заполнением)"
+
+msgctxt "Languages::ship_usps_rate_indicator_o7"
+msgid "O7 - Half Pallet Box"
+msgstr "O7 - Half Pallet Box (Коробка на поддоне с частичным заполнением)"
+
+msgctxt "Languages::ship_usps_rate_indicator_os"
+msgid "OS - Oversized"
+msgstr "OS - Oversized (Крупногабаритное отправление)"
+
+msgctxt "Languages::ship_usps_rate_indicator_p5"
+msgid "P5 - Cubic Soft Pack Tier 1"
+msgstr "P5 - Cubic Soft Pack Tier 1 (Мягкая упаковка; объем уровня 1; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_p6"
+msgid "P6 - Cubic Soft Pack Tier 2"
+msgstr "P6 - Cubic Soft Pack Tier 2 (Мягкая упаковка; объем уровня 2; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_p7"
+msgid "P7 - Cubic Soft Pack Tier 3"
+msgstr "P7 - Cubic Soft Pack Tier 3 (Мягкая упаковка; объем уровня 3; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_p8"
+msgid "P8 - Cubic Soft Pack Tier 4"
+msgstr "P8 - Cubic Soft Pack Tier 4 (Мягкая упаковка; объем уровня 4; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_p9"
+msgid "P9 - Cubic Soft Pack Tier 5"
+msgstr "P9 - Cubic Soft Pack Tier 5 (Мягкая упаковка; объем уровня 5; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_q6"
+msgid "Q6 - Cubic Soft Pack Tier 6"
+msgstr "Q6 - Cubic Soft Pack Tier 6 (Мягкая упаковка; объем уровня 6; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_q7"
+msgid "Q7 - Cubic Soft Pack Tier 7"
+msgstr "Q7 - Cubic Soft Pack Tier 7 (Мягкая упаковка; объем уровня 7; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_q8"
+msgid "Q8 - Cubic Soft Pack Tier 8"
+msgstr "Q8 - Cubic Soft Pack Tier 8 (Мягкая упаковка; объем уровня 8; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_q9"
+msgid "Q9 - Cubic Soft Pack Tier 9"
+msgstr "Q9 - Cubic Soft Pack Tier 9 (Мягкая упаковка; объем уровня 9; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_q0"
+msgid "Q0 - Cubic Soft Pack Tier 10"
+msgstr "Q0 - Cubic Soft Pack Tier 10 (Мягкая упаковка; объем уровня 10; стоимость зависит от объема в куб. ед.)"
+
+msgctxt "Languages::ship_usps_rate_indicator_pa"
+msgid "PA - Priority Mail Express Single Piece"
+msgstr "PA - Priority Mail Express Single Piece (Экспресс-доставка Priority Mail Express; отдельное отправление)"
+
+msgctxt "Languages::ship_usps_rate_indicator_pl"
+msgid "PL - Large Flat Rate Box"
+msgstr "PL - Large Flat Rate Box (Коробка большого размера с фиксированным тарифом)"
+
+msgctxt "Languages::ship_usps_rate_indicator_pm"
+msgid "PM - Large Flat Rate Box APO/FPO/DPO"
+msgstr "PM - Large Flat Rate Box APO/FPO/DPO (Коробка большого размера с фиксированным тарифом для отправки на военный или дипломатический адрес)"
+
+msgctxt "Languages::ship_usps_rate_indicator_pr"
+msgid "PR - Presorted"
+msgstr "PR - Presorted (С предварительной сортировкой)"
+
+msgctxt "Languages::ship_usps_rate_indicator_sb"
+msgid "SB - Small Flat Rate Bag"
+msgstr "SB - Small Flat Rate Bag (Коробка малого размера с фиксированным тарифом)"
+
+msgctxt "Languages::ship_usps_rate_indicator_sn"
+msgid "SN - SCF Dimensional Nonrectangular"
+msgstr "SN - SCF Dimensional Nonrectangular (Непрямоугольная посылка; стоимость зависит от размеров; отправка через региональный сортировочный центр (SCF))"
+
+msgctxt "Languages::ship_usps_rate_indicator_sp"
+msgid "SP - Single Piece"
+msgstr "SP - Single Piece (Отдельное отправление)"
+
+msgctxt "Languages::ship_usps_rate_indicator_sr"
+msgid "SR - SCF Dimensional Rectangular"
+msgstr "SN - SCF Dimensional Nonrectangular (Прямоугольная посылка; стоимость зависит от размеров; отправка через региональный сортировочный центр (SCF))"
+
+msgctxt "Languages::ship_usps_rate_indicator_ep"
+msgid "EP - ECOMPRO Single Piece"
+msgstr "EP - ECOMPRO Single Piece (Отдельное отправление через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_ha"
+msgid "HA - ECOMPRO Legal Flat Rate Envelope"
+msgstr "HA - ECOMPRO Legal Flat Rate Envelope (Конверт с фиксированным тарифом; для юридических документов; отправка через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_hb"
+msgid "HB - ECOMPRO Medium Flat Rate Box"
+msgstr "HB - ECOMPRO Medium Flat Rate Box (Коробка среднего размера с фиксированным тарифом; отправка через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_he"
+msgid "HE - ECOMPRO Flat Rate Envelope"
+msgstr "HE - ECOMPRO Flat Rate Envelope (Конверт с фиксированным тарифом; отправка через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_hl"
+msgid "HL - ECOMPRO Large Flat Rate Box"
+msgstr "HL - ECOMPRO Large Flat Rate Box (Коробка большого размера с фиксированным тарифом; отправка через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_hp"
+msgid "HP - ECOMPRO Padded Flat Rate Envelope"
+msgstr "HP - ECOMPRO Padded Flat Rate Envelope (Конверт с воздушной подушкой с фиксированным тарифом; отправка через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_hs"
+msgid "HS - ECOMPRO Small Flat Rate Box"
+msgstr "HS - ECOMPRO Small Flat Rate Box (Коробка малого размера с фиксированным тарифом; отправка через ECOMPRO)"
+
+msgctxt "Languages::ship_usps_rate_indicator_le"
+msgid "LE - Single-piece parcel"
+msgstr "LE - Single-piece parcel (Отдельная посылка)"
+
+msgctxt "Languages::ship_usps_rate_indicator_pa"
+msgid "PA - Priority Mail Express International Single Piece"
+msgstr "PA - Priority Mail Express International Single Piece (Международная экспресс-доставка Priority Mail Express International; отдельное отправление)"
+
+msgctxt "Languages::ship_usps_service_365"
+msgid "365 - Global Direct Entry"
+msgstr "365 – Global Direct Entry (Упрощенный ввоз международных посылок)"
+
+msgctxt "Languages::ship_usps_service_415"
+msgid "415 - USPS Label Delivery Service"
+msgstr "415 - USPS Label Delivery Service (Служба доставки почтовых этикеток)"
+
+msgctxt "Languages::ship_usps_service_480"
+msgid "480 - Tracking Plus 6 Months"
+msgstr "480 - Tracking Plus 6 Months (Продление истории отслеживания на 6 месяцев)"
+
+msgctxt "Languages::ship_usps_service_481"
+msgid "481 - Tracking Plus 1 Year"
+msgstr "481 - Tracking Plus 1 Year (Продление истории отслеживания на 1 год)"
+
+msgctxt "Languages::ship_usps_service_482"
+msgid "482 - Tracking Plus 3 Years"
+msgstr "482 - Tracking Plus 3 Years (Продление истории отслеживания на 3 года)"
+
+msgctxt "Languages::ship_usps_service_483"
+msgid "483 - Tracking Plus 5 Years"
+msgstr "483 - Tracking Plus 5 Years (Продление истории отслеживания на 5 лет)"
+
+msgctxt "Languages::ship_usps_service_484"
+msgid "484 - Tracking Plus 7 Years"
+msgstr "484 - Tracking Plus 7 Years (Продление истории отслеживания на 7 лет)"
+
+msgctxt "Languages::ship_usps_service_485"
+msgid "485 - Tracking Plus 10 Years"
+msgstr "485 - Tracking Plus 10 Years (Продление истории отслеживания на 10 лет)"
+
+msgctxt "Languages::ship_usps_service_486"
+msgid "486 - Tracking Plus Signature 3 Years"
+msgstr "486 - Tracking Plus Signature 3 Years (Продление истории отслеживания с данными о подписи на 3 года)"
+
+msgctxt "Languages::ship_usps_service_487"
+msgid "487 - Tracking Plus Signature 5 Years"
+msgstr "487 - Tracking Plus Signature 5 Years (Продление истории отслеживания с данными о подписи на 5 лет)"
+
+msgctxt "Languages::ship_usps_service_488"
+msgid "488 - Tracking Plus Signature 7 Years"
+msgstr "488 - Tracking Plus Signature 7 Years (Продление истории отслеживания с данными о подписи на 7 лет)"
+
+msgctxt "Languages::ship_usps_service_489"
+msgid "489 - Tracking Plus Signature 10 Years"
+msgstr "489 - Tracking Plus Signature 10 Years (Продление истории отслеживания с данными о подписи на 10 лет)"
+
+msgctxt "Languages::ship_usps_service_810"
+msgid "810 - Hazardous Materials - Air Eligible Ethanol"
+msgstr "810 - Hazardous Materials - Air Eligible Ethanol (Опасные материалы - Этанол, пригодный для авиаперевозки)"
+
+msgctxt "Languages::ship_usps_service_811"
+msgid "811 - Hazardous Materials - Class 1 – Toy Propellant/Safety Fuse Package"
+msgstr "811 - Hazardous Materials - Class 1 – Toy Propellant/Safety Fuse Package (Опасные материалы - Пиротехнические составы / предохранители, используемые в игрушках или учебных моделях)"
+
+msgctxt "Languages::ship_usps_service_812"
+msgid "812 - Hazardous Materials - Class 3 - Flammable and Combustible Liquids"
+msgstr "812 - Hazardous Materials - Class 3 - Flammable and Combustible Liquids (Опасные материалы - Легковоспламеняющиеся и горючие жидкости)"
+
+msgctxt "Languages::ship_usps_service_813"
+msgid "813 - Hazardous Materials - Class 7 – Radioactive Materials"
+msgstr "813 - Hazardous Materials - Class 7 – Radioactive Materials (Опасные материалы - Радиоактивные материалы)"
+
+msgctxt "Languages::ship_usps_service_814"
+msgid "814 - Hazardous Materials - Class 8 – Air Eligible Corrosive Materials"
+msgstr "814 - Hazardous Materials - Class 8 – Air Eligible Corrosive Materials (Опасные материалы - Коррозийные вещества, пригодные для авиаперевозки)"
+
+msgctxt "Languages::ship_usps_service_815"
+msgid "815 - Hazardous Materials - Class 8 – Nonspillable Wet Batteries"
+msgstr "815 - Hazardous Materials - Class 8 – Nonspillable Wet Batteries (Опасные материалы - Непроливаемые аккумуляторные батареи)"
+
+msgctxt "Languages::ship_usps_service_816"
+msgid "816 - Hazardous Materials - Class 9 - Lithium Battery Marked Ground Only"
+msgstr "816 - Hazardous Materials - Class 9 - Lithium Battery Marked Ground Only (Опасные материалы - Литиевые батареи, пригодные только для наземной перевозки)"
+
+msgctxt "Languages::ship_usps_service_817"
+msgid "817 - Hazardous Materials - Class 9 - Lithium Battery Returns"
+msgstr "817 - Hazardous Materials - Class 9 - Lithium Battery Returns (Опасные материалы - Литиевые батареи, возвращаемые для переработки или утилизации)"
+
+msgctxt "Languages::ship_usps_service_818"
+msgid "818 - Hazardous Materials - Class 9 - Marked Lithium Batteries"
+msgstr "818 - Hazardous Materials - Class 9 - Marked Lithium Batteries (Опасные материалы - Литиевые батареи с маркировкой)"
+
+msgctxt "Languages::ship_usps_service_819"
+msgid "819 - Hazardous Materials - Class 9 – Dry Ice"
+msgstr "819 - Hazardous Materials - Class 9 – Dry Ice (Опасные материалы - Сухой лед в твердой форме)"
+
+msgctxt "Languages::ship_usps_service_820"
+msgid "820 - Hazardous Materials - Class 9 – Unmarked Lithium Batteries"
+msgstr "820 - Hazardous Materials - Class 9 – Unmarked Lithium Batteries (Опасные материалы - Литиевые батареи без маркировки)"
+
+msgctxt "Languages::ship_usps_service_821"
+msgid "821 - Hazardous Materials - Class 9 – Magnetized Materials"
+msgstr "821 - Hazardous Materials - Class 9 – Magnetized Materials (Опасные материалы - Намагниченные материалы)"
+
+msgctxt "Languages::ship_usps_service_822"
+msgid "822 - Hazardous Materials - Division 4.1 – Mailable Flammable Solids and Safety Matches"
+msgstr "822 - Hazardous Materials - Division 4.1 – Mailable Flammable Solids and Safety Matches (Опасные материалы - Воспламеняющиеся твердые вещества и спички, пригодные для почтовой отправки)"
+
+msgctxt "Languages::ship_usps_service_823"
+msgid "823 - Hazardous Materials - Division 5.1 – Oxidizers"
+msgstr "823 - Hazardous Materials - Division 5.1 – Oxidizers (Опасные материалы - Окислители)"
+
+msgctxt "Languages::ship_usps_service_824"
+msgid "824 - Hazardous Materials - Division 5.2 – Organic Peroxides"
+msgstr "824 - Hazardous Materials - Division 5.2 – Organic Peroxides (Опасные материалы - Органические перекиси)"
+
+msgctxt "Languages::ship_usps_service_825"
+msgid "825 - Hazardous Materials - Division 6.1 – Toxic Materials"
+msgstr "825 - Hazardous Materials - Division 6.1 – Toxic Materials (Опасные материалы - Токсичные материалы)"
+
+msgctxt "Languages::ship_usps_service_826"
+msgid "826 - Hazardous Materials - Division 6.2 Biological Materials"
+msgstr "826 - Hazardous Materials - Division 6.2 Biological Materials (Опасные материалы - Биологические материалы)"
+
+msgctxt "Languages::ship_usps_service_827"
+msgid "827 - Hazardous Materials - Excepted Quantity Provision"
+msgstr "827 - Hazardous Materials - Excepted Quantity Provision (Опасные материалы - Материалы в освобожденном количестве)"
+
+msgctxt "Languages::ship_usps_service_828"
+msgid "828 - Hazardous Materials - Ground Only Hazardous Materials"
+msgstr "828 - Hazardous Materials - Ground Only Hazardous Materials (Опасные материалы - Пригодные только для наземной перевозки)"
+
+msgctxt "Languages::ship_usps_service_829"
+msgid "829 - Hazardous Materials - Air Eligible ID8000 Consumer Commodity"
+msgstr "829 - Hazardous Materials - Air Eligible ID8000 Consumer Commodity (Опасные материалы - Товары широкого потребления, пригодные для авиаперевозки)"
+
+msgctxt "Languages::ship_usps_service_830"
+msgid "830 - Hazardous Materials - Lighters"
+msgstr "830 - Hazardous Materials - Lighters (Опасные материалы - Зажигалки)"
+
+msgctxt "Languages::ship_usps_service_831"
+msgid "831 - Hazardous Materials - Limited Quantity Ground"
+msgstr "831 - Hazardous Materials - Limited Quantity Ground (Опасные материалы - Материалы в ограниченном количестве, пригодные для наземной перевозки)"
+
+msgctxt "Languages::ship_usps_service_853"
+msgid "853 - Special Handling - Perishable Material"
+msgstr "853 - Special Handling - Perishable Material (Особое обращение - Скоропортящийся материал)"
+
+msgctxt "Languages::ship_usps_service_856"
+msgid "856 - Live Animal Transportation Fee"
+msgstr "856 - Live Animal Transportation Fee (Комиссия за транспортировку живых животных)"
+
+msgctxt "Languages::ship_usps_service_857"
+msgid "857 - Hazardous Materials"
+msgstr "857 - Hazardous Materials (Опасные материалы)"
+
+msgctxt "Languages::ship_usps_service_858"
+msgid "858 - Cremated Remains"
+msgstr "858 - Cremated Remains (Кремированные останки)"
+
+msgctxt "Languages::ship_usps_service_910"
+msgid "910 - Certified Mail"
+msgstr "910 - Certified Mail (Отправление с подтверждением доставки)"
+
+msgctxt "Languages::ship_usps_service_911"
+msgid "911 - Certified Mail Restricted Delivery"
+msgstr "911 - Certified Mail Restricted Delivery (Отправление с подтверждением доставки лично в руки)"
+
+msgctxt "Languages::ship_usps_service_912"
+msgid "912 - Certified Mail Adult Signature Required"
+msgstr "912 - Certified Mail Adult Signature Required (Отправление с подтверждением доставки;  требуется подпись совершеннолетнего лица)"
+
+msgctxt "Languages::ship_usps_service_913"
+msgid "913 - Certified Mail Adult Signature Restricted Delivery"
+msgstr "913 - Certified Mail Adult Signature Required (Отправление с подтверждением доставки лично в руки; требуется подпись совершеннолетнего лица)"
+
+msgctxt "Languages::ship_usps_service_915"
+msgid "915 - Collect on Delivery"
+msgstr "915 - Collect on Delivery (Отправление наложенным платежом)"
+
+msgctxt "Languages::ship_usps_service_917"
+msgid "917 - Collect on Delivery Restricted Delivery"
+msgstr "917 - Collect on Delivery Restricted Delivery (Отправление наложенным платежом лично в руки)"
+
+msgctxt "Languages::ship_usps_service_920"
+msgid "920 - USPS Tracking Electronic"
+msgstr "920 - USPS Tracking Electronic (Электронное отслеживание)"
+
+msgctxt "Languages::ship_usps_service_921"
+msgid "921 - Signature Confirmation"
+msgstr "921 - Signature Confirmation (Для получения требуется подпись)"
+
+msgctxt "Languages::ship_usps_service_922"
+msgid "922 - Adult Signature Required"
+msgstr "922 - Adult Signature Required (Требуется подпись совершеннолетнего лица)"
+
+msgctxt "Languages::ship_usps_service_923"
+msgid "923 - Adult Signature Restricted Delivery"
+msgstr "923 - Adult Signature Restricted Delivery (Отправление лично в руки; требуется подпись совершеннолетнего лица)"
+
+msgctxt "Languages::ship_usps_service_924"
+msgid "924 - Signature Confirmation Restricted Delivery"
+msgstr "924 - Signature Confirmation Restricted Delivery (Отправление лично в руки; для получения требуется подпись)"
+
+msgctxt "Languages::ship_usps_service_925"
+msgid "925 - Priority Mail Express Merchandise Insurance"
+msgstr "925 - Priority Mail Express Merchandise Insurance (Отправление ускоренной доставкой Prority Mail Express со страхованием)"
+
+msgctxt "Languages::ship_usps_service_930"
+msgid "930 - Insurance <= $500"
+msgstr "930 - Insurance <= $500 (Страховая сумма до 500 долл. США) "
+
+msgctxt "Languages::ship_usps_service_931"
+msgid "931 - Insurance > $500"
+msgstr "931 - Insurance > $500 (Страховая сумма свыше 500 долл. США)"
+
+msgctxt "Languages::ship_usps_service_934"
+msgid "934 - Insurance Restricted Delivery"
+msgstr "934 - Insurance Restricted Delivery (Отправление лично в руки со страхованием)"
+
+msgctxt "Languages::ship_usps_service_940"
+msgid "940 - Registered Mail"
+msgstr "940 - Registered Mail (Заказное отправление)"
+
+msgctxt "Languages::ship_usps_service_941"
+msgid "941 - Registered Mail Restricted Delivery"
+msgstr "941 - Registered Mail Restricted Delivery (Заказное отправление лично в руки)"
+
+msgctxt "Languages::ship_usps_service_955"
+msgid "955 - Return Receipt"
+msgstr "955 - Return Receipt (Уведомление о доставке)"
+
+msgctxt "Languages::ship_usps_service_957"
+msgid "957 - Return Receipt Electronic"
+msgstr "957 - Return Receipt Electronic (Электронное уведомление о доставке)"
+
+msgctxt "Languages::ship_usps_service_972"
+msgid "972 - Live Animal and Perishable Handling Fee"
+msgstr "972 - Live Animal and Perishable Handling Fee (Комиссия за отправление живых животных и скоропортящихся грузов)"
+
+msgctxt "Languages::ship_usps_service_981"
+msgid "981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)"
+msgstr "981 - Signature Requested (PRIORITY_MAIL_EXPRESS only) (Требуется подпись; только для Priority Mail Express)"
+
+msgctxt "Languages::ship_usps_service_984"
+msgid "984 - Parcel Locker Delivery"
+msgstr "984 - Parcel Locker Delivery (Доставка в постамат)"
+
+msgctxt "Languages::ship_usps_service_986"
+msgid "986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)"
+msgstr "986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)  (Отправка от почтового отделения до адресата; только для Priority Mail Express)"
+
+msgctxt "Languages::ship_usps_service_991"
+msgid "991 - Sunday Delivery"
+msgstr "991 - Sunday Delivery (Доставка в воскресенье)"
+
+msgctxt "Languages::ship_usps_entry_type_none"
+msgid "None"
+msgstr "Нет"
+
+msgctxt "Languages::ship_usps_entry_type_destination_delivery_unit"
+msgid "Destination Delivery Unit"
+msgstr "Отделение доставки по месту назначения"
+
+msgctxt "Languages::ship_usps_entry_type_destination_network_distribution_center"
+msgid "Destination Network Distribution Center"
+msgstr "Destination Network Distribution Center (DNDC, сетевой распределительный центр назначения)"
+
+msgctxt "Languages::ship_usps_entry_type_destination_sectional_center_facility"
+msgid "Destination Sectional Center Facility"
+msgstr "Destination Sectional Center Facility (Сортировочный центр конечного назначения)"
+
+msgctxt "Languages::ship_usps_entry_type_destination_service_hub"
+msgid "Destination Service Hub"
+msgstr "Destination Service Hub  (Региональный сортировочный узел)"
+
+msgctxt "Languages::ship_usps_entry_type_international_service_center"
+msgid "International Service Center"
+msgstr "International Service Center (Центр обработки международной почты)"
+
+msgctxt "Languages::shippings.usps.error_empty_response"
+msgid "Service returned an empty response"
+msgstr "Сервис USPS вернул пустой ответ"
+
+msgctxt "Languages::ship_usps_girth_description"
+msgid "Girth is required only for a non-rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+msgstr "Обхват посылки, дополнительно к длине, ширине и высоте, требуется указывать только в том случае, если любой из параметров посылки превышает 12 дюймов. Не указывайте обхват для прямоугольных посылок, т.к. этот параметр используется только для непрямоугольных посылок."
+
+msgctxt "Languages::ship_usps_rate_indicator_help"
+msgid "Rate Indicator value should match (CP, DN, DR, OS, P5, P6, P7, P8, P9, Q0, Q6,Q7, Q8, Q9, SP) when (USPS_GROUND_ADVANTAGE or PARCEL_SELECT) service is selected<br>Rate Indicator value should match (CP, DR, DA, FB, FE, FP, FS, P5, P6, P7, P8, P9, PL, PM, SP) when (PRIORITY_MAIL) service is selected<br>Rate Indicator value should match (ND, DR, E4, E6, FP, P9) when (PRIORITY_MAIL_EXPRESS) service is selected<br>Rate Indicator value should match (PR, NP) when (BOUND_PRINTED_MATTER) service is selected<br>Rate Indicator value should match (SD, BA, SP) when (LIBRARY_MAIL or MEDIA_MAIL) service is selected<br>Rate Indicator value should match (SD, DE, DN, DR, OS, SN, SP, SR) when (USPS_CONNECT_REGIONAL) service is selected"
+msgstr "Значение кода тарифа (Rate Indicator) должно соответствовать (CP, DN, DR, OS, P5, P6, P7, P8, P9, Q0, Q6,Q7, Q8, Q9, SP) при выборе службы (USPS_GROUND_ADVANTAGE or PARCEL_SELECT)<br>Значение кода тарифа (Rate Indicator) должно соответствовать (CP, DR, DA, FB, FE, FP, FS, P5, P6, P7, P8, P9, PL, PM, SP) при выборе службы (PRIORITY_MAIL)<br>Значение кода тарифа (Rate Indicator) должно соответствовать (ND, DR, E4, E6, FP, P9) при выборе службы (PRIORITY_MAIL_EXPRESS)<br>Значение кода тарифа (Rate Indicator) должно соответствовать (PR, NP) при выборе службы (BOUND_PRINTED_MATTER)<br>Значение кода тарифа (Rate Indicator) должно соответствовать (SD, BA, SP) при выборе службы (LIBRARY_MAIL or MEDIA_MAIL)<br>Значение кода тарифа должно (Rate Indicator) должно соответствовать (SD, DE, DN, DR, OS, SN, SP, SR) при выборе службы (USPS_CONNECT_REGIONAL)"
+
 msgctxt "Languages::ship_width"
 msgid "Package width (cm)"
 msgstr "Ширина упаковки, см"
@@ -11481,6 +12233,10 @@ msgctxt "Languages::text_not_allowed_to_upload_file_size"
 msgid "It is not allowed to upload files that exceed the maximum allowed size of [file_size] MB."
 msgstr "Нельзя загружать файлы, размер которых больше максимально разрешённого: [file_size] Мбайт."
 
+msgctxt "Languages::text_not_allowed_to_upload_image_with_dimensions"
+msgid "It is not allowed to upload images that exceed the maximum allowed resolution of [dimension]x[dimension]."
+msgstr "Не удалось загрузить файл: превышено максимальное разрешение: [dimension]x[dimension]."
+
 msgctxt "Languages::text_not_valid_email"
 msgid "<b>[email]</b> is not a valid e-mail address."
 msgstr "<b>[email]</b> — неверный email."
@@ -11979,8 +12735,12 @@ msgid "Thumbnails will be generated from detailed images automatically, but you 
 msgstr "Иконки будут созданы из детальных изображений автоматически, но вы также можете <a id=\"[id]\" class=\"[class]\">загрузить их вручную.</a>"
 
 msgctxt "Languages::text_tinymce"
-msgid "TinyMCE"
-msgstr "TinyMCE"
+msgid "TinyMCE 4 (deprecated)"
+msgstr "TinyMCE 4 (устарел)"
+
+msgctxt "Languages::text_tinymce8"
+msgid "TinyMCE 8"
+msgstr "TinyMCE 8"
 
 msgctxt "Languages::text_topmenu_more"
 msgid "More [item] <i class=\"text-arrow\">&rarr;</i>"
@@ -12863,6 +13623,22 @@ msgctxt "Languages::top_panel"
 msgid "Top panel"
 msgstr "Верхняя панель"
 
+msgctxt "Languages::navbar_mobile.homepage"
+msgid "Main"
+msgstr "Главная"
+
+msgctxt "Languages::navbar_mobile.menu"
+msgid "Catalog"
+msgstr "Каталог"
+
+msgctxt "Languages::navbar_mobile.cart"
+msgid "Cart"
+msgstr "Корзина"
+
+msgctxt "Languages::navbar_mobile.account"
+msgid "Profile"
+msgstr "Профиль"
+
 msgctxt "Languages::total"
 msgid "Total"
 msgstr "Итого"
@@ -13168,8 +13944,8 @@ msgid "Categories to be displayed in the navigation breadcrumbs."
 msgstr "Категории, которые будут отображаться в навигации («хлебных крошках»)."
 
 msgctxt "Languages::tt_views_products_update_images"
-msgid "The maximum size of image files is [file_size] MB."
-msgstr "Максимальный размер файлов с изображениями: [file_size] Мбайт."
+msgid "Maximum file size: [file_size] MB.<br>Maximum dimensions: [max_dimension]px on the longest side."
+msgstr "Максимальный размер файла: [file_size] MB.<br>Максимальное разрешение изображения: [max_dimension]px по наибольшей стороне."
 
 msgctxt "Languages::tt_views_products_update_inventory"
 msgid "Track in stock product quantity. Enable the \"Enable inventory tracking\" option (Settings -> General) to modify."
@@ -13257,7 +14033,7 @@ msgstr "Тип"
 
 msgctxt "Languages::type_comments_here"
 msgid "You can leave us a comment here"
-msgstr "Ваши комментарии к заказу:"
+msgstr "Вы можете оставить свои комментарии для нас здесь"
 
 msgctxt "Languages::uc_ok"
 msgid "OK"
@@ -13458,10 +14234,6 @@ msgstr "Проверка «[validator_name]» завершилась неуда�
 msgctxt "Languages::upgrade_center.filehash_check_failed"
 msgid "Upgrade is impossible due to file integrity check error. Please contact the technical support team."
 msgstr "Обновление невозможно из-за ошибки при проверке целостности файлов. Пожалуйста, обратитесь в службу технической поддержки."
-
-msgctxt "Languages::upgrade_center.upgrades_are_not_available_in_trial"
-msgid "Upgrades are available only in <strong>Full</strong> and <strong>Free</strong> licensing modes.<br /><br />The licensing mode can be changed under Settings → <a class=\"cm-dialog-opener cm-dialog-auto-size\" data-ca-target-id=\"store_mode_dialog\">Licensing mode</a>."
-msgstr "Обновления доступны только в <strong>Полном</strong> и <strong>Бесплатном</strong> режимах.<br/><br/>Активировать один из этих режимов вы можете в меню Настройки → <a class=\"cm-dialog-opener cm-dialog-auto-size\" data-ca-target-id=\"store_mode_dialog\">Лицензирование</a>."
 
 msgctxt "Languages::upgrade_center.incompatible_third_party_addons"
 msgid "Some of your add-ons weren't tested with this version yet. Before the upgrade, ask the developers of these add-ons if they'll work."
@@ -15303,6 +16075,14 @@ msgctxt "SettingsOptions::default_product_details_view"
 msgid "Product detailed page view"
 msgstr "Отображение страницы карточки товара"
 
+msgctxt "SettingsOptions::default_show_videos_before_images"
+msgid "Show videos before images"
+msgstr "Показывать видео перед изображениями"
+
+msgctxt "SettingsOptions::default_autoplay_videos"
+msgid "Autoplay videos"
+msgstr "Автовоспроизведение видео"
+
 msgctxt "SettingsOptions::product_details_in_tab"
 msgid "Display product details in tabs"
 msgstr "Показывать информацию о товаре во вкладках"
@@ -16779,6 +17559,22 @@ msgctxt "Languages::restore_robots"
 msgid "Restore the default robots.txt"
 msgstr "Восстановить стандартный robots.txt"
 
+msgctxt "Languages::llms_title"
+msgid "Editing: llms.txt"
+msgstr "Редактирование: llms.txt"
+
+msgctxt "Languages::edit_llms"
+msgid "Edit llms.txt"
+msgstr "Редактировать файл llms.txt"
+
+msgctxt "Languages::edit_llms_tooltip"
+msgid "<p><strong>What is llms.txt used for?</strong><br>Some AI assistants use llms.txt as a short index, or a list of important pages (shipping, categories, products), which helps them analyze your store more efficiently.<p><strong>How to fill in llms.txt?</strong><br>Do not include the entire catalog and every page of your store. Instead, add the links to automatically generated <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/price_list/set_price_list.html\" target=\"_blank\"><u>price lists</u></a> and <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/google_sitemap/set_google_sitemap.html\" target=\"_blank\"><u>site map</u></a>.</p><p>Include the most important details: terms of delivery and payment, return policy, key categories, storefronts and maybe some bestsellers.</p><p><strong>Recommendations</strong><br><ul><li>Optimal number of links: 20–50.</li><li>Text format: Markdown.</li></ul></p><p>See what llms.txt may look like at <a href=\"https://llmstxt.org/#example\" target=\"_blank\"><u>https://llmstxt.org/#example</u></a>.</p>"
+msgstr "<p><strong>Для чего нужен llms.txt?</strong><br>Некоторые AI-ассистенты используют llms.txt как краткое «оглавление» магазина: список важных страниц (доставка, категории, товары), с которых им проще начинать анализ вашего сайта.<p><strong>Как заполнять llms.txt?</strong><br>Не добавляйте весь каталог товаров и все страницы магазина. Вместо этого укажите ссылки на автоматически генерируемые <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/price_list/set_price_list.html\" target=\"_blank\"><u>прайс-листы</u></a> и <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/google_sitemap/set_google_sitemap.html\" target=\"_blank\"><u>карту сайта</u></a>.</p><p>Оставьте самое главное: условия доставки/оплаты, условия возврата, ключевые категории, витрины и (возможно) несколько хитов продаж.</p><p><strong>Рекомендации</strong><br><ul><li>Оптимальное количество ссылок: 20–50.</li><li>Формат текста: Markdown.</li></ul></p><p>Подробнее о том, как может выглядеть llms.txt см. на <a href=\"https://llmstxt.org/#example\" target=\"_blank\"><u>https://llmstxt.org/#example</u></a>.</p>"
+
+msgctxt "Languages::information_file_llms"
+msgid "A llms.txt file was detected. The changes you make here won't take effect until you delete the existing <b>llms.txt</b> file from the root directory of your store."
+msgstr "Обнаружен файл llms.txt. Чтобы применить внесенные изменения, удалите существующий файл <b>llms.txt</b> из корневого каталога вашего магазина."
+
 msgctxt "Languages::option_exceptions"
 msgid "Option exceptions"
 msgstr "Исключения комбинаций опций"
@@ -17001,11 +17797,11 @@ msgstr "Невозможно подготовить скрипт восстан�
 
 msgctxt "Languages::upgrade_center.pre_script"
 msgid "Pre-upgrade script"
-msgstr "Скрипт предварительного обновления"
+msgstr "Проверка перед обновлением"
 
 msgctxt "Languages::upgrade_center.pre_script_failed"
 msgid "Pre-upgrade script execution failed."
-msgstr "Выполнение скрипта предварительного обновления завершилось ошибкой."
+msgstr "Не удалось выполнить проверку перед обновлением."
 
 msgctxt "Languages::text_cc_javascript_disabled"
 msgid "Note! Your browser has the <b>JavaScript</b> disabled. To pay for your order click"
@@ -18411,9 +19207,17 @@ msgctxt "Languages::exclusive_promotions"
 msgid "Exclusive discounts"
 msgstr "Эксклюзивные скидки"
 
+msgctxt "Languages::exclusive_promotions_short"
+msgid "Exclusive discounts"
+msgstr "Эксклюзивные скидки"
+
 msgctxt "Languages::exclusive_promotions_content"
 msgid "Subscribe to our news and get a 10% discount coupon!"
 msgstr "Подпишитесь на наши новости и получите купон на скидку 10%!"
+
+msgctxt "Languages::exclusive_promotions_content_short"
+msgid "Subscribe and get 10% discount!"
+msgstr "Подпишитесь и получите скидку 10%!"
 
 msgctxt "Languages::tmpl_subscription_advanced"
 msgid "Subscription advanced form"
@@ -18491,10 +19295,6 @@ msgctxt "Languages::licensed_product"
 msgid "Licensed product"
 msgstr "Лицензированный продукт"
 
-msgctxt "Languages::store_mode.free"
-msgid "Free"
-msgstr "Бесплатно"
-
 msgctxt "Languages::store_mode.ultimate"
 msgid "Ultimate"
 msgstr "Ultimate"
@@ -18550,14 +19350,6 @@ msgstr "<p>Теперь вы можете использовать програ�
 msgctxt "Languages::product_state_description.ult.b2b.enterprise"
 msgid "<p>You can use the software without time restrictions now.</p><br>"
 msgstr "<p>Теперь вы можете использовать программу без ограничений по времени.</p><br>"
-
-msgctxt "Languages::text_store_mode_changed_to_ult.free"
-msgid "Your store now uses an active license of [product]."
-msgstr "Теперь в вашем магазине используется активная лицензия [product]."
-
-msgctxt "Languages::text_store_mode_changed_to_ult.free_ru"
-msgid "Your store now uses an active license of [product]."
-msgstr "Теперь в вашем магазине используется активная лицензия [product]."
 
 msgctxt "Languages::text_store_mode_changed_to_ult"
 msgid "Your store now uses an active license of [product]."
@@ -20243,6 +21035,10 @@ msgctxt "Languages::checkout.min_cart_subtotal_required"
 msgid "To continue checkout process your order subtotal must exceed [amount]"
 msgstr "Чтобы продолжить оформление заказа, сумма вашего заказа должна превышать [amount]"
 
+msgctxt "Languages::checkout.chosen_entity_is_unavailable"
+msgid "The selected [entity] is unavailable on the specified storefront."
+msgstr "[entity] недоступен на текущей витрине."
+
 msgctxt "Languages::lite_checkout.customer_information"
 msgid "Customer"
 msgstr "Покупатель"
@@ -21911,45 +22707,9 @@ msgctxt "Languages::exim_error_incorrect_concrete_feature_type"
 msgid "Incorrect feature type '[feature_type]' of the '[feature_name]' product feature. The product feature was skipped."
 msgstr "У характеристики \"[feature_name]\" неверный тип \"[feature_type]\". Характеристика была пропущена."
 
-msgctxt "Languages::product_state_description.ult.free.free"
-msgid "<p>You're using CS-Cart Free. It has all the functionality to launch your own independent online store, free of charge. If you ever need the extended functionality of CS-Cart Standard or Ultimate — such as user groups, advanced product settings, multiple storefronts, and more — please contact us.</p>"
-msgstr "<p>Вы используете CS-Cart Free. Это бесплатная версия, в которой есть всё необходимое для запуска своего интернет-магазина. Если вам когда-нибудь понадобится дополнительная функциональность CS-Cart Standard или Ultimate — например, группы пользователей, расширенные настройки товара, мультивитринность, и др. — свяжитесь с нами.</p>"
-
-msgctxt "Languages::product_state_description.ult.free_ru.free"
-msgid "<p>You're using CS-Cart Free. It has all the functionality to launch your own independent online store, free of charge. If you ever need the extended functionality of CS-Cart Standard or Ultimate — such as user groups, advanced product settings, multiple storefronts, and more — please contact us.</p>"
-msgstr "<p>Вы используете CS-Cart Free. Это бесплатная версия, в которой есть всё необходимое для запуска своего интернет-магазина. Если вам когда-нибудь понадобится дополнительная функциональность CS-Cart Standard или Ultimate — например, группы пользователей, расширенные настройки товара, мультивитринность, и др. — свяжитесь с нами.</p>"
-
 msgctxt "Languages::contact_us"
 msgid "Contact us"
 msgstr "Свяжитесь с нами"
-
-msgctxt "Languages::ultimate_or_storefront_license_required.ult.free"
-msgid "This action requires [product] Ultimate"
-msgstr "Для этого действия нужен [product] Ultimate"
-
-msgctxt "Languages::ultimate_or_storefront_license_required.ult.free_ru"
-msgid "This action requires [product] Ultimate"
-msgstr "Для этого действия нужен [product] Ultimate"
-
-msgctxt "Languages::max_storefronts_reached.ult.free"
-msgid "<p>You have reached the limit of storefronts available for your license. To add another storefront, please upgrade to <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-msgstr "<p>Достигнуто предельное количество витрин, доступное для вашей лицензии. Чтобы добавить ещё одну витрину, перейдите на <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-
-msgctxt "Languages::max_storefronts_reached.ult.free_ru"
-msgid "<p>You have reached the limit of storefronts available for your license. To add another storefront, please upgrade to <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-msgstr "<p>Достигнуто предельное количество витрин, доступное для вашей лицензии. Чтобы добавить ещё одну витрину, перейдите на <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-
-msgctxt "Languages::helpdesk_account.activate_free_license_message"
-msgid "Create an account in our Help Desk system. It will allow you to upgrade your store, contact our Customer Care team, and get add-ons (both paid and free) from the CS-Cart Marketplace for add-ons and themes."
-msgstr "Создайте учётную запись в нашей системе Help Desk. Она позволит вам получать обновления магазина, связываться со службой поддержки и получать модули (платные или бесплатные) с нашего маркетплейса модулей и тем."
-
-msgctxt "Languages::helpdesk_account.activate_free_license_short_message"
-msgid "Create an account in our Help Desk to upgrade your store, receive support, and get free or paid add-ons from our Add-on Market."
-msgstr "Зарегистрируйтесь в  Help Desk,  чтобы обновлять магазин, и получать поддержку, а также платные и бесплатные модули с нашего маркета."
-
-msgctxt "Languages::helpdesk_account.activate_free_license_message_send"
-msgid "An activation link for your free CS-Cart license was sent to the email: [email]"
-msgstr "Ссылка для активации вашей бесплатной лицензии CS-Cart отправлена на электронную почту [email]"
 
 msgctxt "Languages::no_items_for_marketplace_administrator"
 msgid "No items to show for marketplace administrator. Try to check the section as a vendor."
@@ -22254,4 +23014,84 @@ msgstr "Серетный ключ клиента UPS App"
 msgctxt "Languages::authorize"
 msgid "Authorize"
 msgstr "Авторизация"
+
+msgctxt "Languages::predict.products.product_will_lose_some_features"
+msgid "Product will lose some features"
+msgstr "Некоторые характеристики товара будут удалены"
+
+msgctxt "Languages::predict.products.product_will_lose_some_features.warning"
+msgid "<p>Product \"[product]\" is about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] feature</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing categories, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">any of these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>|<p>Product \"[product]\" is about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] features</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing categories, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">any of these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p>У товара\"[product]\" будет удалена <a href=\"[feature_search_url]\" target=\"_blank\">[n] характеристика</a>.</p><p>Характеристики товара зависят от категорий. У товара удаляются те характеристики, которые отсутствуют в его текущих категориях. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением категорий, нажмите \"Продолжить\".</li><li>Если нет, сначала отредактируйте <a href=\"[feature_search_url]\" target=\"_blank\">эти характеристики</a>. Добавьте их в <a href=\"[category_search_url]\" target=\"_blank\">любую из этих категорий</a>. После этого нажмите \"Отменить\" и еще раз сохраните изменения на текущей вкладке. Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товаров.</li></ul>|<p>У товара \"[product]\" будут удалены <a href=\"[feature_search_url]\" target=\"_blank\">[n] характеристики</a>.</p><p>Характеристики товара зависят от категорий. У товара удаляются те характеристики, которые отсутствуют в его текущих категориях. Это обеспечивает согласованность товаров и их характеристик в каталоге.<ul><li>Если вы согласны с удалением категорий у товаров, нажмите \"Продолжить\".</li><li>Если нет, сначала отредактируйте <a href=\"[feature_search_url]\" target=\"_blank\">эти характеристики</a>. Добавьте их в <a href=\"[category_search_url]\" target=\"_blank\">любую из этих категорий</a>. После этого нажмите \"Отменить\" и еще раз сохраните изменения на текущей вкладке. Это предупреждение появлятеся только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товаров.</li></ul>"
+
+msgctxt "Languages::predict.products.products_will_lose_some_features"
+msgid "Products will lose some features"
+msgstr "Некоторые характеристики товара будут удалены"
+
+msgctxt "Languages::predict.products.products_will_lose_some_features.warning"
+msgid "<p><a href=\"[product_search_url]\" target=\"_blank\">These products</a> are about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] feature</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>|<p><a href=\"[product_search_url]\" target=\"_blank\">These products</a> are about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] features</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p><a href=\"[product_search_url]\" target=\"_blank\">У данных товаров</a> будет удалена <a href=\"[feature_search_url]\" target=\"_blank\">[n] характеристика</a>.</p><p>Характеристики товаров зависят от категорий. У товара удаляются те характеристики, которые отсутствуют в его текущих категориях. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением характеристик у товаров, нажмите \"Продолжить\".</li><li>Если нет, сначала отредактируйте <a href=\"[feature_search_url]\" target=\"_blank\">эти характеристики</a>. Добавьте их в <a href=\"[category_search_url]\" target=\"_blank\">эти категории</a>. После этого нажмите \"Отменить\" и еще раз сохраните свои изменения на текущей вкладке. Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товаров.</li></ul>|<p><a href=\"[product_search_url]\" target=\"_blank\">У данных товаров</a> будут удалены <a href=\"[feature_search_url]\" target=\"_blank\">[n] характеристики</a>.</p><p>Характеристики товаров зависят от категорий. У товара удаляются те характеристики, которые отсутствуют в его текущих категориях. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением характеристик у товаров, нажмите \"Продолжить\".</li><li>Если нет, сначала отредактируйте <a href=\"[feature_search_url]\" target=\"_blank\">эти характеристики</a>. Добавьте их в <a href=\"[category_search_url]\" target=\"_blank\">эти категории</a>. После этого нажмите \"Отменить\" и еще раз сохраните свои изменения на текущей вкладке. Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товаров.</li></ul>"
+
+msgctxt "Languages::predict.features.feature_will_be_removed_from_products"
+msgid "Feature will be removed from products"
+msgstr "У товаров будет удалена характеристика"
+
+msgctxt "Languages::predict.features.feature_will_be_removed_from_products.warning"
+msgid "<p>Feature \"[feature]\" is about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] product</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>|<p>Feature \"[feature]\" is about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] products</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p>Характеристика\"[feature]\" будет удалена у <a href=\"[product_search_url]\" target=\"_blank\">[n] товара</a>.</p><p>Характеристики товаров зависят от категорий. Характеристика товара, отсутствующая в какой-либо из его категорий, удаляется. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением характеристик у товаров, нажмите \"Продолжить\".</li><li>Если нет, нажмите \"Отменить\". Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товаров.</li></ul>|<p>Характеристика\"[feature]\" будет удалена у <a href=\"[product_search_url]\" target=\"_blank\">[n] товаров</a>.</p><p>Характеристики товара зависят от категорий. Характеристика товара, отсутствующая в какой-либо из его категорий, удаляется. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением характеристик у товаров, нажмите \"Продолжить\".</li><li>Если нет, нажмите \"Отменить\". Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товаров.</li></ul>"
+
+msgctxt "Languages::predict.features.features_will_be_removed_from_products"
+msgid "Features will be removed from products"
+msgstr "У товаров будут удалены характеристики"
+
+msgctxt "Languages::predict.features.features_will_be_removed_from_products.warning"
+msgid "<p><a href=\"[feature_search_url]\" target=\"_blank\">These features</a> are about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] product</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>|<p><a href=\"[feature_search_url]\" target=\"_blank\">These features</a> are about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] products</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p><a href=\"[feature_search_url]\" target=\"_blank\">Эти характеристики</a> будут удалены у <a href=\"[product_search_url]\" target=\"_blank\">[n] товара</a>.</p><p>Характеристики товара зависят от категорий. Характеристика товара, отсутствующая в какой-либо из его категорий, удаляется. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением характеристик у товаров, нажмите \"Продолжить\".</li><li>Если нет, нажмите \"Отменить\". Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товара.</li></ul>|<p><a href=\"[feature_search_url]\" target=\"_blank\">Эти характеристики</a> будут удалены у <a href=\"[product_search_url]\" target=\"_blank\">[n] товаров</a>.</p><p>Характеристики товара зависят от категорий. Характеристика товара, отсутствующая в какой-либо из его категорий, удаляется. Это обеспечивает согласованность товаров и характеристик в каталоге.<ul><li>Если вы согласны с удалением характеристик у товаров, нажмите \"Продолжить\".</li><li>Если нет, нажмите \"Отменить\". Это предупреждение появляется только тогда, когда сохранение внесенных вами изменений приводит к удалению характеристик товара.</li></ul>"
+
+msgctxt "Languages::unlinked_blocks"
+msgid "Unlinked blocks"
+msgstr "Непривязанные блоки"
+
+msgctxt "Languages::licensing.plans.default"
+msgid "Default"
+msgstr "По умолчанию"
+
+msgctxt "Languages::licensing.plans.trial"
+msgid "Trial"
+msgstr "Пробный"
+
+msgctxt "Languages::licensing.plans.standard"
+msgid "Standard"
+msgstr "Standard"
+
+msgctxt "Languages::licensing.plans.plus"
+msgid "Plus"
+msgstr "Plus"
+
+msgctxt "Languages::licensing.plans.ultimate"
+msgid "Ultimate"
+msgstr "Ultimate"
+
+msgctxt "Languages::licensing.plans.unlim"
+msgid "Unlim"
+msgstr "Unlim"
+
+msgctxt "Languages::licensing.rule_for_feature_not_found"
+msgid "Licensing: Rule for feature \"[feature]\" was not found"
+msgstr "Лицензирование: Не найдено правило для возможности \"[feature]\""
+
+msgctxt "Languages::licensing.rule_handler_for_feature_not_found"
+msgid "Licensing: Rule handler for feature \"[feature]\" was not found"
+msgstr "Лицензирование: Не найден обработчик правила для возможности \"[feature]\""
+
+msgctxt "Languages::licensing.feature_not_allowed.title"
+msgid "Different plan required"
+msgstr "Требуется другой план"
+
+msgctxt "Languages::licensing.feature_not_allowed.message"
+msgid "Sorry, this functionality isn't available on your current plan. To get a plan that offers this functionality, please contact us at <a href=\"mailto:sales@cs-cart.com\">sales@cs-cart.com</a>."
+msgstr "Эта возможность недоступна на вашем текущем плане. Чтобы получить план с этой функциональностью, напишите нам на <a href=\"mailto:sales@cs-cart.com\">sales@cs-cart.com</a>."
+
+msgctxt "Languages::licensing.current_plan_not_found"
+msgid "Licensing: The current plan does not correspond to the plan grid"
+msgstr "Лицензирование: Текущий плане не соотносится с сеткой планов"
 

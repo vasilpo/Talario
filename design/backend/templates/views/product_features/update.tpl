@@ -50,6 +50,7 @@
       {if $action_context}data-ca-ajax-done-event="ce.{$action_context}.product_feature_save"{/if}
 >
 <input type="hidden" class="cm-no-hide-input" name="feature_id" value="{$id}" />
+<input type="hidden" class="cm-no-hide-input" name="dispatch" value="product_features.update" />
 {if !$in_popup}
     <input type="hidden" name="selected_section" id="selected_section" value="{$smarty.request.selected_section}" />
 {/if}
@@ -310,6 +311,44 @@
 <input type="hidden" name="descr_sl" value="{$smarty.const.DESCR_SL}" />
 
 </form>
+{if $id && $id != $smarty.const.NEW_FEATURE_GROUP_ID}
+    <script>
+        (function (_, $) {
+            var $form = $('form[name=update_features_form_{$id}]');
+
+            $form.off('submit.check_{$id}').on('submit.check_{$id}', function (e) {
+                if (!$form.data('confirmed')) {
+                    {literal}
+                    let data = $(e.target).serializeArray().reduce(
+                        (data, {name, value}) => {
+                            data[name] = value;
+
+                            return data;
+                        },
+                        {is_ajax: 1}
+                    );
+                    {/literal}
+
+                    $.ceAjax('request', fn_url('product_features.update'), {
+                        method: 'post',
+                        data: data,
+                        hidden: true,
+                        caching: false,
+                        get_promise: true,
+                        callback: function(response) {
+                            if (!response.need_confirm) {
+                                $form.data('confirmed', true);
+                                $form.trigger('submit.check');
+                            }
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        })(Tygh, Tygh.$);
+    </script>
+{/if}
 <!--content_group{$id}--></div>
 {/capture}
 
