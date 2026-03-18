@@ -1,0 +1,18 @@
+.ty-company-detail__info-list:not(.ty-company-detail_info-first) {
+    display: none;
+}
+.ut2-gl__bottom .product-description {
+  margin: 5px 0 !important;
+}
+@media (max-width:768px) {
+.grid-list:not([class*="scroll"]):not(.ut2-load-more-wrap) .ut2-gl__item:hover .ut2-gl__body{
+      position: static;
+      inset: auto;
+      width: 100%;
+      height: auto;
+      z-index: auto;
+      box-shadow: none;
+      padding: var(--gap-sm);
+box-sizing: border-box !important;
+  }
+}

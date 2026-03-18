@@ -22,7 +22,7 @@
 <core_edition>ULTIMATE,MULTIVENDOR</core_edition>
 </compatibility>
 <ab>
-<hash>9219b282fd98932edcd1ec136e27010707612a83, 2025-10-28 15:06:42</hash>
+<hash>9219b282ff98932bdcd1ec136e27010707612a83, 2025-10-28 15:06:42</hash>
 <compatibility>
 <dependencies>
 <ab__addons_manager><min>2.5.6</min></ab__addons_manager>

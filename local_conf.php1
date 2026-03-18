@@ -1,0 +1,109 @@
+<?php
+// Файл local_conf перепределяет любые конфиги из config.local.php
+
+// Вы можете задать конфиги для локальной копии без изменения config.local.php
+
+/*
+$config['db_host'] = '%DB_HOST%';
+$config['db_name'] = '%DB_NAME%';
+$config['db_user'] = '%DB_USER%';
+$config['db_password'] = '%DB_PASSWORD%';
+
+$config['http_host'] = '%HTTP_HOST%';
+$config['http_path'] = '%HOST_DIR%';
+
+$config['https_host'] = '%HTTPS_HOST%';
+$config['https_path'] = '%HOST_DIR%';
+*/
+
+// Если работаем на живом магазине, то выводим только для своего IP, чтобы не пугать клиентов. Узнать IP поможет сайт 2ip.ru
+function ipcheck() {
+   $office_ip = array('87.76.12.115', '91.239.16.92', '95.104.194.197','212.34.140.113');
+   $variants = array(
+ 	  'REMOTE_ADDR',
+ 	  'HTTP_X_FORWARDED_FOR',
+ 	  'HTTP_X_FORWARDED',
+ 	  'HTTP_FORWARDED_FOR',
+ 	  'HTTP_FORWARDED',
+ 	  'HTTP_forwarded_ip',
+ 	  'HTTP_X_COMING_FROM',
+ 	  'HTTP_COMING_FROM',
+ 	  'HTTP_CLIENT_IP',
+ 	  'HTTP_VIA',
+ 	  'HTTP_XROXY_CONNECTION',
+ 	  'HTTP_PROXY_CONNECTION',
+ 	  'HTTP_X_REAL_IP',
+ 	  'HTTP_CF_CONNECTING_IP');
+   $allow = 0;
+   foreach ($variants as $variant){
+     if(isset($_SERVER[$variant])){
+       if(in_array($_SERVER[$variant], $office_ip)) {
+ 	$allow++;
+       }
+     }
+   }
+
+   return $allow;
+ }
+
+ if(ipcheck()) {
+
+     // Включить DEBUG панель включенной всегда
+     define('DEBUG_MODE', true);
+
+     // Режим разработчика, для отображения ошибок
+     define('DEVELOPMENT', true);
+
+     // Отображение ошибок SMARTY и PHP на экран.
+     error_reporting(-1);
+     ini_set('display_errors', 'on');
+     ini_set('display_startup_errors', true);
+
+     // Выключаем PHP кэш блоков
+     $config['tweaks']['disable_block_cache'] = true;
+
+ }
+
+function _logWrite() {
+
+	
+	$messages = func_get_args();
+	$i = 0;
+	foreach ($messages as $message) {
+	  if(is_object($message)) {
+	    $message = (array) $message;
+	  }
+	  if(is_array($message)) {
+		  $message = var_export($message, TRUE);
+	  }
+	  $messages[$i] = str_replace("\n\n", "\n", $message);
+	  $i++;
+	}
+
+	$ts = date("Y-m-d H:i:s");
+	$dt = date("Y-m-d_H:i");
+	$logFile = "./var/debug_" . $dt . ".log";	
+	//$logFile = "./var/debug.log";
+
+	$logText = "";
+	$logMessage = "";
+	foreach ($messages as $message) {
+	  $logMessage .= " $message \n";
+	}
+	$logText = "[$ts] <" . $_SERVER["REQUEST_URI"] . ">$logMessage \n";
+
+	if ($fd = fopen ($logFile, "a+")) {
+		if (flock($fd, LOCK_EX)) {
+			// do an exclusive lock
+			fwrite($fd, $logText);
+			flock($fd, LOCK_UN); // release the lock
+		} else {
+			echo "Couldn't lock the file !";
+			exit;
+		}
+
+		fclose($fd);
+		chmod($logFile, 0666);
+	}
+}
+
