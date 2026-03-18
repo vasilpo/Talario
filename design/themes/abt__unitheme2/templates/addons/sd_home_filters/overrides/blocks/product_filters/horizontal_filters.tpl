@@ -74,11 +74,6 @@
                                 {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
                             {/if}
                             {/hook}
-                            {strip}
-                                <div class="ty-product-filters__tools">
-                                    {if $reset_url}<a class="ty-btn ty-btn__primary outline ty-product-filters__reset-button  cm-ajax cm-ajax-full-render cm-history" href="{$reset_url|fn_url}" data-ca-event="ce.filtersinit" data-ca-target-id="{$ajax_div_ids}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i>{__("reset")}</a>{/if}
-                                </div>
-                            {/strip}
                         </div>
                     {/if}
                 </div>
@@ -166,11 +161,6 @@
                                 {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
                             {/if}
                             {/hook}
-                            {strip}
-                                <div class="ty-product-filters__tools">
-                                    {if $reset_url}<a class="ty-btn ty-btn__primary outline ty-product-filters__reset-button  cm-ajax cm-ajax-full-render cm-history" href="{$reset_url|fn_url}" data-ca-event="ce.filtersinit" data-ca-target-id="{$ajax_div_ids}"><i class="ty-product-filters__reset-icon ty-icon-cw"></i>{__("reset")}</a>{/if}
-                                </div>
-                            {/strip}
                         </div>
 
                         {if !$sd_home_filters_products_dropdown_inserted && $filter.filter_id == $sd_home_filters_category_filter_id}
