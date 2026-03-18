@@ -1,0 +1,83 @@
+@import "../../responsive/css/addons/product_reviews/components/product_reviews_stars.less";
+
+/*
+    templates/addons/product_reviews/views/product_reviews/components/reviews_stars.tpl
+*/
+
+.ty-product-review-reviews-stars {
+    font-family: inherit;
+    letter-spacing: normal;
+    -webkit-font-smoothing: auto;
+}
+
+.ty-product-review-reviews-stars__content {
+    display: flex;
+    align-items: center;
+}
+
+.ty-product-review-reviews-stars__content--long {
+    display: none;
+}
+
+.ty-product-review-reviews-stars--xlarge .ty-product-review-reviews-stars__content--long {
+    display: flex;
+}
+
+.ty-product-review-reviews-stars--xlarge .ty-product-review-reviews-stars__content--short {
+    display: none;
+}
+
+.ty-product-review-reviews-stars__decimals-rating {
+    font-size: var(--cs-font-size-small);
+    font-weight: 700;
+}
+
+.ty-product-review-reviews-stars__link--empty,
+.ty-product-review-reviews-stars__button--empty {
+    visibility: hidden;
+}
+
+
+/** Full stars of rating **/
+
+/** Full stars **/
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="5"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="4"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="3"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="2"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="1"]:before {
+    content: none;
+}
+/** /Full stars **/
+
+/** Half stars **/
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="4"][data-ca-product-review-reviews-stars-is-half="1"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="3"][data-ca-product-review-reviews-stars-is-half="1"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="2"][data-ca-product-review-reviews-stars-is-half="1"]:before {
+    content: none;
+}
+
+.ty-product-review-reviews-stars[data-ca-product-review-reviews-stars-full="1"][data-ca-product-review-reviews-stars-is-half="1"]:before {
+    content: none;
+}
+/** /Half stars **/
+
+/** Full stars of rating **/

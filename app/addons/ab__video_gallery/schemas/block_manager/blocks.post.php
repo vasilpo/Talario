@@ -1,7 +1,7 @@
 <?php
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -16,6 +16,7 @@
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
 use Tygh\Enum\YesNo;
+defined('BOOTSTRAP') or die('Access denied');
 $schema['main']['cache_overrides_by_dispatch']['products.view']['update_handlers'][] = 'ab__video_gallery';
 $schema['main']['cache_overrides_by_dispatch']['products.view']['update_handlers'][] = 'ab__video_gallery_descriptions';
 $schema['main']['cache_overrides_by_dispatch']['products.view']['update_handlers'][] = 'ab__video_gallery_settings';
@@ -38,7 +39,7 @@ $schema['ab__vg_videos'] = [
 'number_of_columns' => [
 'type' => 'selectbox',
 'default_value' => 4,
-'values' => array (
+'values' => [
 '3' => 'ab__vg.3',
 '4' => 'ab__vg.4',
 '5' => 'ab__vg.5',
@@ -46,7 +47,7 @@ $schema['ab__vg_videos'] = [
 '7' => 'ab__vg.7',
 '8' => 'ab__vg.8',
 '9' => 'ab__vg.9',
-),
+],
 ],
 'ab__vg_show_product_link' => [
 'type' => 'checkbox',

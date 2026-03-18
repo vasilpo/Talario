@@ -520,6 +520,10 @@ msgctxt "Languages::add_to_cart"
 msgid "Add to cart"
 msgstr "Add to cart"
 
+msgctxt "Languages::add_to_cart_short"
+msgid "Add to cart"
+msgstr "Add to cart"
+
 msgctxt "Languages::add_to_comparison_list"
 msgid "Add to comparison list"
 msgstr "Add to comparison list"
@@ -1800,9 +1804,17 @@ msgctxt "Languages::tools_carrier_upsdeprecated_msg"
 msgid "This shipping method will stop working in June 2024. To keep using UPS, please set up a shipping method that uses \"UPS\" rather than \"UPS [Deprecated]\" for rate calculation."
 msgstr "This shipping method will stop working in June 2024. To keep using UPS, please set up a shipping method that uses \"UPS\" rather than \"UPS [Deprecated]\" for rate calculation."
 
-msgctxt "Languages::carrier_usps"
+msgctxt "Languages::carrier_uspsv2"
 msgid "USPS"
 msgstr "USPS"
+
+msgctxt "Languages::tools_carrier_usps_msg"
+msgid "To get Client ID and Client secret, <a target=\"_blank\" href=\"[url]\">create an app in your USPS business account</a>."
+msgstr "To get Client ID and Client secret, <a target=\"_blank\" href=\"[url]\">create an app in your USPS business account</a>."
+
+msgctxt "Languages::carrier_usps"
+msgid "USPS [Deprecated]"
+msgstr "USPS [Deprecated]"
 
 msgctxt "Languages::cart"
 msgid "Cart"
@@ -1815,6 +1827,10 @@ msgstr "Cart content"
 msgctxt "Languages::cart_contents"
 msgid "Cart contents"
 msgstr "Cart contents"
+
+msgctxt "Languages::cart_contents_title"
+msgid "Cart"
+msgstr "Cart"
 
 msgctxt "Languages::cart_info"
 msgid "Site info"
@@ -2156,6 +2172,10 @@ msgctxt "Languages::actions.seo_robots"
 msgid "Robots.txt"
 msgstr "Robots.txt"
 
+msgctxt "Languages::actions.seo_llms"
+msgid "Llms.txt"
+msgstr "Llms.txt"
+
 msgctxt "Languages::actions.shipment_statuses"
 msgid "Shipment statuses"
 msgstr "Shipment statuses"
@@ -2493,6 +2513,10 @@ msgid "Continue"
 msgstr "Continue"
 
 msgctxt "Languages::continue_shopping"
+msgid "Continue shopping"
+msgstr "Continue shopping"
+
+msgctxt "Languages::continue_shopping_short"
 msgid "Continue shopping"
 msgstr "Continue shopping"
 
@@ -3208,6 +3232,42 @@ msgctxt "Languages::default_product_details_view"
 msgid "Parent ([default])"
 msgstr "Parent ([default])"
 
+msgctxt "Languages::default_show_videos_before_images"
+msgid "Global ([default])"
+msgstr "Global ([default])"
+
+msgctxt "Languages::default_autoplay_videos"
+msgid "Global ([default])"
+msgstr "Global ([default])"
+
+msgctxt "Languages::hosting"
+msgid "Video hosting"
+msgstr "Video hosting"
+
+msgctxt "Languages::videos"
+msgid "Videos"
+msgstr "Videos"
+
+msgctxt "Languages::show_videos_before_images"
+msgid "Show videos before images"
+msgstr "Show videos before images"
+
+msgctxt "Languages::autoplay_videos"
+msgid "Autoplay videos"
+msgstr "Autoplay videos"
+
+msgctxt "Languages::insert_video_link_tooltip"
+msgid "Copy a link to your video here"
+msgstr "Copy a link to your video here"
+
+msgctxt "Languages::choose_video_hosting_tooltip"
+msgid "Choose a video hosting"
+msgstr "Choose a video hosting"
+
+msgctxt "Languages::show_videos_before_images_tooltip"
+msgid "By default, videos appear after product images"
+msgstr "By default, videos appear after product images"
+
 msgctxt "Languages::default_template"
 msgid "Default template"
 msgstr "Default template"
@@ -3631,6 +3691,10 @@ msgstr "Third level elements"
 msgctxt "Languages::dropdown_vertical"
 msgid "Dropdown vertical"
 msgstr "Dropdown vertical"
+
+msgctxt "Languages::tree_menu"
+msgid "Tree menu"
+msgstr "Tree menu"
 
 msgctxt "Languages::drop_existing_data"
 msgid "Delete all existing product files before import"
@@ -4080,6 +4144,22 @@ msgctxt "Languages::error_exim_get_images_for_products"
 msgid "Could not import images for some of the products. Either those images don't exist (or can't be accessed), or the paths to those images in the imported file are incorrect."
 msgstr "Could not import images for some of the products. Either those images don't exist (or can't be accessed), or the paths to those images in the imported file are incorrect."
 
+msgctxt "Languages::error_exim_get_videos"
+msgid "Could not import some videos. Either those videos don't exist (or can't be accessed), or the videos links in the imported file are incorrect."
+msgstr "Could not import some videos. Either those videos don't exist (or can't be accessed), or the videos links in the imported file are incorrect."
+
+msgctxt "Languages::error_save_videos"
+msgid "Could not save some videos. Either those videos don't exist (or can't be accessed), or the videos links are incorrect."
+msgstr "Could not save some videos. Either those videos don't exist (or can't be accessed), or the videos links are incorrect."
+
+msgctxt "Languages::error_get_videos"
+msgid "Sorry, this doesn’t look like a video link, or this platform is not supported. It might also be offline or unreachable at the moment."
+msgstr "Sorry, this doesn’t look like a video link, or this platform is not supported. It might also be offline or unreachable at the moment."
+
+msgctxt "Languages::error_exim_export_videos"
+msgid "Something went wrong and some videos links were not exported."
+msgstr "Something went wrong and some videos links were not exported."
+
 msgctxt "Languages::error_exim_cant_open_file"
 msgid "Cannot open uploaded file"
 msgstr "Cannot open uploaded file"
@@ -4291,6 +4371,22 @@ msgstr "CVV/CVC is too short."
 msgctxt "Languages::error_validator_ccv_long"
 msgid "CVV/CVC is too long."
 msgstr "CVV/CVC is too long."
+
+msgctxt "Languages::validator_not_valid_text_field"
+msgid "<b>[field]</b> field is not valid. Only letters, apostrophes and dashes allowed."
+msgstr "<b>[field]</b> field is not valid. Only letters, apostrophes and dashes allowed."
+
+msgctxt "Languages::js_validator_not_valid_text_field"
+msgid "Only letters, spaces, apostrophes and dashes allowed."
+msgstr "Only letters, spaces, apostrophes and dashes allowed."
+
+msgctxt "Languages::firstname"
+msgid "First name"
+msgstr "First name"
+
+msgctxt "Languages::lastname"
+msgid "Last name"
+msgstr "Last name"
 
 msgctxt "Languages::error_change_admin_data_in_frontend"
 msgid "It's forbidden to change the admin email or password in the customer area. Please sign in using a customer account."
@@ -4605,6 +4701,10 @@ msgid "Filter"
 msgstr "Filter"
 
 msgctxt "Languages::filters"
+msgid "Filters"
+msgstr "Filters"
+
+msgctxt "Languages::storefront_filters"
 msgid "Filters"
 msgstr "Filters"
 
@@ -6008,6 +6108,14 @@ msgctxt "Languages::menu"
 msgid "Menu"
 msgstr "Menu"
 
+msgctxt "Languages::main_menu"
+msgid "Main menu"
+msgstr "Main menu"
+
+msgctxt "Languages::open_main_menu"
+msgid "Open main menu"
+msgstr "Open main menu"
+
 msgctxt "Languages::menus"
 msgid "Menus"
 msgstr "Menus"
@@ -6643,6 +6751,10 @@ msgstr "Enable link"
 msgctxt "Languages::no_categories_available"
 msgid "No categories available"
 msgstr "No categories available"
+
+msgctxt "Languages::no_permissions_to_create_update_categories"
+msgid "You have no permissions to create or update categories."
+msgstr "You have no permissions to create or update categories."
 
 msgctxt "Languages::no_data"
 msgid "No data found"
@@ -7880,6 +7992,10 @@ msgctxt "Languages::proceed_to_checkout"
 msgid "Proceed to checkout"
 msgstr "Proceed to checkout"
 
+msgctxt "Languages::proceed_to_checkout_short"
+msgid "Checkout"
+msgstr "Checkout"
+
 msgctxt "Languages::proceed_to_the_next_step"
 msgid "Proceed to the next step"
 msgstr "Proceed to the next step"
@@ -7967,6 +8083,14 @@ msgstr "Products found"
 msgctxt "Languages::n_products_found"
 msgid "[n] product found|[n] products found"
 msgstr "[n] product found|[n] products found"
+
+msgctxt "Languages::show_products"
+msgid "Show products"
+msgstr "Show products"
+
+msgctxt "Languages::show_n_products"
+msgid "Show [n] product|Show [n] products"
+msgstr "Show [n] product|Show [n] products"
 
 msgctxt "Languages::products_grid"
 msgid "Products grid"
@@ -8420,6 +8544,22 @@ msgctxt "Languages::quick_menu"
 msgid "Quick start menu"
 msgstr "Quick start menu"
 
+msgctxt "Languages::main_menu_type.dropdown"
+msgid "Collapsed menu"
+msgstr "Collapsed menu"
+
+msgctxt "Languages::main_menu_type.collapse"
+msgid "Normal menu"
+msgstr "Normal menu"
+
+msgctxt "Languages::main_menu_type.switch_to_dropdown"
+msgid "Collapse menu"
+msgstr "Collapse menu"
+
+msgctxt "Languages::main_menu_type.switch_to_collapse"
+msgid "Expand menu"
+msgstr "Expand menu"
+
 msgctxt "Languages::admin_menu.add_item"
 msgid "Add item"
 msgstr "Add item"
@@ -8631,6 +8771,10 @@ msgstr "Register"
 msgctxt "Languages::registered"
 msgid "Registered"
 msgstr "Registered"
+
+msgctxt "Languages::registered_short"
+msgid "Register."
+msgstr "Register."
 
 msgctxt "Languages::registered_customers"
 msgid "Registered customers"
@@ -10200,6 +10344,614 @@ msgctxt "Languages::ship_usps_username"
 msgid "User ID"
 msgstr "User ID"
 
+msgctxt "Languages::ship_usps_client_id"
+msgid "Client ID"
+msgstr "Client ID"
+
+msgctxt "Languages::ship_usps_client_secret"
+msgid "Client secret"
+msgstr "Client secret"
+
+msgctxt "Languages::ship_usps_price_type"
+msgid "Price type"
+msgstr "Price type"
+
+msgctxt "Languages::ship_usps_package_weight"
+msgid "Package weight"
+msgstr "Package weight"
+
+msgctxt "Languages::ship_usps_package_width"
+msgid "Package width (in inches)"
+msgstr "Package width (in inches)"
+
+msgctxt "Languages::ship_usps_package_length"
+msgid "Package length (in inches)"
+msgstr "Package length (in inches)"
+
+msgctxt "Languages::ship_usps_package_height"
+msgid "Package height (in inches)"
+msgstr "Package height (in inches)"
+
+msgctxt "Languages::ship_usps_package_girth"
+msgid "Package girth (in inches)"
+msgstr "Package girth (in inches)"
+
+msgctxt "Languages::ship_usps_package_cost"
+msgid "Package cost (USD)"
+msgstr "Package cost (USD)"
+
+msgctxt "Languages::ship_usps_cost_description"
+msgid "The merchandise package value in US dollars. Used to calculate Insurance Fees if requested. Set to 0 by default."
+msgstr "The merchandise package value in US dollars. Used to calculate Insurance Fees if requested. Set to 0 by default."
+
+msgctxt "Languages::ship_usps_processing_category"
+msgid "Processing category"
+msgstr "Processing category"
+
+msgctxt "Languages::ship_usps_rate_indicator"
+msgid "Rate indicator"
+msgstr "Rate indicator"
+
+msgctxt "Languages::ship_usps_destination_entry_type"
+msgid "Destination entry type"
+msgstr "Destination entry type"
+
+msgctxt "Languages::ship_usps_rate_indicator_3d"
+msgid "3D - 3-Digit"
+msgstr "3D - 3-Digit"
+
+msgctxt "Languages::ship_usps_rate_indicator_3n"
+msgid "3N - 3-Digit Dimensional Rectangular"
+msgstr "3N - 3-Digit Dimensional Rectangular"
+
+msgctxt "Languages::ship_usps_rate_indicator_3r"
+msgid "3R - 3-Digit Dimensional Nonrectangular"
+msgstr "3R - 3-Digit Dimensional Nonrectangular"
+
+msgctxt "Languages::ship_usps_rate_indicator_5d"
+msgid "5D - 5-Digit"
+msgstr "5D - 5-Digit"
+
+msgctxt "Languages::ship_usps_rate_indicator_ba"
+msgid "BA - Basic"
+msgstr "BA - Basic"
+
+msgctxt "Languages::ship_usps_rate_indicator_bb"
+msgid "BB - Mixed NDC"
+msgstr "BB - Mixed NDC"
+
+msgctxt "Languages::ship_usps_rate_indicator_bm"
+msgid "BM - NDC"
+msgstr "BM - NDC"
+
+msgctxt "Languages::ship_usps_rate_indicator_c1"
+msgid "C1 - Cubic Pricing Tier 1"
+msgstr "C1 - Cubic Pricing Tier 1"
+
+msgctxt "Languages::ship_usps_rate_indicator_c2"
+msgid "C2 - Cubic Pricing Tier 2"
+msgstr "C2 - Cubic Pricing Tier 2"
+
+msgctxt "Languages::ship_usps_rate_indicator_c3"
+msgid "C3 - Cubic Pricing Tier 3"
+msgstr "C3 - Cubic Pricing Tier 3"
+
+msgctxt "Languages::ship_usps_rate_indicator_c4"
+msgid "C4 - Cubic Pricing Tier 4"
+msgstr "C4 - Cubic Pricing Tier 4"
+
+msgctxt "Languages::ship_usps_rate_indicator_c5"
+msgid "C5 - Cubic Pricing Tier 5"
+msgstr "C5 - Cubic Pricing Tier 5"
+
+msgctxt "Languages::ship_usps_rate_indicator_cp"
+msgid "CP - Cubic Parcel"
+msgstr "CP - Cubic Parcel"
+
+msgctxt "Languages::ship_usps_rate_indicator_cm"
+msgid "CM - USPS Connect Local® Mail"
+msgstr "CM - USPS Connect Local® Mail"
+
+msgctxt "Languages::ship_usps_rate_indicator_dc"
+msgid "DC - NDC"
+msgstr "DC - NDC"
+
+msgctxt "Languages::ship_usps_rate_indicator_de"
+msgid "DE - SCF"
+msgstr "DE - SCF"
+
+msgctxt "Languages::ship_usps_rate_indicator_df"
+msgid "DF - 5-Digit"
+msgstr "DF - 5-Digit"
+
+msgctxt "Languages::ship_usps_rate_indicator_dn"
+msgid "DN - Dimensional Nonrectangular"
+msgstr "DN - Dimensional Nonrectangular"
+
+msgctxt "Languages::ship_usps_rate_indicator_dr"
+msgid "DR - Dimensional Rectangular"
+msgstr "DR - Dimensional Rectangular"
+
+msgctxt "Languages::ship_usps_rate_indicator_e4"
+msgid "E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee"
+msgstr "E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee"
+
+msgctxt "Languages::ship_usps_rate_indicator_e6"
+msgid "E6 - Priority Mail Express Legal Flat Rate Envelope"
+msgstr "E6 - Priority Mail Express Legal Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_e7"
+msgid "E7 - Priority Mail Express Legal Flat Rate Envelope Sunday / Holiday"
+msgstr "E7 - Priority Mail Express Legal Flat Rate Envelope Sunday / Holiday"
+
+msgctxt "Languages::ship_usps_rate_indicator_fa"
+msgid "FA - Legal Flat Rate Envelope"
+msgstr "FA - Legal Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_fb"
+msgid "FB - Medium Flat Rate Box/Large Flat Rate Bag"
+msgstr "FB - Medium Flat Rate Box/Large Flat Rate Bag"
+
+msgctxt "Languages::ship_usps_rate_indicator_fe"
+msgid "FE - Flat Rate Envelope"
+msgstr "FE - Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_fp"
+msgid "FP - Padded Flat Rate Envelope"
+msgstr "FP - Padded Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_fs"
+msgid "FS - Small Flat Rate Box"
+msgstr "FS - Small Flat Rate Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_lc"
+msgid "LC - USPS Connect® Local Single Piece"
+msgstr "LC - USPS Connect® Local Single Piece"
+
+msgctxt "Languages::ship_usps_rate_indicator_lf"
+msgid "LF - USPS Connect® Local Flat Rate Box"
+msgstr "LF - USPS Connect® Local Flat Rate Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_ll"
+msgid "LL - USPS Connect® Local Large Flat Rate Bag"
+msgstr "LL - USPS Connect® Local Large Flat Rate Bag"
+
+msgctxt "Languages::ship_usps_rate_indicator_lo"
+msgid "LO - USPS Connect® Local Oversized"
+msgstr "LO - USPS Connect® Local Oversized"
+
+msgctxt "Languages::ship_usps_rate_indicator_ls"
+msgid "LS - USPS Connect® Local Small Flat Rate Bag"
+msgstr "LS - USPS Connect® Local Small Flat Rate Bag"
+
+msgctxt "Languages::ship_usps_rate_indicator_np"
+msgid "NP - Non-Presorted"
+msgstr "NP - Non-Presorted"
+
+msgctxt "Languages::ship_usps_rate_indicator_o1"
+msgid "O1 - Full Tray Box"
+msgstr "O1 - Full Tray Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_o2"
+msgid "O2 - Half Tray Box"
+msgstr "O2 - Half Tray Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_o3"
+msgid "O3 - EMM Tray Box"
+msgstr "O3 - EMM Tray Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_o4"
+msgid "O4 - Flat Tub Tray Box"
+msgstr "O4 - Flat Tub Tray Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_o5"
+msgid "O5 - Surface Transported Pallet"
+msgstr "O5 - Surface Transported Pallet"
+
+msgctxt "Languages::ship_usps_rate_indicator_o6"
+msgid "O6 - Full Pallet Box"
+msgstr "O6 - Full Pallet Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_o7"
+msgid "O7 - Half Pallet Box"
+msgstr "O7 - Half Pallet Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_os"
+msgid "OS - Oversized"
+msgstr "OS - Oversized"
+
+msgctxt "Languages::ship_usps_rate_indicator_p5"
+msgid "P5 - Cubic Soft Pack Tier 1"
+msgstr "P5 - Cubic Soft Pack Tier 1"
+
+msgctxt "Languages::ship_usps_rate_indicator_p6"
+msgid "P6 - Cubic Soft Pack Tier 2"
+msgstr "P6 - Cubic Soft Pack Tier 2"
+
+msgctxt "Languages::ship_usps_rate_indicator_p7"
+msgid "P7 - Cubic Soft Pack Tier 3"
+msgstr "P7 - Cubic Soft Pack Tier 3"
+
+msgctxt "Languages::ship_usps_rate_indicator_p8"
+msgid "P8 - Cubic Soft Pack Tier 4"
+msgstr "P8 - Cubic Soft Pack Tier 4"
+
+msgctxt "Languages::ship_usps_rate_indicator_p9"
+msgid "P9 - Cubic Soft Pack Tier 5"
+msgstr "P9 - Cubic Soft Pack Tier 5"
+
+msgctxt "Languages::ship_usps_rate_indicator_q6"
+msgid "Q6 - Cubic Soft Pack Tier 6"
+msgstr "Q6 - Cubic Soft Pack Tier 6"
+
+msgctxt "Languages::ship_usps_rate_indicator_q7"
+msgid "Q7 - Cubic Soft Pack Tier 7"
+msgstr "Q7 - Cubic Soft Pack Tier 7"
+
+msgctxt "Languages::ship_usps_rate_indicator_q8"
+msgid "Q8 - Cubic Soft Pack Tier 8"
+msgstr "Q8 - Cubic Soft Pack Tier 8"
+
+msgctxt "Languages::ship_usps_rate_indicator_q9"
+msgid "Q9 - Cubic Soft Pack Tier 9"
+msgstr "Q9 - Cubic Soft Pack Tier 9"
+
+msgctxt "Languages::ship_usps_rate_indicator_q0"
+msgid "Q0 - Cubic Soft Pack Tier 10"
+msgstr "Q0 - Cubic Soft Pack Tier 10"
+
+msgctxt "Languages::ship_usps_rate_indicator_pa"
+msgid "PA - Priority Mail Express Single Piece"
+msgstr "PA - Priority Mail Express Single Piece"
+
+msgctxt "Languages::ship_usps_rate_indicator_pl"
+msgid "PL - Large Flat Rate Box"
+msgstr "PL - Large Flat Rate Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_pm"
+msgid "PM - Large Flat Rate Box APO/FPO/DPO"
+msgstr "PM - Large Flat Rate Box APO/FPO/DPO"
+
+msgctxt "Languages::ship_usps_rate_indicator_pr"
+msgid "PR - Presorted"
+msgstr "PR - Presorted"
+
+msgctxt "Languages::ship_usps_rate_indicator_sb"
+msgid "SB - Small Flat Rate Bag"
+msgstr "SB - Small Flat Rate Bag"
+
+msgctxt "Languages::ship_usps_rate_indicator_sn"
+msgid "SN - SCF Dimensional Nonrectangular"
+msgstr "SN - SCF Dimensional Nonrectangular"
+
+msgctxt "Languages::ship_usps_rate_indicator_sp"
+msgid "SP - Single Piece"
+msgstr "SP - Single Piece"
+
+msgctxt "Languages::ship_usps_rate_indicator_sr"
+msgid "SR - SCF Dimensional Rectangular"
+msgstr "SR - SCF Dimensional Rectangular"
+
+msgctxt "Languages::ship_usps_rate_indicator_ep"
+msgid "EP - ECOMPRO Single Piece"
+msgstr "EP - ECOMPRO Single Piece"
+
+msgctxt "Languages::ship_usps_rate_indicator_ha"
+msgid "HA - ECOMPRO Legal Flat Rate Envelope"
+msgstr "HA - ECOMPRO Legal Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_hb"
+msgid "HB - ECOMPRO Medium Flat Rate Box"
+msgstr "HB - ECOMPRO Medium Flat Rate Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_he"
+msgid "HE - ECOMPRO Flat Rate Envelope"
+msgstr "HE - ECOMPRO Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_hl"
+msgid "HL - ECOMPRO Large Flat Rate Box"
+msgstr "HL - ECOMPRO Large Flat Rate Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_hp"
+msgid "HP - ECOMPRO Padded Flat Rate Envelope"
+msgstr "HP - ECOMPRO Padded Flat Rate Envelope"
+
+msgctxt "Languages::ship_usps_rate_indicator_hs"
+msgid "HS - ECOMPRO Small Flat Rate Box"
+msgstr "HS - ECOMPRO Small Flat Rate Box"
+
+msgctxt "Languages::ship_usps_rate_indicator_le"
+msgid "LE - Single-piece parcel"
+msgstr "LE - Single-piece parcel"
+
+msgctxt "Languages::ship_usps_rate_indicator_pa"
+msgid "PA - Priority Mail Express International Single Piece"
+msgstr "PA - Priority Mail Express International Single Piece"
+
+msgctxt "Languages::ship_usps_service_365"
+msgid "365 - Global Direct Entry"
+msgstr "365 - Global Direct Entry"
+
+msgctxt "Languages::ship_usps_service_415"
+msgid "415 - USPS Label Delivery Service"
+msgstr "415 - USPS Label Delivery Service"
+
+msgctxt "Languages::ship_usps_service_480"
+msgid "480 - Tracking Plus 6 Months"
+msgstr "480 - Tracking Plus 6 Months"
+
+msgctxt "Languages::ship_usps_service_481"
+msgid "481 - Tracking Plus 1 Year"
+msgstr "481 - Tracking Plus 1 Year"
+
+msgctxt "Languages::ship_usps_service_482"
+msgid "482 - Tracking Plus 3 Years"
+msgstr "482 - Tracking Plus 3 Years"
+
+msgctxt "Languages::ship_usps_service_483"
+msgid "483 - Tracking Plus 5 Years"
+msgstr "483 - Tracking Plus 5 Years"
+
+msgctxt "Languages::ship_usps_service_484"
+msgid "484 - Tracking Plus 7 Years"
+msgstr "484 - Tracking Plus 7 Years"
+
+msgctxt "Languages::ship_usps_service_485"
+msgid "485 - Tracking Plus 10 Years"
+msgstr "485 - Tracking Plus 10 Years"
+
+msgctxt "Languages::ship_usps_service_486"
+msgid "486 - Tracking Plus Signature 3 Years"
+msgstr "486 - Tracking Plus Signature 3 Years"
+
+msgctxt "Languages::ship_usps_service_487"
+msgid "487 - Tracking Plus Signature 5 Years"
+msgstr "487 - Tracking Plus Signature 5 Years"
+
+msgctxt "Languages::ship_usps_service_488"
+msgid "488 - Tracking Plus Signature 7 Years"
+msgstr "488 - Tracking Plus Signature 7 Years"
+
+msgctxt "Languages::ship_usps_service_489"
+msgid "489 - Tracking Plus Signature 10 Years"
+msgstr "489 - Tracking Plus Signature 10 Years"
+
+msgctxt "Languages::ship_usps_service_810"
+msgid "810 - Hazardous Materials - Air Eligible Ethanol"
+msgstr "810 - Hazardous Materials - Air Eligible Ethanol"
+
+msgctxt "Languages::ship_usps_service_811"
+msgid "811 - Hazardous Materials - Class 1 – Toy Propellant/Safety Fuse Package"
+msgstr "811 - Hazardous Materials - Class 1 – Toy Propellant/Safety Fuse Package"
+
+msgctxt "Languages::ship_usps_service_812"
+msgid "812 - Hazardous Materials - Class 3 - Flammable and Combustible Liquids"
+msgstr "812 - Hazardous Materials - Class 3 - Flammable and Combustible Liquids"
+
+msgctxt "Languages::ship_usps_service_813"
+msgid "813 - Hazardous Materials - Class 7 – Radioactive Materials"
+msgstr "813 - Hazardous Materials - Class 7 – Radioactive Materials"
+
+msgctxt "Languages::ship_usps_service_814"
+msgid "814 - Hazardous Materials - Class 8 – Air Eligible Corrosive Materials"
+msgstr "814 - Hazardous Materials - Class 8 – Air Eligible Corrosive Materials"
+
+msgctxt "Languages::ship_usps_service_815"
+msgid "815 - Hazardous Materials - Class 8 – Nonspillable Wet Batteries"
+msgstr "815 - Hazardous Materials - Class 8 – Nonspillable Wet Batteries"
+
+msgctxt "Languages::ship_usps_service_816"
+msgid "816 - Hazardous Materials - Class 9 - Lithium Battery Marked Ground Only"
+msgstr "816 - Hazardous Materials - Class 9 - Lithium Battery Marked Ground Only"
+
+msgctxt "Languages::ship_usps_service_817"
+msgid "817 - Hazardous Materials - Class 9 - Lithium Battery Returns"
+msgstr "817 - Hazardous Materials - Class 9 - Lithium Battery Returns"
+
+msgctxt "Languages::ship_usps_service_818"
+msgid "818 - Hazardous Materials - Class 9 - Marked Lithium Batteries"
+msgstr "818 - Hazardous Materials - Class 9 - Marked Lithium Batteries"
+
+msgctxt "Languages::ship_usps_service_819"
+msgid "819 - Hazardous Materials - Class 9 – Dry Ice"
+msgstr "819 - Hazardous Materials - Class 9 – Dry Ice"
+
+msgctxt "Languages::ship_usps_service_820"
+msgid "820 - Hazardous Materials - Class 9 – Unmarked Lithium Batteries"
+msgstr "820 - Hazardous Materials - Class 9 – Unmarked Lithium Batteries"
+
+msgctxt "Languages::ship_usps_service_821"
+msgid "821 - Hazardous Materials - Class 9 – Magnetized Materials"
+msgstr "821 - Hazardous Materials - Class 9 – Magnetized Materials"
+
+msgctxt "Languages::ship_usps_service_822"
+msgid "822 - Hazardous Materials - Division 4.1 – Mailable Flammable Solids and Safety Matches"
+msgstr "822 - Hazardous Materials - Division 4.1 – Mailable Flammable Solids and Safety Matches"
+
+msgctxt "Languages::ship_usps_service_823"
+msgid "823 - Hazardous Materials - Division 5.1 – Oxidizers"
+msgstr "823 - Hazardous Materials - Division 5.1 – Oxidizers"
+
+msgctxt "Languages::ship_usps_service_824"
+msgid "824 - Hazardous Materials - Division 5.2 – Organic Peroxides"
+msgstr "824 - Hazardous Materials - Division 5.2 – Organic Peroxides"
+
+msgctxt "Languages::ship_usps_service_825"
+msgid "825 - Hazardous Materials - Division 6.1 – Toxic Materials"
+msgstr "825 - Hazardous Materials - Division 6.1 – Toxic Materials"
+
+msgctxt "Languages::ship_usps_service_826"
+msgid "826 - Hazardous Materials - Division 6.2 Biological Materials"
+msgstr "826 - Hazardous Materials - Division 6.2 Biological Materials"
+
+msgctxt "Languages::ship_usps_service_827"
+msgid "827 - Hazardous Materials - Excepted Quantity Provision"
+msgstr "827 - Hazardous Materials - Excepted Quantity Provision"
+
+msgctxt "Languages::ship_usps_service_828"
+msgid "828 - Hazardous Materials - Ground Only Hazardous Materials"
+msgstr "828 - Hazardous Materials - Ground Only Hazardous Materials"
+
+msgctxt "Languages::ship_usps_service_829"
+msgid "829 - Hazardous Materials - Air Eligible ID8000 Consumer Commodity"
+msgstr "829 - Hazardous Materials - Air Eligible ID8000 Consumer Commodity"
+
+msgctxt "Languages::ship_usps_service_830"
+msgid "830 - Hazardous Materials - Lighters"
+msgstr "830 - Hazardous Materials - Lighters"
+
+msgctxt "Languages::ship_usps_service_831"
+msgid "831 - Hazardous Materials - Limited Quantity Ground"
+msgstr "831 - Hazardous Materials - Limited Quantity Ground"
+
+msgctxt "Languages::ship_usps_service_853"
+msgid "853 - Special Handling - Perishable Material"
+msgstr "853 - Special Handling - Perishable Material"
+
+msgctxt "Languages::ship_usps_service_856"
+msgid "856 - Live Animal Transportation Fee"
+msgstr "856 - Live Animal Transportation Fee"
+
+msgctxt "Languages::ship_usps_service_857"
+msgid "857 - Hazardous Materials"
+msgstr "857 - Hazardous Materials"
+
+msgctxt "Languages::ship_usps_service_858"
+msgid "858 - Cremated Remains"
+msgstr "858 - Cremated Remains"
+
+msgctxt "Languages::ship_usps_service_910"
+msgid "910 - Certified Mail"
+msgstr "910 - Certified Mail"
+
+msgctxt "Languages::ship_usps_service_911"
+msgid "911 - Certified Mail Restricted Delivery"
+msgstr "911 - Certified Mail Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_912"
+msgid "912 - Certified Mail Adult Signature Required"
+msgstr "912 - Certified Mail Adult Signature Required"
+
+msgctxt "Languages::ship_usps_service_913"
+msgid "913 - Certified Mail Adult Signature Restricted Delivery"
+msgstr "913 - Certified Mail Adult Signature Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_915"
+msgid "915 - Collect on Delivery"
+msgstr "915 - Collect on Delivery"
+
+msgctxt "Languages::ship_usps_service_917"
+msgid "917 - Collect on Delivery Restricted Delivery"
+msgstr "917 - Collect on Delivery Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_920"
+msgid "920 - USPS Tracking Electronic"
+msgstr "920 - USPS Tracking Electronic"
+
+msgctxt "Languages::ship_usps_service_921"
+msgid "921 - Signature Confirmation"
+msgstr "921 - Signature Confirmation"
+
+msgctxt "Languages::ship_usps_service_922"
+msgid "922 - Adult Signature Required"
+msgstr "922 - Adult Signature Required"
+
+msgctxt "Languages::ship_usps_service_923"
+msgid "923 - Adult Signature Restricted Delivery"
+msgstr "923 - Adult Signature Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_924"
+msgid "924 - Signature Confirmation Restricted Delivery"
+msgstr "924 - Signature Confirmation Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_925"
+msgid "925 - Priority Mail Express Merchandise Insurance"
+msgstr "925 - Priority Mail Express Merchandise Insurance"
+
+msgctxt "Languages::ship_usps_service_930"
+msgid "930 - Insurance <= $500"
+msgstr "930 - Insurance <= $500"
+
+msgctxt "Languages::ship_usps_service_931"
+msgid "931 - Insurance > $500"
+msgstr "931 - Insurance > $500"
+
+msgctxt "Languages::ship_usps_service_934"
+msgid "934 - Insurance Restricted Delivery"
+msgstr "934 - Insurance Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_940"
+msgid "940 - Registered Mail"
+msgstr "940 - Registered Mail"
+
+msgctxt "Languages::ship_usps_service_941"
+msgid "941 - Registered Mail Restricted Delivery"
+msgstr "941 - Registered Mail Restricted Delivery"
+
+msgctxt "Languages::ship_usps_service_955"
+msgid "955 - Return Receipt"
+msgstr "955 - Return Receipt"
+
+msgctxt "Languages::ship_usps_service_957"
+msgid "957 - Return Receipt Electronic"
+msgstr "957 - Return Receipt Electronic"
+
+msgctxt "Languages::ship_usps_service_972"
+msgid "972 - Live Animal and Perishable Handling Fee"
+msgstr "972 - Live Animal and Perishable Handling Fee"
+
+msgctxt "Languages::ship_usps_service_981"
+msgid "981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)"
+msgstr "981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)"
+
+msgctxt "Languages::ship_usps_service_984"
+msgid "984 - Parcel Locker Delivery"
+msgstr "984 - Parcel Locker Delivery"
+
+msgctxt "Languages::ship_usps_service_986"
+msgid "986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)"
+msgstr "986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)"
+
+msgctxt "Languages::ship_usps_service_991"
+msgid "991 - Sunday Delivery"
+msgstr "991 - Sunday Delivery"
+
+msgctxt "Languages::ship_usps_entry_type_none"
+msgid "None"
+msgstr "None"
+
+msgctxt "Languages::ship_usps_entry_type_destination_delivery_unit"
+msgid "Destination Delivery Unit"
+msgstr "Destination Delivery Unit"
+
+msgctxt "Languages::ship_usps_entry_type_destination_network_distribution_center"
+msgid "Destination Network Distribution Center"
+msgstr "Destination Network Distribution Center"
+
+msgctxt "Languages::ship_usps_entry_type_destination_sectional_center_facility"
+msgid "Destination Sectional Center Facility"
+msgstr "Destination Sectional Center Facility"
+
+msgctxt "Languages::ship_usps_entry_type_destination_service_hub"
+msgid "Destination Service Hub"
+msgstr "Destination Service Hub"
+
+msgctxt "Languages::ship_usps_entry_type_international_service_center"
+msgid "International Service Center"
+msgstr "International Service Center"
+
+msgctxt "Languages::shippings.usps.error_empty_response"
+msgid "Service returned an empty response"
+msgstr "Service returned an empty response"
+
+msgctxt "Languages::ship_usps_girth_description"
+msgid "Girth is required only for a non-rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+msgstr "Girth is required only for a non-rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+
+msgctxt "Languages::ship_usps_rate_indicator_help"
+msgid "Rate Indicator value should match (CP, DN, DR, OS, P5, P6, P7, P8, P9, Q0, Q6,Q7, Q8, Q9, SP) when (USPS_GROUND_ADVANTAGE or PARCEL_SELECT) service is selected<br>Rate Indicator value should match (CP, DR, DA, FB, FE, FP, FS, P5, P6, P7, P8, P9, PL, PM, SP) when (PRIORITY_MAIL) service is selected<br>Rate Indicator value should match (ND, DR, E4, E6, FP, P9) when (PRIORITY_MAIL_EXPRESS) service is selected<br>Rate Indicator value should match (PR, NP) when (BOUND_PRINTED_MATTER) service is selected<br>Rate Indicator value should match (SD, BA, SP) when (LIBRARY_MAIL or MEDIA_MAIL) service is selected<br>Rate Indicator value should match (SD, DE, DN, DR, OS, SN, SP, SR) when (USPS_CONNECT_REGIONAL) service is selected"
+msgstr "Rate Indicator value should match (CP, DN, DR, OS, P5, P6, P7, P8, P9, Q0, Q6,Q7, Q8, Q9, SP) when (USPS_GROUND_ADVANTAGE or PARCEL_SELECT) service is selected<br>Rate Indicator value should match (CP, DR, DA, FB, FE, FP, FS, P5, P6, P7, P8, P9, PL, PM, SP) when (PRIORITY_MAIL) service is selected<br>Rate Indicator value should match (ND, DR, E4, E6, FP, P9) when (PRIORITY_MAIL_EXPRESS) service is selected<br>Rate Indicator value should match (PR, NP) when (BOUND_PRINTED_MATTER) service is selected<br>Rate Indicator value should match (SD, BA, SP) when (LIBRARY_MAIL or MEDIA_MAIL) service is selected<br>Rate Indicator value should match (SD, DE, DN, DR, OS, SN, SP, SR) when (USPS_CONNECT_REGIONAL) service is selected"
+
 msgctxt "Languages::ship_width"
 msgid "Package width (cm)"
 msgstr "Package width (cm)"
@@ -11472,6 +12224,10 @@ msgctxt "Languages::text_not_allowed_to_upload_file_size"
 msgid "It is not allowed to upload files that exceed the maximum allowed size of [file_size] MB."
 msgstr "It is not allowed to upload files that exceed the maximum allowed size of [file_size] MB."
 
+msgctxt "Languages::text_not_allowed_to_upload_image_with_dimensions"
+msgid "It is not allowed to upload images that exceed the maximum allowed resolution of [dimension]x[dimension]."
+msgstr "It is not allowed to upload images that exceed the maximum allowed resolution of [dimension]x[dimension]."
+
 msgctxt "Languages::text_not_valid_email"
 msgid "<b>[email]</b> is not a valid e-mail address."
 msgstr "<b>[email]</b> is not a valid e-mail address."
@@ -11969,8 +12725,12 @@ msgid "Thumbnails will be generated from detailed images automatically, but you 
 msgstr "Thumbnails will be generated from detailed images automatically, but you can also <a id=\"[id]\" class=\"[class]\">upload them manually.</a>"
 
 msgctxt "Languages::text_tinymce"
-msgid "TinyMCE"
-msgstr "TinyMCE"
+msgid "TinyMCE 4 (deprecated)"
+msgstr "TinyMCE 4 (deprecated)"
+
+msgctxt "Languages::text_tinymce8"
+msgid "TinyMCE 8"
+msgstr "TinyMCE 8"
 
 msgctxt "Languages::text_topmenu_more"
 msgid "More [item] <i class=\"text-arrow\">&rarr;</i>"
@@ -12852,6 +13612,22 @@ msgctxt "Languages::top_panel"
 msgid "Top panel"
 msgstr "Top panel"
 
+msgctxt "Languages::navbar_mobile.homepage"
+msgid "Main"
+msgstr "Main"
+
+msgctxt "Languages::navbar_mobile.menu"
+msgid "Catalog"
+msgstr "Catalog"
+
+msgctxt "Languages::navbar_mobile.cart"
+msgid "Cart"
+msgstr "Cart"
+
+msgctxt "Languages::navbar_mobile.account"
+msgid "Profile"
+msgstr "Profile"
+
 msgctxt "Languages::total"
 msgid "Total"
 msgstr "Total"
@@ -13157,8 +13933,8 @@ msgid "Categories to be displayed in the navigation breadcrumbs."
 msgstr "Categories to be displayed in the navigation breadcrumbs."
 
 msgctxt "Languages::tt_views_products_update_images"
-msgid "The maximum size of image files is [file_size] MB."
-msgstr "The maximum size of image files is [file_size] MB."
+msgid "Maximum file size: [file_size] MB.<br>Maximum dimensions: [max_dimension]px on the longest side."
+msgstr "Maximum file size: [file_size] MB.<br>Maximum dimensions: [max_dimension]px on the longest side."
 
 msgctxt "Languages::tt_views_products_update_inventory"
 msgid "Track in stock product quantity. Enable the \"Enable inventory tracking\" option (Settings -> General) to modify."
@@ -13447,10 +14223,6 @@ msgstr "Validator \"[validator_name]\" returned fail status"
 msgctxt "Languages::upgrade_center.filehash_check_failed"
 msgid "Upgrade is impossible due to file integrity check error. Please contact the technical support team."
 msgstr "Upgrade is impossible due to file integrity check error. Please contact the technical support team."
-
-msgctxt "Languages::upgrade_center.upgrades_are_not_available_in_trial"
-msgid "Upgrades are available only in <strong>Full</strong> and <strong>Free</strong> licensing modes.<br /><br />The licensing mode can be changed under Settings → <a class=\"cm-dialog-opener cm-dialog-auto-size\" data-ca-target-id=\"store_mode_dialog\">Licensing mode</a>."
-msgstr "Upgrades are available only in <strong>Full</strong> and <strong>Free</strong> licensing modes.<br /><br />The licensing mode can be changed under Settings → <a class=\"cm-dialog-opener cm-dialog-auto-size\" data-ca-target-id=\"store_mode_dialog\">Licensing mode</a>."
 
 msgctxt "Languages::upgrade_center.incompatible_third_party_addons"
 msgid "Some of your add-ons weren't tested with this version yet. Before the upgrade, ask the developers of these add-ons if they'll work."
@@ -15292,6 +16064,14 @@ msgctxt "SettingsOptions::default_product_details_view"
 msgid "Product detailed page view"
 msgstr "Product detailed page view"
 
+msgctxt "SettingsOptions::default_show_videos_before_images"
+msgid "Show videos before images"
+msgstr "Show videos before images"
+
+msgctxt "SettingsOptions::default_autoplay_videos"
+msgid "Autoplay videos"
+msgstr "Autoplay videos"
+
 msgctxt "SettingsOptions::product_details_in_tab"
 msgid "Display product details in tabs"
 msgstr "Display product details in tabs"
@@ -16768,6 +17548,22 @@ msgstr "Edit robots.txt"
 msgctxt "Languages::restore_robots"
 msgid "Restore the default robots.txt"
 msgstr "Restore the default robots.txt"
+
+msgctxt "Languages::llms_title"
+msgid "Editing: llms.txt"
+msgstr "Editing: llms.txt"
+
+msgctxt "Languages::edit_llms"
+msgid "Edit llms.txt"
+msgstr "Edit llms.txt"
+
+msgctxt "Languages::edit_llms_tooltip"
+msgid "<p><strong>What is llms.txt used for?</strong><br>Some AI assistants use llms.txt as a short index, or a list of important pages (shipping, categories, products), which helps them analyze your store more efficiently.<p><strong>How to fill in llms.txt?</strong><br>Do not include the entire catalog and every page of your store. Instead, add the links to automatically generated <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/price_list/set_price_list.html\" target=\"_blank\"><u>price lists</u></a> and <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/google_sitemap/set_google_sitemap.html\" target=\"_blank\"><u>site map</u></a>.</p><p>Include the most important details: terms of delivery and payment, return policy, key categories, storefronts and maybe some bestsellers.</p><p><strong>Recommendations</strong><br><ul><li>Optimal number of links: 20–50.</li><li>Text format: Markdown.</li></ul></p><p>See what llms.txt may look like at <a href=\"https://llmstxt.org/#example\" target=\"_blank\"><u>https://llmstxt.org/#example</u></a>.</p>"
+msgstr "<p><strong>What is llms.txt used for?</strong><br>Some AI assistants use llms.txt as a short index, or a list of important pages (shipping, categories, products), which helps them analyze your store more efficiently.<p><strong>How to fill in llms.txt?</strong><br>Do not include the entire catalog and every page of your store. Instead, add the links to automatically generated <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/price_list/set_price_list.html\" target=\"_blank\"><u>price lists</u></a> and <a href=\"https://docs.cs-cart.com/latest/user_guide/addons/google_sitemap/set_google_sitemap.html\" target=\"_blank\"><u>site map</u></a>.</p><p>Include the most important details: terms of delivery and payment, return policy, key categories, storefronts and maybe some bestsellers.</p><p><strong>Recommendations</strong><br><ul><li>Optimal number of links: 20–50.</li><li>Text format: Markdown.</li></ul></p><p>See what llms.txt may look like at <a href=\"https://llmstxt.org/#example\" target=\"_blank\"><u>https://llmstxt.org/#example</u></a>.</p>"
+
+msgctxt "Languages::information_file_llms"
+msgid "A llms.txt file was detected. The changes you make here won't take effect until you delete the existing <b>llms.txt</b> file from the root directory of your store."
+msgstr "A llms.txt file was detected. The changes you make here won't take effect until you delete the existing <b>llms.txt</b> file from the root directory of your store."
 
 msgctxt "Languages::option_exceptions"
 msgid "Option exceptions"
@@ -18401,9 +19197,17 @@ msgctxt "Languages::exclusive_promotions"
 msgid "Exclusive discounts"
 msgstr "Exclusive discounts"
 
+msgctxt "Languages::exclusive_promotions_short"
+msgid "Exclusive discounts"
+msgstr "Exclusive discounts"
+
 msgctxt "Languages::exclusive_promotions_content"
 msgid "Subscribe to our news and get a 10% discount coupon!"
 msgstr "Subscribe to our news and get a 10% discount coupon!"
+
+msgctxt "Languages::exclusive_promotions_content_short"
+msgid "Subscribe and get 10% discount!"
+msgstr "Subscribe and get 10% discount!"
 
 msgctxt "Languages::tmpl_subscription_advanced"
 msgid "Subscription advanced form"
@@ -18481,10 +19285,6 @@ msgctxt "Languages::licensed_product"
 msgid "Licensed product"
 msgstr "Licensed product"
 
-msgctxt "Languages::store_mode.free"
-msgid "Free"
-msgstr "Free"
-
 msgctxt "Languages::store_mode.ultimate"
 msgid "Ultimate"
 msgstr "Ultimate"
@@ -18540,14 +19340,6 @@ msgstr "<p>You can use the software without time restrictions now.</p><br>"
 msgctxt "Languages::product_state_description.ult.b2b.enterprise"
 msgid "<p>You can use the software without time restrictions now.</p><br>"
 msgstr "<p>You can use the software without time restrictions now.</p><br>"
-
-msgctxt "Languages::text_store_mode_changed_to_ult.free"
-msgid "Your store now uses an active license of [product]."
-msgstr "Your store now uses an active license of [product]."
-
-msgctxt "Languages::text_store_mode_changed_to_ult.free_ru"
-msgid "Your store now uses an active license of [product]."
-msgstr "Your store now uses an active license of [product]."
 
 msgctxt "Languages::text_store_mode_changed_to_ult"
 msgid "Your store now uses an active license of [product]."
@@ -20233,6 +21025,10 @@ msgctxt "Languages::checkout.min_cart_subtotal_required"
 msgid "To continue checkout process your order subtotal must exceed [amount]"
 msgstr "To continue checkout process your order subtotal must exceed [amount]"
 
+msgctxt "Languages::checkout.chosen_entity_is_unavailable"
+msgid "The selected [entity] is unavailable on the specified storefront."
+msgstr "The selected [entity] is unavailable on the specified storefront."
+
 msgctxt "Languages::lite_checkout.customer_information"
 msgid "Customer"
 msgstr "Customer"
@@ -21901,45 +22697,9 @@ msgctxt "Languages::exim_error_incorrect_concrete_feature_type"
 msgid "Incorrect feature type '[feature_type]' of the '[feature_name]' product feature. The product feature was skipped."
 msgstr "Incorrect feature type '[feature_type]' of the '[feature_name]' product feature. The product feature was skipped."
 
-msgctxt "Languages::product_state_description.ult.free.free"
-msgid "<p>You're using CS-Cart Free. It has all the functionality to launch your own independent online store, free of charge. If you ever need the extended functionality of CS-Cart Standard or Ultimate — such as user groups, advanced product settings, multiple storefronts, and more — please contact us.</p>"
-msgstr "<p>You're using CS-Cart Free. It has all the functionality to launch your own independent online store, free of charge. If you ever need the extended functionality of CS-Cart Standard or Ultimate — such as user groups, advanced product settings, multiple storefronts, and more — please contact us.</p>"
-
-msgctxt "Languages::product_state_description.ult.free_ru.free"
-msgid "<p>You're using CS-Cart Free. It has all the functionality to launch your own independent online store, free of charge. If you ever need the extended functionality of CS-Cart Standard or Ultimate — such as user groups, advanced product settings, multiple storefronts, and more — please contact us.</p>"
-msgstr "<p>You're using CS-Cart Free. It has all the functionality to launch your own independent online store, free of charge. If you ever need the extended functionality of CS-Cart Standard or Ultimate — such as user groups, advanced product settings, multiple storefronts, and more — please contact us.</p>"
-
 msgctxt "Languages::contact_us"
 msgid "Contact us"
 msgstr "Contact us"
-
-msgctxt "Languages::ultimate_or_storefront_license_required.ult.free"
-msgid "This action requires [product] Ultimate"
-msgstr "This action requires [product] Ultimate"
-
-msgctxt "Languages::ultimate_or_storefront_license_required.ult.free_ru"
-msgid "This action requires [product] Ultimate"
-msgstr "This action requires [product] Ultimate"
-
-msgctxt "Languages::max_storefronts_reached.ult.free"
-msgid "<p>You have reached the limit of storefronts available for your license. To add another storefront, please upgrade to <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-msgstr "<p>You have reached the limit of storefronts available for your license. To add another storefront, please upgrade to <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-
-msgctxt "Languages::max_storefronts_reached.ult.free_ru"
-msgid "<p>You have reached the limit of storefronts available for your license. To add another storefront, please upgrade to <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-msgstr "<p>You have reached the limit of storefronts available for your license. To add another storefront, please upgrade to <a href=\"[ultimate_license_url]\" target=\"_blank\">[product] Ultimate</a>.</p>"
-
-msgctxt "Languages::helpdesk_account.activate_free_license_message"
-msgid "Create an account in our Help Desk system. It will allow you to upgrade your store, contact our Customer Care team, and get add-ons (both paid and free) from the CS-Cart Marketplace for add-ons and themes."
-msgstr "Create an account in our Help Desk system. It will allow you to upgrade your store, contact our Customer Care team, and get add-ons (both paid and free) from the CS-Cart Marketplace for add-ons and themes."
-
-msgctxt "Languages::helpdesk_account.activate_free_license_short_message"
-msgid "Create an account in our Help Desk to upgrade your store, receive support, and get free or paid add-ons from our Add-on Market."
-msgstr "Create an account in our Help Desk to upgrade your store, receive support, and get free or paid add-ons from our Add-on Market."
-
-msgctxt "Languages::helpdesk_account.activate_free_license_message_send"
-msgid "An activation link for your free CS-Cart license was sent to the email: [email]"
-msgstr "An activation link for your free CS-Cart license was sent to the email: [email]"
 
 msgctxt "Languages::no_items_for_marketplace_administrator"
 msgid "No items to show for marketplace administrator. Try to check the section as a vendor."
@@ -22244,3 +23004,83 @@ msgstr "UPS App client secret"
 msgctxt "Languages::authorize"
 msgid "Authorize"
 msgstr "Authorize"
+
+msgctxt "Languages::predict.products.product_will_lose_some_features"
+msgid "Product will lose some features"
+msgstr "Product will lose some features"
+
+msgctxt "Languages::predict.products.product_will_lose_some_features.warning"
+msgid "<p>Product \"[product]\" is about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] feature</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing categories, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">any of these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>|<p>Product \"[product]\" is about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] features</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing categories, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">any of these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p>Product \"[product]\" is about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] feature</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing categories, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">any of these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>|<p>Product \"[product]\" is about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] features</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing categories, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">any of these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>"
+
+msgctxt "Languages::predict.products.products_will_lose_some_features"
+msgid "Products will lose some features"
+msgstr "Products will lose some features"
+
+msgctxt "Languages::predict.products.products_will_lose_some_features.warning"
+msgid "<p><a href=\"[product_search_url]\" target=\"_blank\">These products</a> are about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] feature</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>|<p><a href=\"[product_search_url]\" target=\"_blank\">These products</a> are about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] features</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p><a href=\"[product_search_url]\" target=\"_blank\">These products</a> are about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] feature</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>|<p><a href=\"[product_search_url]\" target=\"_blank\">These products</a> are about to lose <a href=\"[feature_search_url]\" target=\"_blank\">[n] features</a>.</p><p>Product features depend on categories. A product loses the features not available in its current categories. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then edit <a href=\"[feature_search_url]\" target=\"_blank\">these features first</a>. Add them to <a href=\"[category_search_url]\" target=\"_blank\">these categories</a>. Once you do that, click \"Cancel\" and save your changes on the current tab again. This warning only appears if saving the changes leads to products losing features.</li></ul>"
+
+msgctxt "Languages::predict.features.feature_will_be_removed_from_products"
+msgid "Feature will be removed from products"
+msgstr "Feature will be removed from products"
+
+msgctxt "Languages::predict.features.feature_will_be_removed_from_products.warning"
+msgid "<p>Feature \"[feature]\" is about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] product</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>|<p>Feature \"[feature]\" is about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] products</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p>Feature \"[feature]\" is about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] product</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>|<p>Feature \"[feature]\" is about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] products</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>"
+
+msgctxt "Languages::predict.features.features_will_be_removed_from_products"
+msgid "Features will be removed from products"
+msgstr "Features will be removed from products"
+
+msgctxt "Languages::predict.features.features_will_be_removed_from_products.warning"
+msgid "<p><a href=\"[feature_search_url]\" target=\"_blank\">These features</a> are about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] product</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>|<p><a href=\"[feature_search_url]\" target=\"_blank\">These features</a> are about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] products</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>"
+msgstr "<p><a href=\"[feature_search_url]\" target=\"_blank\">These features</a> are about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] product</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>|<p><a href=\"[feature_search_url]\" target=\"_blank\">These features</a> are about to be removed from <a href=\"[product_search_url]\" target=\"_blank\">[n] products</a>.</p><p>Product features depend on categories. A product feature not available in any of a product's categories gets removed from the product. This keeps products and features consistent across the catalog.<ul><li>If you're ok with products losing features, click \"Proceed\".</li><li>If not, then click \"Cancel\". This warning only appears if saving the changes leads to products losing features.</li></ul>"
+
+msgctxt "Languages::unlinked_blocks"
+msgid "Unlinked blocks"
+msgstr "Unlinked blocks"
+
+msgctxt "Languages::licensing.plans.default"
+msgid "Default"
+msgstr "Default"
+
+msgctxt "Languages::licensing.plans.trial"
+msgid "Trial"
+msgstr "Trial"
+
+msgctxt "Languages::licensing.plans.standard"
+msgid "Standard"
+msgstr "Standard"
+
+msgctxt "Languages::licensing.plans.plus"
+msgid "Plus"
+msgstr "Plus"
+
+msgctxt "Languages::licensing.plans.ultimate"
+msgid "Ultimate"
+msgstr "Ultimate"
+
+msgctxt "Languages::licensing.plans.unlim"
+msgid "Unlim"
+msgstr "Unlim"
+
+msgctxt "Languages::licensing.rule_for_feature_not_found"
+msgid "Licensing: Rule for feature \"[feature]\" was not found"
+msgstr "Licensing: Rule for feature \"[feature]\" was not found"
+
+msgctxt "Languages::licensing.rule_handler_for_feature_not_found"
+msgid "Licensing: Rule handler for feature \"[feature]\" was not found"
+msgstr "Licensing: Rule handler for feature \"[feature]\" was not found"
+
+msgctxt "Languages::licensing.feature_not_allowed.title"
+msgid "Different plan required"
+msgstr "Different plan required"
+
+msgctxt "Languages::licensing.feature_not_allowed.message"
+msgid "Sorry, this functionality isn't available on your current plan. To get a plan that offers this functionality, please contact us at <a href=\"mailto:sales@cs-cart.com\">sales@cs-cart.com</a>."
+msgstr "Sorry, this functionality isn't available on your current plan. To get a plan that offers this functionality, please contact us at <a href=\"mailto:sales@cs-cart.com\">sales@cs-cart.com</a>."
+
+msgctxt "Languages::licensing.current_plan_not_found"
+msgid "Licensing: The current plan does not correspond to the plan grid"
+msgstr "Licensing: The current plan does not correspond to the plan grid"

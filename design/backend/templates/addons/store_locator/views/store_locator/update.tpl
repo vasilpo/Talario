@@ -23,13 +23,15 @@
                     </div>
                 </div>
 
-                {include file="views/companies/components/company_field.tpl"
-                    name="store_location_data[company_id]"
-                    id="company_id_{$id}"
-                    selected=$store_location.company_id
-                    company_field_name=__("owner")
-                    zero_company_id_name_lang_var=$zero_company_id_name_lang_var
-                }
+                {hook name="store_locator:company_id"}
+                    {include file="views/companies/components/company_field.tpl"
+                        name="store_location_data[company_id]"
+                        id="company_id_{$id}"
+                        selected=$store_location.company_id
+                        company_field_name=__("owner")
+                        zero_company_id_name_lang_var=$zero_company_id_name_lang_var
+                    }
+                {/hook}
 
                 <div class="control-group">
                     <label class="control-label" for="elm_position">{__("position")}:</label>

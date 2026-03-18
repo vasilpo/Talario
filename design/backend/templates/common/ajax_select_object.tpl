@@ -67,7 +67,7 @@
             {/foreach}
             <!--{$id}--></ul>
             <ul>
-                <li id="content_loader_{$id}" class="cm-ajax-content-more ajax-content-more" data-ca-target-url="{$data_url|fn_url}" data-ca-target-id="{$id}" data-ca-result-id="{$result_elm}"><span>{__("loading")}</span></li>
+                <li id="content_loader_{$id}" class="cm-ajax-content-more ajax-content-more" {if $data_url}data-ca-target-url="{$data_url|fn_url}"{/if} data-ca-target-id="{$id}" data-ca-result-id="{$result_elm}"><span>{__("loading")}</span></li>
             </ul>
         </div>
     </li>

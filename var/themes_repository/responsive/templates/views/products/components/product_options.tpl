@@ -84,8 +84,12 @@
                             {/if}
                             {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}
                                 disabled="disabled"
-                                class="disabled"
                             {/if}
+                            class="ty-product-options__item-select {strip}
+                                {if $product.exclude_from_calculate && !$product.aoc || $po.disabled || $disabled}
+                                    disabled {""}
+                                {/if}
+                            {/strip}"
                     >
                         {if $product.options_type == "ProductOptionsApplyOrder::SEQUENTIAL"|enum}
                             {if !$runtime.checkout || $po.disabled || $disabled || ($runtime.checkout && !$po.value)}
@@ -156,12 +160,12 @@
                     <ul id="option_{$obj_prefix}{$id}_{$po.option_id}_group" class="ty-product-options__elem">
                         {if !$po.disabled && !$disabled}
                             {foreach $po.variants as $vr}
-                                <li>
+                                <li class="ty-product-options__box-wrapper ty-product-options__box-wrapper--radio-group">
                                     <label id="option_description_{$id}_{$po.option_id}_{$vr.variant_id}"
                                            class="ty-product-options__box option-items"
                                     >
                                         <input type="radio"
-                                               class="radio"
+                                               class="radio ty-product-options__radio-input ty-product-options__radio-input--radio-group"
                                                name="{$name}[{$id}][product_options][{$po.option_id}]"
                                                value="{$vr.variant_id}"
                                                {if $po.value == $vr.variant_id }
@@ -178,6 +182,9 @@
                                                {/if}
                                         />
                                         {strip}
+                                        {if $enable_product_options_box_inner}
+                                        <span class="ty-product-options__box-inner ty-product-options__box-inner--radio-group">
+                                        {/if}
                                         {$vr.variant_name}&nbsp;
                                         {if  $show_modifiers}
                                             {hook name="products:options_modifiers"}
@@ -188,6 +195,9 @@
                                                     })
                                                 {/if}
                                             {/hook}
+                                        {/if}
+                                        {if $enable_product_options_box_inner}
+                                        </span>
                                         {/if}
                                         {/strip}
                                     </label>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<block_scheme scheme="1.0">
+<block_scheme scheme="1.1">
     <settings>
         <default_language>en</default_language>
     </settings>
@@ -39,8 +39,10 @@
                             <object_type><![CDATA[]]></object_type>
                             <content>
                                 <items>
-                                    <filling><![CDATA[manually]]></filling>
-                                    <item_ids><![CDATA[17,18,19]]></item_ids>
+                                    <filling><![CDATA[newest]]></filling>
+                                    <period><![CDATA[A]]></period>
+                                    <last_days><![CDATA[1]]></last_days>
+                                    <limit><![CDATA[2]]></limit>
                                 </items>
                             </content>
                             <object_ids><![CDATA[]]></object_ids>
@@ -59,7 +61,7 @@
                                             <filling><![CDATA[newest]]></filling>
                                             <period><![CDATA[A]]></period>
                                             <last_days><![CDATA[10]]></last_days>
-                                            <limit><![CDATA[3]]></limit>
+                                            <limit><![CDATA[2]]></limit>
                                         </items>
                                     </content>
                                 </item>
@@ -91,6 +93,46 @@
                             <translations/>
                             <contents/>
                         </block>
+                        <block edition="MULTIVENDOR">
+                            <type><![CDATA[vendors]]></type>
+                            <properties>
+                                <template><![CDATA[blocks/vendor_list_templates/featured_vendors.tpl]]></template>
+                                <number_of_columns><![CDATA[5]]></number_of_columns>
+                                <show_location><![CDATA[Y]]></show_location>
+                                <show_rating><![CDATA[Y]]></show_rating>
+                                <show_vendor_rating><![CDATA[Y]]></show_vendor_rating>
+                                <show_products_count><![CDATA[Y]]></show_products_count>
+                                <displayed_vendors><![CDATA[5]]></displayed_vendors>
+                            </properties>
+                            <lang_code><![CDATA[en]]></lang_code>
+                            <name><![CDATA[Featured Vendors]]></name>
+                            <object_type><![CDATA[]]></object_type>
+                            <content>
+                                <items>
+                                    <filling><![CDATA[all]]></filling>
+                                </items>
+                            </content>
+                            <object_ids><![CDATA[]]></object_ids>
+                            <wrapper><![CDATA[blocks/wrappers/mainbox_simple.tpl]]></wrapper>
+                            <user_class><![CDATA[ty-homepage-vendors]]></user_class>
+                            <order><![CDATA[2]]></order>
+                            <status><![CDATA[A]]></status>
+                            <translations>
+                                <translation lang_code="ru"><![CDATA[]]></translation>
+                            </translations>
+                            <contents>
+                                <item>
+                                    <object_id><![CDATA[0]]></object_id>
+                                    <object_type><![CDATA[]]></object_type>
+                                    <lang_code><![CDATA[]]></lang_code>
+                                    <content>
+                                        <items>
+                                            <filling><![CDATA[all]]></filling>
+                                        </items>
+                                    </content>
+                                </item>
+                            </contents>
+                        </block>
                         <block>
                             <type><![CDATA[products]]></type>
                             <properties>
@@ -120,7 +162,7 @@
                                 </items>
                             </content>
                             <object_ids><![CDATA[]]></object_ids>
-                            <wrapper><![CDATA[]]></wrapper>
+                            <wrapper><![CDATA[blocks/wrappers/mainbox_simple.tpl]]]></wrapper>
                             <user_class><![CDATA[]]></user_class>
                             <order><![CDATA[2]]></order>
                             <status><![CDATA[A]]></status>
@@ -147,7 +189,7 @@
                                 </items>
                             </content>
                             <object_ids><![CDATA[]]></object_ids>
-                            <wrapper><![CDATA[]]></wrapper>
+                            <wrapper><![CDATA[blocks/wrappers/mainbox_simple.tpl]]]></wrapper>
                             <user_class><![CDATA[]]></user_class>
                             <order><![CDATA[3]]></order>
                             <status><![CDATA[A]]></status>

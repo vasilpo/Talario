@@ -4,6 +4,7 @@
          class="items-container cm-sortable ui-sortable"
          data-ca-sortable-table="store_location_destination_links"
          data-ca-sortable-id-name="link_id"
+         data-ca-sortable-non-zero-position="true"
     >
         <div class="table-responsive-wrapper">
             <table class="table table-responsive">

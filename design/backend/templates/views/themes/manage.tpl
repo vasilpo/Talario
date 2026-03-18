@@ -74,51 +74,6 @@
     </div>
 </div>
 <div class="row-fluid">
-    {capture name="add_new_picker"}
-        <form action="{""|fn_url}" method="post" name="clone_theme_{$theme_name}_form" class="cm-ajax cm-comet cm-form-dialog-closer form-horizontal form-edit cm-skip-check-items">
-            <input type="hidden" name="theme_data[theme_src]" value="{$theme_name}">
-            <input type="hidden" name="result_ids" value="themes_list,elm_sidebar">
-
-            <div class="add-new-object-group">
-                <div class="tabs cm-j-tabs tabs--enable-fill tabs--count-{$tabs_count}">
-                    <ul class="nav nav-tabs">
-                        <li id="tab_clone_theme_{$theme_name}" class="cm-js active"><a>{__("general")}</a></li>
-                    </ul>
-                </div>
-
-                <div class="cm-tabs-content" id="content_tab_clone_theme_{$theme_name}">
-                    <fieldset>
-                        <div class="control-group">
-                            <label class="control-label cm-required" for="elm_theme_dir_{$theme_name}">{__("directory")}</label>
-                            <div class="controls">
-                                <input type="text" id="elm_theme_dir_{$theme_name}" name="theme_data[theme_dest]" value="{$theme_name}_clone" />
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" for="elm_theme_title_{$theme_name}">{__("name")}</label>
-                            <div class="controls">
-                                <input type="text" id="elm_theme_title_{$theme_name}" name="theme_data[title]" value="{$theme.title}" />
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" for="elm_theme_desc_{$theme_name}">{__("description")}</label>
-                            <div class="controls">
-                                <textarea name="theme_data[description]" id="elm_theme_desc_{$theme_name}" cols="50" rows="4" class="span9">{$theme.description}</textarea>
-                            </div>
-                        </div>
-
-                    </fieldset>
-                </div>
-            </div>
-
-            <div class="buttons-container">
-                {include file="buttons/save_cancel.tpl" but_name="dispatch[themes.clone]" cancel_action="close" save=true}
-            </div>
-
-        </form>
-    {/capture}
     <div class="span12 section-headers">
         <h4 class="lead">{$theme.title}{if $layout.style_name}: {$layout.style_name}{/if}</h4>
         <span class="muted">{__("theme_styles_and_layouts")}</span>
@@ -365,11 +320,6 @@
     {/if}
     </div>
 {/hook}
-
-    {$theme_name = $available_themes.current.theme_name}
-    <div class="hidden" id="content_elm_clone_theme_{$theme_name}" title="{__("clone_theme")}">
-        {$smarty.capture.add_new_picker nofilter}
-    </div>
 
 </div>
 {/if}

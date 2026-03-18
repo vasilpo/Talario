@@ -1,6 +1,6 @@
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -27,15 +27,20 @@
 
 .ab__vg-image_gallery_video:not(.ab__clear_image),
 .ab__vg-videos .ab__vg-video_thumb {
+
     &:before {
         content: "";
         display: inline-block;
         width: 100%;
         height: 100%;
         position: absolute;
-        opacity: 0.9;
 
-        .transition(filter 150ms linear);
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+        border-radius: calc(var(--border-radius-box) - 6px);
+        overflow: hidden;
+
+        -webkit-transition: background .15s ease-in;
+        transition: background .15s ease-in;
 
         image-rendering: -webkit-optimize-contrast;
         image-rendering: optimizeQuality;
@@ -57,7 +62,10 @@
 
     &:hover {
         &:before {
-            opacity: 1;
+            background-color: rgba(0,0,0,0.1);
+        }
+        &.ab-video-icon:before, &.ab-youtube-icon:before {
+            transform: scale(1.05);
         }
     }
 
@@ -93,14 +101,10 @@
         a:not([href="javascript:void(0)"]) {
             color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @links, white);
             text-decoration: underline;
-
-            &:hover {
-                color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @links, white);
-            }
         }
 
         .ab__vg-video_title p {
-            color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @links, white);
+            color: contrast(@abt__ut2_addons_ab__video_gallery_block_bg, @font, white);
         }
 
         .ab__vg-video_description p {
@@ -113,9 +117,9 @@
         display: flex;
         height: 100%;
         width: 100%;
-        aspect-ratio: 960 / 540;
+        aspect-ratio: 960 / 538;
 
-        border-radius: calc(var(--border-radius-box) - 4px);
+        border-radius: calc(var(--border-radius-box) - 6px);
         overflow: hidden;
     }
 
@@ -138,7 +142,6 @@
         padding: 0;
         font-size: var(--font-size-medium);
         line-height: normal;
-        max-height: none;
 
         strong {
             font-weight: 600;

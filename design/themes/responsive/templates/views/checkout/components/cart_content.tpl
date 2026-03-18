@@ -5,7 +5,7 @@
 <input type="hidden" name="redirect_mode" value="cart" />
 <input type="hidden" name="result_ids" value="{$result_ids}" />
 
-<h1 class="ty-mainbox-title">{__("cart_contents")}</h1>
+<h1 class="ty-mainbox-title">{$cart_content_title|default:__("cart_contents")}</h1>
 
 <div class="buttons-container ty-cart-content__top-buttons clearfix">
     <div class="ty-float-left ty-cart-content__left-buttons">
@@ -16,9 +16,9 @@
     <div class="ty-float-right ty-cart-content__right-buttons">
         {hook name="checkout:cart_content_top_right_buttons"}
             {include file="buttons/update_cart.tpl"
-                     but_id="button_cart"
-                     but_meta="ty-btn--recalculate-cart hidden hidden-phone hidden-tablet"
-                     but_name="dispatch[checkout.update]"
+                    but_id="button_cart"
+                    but_meta="ty-btn--recalculate-cart hidden hidden-phone hidden-tablet"
+                    but_name="dispatch[checkout.update]"
             }
             {if $payment_methods}
                 {include file="buttons/proceed_to_checkout.tpl"}
@@ -43,6 +43,11 @@
     </div>
     <div class="ty-float-right ty-cart-content__right-buttons">
         {hook name="checkout:cart_content_bottom_right_buttons"}
+            {include file="buttons/update_cart.tpl"
+                    but_id="button_cart"
+                    but_meta="ty-btn--recalculate-cart hidden hidden-phone hidden-tablet"
+                    but_name="dispatch[checkout.update]"
+            }
             {if $payment_methods}
                 {assign var="link_href" value="checkout.checkout"}
                 {include file="buttons/proceed_to_checkout.tpl"}
@@ -62,3 +67,5 @@
     </table>
     <!--payment-methods--></div>
 {/if}
+
+{include file="views/checkout/components/cart_bottom_fixed.tpl"}

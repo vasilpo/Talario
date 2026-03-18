@@ -9,18 +9,35 @@
     --cs-menu-sidebar-color: @menuSidebarColor;
 }
 
+html.cs-main-menu-collapse .cs-main-menu-toggle__btn--menu-type-collapse,
+html.cs-main-menu-dropdown .cs-main-menu-toggle__btn--menu-type-dropdown {
+    display: none;
+}
+
+.cs-main-menu-toggle__btn--menu-type-collapse:hover,
+.cs-main-menu-toggle__btn--menu-type-collapse:focus,
+.cs-main-menu-toggle__btn--menu-type-dropdown:hover,
+.cs-main-menu-toggle__btn--menu-type-dropdown:focus {
+    background: linear-gradient(var(--cs-inverse-shadow50-color), var(--cs-inverse-shadow50-color)), var(--cs-menu-sidebar-color-active);
+}
+
 // Menu sidebar styles
 .cs-main-menu {
+    --cs-main-menu-transition-duration: 300ms; // use only ms
+
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
     bottom: var(--bp-bottom-panel-height);
-    padding-top: var(--top-bar-height);
     width: var(--main-menu-width);
-    z-index: var(--cs-zindex-fixed-navbar);
+    z-index: ~"calc(var(--cs-zindex-fixed-navbar) + 1)";
     background-color: var(--cs-menu-sidebar-color);
     background-image: var(--cs-menu-sidebar-bg);
+    box-shadow: 1px 0 1px var(--cs-table-border);
+    transition-duration: var(--cs-main-menu-transition-duration);
+    transition-property: width;
+    transition-timing-function: ease-in-out;
 }
 
 .cs-main-menu__outer {
@@ -28,6 +45,9 @@
     flex-direction: column;
     flex-grow: 1;
     gap: 20px;
+}
+
+html.cs-main-menu-collapse .cs-main-menu__outer {
     overflow-y: auto;
 }
 
@@ -42,16 +62,20 @@
     padding-top: 8px;
 }
 
+html .cs-main-menu__outer {
+    margin-bottom: ~"calc((var(--cs-base-line-height) + 2 * 6px) * 0.5)"; // margin-bottom: 16px;
+}
+
 // var(--cs-tablet-breakpoint) + 1px
 @media (min-width: 768px) {
     html:not(.bp-panel-active) .cs-main-menu__outer {
-        margin-bottom: ~"calc(5px + 40px + (var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 58px;
+        margin-bottom: ~"calc(5px + 40px + ((var(--cs-base-line-height) + 2 * 6px) * 0.5))"; // margin-bottom: 61px;
     }
 }
 
 @media (min-width: 1340px) {
     html:not(.bp-panel-active) .cs-main-menu__outer {
-        margin-bottom: ~"calc(24px + 56px + (var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 93px;
+        margin-bottom: ~"calc(24px + 56px + ((var(--cs-base-line-height) + 2 * 6px) * 0.5))"; // margin-bottom: 96px;
     }
 }
 
@@ -63,12 +87,44 @@
 .cs-main-menu__secondary {
     bottom: 0;
     position: sticky;
-    padding-top: ~"calc(var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 13px;
-    padding-bottom: ~"calc(var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 13px;
+    padding-top: ~"calc((var(--cs-base-line-height) + 2 * 3px) * 0.5)"; // padding-bottom: 13px;
     max-height: ~"calc(100vh / 2)";
-    overflow: auto;
     z-index: 1;
     background: var(--cs-content-background);
+}
+
+.cs-main-menu__bottom-toolbar {
+    bottom: 0;
+    position: sticky;
+    max-height: ~"calc(100vh / 2)";
+    z-index: 1;
+    background-color: var(--cs-menu-sidebar-bottom-toolbar-color);
+    background-image: var(--cs-menu-sidebar-bottom-toolbar-bg);
+}
+
+.cs-main-menu-toggle__icon {
+    --cs-main-menu-toggle-icon-scale-y: 1;
+
+    transform: rotate(90deg) scaleY(var(--cs-main-menu-toggle-icon-scale-y));
+}
+
+html.cs-main-menu-dropdown .cs-main-menu-toggle__icon {
+    transform: rotate(-90deg) scaleY(var(--cs-main-menu-toggle-icon-scale-y));
+}
+
+html[dir="rtl"] .cs-main-menu-toggle__icon {
+    --cs-main-menu-toggle-icon-scale-y: -1;
+}
+
+html.cs-main-menu-dropdown .main-menu__link-wrapper--main-menu-toggle .cs-main-menu-toggle__btn--menu-type-collapse:not(:hover):not(:focus),
+html.cs-main-menu-dropdown .main-menu__link-wrapper--main-menu-toggle .cs-main-menu-toggle__btn--menu-type-dropdown:not(:hover):not(:focus),
+html.cs-main-menu-collapse .cs-main-menu-toggle__btn--menu-type-dropdown:not(:hover):not(:focus) .main-menu-1__link-icon {
+    opacity: 0.7;
+}
+
+
+html.cs-main-menu-collapse .cs-main-menu__secondary {
+    overflow: auto;
 }
 
 // Mobile main menu
@@ -107,9 +163,15 @@
     }
 }
 
-.cs-main-menu__header-mobile {
-    margin-left: 16px;
-    margin-right: 16px;
+.cs-main-menu__header {
+    --cs-main-menu-header-padding-x: ~"calc((var(--top-bar-height) - 34px) / 2)";
+
+    padding: var(--cs-main-menu-header-padding-x) 16px;
+}
+
+html.cs-main-menu-dropdown .cs-main-menu__header {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 // Main menu scroll bar

@@ -29,7 +29,8 @@
 			show_add_to_cart=$settings.abt__ut2.product_list.$tmpl.show_button_add_to_cart[$settings.ab__device] !== "none"
 			show_features=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features"
 			show_descr=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "description"
-            show_brand_logo=$settings.abt__ut2.product_list.$tmpl.show_brand_logo[$settings.ab__device] === "YesNo::YES"|enum
+			show_brand_name=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "name"
+			show_brand_logo=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "logo"
 			show_list_buttons=false
 			show_custom_class="ut2-rp__grid"
 			but_role="action"

@@ -13,8 +13,8 @@
     {if $product_file.license}
         <div>
             <br>
-            <a id="sw_licence_{$product_file.file_id}" class="cm-combination ty-dashed-link">{__("license_agreement")}</a>
-            <div class="hidden" id="licence_{$product_file.file_id}">
+            <a id="sw_licence_{$product_file.file_id}" class="cm-combination ty-dashed-link ty-license-agreement__link">{__("license_agreement")}</a>
+            <div class="ty-license-agreement__content hidden" id="licence_{$product_file.file_id}">
                 {$product_file.license nofilter}
             </div>
         </div>

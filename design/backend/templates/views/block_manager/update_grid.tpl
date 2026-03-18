@@ -56,17 +56,28 @@
         </div>
     </div>
 
-    <div class="control-group cm-no-hide-input">
-        <label class="control-label" for="elm_grid_wrapper_{$elm_id}">{__("wrapper")}</label>
-        <div class="controls">
-            <select id="elm_grid_wrapper_{$elm_id}" name="wrapper">
-                <option value="">{__("none")}</option>
-                {foreach $grids_schema.wrappers as $wrapper_name => $wrapper_template}
-                    <option value="{$wrapper_template}" {if $wrapper_template == $grid.wrapper}selected{/if}>{$wrapper_name}</option>
-                {/foreach}
-            </select>
+    {if $grids_schema.wrappers|count > 0}
+        <div class="control-group cm-no-hide-input">
+            <label class="control-label" for="elm_grid_wrapper_{$elm_id}">{__("wrapper")}</label>
+            <div class="controls">
+                <select id="elm_grid_wrapper_{$elm_id}" name="wrapper">
+                    <option value="">{__("none")}</option>
+                    {foreach $grids_schema.wrappers as $wrapper_key => $wrapper}
+                        {if is_array($wrapper)}
+                            {$wrapper_template=$wrapper.template}
+                            {$wrapper_name=$wrapper.name}
+                        {else}
+                            {* For backward compatibility with old schema format *}
+                            {$wrapper_template=$wrapper}
+                            {$wrapper_name=$wrapper_key}
+                        {/if}
+
+                        <option value="{$wrapper_template}" {if $wrapper_template === $grid.wrapper}selected{/if}>{$wrapper_name}</option>
+                    {/foreach}
+                </select>
+            </div>
         </div>
-    </div>
+    {/if}
 
     <div class="control-group cm-no-hide-input">
         <label class="control-label" for="elm_grid_offset_{$elm_id}">{__("offset")}</label>

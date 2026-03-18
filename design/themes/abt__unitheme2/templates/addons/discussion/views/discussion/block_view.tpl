@@ -5,47 +5,58 @@
 
     <div id="posts_list_{$object_id}">
     {if $discussion.posts}
-        <div class="ty-mb-l">
-            <div class="ty-scroller-discussion-list">
+        <div class="ty-mb-s">
+            <div class="ut2-scroller-discussion-list">
                 <div id="scroll_list_discussion" class="owl-carousel ty-scroller-list">
                     {foreach from=$discussion.posts item=post}
-                        <div class="ty-discussion-post__content ty-mb-l">
+                        <div class="ut2-discussion-post__content">
 
                         {hook name="discussion:items_list_row"}
 
-                        <div class="ty-discussion-post {cycle values=", ty-discussion-post_even"}" id="post_{$post.post_id}">
+                        <div class="ut2-discussion-post {cycle values=", ut2-discussion-post_even"}" id="post_{$post.post_id}">
                             {if $discussion.type == "Addons\\Discussion\\DiscussionTypes::TYPE_COMMUNICATION"|enum
                                 || $discussion.type == "Addons\\Discussion\\DiscussionTypes::TYPE_COMMUNICATION_AND_RATING"|enum
                             }
-                                <div class="ty-discussion-post__message{if $settings.abt__ut2.addons.discussion.highlight_administrator === "Y" && $post.user_type === "UserTypes::ADMIN"|enum} auth-admin{/if}">
-                                    <div class="ty-discussion-post__message-author">
-                                        <div class="ty-discussion-post__author">
-                                            <div class="ty-discussion-post__avatar">
-                                                {* if admin *}
-                                                {if $settings.abt__ut2.addons.discussion.highlight_administrator === "Y" && $post.user_type === "A"}
-                                                    <i class="ut2-icon-outline-headset_mic"></i>
-                                                {else}
-                                                    {fn_substr(trim($post.name), 0, 1)}
-                                                {/if}
-                                            </div>
-                                            <p><b>{$post.name}</b><br/>
-                                            <span class="ty-discussion-post__date">{$post.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</span></p>
-                                        </div>
-                                        {* if not Admin *}
-                                        {if $post.user_type !== "A"}
-                                            <div class="ty-discussion-post__rating-stars">
-                                                {if $discussion.type == "Addons\\Discussion\\DiscussionTypes::TYPE_RATING"|enum
-                                                    || $discussion.type == "Addons\\Discussion\\DiscussionTypes::TYPE_COMMUNICATION_AND_RATING"|enum
-                                                    && $post.rating_value > 0
-                                                }
-                                                    <div class="clearfix ty-discussion-post__rating">
-                                                        {include file="addons/discussion/views/discussion/components/stars.tpl" stars=$post.rating_value|fn_get_discussion_rating}
+                                <div class="ut2-discussion-post__message{if $settings.abt__ut2.addons.discussion.highlight_administrator === "Y" && $post.user_type === "UserTypes::ADMIN"|enum} auth-admin{/if}">
+                                    <div class="ut2-discussion-post__message-author">
+                                        <div class="ut2-discussion-post__message-author">
+                                            <div class="ut2-discussion-post__author">
+                                                <div class="ut2-discussion-post__avatar">
+                                                    {* if admin *}
+                                                    {if $settings.abt__ut2.addons.discussion.highlight_administrator === "Y" && $post.user_type === "A"}
+                                                        <i class="ut2-icon-outline-headset_mic"></i>
+                                                    {else}
+                                                        {fn_substr($post.name, 0, 1)}
+                                                    {/if}
+                                                </div>
+                                                <div class="ut2-discussion-post__name">
+                                                    <div>
+                                                        {$post.name}
+                                                        {* if buyer *}
+                                                        {if $settings.abt__ut2.addons.discussion.verified_buyer === "Y" && $post.abt__is_buyer}
+                                                            <span class="ut2-vr-user">{__("abt__ut2.discussion.verified_buyer_bp")}</span>
+                                                        {/if}
                                                     </div>
-                                                {/if}
+
+                                                    {* if not Admin *}
+                                                    {if $post.user_type !== "A"}
+                                                        <div class="ut2-discussion-post__rating-stars">
+                                                            {if $discussion.type == "Addons\\Discussion\\DiscussionTypes::TYPE_RATING"|enum
+                                                            || $discussion.type == "Addons\\Discussion\\DiscussionTypes::TYPE_COMMUNICATION_AND_RATING"|enum
+                                                            && $post.rating_value > 0
+                                                            }
+                                                                <div class="clearfix ut2-discussion-post__rating">
+                                                                    {include file="addons/discussion/views/discussion/components/stars.tpl" stars=$post.rating_value|fn_get_discussion_rating}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    {/if}
+                                                </div>
                                             </div>
-                                        {/if}
+                                            <div class="ut2-discussion-post__date">{$post.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</div>
+                                        </div>
                                     </div>
-                                    <div class="ty-discussion-post__message-text">
+                                    <div class="ut2-discussion-post__message-text">
                                     {if fn_strlen($post.message) > 300}
                                             <div class="clipped">
                                                 <p>{$post.message|escape|nl2br nofilter}</p>

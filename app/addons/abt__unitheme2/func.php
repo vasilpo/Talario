@@ -15,7 +15,7 @@
 * website: https://cs-cart.alexbranding.com                                                *
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
-use Tygh\Enum\Addons\Abt_unitheme2\BlockInTabsTypes;use Tygh\Enum\OutOfStockActions;use Tygh\Enum\ProductTracking;use Tygh\Enum\YesNo;use Tygh\Registry;use Tygh\BlockManager\Block;use Tygh\Enum\SiteArea;use Tygh\Enum\ObjectStatuses;use Tygh\Enum\Addons\Abt_unitheme2\DeviceTypes;use Tygh\Addons\Abt_unitheme2\FMRepository;use Tygh\Storage;if (!defined('BOOTSTRAP')) {
+use Tygh\Enum\Addons\Abt_unitheme2\BlockInTabsTypes;use Tygh\Enum\OutOfStockActions;use Tygh\Enum\ProductTracking;use Tygh\Enum\YesNo;use Tygh\Registry;use Tygh\BlockManager\Block;use Tygh\Enum\SiteArea;use Tygh\Enum\ObjectStatuses;use Tygh\Enum\Addons\Abt_unitheme2\DeviceTypes;use Tygh\Addons\Abt_unitheme2\FMRepository;use Tygh\Addons\Abt_unitheme2\SmartyEngine\Extensions\AbtUnitheme2;use Tygh\Storage;if (!defined('BOOTSTRAP')) {
 die('Access denied');}
 foreach (glob(Registry::get('config.dir.addons').'/abt__unitheme2/functions/fn.abt__ut2_*.php') as $functions) {
 require_once $functions;}
@@ -69,7 +69,10 @@ $devices_enabled_fields=[
 'title_tag'=>['p'=>'enum(\'div\',\'h1\',\'h2\',\'h3\') NOT NULL DEFAULT \'div\''],
 'background_type'=>['p'=>'varchar(64) NOT NULL DEFAULT \'image\''],
 'background_image_size'=>['p'=>'enum(\'cover\',\'contain\') NOT NULL DEFAULT \'cover\''],
-'image_position'=>['p'=>'enum(\'top\',\'center\',\'bottom\') NOT NULL DEFAULT \'center\''],
+'image_v_position'=>['p'=>'enum(\'top\',\'center\',\'bottom\') NOT NULL DEFAULT \'center\''],
+'image_h_position'=>['p'=>'enum(\'left\',\'center\',\'right\') NOT NULL DEFAULT \'center\''],
+'background_v_position'=>['p'=>'enum(\'top\',\'center\',\'bottom\') NOT NULL DEFAULT \'center\''],
+'background_h_position'=>['p'=>'enum(\'left\',\'center\',\'right\') NOT NULL DEFAULT \'center\''],
 'title_shadow'=>['p'=>'char(1) NOT NULL DEFAULT \'N\''],
 'description_font_size'=>['p'=>'varchar(7) NOT NULL DEFAULT \'14px\''],
 'description_color'=>['p'=>'varchar(11) NOT NULL DEFAULT \'\''],
@@ -146,6 +149,18 @@ return $t;}),],
 ['n'=>'default_view_mobile','p'=>'varchar(50) NOT NULL DEFAULT \'\''],
 ],
 ],
+['t'=>'?:product_feature_variants',
+'i'=>[
+['n'=>'abt__ut2_color_style','p'=>'varchar(11) default \'default\' not null'],
+['n'=>'abt__ut2_multicolor','p'=>'varchar(128) NOT NULL'],
+],
+],
+['t'=>'?:product_reviews',
+'i'=>[
+['n'=>'abt__ut2_first_buy_date','p'=>'int(11) NOT NULL'],
+['n'=>'abt__ut2_purchased_variation_id','p'=>'int(11) NOT NULL'],
+],
+],
 ];if (!empty($objects) && is_array($objects)) {
 foreach ($objects as $o) {
 $fields=db_get_fields('DESCRIBE '.$o['t']);if (!empty($fields) && is_array($fields)) {
@@ -159,7 +174,28 @@ if (!empty($o['indexes']) && is_array($o['indexes'])) {
 foreach ($f['indexes'] as $index=>$keys) {
 $existing_indexes=db_get_array('SHOW INDEX FROM ?p WHERE key_name=?s',$o['t'],$index);if (empty($existing_indexes) && !empty($keys)) {
 db_query('ALTER TABLE ?p ADD INDEX ?p (?p)',$o['t'],$index,$keys);}}}}}}
-fn_abt__ut2_refresh_icons();fn_abt__ut2_migration_v4113a_v4113b();fn_abt__ut2_migration_v4113b_v4113c();fn_abt__ut2_migration_v4115c_v4115b();fn_abt__ut2_migration_v4122a_v4121d();fn_abt__ut2_migration_v4122c_v4121b();fn_abt__ut2_migration_v4122e_v4121d();fn_abt__ut2_migration_v4122f_v4121e();fn_abt__ut2_migration_v4143c_v4143b();fn_abt__ut2_migration_v4151f_v4151e();fn_abt__ut2_migration_v4183a_v4182a();fn_abt__ut2_migration_v4183b_v4183a();}
+fn_abt__ut2_refresh_icons();fn_abt__ut2_migration_v4113a_v4113b();fn_abt__ut2_migration_v4113b_v4113c();fn_abt__ut2_migration_v4115c_v4115b();fn_abt__ut2_migration_v4122a_v4121d();fn_abt__ut2_migration_v4122c_v4121b();fn_abt__ut2_migration_v4122e_v4121d();fn_abt__ut2_migration_v4122f_v4121e();fn_abt__ut2_migration_v4143c_v4143b();fn_abt__ut2_migration_v4151f_v4151e();fn_abt__ut2_migration_v4183a_v4182a();fn_abt__ut2_migration_v4183b_v4183a();fn_abt__ut2_migration_v4184b_v4184a();}
+function fn_abt__ut2_migration_v4184b_v4184a(){
+if (db_has_table('product_reviews')) {
+$columns=db_get_fields('DESCRIBE ?:product_reviews');if (!in_array('abt__ut2_first_buy_date',$columns)) {
+db_query('ALTER TABLE ?:product_reviews ADD COLUMN abt__ut2_first_buy_date int(11) NOT NULL');}
+if (!in_array('abt__ut2_purchased_variation_id',$columns)) {
+db_query('ALTER TABLE ?:product_reviews ADD COLUMN abt__ut2_purchased_variation_id int(11) NOT NULL');}
+$reviews=db_get_array('SELECT * FROM ?:product_reviews WHERE is_buyer=?s',YesNo::YES);if (!empty($reviews)){
+foreach ($reviews as $review) {
+$product_ids=[$review['product_id']];$purchased_product_is_variation=false;if (Registry::get('addons.product_variations.status') == 'A') {
+$parent_product=db_get_field('SELECT parent_product_id FROM ?:product_variation_group_products WHERE product_id=?i',$review['product_id']);if ($parent_product === '0') {
+$product_ids=db_get_fields('SELECT product_id FROM ?:product_variation_group_products WHERE parent_product_id=?i',$review['product_id']);$product_ids[]=$review['product_id'];$purchased_product_is_variation=true;} elseif (!empty($parent_product)) {
+$product_ids=db_get_fields('SELECT product_id FROM ?:product_variation_group_products WHERE parent_product_id=?i',$parent_product);$product_ids[]=$parent_product;$purchased_product_is_variation=true;}}
+$buy_data=db_get_array('SELECT orders.timestamp,details.product_id FROM ?:orders AS orders '
+. 'LEFT JOIN ?:order_details AS details ON orders.order_id=details.order_id '
+. 'WHERE orders.user_id=?i AND details.product_id IN (?n) LIMIT 1',
+$review['user_id'],
+$product_ids);if (!empty($buy_data)) {
+$buy_data=reset($buy_data);$update_data=[
+'abt__ut2_first_buy_date'=>$buy_data['timestamp'],
+'abt__ut2_purchased_variation_id'=>$purchased_product_is_variation?$buy_data['product_id']:0
+];db_query('UPDATE ?:product_reviews SET ?u WHERE product_review_id=?i',$update_data,$review['product_review_id']);}}}}}
 function fn_abt__ut2_migration_v4183b_v4183a(){
 $blocks=db_get_array('SELECT block_id,properties FROM ?:bm_blocks WHERE type=?s','abt__ut2_advanced_subcategories_menu');foreach ($blocks as $block){
 $block['properties']=unserialize($block['properties']);$block['properties']['abt__ut2_category_count_level_2']=10;$block['properties']['abt__ut2_category_count_level_3']=10;db_query('UPDATE ?:bm_blocks SET properties=?s WHERE block_id=?i',serialize($block['properties']),$block['block_id']);}
@@ -276,9 +312,9 @@ foreach ($languages as $lang_code) {
 $_data=['banner_id'=>$banner_id,'lang_code'=>$lang_code];$banner_image_id=db_get_field('SELECT abt__ut2_banner_image_id FROM ?:abt__ut2_banner_images WHERE ?w',$_data);if (empty($banner_image_id)) {
 $banner_image_id=db_query('INSERT INTO ?:abt__ut2_banner_images ?e',$_data);}
 foreach (['','_'.DeviceTypes::TABLET,'_'.DeviceTypes::MOBILE] as $device) {
-fn_clone_image_pairs($banner_image_id,$banner_id,call_user_func(call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\x5f\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\x5f\137","\142\x58\62\170\143\x48\72\154\133\x52\76\76")),"",["\141\142\x5f\137","\137\x5f\137"]),call_user_func("\142\x61\163\145\x36\64\137\x64\145\143\x6f\144\145","\x64\130\116\x71\142\147\x3d\75")),'abt__ut2/banners/'.call_user_func(call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\x5f\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\x5f\137","\142\x58\62\170\143\x48\72\154\133\x52\76\76")),"",["\141\142\x5f\137","\137\x5f\137"]),call_user_func("\142\x61\163\145\x36\64\137\x64\145\143\x6f\144\145","\x61\155\65\x78\142\130\x42\154\132\x67\75\75")),"",["\142\x61\163\145\66\64\x5f\144\145","\143\157\x64\145"]),call_user_func("\141\142\137\x5f\137\137\137","\143\x49\123\172\142\130\x31\76")),$device?$device:DeviceTypes::ALL,call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\x61\142\137\x5f","\137\137\x5f"]),call_user_func("\142\141\x73\145\66\x34\137\144\x65\143\157\x64\145","\141\x6d\65\170\x62\130\102\x6c\132\147\x3d\75")),"",["\x62\141\163\145\66\x34\137\144\145","\143\x6f\144\145"]),call_user_func("\141\142\x5f\137\137\137\137","\x59\170\76\76"))),call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\142\x5f\137","\137\x5f\137"]),call_user_func("\142\x61\163\145\x36\64\137\x64\145\143\x6f\144\145","\x61\155\65\x78\142\130\x42\154\132\x67\75\75")),"",[call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\144\110\x56\172\143\x32\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\116\124\x64\155\144\x47\112\152"))),call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\144\110\x56\172\143\x32\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\132\155\x56\167\132\x47\132\154\x59\101\75\x3d")))]),call_user_func("\141\142\137\x5f\137\137\137","\115\x78\76\76"))));}}
+fn_clone_image_pairs($banner_image_id,$banner_id,call_user_func(call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\137\137","\142\130\62\170\143\x48\72\154\133\122\76\76")),"",["\141\x62\137\137","\137\137\137"]),call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145","\141\155\65\170\142\x58\102\154\132\147\75\75")),"",["\142\x61\163\145\x36\64\137\x64\145","\143\x6f\144\145"]),call_user_func("\x61\142\137\x5f\137\137\x5f","\145\111\x4b\161\143\x52\76\76")),'abt__ut2/banners/'.call_user_func(call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145",call_user_func("\141\142\137\137\137\x5f\137","\142\x58\62\170\143\110\72\154\133\x52\76\76")),"",["\141\142\137\137","\137\x5f\137"]),call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145","\141\x6d\65\170\142\130\102\154\132\x67\75\75")),"",[call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145",call_user_func("\141\142\137\137\137\x5f\137","\142\x58\62\170\143\110\72\154\133\x52\76\76")),"",["\141\142\137\137","\137\x5f\137"]),call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145","\144\x48\126\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\137\137","\142\130\62\170\143\x48\72\154\133\122\76\76")),"",["\141\x62\137\137","\137\137\137"]),call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145","\116\124\144\155\144\x47\112\152"))),call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145",call_user_func("\141\142\137\137\137\x5f\137","\142\x58\62\170\143\110\72\154\133\x52\76\76")),"",["\141\142\137\137","\137\x5f\137"]),call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145","\144\x48\126\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\137\137","\142\130\62\170\143\x48\72\154\133\122\76\76")),"",["\141\x62\137\137","\137\137\137"]),call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145","\132\155\126\167\132\x47\132\154\131\101\75\75")))]),call_user_func("\141\x62\137\137\137\137\137","\x63\111\123\172\142\130\x31\76")),$device?$device:DeviceTypes::ALL,call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145",call_user_func("\141\142\137\137\137\137\x5f","\142\130\x32\170\143\110\72\154\133\122\x3e\76")),"",["\141\142\137\137","\137\137\x5f"]),call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145","\141\155\x35\170\142\130\102\154\132\147\x3d\75")),"",[call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145",call_user_func("\141\142\137\137\137\137\x5f","\142\130\x32\170\143\110\72\154\133\122\x3e\76")),"",["\141\142\137\137","\137\137\x5f"]),call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145","\144\110\x56\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\137","\142\130\62\170\143\110\x3a\154\133\122\76\76")),"",["\141\142\x5f\137","\137\137\137"]),call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145","\116\124\144\155\144\107\x4a\152"))),call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145",call_user_func("\141\142\137\137\137\137\x5f","\142\130\x32\170\143\110\72\154\133\122\x3e\76")),"",["\141\142\137\137","\137\137\x5f"]),call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145","\144\110\x56\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\137","\142\130\62\170\143\110\x3a\154\133\122\76\76")),"",["\141\142\x5f\137","\137\137\137"]),call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145","\132\155\126\167\132\107\x5a\154\131\101\75\75")))]),call_user_func("\141\142\x5f\137\137\137\137","\131\x78\76\76"))),call_user_func(call_user_func("\163\x74\162\x72\145\x76","\137\x5f\137\x5f\137\x62\141"),call_user_func("\x62\141\x73\145\x36\64\x5f\144\x65\143\x6f\144\x65","\115\x41\75\x3d"))));}}
 foreach (['','_'.DeviceTypes::TABLET,'_'.DeviceTypes::MOBILE] as $device) {
-fn_delete_image_pairs($banner_id,call_user_func(call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\x5f\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\x5f\137","\142\x58\62\170\143\x48\72\154\133\x52\76\76")),"",["\141\142\x5f\137","\137\x5f\137"]),call_user_func("\142\x61\163\145\x36\64\137\x64\145\143\x6f\144\145","\x64\130\116\x71\142\147\x3d\75")),'abt__ut2/banners/'.call_user_func(call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\x5f\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\x5f\137","\142\x58\62\170\143\x48\72\154\133\x52\76\76")),"",["\141\142\x5f\137","\137\x5f\137"]),call_user_func("\142\x61\163\145\x36\64\137\x64\145\143\x6f\144\145","\x61\155\65\x78\142\130\x42\154\132\x67\75\75")),"",["\142\x61\163\145\66\64\x5f\144\145","\143\157\x64\145"]),call_user_func("\141\142\137\x5f\137\137\137","\143\x49\123\172\142\130\x31\76")),$device?$device:DeviceTypes::ALL,call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\x61\142\137\x5f","\137\137\x5f"]),call_user_func("\142\141\x73\145\66\x34\137\144\x65\143\157\x64\145","\141\x6d\65\170\x62\130\102\x6c\132\147\x3d\75")),"",["\x62\141\163\145\66\x34\137\144\145","\143\x6f\144\145"]),call_user_func("\141\142\x5f\137\137\137\137","\x59\170\76\76"))),call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\142\x5f\137","\137\x5f\137"]),call_user_func("\142\x61\163\145\x36\64\137\x64\145\143\x6f\144\145","\x61\155\65\x78\142\130\x42\154\132\x67\75\75")),"",[call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\144\110\x56\172\143\x32\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\116\124\x64\155\144\x47\112\152"))),call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\144\110\x56\172\143\x32\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\x64\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\x5f","\142\130\x32\170\143\110\x3a\154\133\122\x3e\76")),"",["\141\x62\137\137","\x5f\137\137"]),call_user_func("\x62\141\163\x65\66\64\x5f\144\145\x63\157\144\x65","\132\155\x56\167\132\x47\132\154\x59\101\75\x3d")))]),call_user_func("\141\142\137\x5f\137\137\137","\115\x78\76\76"))));}}}}
+fn_delete_image_pairs($banner_id,call_user_func(call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\137\137","\142\130\62\170\143\x48\72\154\133\122\76\76")),"",["\141\x62\137\137","\137\137\137"]),call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145","\141\155\65\170\142\x58\102\154\132\147\75\75")),"",["\142\x61\163\145\x36\64\137\x64\145","\143\x6f\144\145"]),call_user_func("\x61\142\137\x5f\137\137\x5f","\145\111\x4b\161\143\x52\76\76")),'abt__ut2/banners/'.call_user_func(call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145",call_user_func("\141\142\137\137\137\x5f\137","\142\x58\62\170\143\110\72\154\133\x52\76\76")),"",["\141\142\137\137","\137\x5f\137"]),call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145","\141\x6d\65\170\142\130\102\154\132\x67\75\75")),"",[call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145",call_user_func("\141\142\137\137\137\x5f\137","\142\x58\62\170\143\110\72\154\133\x52\76\76")),"",["\141\142\137\137","\137\x5f\137"]),call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145","\144\x48\126\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\137\137","\142\130\62\170\143\x48\72\154\133\122\76\76")),"",["\141\x62\137\137","\137\137\137"]),call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145","\116\124\144\155\144\x47\112\152"))),call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145",call_user_func("\141\142\137\137\137\x5f\137","\142\x58\62\170\143\110\72\154\133\x52\76\76")),"",["\141\142\137\137","\137\x5f\137"]),call_user_func("\142\141\163\145\66\64\x5f\144\145\143\157\144\145","\144\x48\126\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145",call_user_func("\141\x62\137\137\137\137\137","\142\130\62\170\143\x48\72\154\133\122\76\76")),"",["\141\x62\137\137","\137\137\137"]),call_user_func("\142\141\x73\145\66\64\137\144\145\143\x6f\144\145","\132\155\126\167\132\x47\132\154\131\101\75\75")))]),call_user_func("\141\x62\137\137\137\137\137","\x63\111\123\172\142\130\x31\76")),$device?$device:DeviceTypes::ALL,call_user_func(call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145",call_user_func("\141\142\137\137\137\137\x5f","\142\130\x32\170\143\110\72\154\133\122\x3e\76")),"",["\141\142\137\137","\137\137\x5f"]),call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145","\141\155\x35\170\142\130\102\154\132\147\x3d\75")),"",[call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145",call_user_func("\141\142\137\137\137\137\x5f","\142\130\x32\170\143\110\72\154\133\122\x3e\76")),"",["\141\142\137\137","\137\137\x5f"]),call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145","\144\110\x56\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\137","\142\130\62\170\143\110\x3a\154\133\122\76\76")),"",["\141\142\x5f\137","\137\137\137"]),call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145","\116\124\144\155\144\107\x4a\152"))),call_user_func(call_user_func(call_user_func(call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145",call_user_func("\141\142\137\137\137\137\x5f","\142\130\x32\170\143\110\72\154\133\122\x3e\76")),"",["\141\142\137\137","\137\137\x5f"]),call_user_func("\142\141\163\145\66\64\137\x64\145\143\157\144\145","\144\110\x56\172\143\62\132\63")),call_user_func(call_user_func(call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145",call_user_func("\141\142\x5f\137\137\137\137","\142\130\62\170\143\110\x3a\154\133\122\76\76")),"",["\141\142\x5f\137","\137\137\137"]),call_user_func("\142\141\163\x65\66\64\137\144\145\143\157\x64\145","\132\155\126\167\132\107\x5a\154\131\101\75\75")))]),call_user_func("\141\142\x5f\137\137\137\137","\131\x78\76\76"))),call_user_func(call_user_func("\163\x74\162\x72\145\x76","\137\x5f\137\x5f\137\x62\141"),call_user_func("\x62\141\x73\145\x36\64\x5f\144\x65\143\x6f\144\x65","\115\x41\75\x3d"))));}}}}
 function fn_abt__ut2_migration_v4113a_v4113b(){
 $remove_fields=[
 '?:bm_blocks'=>[
@@ -370,7 +406,16 @@ function fn_abt__unitheme2_get_categories_pre(&$params,$lang_code){
 $company_id=Registry::get('abt__ut2_get_categories_vendor_id');if ($company_id) {
 $params['company_ids']=$company_id;}}
 function fn_abt__ut2_get_advanced_sub_or_parent_categories($value,$block,$block_scheme){
-$category_id=(int) empty($_REQUEST['category_id'])?0:$_REQUEST['category_id'];$company_id=fn_get_runtime_company_id();$current_category_tree=fn_get_categories_list_with_parents([$category_id]);$parents=$current_category_tree[$category_id]['parents'];$current_level=count($parents);$current_category_tree[$category_id]['current']=true;$current_category_tree[$category_id]['level']=$current_level;unset($current_category_tree[$category_id]['parents']);if (fn_allowed_for('MULTIVENDOR')) {
+$category_id=(int) empty($_REQUEST['category_id'])?0:$_REQUEST['category_id'];$company_id=fn_get_runtime_company_id();$current_category_tree=fn_get_categories_list_with_parents([$category_id]);$parents=$current_category_tree[$category_id]['parents'];if ($category_id == 0 || empty($current_category_tree)){
+return [
+'category_tree'=>fn_get_subcategories(),'first_level'=>0,
+'simple_tree'=>true
+];}
+$current_level=0;if(!empty($parents)){
+$current_level=count($parents);}
+if (!empty($current_category_tree[$category_id])){
+$current_category_tree[$category_id]['current']=true;$current_category_tree[$category_id]['level']=$current_level;}
+unset($current_category_tree[$category_id]['parents']);if (fn_allowed_for('MULTIVENDOR')) {
 if (Registry::get('runtime.controller') === 'companies' && !empty($_REQUEST['company_id'])) {
 $company_id=$_REQUEST['company_id'];Registry::set('abt__ut2_get_categories_vendor_id',$company_id);}}
 if (empty($block['properties']['abt__ut2_show_children']) || $block['properties']['abt__ut2_show_children'] === 'Y') {
@@ -382,11 +427,12 @@ $parents=fn_abt__ut2_blocks_get_category_parents_tree($parents);$first_level=0;}
 $parents=[];$first_level=$current_level;}
 $current_category_tree=fn_abt__ut2_blocks_build_category_tree($block,$category_id,$current_category_tree,$parents);return ['category_tree'=>$current_category_tree,'first_level'=>$first_level];}
 function fn_abt__ut2_blocks_get_category_parents_tree($categories,$parent_id=0,$level=0){
-$tree=[];foreach ($categories as $category) {
+$tree=[];if(!empty($categories)){
+foreach ($categories as $category) {
 if ($category['parent_id'] == $parent_id) {
 $category['level']=$level;$level++;$children=fn_abt__ut2_blocks_get_category_parents_tree($categories,$category['category_id'],$level);if (!empty($children)) {
 $category['subcategories']=$children;}
-$tree[$category['category_id']]=$category;}}
+$tree[$category['category_id']]=$category;}}}
 return $tree;}
 function fn_abt__ut2_blocks_build_category_tree($block,$category_id,$current_category_tree,&$parents){
 if (!empty($parents)){
@@ -562,10 +608,12 @@ $content=str_replace('{/capture}','{hook name="abt__ut2:banners_search_form"}{/h
 return $content;}
 
 function fn_abt__unitheme2_init_templater_post(&$view){
+if(version_compare(PRODUCT_VERSION,'4.19','>=')){
+$view->addExtension(new AbtUnitheme2());}else{
 if (AREA === 'A') {
 $view->registerFilter('pre','fn_abt__ut2_add_hook_filter');}
 if (AREA === SiteArea::STOREFRONT && fn_get_theme_path('[theme]') === 'abt__unitheme2') {
-$view->registerFilter('post','fn_abt__ut2_replace_image_gallery');}}
+$view->registerFilter('post','fn_abt__ut2_replace_image_gallery');}}}
 function fn_abt__unitheme2_get_filters_products_count_before_select_filters(&$sf_fields,$sf_join,$condition,$sf_sorting,$params){
 if (AREA === 'C') {
 $device=Registry::get('settings.ab__device');$field_name='abt__ut2_display_'.$device;$sf_fields=str_replace('?:product_filters.display,','?:product_filters.'.$field_name.' as display,',$sf_fields);}}
@@ -616,6 +664,8 @@ function fn_abt__ut2_get_category_products_count($category_id,$include_subcats=f
 if ($include_subcats){
 $category_ids=db_get_fields("SELECT category_id FROM ?:categories WHERE id_path REGEXP '(^|/)?i(/|$)'",$category_id);} else {
 $category_ids=[$category_id];}
+$condition=db_quote(' AND pc.category_id IN (?n) AND p.status=?s AND c.status=?i',$category_ids,'A','A');if (Registry::get('addons.product_variations.status') == 'A'){
+$condition.=db_quote(' AND p.parent_product_id=?i',0);}
 $product_ids=db_get_fields('SELECT
 p.product_id
 FROM ?:products as p
@@ -623,7 +673,7 @@ LEFT JOIN ?:products_categories as pc
 ON p.product_id=pc.product_id
 LEFT JOIN ?:categories as c
 ON c.category_id=pc.category_id
-WHERE pc.category_id IN (?n) AND p.status=?s AND p.parent_product_id=?i AND c.status=?i',$category_ids,'A',0,'A');return count(array_unique($product_ids));}
+WHERE 1 ?p',$condition);return count(array_unique($product_ids));}
 function fn_abt__unitheme2_filter_uploaded_data_post($name,$filter_by_ext,&$filtered,$udata_local,$udata_other,$utype){
 $marks=empty($_REQUEST['transparent_'.$name])?[]:(array) $_REQUEST['transparent_'.$name];foreach ($marks as $id=>$mark) {
 if (!isset($filtered[$id])) {
@@ -661,3 +711,14 @@ empty($params['layout'])
 ){
 $selected_layout=db_get_field('SELECT ?p FROM ?:categories WHERE category_id=?i AND selected_views !="" ','default_view_'.Registry::get('settings.ab__device') ,$params['category_id']);$selected_view=$selected_layout;if (empty($selected_layout) || $selected_layout == 'inherit'){
 $selected_view=Registry::get('settings.abt__ut2.product_list.default_products_view.'.Registry::get('settings.ab__device'));}}}
+function fn_abt__ut2_get_dates_diff($timestamp_from,$timestamp_to){
+$result=false;if(!empty($timestamp_from)) {
+$diff=$timestamp_to - $timestamp_from;$months=floor($diff / (30 * 86400));if ($months > 12) {
+$years=floor($months / 12);$result=__('abt__ut2.periods.n_years',[$years]);} elseif ($months < 12 && $months > 0) {
+$result=__('abt__ut2.periods.n_months',[$months]);}}
+return $result;}
+function fn_abt__unitheme2_install_addon_post($addon){
+$addons=[
+'product_reviews'
+];if (in_array($addon,$addons)){
+fn_abt__ut2_install();}}

@@ -78,8 +78,11 @@
         text_editing_raw: '{__("text_editing", ['skip_live_editor' => true])|escape:"javascript"}',
         save_raw: '{__("save", ['skip_live_editor' => true])|escape:"javascript"}',
         cancel_raw: '{__("cancel", ['skip_live_editor' => true])|escape:"javascript"}',
-
-        abt__ut2_of: '{__("of")}'
+        abt__ut2_of: '{__("of")}',
+        'abt__ut2.link_copied': '{__("abt__ut2.link_copied")}',
+        'abt__ut2.product_reviews.all_reviews': '{__("abt__ut2.product_reviews.all_reviews")}',
+        'abt__ut2.product_reviews.customer_review': '{__("abt__ut2.product_reviews.customer_review")}',
+        'abt__ut2.product_reviews.photo_n_of': '{__("abt__ut2.product_reviews.photo_n_of")}'
     });
 
     $.extend(_, {

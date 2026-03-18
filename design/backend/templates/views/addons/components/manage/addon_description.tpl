@@ -11,9 +11,6 @@
     {/if}
 {/if}
 
-{* Get addon license required text *}
-{include file="views/addons/components/addons/addon_license_required.tpl"}
-
 <div class="addons-addon-description">
     <div>
         <a href="{$href}"

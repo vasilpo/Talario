@@ -37,7 +37,7 @@ use YooKassa\Model\SourceInterface;
 /**
  * Класс билдера запросов к API на создание возврата средств
  *
- * @example 02-builder.php 148 35 Пример использования билдера
+ * @example 02-builder.php 149 34 Пример использования билдера
  *
  * @package YooKassa
  */

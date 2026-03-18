@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: pt-PT\n"
-"X-Crowdin-File: /release-4.18.4/addons/attachments.po\n"
-"X-Crowdin-File-ID: 9551\n"
-"PO-Revision-Date: 2025-05-26 13:31\n"
+"X-Crowdin-File: /release-4.20.1/addons/attachments.po\n"
+"X-Crowdin-File-ID: 10111\n"
+"PO-Revision-Date: 2026-02-05 11:01\n"
 
 msgctxt "Addons::name::attachments"
 msgid "Attachments"
@@ -62,7 +62,7 @@ msgstr "Excluir anexos existentes"
 
 msgctxt "Languages::attachments.delete_attachments_tooltip"
 msgid "If you enable this setting, then the existing attachments of the imported products will be replaced with the attachments specified in the imported file (if no attachments are specified, the old attachments will remain). If the setting is disabled, the new attachments will simply be added to the existing attachments."
-msgstr "Se você habilitar essa configuração, os anexos existentes dos produtos importados serão substituídos pelos anexos especificados no arquivo importado (se nenhum anexo for especificado, os anexos antigos permanecerão). Se a configuração estiver desativada, os novos anexos serão simplesmente adicionados aos anexos existentes."
+msgstr "Se ativar essa configuração, os anexos existentes dos produtos importados serão substituídos pelos anexos especificados no arquivo importado (se nenhum anexo for especificado, os anexos antigos permanecerão). Se a configuração estiver desativada, os novos anexos serão simplesmente adicionados aos anexos existentes."
 
 msgctxt "Languages::attachments.attachments_directory"
 msgid "Attachments directory"
@@ -70,17 +70,17 @@ msgstr "Diretório de anexos"
 
 msgctxt "SettingsSections::attachments::general"
 msgid "General"
-msgstr "Em geral"
+msgstr "Geral"
 
 msgctxt "SettingsOptions::attachments::allow_save_attachments_to_server"
 msgid "Save attachments to your server"
-msgstr "Salve anexos em seu servidor"
+msgstr "Salvar anexos no seu servidor"
 
 msgctxt "SettingsTooltips::attachments::allow_save_attachments_to_server"
 msgid "Attachments listed as URLs in the imported file will be downloaded to your server."
-msgstr "Os anexos listados como URLs no arquivo importado serão baixados para o seu servidor."
+msgstr "Os anexos listados como URLs no ficheiro importado serão descarregados para o seu servidor."
 
 msgctxt "Languages::attachments.cant_upload_file"
 msgid "Couldn't load file [url] for product [product]"
-msgstr "Não foi possível carregar o arquivo [url] para o produto [product]"
+msgstr "Não foi possível carregar o ficheiro [url] para o produto [product]"
 

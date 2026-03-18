@@ -47,6 +47,12 @@
     min-height: 0;
 }
 
+@media (min-width: 768px) {
+    .top-bar__left {
+        padding-left: ~"calc(var(--main-menu-width) - 16px + 16px)";
+    }
+}
+
 // var(--cs-tablet-breakpoint)
 @media (max-width: 767px) {
     .top-bar__left--mobile-hidden,
@@ -76,6 +82,15 @@
     color: var(--cs-text-color);
 }
 
+a.top-bar__btn {
+    color: var(--cs-text-color);
+}
+
+a.top-bar__btn:hover .top-bar__btn-inner,
+button.top-bar__btn:hover .top-bar__btn-inner {
+    background: var(--cs-btn-background-highlight);
+}
+
 .top-bar__btn-inner {
     display: flex;
     justify-content: center;
@@ -87,10 +102,6 @@
     position: relative;
     white-space: nowrap;
     border-radius: 99px;
-}
-
-.top-bar__btn:not(.top-bar__btn--not-hover):hover .top-bar__btn-inner {
-    background: var(--cs-body-background);
 }
 
 .top-bar__btn-wrapper.btn-group.open > .dropdown-menu {

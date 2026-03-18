@@ -3,6 +3,7 @@
     grid-area: modes;
 
     &__item {
+        box-sizing: border-box;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -18,6 +19,8 @@
         border: 0;
         color: #fff;
         background: none;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
 
         &:hover,
         &:focus,
@@ -27,28 +30,52 @@
             color: #fff;
         }
 
+        &--active {
+            border-top-color: #fff;
+        }
+
         &:hover &-icon {
             -webkit-transform: scale(1.2);
             -ms-transform: scale(1.2);
             transform: scale(1.2);
         }
 
+        &--active&--preview {
+            border-top-color: var(--bp-preview-color);
+        }
+
+        &--active&--build {
+            border-top-color: var(--bp-build-color);
+        }
+
+        &--active&--text {
+            border-top-color: var(--bp-text-color);
+        }
+
+        &--active&--theme {
+            border-top-color: var(--bp-theme-color);
+        }
+
         &:hover&--preview,
+        &:focus&--preview,
         &--active&--preview {
             color: var(--bp-preview-color);
         }
 
         &:hover&--build,
+        &:focus&--build,
         &--active&--build {
             color: var(--bp-build-color);
         }
 
         &:hover&--text,
+        &:focus&--text,
         &--active&--text {
             color: var(--bp-text-color);
         }
 
         &:hover&--theme,
+        &:focus&--theme,
         &--active&--theme {
             color: var(--bp-theme-color);
         }
@@ -73,35 +100,6 @@
         -webkit-transition: all 0.2s;
         -o-transition: all 0.2s;
         transition: all 0.2s;
-    }
-
-    &__active {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100px;
-        height: 4px;
-        background: transparent;
-        width:~"calc(100% / 4)";
-        -webkit-transition: all 0.3s ease-out;
-        -o-transition: all 0.3s ease-out;
-        transition: all 0.3s ease-out;
-
-        &--preview {
-            background-color: var(--bp-preview-color);
-        }
-
-        &--build {
-            background-color: var(--bp-build-color);
-        }
-
-        &--text {
-            background-color: var(--bp-text-color);
-        }
-
-        &--theme {
-            background-color: var(--bp-theme-color);
-        }
     }
 }
 

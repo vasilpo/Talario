@@ -6,7 +6,7 @@
     <status>active</status>
     <default_language>en</default_language>
     <compatibility>
-        <dependencies>rus_taxes,rus_cities</dependencies>
+        <dependencies>rus_taxes,cities</dependencies>
         <core_version>
             <min>4.3.9</min>
         </core_version>

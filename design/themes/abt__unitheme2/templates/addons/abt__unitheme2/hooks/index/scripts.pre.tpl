@@ -67,3 +67,6 @@
 {if $settings.abt__ut2.general.bfcache.{$settings.ab__device} === "YesNo::YES"|enum}
     {script src="js/addons/abt__unitheme2/abt__ut2_bfcache.js"}
 {/if}
+{if $addons.product_reviews.status === "A"}
+    {script src="js/addons/abt__unitheme2/abt__ut2_customer_reviews.js"}
+{/if}

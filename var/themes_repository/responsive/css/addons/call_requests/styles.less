@@ -38,7 +38,7 @@
     }
 
     .ty-cr-phone-prefix {
-        color: darken(@base, 15%);
+        color: @inputMutedText; // color: darken(@base, 15%);
         font-weight: normal;
     }
 
@@ -55,6 +55,18 @@
         font-size: 11px;
         color: lighten(@font, 30%);
     }
+}
+
+.ty-cr-phone__link {
+    color: darken(@base, 40%);
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 1em;
+    white-space: nowrap;
+}
+
+.ty-cr-phone__link:hover {
+    color: darken(@base, 40%);
 }
 
 .ty-cr-or {

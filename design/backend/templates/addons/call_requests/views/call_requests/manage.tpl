@@ -124,7 +124,7 @@
                     </tr>
                     <tr class="cr-table-detail">
                         <td class="mobile-hide table__check-items-cell">&nbsp;</td>
-                        <td class="table__first-column {if !$request.product_id && !$request.cart_products}mobile-hide"{/if}" colspan="3" valign="top">
+                        <td class="table__first-column {if !$request.product_id && !$request.cart_products}mobile-hide{/if}" colspan="3" valign="top">
                             {if $request.product_id}
                                 <div>
                                     <span>{__("call_requests.requested_product")}:</span><br>

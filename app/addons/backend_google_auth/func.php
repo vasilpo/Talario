@@ -1,43 +1,45 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+use Hybridauth\Hybridauth;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Registry;
 
 /**
  * Creates and configures Hybrid_Auth instance
  *
- * @return Hybrid_Auth
+ * @return Hybridauth
  */
 function fn_backend_google_auth_create_hybrid_auth_instance()
 {
-    return new Hybrid_Auth(array(
-        'base_url' => fn_url('backend_google_auth.callback'),
-        'providers' => array(
-            'Google' => array(
+    return new Hybridauth([
+        'callback' => fn_url('backend_google_auth.callback?hauth.done=Google'),
+        'providers' => [
+            'Google' => [
                 'enabled' => true,
-                'keys' => array(
+                'keys' => [
                     'id' => fn_backend_google_auth_get_app_client_id(),
                     'secret' => fn_backend_google_auth_get_app_client_secret()
-                ),
+                ],
                 'scope' => 'https://www.googleapis.com/auth/userinfo.email',
                 'access_type' => 'offline',
                 'approval_prompt' => 'force',
-            )
-        ),
-    ));
+            ]
+        ],
+    ]);
 }
 
 /**
@@ -79,17 +81,15 @@ function fn_backend_google_auth_get_app_client_secret()
  *
  * @param string $return_url
  */
-function fn_backend_google_auth_hybrid_auth_authenticate($return_url)
+function fn_backend_google_auth_hybrid_auth_authenticate()
 {
     try {
         $hybrid_auth = fn_backend_google_auth_create_hybrid_auth_instance();
-        $hybrid_auth->storage()->clear();
+        unset(Tygh::$app['session']['HYBRIDAUTH::STORAGE']);
 
-        $hybrid_auth->authenticate(BACKEND_GOOGLE_AUTH_PROVIDER, array(
-            'hauth_return_to' => fn_url(sprintf('backend_google_auth.done?return_url=%s', urlencode($return_url)))
-        ));
+        $hybrid_auth->authenticate(BACKEND_GOOGLE_AUTH_PROVIDER);
     } catch (Exception $exception) {
-        fn_set_notification('E', __('error'), $exception->getMessage());
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), $exception->getMessage());
     }
 }
 

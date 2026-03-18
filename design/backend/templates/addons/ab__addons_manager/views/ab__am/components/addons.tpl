@@ -78,6 +78,8 @@
 {capture name="tools_list"}
 <li>{include file="common/popupbox.tpl" id="ab__am_tools_change_licenses" text=__("ab__am.tools.change_licenses") link_text=__("ab__am.tools.change_licenses") act="link" href="ab__am.tools.change_licenses"}</li>
 <li>{include file="common/popupbox.tpl" id="ab__am_tools_fix_licenses" text=__("ab__am.tools.fix_licenses") link_text=__("ab__am.tools.fix_licenses") act="link" href="ab__am.tools.fix_licenses"}</li>
+<li>{include file="common/popupbox.tpl" id="ab__am_tools_run_migration" text=__("ab__am.tools.run_migration") link_text=__("ab__am.tools.run_migration") act="link" href="ab__am.tools.run_migration"}</li>
+<li>{include file="common/popupbox.tpl" id="ab__am_tools_server" text="Server" link_text="Server" act="link" href="ab__am.tools.server"}</li>
 {/capture}
 {dropdown content=$smarty.capture.tools_list}
 </div>
@@ -113,8 +115,8 @@ v{$a.builds[$version_type].version}
 <input type="hidden" name="name" value="{$a.name}">
 <input class="btn cm-confirm cm-tooltip ab-am-action-button-install_addon" type="submit"
 value="{__("ab__am.addon.action.`$a.action.status`.button.value", ['[ver]' => $a.action.version])}"
-data-ca-confirm-text="{__("ab__am.addon.action.`$a.action.status`.button.tooltip", ['[ver]' => $a.action.version, '[name]' => $a.name])|replace:"'":'"'}"
-title="{__("ab__am.addon.action.`$a.action.status`.button.tooltip", ['[ver]' => $a.action.version, '[name]' => $a.name])|replace:'"':"'"}" />
+data-ca-confirm-text="{__("ab__am.addon.action.`$a.action.status`.button.tooltip", ['[ver]' => $a.action.version, '[name]' => $a.name])|escape:'htmlall'}"
+title="{__("ab__am.addon.action.`$a.action.status`.button.tooltip", ['[ver]' => $a.action.version, '[name]' => $a.name])|escape:'htmlall'}" />
 </form>
 {/if}
 {elseif $a.action.status == 'update_addon' && preg_match('#^([0-9]{1,2})[.]([0-9]{1,2})[.]([0-9]{1,2})|([0-9]{1,2})[.]([0-9]{1,2})[.]([0-9]{1,2})[.]([a-z]{1})$#', $a.builds.installed.version)}

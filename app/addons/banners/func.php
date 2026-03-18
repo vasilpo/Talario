@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Registry;
 use Tygh\Languages\Languages;
@@ -185,7 +185,7 @@ function fn_get_banner_data($banner_id, $lang_code = CART_LANGUAGE)
 
     $banner = db_get_row("SELECT " . implode(", ", $fields) . " FROM ?:banners " . implode(" ", $joins) ." $condition");
 
-    if (!empty($banner)) {
+    if (!empty($banner) && !empty($banner['banner_image_id'])) {
         $banner['main_pair'] = fn_get_image_pairs($banner['banner_image_id'], 'promo', 'M', true, false, $lang_code);
     }
 

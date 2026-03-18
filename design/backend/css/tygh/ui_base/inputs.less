@@ -90,7 +90,7 @@ input[type="radio"] {
 }
 
 input[type="checkbox"] {
-    margin: 2px 1px 1px 1px;
+    margin: 0;
     transition: border linear .2s, box-shadow linear .2s, background linear .2s;
 }
 
@@ -124,20 +124,33 @@ select {
 // -------------------
 
 // Indent the labels to position radios/checkboxes as hanging
-.radio,
-.checkbox {
+.radio {
     padding: 5px 0 5px 24px;
 }
-.radio input[type="radio"],
+
+.checkbox {
+    padding: ~"5px 0 5px calc(var(--cs-checkbox-size) + 8px)";
+}
+
+.radio input[type="radio"] {
+    margin-left: -24px;
+}
+
 .checkbox input[type="checkbox"] {
-  margin-left: -24px;
+    margin-left: ~"calc(-1 * (var(--cs-checkbox-size) + 8px))";
+    margin-top: ~"calc( var(--cs-checkbox-padding) - 5px)";
+    margin-bottom: ~"calc( var(--cs-checkbox-padding) - 5px)";
 }
 
 // Radios and checkboxes on same line
 // TODO v3: Convert .inline to .control-inline
+.checkbox.inline {
+    padding-bottom: 5px;
+}
+
 .radio.inline + .radio.inline,
 .checkbox.inline + .checkbox.inline {
-  margin-left: 16px; // space out consecutive inline controls
+    margin-left: 16px; // space out consecutive inline controls
 }
 
 
@@ -234,7 +247,10 @@ textarea {
 // Webkit-style focus
 // ------------------
 input[type="checkbox"]:focus {
-    outline-offset: 4px;
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: var(--cs-main-color);
+    outline-offset: ~"calc((var(--cs-checkbox-clickable-size) - var(--cs-checkbox-size)) / 2 - 2px)";
 }
 
 input[type="radio"]:focus {
@@ -271,7 +287,8 @@ select:focus {
 .input-group > .input-large,
 .input-group > .input-long,
 .input-group > .redactor-box,
-.input-group > .mce-tinymce {
+.input-group > .mce-tinymce,
+.input-group > .tox-tinymce {
     flex: 1 1 auto;
     width: 1%;
     min-width: 0;   // https://stackoverflow.com/questions/36247140/why-dont-flex-items-shrink-past-content-size
@@ -700,10 +717,13 @@ textarea[class*="span"] {
 }
 
 .controls > input[type="radio"],
-.controls > input[type="checkbox"],
-.controls > span > input[type="radio"],
-.controls > span > input[type="checkbox"] {
+.controls > span > input[type="radio"] {
     margin-top: 9px;
+}
+
+.controls > input[type="checkbox"],
+.controls > span > input[type="checkbox"] {
+    margin-top: ~"calc((30px - var(--cs-checkbox-size)) / 2)";
 }
 
 .controls > input[type="radio"] {
@@ -711,12 +731,13 @@ textarea[class*="span"] {
 }
 
 input[type="checkbox"]:before {
+    --cs-checkbox-clickable-translate: ~"calc((var(--cs-checkbox-clickable-size) - var(--cs-checkbox-size)) / -2 - 2px)";
+
     content: '';
-    position: absolute;
     display: block;
-    width: 34px;
-    height: 34px;
-    transform: translate(-11px, -11px);
+    width: var(--cs-checkbox-clickable-size);
+    height: var(--cs-checkbox-clickable-size);
+    transform: ~"translate(var(--cs-checkbox-clickable-translate), var(--cs-checkbox-clickable-translate))";
 }
 
 .controls .select-field > .radio:first-child {
@@ -990,36 +1011,37 @@ label.checkbox {
 input[type="checkbox"] {
     -moz-appearance: none;
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    width: var(--cs-checkbox-size);
+    height: var(--cs-checkbox-size);
+    font-size: 20px;
+    line-height: 1;
     border: 2px solid var(--cs-input-border);
     border-radius: var(--cs-border-radius-small);
     background: var(--cs-input-background);
     box-shadow: none; // Override jQuery UI Bootstrap
-    font-size: var(--cs-font-size-mini);
+
+    &:after {
+        --cs-checkbox-translate: ~"calc((var(--cs-checkbox-size) - 20px) / 2 - 2px)";
+
+        display: block;
+        transform: ~"translate(var(--cs-checkbox-translate), calc(-1 * var(--cs-checkbox-clickable-size) + var(--cs-checkbox-translate))) scale(calc( (20 + var(--cs-checkbox-size-wo-unit) ) / (20 * 2) ))";
+        height: 20px;
+        width: 20px;
+    }
 
     &:checked,
     &:indeterminate {
         background: var(--cs-main-color);
         border-color: var(--cs-main-color);
-        position: relative;
-
-        &:after {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            color: white;
-        }
     }
 
+    &:not(:checked):after {
+        content: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' width='20' height='20' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E");
+    }
     &:checked:after {
-        transform: translate(-0.5px, 1px);
         content: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' width='20' height='20' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m15.9754 5.89958c.3661.36611.3661.9597 0 1.32582l-6.83034 6.8305c-.17581.1759-.41427.2746-.66292.2746-.24864 0-.4871-.0987-.66292-.2746l-3.79464-3.7947c-.36611-.36609-.36611-.95968.00001-1.32579.36612-.36612.95972-.36611 1.32583.00001l3.13172 3.13178 6.16746-6.1676c.3661-.36613.9597-.36613 1.3258-.00002z'/%3E%3C/svg%3E");
     }
     &:indeterminate:after {
-        transform: translate(-0.5px, 1px);
         content: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' width='20' height='20' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m4.0625 10c0-.51777.41973-.9375.9375-.9375h10.625c.5178 0 .9375.41973.9375.9375 0 .5178-.4197.9375-.9375.9375h-10.625c-.51777 0-.9375-.4197-.9375-.9375z'/%3E%3C/svg%3E");
     }
 
@@ -1037,6 +1059,16 @@ input[type="checkbox"] {
         margin: 0;
     }
 }
+
+.cs-dark-theme input[type="checkbox"]:checked:after {
+    filter: invert(1);
+}
+
+input[type="checkbox"]:not(:focus):hover {
+    box-shadow: 0 0 0 7px var(--cs-shadow5-color);
+    outline: 1px solid var(--cs-shadow2-color);
+}
+
 
 input[type="checkbox"]:checked:hover {
     filter: brightness(90%);

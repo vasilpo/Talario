@@ -24,7 +24,7 @@
                     />
 
                     {capture name="vendor_terms_href"}
-                        <a id="sw_elm_vendor_terms_{$suffix}_{$vendor.company_id}" class="cm-combination ty-dashed-link">
+                        <a id="sw_elm_vendor_terms_{$suffix}_{$vendor.company_id}" class="cm-combination ty-dashed-link ty-license-agreement__link">
                             {__("vendor_terms.checkout_terms_and_conditions_name")}
                         </a>
                     {/capture}
@@ -32,7 +32,7 @@
                 </label>
             {/strip}
         </div>
-        <div class="hidden" id="elm_vendor_terms_{$suffix}_{$vendor.company_id}">
+        <div class="ty-license-agreement__content hidden" id="elm_vendor_terms_{$suffix}_{$vendor.company_id}">
             {$vendor.terms nofilter}
         </div>
     </div>

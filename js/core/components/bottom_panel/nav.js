@@ -7,8 +7,6 @@ export const nav = {
             state.navActive = elem.data('bpNavItem');
         }
         $(state.bottomPanel).data('navActive', state.navActive);
-        nav._setWidth();
-        nav._setPosition();
         nav._setClass(elem);
     },
 
@@ -18,29 +16,7 @@ export const nav = {
         });
     },
 
-    _setWidth: function () {
-        $(params.navActiveSelector).width(
-            $(state.bottomPanel).find(params.navItemSpecificSelector.replace('{placeholder}', state.navActive)).outerWidth()
-        );
-    },
-
-    _setPosition: function () {
-        let activeNav = $(state.bottomPanel).find(params.navItemSpecificSelector.replace('{placeholder}', state.navActive));
-        let position = $(activeNav).position().left;
-
-        if (Tygh.language_direction === 'rtl' && state.nav.length > 0) {
-            position = -Math.ceil($(state.nav[(state.nav.length - 1) - $(activeNav).index()]).position().left);
-            if (position != 0) {
-                position += $(activeNav).outerWidth() - $(activeNav).width();
-            }
-        }
-
-        $(params.navActiveSelector).css('transform', 'translate(' + position + 'px)');
-    },
-
     _setClass: function (elem) {
-        $(params.navActiveSelector)
-            .addClass(params.navActiveActivatedClass);
 
         if (elem) {
             $(state.nav).each(function () {

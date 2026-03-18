@@ -30,7 +30,8 @@
 		show_qty=$settings.abt__ut2.product_list.$tmpl.show_qty[$settings.ab__device]|default:{"YesNo::NO"|enum} === "YesNo::YES"|enum
 		show_features=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features"
 		show_descr=$settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "description"
-        show_brand_logo=$settings.abt__ut2.product_list.$tmpl.show_brand_logo[$settings.ab__device]|default:{"YesNo::NO"|enum} === "YesNo::YES"|enum
+        show_brand_name=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "name"
+        show_brand_logo=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] === "logo"
 		show_list_buttons=false
         show_reset_button=true
 		show_custom_class="ut2-wl__grid"

@@ -1,5 +1,5 @@
 {if $content|trim}
-    <div class="ty-mainbox-container clearfix{if isset($hide_wrapper)} cm-hidden-wrapper{/if}{if $hide_wrapper} hidden{/if}{if $details_page} details-page{/if}{if $block.user_class} {$block.user_class}{/if}{if $content_alignment == "RIGHT"} ty-float-right{elseif $content_alignment == "LEFT"} ty-float-left{/if}">
+    <div class="ty-mainbox-container clearfix{if isset($hide_wrapper)} cm-hidden-wrapper{/if}{if $hide_wrapper} hidden{/if}{if $details_page} details-page{/if}{if $block.user_class} {$block.user_class}{/if}{if $content_alignment == "RIGHT"} ty-float-right{elseif $content_alignment == "LEFT"} ty-float-left{/if}"{if $block.snapping_id} id="snapping_id_{$block.snapping_id}"{/if}>
         {if $title || $smarty.capture.title && $smarty.capture.title|trim}
             {hook name="wrapper:mainbox_general_title_wrapper"}
                 <h1 class="ty-mainbox-title">
@@ -14,5 +14,5 @@
             {/hook}
         {/if}
         <div class="ty-mainbox-body">{$content nofilter}</div>
-    </div>
+    {if $block.snapping_id}<!--snapping_id_{$block.snapping_id}-->{/if}</div>
 {/if}

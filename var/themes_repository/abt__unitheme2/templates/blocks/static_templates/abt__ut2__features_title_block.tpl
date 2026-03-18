@@ -5,7 +5,7 @@
         {if $variant_data.variant}
         <h1 class="ty-mainbox-title">
             {hook name="wrapper:features_title"}
-				<span>{$variant_data.variant nofilter}</span>
+				{$variant_data.variant nofilter}
             {/hook}
         </h1>
         {/if}

@@ -32,7 +32,8 @@ product_labels_mini=true
 show_discount_label=true
 show_shipping_label=true
 show_product_amount=true
-show_brand_logo=$settings.abt__ut2.product_list.products_without_options.show_brand_logo[$settings.ab__device]|default:{"YesNo::NO"|enum} == "YesNo::YES"|enum
+show_brand_name=$settings.abt__ut2.product_list.products_without_options.show_brand[$settings.ab__device] == "name"
+show_brand_logo=$settings.abt__ut2.product_list.products_without_options.show_brand[$settings.ab__device] == "logo"
 show_product_options=$_show_product_options 
 show_qty=true 
 show_min_qty=true 

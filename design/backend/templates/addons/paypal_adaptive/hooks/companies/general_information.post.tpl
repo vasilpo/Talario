@@ -1,6 +1,14 @@
 {if "MULTIVENDOR"|fn_allowed_for}
 
     {include file="common/subheader.tpl" title=__("pp_adaptive_payments")}
+
+    <div class="control-group">
+        <label for="paypal_verification" class="control-label">{__("paypal_verification")}:</label>
+        <div class="controls">
+            <p class="{if $company_data.paypal_verification === "verified"}text-success{elseif $company_data.paypal_verification === "not_verified"}text-error{/if}">{__($company_data.paypal_verification)}</p>
+        </div>
+    </div>
+
     <div class="control-group">
         <label for="email" class="control-label cm-email">{__("paypal_adaptive.vendor.paypal_email")}:</label>
         <div class="controls">

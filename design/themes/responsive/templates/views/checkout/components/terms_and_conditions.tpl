@@ -23,7 +23,7 @@
                 data-ca-lite-checkout-auto-save="true" {""}
             />
             {capture name="terms_link"}
-                <a id="sw_terms_and_conditions_{$suffix}" class="cm-combination ty-dashed-link">
+                <a id="sw_terms_and_conditions_{$suffix}" class="cm-combination ty-dashed-link ty-license-agreement__link">
                     {__("checkout_terms_n_conditions_name")}
                 </a>
             {/capture}
@@ -31,7 +31,7 @@
         </label>
         {/strip}
 
-        <div class="hidden" id="terms_and_conditions_{$suffix}">
+        <div class="ty-license-agreement__content hidden" id="terms_and_conditions_{$suffix}">
             {__("terms_and_conditions_content") nofilter}
         </div>
     </div>
@@ -64,12 +64,12 @@
                     data-ca-lite-checkout-auto-save="true" {""}
                 />
                 <span>{__("checkout_edp_terms_n_conditions")}</span>&nbsp;
-                <a id="sw_elm_agreements_{$suffix}" class="cm-combination ty-dashed-link">{__("license_agreement")}</a>
+                <a id="sw_elm_agreements_{$suffix}" class="cm-combination ty-dashed-link ty-license-agreement__link">{__("license_agreement")}</a>
             </label>
             {/strip}
         </div>
         {/hook}
-        <div class="hidden" id="elm_agreements_{$suffix}">
+        <div class="ty-license-agreement__content hidden" id="elm_agreements_{$suffix}">
         {foreach from=$cart_agreements item="product_agreements"}
             {foreach from=$product_agreements item="agreement"}
                 <p>{$agreement.license nofilter}</p>

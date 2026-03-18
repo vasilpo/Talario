@@ -38,4 +38,7 @@ if(!empty($_REQUEST['redirect_url']) && !empty($_REQUEST['product_id']) && strpo
 $_REQUEST['redirect_url'] = fn_url('products.view?product_id=' . $_REQUEST['product_id']);
 }
 fn_abt__ut2_change_wl_state();
+if ($mode == 'delete_product') {
+fn_set_notification('W','',__('abt__ut2.notifications.product_removed_from_comparison_list'));
+}
 }

@@ -32,9 +32,9 @@ Buy together
 		}
 		.owl-pagination {
 			justify-content: flex-end;
+			top: 0;
 			right: 0;
 			left: auto;
-			top: 15px;
 			bottom: auto;
 			max-width: 140px;
 			background: @content_bg;
@@ -63,14 +63,13 @@ Buy together
 	}
 
 	.subheader {
-		padding-block: var(--gap-sm);
+		padding-block-end: var(--gap-sm);
 		padding-right: 140px;
 		font-size: var(--font-size-large);
 		font-weight: bold;
 
 		.tabs-list & {
 			font-weight: normal;
-			margin-top: -10px;
 		}
 	}
 }
@@ -82,7 +81,6 @@ Buy together
 }
 
 .ut2-bt {
-	margin-block-end: var(--gap-sm);
 	padding: var(--gap-xs);
 	box-shadow: inset 0 0 0 10px var(--fill-gray);
 	border-radius: var(--border-radius-box);
@@ -93,7 +91,6 @@ Buy together
 		max-width: 100%;
 		padding-block: var(--gap-sm);
 		margin-inline: auto;
-		background: @general_bg_color;
 
 		.ut2_round() when (@abt__ut2_general_use_rounding_blocks = do_not_use) {
 			border-radius: 0;
@@ -137,30 +134,8 @@ Buy together
 
 		> a {
 			display: inline-block;
+			border-radius: var(--border-radius-decreased);
 
-			.ut2_product_image_mask() when not (@general_bg_image = transparent) {
-				background: @general_bg_image;
-			}
-			.ut2_product_image_mask() when (@abt__ut2_product_list_mask_images_gallery = true) and (@general_bg_color = #ffffff) {
-
-				.ut2_round() when (@abt__ut2_general_use_rounding = little) {
-					border-radius: calc(var(--border-radius-box) - 2px);
-				}
-				.ut2_round() when (@abt__ut2_general_use_rounding = full) {
-					border-radius: calc(var(--border-radius-box) - 6px);
-				}
-				.ut2_round();
-
-				background: lighten(@fill-gray-box, 0.5%);
-
-				.ut2_product_image_mask_bg_ready() when (@general_bg_color = #ffffff) {
-					img.ty-pict {
-						mix-blend-mode: multiply;
-						filter: brightness(1.05);
-					}
-				}
-				.ut2_product_image_mask_bg_ready();
-			}
 			.ut2_product_image_mask();
 		}
 	}
@@ -194,7 +169,7 @@ Buy together
 		}
 
 		a {
-			color: @font;
+			color: var(--color-font);
 			.ut2_line_clamp(2);
 		}
 	}
@@ -205,8 +180,8 @@ Buy together
 		padding-block: var(--gap-sm);
 		padding-inline: var(--gap-sm);
 		width: 100%;
-		border-top: 1px solid @base;
-		background: @general_bg_color;
+		border-top: 1px solid var(--color-base);
+		background-color: @content_bg;
 
 		.ut2_round() when (@abt__ut2_general_use_rounding_blocks = do_not_use) {
 			border-radius: 0;
@@ -264,14 +239,14 @@ Buy together
 			.price {
 				font-family: @price_font;
 				font-weight: @price_font_weight;
-				font-size: @price_font_size;
+				font-size: var(--price-font-size);
 				color: @discount_label;
 			}
 		}
 	}
 
 	.chain-old-line.ty-strike {
-		color: @font;
+		color: var(--color-font);
 		text-decoration: line-through;
 	}
 
@@ -293,7 +268,7 @@ Buy together
 
 		a {
 			text-decoration: underline;
-			color: @links;
+			color: var(--color-links);
 		}
 	}
 	.ut2-bt-option {

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Illuminate\Support\Collection;
 use Tygh\BlockManager\Location;
@@ -21,6 +21,7 @@ use Tygh\Enum\SiteArea;
 use Tygh\Enum\YesNo;
 use Tygh\Exceptions\DeveloperException;
 use Tygh\Navigation\LastView;
+use Tygh\Providers\LicensingProvider;
 use Tygh\Providers\StorefrontProvider;
 use Tygh\Registry;
 use Tygh\Router;
@@ -991,7 +992,6 @@ function fn_allowed_for($editions)
     $_mode = (string) fn_get_storage_data('store_mode');
 
     switch ($_mode) {
-        case 'free':
         case '':
         case 'plus':
         case 'ultimate':
@@ -1029,6 +1029,17 @@ function fn_allowed_for($editions)
     $cache[$editions] = $is_allowed;
 
     return $is_allowed;
+}
+
+/**
+ * @param string $feature Feature code
+ * @param bool   $default Default result
+ *
+ * @return bool
+ */
+function fn_is_allowed($feature, $default = false)
+{
+    return LicensingProvider::getLicensingService()->isAllowed($feature, $default);
 }
 
 /**

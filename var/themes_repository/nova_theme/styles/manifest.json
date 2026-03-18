@@ -1,0 +1,19 @@
+{
+    "default_style": "White",
+    "default": {
+        "White": true,
+        "Blue": true,
+        "Green": true,
+        "Orange": true,
+        "Red": true,
+        "Yellow": true
+    },
+    "colors": {
+        "White": "#1693e9",
+        "Blue": "#1976d2",
+        "Green": "#388e3c",
+        "Orange": "#f57c00",
+        "Red": "#d32f2f",
+        "Yellow": "#fbc02d"
+    }
+}

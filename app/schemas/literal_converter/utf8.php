@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 /* WARNING: DO NOT MODIFY THIS FILE TO AVOID PROBLEMS WITH THE CART FUNCTIONALITY */
 
@@ -27,7 +27,6 @@ fn_define('LIC_STAT_PL', 0x79B);
 fn_define('LIC_STAT_UE', 0xC42);
 fn_define('LIC_STAT_EN', 0x7E5);
 fn_define('LIC_STAT_ST', 0xDD3);
-fn_define('LIC_STAT_CF', 0xCFE);
 
 $schema = [];
 
@@ -100,9 +99,6 @@ if (!isset($_SESSION[$description])) {
         case fn_simple_decode_str('usjbm'):
             $_SESSION[$description] = LIC_STAT_TR;
             break;
-        case fn_simple_decode_str('gsff'):
-            $_SESSION[$description] = LIC_STAT_CF;
-            break;
         case fn_simple_decode_str('qmvt'):
             $_SESSION[$description] = LIC_STAT_PL;
             break;
@@ -145,11 +141,11 @@ if ($data == fn_simple_decode_str('EJTBCMFE')) {
 } elseif ($data == fn_simple_decode_str('MJDFOTF`JT`JOWBMJE')) {
     if (
         isset($_SESSION[$description])
-        && in_array($_SESSION[$description], [LIC_STAT_FL, LIC_STAT_PL, LIC_STAT_UE, LIC_STAT_EN, LIC_STAT_ST, LIC_STAT_CF])
-        && !call_user_func(fn_simple_decode_str('go`bmmpxfe`gps'), fn_simple_decode_str('VMUJNBUF;GSFF'))
+        && in_array($_SESSION[$description], [LIC_STAT_FL, LIC_STAT_PL, LIC_STAT_UE, LIC_STAT_EN, LIC_STAT_ST])
     ) {
         $_SESSION[$description] = LIC_STAT_TR;
         fn_set_storage_data(fn_simple_decode_str('tupsf`npef'), fn_simple_decode_str('usjbm'));
+        fn_set_storage_data(fn_simple_decode_str('qmbo'), fn_simple_decode_str('usjbm'));
         fn_clear_cache();
     }
 
@@ -181,6 +177,7 @@ if ($data == fn_simple_decode_str('EJTBCMFE')) {
     unset($_SESSION[fn_simple_decode_str('bvui`ujnftubnq')]);
 
     fn_set_storage_data(fn_simple_decode_str('tupsf`npef'), fn_simple_decode_str('usjbm'));
+    fn_set_storage_data(fn_simple_decode_str('qmbo'), fn_simple_decode_str('usjbm'));
     fn_clean_up_addons();
     fn_clear_cache();
 

@@ -267,3 +267,15 @@ msgstr "No order UUID found by tracking number"
 msgctxt "Languages::rus_sdek2.empty_response_body"
 msgid "Request error. Empty body"
 msgstr "Request error. Empty body"
+
+msgctxt "Languages::rus_sdek2.empty_response"
+msgid "Empty response"
+msgstr "Empty response"
+
+msgctxt "Languages::rus_sdek2.invalid_response"
+msgid "Invalid response"
+msgstr "Invalid response"
+
+msgctxt "Languages::rus_sdek2.no_tariffs_available"
+msgid "No tariffs available for this configuration"
+msgstr "No tariffs available for this configuration"

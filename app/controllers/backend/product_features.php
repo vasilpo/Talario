@@ -1,18 +1,19 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Common\OperationResult;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\ProductFeatures;
 use Tygh\Enum\YesNo;
@@ -29,6 +30,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update features
     if ($mode === 'update') {
+        if (defined('AJAX_REQUEST') && $_REQUEST['feature_id'] && $_REQUEST['feature_id'] !== NEW_FEATURE_GROUP_ID && empty($_REQUEST['confirmed'])) {
+            [$affected_product_ids, $affected_feature_ids, $affected_categories_ids] = fn_update_features_get_affected_entities([$_REQUEST['feature_id'] => $_REQUEST['feature_data']]);
+            $product_ids_search_key = 'affected_product_ids_' . $auth['user_id'];
+            fn_set_storage_data($product_ids_search_key, json_encode($affected_product_ids));
+            fn_set_storage_data($product_ids_search_key . '_ttl', TIME + SECONDS_IN_HOUR);
+
+            if ($affected_feature_ids) {
+                $feature = fn_get_product_feature_data($_REQUEST['feature_id']);
+                Tygh::$app['view']->assign([
+                    'affected_product_ids'    => $affected_product_ids,
+                    'affected_feature_ids'    => $affected_feature_ids,
+                    'affected_categories_ids' => $affected_categories_ids,
+                    'product_ids_search_key'  => $product_ids_search_key,
+                    'feature'                 => $feature,
+                    'form'                    => "update_features_form_{$_REQUEST['feature_id']}",
+                    'dispatch'                => 'product_features.update',
+                ]);
+                Tygh::$app['ajax']->assign('need_confirm', 1);
+
+                fn_set_notification(
+                    NotificationSeverity::INFO,
+                    __('predict.features.feature_will_be_removed_from_products'),
+                    Tygh::$app['view']->fetch('views/product_features/components/product_feature_confirm_dialog.tpl'),
+                    'K'
+                );
+            }
+
+            return [CONTROLLER_STATUS_NO_PAGE];
+        }
+
         if (!empty($_REQUEST['feature_data'])) {
             $feature_id = fn_update_product_feature($_REQUEST['feature_data'], $_REQUEST['feature_id'], DESCR_SL);
         } else {
@@ -211,17 +242,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (
-        $mode === 'm_set_categories'
-        && !empty($_REQUEST['features_ids'])
-        && is_array($_REQUEST['features_ids'])
-        && !empty($_REQUEST['categories_map'])
-        && is_array($_REQUEST['categories_map'])
-    ) {
+    if ($mode === 'm_set_categories') {
         $added_categories = empty($_REQUEST['categories_map']['A']) ? [] : $_REQUEST['categories_map']['A'];
         $deleted_categories = empty($_REQUEST['categories_map']['D']) ? [] : $_REQUEST['categories_map']['D'];
 
-        foreach ($_REQUEST['features_ids'] as $feature_id) {
+        if (defined('AJAX_REQUEST')) {
+            if (empty($_REQUEST['confirm'])) {
+                fn_save_post_data('features_ids', 'categories_map');
+
+                $features = [];
+                foreach ((array) $_REQUEST['features_ids'] as $id) {
+                    $feature_data = fn_get_product_feature_data($id);
+
+                    if (!$feature_data) {
+                        continue;
+                    }
+
+                    $feature_categories = explode(',', $feature_data['categories_path']);
+                    $feature_categories = array_merge($feature_categories, $added_categories);
+                    $feature_categories = array_unique(array_filter(array_diff($feature_categories, $deleted_categories)));
+                    $categories_path = implode(',', $feature_categories);
+
+                    $features[$id] = ['categories_path' => $categories_path];
+                }
+                [$affected_product_ids, $affected_feature_ids] = fn_update_features_get_affected_entities($features);
+                $product_ids_search_key = 'affected_product_ids_' . $auth['user_id'];
+                fn_set_storage_data($product_ids_search_key, json_encode($affected_product_ids));
+                fn_set_storage_data($product_ids_search_key . '_ttl', TIME + SECONDS_IN_HOUR);
+                $feature_ids_search_key = 'affected_feature_ids_' . $auth['user_id'];
+                fn_set_storage_data($feature_ids_search_key, json_encode($affected_feature_ids));
+                fn_set_storage_data($feature_ids_search_key . '_ttl', TIME + SECONDS_IN_HOUR);
+
+                if ($affected_product_ids) {
+                    Tygh::$app['view']->assign([
+                        'affected_product_ids'    => $affected_product_ids,
+                        'product_ids_search_key'  => $product_ids_search_key,
+                        'feature_ids_search_key'  => $feature_ids_search_key,
+                        'dispatch'                => 'product_features.update',
+                        'confirm_dispatch'        => "$controller.$mode"
+                    ]);
+                    Tygh::$app['ajax']->assign('need_confirm', 1);
+
+                    fn_set_notification(
+                        NotificationSeverity::INFO,
+                        __('predict.features.features_will_be_removed_from_products'),
+                        Tygh::$app['view']->fetch('views/product_features/components/product_features_confirm_dialog.tpl'),
+                        'K'
+                    );
+
+                    return [CONTROLLER_STATUS_NO_PAGE];
+                }
+            } else {
+                $_REQUEST['features_ids'] = fn_restore_post_data('features_ids');
+                $_REQUEST['categories_map'] = fn_restore_post_data('categories_map');
+                $added_categories = empty($_REQUEST['categories_map']['A']) ? [] : $_REQUEST['categories_map']['A'];
+                $deleted_categories = empty($_REQUEST['categories_map']['D']) ? [] : $_REQUEST['categories_map']['D'];
+            }
+        }
+
+        foreach ((array) $_REQUEST['features_ids'] as $feature_id) {
             $feature_data = fn_get_product_feature_data($feature_id);
 
             if (!$feature_data) {
@@ -251,15 +330,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (
-        $mode === 'm_set_group'
-        && !empty($_REQUEST['feature_ids'])
-        && is_array($_REQUEST['feature_ids'])
-        && isset($_REQUEST['selected_group'])
-    ) {
+    if ($mode === 'm_set_group') {
+        if (defined('AJAX_REQUEST')) {
+            if (empty($_REQUEST['confirm'])) {
+                fn_save_post_data('feature_ids', 'selected_group');
+
+                $features = [];
+                foreach ((array) $_REQUEST['feature_ids'] as $id) {
+                    $features[$id] = ['parent_id' => $_REQUEST['selected_group']];
+                }
+                [$affected_product_ids, $affected_feature_ids] = fn_update_features_get_affected_entities($features);
+                $product_ids_search_key = 'affected_product_ids_' . $auth['user_id'];
+                fn_set_storage_data($product_ids_search_key, json_encode($affected_product_ids));
+                fn_set_storage_data($product_ids_search_key . '_ttl', TIME + SECONDS_IN_HOUR);
+                $feature_ids_search_key = 'affected_feature_ids_' . $auth['user_id'];
+                fn_set_storage_data($feature_ids_search_key, json_encode($affected_feature_ids));
+                fn_set_storage_data($feature_ids_search_key . '_ttl', TIME + SECONDS_IN_HOUR);
+
+                if ($affected_product_ids) {
+                    Tygh::$app['view']->assign([
+                        'affected_product_ids'    => $affected_product_ids,
+                        'product_ids_search_key'  => $product_ids_search_key,
+                        'feature_ids_search_key'  => $feature_ids_search_key,
+                        'dispatch'                => 'product_features.update',
+                        'confirm_dispatch'        => "$controller.$mode"
+                    ]);
+                    Tygh::$app['ajax']->assign('need_confirm', 1);
+
+                    fn_set_notification(
+                        NotificationSeverity::INFO,
+                        __('predict.features.features_will_be_removed_from_products'),
+                        Tygh::$app['view']->fetch('views/product_features/components/product_features_confirm_dialog.tpl'),
+                        'K'
+                    );
+
+                    return [CONTROLLER_STATUS_NO_PAGE];
+                }
+            } else {
+                $_REQUEST['feature_ids'] = fn_restore_post_data('feature_ids');
+                $_REQUEST['selected_group'] = fn_restore_post_data('selected_group');
+            }
+        }
+
         $group_id = (int) $_REQUEST['selected_group'];
 
-        foreach ($_REQUEST['feature_ids'] as $feature_id) {
+        foreach ((array) $_REQUEST['feature_ids'] as $feature_id) {
             OperationResult::wrap(
                 static function () use ($group_id, $feature_id) {
                     if (!fn_check_company_id('product_features', 'feature_id', $feature_id)) {
@@ -357,6 +472,10 @@ if ($mode === 'quick_add' || $mode === 'add') {
     $params['get_descriptions'] = true;
     $params['search_in_subcats'] = true;
     $params['exclude_group'] = true;
+
+    if (!empty($params['feature_ids_search_key'])) {
+        $params['feature_id'] = json_decode(fn_get_storage_data($params['feature_ids_search_key']), true);
+    }
 
     list($features, $search) = fn_get_product_features($params, Registry::get('settings.Appearance.admin_elements_per_page'), DESCR_SL);
     list($group_features) = fn_get_product_features(['feature_types' => ProductFeatures::GROUP, 'get_descriptions' => true], 0, DESCR_SL);

@@ -1,0 +1,62 @@
+.ty-compare-menu__a {
+    color: var(--cs-btn-link-color);
+    background: var(--cs-btn-link-background);
+}
+
+.ty-compare-menu__a:hover {
+    background: var(--cs-btn-link-background-highlight);
+    color: var(--cs-btn-link-color-highlight);
+}
+
+.ty-compare-menu__elem {
+    color: var(--cs-btn-link-color-highlight);
+    background: var(--cs-btn-link-background-highlight);
+    font-weight: bold;
+}
+
+.ty-compare-products__product {
+    padding-bottom: 20px;
+    border-left: 1px solid var(--cs-base);
+}
+
+.ty-compare-products__title {
+    --cs-product-title-lines: 2;
+
+    display: -webkit-box;
+    min-height: calc(var(--cs-links-font-size) * 1.2 * var(--cs-product-title-lines));
+    color: var(--cs-btn-link-color);
+    -webkit-line-clamp: var(--cs-product-title-lines);
+    -webkit-box-orient: vertical;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.ty-compare-products__title:hover {
+    color: var(--cs-btn-link-color-highlight);
+}
+
+.ty-compare-products__menu {
+    border-left: 1px solid transparent;
+}
+
+.ty-compare-products__delete {
+    visibility: visible;
+}
+
+.ty-compare-feature__item {
+    border-color: var(--cs-base);
+}
+
+.ty-compare-checkbox {
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+}
+
+.ty-compare-checkbox__icon {
+    top: -1px;
+    left: -1px;
+    font-size: 16px;
+    line-height: 15px;
+}

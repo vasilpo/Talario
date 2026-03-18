@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\UsergroupTypes;
@@ -396,16 +396,14 @@ function fn_check_feedback_value($value)
  */
 function fn_feedback_get_local_modifications_summary()
 {
-    $result = array();
-    $directories = array(
+    $result = [];
+    $directories = [
         '/app/addons/',
         '/app/controllers/',
         '/app/functions/',
         '/app/Tygh/'
-    );
-    $excluded = array(
-        '/app/addons/twigmo/'
-    );
+    ];
+    $excluded = [];
 
     $files = \Tygh\Snapshot::getModifiedFiles('php', $directories, $excluded);
 
@@ -421,7 +419,7 @@ function fn_feedback_get_local_modifications_summary()
         }
 
         foreach ($counter as $directory => $cnt) {
-            $result[] = array('dir' => $directory, 'cnt' => $cnt);
+            $result[] = ['dir' => $directory, 'cnt' => $cnt];
         }
     }
 

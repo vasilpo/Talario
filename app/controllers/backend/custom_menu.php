@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BackendCustomMenu;
 use Tygh\BackendMenu;
@@ -89,43 +89,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    return [CONTROLLER_STATUS_OK, $return_url];
-}
+    if ($mode === 'update_position') {
+        $id_paths = explode(',', $_REQUEST['ids']);
+        $positions = array_map(
+            static function ($pos) {
+                return ((int) $pos + 1) * 100;
+            },
+            explode(',', $_REQUEST['positions'])
+        );
 
-if ($mode === 'update_position') {
-    $id_paths = explode(',', $_REQUEST['ids']);
-    $positions = array_map(
-        static function ($pos) {
-            return ((int) $pos + 1) * 100;
-        },
-        explode(',', $_REQUEST['positions'])
-    );
+        foreach ($id_paths as $k => $id_path) {
+            $id_path_array = explode('/', $id_path);
+            $item = [
+                'item_id' => end($id_path_array),
+                'id_path' => $id_path
+            ];
 
-    foreach ($id_paths as $k => $id_path) {
-        $id_path_array = explode('/', $id_path);
-        $item = [
-            'item_id' => end($id_path_array),
-            'id_path' => $id_path
-        ];
+            BackendCustomMenu::addCustomMenuItemParents($item['item_id'], $item['id_path']);
 
-        BackendCustomMenu::addCustomMenuItemParents($item['item_id'], $item['id_path']);
+            $custom_item_exists = db_get_field('SELECT COUNT(*) FROM ?:custom_menu WHERE id_path = ?s', $id_path);
 
-        $custom_item_exists = db_get_field('SELECT COUNT(*) FROM ?:custom_menu WHERE id_path = ?s', $id_path);
-
-        if (!$custom_item_exists) {
-            if (count($id_path_array) < 2) {
-                $item['parent_id'] = 0;
-            } else {
-                array_pop($id_path_array);
-                $item['parent_id'] = end($id_path_array);
+            if (!$custom_item_exists) {
+                if (count($id_path_array) < 2) {
+                    $item['parent_id'] = 0;
+                } else {
+                    array_pop($id_path_array);
+                    $item['parent_id'] = end($id_path_array);
+                }
+                db_query('INSERT INTO ?:custom_menu ?e', $item);
             }
-            db_query('INSERT INTO ?:custom_menu ?e', $item);
+
+            db_query('UPDATE ?:custom_menu SET position = ?i WHERE ?w', $positions[$k], ['id_path' => $id_path]);
         }
 
-        db_query('UPDATE ?:custom_menu SET position = ?i WHERE ?w', $positions[$k], ['id_path' => $id_path]);
+        fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('positions_updated'));
+
+        exit;
     }
 
-    fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('positions_updated'));
-
-    exit;
+    return [CONTROLLER_STATUS_OK, $return_url];
 }

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 
 namespace Tygh\Addons\CommerceML\Tests\Formators;
@@ -281,7 +281,7 @@ class OrderFormatorTest extends StorageBasedTestCase
                     ],
                     'group_key'     => 0,
                     'rate'          => 28.0,
-                    'group_name'    => 'Simtech',
+                    'group_name'    => 'Acme',
                     'need_shipment' => true,
                 ],
             ],
@@ -291,7 +291,7 @@ class OrderFormatorTest extends StorageBasedTestCase
             'payment_info'       => [],
             'product_groups'     => [
                 [
-                    'name'       => 'Simtech',
+                    'name'       => 'Acme',
                     'company_id' => 1,
                     'products'   => [
                         4163016541 => [
@@ -445,7 +445,7 @@ class OrderFormatorTest extends StorageBasedTestCase
                             ],
                             'group_key'  => 0,
                             'rate'       => 28.0,
-                            'group_name' => 'Simtech',
+                            'group_name' => 'Acme',
                         ],
                     ],
                 ],

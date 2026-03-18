@@ -30,7 +30,7 @@ PARAMETER.COMPILEID
 
 
     <?php
-    include('Smarty.class.php');
+    use Smarty\Smarty;
     $smarty = new Smarty;
 
     $smarty->setCaching(true);
@@ -69,7 +69,7 @@ The `email_body.tpl` template
 
         
 
-The php script using the PHP [`mail()`](&url.php-manual;function.mail)
+The php script using the PHP [`mail()`](https://www.php.net/function.mail)
 function
 
 

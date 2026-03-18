@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\ProductReviews\ProductReview;
 
@@ -74,6 +74,7 @@ class ImagesService
     {
         $allowed_file_size_bytes = fn_get_allowed_image_file_size();
         $filtered = fn_filter_uploaded_data('product_review_data', $this->allowed_extensions, true, true, $allowed_file_size_bytes);
+        $filtered = fn_filter_by_image_resolution($filtered);
         $filtered = array_slice($filtered, 0, $this->max_images_upload);
 
         $pairs_data = [];

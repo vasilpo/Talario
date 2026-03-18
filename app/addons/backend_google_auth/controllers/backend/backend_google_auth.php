@@ -1,19 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Helpdesk;
 
 /**
@@ -22,30 +23,34 @@ use Tygh\Helpdesk;
  */
 
 if (ACCOUNT_TYPE !== 'admin') {
-    return array(CONTROLLER_STATUS_OK);
+    return [CONTROLLER_STATUS_OK];
 }
 
 if ($mode === 'check') {
     if (!fn_backend_google_auth_is_configured()) {
-        fn_set_notification('E', __('error'), __('backend_google_auth.errors.not_configured'));
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), __('backend_google_auth.errors.not_configured'));
 
-        return array(CONTROLLER_STATUS_REDIRECT, 'addons.manage');
+        return [CONTROLLER_STATUS_REDIRECT, 'addons.manage'];
     }
 
     fn_set_session_data('backend_google_auth.is_check', true);
-    fn_backend_google_auth_hybrid_auth_authenticate('addons.manage');
+    fn_backend_google_auth_hybrid_auth_authenticate();
     exit();
 } elseif ($mode === 'callback') {
     try {
-        Hybrid_Endpoint::process();
+        $hybrid_auth = fn_backend_google_auth_create_hybrid_auth_instance();
+
+        $hybrid_auth->authenticate(BACKEND_GOOGLE_AUTH_PROVIDER);
+
+        return [CONTROLLER_STATUS_REDIRECT, fn_url('backend_google_auth.done')];
     } catch (Exception $exception) {
         fn_delete_session_data('backend_google_auth.is_check');
-        fn_set_notification('E', __('error'), $exception->getMessage());
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), $exception->getMessage());
     }
 
-    return array(CONTROLLER_STATUS_REDIRECT, 'auth.login_form');
+    return [CONTROLLER_STATUS_REDIRECT, 'auth.login_form'];
 } elseif ($mode === 'done') {
-    $return_url = isset($_REQUEST['return_url']) ? $_REQUEST['return_url'] : '';
+    $return_url = $_REQUEST['return_url'] ?? fn_url();
 
     try {
         $hybrid_auth = fn_backend_google_auth_create_hybrid_auth_instance();
@@ -62,23 +67,23 @@ if ($mode === 'check') {
 
                 if ($user_id && fn_login_user($user_id, true) === LOGIN_STATUS_OK) {
                     Helpdesk::auth();
-                    fn_log_event('users', 'session', array(
+                    fn_log_event('users', 'session', [
                         'user_id' => $user_id
-                    ));
+                    ]);
 
                     if (fn_get_session_data('backend_google_auth.is_check')) {
                         fn_delete_session_data('backend_google_auth.is_check');
-                        fn_set_notification('N', __('notice'), __('successful'));
+                        fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('successful'));
                     }
-                    return array(CONTROLLER_STATUS_REDIRECT, $return_url);
+                    return [CONTROLLER_STATUS_REDIRECT, $return_url];
                 } else {
-                    fn_set_notification('E', __('error'), __('backend_google_auth.user_not_found', array('[user]' => $email)));
+                    fn_set_notification(NotificationSeverity::ERROR, __('error'), __('backend_google_auth.user_not_found', ['[user]' => $email]));
                 }
             }
         }
     } catch (Exception $exception) {
-        fn_set_notification('E', __('error'), $exception->getMessage());
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), $exception->getMessage());
     }
 
-    return array(CONTROLLER_STATUS_REDIRECT, 'auth.login_form');
+    return [CONTROLLER_STATUS_REDIRECT, 'auth.login_form'];
 }

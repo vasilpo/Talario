@@ -1,7 +1,7 @@
 <?php
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -15,18 +15,18 @@
 * website: https://cs-cart.alexbranding.com                                                *
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
+use Tygh\Addons\Ab_videoGallery\SmartyEngine\Extensions\AbVideoGallery;
 use Tygh\Enum\Addons\Ab_videoGallery\VideoProductPositionTypes;
-use Tygh\Languages\Languages;
-use Tygh\Registry;
-use Tygh\Enum\YesNo;
+use Tygh\Enum\Addons\Ab_videoGallery\VideoTypes;
+use Tygh\Enum\ImagePairTypes;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\SiteArea;
-use Tygh\Enum\ImagePairTypes;
-use Tygh\Enum\Addons\Ab_videoGallery\VideoTypes;
+use Tygh\Enum\YesNo;
 use Tygh\Http;
-if (!defined('BOOTSTRAP')) {
-die('Access denied');
-}
+use Tygh\Languages\Languages;
+use Tygh\Registry;
+use Tygh\Tools\SecurityHelper;
+defined('BOOTSTRAP') or die('Access denied');
 foreach (glob(__DIR__ . '/functions/fn.*.php') as $functions) {
 require_once $functions;
 }
@@ -69,7 +69,7 @@ $video['lang_code'] = $lang_code;
 db_replace_into('ab__video_gallery', $video);
 db_replace_into('ab__video_gallery_descriptions', $video);
 } else {
-if (Registry::get('runtime.simple_ultimate') == true){
+if (Registry::get('runtime.simple_ultimate')) {
 $video['storefront_id'] = 0;
 }
 $video_id = $video['video_id'] = db_query('INSERT INTO ?:ab__video_gallery ?e', $video);
@@ -98,8 +98,8 @@ $orig_product_id = $parent_product_id;
 }
 if (Registry::ifGet('addons.master_products.status', ObjectStatuses::DISABLED) === ObjectStatuses::ACTIVE) {
 
-$master_producs_repo = \Tygh\Addons\MasterProducts\ServiceProvider::getProductRepository();
-$master_product_id = $master_producs_repo->findMasterProductId($orig_product_id);
+$master_products_repo = \Tygh\Addons\MasterProducts\ServiceProvider::getProductRepository();
+$master_product_id = $master_products_repo->findMasterProductId($orig_product_id);
 if (!empty($master_product_id)) {
 $orig_product_id = $master_product_id;
 }
@@ -117,7 +117,7 @@ $params = array_merge([
 $cache_key_product_id = $orig_product_id ?? $product_id;
 $cache_conditions = ['ab__video_gallery', 'ab__video_gallery_descriptions', 'products'];
 fn_set_hook('ab__vg_get_videos_build_cache', $cache_key_product_id, $cache_conditions, $params);
-$cache_key = "ab__vg_" . md5("$cache_key_product_id-$lang_code-" . serialize($params));
+$cache_key = 'ab__vg_' . md5("{$cache_key_product_id}-{$lang_code}-" . serialize($params));
 if (!is_null($orig_product_id) && AREA === SiteArea::STOREFRONT) {
 Registry::registerCache(['ab__video_gallery', $cache_key], $cache_conditions);
 }
@@ -142,12 +142,12 @@ $params['unique_videos'] === true
 '?:ab__video_gallery_descriptions.description',
 ];
 $condition = '1';
-if (AREA == "C"){
-$condition .= db_quote(" AND videos.storefront_id IN (?i, 0)", $params['storefront_id']);
+if (AREA === SiteArea::STOREFRONT) {
+$condition .= db_quote(' AND videos.storefront_id IN (?i, 0)', $params['storefront_id']);
 }
 $limit = '';
 if (!empty($params['limit'])) {
-$limit = db_quote(" LIMIT 0, ?i", $params['limit']);
+$limit = db_quote(' LIMIT 0, ?i', $params['limit']);
 }
 $join = db_quote('LEFT JOIN ?:ab__video_gallery_descriptions ON ?:ab__video_gallery_descriptions.video_id = videos.video_id AND ?:ab__video_gallery_descriptions.lang_code = ?s', $lang_code);
 if (!empty($params['types'])) {
@@ -196,7 +196,7 @@ if ($product_videos === 'empty') {
 $product_videos = [];
 }
 $product_videos = array_map(function ($video) {
-$video['unique_id'] = Tygh\Tools\SecurityHelper::generateRandomString();
+$video['unique_id'] = SecurityHelper::generateRandomString();
 return $video;
 }, $product_videos);
 return $product_videos;
@@ -242,10 +242,10 @@ function fn_ab__video_gallery_get_products_post(&$products, $params, $lang_code)
 if (Registry::ifGet('addons.ab__video_gallery.show_in_lists', YesNo::NO) == YesNo::YES && !empty($products)) {
 $products_ids = array_column($products, 'product_id');
 $condition = '';
-if (AREA == "C"){
-$condition .= db_quote("AND storefront_id IN (?i, 0)", Registry::ifGet('runtime.storefront_id',0));
+if (AREA === SiteArea::STOREFRONT) {
+$condition .= db_quote('AND storefront_id IN (?i, 0)', Registry::ifGet('runtime.storefront_id', 0));
 }
-$array = db_get_hash_array('SELECT video_id, product_id FROM ?:ab__video_gallery WHERE product_id IN (?n) AND status = "A" ?p', 'product_id', $products_ids, $condition);
+$array = db_get_hash_array('SELECT video_id, product_id FROM ?:ab__video_gallery WHERE product_id IN (?n) AND status = ?s ?p', 'product_id', $products_ids, ObjectStatuses::ACTIVE, $condition);
 foreach ($products as &$product) {
 $product['ab__vg_videos'] = !empty($array[$product['product_id']]);
 }
@@ -516,7 +516,7 @@ $get_product_conditions['cid'] = $_REQUEST['category_id'];
 $get_product_conditions['subcats'] = true;
 $query = fn_get_products($get_product_conditions);
 $videos = fn_ab__vg_get_videos(null, [
-'limit' => (int)$block['properties']['ab__vg_max_videos'],
+'limit' => (int) $block['properties']['ab__vg_max_videos'],
 'condition' => db_quote('AND videos.product_id IN (?p)', $query),
 'unique_videos' => true,
 'exclude_types' => [VideoTypes::HREF, VideoTypes::RESOURCE],
@@ -527,6 +527,9 @@ return $videos;
 
 function fn_ab__video_gallery_init_templater_post($view)
 {
+if (version_compare(PRODUCT_VERSION, '4.19', '>=')) {
+$view->addExtension(new AbVideoGallery());
+} else {
 if (AREA === SiteArea::STOREFRONT) {
 $view->registerFilter('post', 'fn_ab__vg_replace_image_gallery');
 if (fn_ab__vg_get_theme_name() !== 'abt__unitheme2') {
@@ -534,8 +537,9 @@ $view->registerFilter('pre', 'fn_ab__vg_add_storefront_hooks');
 }
 }
 }
+}
 
-function fn_ab__vg_replace_image_gallery($content, \Smarty_Internal_Template $template)
+function fn_ab__vg_replace_image_gallery($content, Smarty_Internal_Template $template)
 {
 if (strpos($content, 'js/tygh/product_image_gallery.js') !== false) {
 $content = str_replace('js/tygh/product_image_gallery.js', 'js/addons/ab__video_gallery/product_image_gallery.js', $content);
@@ -543,7 +547,7 @@ $content = str_replace('js/tygh/product_image_gallery.js', 'js/addons/ab__video_
 return $content;
 }
 
-function fn_ab__vg_add_storefront_hooks($content, \Smarty_Internal_Template $template)
+function fn_ab__vg_add_storefront_hooks($content, Smarty_Internal_Template $template)
 {
 if (strpos($template->template_resource, 'views/products/components/product_icon.tpl') !== false) {
 $content = preg_replace('/\{\s*if\s*\$product\.image_pairs/i', '{hook name="ab__vg:product_main_icon"}{/hook}' . PHP_EOL . '$0', $content);
@@ -551,41 +555,42 @@ $content = preg_replace('/\{\s*if\s*\$product\.main_pair\s*}/i', '{hook name="ab
 }
 return $content;
 }
-function fn_ab__vg_get_storefronts() {
-return db_get_hash_single_array('SELECT storefront_id, name FROM ?:storefronts', array('storefront_id', 'name'));
+function fn_ab__vg_get_storefronts()
+{
+return db_get_hash_single_array('SELECT storefront_id, name FROM ?:storefronts', ['storefront_id', 'name']);
 }
 
-function fn_ab__vg_get_videos_by_position(&$videos, $position, $iterator, $total)
+function fn_ab__vg_get_videos_by_position($videos, $position, $iterator, $total)
 {
 $videos_by_pos = [];
 $default_position = Registry::get('addons.ab__video_gallery.position') === 'pre' ? VideoProductPositionTypes::TOP : VideoProductPositionTypes::BOTTOM;
 if (in_array($position, [VideoProductPositionTypes::TOP, VideoProductPositionTypes::BOTTOM])) {
-$videos_by_pos = array_filter($videos, function($video) use($position, $default_position) {
+$videos_by_pos = array_filter($videos, function ($video) use ($position, $default_position) {
 $cond1 = $video['product_pos_type'] === VideoProductPositionTypes::DEFAULT && $position === $default_position;
 $cond2 = $video['product_pos_type'] === $position;
 return $cond1 || $cond2;
 });
-} else if ($position === VideoProductPositionTypes::CUSTOM) {
+} elseif ($position === VideoProductPositionTypes::CUSTOM) {
 if ($total === 0) {
-$videos_by_pos = array_filter($videos, function($video) {
+$videos_by_pos = array_filter($videos, function ($video) {
 return $video['product_pos_type'] === VideoProductPositionTypes::CUSTOM;
 });
-} else if ($iterator === 0) {
-$videos_by_pos = array_filter($videos, function($video) {
+} elseif ($iterator === 0) {
+$videos_by_pos = array_filter($videos, function ($video) {
 return $video['product_pos_type'] === VideoProductPositionTypes::CUSTOM && $video['product_pos'] <= 0;
 });
-} else if ($iterator >= $total) {
-$videos_by_pos = array_filter($videos, function($video) use ($iterator) {
+} elseif ($iterator >= $total) {
+$videos_by_pos = array_filter($videos, function ($video) use ($iterator) {
 return $video['product_pos_type'] === VideoProductPositionTypes::CUSTOM && $video['product_pos'] >= $iterator;
 });
 } else {
-$videos_by_pos = array_filter($videos, function($video) use ($iterator) {
+$videos_by_pos = array_filter($videos, function ($video) use ($iterator) {
 return $video['product_pos_type'] === VideoProductPositionTypes::CUSTOM && $video['product_pos'] == $iterator;
 });
 }
 }
 $videos = array_diff_key($videos, $videos_by_pos);
-return $videos_by_pos;
+return [$videos_by_pos, $videos];
 }
 
 function fn_ab__vg_get_theme_name()
@@ -595,4 +600,65 @@ if (is_null($theme_name)) {
 $theme_name = fn_get_theme_path('[theme]');
 }
 return $theme_name;
+}
+
+function fn_ab__vg_get_template_iterator($type)
+{
+if (empty($type) || !is_string($type) && !is_int($type)) {
+return 0;
+}
+$iterator = Registry::ifGet('runtime.ab__vg.template_iterator.' . $type, 0);
+return $iterator;
+}
+
+function fn_ab__vg_set_template_iterator($type, $value = 0)
+{
+if (empty($type) || !is_string($type) && !is_int($type)) {
+return;
+}
+if (!is_int($value)) {
+$value = 0;
+}
+Registry::set('runtime.ab__vg.template_iterator.' . $type, $value);
+}
+
+function fn_ab__vg_increase_template_iterator($type, $value = 1)
+{
+if (empty($type) || !is_string($type) && !is_int($type)) {
+return;
+}
+if (!is_int($value)) {
+$value = 1;
+}
+$new_iterator = fn_ab__vg_get_template_iterator($type) + $value;
+fn_ab__vg_set_template_iterator($type, $new_iterator);
+}
+
+function fn_ab__vg_get_template_videos()
+{
+$videos = Registry::ifGet('runtime.ab__vg.template_videos.', []);
+return $videos;
+}
+
+function fn_ab__vg_set_template_videos($videos)
+{
+if (!is_array($videos)) {
+$videos = [];
+}
+Registry::set('runtime.ab__vg.template_videos.', $videos);
+}
+
+function fn_ab__vg_core_is_allowed($feature, $default = false)
+{
+if (function_exists('fn_is_allowed')) {
+return fn_is_allowed($feature, $default);
+}
+return $default;
+}
+
+function fn_ab__vg_array_unshift($array, ...$values)
+{
+$_array = $array;
+array_unshift($_array, ...$values);
+return $_array;
 }

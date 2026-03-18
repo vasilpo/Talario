@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\TinkoffMultiparty\Client\SMRegisterApiClient;
 use Tygh\Addons\TinkoffMultiparty\Enum\AddressesTypes;
@@ -18,6 +18,7 @@ use Tygh\Addons\TinkoffMultiparty\Enum\PaymentSessionStatuses;
 use Tygh\Addons\TinkoffMultiparty\Payments\EACQMultipartyClient;
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\OrderStatuses;
+use Tygh\Enum\SiteArea;
 use Tygh\Enum\UserTypes;
 use Tygh\Enum\YesNo;
 use Tygh\Models\VendorPlan;
@@ -148,7 +149,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $shop_data['bankAccount'] = (object) $shop_data['bankAccount'];
         }
 
-        $client = new SMRegisterApiClient($processor_params['sm_register_username'], $processor_params['sm_register_password']);
+        if (empty($processor_params['certificate_filename']) || empty($processor_params['certificate_key_filename'])) {
+            fn_set_notification(
+                NotificationSeverity::ERROR,
+                __('error'),
+                __('addons.tinkoff_multiparty.shopcode_is_not_registered_no_cert_or_key', ['[url]' => fn_url('payments.manage', SiteArea::ADMIN_PANEL)])
+            );
+
+            return;
+        }
+
+        $certificate_path = Registry::get('config.dir.certificates') . $processor_params['certificate_filename'];
+        $certificate_key_path = Registry::get('config.dir.certificate_keys') . $processor_params['certificate_key_filename'];
+
+        $client = new SMRegisterApiClient(
+            $processor_params['sm_register_username'],
+            $processor_params['sm_register_password'],
+            $certificate_path,
+            $certificate_key_path
+        );
         /** @var array $response */
         $response = $client->registerShopCode($shop_data);
         if (empty($response['shopCode'])) {

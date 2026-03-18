@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Registry;
 use Tygh\Settings;
@@ -59,6 +59,11 @@ $schema = [
             'reference_fields' => ['product_id' => '#key'],
             'join_type'        => 'LEFT'
         ],
+        'videos_links' => [
+            'reference_fields'          => ['object_id' => '#key', 'object_type' => 'product', 'pair_id' => 0],
+            'join_type'                 => 'LEFT',
+            'import_skip_db_processing' => true
+        ]
     ],
     'condition' => [
         'use_company_condition' => true,
@@ -217,6 +222,7 @@ $schema = [
             'db_field' => 'product_id'
         ],
         'Category' => [
+            'convert_put' => ['fn_exim_prepare_categories', '#this', '@category_delimiter'],
             'process_get' => ['fn_exim_get_product_categories', '#key', 'M', '@category_delimiter', '#lang_code'],
             'process_put' => ['fn_exim_set_product_categories', '#key', 'M', '#this', '@category_delimiter', '%Store%', '#counter', '#new', '#row'],
             'multilang'   => true,
@@ -224,6 +230,7 @@ $schema = [
             'default'     => ''
         ],
         'Secondary categories' => [
+            'convert_put' => ['fn_exim_prepare_categories', '#this', '@category_delimiter'],
             'process_get' => ['fn_exim_get_product_categories', '#key', 'A', '@category_delimiter', '#lang_code'],
             'process_put' => ['fn_exim_set_product_categories', '#key', 'A', '#this', '@category_delimiter', '%Store%', '#counter', '#new'],
             'multilang'   => true,
@@ -407,6 +414,12 @@ $schema = [
             'db_field'    => 'image_id',
             'table'       => 'images_links',
             'export_only' => true,
+        ],
+        'Videos' => [
+            'process_get' => ['fn_exim_get_all_videos_url', '#key', 'product', '@images_delimiter', '#this'],
+            'process_put' => ['fn_exim_set_videos', '#key', 'product', '#new', '#this', '@images_delimiter'],
+            'db_field'    => 'video_id',
+            'table'       => 'videos_links',
         ],
         'Detailed image URL' => [
             'process_get' => ['fn_exim_get_detailed_image_url', '#key', 'product', 'M', '#lang_code'],

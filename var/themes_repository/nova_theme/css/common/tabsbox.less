@@ -1,0 +1,32 @@
+.ty-tabs__item,
+.ty-tabs .subtab {
+    background: var(--cs-btn-link-background);
+    border-bottom: 3px solid transparent;
+}
+
+.ty-tabs__item:hover,
+.ty-tabs .subtab:hover {
+    background: var(--cs-btn-link-background-highlight);
+}
+
+.ty-tabs__item.active,
+.ty-tabs .subtab.active {
+    background: var(--cs-btn-link-background-highlight);
+    border-bottom-color: var(--cs-btn-link-color);
+}
+
+.ty-tabs__a,
+.ty-tabs .subtab a {
+    padding: 16px 24px 11px 24px;
+    color: var(--cs-btn-link-color);
+    font-weight: 700;
+}
+
+.ty-tabs__item.active .ty-tabs__a {
+    color: var(--cs-btn-link-color);
+}
+
+.ty-tabs__a:hover,
+.ty-tabs .subtab a:hover {
+    color: var(--cs-btn-link-color-highlight);
+}

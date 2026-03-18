@@ -16,7 +16,7 @@
 *******************************************************************************************/
 // Small items
 :root {
-    --smallitems-item-min-width: 295px;
+    --smallitems-item-min-width: 294px;
 }
 
 .ut2-template-small {
@@ -48,7 +48,7 @@
         text-align: center;
         font-size: 11px;
         font-weight: 500;
-        color: @font;
+        color: var(--color-font);
         background: white;
         background-clip: content-box;
         border-radius: 100%;
@@ -85,8 +85,7 @@
         position: relative;
         padding: 0;
         gap: var(--gap-sm);
-        background: @general_bg_color;
-        //overflow: hidden;
+        background: var(--color-general);
 
         .contrast_background();
 
@@ -101,15 +100,15 @@
                 padding: var(--gap-xs);
             }
 
-            box-shadow: inset 0 0 0 1px @base;
+            box-shadow: inset 0 0 0 1px var(--color-base);
 
             .extend_grid_item_on_hover() when not (@abt__ut2_product_list_extend_grid_item_on_hover = true) {
-                transition: box-shadow .2s linear;
+                transition: box-shadow 200ms linear;
             }
             .extend_grid_item_on_hover();
 
             &:hover {
-                box-shadow: inset 0 0 0 1px @base5;
+                box-shadow: inset 0 0 0 1px var(--color-base5);
             }
         }
         .ut2_grid_border() when (@abt__ut2_product_list_show_grid_border = none) {
@@ -164,29 +163,10 @@
 
         > a {
             display: inline-block;
+            border-radius: var(--border-radius-decreased);
             overflow: hidden;
 
             // Mask
-            .ut2_product_image_mask() when not (@general_bg_image = transparent) {
-                background: @general_bg_image;
-            }
-            .ut2_product_image_mask() when (@abt__ut2_product_list_mask_images_gallery = true) {
-                .ut2_round() when (@abt__ut2_general_use_rounding = little) {
-                    border-radius: calc(var(--border-radius-box) - 2px);
-                }
-                .ut2_round() when (@abt__ut2_general_use_rounding = full) {
-                    border-radius: calc(var(--border-radius-box) - 6px);
-                }
-                .ut2_round();
-            }
-            .ut2_product_image_mask() when (@abt__ut2_product_list_mask_images_gallery = true) and (@general_bg_color = #ffffff) {
-                background: lighten(@fill-gray-box, 0.5%);
-
-                img.ty-pict {
-                    mix-blend-mode: multiply;
-                    filter: brightness(1.05);
-                }
-            }
             .ut2_product_image_mask();
         }
     }
@@ -228,7 +208,7 @@
         display: inline-flex;
         align-items: flex-start;
         text-align: left;
-        color: @font;
+        color: var(--color-font);
 
         .ut2_line_clamp(var(--si-lines-in-name-product));
     }

@@ -15,14 +15,6 @@
         <sections>
             <section id="general">
                 <items>
-                    <item id="collect_payouts">
-                        <type>radiogroup</type>
-                        <default_value>N</default_value>
-                        <variants>
-                            <item id="N"/>
-                            <item id="Y"/>
-                        </variants>
-                    </item>
                     <item id="rma_refunded_order_status">
                         <type>hidden</type>
                         <default_value/>

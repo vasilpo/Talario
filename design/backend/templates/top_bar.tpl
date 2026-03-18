@@ -1,4 +1,4 @@
-{$scroll_header = $config.scroll_header|default:false}
+{$scroll_header = $config.tweaks.scroll_header|default:false}
 <div class="top-bar {if $scroll_header}top-bar--scroll-header{/if}" id="top_bar">
     <div class="top-bar__inner
         {if $runtime.is_current_storefront_closed || $runtime.are_all_storefronts_closed}top-bar__inner--disabled{/if}
@@ -7,7 +7,6 @@
     >
         <div class="top-bar__left" id="top_bar_left">
             {include file="components/menu/mobile_menu.tpl"}
-            {include file="components/menu/logo_menu.tpl"}
             {include file="components/menu/storefront_menu.tpl"}
         <!--top_bar_left--></div>
 

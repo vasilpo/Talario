@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Api;
 use Tygh\Enum\NotificationSeverity;
@@ -18,6 +18,7 @@ use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\UserTypes;
 use Tygh\Enum\YesNo;
+use Tygh\Licensing\Features;
 use Tygh\Registry;
 use Tygh\Tools\Url;
 use Tygh\Tygh;
@@ -272,8 +273,12 @@ if ($mode === 'manage') {
 
     list($users, $search) = fn_get_users($_REQUEST, $auth, Registry::get('settings.Appearance.admin_elements_per_page'));
 
-    $user_ids = array_column($users, 'user_id');
-    $orders_statistics = fn_get_user_order_statistics($user_ids);
+    if ($users) {
+        $user_ids = array_column($users, 'user_id');
+        $orders_statistics = fn_get_user_order_statistics($user_ids);
+    } else {
+        $orders_statistics = [];
+    }
 
     Tygh::$app['view']->assign('users', $users);
     Tygh::$app['view']->assign('search', $search);
@@ -347,10 +352,7 @@ if ($mode === 'manage') {
         }
 
         $sess_data = [
-            'auth'        => fn_fill_auth($user_data, [], true, $area),
-            'last_status' => empty(Tygh::$app['session']['last_status'])
-                ? ''
-                : Tygh::$app['session']['last_status'],
+            'auth' => fn_fill_auth($user_data, [], true, $area),
         ];
 
         $redirect_url = !empty($_REQUEST['redirect_url'])
@@ -574,7 +576,7 @@ if ($mode === 'manage') {
             }
         }
 
-        if (fn_allowed_for('MULTIVENDOR:ULTIMATE')) {
+        if (fn_allowed_for('MULTIVENDOR') && fn_is_allowed(Features::MULTIPLE_STOREFRONTS)) {
             $show_storefront_picker = UserTypes::isAdmin($_REQUEST['user_type']) && empty($auth['storefront_id']);
         }
     } else {
@@ -733,6 +735,10 @@ if ($mode === 'manage') {
     Tygh::$app['view']->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
     Tygh::$app['view']->assign('states', fn_get_all_states());
     Tygh::$app['view']->assign('show_storefront_picker', $show_storefront_picker);
+
+    if (fn_allowed_for('ULTIMATE')) {
+        Tygh::$app['view']->assign('ult_check_users_usergroup_companies', fn_ult_check_users_usergroup_companies($user_data['user_id'] ?? 0));
+    }
 
     if (
         !empty($user_data['user_id'])

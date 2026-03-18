@@ -1,0 +1,1 @@
+{$show_cart_bottom_fixed = false scope=parent}

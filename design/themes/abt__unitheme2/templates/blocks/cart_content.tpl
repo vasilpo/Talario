@@ -25,12 +25,12 @@
                                         {foreach from=$_cart_products key="key" item="product" name="cart_products"}
                                             {hook name="checkout:minicart_product"}
                                             {if !$product.extra.parent}
-                                                <li class="ty-cart-items__list-item">
+                                                <li class="ty-cart-items__list-item{if $block.properties.display_delete_icons == "YesNo::YES"|enum && (!$runtime.checkout || $force_items_deletion) && !$product.extra.exclude_from_calculate} has-rm-btn{/if}">
                                                     {hook name="checkout:minicart_product_info"}
                                                     {if $block.properties.products_links_type == "thumb"}
                                                         <div class="ty-cart-items__list-item-image">
                                                             <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">
-                                                            {include file="common/image.tpl" image_width="40" image_height="40" images=$product.main_pair no_ids=true lazy_load=false}
+                                                            {include file="common/image.tpl" image_width=$settings.Thumbnails.product_cart_thumbnail_width image_height=$settings.Thumbnails.product_cart_thumbnail_height images=$product.main_pair no_ids=true lazy_load=false}
                                                             </a>
                                                         </div>
                                                     {/if}
@@ -63,13 +63,17 @@
                         <div class="cm-cart-buttons buttons-container {if $smarty.session.cart.amount} full-cart{else} hidden{/if}">
                             {hook name="checkout:cart_subtotal"}
                             {if $smarty.session.cart.amount > 1 || $product.extra.buy_together}
-                            <p class="cart_subtotal">{__("total_items")}:&nbsp;<span class="ty-float-right">{$smarty.session.cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;&nbsp;<strong>{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</strong></span><br>&nbsp;</p>
+                            <div class="cart_subtotal">
+                                <div class="ut2-cart_subtotal__caption">{__("total_items")}:</div>
+                                <div class="ut2-cart_subtotal__data">{$smarty.session.cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;&nbsp;<strong>{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</strong></div></div>
                             {/if}
                             {/hook}
-                            <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__outline">{__("view_cart")}</a>
-                            {if $settings.Checkout.checkout_redirect != "YesNo::YES"|enum}
-                                {include file="buttons/proceed_to_checkout.tpl" but_text=__("checkout")}
-                            {/if}
+                            <div class="cart_buttons">
+                                <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__outline">{__("view_cart")}</a>
+                                {if $settings.Checkout.checkout_redirect != "YesNo::YES"|enum}
+                                    {include file="buttons/proceed_to_checkout.tpl" but_text=__("checkout")}
+                                {/if}
+                            </div>
                         </div>
                     {/if}
 

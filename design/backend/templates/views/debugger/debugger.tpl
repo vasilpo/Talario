@@ -621,21 +621,31 @@ $(document).ready(function() {
         #DebugToolbar input[type="checkbox"] {
             -moz-appearance: none;
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            position: relative;
+            width: 26px;
+            height: 26px;
+            font-size: 20px;
+            line-height: 1;
             border: 2px solid #dde4ef;
             border-radius: 4px;
-            box-shadow: none;
-            border-color: #dde4ef;
             background: #fff;
-            cursor: pointer;
-            font-size: 11px;
+            box-shadow: none;
+        }
+        #DebugToolbar input[type="checkbox"]:after {
+            display: block;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(calc( (20 + 26) / (20 * 2) ));
+            height: 20px;
+            width: 20px;
         }
         #DebugToolbar input[type="checkbox"]:checked,
         #DebugToolbar input[type="checkbox"]:indeterminate {
             background: #1d9ff8;
             border-color: #1d9ff8;
+        }
+        #DebugToolbar input[type="checkbox"]:not(:checked):after {
+            content: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' width='20' height='20' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E");
         }
         #DebugToolbar input[type="checkbox"]:not(:checked):hover {
             border-color: #2d2d2d;
@@ -646,24 +656,39 @@ $(document).ready(function() {
             display: block;
             width: 34px;
             height: 34px;
-            transform: translate(-11px, -11px);
-        }
-        #DebugToolbar input[type="checkbox"]:checked:after,
-        #DebugToolbar input[type="checkbox"]:indeterminate:after {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            color: white;
+            transform: translate(calc(((34px - 26px) / -2) - 2px), calc(((34px - 26px) / -2) - 2px));
         }
         #DebugToolbar input[type="checkbox"]:checked:after {
-            transform: translate(-0.5px, 1px);
             content: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' width='20' height='20' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m15.9754 5.89958c.3661.36611.3661.9597 0 1.32582l-6.83034 6.8305c-.17581.1759-.41427.2746-.66292.2746-.24864 0-.4871-.0987-.66292-.2746l-3.79464-3.7947c-.36611-.36609-.36611-.95968.00001-1.32579.36612-.36612.95972-.36611 1.32583.00001l3.13172 3.13178 6.16746-6.1676c.3661-.36613.9597-.36613 1.3258-.00002z'/%3E%3C/svg%3E");
         }
         #DebugToolbar input[type="checkbox"]:indeterminate:after {
-            transform: translate(-0.5px, 1px);
             content: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' width='20' height='20' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m4.0625 10c0-.51777.41973-.9375.9375-.9375h10.625c.5178 0 .9375.41973.9375.9375 0 .5178-.4197.9375-.9375.9375h-10.625c-.51777 0-.9375-.4197-.9375-.9375z'/%3E%3C/svg%3E");
+        }
+        #DebugToolbar input[type="checkbox"]:disabled {
+            border-color: #7a7a7a;
+            background: #7a7a7a;
+            outline-color: #7a7a7a;
+        }
+        #DebugToolbar input[type="checkbox"].checkbox {
+            min-height: auto;
+            padding-left: initial;
+        }
+        #DebugToolbar input[type="checkbox"].checkbox--nomargin {
+            margin: 0;
+        }
+        .cs-dark-theme #DebugToolbar input[type="checkbox"]:checked:after {
+            /* override */
+            filter: invert(0);
+        }
+        #DebugToolbar input[type="checkbox"]:not(:focus):hover {
+            box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.05);
+            outline: 1px solid rgba(0, 0, 0, 0.025);
+        }
+        #DebugToolbar input[type="checkbox"]:checked:hover {
+            filter: brightness(90%);
+        }
+        #DebugToolbar input[type="checkbox"]:not(:checked):hover {
+            border-color: #2d2d2d;
         }
         #DebugToolbar #DebugToolbarSubTabSQLList,
         #DebugToolbar #DebugToolbarSubTabCacheQueriesList {

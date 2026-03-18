@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\BlockManager;
 
@@ -329,6 +329,7 @@ class Exim extends CompanySingleton
             $xml_location = $xml_root->addChild('location');
             $location = array_diff_key($location, $except_location_fields);
             foreach ($location as $attr => $value) {
+                $value = (string) $value;
                 $xml_location->addAttribute($attr, $value);
             }
 
@@ -484,7 +485,28 @@ class Exim extends CompanySingleton
         $structure = null;
 
         if (file_exists($xml_filepath)) {
+            /** @var ExSimpleXmlElement $structure */
             $structure = @simplexml_load_file($xml_filepath, '\\Tygh\\ExSimpleXmlElement', LIBXML_NOCDATA);
+        }
+
+        if (
+            $structure
+            && $structure->attributes()->scheme
+            && version_compare($structure->attributes()->scheme, '1.1', '>=')
+        ) {
+            $product_build = fn_strtoupper(PRODUCT_BUILD) ?: 'EN';
+            $condition = ["@build and not(contains(@build,'{$product_build}'))"];
+
+            if (PRODUCT_EDITION) {
+                $product_edition = fn_strtoupper(PRODUCT_EDITION);
+                $condition[] = "@edition and not(contains(@edition,'{$product_edition}'))";
+            }
+
+            if ($condition) {
+                $condition = implode(' or ', $condition);
+
+                $structure->remove("//*[{$condition}]");
+            }
         }
 
         return $structure;
@@ -550,27 +572,44 @@ class Exim extends CompanySingleton
 
     private function parseBlockStructure($grid_id, $blocks)
     {
-        $unique_blocks = array();
+        $unique_blocks = [];
         $langs = Languages::getAll();
 
         $_unique = Block::instance($this->_company_id, [], $this->storefront_id)->getAllUnique();
 
-        $blocks_by_storefront = [];
-        foreach ($_unique as $block_data) {
-            $blocks_by_storefront[$block_data['storefront_id']] = $block_data;
-        }
-
         if (!empty($_unique)) {
             foreach ($_unique as $block_id => $block) {
-                $key = $this->getUniqueBlockKey(
-                    $block['type'],
-                    $block['properties'],
-                    $block['name'],
-                    '',
-                    $block['storefront_id']
-                );
+                if (empty($block['locations'])) {
+                    $key = $this->getUniqueBlockKey(
+                        $block['type'],
+                        $block['properties'],
+                        $block['name'],
+                        '',
+                        $block['storefront_id']
+                    );
 
-                $unique_blocks[$key] = $block_id;
+                    $unique_blocks[$key] = $block_id;
+
+                    continue;
+                }
+
+                foreach ($block['locations'] as $location) {
+                    if (!isset($location['theme_id']) || $location['theme_id'] !== $this->theme_name) {
+                        continue;
+                    }
+
+                    $key = $this->getUniqueBlockKey(
+                        $block['type'],
+                        $block['properties'],
+                        $block['name'],
+                        '',
+                        $block['storefront_id']
+                    );
+
+                    $unique_blocks[$key] = $block_id;
+
+                    break;
+                }
             }
         }
 
@@ -733,6 +772,8 @@ class Exim extends CompanySingleton
                 $this->buildAttrStructure($xml_attr, $value);
 
             } else {
+                $value = (string) $value;
+
                 $child = $parent->addChild($attr);
                 $node = dom_import_simplexml($child);
                 $no = $node->ownerDocument;

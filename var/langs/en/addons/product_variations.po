@@ -17,12 +17,12 @@ msgid "General"
 msgstr "General"
 
 msgctxt "SettingsOptions::product_variations::variations_allow_own_images"
-msgid "Allow own images for child variations"
-msgstr "Allow own images for child variations"
+msgid "Allow own media for child variations"
+msgstr "Allow own media for child variations"
 
 msgctxt "SettingsTooltips::product_variations::variations_allow_own_images"
-msgid "If child variations aren't allowed to have their own images, they will use the images from the default variation of the catalog item."
-msgstr "If child variations aren't allowed to have their own images, they will use the images from the default variation of the catalog item."
+msgid "If you don't allow this, child variations will use images and videos from the default variation of the catalog item."
+msgstr "If you don't allow this, child variations will use images and videos from the default variation of the catalog item."
 
 msgctxt "SettingsOptions::product_variations::variations_allow_auto_change_default_variation"
 msgid "Change default variation when it gets hidden or runs out of stock"
@@ -365,8 +365,8 @@ msgid "You've disabled the <b>Allow own feature values for child variations</b> 
 msgstr "You've disabled the <b>Allow own feature values for child variations</b> setting. Please export <a href=\"[url]\">all your default variations</a> (use \"Export found products\" in the gear button) and reimport them. This will apply their feature values to existing child variations."
 
 msgctxt "Languages::product_variations.allow_own_images_setting_changing"
-msgid "You've disabled the <b>Allow own images for child variations</b> setting. Please export <a href=\"[url]\">all your default variations</a> (use \"Export found products\" in the gear button) and reimport them. This will apply their images to existing child variations."
-msgstr "You've disabled the <b>Allow own images for child variations</b> setting. Please export <a href=\"[url]\">all your default variations</a> (use \"Export found products\" in the gear button) and reimport them. This will apply their images to existing child variations."
+msgid "You've disabled the <b>Allow own media for child variations</b> setting. Please export <a href=\"[url]\">all your default variations</a> (use \"Export found products\" in the gear button) and reimport them. This will apply their images and videos to existing child variations."
+msgstr "You've disabled the <b>Allow own media for child variations</b> setting. Please export <a href=\"[url]\">all your default variations</a> (use \"Export found products\" in the gear button) and reimport them. This will apply their images and videos to existing child variations."
 
 msgctxt "Languages::product_variations.add_all_variants"
 msgid "Add all variants"

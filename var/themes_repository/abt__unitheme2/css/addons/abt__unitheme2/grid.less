@@ -18,7 +18,7 @@ html {
     @media not all and (hover: hover) {
         --safe-area-inset-top: env(safe-area-inset-top);
         --safe-area-inset-bottom: env(safe-area-inset-bottom);
-        --safe-area-inset: calc(~'var(--safe-area-inset-top) + var(--safe-area-inset-bottom)');
+        --safe-area-inset: calc(var(--safe-area-inset-top) + var(--safe-area-inset-bottom));
     }
 
     @media (hover: hover) {
@@ -26,9 +26,9 @@ html {
     }
 
     &.no-scroll,
-    &.dialog-is-open,
-    &.notif-dialog-is-open,
-    &.select-variation-dialog-is-open
+    &.dialog-is-open, // platform core
+    &.js_notif-dialog_-open,
+    &.js_select-variation-dialog_-open
     {
         overflow: clip !important;
 
@@ -54,8 +54,8 @@ html {
     html.mouseevents {
         &.no-scroll,
         &.dialog-is-open,
-        &.notif-dialog-is-open,
-        &.select-variation-dialog-is-open
+        &.js_notif-dialog_-open,
+        &.js_select-variation-dialog_-open
         {
             border-inline-end: 10px solid rgba(0, 0, 0, .1);
         }
@@ -64,16 +64,16 @@ html {
 
 html,
 body {
-    scroll-behavior: auto; // for correct locking scroll
+    scroll-behavior: auto; // for correct locking scroll and to prevent jumping
     overflow-x: clip !important;
     max-width: 100dvw;
     height: auto;
     min-height: 100dvh;
 
-        /*@supports (scrollbar-width: thin) {
-            scrollbar-width: thin;
-            scrollbar-color: @base10 transparent;
-        }*/
+    /*@supports (scrollbar-width: thin) {
+        scrollbar-width: thin;
+        scrollbar-color: @base10 transparent;
+    }*/
 
     &::-webkit-scrollbar {
         height: 8px;
@@ -84,7 +84,7 @@ body {
         background: var(--fill-gray);
     }
     &::-webkit-scrollbar-thumb {
-        background: @base5;
+        background: var(--color-base5);
         border-radius: 4px;
     }
     &:hover {
@@ -92,7 +92,7 @@ body {
             height: 8px;
         }
         &::-webkit-scrollbar-thumb {
-            background: @base20;
+            background: var(--color-base20);
         }
     }
 }
@@ -121,7 +121,7 @@ body {
             }
         }
         &::-webkit-scrollbar-thumb {
-            background: @base5;
+            background: var(--color-base5);
             border-radius: 4px;
         }
         &:hover {
@@ -129,25 +129,13 @@ body {
                 height: 8px;
             }
             &::-webkit-scrollbar-thumb {
-                background: @base20;
+                background: var(--color-base20);
             }
         }
     }
 }
 
 html {
-    &:not(.no-scroll) {
-        .tygh-top-panel:hover {
-            position: relative;
-            z-index: @big-z + 4;
-        }
-    }
-    &.no-scroll {
-        .tygh-top-panel {
-            position: relative;
-            z-index: 1;
-        }
-    }
     &.touchevents, &.touchevents body {
         scrollbar-width: none;
     }
@@ -364,18 +352,10 @@ html {
         border-radius:  0 0 var(--border-radius-box) var(--border-radius-box);
     }
 }
-@media (max-width: 1023px) {
-    .top-menu-grid .ty-dropdown-box__content {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-}
+
 .ty-footer-form-block,
 .ut2-social-link-block,
-.ut2-blog__recent-posts-scroller--img,
-.ut2-blog__recent-posts--item .ut2-blog__recent-posts--img,
-.ut2-blog__img-block img,
 .ty-banner__image-wrapper img {
     overflow: hidden;
-    border-radius: var(--border-radius-box) !important;
+    border-radius: var(--border-radius-box);
 }

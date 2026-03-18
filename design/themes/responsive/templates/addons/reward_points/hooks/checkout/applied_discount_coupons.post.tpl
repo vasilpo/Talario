@@ -1,7 +1,7 @@
 {if $cart.points_info.reward}
     <div class="ty-reward-points__info clearfix">
-        <span>{__("points")}</span>
-        <span class="ty-float-right">{$cart.points_info.reward}</span>
+        <span class="ty-reward-points__info-label">{__("points")}</span>
+        <span class="ty-reward-points__info-value ty-float-right ">{$cart.points_info.reward}</span>
     </div>
 {/if}
 

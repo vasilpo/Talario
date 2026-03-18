@@ -1,17 +1,18 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Registry;
 use Tygh\Tygh;
@@ -156,6 +157,11 @@ if ($mode == 'manage') {
     $destinations = fn_get_destinations(DESCR_SL, $params);
 
     if ($mode == 'update') {
+        if (!fn_check_store_location_update_allowed($_REQUEST['store_location_id'])) {
+            fn_set_notification(NotificationSeverity::ERROR, __('error'), __('access_denied'));
+            return [CONTROLLER_STATUS_DENIED];
+        }
+
         $store_location = fn_get_store_location($_REQUEST['store_location_id'], DESCR_SL);
         if (empty($store_location)) {
             return [CONTROLLER_STATUS_NO_PAGE];

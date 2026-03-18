@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -26,13 +26,17 @@ function fn_customers_also_bought_place_order(&$order_id)
     foreach ($product_ids as $_origin) {
         foreach ($product_ids as $_target) {
             if ($_origin != $_target) {
-                $_data = array (
-                    'product_id' => $_origin,
-                    'related_id' => $_target,
-                    'amount' => db_get_field("SELECT amount FROM ?:also_bought_products WHERE product_id = ?i AND related_id = ?i", $_origin, $_target),
+                $amount = db_get_field(
+                    'SELECT amount FROM ?:also_bought_products WHERE product_id = ?i AND related_id = ?i',
+                    $_origin,
+                    $_target
                 );
 
-                $_data['amount']++;
+                $_data = [
+                    'product_id' => $_origin,
+                    'related_id' => $_target,
+                    'amount'     => (int) $amount + 1,
+                ];
 
                 db_query("REPLACE INTO ?:also_bought_products ?e", $_data);
             }

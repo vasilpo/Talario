@@ -1,15 +1,5 @@
 <?php
-//
-// $Id$
-//
 
-/*
-
-   Initial version of this class was kindly provided by Torin Walker.
-
-   Improved and extended by Simbirsk Technologies Ltd. team.
-
-*/
 namespace {
     if (version_compare(PHP_VERSION, '8.0.0') === -1) {
         class XMLDocument extends \XMLDocument\XMLDocument{};

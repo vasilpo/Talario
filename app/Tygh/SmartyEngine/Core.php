@@ -1,22 +1,23 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\SmartyEngine;
 
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Smarty\Smarty;
 use Tygh\Enum\SiteArea;
 use Tygh\Exceptions\PermissionsException;
 use Tygh\Providers\StorefrontProvider;
@@ -24,7 +25,7 @@ use Tygh\Registry;
 use Tygh\Themes\Themes;
 use Tygh\Tygh;
 
-class Core extends \Smarty
+class Core extends Smarty
 {
     private $_area = AREA;
     private $_area_type = '';
@@ -32,26 +33,23 @@ class Core extends \Smarty
     public $lang_code = CART_LANGUAGE;
     public $default_resource_type = 'tygh';
     public $escape_html = true;
+
+    /** @var string */
     public $template_area = '';
+
+    /** @var Themes */
     public $theme;
-    public $theme_dirs = array();
+
+    /** @var string[] */
+    public $theme_dirs = [];
+
+    /** @var string[] */
+    protected $component_dirs = [];
 
     /**
      * @var bool Whether to use logos from runtime layout (true) or from default layout (false).
      */
     protected $use_runtime_layout_for_logos = true;
-
-    /**
-     * Wrapper for translate function
-     *
-     * @param  string $var    variable to translate
-     * @param  array  $params placeholder replacements
-     * @return string translated variable
-     */
-    public function __($var, $params = array())
-    {
-        return __($var, $params, $this->getLanguage());
-    }
 
     /**
      * Smarty display method wrapper (adds template override, assigns navigation and checks for ajax request)
@@ -62,7 +60,10 @@ class Core extends \Smarty
      */
     public function display($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
-        parent::display($this->_preFetch($template), $cache_id, $compile_id, $parent);
+        $template = $this->createTemplate($this->_preFetch($template), $cache_id, $compile_id, $parent);
+        $template->caching = $this->caching;
+
+        $template->display();
     }
 
     /**
@@ -78,33 +79,10 @@ class Core extends \Smarty
      */
     public function fetch($template = null, $cache_id = null, $compile_id = null, $parent = null, $display = false, $merge_tpl_vars = true, bool $no_output_filter = false)
     {
-        return parent::fetch($this->_preFetch($template), $cache_id, $compile_id, $parent, $display, $merge_tpl_vars, $no_output_filter);
-    }
+        $template = $this->createTemplate($this->_preFetch($template), $cache_id, $compile_id, $parent);
+        $template->caching = $this->caching;
 
-    /**
-     * Smarty loadPlugin method wrapper, allows to load smarty classes outside default directory
-     * @param  string $plugin_name class plugin name to load
-     * @param  bool   $check       check if already loaded
-     * @return string |boolean filepath of loaded file or false
-     */
-    public function loadPlugin($plugin_name, $check = true)
-    {
-        if ($check && (is_callable($plugin_name) || class_exists($plugin_name, false))) {
-            return true;
-        }
-
-        $_name_parts = explode('_', $plugin_name, 3);
-
-        if (strtolower($_name_parts[1]) == 'internal') {
-            $file = Registry::get('config.dir.functions') . 'smarty_plugins/' . strtolower($plugin_name) . '.php';
-            if (file_exists($file)) {
-                require_once($file);
-
-                return $file;
-            }
-        }
-
-        return parent::loadPlugin($plugin_name, $check);
+        return $template->fetch();
     }
 
     public function getArea()
@@ -269,15 +247,15 @@ class Core extends \Smarty
         $this->assign(array(
             'demo_username' => isset($data['config']['demo_username']) ? $data['config']['demo_username'] : null,
             'demo_password' => isset($data['config']['demo_password']) ? $data['config']['demo_password'] : null,
-            'user_info' => isset($data['user_info']) ? $data['user_info'] : null,
-            'navigation' => isset($data['navigation']) ? $data['navigation'] : null, // Pass navigation to templates
-            'settings' => $data['settings'],
-            'addons' => $data['addons'],
-            'config' => $data['config'],
-            'runtime' => $data['runtime'],
-            '_REQUEST' => $_REQUEST, // we need escape the request array too (access via $smarty.request in template)
-            'auth' => \Tygh::$app['session']['auth'],
-            'server_env' => \Tygh::$app['server.env'] // Pass server environment to templates
+            'user_info'     => isset($data['user_info']) ? $data['user_info'] : null,
+            'navigation'    => isset($data['navigation']) ? $data['navigation'] : null, // Pass navigation to templates
+            'settings'      => $data['settings'],
+            'addons'        => $data['addons'],
+            'config'        => $data['config'],
+            'runtime'       => $data['runtime'],
+            '_REQUEST'      => $_REQUEST, // we need escape the request array too (access via $smarty.request in template)
+            'auth'          => \Tygh::$app['session']['auth'],
+            'server_env'    => \Tygh::$app['server.env'] // Pass server environment to templates
         ));
     }
 
@@ -440,5 +418,84 @@ class Core extends \Smarty
         );
 
         $this->assign('logos', $logos);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getComponentDirs()
+    {
+        return $this->component_dirs;
+    }
+
+    /**
+     * @param string $dir Dir path
+     */
+    public function addComponentDir(string $dir): void
+    {
+        $this->component_dirs[] = $dir;
+    }
+
+    /**
+     * @param string $plugin_name Class plugin name to load
+     * @param bool   $check       Check if already loaded
+     *
+     * @return Core
+     *
+     * @deprecated since Smarty 5.0
+     */
+    public function loadPlugin($plugin_name, $check = true)
+    {
+        trigger_error(
+            'Using Core::loadPlugin() to load plugins is deprecated.' .
+            ' Use Core::addExtension() to add an extension or Smarty::registerPlugin() to ' .
+            'quickly register a plugin using a callback function.',
+            E_USER_DEPRECATED
+        );
+
+        return $this;
+    }
+
+    /**
+     * phpcs:ignore
+     * @param string|array $plugins_dir Plugins dir
+     *
+     * @return static
+     *
+     * @deprecated since Smarty 5.0
+     */
+    public function setPluginsDir($plugins_dir)
+    {
+        trigger_error(
+            'Using Core::addPluginsDir() is deprecated.' .
+            ' Use Core::addExtension() to add an extension or Smarty::registerPlugin() to ' .
+            'quickly register a plugin using a callback function.',
+            E_USER_DEPRECATED
+        );
+
+        return $this;
+    }
+
+    /**
+     * Registers a filter function
+     *
+     * @param string      $type     Filter type
+     * @param callable    $callback Callback
+     * @param string|null $name     Optional filter name
+     *
+     * @return static
+     *
+     * @deprecated since Smarty 5.0
+     */
+    //phpcs:ignore
+    public function registerFilter($type, $callback, $name = null)
+    {
+        trigger_error(
+            'Using Core::registerFilter() to register filters is deprecated.' .
+            ' Use Core::addExtension() to add an extension.',
+            E_USER_DEPRECATED
+        );
+
+        return $this;
     }
 }

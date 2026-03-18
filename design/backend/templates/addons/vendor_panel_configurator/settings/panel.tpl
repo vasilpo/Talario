@@ -77,7 +77,7 @@
                 hide_titles=true
                 hide_alt=true
             }
-            <p class="muted description">{__("vendor_panel_configurator.logo_description")}</p>
+            <p class="muted description">{__("vendor_panel_configurator.logo_description", ["[filesize]" => $config.tweaks.logo_max_upload_filesize_in_bytes / 1024 / 1024])}</p>
         </div>
     </div>
     <div class="control-group">

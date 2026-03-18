@@ -784,3 +784,12 @@
     display: none !important;
   }
   
+/* Custom Klaro */
+.klaro .cookie-notice:not(.cookie-modal-notice) {
+    padding-bottom: env(safe-area-inset-bottom); /* iOS */
+}
+
+.klaro .cookie-modal .cm-modal.cm-klaro {
+    max-height: calc(98% - 2 * env(safe-area-inset-bottom)); /* iOS */
+}
+/* /Custom Klaro */

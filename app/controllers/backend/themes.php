@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BlockManager\Layout;
 use Tygh\Development;
@@ -30,14 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($mode == 'clone') {
 
-        $source_theme_name = basename($_REQUEST['theme_data']['theme_src']);
-        $target_theme_name = basename(str_replace(' ', '_', $_REQUEST['theme_data']['theme_dest']));
+        $source_theme_name = basename($_REQUEST['theme_data']['theme_src'] ?? $_REQUEST['source']);
+        $target_theme_name = basename(str_replace(' ', '_', $_REQUEST['theme_data']['theme_dest'] ?? $_REQUEST['target']));
 
         $target_theme_data = isset($_REQUEST['theme_data']['title'], $_REQUEST['theme_data']['description'])
-            ? array(
-                'title' => $_REQUEST['theme_data']['title'],
+            ? [
+                'title'       => $_REQUEST['theme_data']['title'],
                 'description' => $_REQUEST['theme_data']['description'],
-            ) : array();
+            ] : [];
+
+        if (!isset($target_theme_data['title']) && isset($_REQUEST['target'])) {
+            $target_theme_data['title'] = $_REQUEST['target'];
+        }
 
         $source_theme = Themes::factory($source_theme_name);
         $source_theme->cloneAs($target_theme_name, $target_theme_data, Registry::get('runtime.company_id'));
@@ -278,24 +282,6 @@ if ($mode == 'manage') {
 
     Tygh::$app['view']->assign('themes_prefix', fn_get_theme_path('[relative]', 'C'));
     Tygh::$app['view']->assign('repo_prefix', fn_get_theme_path('[repo]', 'C'));
-
-    $clone_theme_button_params = Registry::get('navigation.dynamic.actions.clone_theme');
-
-    // Action buttons: Clone theme button
-    if (
-        !empty($available_themes)
-        && !empty($available_themes['current'])
-        && !empty($available_themes['current']['theme_name'])
-    ) {
-        if (UserTypes::isVendor($auth['user_type'])) {
-            // Hide Clone theme button for vendor
-            Registry::del('navigation.dynamic.actions.clone_theme');
-        } else {
-            // Set target id for Clone theme button
-            $clone_theme_button_params['target_id'] = 'content_elm_clone_theme_' . $available_themes['current']['theme_name'];
-            Registry::set('navigation.dynamic.actions.clone_theme', $clone_theme_button_params);
-        }
-    }
 
     if (!fn_get_styles_owner()) {
         Registry::set('navigation.tabs', [

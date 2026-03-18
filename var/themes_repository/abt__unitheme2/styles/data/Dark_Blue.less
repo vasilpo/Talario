@@ -14,7 +14,7 @@
 	color: @base5;
 }
 .benefits .benefit i {
-    color: #1e1e1e;
+	color: #1e1e1e;
 }
 
 // Remove this code to change the color of the icons in the menu
@@ -61,7 +61,7 @@
 @sidebar: #f5f5f7;
 @price: #1e1e1e;
 @discount_label: #e91e2d;
-@in_stock: #119a16;
+@in_stock: #1e905d;
 @out_of_stock: #767f8d;
 @top_panel_links: rgba(255,255,255,0.75);
 @top_panel_text: rgba(255,255,255,0.75);
@@ -92,30 +92,37 @@
 @footer_bg_transparent: false;
 @footer_bg_grad_stop: #24488e;
 
-@body_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+// Font - Open Sans for heading: 'Open Sans','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Open Sans for regular text: -apple-system,BlinkMacSystemFont,'Open Sans','Helvetica Neue','Arial',sans-serif;
+// Font - Inter for heading: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Inter for regular text: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
+// Font - Montserrat for heading: 'Montserrat','Helvetica Neue','Arial',-apple-system,sans-serif;
+// Font - Montserrat for regular text: -apple-system,BlinkMacSystemFont,'Montserrat','Helvetica Neue','Arial',sans-serif;
+
+@body_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;
 @body_font_size: 14px;
 @body_font_style: normal;
 @body_font_weight: normal;
-@headings_font: 'MuseoSansBlack','Helvetica Neue','Arial',-apple-system,sans-serif;
+@headings_font: 'Inter','Helvetica Neue','Arial',-apple-system,sans-serif;
 @headings_font_size: 24px;
 @headings_font_decoration: none;
 @headings_font_style: normal;
-@headings_font_weight: normal;
-@links_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@headings_font_weight: 900;
+@links_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
 @links_font_size: 14px;
 @links_font_decoration: none;
 @links_font_style: normal;
-@links_font_weight: normal;
-@price_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+@links_font_weight: 400;
+@price_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
 @price_font_size: 18px;
 @price_font_decoration: none;
 @price_font_style: normal;
-@price_font_weight: bold;
-@buttons_font: -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
-@buttons_font_size: 14px;
+@price_font_weight: 700;
+@buttons_font: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue','Arial',sans-serif;;
+@buttons_font_size: 15px;
 @buttons_font_decoration: none;
 @buttons_font_style: normal;
-@buttons_font_weight: normal;
+@buttons_font_weight: 600;
 
 // Only this style ------------------------------------
 
@@ -132,7 +139,7 @@
 
 // Mix color
 @mix-lighten-font: 40%;
-@mix-lighten-max-font: 60%;
+@mix-lighten-max-font: 50%;
 @mix-discount_label_lighten: 45%;
 
 // Fill
@@ -176,26 +183,26 @@
 // Products
 @abt__ut2_products_mask_images_gallery: false;
 @abt__ut2_products_bordered_images_gallery: false;
-@abt__ut2_products_sticky_columns: false;
+@abt__ut2_products_sticky_columns: true;
 
 // Checkout
 @checkout_link: #24488e;
 @checkout_input_border: #e4e6ed;
 @checkout_selected_input_border: #24488e;
-@checkout_step_title: #848c99;
+@checkout_step_title: #767f8d;
 @checkout_input_text: #1e1e1e;
-@checkout_input_label: #848c99;
+@checkout_input_label: #767f8d;
 @checkout_control_border: #e4e6ed;
 @checkout_selected_control_border: #24488e;
 @checkout_control_background: #ffffff;
-@checkout_selected_control_background: #eff3fa;
+@checkout_selected_control_background: #e7efff;
 @checkout_control_title: #24488e;
-@checkout_control_description: #848c99;
-@checkout_control_label: #848c99;
+@checkout_control_description: #767f8d;
+@checkout_control_label: #767f8d;
 @checkout_terms_background: #fdeff0;
 
 // Video Gallery
-@abt__ut2_addons_ab__video_gallery_block_bg: #24488e;
+@abt__ut2_addons_ab__video_gallery_block_bg: #4c4c4c;
 
 // Deal of the day
 @abt__ut2_addons_ab__deal_of_the_day_block_background: #767f8d;
@@ -203,14 +210,14 @@
 @abt__ut2_addons_ab__deal_of_the_day_bright_color_promotion_title: false;
 @abt__ut2_addons_ab__deal_of_the_day_bordered_block: false;
 @abt__ut2_addons_ab__deal_of_the_day_shadow_block: false;
-@abt__ut2_addons_ab__deal_of_the_day_rounded_corners_blocks: false;
+
 
 // Vendor colors
-@abt__ut2_vendor_vendor_info_background: #f3f4f7;
+@abt__ut2_vendor_vendor_info_background: #f5f5f7;
 @abt__ut2_vendor_vendor_info_font_main: #1e1e1e;
-@abt__ut2_vendor_vendor_info_font_additional: #848c99;
+@abt__ut2_vendor_vendor_info_font_additional: #767f8d;
 @abt__ut2_vendor_vendor_info_links: #24488e;
 @abt__ut2_vendor_vendor_menu_background: #ffffff;
-@abt__ut2_vendor_vendor_menu_active_background: #f3f4f7;
+@abt__ut2_vendor_vendor_menu_active_background: #f5f5f7;
 @abt__ut2_vendor_vendor_menu_item: #1e1e1e;
 @abt__ut2_vendor_vendor_menu_item_active: #1e1e1e;

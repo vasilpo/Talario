@@ -1,0 +1,1 @@
+{* Disable products:product_detail_bottom hook *}

@@ -1,6 +1,6 @@
 {** ab:single-banner **}
 {hook name="abt__ut2_banner:banners"}
-
+{if $b.abt__ut2_device_settings}
 <div class="ut2-banner ut2-banner-{$b.abt__ut2_device_settings} {if $block.properties.navigation == "L"} ut2-scroll-item {/if}{$b.abt__ut2_class}" style="{strip}
     {if $b.abt__ut2_color_scheme === "dark"}{$b_color_scheme = "0,0,0"}
         --ab-banner-color-schemes: dark;
@@ -9,11 +9,9 @@
     {/if}
     {if $b.abt__ut2_background_color_use === "YesNo::YES"|enum}--ab-banner-background-color: {$b.abt__ut2_background_color|default:white};{/if}
     {if $b.abt__ut2_background_image_size}--ab-banner-background-size: {$b.abt__ut2_background_image_size};{/if}
-    {if $b.abt__ut2_image_position}--ab-banner-background-position: {$b.abt__ut2_image_position};{/if}
-
-    {if $b.abt__ut2_content_bg === "colored" && $b.abt__ut2_content_bg_color_use === "YesNo::YES"|enum}
-        --ab-banner-mask-background-color: {$b.abt__ut2_content_bg_color};
-    {/if}
+    {if $b.abt__ut2_background_v_position}--ab-banner-background-vertical-position: {$b.abt__ut2_background_v_position};{/if}
+    {if $b.abt__ut2_background_h_position}--ab-banner-background-horizontal-position: {$b.abt__ut2_background_h_position};{/if}
+    {if $b.abt__ut2_content_bg === "colored" && $b.abt__ut2_content_bg_color_use === "YesNo::YES"|enum}--ab-banner-mask-background-color: {$b.abt__ut2_content_bg_color};{/if}
     {if $b.abt__ut2_content_bg === "transparent" || $b.abt__ut2_content_bg === "transparent_blur"}
         --ab-banner-mask-background-color: color-mix(in srgb, {$b.abt__ut2_content_bg_color|default: "rgba({$b_color_scheme})"} {$b.abt__ut2_content_bg_opacity}%, rgba({$b_color_scheme},0));
     {/if}
@@ -103,7 +101,7 @@
             {$url_1 = "url(`$cropped.image_path`) 1x"}
             {$url_2 = "url(`$b.abt__ut2_background_image.icon.image_path`) 2x"}
 
-            {$background_url="`$cropped.image_path`'); background-image: image-set($url_1, $url_2);" scope="parent"}
+            {$background_url="`$cropped.image_path`'); background-image: image-set($url_1, $url_2);"}
             {$data_backgroud_url = "" scope="parent"}
         {/if}
     {/if}
@@ -122,10 +120,6 @@
         {if $data_backgroud_url} lazyload{/if} {$b.abt__ut2_color_scheme}{/strip}"
          data-id="{$b.banner_id}" {if $data_backgroud_url}data-background-url="{$data_backgroud_url}"{/if}{if $background_url} style="background-image: url('{$background_url}');"{/if}>
 
-        {if $b.abt__ut2_background_type === "mp4_video" && $b.abt__ut2_background_mp4_video}
-            <video class="ut2-banner__video" src="{$config.origin_https_location}/images/{$b.abt__ut2_background_mp4_video}" muted loop playsinline></video>
-        {/if}
-
         <div class="{strip}ut2-a__content valign-{$b.abt__ut2_content_valign} align-{$b.abt__ut2_content_align}
             {if $b.abt__ut2_content_full_width === "YesNo::YES"|enum} width-full{else} width-half{/if}
             {if $b.abt__ut2_object === 'image' && $b.abt__ut2_main_image.icon.image_path} internal-image{/if}
@@ -133,11 +127,11 @@
             {if $b.abt__ut2_object === 'products' && $b.products} internal-products{/if}{/strip}">
 
             {if $b.abt__ut2_object === 'image' && $b.abt__ut2_main_image.icon.image_path}
-                <div class="ut2-a__img {if $b.abt__ut2_image_position}vp--{$b.abt__ut2_image_position}{/if}">
+                <div class="ut2-a__img{if $b.abt__ut2_image_v_position} vp--{$b.abt__ut2_image_v_position}{/if}{if $b.abt__ut2_image_h_position} hp--{$b.abt__ut2_image_h_position}{/if}">
                     {include file="common/image.tpl" images=$b.abt__ut2_main_image.icon}
                 </div>
             {elseif $b.abt__ut2_object === 'video' && $b.abt__ut2_youtube_id}
-                <div class="ut2-a__img ut2-a__video {if $b.abt__ut2_image_position}vp--{$b.abt__ut2_image_position}{/if}" {if $block.properties.height || $block.properties.height_mobile}style="height: {if $settings.ab__device === "mobile"}100%{else}{$block.properties.height|default: 0}{/if}"{/if}
+                <div class="ut2-a__img ut2-a__video{if $b.abt__ut2_image_v_position} vp--{$b.abt__ut2_image_v_position}{/if}{if $b.abt__ut2_image_h_position} hp--{$b.abt__ut2_image_h_position}{/if}" {if $block.properties.height || $block.properties.height_mobile}style="height: {if $settings.ab__device === "mobile"}100%{else}{$block.properties.height|default: 0}{/if}"{/if}
                      data-banner-youtube-id="{$b.abt__ut2_youtube_id}"
                      data-is-autoplay="{$b.abt__ut2_youtube_autoplay}"
                      data-banner-youtube-params="{$b|fn_abt__ut2_build_youtube_link:true}">
@@ -150,7 +144,7 @@
 
                 </div>
             {elseif $b.abt__ut2_object === 'products' && $b.products}
-                <div class="ut2-a__img ut2-a__products {if $b.abt__ut2_image_position}vp--{$b.abt__ut2_image_position}{/if}">
+                <div class="ut2-a__img ut2-a__products{if $b.abt__ut2_image_v_position} vp--{$b.abt__ut2_image_v_position}{/if}{if $b.abt__ut2_image_h_position} hp--{$b.abt__ut2_image_h_position}{/if}">
                     {include file="addons/abt__unitheme2/blocks/components/abt__ut2_banner_products.tpl" banner=$b}
                 </div>
             {/if}
@@ -194,12 +188,15 @@
                     {/if}
                 {/if}
             {/if}
-
         </div>
+            {if $b.abt__ut2_background_type === "mp4_video" && $b.abt__ut2_background_mp4_video}
+                <video class="ut2-banner__video" src="{$config.origin_https_location}/images/{$b.abt__ut2_background_mp4_video}" muted loop playsinline></video>
+            {/if}
     </div>
 
     {if $b.abt__ut2_button_use === "YesNo::NO"|enum && $b.abt__ut2_url|trim && $b.abt__ut2_object !== 'products'}
         </a>
     {/if}
 </div>
+{/if}
 {/hook}

@@ -1,0 +1,17 @@
+input.ty-search-block__input {
+    --ty-search-block-input-height: 44px;
+    --ty-search-magnifier-size: 32px;
+
+    padding: 7px calc(var(--ty-search-magnifier-size) + 10px) 7px 20px;
+    height: var(--ty-search-block-input-height);
+    border-color: var(--cs-btn-background);
+    background: var(--cs-btn-background);
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+@media (min-width: 768px) {
+    input.ty-search-block__input {
+        --ty-search-block-input-height: 56px;
+        --ty-search-magnifier-size: 44px;
+    }
+}

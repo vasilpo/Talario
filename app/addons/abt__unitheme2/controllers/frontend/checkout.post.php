@@ -20,7 +20,7 @@ if (!defined('BOOTSTRAP')) {
 die('Access denied');
 }
 if ($mode === 'checkout') {
-if(Registry::get('addons.rus_cities.status') === 'A'){
+if(Registry::get('addons.cities.status') === 'A'){
 Tygh::$app['view']->assign('abt_ut2__checkout_cities', fn_abt__ut2_get_cities(CART_LANGUAGE));
 }
 }

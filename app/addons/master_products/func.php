@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -3372,4 +3372,46 @@ function fn_product_variations_render_block_content_pre($template_variable, arra
 
     unset($block_schema['content']['items']['fillings'][$filling]['params']['request'][$param_name]);
     $block_schema['content']['items']['fillings'][$filling]['params'][$param_name] = $master_product_id;
+}
+
+/**
+ * The 'update_product_videos' hook handler.
+ *
+ * Action performed:
+ *    - Sync updated product video data for a vendor product offer.
+ *
+ * @param int                              $product_id     Product id.
+ * @param array<array<string, string|int>> $product_videos Product videos links.
+ *
+ * @return void
+ */
+function fn_master_products_update_product_videos($product_id, array $product_videos)
+{
+    if (empty($product_id) || empty($product_videos)) {
+        return;
+    }
+
+    $sync_service = ServiceProvider::getService();
+    $sync_service->onTableChanged('videos_links', $product_id);
+}
+
+/**
+ * The 'delete_video_pairs' hook handler.
+ *
+ * Action performed:
+ *    - Sync deleted product video data for a vendor product offer.
+ *
+ * @param int                $product_id Product id.
+ * @param array<string, int> $pairs      Video data.
+ *
+ * @return void
+ */
+function fn_master_products_delete_video_pairs($product_id, array $pairs)
+{
+    if (empty($product_id) || empty($pairs)) {
+        return;
+    }
+
+    $sync_service = ServiceProvider::getService();
+    $sync_service->onTableChanged('videos_links', $product_id);
 }

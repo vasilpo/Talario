@@ -1,0 +1,1 @@
+<span class="text-small-adaptive {if $company.absolute_vendor_rating === "0"}muted{/if}">{$company.absolute_vendor_rating|default:"–"}</span>

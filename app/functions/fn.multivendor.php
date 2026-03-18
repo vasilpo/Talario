@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BlockManager\Layout;
 use Tygh\Enum\NotificationSeverity;
@@ -408,7 +408,6 @@ function fn_mve_import_check_product_data(&$v, $primary_object_id, &$options, &$
         if (!empty($v['Secondary categories']) && !$skip_record) {
             $delimiter = ';';
             $categories = explode($delimiter, $v['Secondary categories']);
-            array_walk($categories, 'fn_trim_helper');
 
             foreach ($categories as $key => $category) {
                 if (fn_mve_import_check_exist_category($category, $options['category_delimiter'], $v['lang_code'])) {
@@ -417,7 +416,7 @@ function fn_mve_import_check_product_data(&$v, $primary_object_id, &$options, &$
                 unset($categories[$key]);
             }
 
-            $v['Secondary categories'] = implode($delimiter . ' ', $categories);
+            $v['Secondary categories'] = implode($delimiter, $categories);
         }
     }
 
@@ -428,9 +427,10 @@ function fn_mve_import_check_product_data(&$v, $primary_object_id, &$options, &$
 /**
  * Check on exists import category in database
  *
- * @param array $category
- * @param string $delimiter
- * @param string $lang
+ * @param string $category  Category paths
+ * @param string $delimiter Categories delimiter
+ * @param string $lang      Lang code
+ *
  * @return bool
  */
 function fn_mve_import_check_exist_category($category, $delimiter, $lang)
@@ -447,7 +447,6 @@ function fn_mve_import_check_exist_category($category, $delimiter, $lang)
 
     if (strpos($category, $delimiter) !== false) {
         $paths = explode($delimiter, $category);
-        array_walk($paths, 'fn_trim_helper');
     } else {
         $paths = array($category);
     }

@@ -1,6 +1,7 @@
 {** block-description:abt__ut2__scroller_advanced **}
 {$tmpl='products_multicolumns'}
 
+{strip}
 {if $block.properties.enable_quick_view == "YesNo::YES"|enum && $settings.ab__device !== "mobile"}
     {$quick_nav_ids = $items|fn_fields_from_multi_level:"product_id":"product_id"}
 {/if}
@@ -26,7 +27,8 @@
 {assign var="show_list_discount" value=$settings.abt__ut2.product_list.show_you_save[$settings.ab__device] !== "none"}
 {assign var="show_sku" value=$settings.abt__ut2.product_list.$tmpl.show_sku[$settings.ab__device]|default:{"YesNo::NO"|enum} == "YesNo::YES"|enum}
 {assign var="show_qty" value=$settings.abt__ut2.product_list.$tmpl.show_qty[$settings.ab__device]|default:{"YesNo::NO"|enum} == "YesNo::YES"|enum}
-{assign var="show_brand_logo" value=$settings.abt__ut2.product_list.$tmpl.show_brand_logo[$settings.ab__device]|default:{"YesNo::NO"|enum} == "YesNo::YES"|enum}
+{assign var="show_brand_name" value=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] == "name"}
+{assign var="show_brand_logo" value=$settings.abt__ut2.product_list.$tmpl.show_brand[$settings.ab__device] == "logo"}
 {assign var="hide_qty_label" value=true}
 {assign var="show_product_amount" value=$settings.abt__ut2.product_list.$tmpl.show_amount[$settings.ab__device]|default:{"YesNo::NO"|enum} == "YesNo::YES"|enum}
 {assign var="show_amount_label" value=false}
@@ -70,7 +72,7 @@
     </div>
 {/if}
 
-<div id="scroll_list_{$block.block_id}" class="grid-list active-scroll owl-carousel ty-scroller-list ty-scroller"
+<div id="scroll_list_{$block.block_id}" class="grid-list ut2-gl owl-carousel ty-scroller-list ty-scroller active-scroll"
      style="--gl-lines-in-name-product: {$settings.abt__ut2.product_list.$tmpl.lines_number_in_name_product[$settings.ab__device]};
         --gl-item-default-height: {$smarty.capture.abt__ut2_gl_item_height nofilter};
         --gl-item-content-height: {$smarty.capture.abt__ut2_gl_content_height nofilter}px;
@@ -170,7 +172,6 @@
                                     {/hook}
                                 </div>
 
-
                                 {if $settings.abt__ut2.product_list.$tmpl.show_qty[$settings.ab__device] === "YesNo::NO"|enum || $settings.ab__device === "desktop"}
                                     {if $button_type_add_to_cart == 'icon' || $button_type_add_to_cart == 'icon_button'}
                                         {if $smarty.capture.product_multicolumns_list_control_data|trim}
@@ -201,7 +202,7 @@
                                     {$smarty.capture.$sku nofilter}
                                 {/if}
 
-                                {include file="blocks/product_list_templates/components/average_rating.tpl"}
+                                {include file="blocks/product_list_templates/components/average_rating.tpl" meta="" show_label_in_title=""}
 
                                 {if $settings.abt__ut2.product_list.$tmpl.show_amount[$settings.ab__device] === "YesNo::YES"|enum}
                                     <div class="ut2-gl__amount">
@@ -271,5 +272,6 @@
         {/hook}
     {/foreach}
 </div>
+{/strip}
 
 {include file="common/scroller_init.tpl" prev_selector="#owl_prev_`$obj_prefix`" next_selector="#owl_next_`$obj_prefix`"}

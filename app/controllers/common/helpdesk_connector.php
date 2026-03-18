@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\SiteArea;
@@ -59,16 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = simplexml_load_string(urldecode($_REQUEST['request']));
 
             Helpdesk::processMessages($data->Messages, true, $data->License);
-
-            echo 'OK';
-        }
-
-        return [CONTROLLER_STATUS_NO_CONTENT];
-    }
-
-    if ($mode === 'activate_license') {
-        if (Helpdesk::isValidRequest($_REQUEST)) {
-            fn_set_storage_data('free_mode', YesNo::YES);
 
             echo 'OK';
         }
@@ -246,30 +236,6 @@ if ($mode === 'visit_marketplace' || $mode === 'view_more_addons') {
         $redirect_url,
         true
     ];
-}
-
-if ($mode === 'activate_license_mail_request') {
-    if (
-        !$user_id
-        || $auth['company_id']
-        || !UserTypes::isAdmin($auth['user_type'])
-        || !YesNo::toBool($auth['is_root'])
-    ) {
-        return [CONTROLLER_STATUS_DENIED];
-    }
-    $result = HelpdeskProvider::getLicenseActivateMailRequester()->requestMail();
-
-    if ($result->isSuccess()) {
-        fn_set_notification(
-            NotificationSeverity::NOTICE,
-            __('notice'),
-            __('helpdesk_account.activate_free_license_message_send', ['[email]' => $result->getData('email')])
-        );
-    } else {
-        $result->showNotifications();
-    }
-
-    return [CONTROLLER_STATUS_OK];
 }
 
 return [CONTROLLER_STATUS_NO_PAGE];

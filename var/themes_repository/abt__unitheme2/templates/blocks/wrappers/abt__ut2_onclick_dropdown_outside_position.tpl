@@ -14,7 +14,7 @@
 
         <div id="dropdown_{$dropdown_id}" class="cm-popup-box ty-dropdown-box__content {if $content_class} {$content_class}{/if} hidden">
             <div class="ty-dropdown-box__title cm-external-click {if $header_class} {$header_class}{/if} hidden-desktop" data-ca-external-click-id="sw_dropdown_{$dropdown_id}">
-                <i class="ut2-icon"></i>{$title nofilter}<span class="ut2-btn-close hidden"><i class="ut2-icon-baseline-close"></i></span>
+                <i class="ut2-icon"></i>{$title nofilter}<span class="ut2-btn-close"><i class="ut2-icon-baseline-close"></i></span>
             </div>
             {$content|default:"&nbsp;" nofilter}
         </div>

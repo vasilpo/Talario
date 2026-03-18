@@ -7,7 +7,7 @@
             {foreach from=$ssubcateg item=category name="ssubcateg"}
                 {if $category}
                     <li class="ty-subcategories__item">
-                        <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}">
+                        <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}" class="ty-subcategories__link">
                             {if $category.main_pair}
                                 {include file="common/image.tpl"
                                     show_detailed_link=false

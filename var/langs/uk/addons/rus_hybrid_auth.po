@@ -24,6 +24,10 @@ msgctxt "Languages::rus_hybrid_auth.instruction_mailru"
 msgid "Use the application ID and Secret key that you've received after creating an application on <a href='http://api.mail.ru/sites/' target='_blank'>Mail.Ru Sites</a>."
 msgstr "Use the application ID and Secret key that you've received after creating an application on <a href='http://api.mail.ru/sites/' target='_blank'>Mail.Ru Sites</a>."
 
+msgctxt "Languages::rus_hybrid_auth.instruction_mailru_new"
+msgid "Use the client ID and client Secret that you've received after creating an application on <a href='https://o2.mail.ru/app/' target='_blank'>Mail.Ru apps</a>."
+msgstr "Use the client ID and client Secret that you've received after creating an application on <a href='https://o2.mail.ru/app/' target='_blank'>Mail.Ru apps</a>."
+
 msgctxt "Languages::rus_hybrid_auth.instruction_odnoklassniki"
 msgid "Use the application ID and Secret key that you've received after creating an application on <a href='http://www.odnoklassniki.ru/devaccess' target='_blank'>Sites</a>."
 msgstr "Use the application ID and Secret key that you've received after creating an application on <a href='http://www.odnoklassniki.ru/devaccess' target='_blank'>Sites</a>."

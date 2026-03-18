@@ -1,7 +1,7 @@
 <?php
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -16,13 +16,11 @@
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
 use Tygh\Registry;
-if (!defined('BOOTSTRAP')) {
-die('Access denied');
-}
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+defined('BOOTSTRAP') or die('Access denied');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 return;
 }
-if ($mode == 'update') {
+if (Registry::get('runtime.mode') === 'update') {
 if (fn_check_view_permissions('ab__video_gallery.view')) {
 Registry::set('navigation.tabs.ab__video_gallery', [
 'title' => __('ab__video_gallery'),

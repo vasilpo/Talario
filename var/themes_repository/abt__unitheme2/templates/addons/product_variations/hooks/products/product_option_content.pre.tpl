@@ -28,7 +28,7 @@
             {$product_url = $product_url|fn_link_attach:"action=preview"}
         {/if}
 
-        <div class="cm-picker-product-variation-features ty-product-options">
+        <div class="cm-picker-product-variation-features ty-product-options" style="--tb-var-image-width: {$settings.Thumbnails.product_variant_mini_icon_width};--tb-var-image-height: {$settings.Thumbnails.product_variant_mini_icon_height}">
             {$feature_style_dropdown = "\Tygh\Enum\ProductFeatureStyles::DROP_DOWN"|constant}
             {$feature_style_images = "\Tygh\Enum\ProductFeatureStyles::DROP_DOWN_IMAGES"|constant}
             {$feature_style_labels = "\Tygh\Enum\ProductFeatureStyles::DROP_DOWN_LABELS"|constant}
@@ -40,7 +40,7 @@
                 <div class="ty-control-group ty-product-options__item clearfix">
                     <div class="ut2{if $feature.feature_style === $feature_style_images}-vimg{else}-vopt{/if}__wrap">
                         <label class="ty-control-group__label ty-product-options__item-label">{$feature.description}:</label>
-                        <bdi>
+                        {*<bdi>*}
                             {if $feature.feature_style === $feature_style_images}
                                 {foreach $feature.variants as $variant}
                                     {if $feature.variant_id != $variant.variant_id}
@@ -55,7 +55,7 @@
                             {elseif $feature.feature_style === $feature_style_dropdown || $is_feature_default_style}
                                 <div class="ty-product-option-container">
                                     <div class="ty-product-option-child">
-                                        <select class="{if $feature.purpose === $purpose_create_variations || $quick_view || $ut2_select_variation}cm-ajax{/if} {if !$quick_view && $settings.abt__ut2.product_list.product_variations.allow_variations_selection[$settings.ab__device] != "YesNo::YES"|enum}cm-history{/if} cm-ajax-force"
+                                        <select class="{if $feature.purpose === $purpose_create_variations || $quick_view || $ut2_select_variation}cm-ajax{/if} {if !$quick_view}cm-history{/if} cm-ajax-force"
                                                 data-ca-target-id="{$container}">
                                             {foreach $feature.variants as $variant}
                                                 {if $variant.product.status}
@@ -74,7 +74,7 @@
                                     </div>
                                 </div>
                             {/if}
-                        </bdi>
+                        {*</bdi>*}
                     </div>
 
                     {if $feature.feature_style === $feature_style_images}
@@ -103,7 +103,7 @@
                                     {/if}
                                     <a
                                         {if $variant.product.amount >= 1 || $allow_negative_amount || $details_page}href="{$product_url|fn_link_attach:"product_id={$variant_product_id}"|fn_url}"{/if}
-                                        class="ty-product-options__image--wrapper {if $variant.product.abt__ut2_is_in_stock < 1 && $settings.abt__ut2.products.highlight_unavailable_variations[$settings.ab__device] == "YesNo::YES"|enum}ty-product-options__image--wrapper--disabled{/if} {if $settings.ab__device=='desktop'}cm-tooltip{/if} {if $variant.variant_id == $feature.variant_id && ($variant.product.amount >= 1 || $settings.abt__ut2.products.highlight_unavailable_variations[$settings.ab__device] == "YesNo::NO"|enum)}ty-product-options__image--wrapper--active{/if} {if $feature.purpose === $purpose_create_variations || $quick_view || $ut2_select_variation}cm-ajax {if !$ut2_select_variation}cm-history {/if}cm-ajax-cache{/if}"
+                                        class="ty-product-options__image--wrapper {if $variant.product.abt__ut2_is_in_stock < 1 && $settings.abt__ut2.products.highlight_unavailable_variations[$settings.ab__device] == "YesNo::YES"|enum}ty-product-options__image--wrapper--disabled{/if} {if $settings.ab__device=='desktop'}cm-tooltip{/if} {if $variant.variant_id == $feature.variant_id}ty-product-options__image--wrapper--active{/if} {if $feature.purpose === $purpose_create_variations || $quick_view || $ut2_select_variation}cm-ajax {if !$ut2_select_variation}cm-history {/if}cm-ajax-cache{/if}"
                                         title="{$feature.prefix} {$variant.variant} {$feature.suffix}"
                                         {if $feature.purpose === $purpose_create_variations || $quick_view || $ut2_select_variation}data-ca-target-id="{$container}"{/if}
                                         {if $variant.variant_id != $feature.variant_id}

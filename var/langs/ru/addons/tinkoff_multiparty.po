@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-ru\n"
 "X-Crowdin-Project-ID: 54044\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /release-4.18.4/addons/tinkoff_multiparty.po\n"
-"X-Crowdin-File-ID: 9801\n"
-"PO-Revision-Date: 2025-05-26 13:37\n"
+"X-Crowdin-File: /release-4.20.1/addons/tinkoff_multiparty.po\n"
+"X-Crowdin-File-ID: 10371\n"
+"PO-Revision-Date: 2026-02-13 11:00\n"
 
 msgctxt "Addons::name::tinkoff_multiparty"
 msgid "T-Bank Multiparty"
@@ -339,6 +339,30 @@ msgstr "ИНН маркетплейса"
 msgctxt "Languages::addons.tinkoff_multiparty.marketplace_inn.description"
 msgid "The INN of the marketplace is required to send receipts"
 msgstr "ИНН маркетплейса необходим для отправки чеков."
+
+msgctxt "Languages::addons.tinkoff_multiparty.mtls_certificate"
+msgid "mTLS certificate"
+msgstr "Сертификат mTLS"
+
+msgctxt "Languages::addons.tinkoff_multiparty.mtls_certificate.description"
+msgid "Upload your mTLS-certificate (.pem file) for secure connection with T-Bank API (see the instruction <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>here</u></a>)."
+msgstr "Загрузите mTLS-сертификат (файл .pem) для защищенного соединения с API Т-Банка (см. инструкцию <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>здесь</u></a>)."
+
+msgctxt "Languages::addons.tinkoff_multiparty.private_key"
+msgid "Private key"
+msgstr "Приватный ключ"
+
+msgctxt "Languages::addons.tinkoff_multiparty.private_key.description"
+msgid "Upload your private key (.key file). It is saved when the certificate is issued (see the instruction <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>here</u></a>)."
+msgstr "Загрузите свой приватный ключ (файл .key). Он сохраняется при выдаче сертификата (см. инструкцию <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>здесь</u></a>)."
+
+msgctxt "Languages::addons.tinkoff_multiparty.settings_instruction"
+msgid "<p>To register sellers, first get the IP address of your server whitelisted with T-Bank:</p><p>1. Request the IP address of your server from your hosting support.<p>2. Send this to T-Bank using one of the following ways:</p><ul><li>Send an email to <b>acq_help@tbank.ru</b> with your INN, company name, and your server IP address.</li><li>Sign in to <a href=\"https://business.tbank.ru/sme/dashboard\" target=\"_blank\"><u>T-Business support chat</u></a> and send the IP address of your server in the chat.</li></ul>"
+msgstr "<p>Для регистрации продавцов сначала добавьте IP-адрес вашего сервера в белый список Т-Банка:</p><p>1. Узнайте IP-адрес вашего сервера в поддержке вашего хостинга.<p>2. Передайте его в Т-Банк одним из следующих способов:</p><ul><li>Отправьте электронное письмо на адрес <b>acq_help@tbank.ru</b> с указанием вашего ИНН, названия компании и IP-адреса вашего сервера. </li><li>Напишите в <a href=\"https://business.tbank.ru/sme/dashboard\" target=\"_blank\"><u>чат поддержки Т-Бизнес</u></a> (требуется авторизация) и укажите в чате IP-адрес вашего сервера.</li></ul>"
+
+msgctxt "Languages::addons.tinkoff_multiparty.shopcode_is_not_registered_no_cert_or_key"
+msgid "Vendor registration failed.<p>To register your vendors, get your mTLS-certificate and private key to from T-Bank and add them to the payment method.</p><a class=\"btn btn-default\" target=\"_blank\" href=\"[url]\">Go to payment methods configuration</a>"
+msgstr "Не удалось зарегистрировать продавца. <p>Для регистрации продавцов получите сертификат mTLS и приватный ключ от Т-Банка и добавьте их в способ оплаты. </p><a class=\"btn btn-default\" target=\"_blank\" href=\"[url]\">Перейти к настройке способов оплаты</a>"
 
 msgctxt "Languages::addons.tinkoff_multiparty.full_refunded.notification"
 msgid "The refund did not cause an error: [errorCode]"

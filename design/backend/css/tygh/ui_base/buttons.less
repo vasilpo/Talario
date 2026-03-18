@@ -325,18 +325,18 @@ a {
     margin: -4px -8px;
     input[type="checkbox"] {
         position: absolute;
-        top: 9px;
+        top: ~"calc( var(--cs-checkbox-padding) + 2px)";
         left: 6px;
         z-index: 5;
     }
     .caret {
-        margin-left: ~"calc(100% - 3px)";
+        margin-left: 100%;
         margin-top: 10px;
     }
     .dropdown-toggle {
         box-shadow: none;
         border-radius: var(--cs-base-border-radius);
-        padding: 3px 13px 3px 6px;
+        padding: ~"3px calc( var(--cs-checkbox-padding) + 12px) 3px 6px";
         width: 50px;
         height: var(--cs-input-height);
         border: 1px solid transparent ;

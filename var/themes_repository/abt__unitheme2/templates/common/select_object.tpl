@@ -19,7 +19,7 @@
 
             <span class="ty-select-block__a-item ab__ut2--select-block__head__text {if $link_class}{$link_class}{/if}">
                 {$ab__symbol_head = $items.$selected_id.symbol}
-                {$ab__code_head = $items.$selected_id.country_code|upper}
+                {$ab__code_head = $items.$selected_id.lang_code|upper}
 
                 {if $show_button_text && $items.$selected_id.$key_name}
 
@@ -70,7 +70,7 @@
                         
                         <span class="ab__ut2--select-block__popup__text">
                             {$ab__symbol_popup = $item.symbol}
-                            {$ab__code_popup = $item.country_code|upper}
+                            {$ab__code_popup = $item.lang_code|upper}
 
                             {if $item.$key_name}
 

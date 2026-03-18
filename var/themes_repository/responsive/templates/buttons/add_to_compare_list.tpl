@@ -21,6 +21,12 @@
         {$but_meta        = $compare_but_meta|default:     "ty-btn__text ty-add-to-compare $ajax_class"}
     {/if}
 
+    {if $quick_view}
+        {$but_meta = "`$but_meta` ty-add-to-compare--quick-view"}
+    {elseif $details_page}
+        {$but_meta = "`$but_meta` ty-add-to-compare--details-page"}
+    {/if}
+
     {include file="buttons/button.tpl"
         but_text=$but_text
         but_title=$but_title

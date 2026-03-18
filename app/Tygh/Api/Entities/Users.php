@@ -1,21 +1,22 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Api\Entities;
 
 use Tygh\Api\AEntity;
 use Tygh\Api\Response;
+use Tygh\Common\OperationResult;
 use Tygh\Enum\UserTypes;
 use Tygh\Registry;
 
@@ -107,13 +108,25 @@ class Users extends AEntity
 
         if (
             fn_allowed_for('MULTIVENDOR:ULTIMATE')
+            && isset($params['user_type'])
             && UserTypes::isAdmin($params['user_type'])
         ) {
             $params['storefront_id'] = 0;
         }
 
         if ($valid_params) {
-            list($user_id, $profile_id) = fn_update_user($user_id, $params, $auth, false, false);
+            $result = OperationResult::wrap(
+                static function () use ($user_id, $params, $auth) {
+                    return fn_update_user($user_id, $params, $auth, false, false);
+                }
+            );
+
+            [$user_id, $profile_id] = $result->getData();
+            $errors = $result->getErrors();
+
+            foreach ($errors as $error) {
+                $data['message'] = $error;
+            }
 
             if ($user_id) {
                 $status = Response::STATUS_CREATED;

@@ -1,13 +1,13 @@
 (function (_, $) {
   $(document).ready(function () {
-    var $mobileMenuToggler = $('.mobile-menu-toggler');
+    var $mobileMenuToggler = $('[data-mobile-menu="toggler"]');
     if (!$mobileMenuToggler.length) {
       return;
     }
 
     // Toggle mobile navbar
-    $(document).on('click', '.mobile-menu-toggler', toggleMobileMenu);
-    $(document).on('click', '.mobile-menu-closer', toggleMobileMenu);
+    $(document).on('click', '[data-mobile-menu="toggler"]', toggleMobileMenu);
+    $(document).on('click', '[data-mobile-menu="closer"]', toggleMobileMenu);
   });
   $.ceEvent('on', 'ce.dialogshow', function ($context) {
     toggleMobileMenu(undefined, false);

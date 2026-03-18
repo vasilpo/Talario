@@ -1,18 +1,17 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
-use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use Tygh\BlockManager\Block;
 use Tygh\BlockManager\Location;
@@ -690,7 +689,9 @@ function fn_update_payment($payment_data, $payment_id, $lang_code = DESCR_SL)
     SecurityHelper::sanitizeObjectData('payment', $payment_data);
 
     $certificate_file = fn_filter_uploaded_data('payment_certificate');
+    $certificate_key_file = fn_filter_uploaded_data('payment_certificate_key');
     $certificates_dir = Registry::get('config.dir.certificates');
+    $certificate_keys_dir = Registry::get('config.dir.certificate_keys');
     $previous_storefronts = [];
 
     $can_remove_offline_payment_params = true;
@@ -698,18 +699,28 @@ function fn_update_payment($payment_data, $payment_id, $lang_code = DESCR_SL)
     /**
      * Adds additional actions before payment updating
      *
-     * @param array  $payment_data               Payment data
-     * @param int    $payment_id                 Payment identifier
-     * @param string $lang_code                  Language code
-     * @param array  $certificate_file
-     * @param string $certificates_dir
+     * @param array  $payment_data                      Payment data
+     * @param int    $payment_id                        Payment identifier
+     * @param string $lang_code                         Language code
+     * @param array  $certificate_file                  Certificate file data
+     * @param string $certificates_dir                  Certificate file path
      * @param string $can_remove_offline_payment_params Whether offline payment parameters should be removed
-     *
+     * @param array  $certificate_key_file              Certificate key file data
      */
-    fn_set_hook('update_payment_pre', $payment_data, $payment_id, $lang_code, $certificate_file, $certificates_dir, $can_remove_offline_payment_params);
+    fn_set_hook(
+        'update_payment_pre',
+        $payment_data,
+        $payment_id,
+        $lang_code,
+        $certificate_file,
+        $certificates_dir,
+        $can_remove_offline_payment_params,
+        $certificate_key_file,
+        $certificate_keys_dir
+    );
 
     /**
-     * Create/update the certificate file
+     * Create/update the certificate and/or certificate key file
      * only for an existing payment method.
      *
      * Non-existing payment method will be created first,
@@ -726,8 +737,18 @@ function fn_update_payment($payment_data, $payment_id, $lang_code = DESCR_SL)
             $payment_data['processor_params']['certificate_filename'] = $filename;
         }
 
+        if ($certificate_key_file) {
+            $file = reset($certificate_key_file);
+            $filename = $payment_id . '/' . $file['name'];
+
+            fn_mkdir($certificate_keys_dir . $payment_id);
+            fn_copy($file['path'], $certificate_keys_dir . $filename);
+            $payment_data['processor_params']['certificate_key_filename'] = $filename;
+        }
+
         $old_params = fn_get_processor_data($payment_id);
 
+        // Check certificate
         if (empty($payment_data['processor_params']['certificate_filename']) && isset($old_params['processor_params']['certificate_filename'])) {
             $payment_data['processor_params']['certificate_filename'] = $old_params['processor_params']['certificate_filename'];
         }
@@ -739,6 +760,24 @@ function fn_update_payment($payment_data, $payment_id, $lang_code = DESCR_SL)
 
             if (!file_exists($certificates_dir . $payment_data['processor_params']['certificate_filename'])) {
                 $payment_data['processor_params']['certificate_filename'] = '';
+            }
+        }
+
+        // Check certificate key
+        if (empty($payment_data['processor_params']['certificate_key_filename']) && isset($old_params['processor_params']['certificate_key_filename'])) {
+            $payment_data['processor_params']['certificate_key_filename'] = $old_params['processor_params']['certificate_key_filename'];
+        }
+
+        if (!empty($payment_data['processor_params']['certificate_key_filename'])) {
+            if (
+                !empty($old_params['processor_params']['certificate_key_filename'])
+                && $payment_data['processor_params']['certificate_key_filename'] !== $old_params['processor_params']['certificate_key_filename']
+            ) {
+                fn_rm($certificate_keys_dir . $old_params['processor_params']['certificate_key_filename']);
+            }
+
+            if (!file_exists($certificate_keys_dir . $payment_data['processor_params']['certificate_key_filename'])) {
+                $payment_data['processor_params']['certificate_key_filename'] = '';
             }
         }
 
@@ -785,9 +824,9 @@ function fn_update_payment($payment_data, $payment_id, $lang_code = DESCR_SL)
         }
 
         /**
-         * Update the certificate
+         * Update the certificate and/or certificate key
          */
-        if ($certificate_file && $payment_id) {
+        if (($certificate_file || $certificate_key_file) && $payment_id) {
             unset($payment_data['lang_code']);
             $payment_data['processor_params'] = $processor_params;
             fn_update_payment($payment_data, $payment_id, $lang_code);
@@ -811,7 +850,29 @@ function fn_update_payment($payment_data, $payment_id, $lang_code = DESCR_SL)
 
     fn_attach_image_pairs('payment_image', 'payment', $payment_id, $lang_code);
 
-    fn_set_hook('update_payment_post', $payment_data, $payment_id, $lang_code, $certificate_file, $certificates_dir, $processor_params, $action);
+    /**
+     * Adds additional actions after payment updating
+     *
+     * @param array  $payment_data                      Payment data
+     * @param int    $payment_id                        Payment identifier
+     * @param string $lang_code                         Language code
+     * @param array  $certificate_file                  Certificate file data
+     * @param string $certificates_dir                  Certificate file path
+     * @param string $can_remove_offline_payment_params Whether offline payment parameters should be removed
+     * @param array  $certificate_key_file              Certificate key file data
+     */
+    fn_set_hook(
+        'update_payment_post',
+        $payment_data,
+        $payment_id,
+        $lang_code,
+        $certificate_file,
+        $certificates_dir,
+        $processor_params,
+        $action,
+        $certificate_key_file,
+        $certificate_keys_dir
+    );
 
     return $payment_id;
 }
@@ -1340,7 +1401,6 @@ function fn_create_order_details($order_id, array $cart, $is_parent_order = YesN
             if (empty($v['product_id'])) {
                 continue;
             }
-            $product_code = '';
             $extra = empty($v['extra']) ? array() : $v['extra'];
             $v['discount'] = empty($v['discount']) ? 0 : $v['discount'];
 
@@ -1385,9 +1445,7 @@ function fn_create_order_details($order_id, array $cart, $is_parent_order = YesN
                 $v['product_options'] = array();
             }
 
-            if (empty($product_code)) {
-                $product_code = db_get_field("SELECT product_code FROM ?:products WHERE product_id = ?i", $v['product_id']);
-            }
+            $product_code = db_get_field('SELECT product_code FROM ?:products WHERE product_id = ?i', $v['product_id']);
 
             // Check the cart custom files
             if (isset($extra['custom_files']) && $is_parent_order === YesNo::NO) {
@@ -2813,7 +2871,7 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
         }
 
         // Update product amount if inventory tracking is enabled
-        if (Registry::get('settings.General.gloabl_inventory_tracking') === YesNo::NO) {
+        if (Registry::get('settings.General.inventory_tracking') === YesNo::NO) {
             continue;
         }
 
@@ -3092,7 +3150,7 @@ function fn_generate_ekeys_for_edp(array $statuses, array $order_info, array $ac
                     'file_id' => $file_id,
                     'product_id' => $v['product_id'],
                     'ekey' => md5(uniqid(rand())),
-                    'ttl' => (TIME + (Registry::get('settings.General.edp_key_ttl') * 60 * 60)),
+                    'ttl' => (TIME + ((int) Registry::get('settings.General.edp_key_ttl') * 60 * 60)),
                     'order_id' => $order_info['order_id'],
                     'activation' => $activation_type,
                 ];
@@ -7193,8 +7251,6 @@ function fn_form_cart_from_abandoned($params)
         $cart['profile_id'] = $profile_id;
         $customer_auth = fn_fill_auth(['user_id' => $customer_id], [], false, 'C');
     } else {
-        $faker = Faker::create();
-
         if (!empty($extra['email'])) {
             $email = $extra['email'];
         } elseif (!empty($extra['phone'])) {
@@ -7208,13 +7264,15 @@ function fn_form_cart_from_abandoned($params)
             );
         }
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $email = $faker->safeEmail;
+            $rand = bin2hex(random_bytes(8));
+
+            $email = $rand . '@example.com';
         }
 
         $user_data = [
             'email'     => $email,
-            'firstname' => isset($extra['firstname']) ? $extra['firstname'] : $faker->firstNameMale,
-            'lastname'  => isset($extra['lastname']) ? $extra['lastname'] : $faker->firstNameMale,
+            'firstname' => isset($extra['firstname']) ? $extra['firstname'] : __('customer'),
+            'lastname'  => isset($extra['lastname']) ? $extra['lastname'] : __('customer'),
             'phone'     => isset($extra['phone']) ? $extra['phone'] : '',
         ];
 
@@ -7588,6 +7646,29 @@ function fn_allow_place_order(array &$cart, array $auth = [], $parent_order_id =
 
     fn_set_hook('allow_place_order', $total, $cart, $parent_order_id);
 
+    // Prevent using disabled payment method by challenging HTTP data
+    if (!empty($cart['payment_id'])) {
+        $payment_method_data = fn_get_payment_method_data($cart['payment_id']);
+
+        /**
+         * Executes after getting chosen payment data, allows restricting order placement.
+         *
+         * @param array    $cart                Array of the cart contents and user information necessary for purchase
+         * @param array    $auth                Array with authorization data
+         * @param int|null $parent_order_id     Parent order id
+         * @param array    $payment_method_data Payment method data
+         * @param int      $total               Order total
+         * @param bool     $result              Flag determines if order can be placed
+         */
+        fn_set_hook('allow_place_order_check_payment', $cart, $auth, $parent_order_id, $payment_method_data, $total, $result);
+
+        if (empty($payment_method_data) || $payment_method_data['status'] !== ObjectStatuses::ACTIVE) {
+            fn_set_notification(NotificationSeverity::ERROR, __('notice'), __('payment_method_not_found'));
+
+            $result = false;
+        }
+    }
+
     // Check minimal amount only for parent order
     if (empty($parent_order_id)) {
         $checkout_settings = fn_get_checkout_settings($cart);
@@ -7597,9 +7678,13 @@ function fn_allow_place_order(array &$cart, array $auth = [], $parent_order_id =
         if (YesNo::toBool($checkout_settings['show_unavailable_shipping_methods'])) {
             $cart['shipping_failed'] = $cart['shipping_required'] && empty($cart['shipping']);
         }
+
+        $result = isset($cart['unavialable_entity'])
+                ? false
+                : fn_check_order_entites_are_available_on_storefront($cart);
     }
 
-    if (!empty($cart['amount_failed']) || !empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed'])) {
+    if ($result && (!empty($cart['amount_failed']) || !empty($cart['shipping_failed']) || !empty($cart['company_shipping_failed']))) {
         $result = false;
     }
 
@@ -8757,6 +8842,71 @@ function fn_one_full_shipped(&$shipments)
 }
 
 /**
+ * Checks whether update is allowed.
+ *
+ * @param int $shipment_id Shipment identifier
+ *
+ * @return bool
+ */
+function fn_check_shipment_update_allowed($shipment_id)
+{
+    $result = true;
+
+    /**
+     * Executes before rules for restricting access to shipment update,
+     * allows changing current result or runtime params before the rules are applied.
+     *
+     * @param int  $shipment_id Shipment identifier
+     * @param bool $result      Whether shipment update is allowed
+     */
+    fn_set_hook('check_shipment_update_allowed_pre', $shipment_id, $result);
+
+    if (fn_allowed_for('MULTIVENDOR') && !empty($shipment_id)) {
+        $auth = Tygh::$app['session']['auth'];
+
+        if (
+            !empty($auth['user_type']) && $auth['user_type'] === UserTypes::VENDOR && !empty($auth['company_id'])
+        ) {
+            $shipment_company_id = fn_get_shipment_company_id($shipment_id);
+
+            $result = $shipment_company_id && (int) $auth['company_id'] === $shipment_company_id;
+        }
+    }
+
+    /**
+     * Executes afters rules for restricting access to shipment update, allows changing result.
+     *
+     * @param int  $shipment_id Shipment identifier
+     * @param bool $result      Whether shipment update is allowed
+     */
+    fn_set_hook('check_shipment_update_allowed_post', $shipment_id, $result);
+
+    return $result;
+}
+
+/**
+ * Fetches shipment owner ID.
+ *
+ * @param int $shipment_id Shipment identifier
+ *
+ * @return int|false
+ */
+function fn_get_shipment_company_id($shipment_id)
+{
+    if (empty($shipment_id)) {
+        return false;
+    }
+
+    return (int) db_get_field(
+        'SELECT ?:orders.company_id FROM ?:shipments'
+        . ' LEFT JOIN ?:shipment_items ON ?:shipments.shipment_id = ?:shipment_items.shipment_id'
+        . ' LEFT JOIN ?:orders ON ?:shipment_items.order_id = ?:orders.order_id'
+        . ' WHERE ?:shipments.shipment_id = ?i',
+        $shipment_id
+    );
+}
+
+/**
  * Create/update shipment
  *
  * @param array $shipment_data Array of shipment data.
@@ -8769,6 +8919,13 @@ function fn_one_full_shipped(&$shipments)
  */
 function fn_update_shipment($shipment_data, $shipment_id = 0, $group_key = 0, $all_products = false, $force_notification = array())
 {
+    $allow_update = fn_check_shipment_update_allowed($shipment_id);
+
+    if (!$allow_update) {
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), __('access_denied'));
+        return $shipment_id;
+    }
+
     if (!empty($shipment_id)) {
 
         $new_shipment_data = array_intersect_key(
@@ -10257,6 +10414,10 @@ function fn_checkout_update_steps(&$cart, &$auth, $params)
 
     fn_calculate_cart_content($cart, $auth, $shipping_calculation_type, true, 'F');
 
+    if (!isset($params['payment_id'])) {
+        $params['payment_id'] = $cart['payment_id'] ?? null;
+    }
+
     if ($params['payment_id']) {
         $cart = fn_checkout_update_payment(
             $cart,
@@ -10307,21 +10468,6 @@ function fn_checkout_place_order(&$cart, &$auth, $params)
     // Prevent unauthorized access
     if (empty($cart['user_data']['email'])) {
         return PLACE_ORDER_STATUS_DENIED;
-    }
-
-    // Prevent using disabled payment method by challenging HTTP data
-    if (!empty($params['payment_id'])) {
-        $cart['payment_id'] = $params['payment_id'];
-    }
-
-    if (!empty($cart['payment_id'])) {
-        $payment_method_data = fn_get_payment_method_data($cart['payment_id']);
-
-        if (empty($payment_method_data) || $payment_method_data['status'] !== ObjectStatuses::ACTIVE) {
-            fn_set_notification('E', __('notice'), __('payment_method_not_found'));
-
-            return PLACE_ORDER_STATUS_TO_CART;
-        }
     }
 
     unset($cart['failed_order_id'], $cart['processed_order_id']);
@@ -11879,4 +12025,132 @@ function fn_change_non_settled_order_status(array $order_info, $status_to): void
     } else {
         fn_change_order_status($order_info['order_id'], $status_to);
     }
+}
+
+/**
+ * Check orders entities (shippings, payment, products) are available on the specified storefront.
+ *
+ * @param array<string, int|string|array> $cart Cart data.
+ *
+ * @return bool
+ *
+ * @psalm-suppress InvalidScalarArgument,PossiblyInvalidArgument
+ */
+function fn_check_order_entites_are_available_on_storefront(array &$cart)
+{
+    $result = true;
+
+    if (!empty($cart['storefront_id'])) {
+        if (!empty($cart['chosen_shipping'])) {
+            /** @psalm-suppress PossiblyInvalidIterator */
+            foreach ($cart['chosen_shipping'] as $shipping_id) {
+                $shipping_data = fn_get_shipping_info($shipping_id);
+                $shipping_storefront_ids = explode(',', $shipping_data['storefront_ids']);
+                $is_available = fn_check_order_entity_is_available_on_storefront(
+                    $shipping_id,
+                    $cart['storefront_id'],
+                    $shipping_storefront_ids,
+                    '?:storefronts_shippings',
+                    'shipping_id'
+                );
+
+                if (!$is_available) {
+                    $result = false;
+                    $cart['unavialable_entity'] = __('shipping_method');
+                    break;
+                }
+            }
+        }
+
+        if ($result && !empty($cart['payment_id'])) {
+            $payment_method_data = fn_get_payment_method_data($cart['payment_id']);
+            $payment_storefront_ids = explode(',', $payment_method_data['storefront_ids']);
+            $is_available = fn_check_order_entity_is_available_on_storefront(
+                $cart['payment_id'],
+                $cart['storefront_id'],
+                $payment_storefront_ids,
+                '?:storefronts_payments',
+                'payment_id'
+            );
+
+            if (!$is_available) {
+                $result = false;
+                $cart['unavialable_entity'] = __('payment_method');
+            }
+        }
+
+        if ($result && !empty($cart['products'])) {
+            if (fn_allowed_for('ULTIMATE')) {
+                $storefront_repository = StorefrontProvider::getRepository();
+                $cart_storefront = $storefront_repository->findById((int) $cart['storefront_id']);
+                $storefront_company_ids = $cart_storefront->getCompanyIds();
+
+                /** @psalm-suppress PossiblyInvalidIterator */
+                foreach ($cart['products'] as $product) {
+                    $product_company_ids = fn_ult_get_shared_product_companies($product['product_id']);
+
+                    if (!array_intersect($storefront_company_ids, $product_company_ids)) {
+                        $result = false;
+                        $cart['unavialable_entity'] = __('product');
+                        break;
+                    }
+                }
+            } else {
+                $products_companies = fn_get_products_companies($cart['products']);
+                $storefront_repository = Tygh::$app['storefront.repository'];
+
+                foreach ($products_companies as $company_id) {
+                    $company_storefronts_data = $storefront_repository->findAvailableForCompanyId($company_id, false);
+                    $company_storefronts_ids = array_keys($company_storefronts_data);
+                    $is_available = fn_check_order_entity_is_available_on_storefront(
+                        $company_id,
+                        $cart['storefront_id'],
+                        $company_storefronts_ids,
+                        '?:storefronts_companies',
+                        'company_id'
+                    );
+
+                    if (!$is_available) {
+                        $result = false;
+                        $cart['unavialable_entity'] = __('product');
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Checks shared order entity is available on specified storefront.
+ *
+ * @param string                $entity_id             Entity Id
+ * @param string                $storefront_id         Storefront Id
+ * @param array<string, string> $entity_storefront_ids Ids of available entity storefronts
+ * @param string                $table                 Table for query
+ * @param string                $column                Target column
+ *
+ * @return string|bool
+ *
+ * @psalm-suppress PossiblyInvalidArgument
+ */
+function fn_check_order_entity_is_available_on_storefront($entity_id, $storefront_id, array $entity_storefront_ids, $table, $column)
+{
+    if (db_get_field("SELECT COUNT(*) FROM $table") === '0') {
+        return true;
+    }
+
+    return db_get_field(
+        "SELECT COUNT(separate_check.$column) > 0"
+        . " FROM $table as separate_check"
+        . " LEFT JOIN $table as existing_check ON existing_check.$column = ?i"
+        . " WHERE (separate_check.$column = ?i AND ?i IN (?n))"
+        . " OR existing_check.$column IS NULL",
+        $entity_id,
+        $entity_id,
+        $storefront_id,
+        $entity_storefront_ids
+    );
 }

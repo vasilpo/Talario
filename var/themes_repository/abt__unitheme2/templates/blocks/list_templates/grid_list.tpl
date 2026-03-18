@@ -71,6 +71,7 @@
     <div class="grid-list ut2-gl{if $ab__add_ajax_loading_button} ut2-load-more-wrap{/if} {$show_custom_class}"
          style="
             --gl-lines-in-name-product: {$settings.abt__ut2.product_list.$tmpl.lines_number_in_name_product[$settings.ab__device]};
+            --gl-features-height: {$smarty.capture.abt__ut2_gl_features_height nofilter}px;
             --gl-cols: {$block.properties.item_quantity|default:$columns};
             --gl-item-default-height: {$smarty.capture.abt__ut2_gl_item_height nofilter};
             --gl-item-content-height: {$smarty.capture.abt__ut2_gl_content_height nofilter}px;
@@ -94,7 +95,7 @@
 
                 {include file="common/product_data.tpl" product=$product product_labels_position="left-top" show_labels_in_title=false}
 
-                <div class="ut2-gl__item {if $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::YES"|enum && !$products_scroller} content-on-hover{/if}{if $settings.abt__ut2.product_list.decolorate_out_of_stock_products == "YesNo::YES"|enum && $product.amount <= 0} out-of-stock{/if}">
+                <div class="ut2-gl__item{if $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::YES"|enum && !$products_scroller} content-on-hover{/if}{if $settings.abt__ut2.product_list.decolorate_out_of_stock_products == "YesNo::YES"|enum && $product.amount <= 0} out-of-stock{/if}">
 
                 {hook name="products:product_multicolumns_list"}
 
@@ -104,7 +105,6 @@
                     <div class="ut2-gl__body{if $settings.abt__ut2.product_list.decolorate_out_of_stock_products == "YesNo::YES"|enum && $product.amount < 1 && $product.out_of_stock_actions != "OutOfStockActions::BUY_IN_ADVANCE"|enum} decolorize{/if}">
 
                         <div class="ut2-gl__image">
-
                             {include file="views/products/components/product_icon.tpl" product=$product image_width=$tbw image_height=$tbh thumbnails_size=$thumbnails_size show_gallery=$show_gallery}
 
                             {assign var="product_labels" value="product_labels_`$obj_prefix``$obj_id`"}
@@ -194,9 +194,13 @@
                             {if $button_type_add_to_cart === 'icon' || $button_type_add_to_cart === 'icon_button'}
                                 </div>
                             {/if}
+                        {else}
+                            {if $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::YES"|enum && !$products_scroller}
+                                {hook name="products:color_variations"}{/hook}
+                            {/if}
                         {/if}
 
-                        <div class="ut2-gl__content{if $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::YES"|enum} content-on-hover{/if}">
+                        <div class="ut2-gl__content">
 
                             <div class="ut2-gl__name">
                                 {if $item_number == "YesNo::YES"|enum}
@@ -213,7 +217,7 @@
                                 {$smarty.capture.$sku nofilter}
                             {/if}
 
-                            {include file="blocks/product_list_templates/components/average_rating.tpl"}
+                            {include file="blocks/product_list_templates/components/average_rating.tpl" meta="" show_label_in_title=""}
 
                             {if $settings.abt__ut2.product_list.$tmpl.show_amount[$settings.ab__device] === "YesNo::YES"|enum}
                                 <div class="ut2-gl__amount">
@@ -222,27 +226,28 @@
                                 </div>
                             {/if}
 
-                            {if $show_features || $show_descr}
-                                {if empty($block.properties) && $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::NO"|enum && !$products_scroller}
-                                    <div class="ut2-gl__bottom">
-                                        {hook name="products:additional_info_before"}{/hook}
-                                        {if $product.short_description && ($settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "description")}
-                                            {assign var="prod_descr" value="prod_descr_`$obj_id`"}
-                                            {$smarty.capture.$prod_descr nofilter}
-                                        {/if}
+                            {if $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::NO"|enum && !$products_scroller}
+                                <div class="ut2-gl__bottom">
+                                    {hook name="products:color_variations"}{/hook}
+                                    {hook name="products:additional_info_before"}{/hook}
 
-                                        {hook name="products:ab__s_pictograms_pos_1"}{/hook}
+                                    {if $product.short_description && ($settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "features_and_description" || $settings.abt__ut2.product_list.$tmpl.grid_item_bottom_content[$settings.ab__device] === "description")}
+                                        {assign var="prod_descr" value="prod_descr_`$obj_id`"}
+                                        {$smarty.capture.$prod_descr nofilter}
+                                    {/if}
 
-                                        {if $product.abt__ut2_features && !$hide_features}
-                                            <div class="ut2-gl__feature">
-                                                {assign var="product_features" value="product_features_`$obj_id`"}
-                                                {$smarty.capture.$product_features nofilter}
-                                            </div>
-                                        {/if}
+                                    {hook name="products:ab__s_pictograms_pos_1"}{/hook}
 
-                                        {hook name="products:ab__s_pictograms_pos_2"}{/hook}
-                                    </div>
-                                {/if}
+                                    {if $product.abt__ut2_features && !$hide_features}
+                                        <div class="ut2-features-list">
+                                            {assign var="product_features" value="product_features_`$obj_id`"}
+                                            {$smarty.capture.$product_features nofilter}
+                                        </div>
+                                    {/if}
+
+                                    {hook name="products:ab__s_pictograms_pos_2"}{/hook}
+
+                                </div>
                             {/if}
 
                             <div class="ut2-gl__price-wrap">
@@ -291,6 +296,10 @@
                                     </div>
                                 {/if}
                             </div>
+
+                            {if $settings.abt__ut2.product_list.price_position_top === "YesNo::YES"|enum && $settings.abt__ut2.product_list.$tmpl.show_content_on_hover[$settings.ab__device] === "YesNo::YES"|enum && !$products_scroller}
+                                {hook name="products:color_variations"}{/hook}
+                            {/if}
                         </div>
 
                         {hook name="products:ab__mv_vendor_info"}{/hook}
@@ -317,7 +326,7 @@
                                 {hook name="products:ab__s_pictograms_pos_1"}{/hook}
 
                                 {if $show_features and $product.abt__ut2_features && !$hide_features}
-                                    <div class="ut2-gl__feature">
+                                    <div class="ut2-features-list">
                                         {assign var="product_features" value="product_features_`$obj_id`"}
                                         {$smarty.capture.$product_features nofilter}
                                     </div>

@@ -1,6 +1,6 @@
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -25,8 +25,20 @@ observer.unobserve(entry.target);
 }, {threshold: 0.2});
 const mainObserver = new IntersectionObserver(function (entries) {
 entries.forEach(entry => {
-let state = entry.isIntersecting && entry.target.dataset.autoplay ? 'play' : 'pause';
-toggle_video(entry.target.dataset.videoId, state);
+const target = $(entry.target);
+if (target.parents('.ui-dialog').length) {
+return;
+}
+let state = 'pause';
+if (entry.isIntersecting && target.data('autoplay')) {
+state = 'play';
+} else if (!target.data('observed-one-time')) {
+state = 'play';
+}
+if (state === 'play') {
+target.data('observed-one-time', true);
+}
+toggle_video(target.data('videoId'), state);
 });
 }, {threshold: 0.01});
 const videos_queue = {Y: [], V: []};
@@ -257,13 +269,13 @@ resize_video_to_grid($(target.g), params, width, height)
 }
 },
 onReady: ({target}) => {
-if (!autoplay) {
-toggle_video(video_id, 'play');
-}
 if (player?.player?.g) {
 add_video_observer(player.player.g, video_id, player);
 }
-init_video_after(video_elem, player, video_id, video_path, video_type, params);
+if (!autoplay) {
+toggle_video(video_id, 'play');
+}
+init_video_after($(player?.player?.g ? player.player.g : video_elem), player, video_id, video_path, video_type, params);
 },
 onError({target}) {
 const {errorCode} = target.getVideoData();
@@ -326,11 +338,11 @@ if (i !== 'src') {
 video_elem.attr(i, val);
 }
 });
+add_video_observer(video_elem.get(0), video_id, player);
 if (!player.autoplay) {
 toggle_video(video_id, 'play');
 }
-add_video_observer(video_elem.get(0), video_id, player);
-init_video_after(video_elem, player, video_id, video_path, video_type, params);
+init_video_after(video_elem.first(), player, video_id, video_path, video_type, params);
 });
 }
 function add_resource_player_listeners(video_elem, video_id, video_path, video_type, params) {
@@ -388,11 +400,11 @@ if (ready_callback_triggered) {
 return;
 }
 ready_callback_triggered = true;
+add_video_observer(player.player, video_id, player);
 if (!player.autoplay) {
 toggle_video(video_id, 'play')
 }
-add_video_observer(video_elem.get(0), video_id, player);
-init_video_after(video_elem, player, video_id, video_path, video_type, params);
+init_video_after(video.first(), player, video_id, video_path, video_type, params);
 }
 player.player.addEventListener('loadeddata', function () {
 ready_callback();
@@ -418,10 +430,10 @@ autoplay: params.autoplay,
 params: params
 };
 video.on('load', function () {
+add_video_observer(player.player, video_id, player);
 if (!player.autoplay) {
 toggle_video(video_id, 'play');
 }
-add_video_observer(video.get(0), video_id, player);
 init_video_after(video, player, video_id, video_path, video_type, params);
 });
 video_elem.replaceWith(video);

@@ -4,19 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ac37e24a5a172604db0be8aecc94712",
+    "content-hash": "ca38438eafd77dc2e558c6974a62b5f3",
     "packages": [
         {
             "name": "yoomoney/yookassa-sdk-php",
-            "version": "2.12.0",
+            "version": "2.13.0",
             "source": {
                 "type": "git",
                 "url": "https://git.yoomoney.ru/scm/sdk/yookassa-sdk-php.git",
-                "reference": "61ac9c7ebdf60f28b58e64cc0fc86283687d937f"
+                "reference": "846375280694d418025ba9ec5bcdbdfac6773932"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://git.yoomoney.ru/rest/api/latest/projects/SDK/repos/yookassa-sdk-php/archive?at=refs%2Ftags%2F2.12.0&format=zip"
+                "url": "https://git.yoomoney.ru/rest/api/latest/projects/SDK/repos/yookassa-sdk-php/archive?at=refs%2Ftags%2F2.13.0&format=zip",
+                "reference": "846375280694d418025ba9ec5bcdbdfac6773932"
             },
             "require": {
                 "ext-curl": "*",
@@ -58,16 +59,16 @@
                 "yookassa",
                 "yoomoney"
             ],
-            "time": "2025-01-17T12:54:00+00:00"
+            "time": "2025-12-17T09:05:11+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

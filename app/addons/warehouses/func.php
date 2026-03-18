@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -1015,7 +1015,9 @@ function fn_warehouses_check_amount_in_stock_before_cart_amount_check(
             Tygh::$app['session']['warehouses']['access_to_place_order'] = false;
             Tygh::$app['session']['warehouses']['not_available_products'][$product_id] = $product_id;
         } elseif ($amount_from_destination !== false) {
-            Tygh::$app['session']['warehouses']['access_to_place_order'] = true;
+            if (!isset(Tygh::$app['session']['warehouses']['access_to_place_order'])) {
+                Tygh::$app['session']['warehouses']['access_to_place_order'] = true;
+            }
             $product_amount = $amount_from_destination;
         }
     }
@@ -1361,7 +1363,7 @@ function fn_warehouses_store_locator_update_store_location_before_update(&$store
 
     if ($store_location_id) {
         $current_location_data = db_get_row(
-            'SELECT status FROM ?:store_locations WHERE store_location_id = ?i',
+            'SELECT status, shipping_destinations_ids FROM ?:store_locations WHERE store_location_id = ?i',
             $store_location_id
         );
 
@@ -1370,6 +1372,23 @@ function fn_warehouses_store_locator_update_store_location_before_update(&$store
             && $store_location_data['status'] !== $current_location_data['status']
         ) {
             $store_location_data['recalculate_products_amounts'] = true;
+        }
+
+        // Set shipping destinations if they weren't sent by request but store locator type is 'warehouse' or 'store'.
+        if (
+            (
+                $store_location_data['store_type'] === Manager::STORE_LOCATOR_TYPE_WAREHOUSE
+                || $store_location_data['store_type'] === Manager::STORE_LOCATOR_TYPE_STORE
+            )
+            && !empty($current_location_data['shipping_destinations_ids'])
+            && !isset($store_location_data['shipping_destinations'])
+        ) {
+            $store_location_data['shipping_destinations'] = [];
+            foreach (explode(',', $current_location_data['shipping_destinations_ids']) as $shipping_destination_id) {
+                $store_location_data['shipping_destinations'][$shipping_destination_id] = [
+                    'destination_id' => $shipping_destination_id
+                ];
+            }
         }
     }
 

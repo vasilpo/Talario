@@ -35,10 +35,10 @@
     {$redirect_current_url = $config.current_url|escape:url}
 
     {* Saved search count thresholds *}
-    {$saved_search_count_threshold_difference = $config.saved_search.count_threshold_difference|default:3}
-    {$saved_search_count_threshold_xl = $config.saved_search.count_threshold_xl|default:9}
-    {$saved_search_count_threshold_xxl = $config.saved_search.count_threshold_xxl|default:11}
-    {$saved_search_count_threshold_xxxl = $config.saved_search.count_threshold_xxxl|default:13}
+    {$saved_search_count_threshold_difference = $config.tweaks.saved_search.count_threshold_difference|default:3}
+    {$saved_search_count_threshold_xl = $config.tweaks.saved_search.count_threshold_xl|default:9}
+    {$saved_search_count_threshold_xxl = $config.tweaks.saved_search.count_threshold_xxl|default:11}
+    {$saved_search_count_threshold_xxxl = $config.tweaks.saved_search.count_threshold_xxxl|default:13}
     {if $is_compact_view}
         {$saved_search_count_threshold_xl = $saved_search_count_threshold_xl - $saved_search_count_threshold_difference}
         {$saved_search_count_threshold_xxl = $saved_search_count_threshold_xxl - $saved_search_count_threshold_difference}

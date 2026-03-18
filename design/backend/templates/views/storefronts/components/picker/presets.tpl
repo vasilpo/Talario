@@ -12,7 +12,7 @@
 {$canvas_ratio = (56 - 2 * 2) / (36 - 2 * 2)}
 
 {if $is_enabled && $is_available_for_disaptch}
-    {if (fn_allowed_for("MULTIVENDOR:ULTIMATE"))}
+    {if fn_allowed_for('MULTIVENDOR') && fn_is_allowed(constant("\Tygh\Licensing\Features::MULTIPLE_STOREFRONTS"))}
         {$selected_storefront_id = $selected_storefront_id|default:$app["storefront.switcher.selected_storefront_id"]}
         {$storefront_switcher_param_name = $storefront_switcher_param_name|default:"s_storefront"}
         {$storefront_switcher_data_name = "storefront_id"}

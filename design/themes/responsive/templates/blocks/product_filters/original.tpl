@@ -14,6 +14,8 @@
 {$is_selected_filters = $smarty.request.features_hash}
 {$show_not_found_notification = $show_not_found_notification|default:0}
 
+{include file="blocks/product_filters/components/product_filters_original_pre.tpl"}
+
 <div class="cm-product-filters"
     data-ca-target-id="{$ajax_div_ids}"
     data-ca-base-url="{$filter_base_url|fn_url}"
@@ -25,6 +27,8 @@
     id="product_filters_{$block.block_id}">
 <div class="ty-product-filters__wrapper" data-ca-product-filters="wrapper" {if $is_selected_filters}data-ca-product-filters-status="active"{/if}>
 {if $items}
+
+{include file="blocks/product_filters/components/product_filters_original_items_pre.tpl"}
 
 {foreach from=$items item="filter" name="filters"}
     {hook name="blocks:product_filters_variants"}
@@ -64,12 +68,14 @@
                     {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
                 {/if}
             {else}
-                {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter collapse=$collapse}
+                {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter collapse=$collapse type="original"}
             {/if}
         {/hook}
     </div>
     {/hook}
 {/foreach}
+
+{include file="blocks/product_filters/components/product_filters_original_items_post.tpl"}
 
 {if $ajax_div_ids}
 <div class="ty-product-filters__tools clearfix {if !$is_selected_filters}hidden{/if}" data-ca-product-filters="tools">
@@ -88,6 +94,8 @@
 </div>
 <!--product_filters_{$block.block_id}--></div>
 
+{include file="blocks/product_filters/components/product_filters_original_post.tpl"}
+
 <div data-ca-tooltip-layout="true" class="hidden">
-    <button type="button" data-ca-scroll=".ty-mainbox-title" class="cm-scroll ty-tooltip--link ty-tooltip--filter"><span class="tooltip-arrow"></span></button>
+    <button type="button" data-ca-scroll=".ty-mainbox-title" class="cm-scroll ty-tooltip--link ty-tooltip--filter ty-product-filters__tooltip-original"><span class="tooltip-arrow"></span></button>
 </div>

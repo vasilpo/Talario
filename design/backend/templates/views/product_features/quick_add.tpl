@@ -124,7 +124,7 @@
                                     data-ca-object-picker-has-strict-compliance-matcher="true"
                                     data-ca-object-picker-enable-create-object="true"
                                     data-ca-object-picker-token-separators="[',']"
-                                    data-ca-object-picker-container-css-class="object-picker__selection-simple object-picker__selection-simple--full-width object-picker__selection-simple--product-features-variants-add"
+                                    data-ca-object-picker-selection-css-class="object-picker__selection-simple object-picker__selection-simple--full-width object-picker__selection-simple--product-features-variants-add"
                                     data-ca-object-picker-show-dropdown="false"
                                     data-ca-object-picker-select-on-close="true"
                                     data-ca-object-picker-autofocus="{$is_variants_focus}"

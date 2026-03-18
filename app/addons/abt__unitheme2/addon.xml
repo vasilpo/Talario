@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
 <id>abt__unitheme2</id>
-<version>4.18.4.a</version>
+<version>4.19.1.b</version>
 <priority>10000</priority>
 <position>0</position>
 <status>active</status>
 <default_language>en</default_language>
 <ab>
-<hash>16be8f05de98932ec8595b9c8b229478a3842032, 2025-06-18 17:06:37</hash>
+<hash>c2e182534c98932efee641196c24259a109334d5, 2025-11-04 12:09:53</hash>
 <layout_version>ult11</layout_version>
 <compatibility>
 <dependencies>
@@ -32,7 +32,7 @@
 <compatibility>
 <dependencies>ab__addons_manager,banners</dependencies>
 <conflicts>rus_theme_style,abt__unitheme,abt__youpitheme,ab__auto_loading_products,ab__advanced_banners</conflicts>
-<core_version><min>4.18.4</min></core_version>
+<core_version><min>4.19.1</min></core_version>
 <core_edition>ULTIMATE,MULTIVENDOR</core_edition>
 </compatibility>
 <settings layout="separate" edition_type="ROOT,VENDOR,STOREFRONT">
@@ -40,7 +40,7 @@
 <section id="settings">
 <items>
 <item id="code"><type>hidden</type><default_value>ABA-8pJNE0La32Th1toiLCzPe</default_value></item>
-<item id="build"><type>hidden</type><default_value>1225</default_value></item>
+<item id="build"><type>hidden</type><default_value>1261</default_value></item>
 </items>
 </section>
 </sections>

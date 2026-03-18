@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\CategoryLinkTypes;
 use Tygh\Enum\ProductFeatures;
@@ -49,6 +49,43 @@ function fn_exim_set_product_company(array $object, $product_id, $company_name, 
     }
 
     return $company_id;
+}
+
+/**
+ * Prepare category fields for import.
+ *
+ * @param string $category_paths  Category/categories from import file
+ * @param string $paths_delimiter Category paths delimiter
+ *
+ * @return string
+ */
+function fn_exim_prepare_categories($category_paths, $paths_delimiter)
+{
+    $categories_delimiter = ';';
+
+    if (strpos($category_paths, $categories_delimiter) !== false) {
+        $paths = explode($categories_delimiter, $category_paths);
+    } else {
+        $paths = [$category_paths];
+    }
+
+    foreach ($paths as &$path) {
+        if (strpos($path, $paths_delimiter) === false) {
+            continue;
+        }
+
+        $categories = explode($paths_delimiter, $path);
+        array_walk($categories, 'fn_trim_helper');
+        $path = implode($paths_delimiter, $categories);
+    }
+
+    if (count($paths) > 1) {
+        $category_paths = implode($categories_delimiter, $paths);
+    } else {
+        $category_paths = reset($paths);
+    }
+
+    return $category_paths;
 }
 
 /**
@@ -150,7 +187,6 @@ function fn_exim_set_product_categories(
 
     foreach ($categories_data as $lang => $data) {
         $_paths = str_getcsv($data, $set_delimiter, "'");
-        array_walk($_paths, 'fn_trim_helper');
 
         foreach ($_paths as $k => $cat_path) {
             if (fn_allowed_for('ULTIMATE') && strpos($cat_path, $store_delimiter)) {
@@ -164,7 +200,8 @@ function fn_exim_set_product_categories(
                 }
             }
 
-            $category = (strpos($cat_path, $category_delimiter) !== false) ? explode($category_delimiter, $cat_path) : array($cat_path);
+            $category = strpos($cat_path, $category_delimiter) !== false ? explode($category_delimiter, $cat_path) : [$cat_path];
+
             foreach ($category as $key_cat => $cat) {
                 $paths[$k][$key_cat][$lang] = $cat;
             }

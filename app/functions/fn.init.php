@@ -1,17 +1,19 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Smarty\Extension\CoreExtension;
+use Smarty\Extension\DefaultExtension;
 use Tygh\Ajax;
 use Tygh\Api;
 use Tygh\Api\Response;
@@ -29,10 +31,12 @@ use Tygh\Languages\Languages;
 use Tygh\Registry;
 use Tygh\Settings;
 use Tygh\SmartyEngine\Core as SmartyCore;
+use Tygh\SmartyEngine\Extensions\TyghExtension;
 use Tygh\Storage;
 use Tygh\Themes\Styles;
 use Tygh\Tools\DateTimeHelper;
 use Tygh\Enum\UserTypes;
+use Tygh\Enum\MainMenuTypeVariants;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -42,14 +46,12 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
  * @param string $area
  *
  * @return array
- * @throws \SmartyException
  * @throws \Tygh\Exceptions\PermissionsException
  */
 function fn_init_templater($area = AREA)
 {
     $auth = Tygh::$app['session']['auth'];
     $view = new SmartyCore();
-    \SmartyException::$escape = false;
 
     /**
      * Change templater pre-init parameters
@@ -58,66 +60,27 @@ function fn_init_templater($area = AREA)
      */
     fn_set_hook('init_templater', $view);
 
-    $view->_dir_perms = DEFAULT_DIR_PERMISSIONS;
-    $view->_file_perms = DEFAULT_FILE_PERMISSIONS;
+    foreach (glob(Registry::get('config.dir.functions') . 'smarty_plugins/modifier.?*.php') as $filename) {
+        require_once $filename;
+    }
+
+    $view->setExtensions([
+        new CoreExtension(),
+        new TyghExtension($area, $auth),
+        new DefaultExtension(),
+    ]);
 
     $view->registerResource('tygh', new Tygh\SmartyEngine\FileResource());
 
     // resource for shared templates loaded from backend
     $view->registerResource('backend', new Tygh\SmartyEngine\BackendResource());
-
-    if ($area == 'A') {
-
-        if (!empty($auth['user_id']) && fn_allowed_for('ULTIMATE')) {
-            // Enable sharing for objects
-            $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputSharing'));
-        }
-
-        $view->registerFilter('pre', array('Tygh\SmartyEngine\Filters', 'preScript'));
-    }
-
-    if ($area == 'C') {
-        $view->registerFilter('pre', array('Tygh\SmartyEngine\Filters', 'preTemplateWrapper'));
-
-        if (Registry::get('runtime.customization_mode.design')) {
-            $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputTemplateIds'));
-        }
-
-        if (Registry::get('runtime.customization_mode.live_editor')) {
-            $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputLiveEditorWrapper'));
-        }
-
-        $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputScript'));
-    }
-
-    if (Embedded::isEnabled()) {
-        $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputEmbeddedUrl'));
-    }
-
-    // CSRF form protection
-    if (fn_is_csrf_protection_enabled($auth)) {
-        $view->registerFilter('output', array('Tygh\SmartyEngine\Filters', 'outputSecurityHash'));
-    }
-
-    // Language variable retrieval optimization
-    $view->registerFilter('variable_pre', ['Tygh\SmartyEngine\Filters', 'preTranslation']);
-    $view->registerFilter('post', ['Tygh\SmartyEngine\Filters', 'postTranslation']);
-
-    $smarty_plugins_dir = $view->getPluginsDir();
-    $view->setPluginsDir(Registry::get('config.dir.functions') . 'smarty_plugins');
-    $view->addPluginsDir($smarty_plugins_dir);
+    $view->addComponentDir(Registry::get('config.dir.functions') . 'smarty_plugins/components');
 
     $view->error_reporting = E_ALL & ~E_NOTICE;
 
     if (version_compare(phpversion(), '8.0.0', '>=')) {
         $view->error_reporting &= ~E_WARNING;
     }
-
-    if (version_compare(phpversion(), '8.1.0', '>=')) {
-        $view->error_reporting &= ~E_DEPRECATED;
-    }
-
-    $view->registerDefaultPluginHandler(['Tygh\SmartyEngine\Filters', 'smartyDefaultHandler']);
 
     $view->setArea($area);
     $view->use_sub_dirs = false;
@@ -160,10 +123,13 @@ function fn_init_templater($area = AREA)
         $view->assign([
             'backoffice_color_scheme_variants' => Registry::get('backoffice_color_scheme_variants'),
             'backoffice_color_scheme' => Tygh::$app['session']['auth']['backoffice_color_scheme'] ?? '',
+            'main_menu_type_variants' => Registry::get('main_menu_type_variants'),
+            'main_menu_type' => Tygh::$app['session']['auth']['main_menu_type'] ?? '',
+            'show_main_menu_toggle' => !Registry::get('runtime.customization_mode.block_manager'),
         ]);
     }
 
-    $view->assignByRef('app', Tygh::$app);
+    $view->assign('app', Tygh::$app);
     Tygh::$app['view'] = $view;
 
     /**
@@ -988,11 +954,11 @@ function fn_check_cache($params)
 
     /* Add extra files for cache checking if needed */
     $core_hashes = array(
-        '47e4664f2628c1cad1676279637ee055f8c5ad72' => [
+        'ef10ab1c546646d3c4507003ef75d1ac21aaec2b' => [
             'file'   => 'cuc.xfrqcyrU/utlG/ccn',
             'notice' => 'nqzva_cnary_jvyy_or_oybpxrq'
         ],
-        '7f569494ab3a41730dbc76ea2a544408106107f7' => [
+        '830e6093c1b136a442d32c68cb51bbfbea4e8898' => [
             'file'   => 'cuc.8sgh/ergeriabp_ynergvy/fnzrupf/ccn',
             'notice' => 'nqzva_cnary_jvyy_or_oybpxrq'
         ],
@@ -1680,6 +1646,42 @@ function fn_init_backoffice_theme_mode(array $params)
         }
 
         Registry::set('backoffice_color_scheme_variants', $backoffice_color_scheme_variants);
+    }
+
+    return [INIT_STATUS_OK];
+}
+
+/**
+ * Initialize admin panel color scheme mode.
+ *
+ * @param array<string, string> $params Request parameters
+ *
+ * @return array{int}|null
+ */
+function fn_init_main_menu_type(array $params)
+{
+    $auth = & Tygh::$app['session']['auth'];
+
+    if (
+        ($auth['user_type'] === UserTypes::ADMIN || $auth['user_type'] === UserTypes::VENDOR)
+        || (AREA === SiteArea::VENDOR_PANEL || AREA === SiteArea::VENDOR_PANEL)
+    ) {
+        $main_menu_type_variants = fn_get_schema('main_menu_type', 'main_menu_type_variants');
+
+        if (Registry::get('runtime.customization_mode.block_manager')) {
+            $auth['main_menu_type'] = MainMenuTypeVariants::COLLAPSE;
+        } elseif (
+            !empty($params['main_menu_type'])
+            && array_key_exists($params['main_menu_type'], $main_menu_type_variants)
+        ) {
+            $main_menu_type = $params['main_menu_type'];
+            $auth['main_menu_type'] = $main_menu_type;
+            fn_save_user_additional_data(MAIN_MENU_TYPE, ['main_menu_type' => $main_menu_type]);
+        } elseif (empty($auth['main_menu_type'])) {
+            $auth['main_menu_type'] = fn_load_main_menu_type_variants($auth);
+        }
+
+        Registry::set('main_menu_type_variants', $main_menu_type_variants);
     }
 
     return [INIT_STATUS_OK];

@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cs-cart-latest\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: cs-cart-latest\n"
+"X-Crowdin-Project-ID: 50163\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /release-4.20.1/addons/full_page_cache.po\n"
+"X-Crowdin-File-ID: 10157\n"
+"PO-Revision-Date: 2026-02-05 11:01\n"
+
+msgctxt "Addons::name::full_page_cache"
+msgid "Performance Booster"
+msgstr "Performance Booster"
+
+msgctxt "Addons::description::full_page_cache"
+msgid "Set up full-page cache powered by Varnish to speed up your site under heavy workload."
+msgstr "Skonfiguruj pamięć podręczną całej strony obsługiwaną przez Varnish, aby przyspieszyć działanie swojej witryny przy dużym obciążeniu."
+
+msgctxt "Languages::full_page_cache.unable_to_enable_full_page_caching"
+msgid "Unable to enable full-page caching."
+msgstr "Nie można włączyć buforowania całej strony."
+
+msgctxt "Languages::full_page_cache.unable_to_connect_to_varhish"
+msgid "Unable to connect to Varnish server. Please make sure that Varnish service is running and check the entered address and port."
+msgstr "Nie można połączyć się z serwerem Varnish. Upewnij się, że usługa Varnish jest uruchomiona i sprawdź wprowadzony adres oraz port."
+
+msgctxt "Languages::full_page_cache.error_session_auto_start_enabled"
+msgid "The \"session.auto_start\" PHP configuration option is enabled. Please, disable this option by setting \"session.auto_start = 0\" in your php.ini file."
+msgstr "Opcja konfiguracji PHP \"session.auto_start\" jest włączona. Wyłącz tę opcję, ustawiając \"session.auto_start = 0\" w pliku php.ini."
+
+msgctxt "Languages::full_page_cache.notice_caching_was_enabled"
+msgid "Full-page caching have been successfully enabled, started and running."
+msgstr "Buforowanie całej strony zostało pomyślnie włączone, uruchomione i działa."
+
+msgctxt "Languages::full_page_cache.warning_root_dir_not_writable"
+msgid "<strong>Performance Booster:</strong> Root directory of your site isn't writable. Couldn't create symlink to esi.php in the root directory. Please make the directory writable and activate the add-on. Alternatively, create the symlink from the root directory to app/addons/full_page_cache/esi.php manually."
+msgstr "<strong>Performance Booster:</strong> Katalog główny Twojej witryny nie jest zapisywalny. Nie udało się utworzyć dowiązania symbolicznego do pliku esi.php w katalogu głównym. Ustaw katalog jako zapisywalny i aktywuj dodatek. Możesz również ręcznie utworzyć dowiązanie symboliczne z katalogu głównego do pliku app/addons/full_page_cache/esi.php."
+
+msgctxt "Languages::full_page_cache.failed_to_create_symlink"
+msgid "Failed to create symlink [file]"
+msgstr "Nie udało się utworzyć dowiązania symbolicznego [file]"
+
+msgctxt "Languages::full_page_cache.notice_configure_addon"
+msgid "Before you can activate Performance Booster, you'll need to <a href=\"[url]\">configure the server and the add-on.</a>"
+msgstr "Zanim aktywujesz Performance Booster, musisz <a href=\"[url]\">skonfigurować serwer i dodatek.</a>"
+
+msgctxt "Languages::full_page_cache.text_settings_general"
+msgid "This add-on will only work after proper server configuration. <a target=\"_blank\" href=\"[docs_url]user_guide/addons/full_page_cache/configure.html\">Learn more about how to configure caching on your server</a>."
+msgstr "Ten dodatek będzie działał dopiero po prawidłowej konfiguracji serwera. <a target=\"_blank\" href=\"[docs_url]user_guide/addons/full_page_cache/configure.html\">Dowiedz się więcej o tym, jak skonfigurować buforowanie na serwerze</a>."
+
+msgctxt "SettingsOptions::full_page_cache::varnish"
+msgid "Varnish"
+msgstr "Varnish"
+
+msgctxt "SettingsOptions::full_page_cache::varnish_host"
+msgid "Host"
+msgstr "Host"
+
+msgctxt "SettingsOptions::full_page_cache::common"
+msgid "Common"
+msgstr "Wspólny"
+

@@ -1,0 +1,1 @@
+{__("vendor_rating.absolute_vendor_rating_short_2")}

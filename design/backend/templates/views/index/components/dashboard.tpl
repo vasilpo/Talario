@@ -144,27 +144,10 @@
         && !$auth.helpdesk_user_id
         && fn_check_permissions("addons", "update", "admin")
     }
-        {if "ULTIMATE:FREE"|fn_allowed_for && $is_activated_free !== "YesNo::YES"|enum}
-            {if
-                $auth.is_root === "YesNo::YES"|enum
-                && !$auth.company_id
-                && $settings.Upgrade_center.license_number
-            }
-                <div class="well well-small help-block">
-                    {include file="buttons/helpdesk.tpl"
-                        btn_class="pull-right cm-ajax"
-                        btn_text=__("activate")
-                        btn_href="helpdesk_connector.activate_license_mail_request"
-                    }
-                    <p>{__("helpdesk_account.activate_free_license_message")}</p>
-                </div>
-            {/if}
-        {else}
-            <div class="well well-small help-block">
-                {include file="buttons/helpdesk.tpl" btn_class="pull-right"}
-                <p>{__("helpdesk_account.signed_out_message")}</p>
-            </div>
-        {/if}
+        <div class="well well-small help-block">
+            {include file="buttons/helpdesk.tpl" btn_class="pull-right"}
+            <p>{__("helpdesk_account.signed_out_message")}</p>
+        </div>
     {/if}
 
     <div class="dashboard row-fluid" id="dashboard">

@@ -188,6 +188,10 @@ msgctxt "Languages::rus_taxes.tax.vat20"
 msgid "VAT 20%"
 msgstr "VAT 20%"
 
+msgctxt "Languages::rus_taxes.tax.vat22"
+msgid "VAT 22%"
+msgstr "VAT 22%"
+
 msgctxt "Languages::rus_taxes.tax.vat105"
 msgid "VAT 105%"
 msgstr "VAT 105%"
@@ -207,6 +211,10 @@ msgstr "VAT 18/118"
 msgctxt "Languages::rus_taxes.tax.vat120"
 msgid "VAT 20/120"
 msgstr "VAT 20/120"
+
+msgctxt "Languages::rus_taxes.tax.vat122"
+msgid "VAT 22/122"
+msgstr "VAT 22/122"
 
 msgctxt "Languages::rus_taxes.tax_type"
 msgid "VAT rate"

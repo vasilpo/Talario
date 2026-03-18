@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Illuminate\Support\Collection;
 use Tygh\Enum\NotificationSeverity;
@@ -23,6 +23,7 @@ use Tygh\Enum\ProfileFieldTypes;
 use Tygh\Enum\ProfileTypes;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\BackofficeColorSchemeVariants;
+use Tygh\Enum\MainMenuTypeVariants;
 use Tygh\Enum\UsergroupLinkStatuses;
 use Tygh\Enum\UsergroupStatuses;
 use Tygh\Enum\UsergroupTypes;
@@ -31,6 +32,7 @@ use Tygh\Enum\YesNo;
 use Tygh\Exceptions\DeveloperException;
 use Tygh\Http;
 use Tygh\Languages\Languages;
+use Tygh\Licensing\Features;
 use Tygh\Location\Manager;
 use Tygh\Navigation\LastView;
 use Tygh\RecoverPassword;
@@ -1388,6 +1390,7 @@ function fn_fill_auth($user_data = [], $original_auth = [], $act_as_user = false
         'ip' => $ip['host'],
         'act_as_area' => $area,
         'backoffice_color_scheme' => fn_load_backoffice_color_scheme_variants($user_data),
+        'main_menu_type' => fn_load_main_menu_type_variants($user_data),
     ];
 
     /**
@@ -1653,10 +1656,9 @@ function fn_get_users($params, &$auth, $items_per_page = 0, $custom_view = '')
         $union_condition = ' AND ';
     }
 
-    $condition = $compact_fields = array();
-    $join = $group = '';
-
-    $group .= ' GROUP BY ?:users.user_id';
+    $condition = $compact_fields = [];
+    $join = '';
+    $group_by = [];
 
     if (isset($params['company']) && fn_string_not_empty($params['company'])) {
         $condition['company'] = db_quote(' AND ?:users.company LIKE ?l', '%' . trim($params['company']) . '%');
@@ -1820,8 +1822,6 @@ function fn_get_users($params, &$auth, $items_per_page = 0, $custom_view = '')
         $condition['user_type'] = db_quote(' AND ?:users.user_type IN(?a)', $user_types);
     }
 
-    $join .= db_quote(' LEFT JOIN ?:user_profiles ON ?:user_profiles.user_id = ?:users.user_id');
-
     if ($params['extended_search']) {
         $join .= db_quote(' LEFT JOIN ?:companies ON ?:companies.company_id = ?:users.company_id');
     }
@@ -1839,8 +1839,9 @@ function fn_get_users($params, &$auth, $items_per_page = 0, $custom_view = '')
      * @param array  $condition Conditions set
      * @param string $join      Joins list
      * @param array  $auth      Auth data
+     * @param array  $group_by  Fields to group by
      */
-    fn_set_hook('get_users', $params, $fields, $sortings, $condition, $join, $auth);
+    fn_set_hook('get_users', $params, $fields, $sortings, $condition, $join, $auth, $group_by);
 
     if (!empty($params['compact']) && $params['compact'] == YesNo::YES) {
         $compact_conditions = [];
@@ -1853,6 +1854,26 @@ function fn_get_users($params, &$auth, $items_per_page = 0, $custom_view = '')
     }
 
     $sorting = db_sort($params, $sortings, 'name', 'asc');
+
+    // Workaround to not JOIN user_profiles table when not needed
+    if (
+        (
+            strpos(implode(' ', $fields), '?:user_profiles') !== false
+            || strpos(implode(' ', $condition), '?:user_profiles') !== false
+        )
+        && strpos($join, '?:user_profiles') === false
+    ) {
+        $join .= db_quote(' LEFT JOIN ?:user_profiles ON ?:user_profiles.user_id = ?:users.user_id');
+    }
+
+    // Workaround to not use GROUP BY when not needed
+    $has_joins_for_group_by = strpos($join, '?:user_profiles') !== false || strpos($join, '?:orders') !== false;
+    if ($has_joins_for_group_by && !in_array('?:users.user_id', $group_by)) {
+        $group_by[] = '?:users.user_id';
+    }
+
+    $group_by = array_unique($group_by);
+    $group = !empty($group_by) ? ' GROUP BY ' . implode(', ', $group_by) : '';
 
     // Used for Extended search
     if (!empty($params['get_conditions'])) {
@@ -2182,6 +2203,11 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
     }
 
     array_walk($user_data, 'fn_trim_helper');
+
+    if (!fn_validate_user_data($user_data, $user_id)) {
+        return false;
+    }
+
     $register_at_checkout = isset($user_data['register_at_checkout']) && $user_data['register_at_checkout'] == 'Y' ? true : false;
 
     if (fn_allowed_for('ULTIMATE')) {
@@ -2661,6 +2687,36 @@ function fn_update_user($user_id, $user_data, &$auth, $ship_to_another, $notify_
 }
 
 /**
+ * Validates user data.
+ *
+ * @param array $user_data User data
+ * @param int   $user_id   User identifier
+ *
+ * @return bool
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
+ */
+function fn_validate_user_data(array $user_data, $user_id)
+{
+    $is_valid_user_data = true;
+
+    if (empty($user_id)) {
+        $text_fields_to_validate = ['firstname', 'lastname'];
+        foreach ($text_fields_to_validate as $text_field) {
+            if (
+                !empty($user_data[$text_field])
+                && !fn_validate_text_field($user_data[$text_field])
+            ) {
+                fn_set_notification(NotificationSeverity::ERROR, __('error'), __('validator_not_valid_text_field', ['[field]' => __($text_field)]));
+                $is_valid_user_data = false;
+            }
+        }
+    }
+
+    return $is_valid_user_data;
+}
+
+/**
  * Gets user last passwords
  *
  * @param int $user_id User identifier
@@ -3078,7 +3134,7 @@ function fn_check_current_user_access($permission)
 function fn_check_permission_storefronts($storefront_id = null)
 {
     if (
-        !fn_allowed_for('MULTIVENDOR:ULTIMATE')
+        !fn_allowed_for('MULTIVENDOR') && !fn_is_allowed(Features::MULTIPLE_STOREFRONTS)
         || empty(Tygh::$app['session']['auth'])
         || ($storefront_id !== null && (int) $storefront_id === 0)
     ) {
@@ -5413,7 +5469,7 @@ function fn_copy_shipping_fields_in_billing(array $user_data)
     $shipping_address = ProfileFieldSections::SHIPPING_ADDRESS;
 
     $form_fields = [];
-    $profile_fields = fn_get_profile_fields(ProfileFieldLocations::CHECKOUT_FIELDS, null, CART_LANGUAGE, ['section' => $shipping_address]);
+    $profile_fields = fn_get_profile_fields(ProfileFieldLocations::CUSTOMER_FIELDS, null, CART_LANGUAGE, ['section' => $shipping_address]);
 
     foreach ($profile_fields[$shipping_address] as $field) {
         $form_fields[$field['field_id']] = $field['field_name'];
@@ -5422,19 +5478,10 @@ function fn_copy_shipping_fields_in_billing(array $user_data)
     foreach ($form_fields as $key => $shipping_name) {
         if (isset($user_data[$shipping_name]) && strpos($shipping_name, SHIPPING_ADDRESS_PREFIX . '_') === 0) {
             $billing_name = substr_replace($shipping_name, BILLING_ADDRESS_PREFIX . '_', 0, 2);
-            $user_data[$billing_name] = isset($user_data[$billing_name])
-                ? $user_data[$billing_name]
-                : $user_data[$shipping_name];
-        } elseif (
-            isset($profile_fields[$shipping_address][$key]['matching_id'])
-            && !empty($profile_fields[$shipping_address][$key]['matching_id'])
-        ) {
+            $user_data[$billing_name] = $user_data[$billing_name] ?? $user_data[$shipping_name];
+        } elseif (!empty($profile_fields[$shipping_address][$key]['matching_id'])) {
             $matching_id = $profile_fields[$shipping_address][$key]['matching_id'];
-            $user_data['fields'][$matching_id] = isset($user_data['fields'][$matching_id])
-                ? $user_data['fields'][$matching_id]
-                : $user_data['fields'][$key];
-        } else {
-            continue;
+            $user_data['fields'][$matching_id] = $user_data['fields'][$matching_id] ?? $user_data['fields'][$key];
         }
     }
 
@@ -5449,8 +5496,8 @@ function fn_copy_shipping_fields_in_billing(array $user_data)
  */
 function fn_is_user_can_login_as(array $current_user_info, array $target_user_info): bool
 {
-    define('USER_TYPE_ADMIN_ROOT', 'AR');
-    define('USER_TYPE_VENDOR_ROOT', 'VR');
+    fn_define('USER_TYPE_ADMIN_ROOT', 'AR');
+    fn_define('USER_TYPE_VENDOR_ROOT', 'VR');
 
     $login_as_map = [
         USER_TYPE_ADMIN_ROOT  => [USER_TYPE_ADMIN_ROOT => true,  UserTypes::ADMIN => true,  USER_TYPE_VENDOR_ROOT => true,  UserTypes::VENDOR => true,  UserTypes::CUSTOMER => true],
@@ -5494,5 +5541,25 @@ function fn_load_backoffice_color_scheme_variants(array $user_data)
 
         return !empty($backoffice_color_scheme['backoffice_color_scheme'])
             ? $backoffice_color_scheme['backoffice_color_scheme'] : BackofficeColorSchemeVariants::SYSTEM;
+    }
+}
+
+/**
+ * Loads user prefer color scheme for admin panel.
+ *
+ * @param array<string, string> $user_data User data.
+ *
+ * @return string|void
+ */
+function fn_load_main_menu_type_variants(array $user_data)
+{
+    if (
+        isset($user_data['user_id'], $user_data['user_type'])
+        && ($user_data['user_type'] === UserTypes::ADMIN || $user_data['user_type'] === UserTypes::VENDOR)
+    ) {
+        $main_menu_type = fn_get_user_additional_data(MAIN_MENU_TYPE, $user_data['user_id']);
+
+        return !empty($main_menu_type['main_menu_type'])
+            ? $main_menu_type['main_menu_type'] : MainMenuTypeVariants::COLLAPSE;
     }
 }

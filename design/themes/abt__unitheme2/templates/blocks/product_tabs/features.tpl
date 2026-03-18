@@ -16,7 +16,7 @@
                     {if $ab__search_similar_in_category}
                     {if $ab__enable_similar_filter}
                         <div class="abt__ut2--product-features__utility">
-                            {include file="buttons/button.tpl" but_text=__("ab__ut2.search_similar") but_meta="abt__ut2_search_similar_in_category_btn" but_icon="ut2-icon-filter-empty"}
+                            {include file="buttons/button.tpl" but_text=__("ab__ut2.search_similar") but_meta="abt__ut2_search_similar_in_category_btn disabled" but_icon="ut2-icon-filter-empty"}
                         </div>
                     {/if}
                 </div>

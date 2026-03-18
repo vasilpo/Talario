@@ -1,20 +1,21 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BlockManager\Block;
 use Tygh\BlockManager\ProductTabs;
 use Tygh\Enum\ImagePairTypes;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\OutOfStockActions;
 use Tygh\Enum\ProductFeaturesDisplayOn;
@@ -22,6 +23,7 @@ use Tygh\Enum\ProductTracking;
 use Tygh\Enum\UserTypes;
 use Tygh\Enum\YesNo;
 use Tygh\Languages\Languages;
+use Tygh\Licensing\Features;
 use Tygh\Navigation\LastView;
 use Tygh\Providers\StorefrontProvider;
 use Tygh\Registry;
@@ -31,6 +33,7 @@ use Tygh\Tools\SecurityHelper;
 use Tygh\Enum\VendorStatuses;
 use Tygh\Enum\SiteArea;
 use Tygh\Settings;
+use Tygh\Video\UrlConstructors\IVideoUrlConstructor;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -376,6 +379,10 @@ function fn_get_product_data(//phpcs:ignore Squiz.Commenting.FunctionComment.Typ
         $product_data['product_features'] = fn_get_product_features_list($product_data, ProductFeaturesDisplayOn::ALL);
     }
 
+    if (!empty($params['get_videos'])) {
+        $product_data['videos'] = fn_get_product_videos($product_id);
+    }
+
     $product_data = fn_normalize_product_overridable_fields($product_data);
     $product_data['detailed_params']['info_type'] = 'D';
 
@@ -682,6 +689,10 @@ function fn_gather_additional_products_data(&$products, $params, $lang_code = CA
             if (empty($product['image_pairs']) && !empty($additional_images[$product_id])) {
                 $product['image_pairs'] = $additional_images[$product_id];
             }
+        }
+
+        if (!empty($params['get_videos'])) {
+            $product['videos'] = fn_get_product_videos($product['product_id']);
         }
 
         if (isset($product['price']) && !isset($product['base_price'])) {
@@ -1054,6 +1065,9 @@ function fn_delete_product($product_id)
         db_query('DELETE FROM ?:product_popularity WHERE product_id = ?i', $product_id);
 
         fn_delete_image_pairs($product_id, 'product');
+
+        $video_manager = Tygh::$app['video.video_manager'];
+        $video_manager->deleteVideoPairs($product_id, ['object_type' => 'product']);
 
         // Delete product options and inventory records for this product
         fn_poptions_delete_product($product_id);
@@ -1590,6 +1604,10 @@ function fn_update_product($product_data, $product_id = 0, $lang_code = CART_LAN
                 }
 
                 fn_update_image_pairs([], [], $pairs_data, $product_id, 'product', [], true, $lang_code);
+            }
+
+            if (isset($product_data['videos'])) {
+                fn_update_product_videos($product_id, $product_data['videos']);
             }
 
             if (fn_allowed_for('ULTIMATE')) {
@@ -2732,7 +2750,7 @@ function fn_get_products_views($simple_mode = true, $active = false)
      */
     fn_set_hook('get_products_views_pre', $simple_mode, $active);
 
-    $active_views = Registry::get('settings.Appearance.default_products_view_templates');
+    $active_views = Registry::ifGet('settings.Appearance.default_products_view_templates', []);
     if (!is_array($active_views)) {
         parse_str($active_views, $active_views);
     }
@@ -2858,7 +2876,7 @@ function fn_get_products_layout($params)
             $params['category_id']
         );
         $category_default_view = $_layout['default_view'];
-        $category_views = unserialize($_layout['selected_views']);
+        $category_views = !empty($_layout['selected_views']) ? unserialize($_layout['selected_views']) : [];
         if (!empty($category_views)) {
             if (!empty($category_default_view)) {
                 $default_view = $category_default_view;
@@ -3266,13 +3284,29 @@ function fn_update_product_prices($product_id, $product_data, $company_id = 0)
                 }
                 unset($v['type']);
 
-                if (count($_product_data['prices']) == 1 && $skip_price_delete && empty($_product_data['create'])) {
-                    $data = array(
-                        'price' => $v['price']
-                    );
+                if (count($_product_data['prices']) === 1 && $skip_price_delete && empty($_product_data['create'])) {
+                        $data = [
+                            'price' => $v['price']
+                        ];
 
-                    db_query("UPDATE $table_name SET ?u WHERE product_id = ?i AND ((lower_limit = ?i AND usergroup_id = ?i) OR percentage_discount > ?i) ?p", $data, $v['product_id'], 1, 0, 0, $condition);
+                        db_query(
+                            "UPDATE $table_name SET ?u WHERE product_id = ?i AND ((lower_limit = ?i AND usergroup_id = ?i) OR percentage_discount > ?i) ?p",
+                            $data,
+                            $v['product_id'],
+                            1,
+                            0,
+                            0,
+                            $condition
+                        );
                 } else {
+                    if ($skip_price_delete && empty($_product_data['create']) && isset($_product_data['price'])) {
+                        $data = [
+                            'price' => $_product_data['price'],
+                        ];
+
+                        db_query("UPDATE $table_name SET ?u WHERE product_id = ?i AND percentage_discount > ?i ?p", $data, $v['product_id'], 0, $condition);
+                    }
+
                     db_query("REPLACE INTO $table_name ?e", $v);
                 }
             }
@@ -3587,6 +3621,14 @@ function fn_get_product_fields()
             'field' => 'box_height'
         ],
     ];
+
+    if (fn_is_allowed(Features::PRODUCT_VIDEOS)) {
+        $fields[] = [
+            'name' => '[data][videos]',
+            'text' => __('videos'),
+            'field' => 'videos'
+        ];
+    }
 
     if (YesNo::isTrue(Registry::get('settings.General.enable_edp'))) {
         $fields[] = [
@@ -4394,4 +4436,174 @@ function fn_products_form_product_list_params($request)
     fn_set_hook('products_form_product_list_params_post', $request, $params);
 
     return $params;
+}
+
+/**
+ * Gets and prepare product videos data.
+ *
+ * @param int $product_id Product id.
+ *
+ * @return array<int, array<string, int|string|array<string, string>|array<string, int|string|array<string, string|int>>>>
+ */
+function fn_get_product_videos($product_id)
+{
+    $video_manager = Tygh::$app['video.video_manager'];
+    $videos = $video_manager->getVideos($product_id, 'product');
+
+    foreach ($videos as &$video) {
+        $source = $video['source'];
+        if (!$video_manager->isAvailableProvider((string) $source) || empty($video['video_url_id'])) {
+            continue;
+        }
+
+        $video_url_constructor = $video_manager->getSourceConstructor($source);
+        $video['preview'] = fn_prepare_product_video_preview($product_id, $video, $video_url_constructor);
+        $video['video_urls'] = $video_url_constructor->buildVideoUrlById($video['video_url_id']);
+    }
+
+    return $videos;
+}
+
+
+/**
+ * Prepare product videos data for storefront.
+ *
+ * @param int                       $product_id            Product ID.
+ * @param array<string, int|string> $video                 Video data.
+ * @param IVideoUrlConstructor      $video_url_constructor Name of video provider class
+ *
+ * @return array<string, int|string|array<string, string|int>>
+ *
+ * @psalm-suppress InvalidScalarArgument
+ */
+function fn_prepare_product_video_preview($product_id, array $video, IVideoUrlConstructor $video_url_constructor)
+{
+    return [
+        'pair_id'     => $video['pair_id'],
+        'image_id'    => 0,
+        'detailed_id'    => $video['video_id'],
+        'object_id'   => $product_id,
+        'object_type' => 'product',
+        'href'        => $video_url_constructor->buildVideoUrlById($video['video_url_id']),
+        'detailed'    => [
+            'object_id'   => $product_id,
+            'object_type' => 'product',
+            'type'        => 'A',
+            'image_path' => $video_url_constructor->buildPreviewUrlByVideoID($video['video_url_id']),
+            'image_x' => '',
+            'image_y' => '',
+            'http_image_path' => '',
+            'https_image_path' => '',
+            'absolute_path' => '',
+            'relative_path' => '',
+        ],
+    ];
+}
+
+/**
+ * Update product videos data.
+ *
+ * @param int                                                                                                                                          $product_id Product ID.
+ * @param array{video_links: array<int, array<string, int|null>>, video_data: array<int, array<string, int|string|null>>, deleted_videos: string|null} $videos     Videos data.
+ *
+ * @return void
+ */
+function fn_update_product_videos($product_id, $videos)
+{
+    $video_data = array_filter($videos['video_data'], static function ($video) {
+        return !empty($video['video_url_id']) && !empty($video['source']);
+    });
+
+    $delete_params = [];
+
+    if (isset($videos['deleted_videos']) && fn_string_not_empty($videos['deleted_videos'])) {
+        $delete_params = [
+            'object_type' => 'product',
+            'video_ids' => $videos['deleted_videos'],
+        ];
+    } elseif (isset($videos['override']) && !empty($video_data)) {
+        $delete_params['object_type'] = 'product';
+    }
+
+    $video_manager = Tygh::$app['video.video_manager'];
+
+    if (!empty($delete_params)) {
+        $video_manager->deleteVideoPairs($product_id, $delete_params);
+    }
+    unset($videos['deleted_videos'], $videos['override']);
+
+    $skipped_videos_count = $video_manager->updateVideos($product_id, 'product', $videos);
+
+    if (!empty($skipped_videos_count)) {
+        fn_set_notification(NotificationSeverity::WARNING, __('warning'), __('error_save_videos'));
+    }
+
+    /**
+     * Executed after saving video data of a product.
+     *
+     * @param int                              $product_id Product ID.
+     * @param array<array<string, string|int>> $videos     Videos data.
+     */
+    fn_set_hook('update_product_videos', $product_id, $videos);
+}
+
+/**
+ * @param array<array{category_ids?: array<string|int>}> $products Array of updating products
+ *
+ * @return array<array<string|int>>
+ */
+function fn_update_products_get_affected_entities($products)
+{
+    if (!$products) {
+        return [[], [], [], []];
+    }
+
+    $affected_features = [];
+    $affected_products = [];
+    $affected_categories = [];
+    $all_not_affected_categories_ids = [];
+
+    foreach ($products as $id => $new_data) {
+        $product_ids = [$id];
+        $removed_categories = null;
+        $new_categories = array_unique($new_data['category_ids']) ?? [];
+        $old_categories = db_get_fields('SELECT category_id FROM ?:products_categories WHERE product_id = ?i', $id);
+
+        if (empty($new_categories)) {
+            continue;
+        }
+
+        $removed_categories = array_diff($old_categories, $new_categories);
+        $not_affected_categories_ids = array_diff($new_categories, $old_categories);
+
+        if (!$removed_categories) {
+            continue;
+        }
+
+        $find_in_set = [];
+        foreach ($removed_categories as $removed_category) {
+            $find_in_set[] = db_quote('FIND_IN_SET(?i, pf.categories_path)', $removed_category);
+        }
+
+        $feature_ids = db_get_fields(
+            'SELECT DISTINCT pfv.feature_id FROM ?:product_features_values AS pfv'
+            . ' LEFT JOIN ?:product_features AS pf'
+                . ' ON pfv.feature_id = pf.feature_id'
+            . ' WHERE pfv.product_id IN (?n)'
+                . ' AND (?p)',
+            $product_ids,
+            join(' OR ', $find_in_set)
+        );
+
+        if (!$feature_ids) {
+            continue;
+        }
+
+        $affected_products = array_merge($affected_products, $product_ids);
+        $affected_features = array_merge($affected_features, $feature_ids);
+        $affected_categories = array_merge($affected_categories, $removed_categories);
+        $all_not_affected_categories_ids = array_merge($all_not_affected_categories_ids, $not_affected_categories_ids, $new_categories);
+    }
+
+    return [array_unique($affected_products), array_unique($affected_features), array_unique($affected_categories), array_unique(array_diff($all_not_affected_categories_ids, $affected_categories))];
 }

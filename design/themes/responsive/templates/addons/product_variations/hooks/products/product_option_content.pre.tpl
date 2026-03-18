@@ -9,7 +9,7 @@
         {$show_out_of_stock_products = $settings.General.show_out_of_stock_products === "YesNo::YES"|enum}
 
         {if $quick_view}
-            {$container = "product_main_info_form_{$obj_prefix}{$quick_view_additional_container}"}
+            {$container = "product_main_info_{$obj_prefix}"}
             {$product_url = "products.quick_view?product_id=`$product.product_id`&prev_url=`$current_url`"|trim}
         {/if}
 
@@ -25,6 +25,10 @@
             {$product_url = $product_url|fn_link_attach:"action=preview"}
         {/if}
 
+        {if $show_quick_view_for_options}
+            {$product_url = $product_url|fn_link_attach:"show_quick_view_for_options={"YesNo::YES"|enum}"}
+        {/if}
+
         <div class="cm-picker-product-variation-features ty-product-options">
             {$feature_style_dropdown = "\Tygh\Enum\ProductFeatureStyles::DROP_DOWN"|constant}
             {$feature_style_images = "\Tygh\Enum\ProductFeatureStyles::DROP_DOWN_IMAGES"|constant}
@@ -35,7 +39,7 @@
                 {$is_feature_default_style = !in_array($feature.feature_style, [$feature_style_images, $feature_style_labels, $feature_style_dropdown])}
 
                 <div class="ty-control-group ty-product-options__item clearfix">
-                    <label class="ty-control-group__label ty-product-options__item-label">{$feature.description}:</label>
+                    <label class="ty-control-group__label ty-product-options__item-label ty-product-options__item-label--variations">{$feature.description}:</label>
                     <bdi>
                         {if $feature.feature_style === $feature_style_images}
                             {foreach $feature.variants as $variant}
@@ -60,7 +64,7 @@
                                 <div class="ty-product-option-child">{$feature.prefix}</div>
                             {/if}
                                 <div class="ty-product-option-child">
-                                    <select class="{if $feature.purpose === $purpose_create_variations || $quick_view}cm-ajax{/if} {if !$quick_view}cm-history{/if} cm-ajax-force" data-ca-target-id="{$container}">
+                                    <select class="ty-product-options__item-select {if $feature.purpose === $purpose_create_variations || $quick_view}cm-ajax{/if} {if !$quick_view}cm-history{/if} cm-ajax-force" data-ca-target-id="{$container}">
                                         {foreach $feature.variants as $variant}
                                             {if $variant.product_id}
                                                 <option

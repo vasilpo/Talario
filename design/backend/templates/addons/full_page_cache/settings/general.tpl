@@ -1,0 +1,1 @@
+<p>{__('full_page_cache.text_settings_general', ["[docs_url]" => $config.resources.docs_url])}</p>

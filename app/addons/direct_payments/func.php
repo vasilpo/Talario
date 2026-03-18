@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -21,6 +21,7 @@ use Tygh\BlockManager\Layout;
 use Tygh\BlockManager\Location;
 use Tygh\Enum\Addons\DirectPayments\OrderDataTypes;
 use Tygh\Enum\CartTypes;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\TaxApplies;
 use Tygh\Enum\VendorPayoutApprovalStatuses;
@@ -230,6 +231,90 @@ function fn_direct_payments_check_promotion_owner($vendor_id, $promotion)
 }
 
 /**
+ * Checks request dispatch permissions.
+ *
+ * @param string $permission_to Specific case permissions go to
+ * @param string $dispatch      Request dispatch
+ *
+ * @return bool
+ */
+function fn_direct_payments_check_dispatch_permissions($permission_to, $dispatch)
+{
+    $result = false;
+
+    $dispatch_permissions_schema = fn_get_schema('direct_payments', 'dispatch_permissions');
+    $case_permissions = $dispatch_permissions_schema[$permission_to] ?? null;
+
+    if (empty($case_permissions) || empty($dispatch)) {
+        return false;
+    }
+
+    $dispatch_as_array = explode('.', $dispatch);
+    $request_controller = $dispatch_as_array[0];
+    $request_mode = $dispatch_as_array[1] ?? null;
+
+    foreach ($case_permissions as $controller => $modes) {
+        if ($controller !== $request_controller) {
+            continue;
+        }
+
+        if (empty($modes)) {
+            $result = true;
+            continue;
+        } else {
+            foreach ($modes as $mode) {
+                if ($mode !== $request_mode) {
+                    continue;
+                }
+
+                $result = true;
+                continue 2;
+            }
+        }
+
+        $result = false;
+    }
+
+    return $result;
+}
+
+/**
+ * The "allow_place_order_check_payment" hook handler.
+ *
+ * Actions performed:
+ *  - Checks if chosen payment belongs to current vendor. If not - order placement is disallowed.
+ *
+ * @param array    $cart                Array of the cart contents and user information necessary for purchase
+ * @param array    $auth                Array with authorization data
+ * @param int|null $parent_order_id     Parent order id
+ * @param array    $payment_method_data Payment method data
+ * @param int      $total               Order total
+ * @param bool     $result              Flag determines if order can be placed
+ *
+ * @return void
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
+ */
+function fn_direct_payments_allow_place_order_check_payment(
+    array $cart,
+    array $auth,
+    $parent_order_id,
+    array $payment_method_data,
+    $total,
+    &$result
+) {
+    if (
+        !isset($cart['vendor_id']) || empty($payment_method_data['company_id'])
+        || $cart['vendor_id'] === (int) $payment_method_data['company_id']
+    ) {
+        return;
+    }
+
+    fn_set_notification(NotificationSeverity::WARNING, __('warning'), __('direct_payments.payment_doesnt_belong_to_vendor'));
+    $result = false;
+}
+
+/**
  * Hook handler: replaces 'checkout' controller with the 'separate_checkout' one.
  */
 function fn_direct_payments_get_route_runtime(
@@ -419,13 +504,59 @@ function fn_direct_payments_save_cart_content_pre($cart, $user_id, $type, $user_
 }
 
 /**
- * Hook handler: sets company ID when storing cart info.
+ * The "save_cart_content_before_save" hook handler.
+ *
+ * Actions performed:
+ * - Sets company ID when storing cart info.
+ *
+ * @param array  $cart         Cart contents
+ * @param int    $user_id      User identifier
+ * @param string $type         Cart type
+ * @param string $user_type    User type
+ * @param array  $product_data Product data
+ *
+ * @return void
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
  */
-function fn_direct_payments_save_cart_content_before_save($cart, $user_id, $type, $user_type, &$product_data)
+function fn_direct_payments_save_cart_content_before_save(array &$cart, $user_id, $type, $user_type, array &$product_data)
 {
     if (isset($cart['vendor_id'])) {
         $product_data['company_id'] = $cart['vendor_id'];
+    } else {
+        // Workaround for cases when cart is saved after custom fn_clear_cart(), so that vendor_id is cleared from cart.
+        $cart_service = ServiceProvider::getCartService();
+        if ($cart_service->getVendorIdFromRequest() === null) {
+            return;
+        }
+
+        $vendor_id = $cart_service->getVendorIdFromRequest();
+        $product_data['company_id'] = $vendor_id;
+        $cart['vendor_id'] = $vendor_id;
     }
+}
+
+/**
+ * The "placement_routines" hook handler.
+ *
+ * Actions performed:
+ * - Sets runtime vendor id from order data.
+ *
+ * @param int   $order_id   Order identifier
+ * @param array $order_info Order data
+ *
+ * @return void
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+ */
+function fn_direct_payments_placement_routines($order_id, array $order_info)
+{
+    if (empty($order_info['company_id'])) {
+        return;
+    }
+
+    $cart_service = ServiceProvider::getCartService();
+    $cart_service->setRuntimeVendorId($order_info['company_id']);
 }
 
 /**
@@ -873,6 +1004,44 @@ function fn_direct_payments_stripe_data_loader_get_supported_payments_before(arr
         return;
     }
     $params['company_id'] = 0;
+}
+
+/**
+ * The "stripe_data_loader_load_payment_request_data_post" hook handler.
+ *
+ * Actions performed:
+ *     - Sets vendor id to supported payments.
+ *
+ * @param array          $payment_buttons Payment buttons
+ * @param int            $product_id      Purchased product ID
+ * @param array          $product_options Purchased product options
+ * @param array          $user_data       Customer information
+ * @param int|null|false $shipping_id     Shipping identifier
+ * @param array          $cart            Cart content
+ * @param array          $product         Product data
+ *
+ * @return void
+ *
+ * @see \Tygh\Addons\Stripe\PaymentButton\DataLoader::getSupportedPayments()
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+ */
+function fn_direct_payments_stripe_data_loader_load_payment_request_data_post(
+    array &$payment_buttons,
+    $product_id,
+    array $product_options,
+    array $user_data,
+    $shipping_id,
+    array $cart,
+    array $product
+) {
+    if (empty($product['company_id'])) {
+        return;
+    }
+
+    foreach ($payment_buttons as &$button) {
+        $button['vendor_id'] = $product['company_id'];
+    }
 }
 
 /**

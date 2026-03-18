@@ -153,6 +153,58 @@
             </div>
         </div>
 
+        {if $settings_schema["catalog_importer.sync_feature_names"].editable}
+            <div class="control-group setting-wide">
+                <label class="control-label" for="elm_sync_data_commerceml_cml_catalog_sync_feature_names">{__("commerceml.cml_catalog_sync_feature_names")}:</label>
+                <div class="controls">
+                    {foreach $settings_schema["catalog_importer.sync_feature_names"].variants as $variant}
+                        <label class="radio">
+                            <input
+                                type="radio"
+                                value="{$variant}" name="sync_data_settings[{$sync_provider_id}][catalog_importer.sync_feature_names]"
+                                {if $import_settings["catalog_importer.sync_feature_names"] == $variant}checked="checked"{/if}
+                            >
+                            {__("commerceml.cml_catalog_sync_feature_names.{$variant|lower}")}
+                            <p class="muted">
+                                {__("commerceml.cml_catalog_sync_feature_names.{$variant|lower}.tooltip")}
+                            </p>
+                        </label>
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
+
+        {if $settings_schema["catalog_importer.sync_feature_variant_names"].editable}
+            <div class="control-group setting-wide">
+                <label class="control-label" for="elm_sync_data_commerceml_cml_catalog_sync_feature_variant_names">{__("commerceml.cml_catalog_sync_feature_variant_names")}:</label>
+                <div class="controls">
+                    {foreach $settings_schema["catalog_importer.sync_feature_variant_names"].variants as $variant}
+                        <label class="radio">
+                            <input
+                                type="radio"
+                                value="{$variant}" name="sync_data_settings[{$sync_provider_id}][catalog_importer.sync_feature_variant_names]"
+                                {if $import_settings["catalog_importer.sync_feature_variant_names"] == $variant}checked="checked"{/if}
+                            >
+                            {__("commerceml.cml_catalog_sync_feature_variant_names.{$variant|lower}")}
+                            <p class="muted">
+                                {__("commerceml.cml_catalog_sync_feature_variant_names.{$variant|lower}.tooltip")}
+                            </p>
+                        </label>
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
+
+        {if fn_allowed_for("MULTIVENDOR") && $runtime.company_id
+            && ($settings_schema["catalog_importer.sync_feature_names"].editable || $settings_schema["catalog_importer.sync_feature_variant_names"].editable)
+        }
+            <div class="control-group setting-wide">
+                <div class="controls well well-small help-block">
+                    <p>{__("commerceml.cml_catalog_sync_feature.vendor_notice")}</p>
+                </div>
+            </div>
+        {/if}
+
         <div class="control-group setting-wide">
             <label class="control-label" for="elm_sync_data_commerceml_cml_default_lang">{__("commerceml.cml_default_lang")}:</label>
             <div class="controls">

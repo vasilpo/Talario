@@ -5,8 +5,9 @@
     <div class="ut2-pb__sticky-add-to-cart_block">
         {if $settings.ab__device !== "mobile"}
         <div class="ut2-pb__sticky-add-to-cart_product">
-            {include file="common/image.tpl" image_width="40" image_height="40" images=$product.main_pair no_ids=true lazy_load=false}
-
+            <div class="ut2-pb__sticky-add-to-cart_product-img">
+                {include file="common/image.tpl" image_width="40" image_height="40" images=$product.main_pair no_ids=true lazy_load=false}
+            </div>
             <div class="ut2-pb__sticky-add-to-cart_product-content">
                 <div class="ut2-pb__sticky-add-to-cart_product-name">{$product.product|default:fn_get_product_name($product.product_id) nofilter}</div>
 
@@ -42,8 +43,8 @@
 
         <!--abt__service_buttons_id_{$obj_id}--></div>
 
-        <div class="cm-external-click{if $product.product_id} cm-reload-{$product.product_id}{/if}" data-ca-external-click-id="{$_but_id}">
+        <div class="cm-external-click" data-ca-external-click-id="{$_but_id}">
             {include file="buttons/add_to_cart.tpl" but_id=$but_id but_name="dispatch[checkout.add..`$obj_id`]" but_role=$but_role block_width=$block_width obj_id=$obj_id but_target_id=$obj_id product=$product but_meta=$add_to_cart_meta but_text=__("add_to_cart") show_price_in_button=false}
-        <!--ut2_pb__sticky_add_to_cart--></div>
+        </div>
     </div>
-</div>
+    <!--ut2_pb__sticky_add_to_cart--></div>

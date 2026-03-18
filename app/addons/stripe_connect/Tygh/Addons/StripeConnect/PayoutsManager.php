@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\StripeConnect;
 
@@ -63,35 +63,6 @@ class PayoutsManager
     }
 
     /**
-     * Marks all pending payouts of vendor accepted.
-     */
-    public function acceptPayouts()
-    {
-        $pending_payouts = $this->getPendingPayouts();
-
-        foreach ($pending_payouts as $payout_data) {
-            $this->manager->update(array(
-                'approval_status' => VendorPayoutApprovalStatuses::COMPLETED,
-            ), $payout_data['payout_id']);
-        }
-    }
-
-    /**
-     * Gets all vendor pending payouts.
-     *
-     * @return array
-     */
-    protected function getPendingPayouts()
-    {
-        $pending_payouts = $this->manager->getSimple(array(
-            'payout_type'     => VendorPayoutTypes::PAYOUT,
-            'approval_status' => VendorPayoutApprovalStatuses::PENDING,
-        ));
-
-        return $pending_payouts;
-    }
-
-    /**
      * Gets order commission value.
      *
      * @param int $order_id Order ID
@@ -112,30 +83,6 @@ class PayoutsManager
         $commission = reset($commission);
 
         $fee = $commission['commission_type'] == 'P' ? $commission['commission_amount'] : $commission['commission'];
-
-        return $fee;
-    }
-
-    /**
-     * Gets total amount of pending vendor payouts.
-     *
-     * @return float
-     */
-    public function getPendingPayoutsFee()
-    {
-        $fee = 0;
-
-        [$balance,] = $this->manager->getBalance();
-
-        $pending_payouts = $this->getPendingPayouts();
-
-        if ($pending_payouts) {
-            if ($balance < 0) {
-                $fee = abs($balance);
-            } else {
-                $fee = abs(array_sum(array_column($pending_payouts, 'payout_amount')));
-            }
-        }
 
         return $fee;
     }

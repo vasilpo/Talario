@@ -9,6 +9,32 @@
 
 
 ---
+### Examples
+Пример использования билдера
+
+```php
+try {
+    $selfEmployedBuilder = \YooKassa\Request\SelfEmployed\SelfEmployedRequest::builder();
+    $selfEmployedBuilder
+        ->setItn('123456789012')
+        ->setPhone('79001002030')
+        ->setConfirmation(array('type' => \YooKassa\Model\SelfEmployed\SelfEmployedConfirmationType::REDIRECT))
+    ;
+
+    // Создаем объект запроса
+    $request = $selfEmployedBuilder->build();
+
+    $idempotenceKey = uniqid('', true);
+    $response = $client->createSelfEmployed($request, $idempotenceKey);
+} catch (Exception $e) {
+    $response = $e;
+}
+
+var_dump($response);
+
+```
+
+---
 ### Constants
 * No constants found
 
@@ -37,12 +63,6 @@
 * Class Hierarchy: 
   * [\YooKassa\Common\AbstractRequestBuilder](../classes/YooKassa-Common-AbstractRequestBuilder.md)
   * \YooKassa\Request\SelfEmployed\SelfEmployedRequestBuilder
-
----
-### Tags
-| Tag | Version | Description |
-| --- | ------- | ----------- |
-| todo |  | @example 02-builder.php 11 78 Пример использования билдера |
 
 ---
 ## Properties
@@ -227,11 +247,11 @@ protected initCurrentObject() : \YooKassa\Request\SelfEmployed\SelfEmployedReque
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

@@ -1,24 +1,24 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Bootstrap;
 use Tygh\Debugger;
 use Tygh\Helpdesk;
 use Tygh\Registry;
 
-define('MIN_PHP_VERSION', '7.2.5');
-define('MAX_PHP_VERSION', '8.3.0');
+define('MIN_PHP_VERSION', '7.4.0');
+define('MAX_PHP_VERSION', '8.4.0');
 
 if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<') || version_compare(PHP_VERSION, MAX_PHP_VERSION, '>=')) {
     if (PHP_SAPI !== 'cli') {
@@ -27,10 +27,6 @@ if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<') || version_compare(PHP_VE
 
     echo('CS-Cart supports PHP from <b>' . MIN_PHP_VERSION . '</b> and up to (but not including) <b>' . MAX_PHP_VERSION . '</b>. Your current PHP version is <b>' . PHP_VERSION . '</b>, please ask your host to change it.');
     exit(1);
-}
-
-if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
-    error_reporting(error_reporting() & ~E_DEPRECATED);
 }
 
 // Register autoloader
@@ -101,6 +97,7 @@ $application = Tygh\Tygh::createApplication();
 $application['class_loader'] = $classLoader;
 
 // Register service providers
+$application->register(new Tygh\Providers\LicensingProvider());
 $application->register(new Tygh\Providers\DatabaseProvider());
 $application->register(new Tygh\Providers\SessionProvider());
 $application->register(new Tygh\Providers\AddonLoaderProvider());
@@ -131,6 +128,7 @@ $application->register(new Tygh\Providers\StorefrontProvider($requested_url, $_R
 $application->register(new Tygh\Providers\MarketplaceProvider());
 $application->register(new Tygh\Providers\HelpdeskProvider());
 $application->register(new Tygh\Providers\GdprServiceProvider());
+$application->register(new Tygh\Providers\VideoServiceProvider());
 
 if (isset($_REQUEST['version'])
     && AREA === 'A'
@@ -188,6 +186,7 @@ fn_init_stack(
     ['fn_init_layout', &$_REQUEST],
     ['fn_init_user'],
     ['fn_init_backoffice_theme_mode', $_REQUEST],
+    ['fn_init_main_menu_type', $_REQUEST],
     ['fn_init_templater'],
     ['fn_init_http_content_security']
 );

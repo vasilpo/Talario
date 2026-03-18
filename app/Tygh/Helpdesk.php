@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 /* WARNING: DO NOT MODIFY THIS FILE TO AVOID PROBLEMS WITH THE CART FUNCTIONALITY */
 
@@ -48,12 +48,13 @@ class Helpdesk
 
         $store_mode = fn_get_storage_data('store_mode');
 
-        if (empty($license_number) && !in_array($store_mode, ['trial', 'free'])) {
+        if (empty($license_number) && !in_array($store_mode, ['trial'])) {
             return 'LICENSE_IS_INVALID';
         }
 
         $store_ip = fn_get_ip();
         $store_ip = $store_ip['host'];
+        $plan = fn_get_storage_data('plan');
 
         $request = [
             'license_number'   => $license_number,
@@ -75,6 +76,7 @@ class Helpdesk
                 ? $extra_fields['store_mode']
                 : $store_mode
             ),
+            'plan'             => $plan
         ];
 
         $request = array(
@@ -95,7 +97,7 @@ class Helpdesk
 
         $_SESSION['license_information'] = $data;
 
-        if (empty($license_number) && !fn_allowed_for('ULTIMATE:FREE')) {
+        if (empty($license_number)) {
             return 'LICENSE_IS_INVALID';
         }
 
@@ -153,6 +155,7 @@ class Helpdesk
     public static function auth()
     {
         $_SESSION['last_status'] = 'INIT';
+        $_SESSION['last_status_timestamp'] = TIME;
 
         self::initHelpdeskRequest();
 
@@ -181,7 +184,8 @@ class Helpdesk
      */
     public static function parseLicenseInformation($data, $auth, $process_messages = true)
     {
-        $updates = $messages = $license = '';
+        $updates = $messages = $license = $store_mode = '';
+        $plan = 'default';
         $params = $restrictions = [];
 
         if (!empty($data)) {
@@ -191,6 +195,16 @@ class Helpdesk
                 $updates = (string) $xml->Updates;
                 $messages = $xml->Messages;
                 $license = (string) $xml->License;
+
+                if (isset($xml->StoreMode)) {
+                    $store_mode = fn_strtolower($xml->StoreMode);
+                    fn_set_storage_data('store_mode', $store_mode, true);
+                }
+
+                if (!empty($xml->Plan)) {
+                    $plan = $xml->Plan;
+                    fn_set_storage_data('plan', $plan);
+                }
 
                 if (isset($xml->TrialExpiryTime)) {
                     $params['trial_expiry_time'] = (int) $xml->TrialExpiryTime;
@@ -217,10 +231,6 @@ class Helpdesk
 
                 if (isset($xml->LicenseKey)) {
                     Settings::instance()->updateValue('license_number', (string) $xml->LicenseKey, '', false, null, false);
-                }
-
-                if (isset($xml->FreeMode) && fn_allowed_for('ULTIMATE:FREE') && YesNo::isFalse(fn_get_storage_data('free_mode', false))) {
-                    fn_set_storage_data('free_mode', YesNo::YES);
                 }
 
                 if (isset($xml->LatestAvailableVersion)) {
@@ -290,7 +300,7 @@ class Helpdesk
 
         $messages = self::processMessages($messages, $process_messages, $license);
 
-        return [$license, $updates, $messages, $params, $restrictions];
+        return [$license, $updates, $messages, $params, $restrictions, $store_mode, $plan];
     }
 
     public static function processMessages($messages, $process_messages = true, $license_status = '')
@@ -515,24 +525,8 @@ class Helpdesk
      */
     public static function getStoreMode($license_number, $auth, $extra = array())
     {
-        $license_status = 'LICENSE_IS_INVALID';
-        $store_mode = '';
-        $messages = [];
-
-        if (fn_allowed_for('MULTIVENDOR')) {
-            $store_modes_list = ['', 'plus', 'ultimate', 'enterprise'];
-        } else {
-            $store_modes_list = ['free', '', 'ultimate', 'enterprise'];
-        }
-
-        foreach ($store_modes_list as $store_mode) {
-            $extra['store_mode'] = $store_mode;
-            $data = Helpdesk::getLicenseInformation($license_number, $extra);
-            [$license_status, , $messages, , $restrictions] = Helpdesk::parseLicenseInformation($data, $auth, false);
-            if ($license_status == 'ACTIVE') {
-                break;
-            }
-        }
+        $license_info = Helpdesk::getLicenseInformation($license_number, $extra);
+        [$license_status, , $messages, , $restrictions, $store_mode] = Helpdesk::parseLicenseInformation($license_info, $auth, false);
 
         return [$license_status, $messages, $store_mode, $restrictions];
     }

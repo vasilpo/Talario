@@ -13,7 +13,7 @@
         ut2-sw-b -- ut2-swipe-bolster
     **}
     {if $items}
-        <div id="sw_dropdown_{$block.block_id}" class="ut2-sp-n cm-combination cm-abt--ut2-toggle-scroll {if $block.properties.open_on_sticky_panel_button === "YesNo::YES"|enum} cm-external-triggered{/if}{if $block.properties.abt__ut2_show_title === "YesNo::YES"|enum} ut2-sw-title{/if}"><span><i class="ut2-icon-outline-menu"></i>{if $block.properties.abt__ut2_show_title === "YesNo::YES"|enum && $settings.ab__device !== 'mobile'}<span>{$title nofilter}</span>{/if}</span></div>
+        <div id="sw_dropdown_{$block.block_id}" class="ut2-sp-n cm-combination {if $block.properties.open_on_sticky_panel_button === "YesNo::YES"|enum} cm-external-triggered{/if}{if $block.properties.abt__ut2_show_title === "YesNo::YES"|enum} ut2-sw-title{/if}"><span><i class="ut2-icon-outline-menu"></i>{if $block.properties.abt__ut2_show_title === "YesNo::YES"|enum && $settings.ab__device !== 'mobile'}<span>{$title nofilter}</span>{/if}</span></div>
         <div id="dropdown_{$block.block_id}" class="ut2-sw-b hidden cm-external-click" data-ca-external-click-id="sw_dropdown_{$block.block_id}"></div>
         <div class="ut2-sw-w{if $block.user_class} {$block.user_class}{/if}{if $content_alignment == "RIGHT"} swipe-right{elseif $content_alignment == "LEFT"} swipe-left{/if}" style="display: none;">
 
@@ -22,13 +22,13 @@
                     {if $smarty.capture.title|trim}
                         {$smarty.capture.title nofilter}
                     {/if}
-                    <div class="ut2-sp-f cm-combination cm-abt--ut2-toggle-scroll" id="off_dropdown_{$block.block_id}" style="display:none;"><i class="ut2-icon-baseline-close"></i></div>
+                    <div class="ut2-sp-f cm-combination" id="off_dropdown_{$block.block_id}" style="display:none;"><i class="ut2-icon-baseline-close"></i></div>
                 </div>
             {/if}
 
             <div class="ut2-scroll">
                 <div class="ut2-sw">
-                    <div class="ut2-sp-f cm-combination cm-abt--ut2-toggle-scroll" id="off_dropdown_{$block.block_id}" style="display:none;"><i class="ut2-icon-baseline-close"></i></div>
+                    <div class="ut2-sp-f cm-combination" id="off_dropdown_{$block.block_id}" style="display:none;"><i class="ut2-icon-baseline-close"></i></div>
                     {foreach $items as $m_item}
                         {if $m_item.type == $menu_type}
 

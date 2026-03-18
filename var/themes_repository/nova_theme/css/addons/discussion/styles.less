@@ -1,0 +1,38 @@
+@import "../../responsive/css/addons/discussion/styles.less";
+
+/* ==========================================================================
+Discussion
+========================================================================== */
+
+.ty-stars {
+    color: var(--cs-shipping-label);
+}
+
+/* Rate stars */
+/* Template: templates/addons/discussion/views/discussion/components/rate.tpl */
+.ty-rating {
+    color: var(--cs-shipping-label);
+}
+.ty-rating:not(:checked) > .ty-rating__label {
+    width: 21px;
+}
+.ty-rating:not(:checked) > .ty-rating__label:before {
+    content: "\f09a";
+}
+.ty-rating:not(:checked) > .ty-rating__label:hover:before,
+.ty-rating:not(:checked) > .ty-rating__label:hover ~ .ty-rating__label:before {
+    content: "\f09a";
+    font-variation-settings: 'FILL' 1;
+}
+.ty-rating > .ty-rating__check:checked ~ .ty-rating__label:before,
+.ty-rating > .ty-rating__check:checked + .ty-rating__label:hover:before,
+.ty-rating > .ty-rating__check:checked + .ty-rating__label:hover ~ .ty-rating__label:before,
+.ty-rating > .ty-rating__check:checked ~ .ty-rating__label:hover:before,
+.ty-rating > .ty-rating__check:checked ~ .ty-rating__label:hover ~ .ty-rating__label:before,
+.ty-rating > .ty-rating__label:hover ~ .ty-rating__check:checked ~ .ty-rating__label:before {
+    content: "\f09a";
+    font-variation-settings: 'FILL' 1;
+}
+/* /Rate stars */
+
+/* /Discussion */

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\AdvancedImport\Readers;
 
@@ -35,8 +35,15 @@ class Xml implements IReader
     /**
      * @var int Amount of rows to read from a big file file when determining its structure
      * @see \Tygh\Addons\AdvancedImport\Readers\Xml::FULLSCAN_MAX_FILESIZE
+     *
+     * @deprecated use Xml::SCHEMA_MAX_NODE_COUNT instead
      */
     const SCHEMA_MAX_PROBE_SIZE_BIG_FILE = 3000;
+
+    /**
+     * Amount of nodes to read from a file when determining its structure
+     */
+    const SCHEMA_MAX_NODE_COUNT = 1000;
 
     /** @var string Legacy target node path delimiter */
     const PATH_DELIMITER_LEGACY = '->';
@@ -91,12 +98,8 @@ class Xml implements IReader
     {
         $result = new OperationResult(false, array());
 
-        $probe_size = self::SCHEMA_MAX_PROBE_SIZE;
-        if (filesize($this->path) > self::FULLSCAN_MAX_FILESIZE) {
-            $probe_size = self::SCHEMA_MAX_PROBE_SIZE_BIG_FILE;
-        }
+        $contents = $this->getContents(self::SCHEMA_MAX_NODE_COUNT);
 
-        $contents = $this->getContents($probe_size);
         $contents = $contents->getData();
 
         if (!empty($contents)) {
@@ -323,6 +326,23 @@ class Xml implements IReader
                 $attributes = $this->getAttributes();
                 $this->createParentItem($attributes);
 
+                if (!$this->reader->hasAttributes && $this->reader->isEmptyElement) {
+                    array_pop($opened_nodes);
+
+                    if ($node_name === $target_node) {
+                        $parsing_target = false;
+
+                        $count--;
+
+                        if ($count === 0) {
+                            break;
+                        }
+                    }
+
+                    $this->storeValue('');
+                } elseif ($this->reader->isEmptyElement) {
+                    $this->storeValue('');
+                }
             } elseif ($node_type === XMLReader::TEXT || $node_type === XMLReader::CDATA) {
 
                 if (!$parsing_target) {
@@ -390,6 +410,8 @@ class Xml implements IReader
             while ($this->reader->moveToNextAttribute()) {
                 $attributes[$this->reader->name] = $this->reader->value;
             }
+
+            $this->reader->moveToElement();
         }
 
         return $attributes;

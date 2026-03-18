@@ -1,17 +1,19 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Tygh\Enum\Addons\Wishlist\CartTypes;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Registry;
 use Tygh\Storage;
 
@@ -81,27 +83,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             unset($_REQUEST['redirect_url']);
         }
+
+        return [CONTROLLER_STATUS_OK, 'wishlist.view'];
     }
 
-    return array(CONTROLLER_STATUS_OK, 'wishlist.view');
+    if ($mode === 'clear') {
+        $wishlist = [];
+
+        fn_save_cart_content($wishlist, $auth['user_id'], CartTypes::WISHLIST);
+
+        return [CONTROLLER_STATUS_REDIRECT, 'wishlist.view'];
+    }
+
+    if ($mode === 'delete' && !empty($_REQUEST['cart_id'])) {
+        fn_delete_wishlist_product($wishlist, $_REQUEST['cart_id']);
+
+        fn_save_cart_content($wishlist, $auth['user_id'], CartTypes::WISHLIST);
+
+        return [CONTROLLER_STATUS_OK, 'wishlist.view'];
+    }
+
+    if ($mode === 'delete_file' && isset($_REQUEST['cart_id'])) {
+        if (isset($wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
+            // Delete saved custom file
+            $file = $wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']];
+
+            Storage::instance('custom_files')->delete($file['path']);
+            Storage::instance('custom_files')->delete($file['path'] . '_thumb');
+
+            unset($wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']]);
+
+            if (defined('AJAX_REQUEST')) {
+                fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('text_product_file_has_been_deleted'));
+            }
+        }
+
+        return [CONTROLLER_STATUS_REDIRECT, 'wishlist.view'];
+    }
 }
 
-if ($mode == 'clear') {
-    $wishlist = array();
-
-    fn_save_cart_content($wishlist, $auth['user_id'], 'W');
-
-    return array(CONTROLLER_STATUS_REDIRECT, 'wishlist.view');
-
-} elseif ($mode == 'delete' && !empty($_REQUEST['cart_id'])) {
-    fn_delete_wishlist_product($wishlist, $_REQUEST['cart_id']);
-
-    fn_save_cart_content($wishlist, $auth['user_id'], 'W');
-
-    return array(CONTROLLER_STATUS_OK, 'wishlist.view');
-
-} elseif ($mode == 'view') {
-
+if ($mode === 'view') {
     fn_add_breadcrumb(__('wishlist_content'));
 
     if (
@@ -135,20 +156,4 @@ if ($mode == 'clear') {
     Tygh::$app['view']->assign('wishlist', $wishlist);
     Tygh::$app['view']->assign('continue_url', Tygh::$app['session']['continue_url']);
 
-} elseif ($mode == 'delete_file' && isset($_REQUEST['cart_id'])) {
-    if (isset($wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
-        // Delete saved custom file
-        $file = $wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']];
-
-        Storage::instance('custom_files')->delete($file['path']);
-        Storage::instance('custom_files')->delete($file['path'] . '_thumb');
-
-        unset($wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']]);
-
-        if (defined('AJAX_REQUEST')) {
-            fn_set_notification('N', __('notice'), __('text_product_file_has_been_deleted'));
-        }
-    }
-
-    return array(CONTROLLER_STATUS_REDIRECT, 'wishlist.view');
 }

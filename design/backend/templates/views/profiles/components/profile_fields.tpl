@@ -93,7 +93,7 @@
     {$required = "YesNo::NO"|enum}
 {/if}
 
-{$allow_email_required = $allow_email_required|default:true}
+{$allow_email_required = $allow_email_required|default:false}
 {if $allow_email_required && $field.field_type == "ProfileFieldTypes::EMAIL"|enum}
     {$required = "YesNo::YES"|enum}
 {/if}

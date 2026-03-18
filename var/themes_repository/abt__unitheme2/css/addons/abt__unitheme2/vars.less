@@ -64,6 +64,7 @@
 @big-z: 10000;
 @fog-color: @content_bg;
 @min-height-button: var(--min-height-button);
+@dialog-popup__title-_height: 50px;
 
 @pdp: 10px;
 @pdi: 15px;
@@ -75,7 +76,7 @@
 
 @button_letter-spacing-extended: .01929em;
 @button_letter-spacing-condenced: -.01929em;
-@heading_letter-spacing: normal;
+@heading_letter-spacing: normal; //.00929em;
 @button_letter-spacing: normal;  //.01929em;
 
 @base5: contrast(@content_bg, darken(@base, 5%), lighten(@base, 5%));
@@ -83,10 +84,16 @@
 @base20: contrast(@content_bg, darken(@base, 20%), lighten(@base, 20%));
 @base30: contrast(@content_bg, darken(@base, 30%), lighten(@base, 30%));
 
+@common-duration: 150ms;
+@common-transition: color @common-duration, background-color @common-duration, border-color @common-duration, box-shadow @common-duration, text-shadow @common-duration, opacity @common-duration;
+@dialog-modal-_duration: 400ms;
+@dialog-modal-_timing-func: cubic-bezier(.4,0,.2,1);
+
 :root {
 
     --fluidContainerMaxWidth: @fluidContainerMaxWidth;
     --fluidContainerPadding: calc(var(--gap-s) * 2);
+    --fluid-container-_padding_one-side: var(--gap-s);
     .mxn_get-fluid-container-_max-width_-calculable() when (@fluidContainerMaxWidth = auto) {
         --fluid-container-_max-width_-calc: 100dvw;
     }
@@ -96,25 +103,57 @@
     .mxn_get-fluid-container-_max-width_-calculable();
 
     --sticky-top-panel-height: 56px;
-    --sticky-bottom-panel-height: 56px;
     --lt-sticky-panel-width: 350px;
 
-    @media (min-width: 1024px) {
-        --sticky-add-to-cart-height: 66px;
+    /* [ BEGIN ] sticky bottom panel and buy (add to cart) panel */
+    &:not(.bp-panel-active) {
+        --sticky-bottom-panel-height: 66px;
+        --sticky-bottom-panel-content-height: 56px;
     }
-    @media (max-width: 1023px) {
-        --sticky-add-to-cart-height: 56px;
+    &.bp-panel-active {
+        --sticky-bottom-panel-height: 56px;
+        --sticky-bottom-panel-content-height: 56px;
     }
+
+    &.sticky-bottom-panel body, // mobile only
+    &:not(.sticky-bottom-panel).sticky-buy-panel-_top body,
+    &:not(.sticky-bottom-panel).sticky-buy-panel-_bottom body.desktop-screen,
+    &:not(.sticky-bottom-panel).sticky-buy-panel-_bottom.bp-panel-active body:not(.desktop-screen)
+    {
+        @media (min-width: 1024px) {
+            --sticky-add-to-cart-height: 66px;
+            --sticky-add-to-cart-content-height: 66px;
+        }
+        @media (max-width: 1023px) {
+            --sticky-add-to-cart-height: 56px;
+            --sticky-add-to-cart-content-height: 56px;
+        }
+    }
+    &:not(.sticky-bottom-panel).sticky-buy-panel-_bottom:not(.bp-panel-active) body:not(.desktop-screen) {
+        @media (min-width: 1024px) {
+            --sticky-add-to-cart-height: 76px;
+            --sticky-add-to-cart-content-height: 66px;
+        }
+        @media (max-width: 1023px) {
+            --sticky-add-to-cart-height: 66px;
+            --sticky-add-to-cart-content-height: 56px;
+        }
+    }
+    /* [ END ] sticky bottom panel and buy (add to cart) panel */
+
     @media (max-width: 500px) {
         --lt-sticky-panel-width: 100%;
     }
 
-    --font-size-smallest: @body_font_size - 4;
+    --font-size-smallest: @body_font_size - 3;
     --font-size-small: @body_font_size - 2;
     --font-size-normal: @body_font_size;
     --font-size-medium: @body_font_size + 2;
     --font-size-large: @body_font_size + 4;
-    --font-size-extra-bigest: @body_font_size + 30;
+    --font-size-extra-large: @body_font_size + 6;
+    --font-size-extra-bigest: @body_font_size * 2;
+
+    --price-font-size: @price_font_size;
 
     .uppercase() when not (@abt__ut2_general_use_titles_uppercase = true) {
         --font-size-big: @headings_font_size;
@@ -132,25 +171,34 @@
     --min-height-button: 36px;
     --max-height-button: 46px;
 
-    .ut2_round(@round: 0px) when (@abt__ut2_general_use_rounding = do_not_use) {
-        --border-radius: @round;
+    .ut2_round_elements() when (@abt__ut2_general_use_rounding = do_not_use) {
+        --border-radius: 0px;
+        --border-radius-full: 0px;
     }
-    .ut2_round(@round: 8px) when (@abt__ut2_general_use_rounding = little) {
-        --border-radius: @round;
+    .ut2_round_elements() when (@abt__ut2_general_use_rounding = little) {
+        --border-radius: 8px;
+        --border-radius-full: 8px;
     }
-    .ut2_round(@round: 8px) when (@abt__ut2_general_use_rounding = full) {
-        --border-radius: @round;
+    .ut2_round_elements() when (@abt__ut2_general_use_rounding = full) {
+        --border-radius: 8px;
+        --border-radius-full: var(--height-button);
     }
-    .ut2_round();
+    .ut2_round_elements();
 
-    .ut2_round_blocks(@round: 0px) when (@abt__ut2_general_use_rounding_blocks = do_not_use) {
-        --border-radius-box: @round;
+    .ut2_round_blocks() when (@abt__ut2_general_use_rounding_blocks = do_not_use) {
+        --border-radius-box: 0px;
+        --border-radius-decreased: 0px;
+        --border-radius-decreased-more: 0px;
     }
-    .ut2_round_blocks(@round: 12px) when (@abt__ut2_general_use_rounding_blocks = little) {
-        --border-radius-box: @round;
+    .ut2_round_blocks() when (@abt__ut2_general_use_rounding_blocks = little) {
+        --border-radius-box: 12px;
+        --border-radius-decreased: 10px;
+        --border-radius-decreased-more: 8px;
     }
-    .ut2_round_blocks(@round: 16px) when (@abt__ut2_general_use_rounding_blocks = full) {
-        --border-radius-box: @round;
+    .ut2_round_blocks() when (@abt__ut2_general_use_rounding_blocks = full) {
+        --border-radius-box: 16px;
+        --border-radius-decreased: 12px;
+        --border-radius-decreased-more: 8px;
     }
     .ut2_round_blocks();
 
@@ -159,7 +207,7 @@
 
     --flow-direction-factor-inline: 1;
     --check-radio-size: 22px;
-    --check-radio-inline-gap: calc(~'var(--gap-xs) - 2px');
+    --check-radio-inline-gap: calc(var(--gap-xs) - 2px);
     --check-radio-label-line-height: 20px;
 
     .top_panel_params() when (@abt__ut2_containers_top_panel_height >= 28px) {
@@ -196,6 +244,8 @@
     --ut2-header__common-button-_min-size: 40px;
     --ut2-header__common-button__icon-_size: 26px;
 
+    --ut2-header__block-_common-inline-padding: var(--gap-xs);
+
     --gap-xxs: 5px;
     --gap-xs: 10px;
     --gap-sm: 15px;
@@ -229,6 +279,8 @@
         --gap-s: 10px;
         --gap: 10px;
         --gap-half: 5px;
+
+        --ut2-header__block-_common-inline-padding: calc(var(--gap-s) / 2);
     }
 
     --gap-inset: calc(var(--gap-s) - var(--gap-half));
@@ -238,9 +290,33 @@
     --color-base10: @base10;
     --color-base20: @base20;
     --color-base30: @base30;
-    --color-decorative: @decorative;
+
+    --color-links: @links;
+    --color-links-active: contrast(@general_bg_color, darken(@links, 10%), lighten(@links, 10%));
+    --color-links-darken: darken(@links, 10%);
+    --color-links-lighten: lighten(@links, 10%);
+
+    --color-font: @font;
     --color-font-lighten: @lighten-font;
     --color-font-lighten-max: @lighten-max-font;
+    --color-price: @price;
+    --color-discount: @discount_label;
+    --color-in-stock: @in_stock;
+    --color-out-of-stock: @out_of_stock;
+    --color-decorative: @decorative;
+    --color-decorative-light: fade(@decorative, 5%);
+
+    --color-content: @content_bg;
+    --color-general: @general_bg_color;
+    --color-general-lighten: lighten(@general_bg_color, 50%);
+    --color-general-darken: darken(@general_bg_color, 50%);
+
+    --color-primary: @primary_button;
+    --color-primary-active: lighten(@primary_button, 3%);
+    --color-secondary: @secondary_button;
+    --color-secondary-active: lighten(@secondary_button, 3%);
+    --color-tertiary: @tertiary_button;
+    --color-tertiary-active: lighten(@tertiary_button, 3%);
 
     .main_color_is_true() when (iscolor(@main_color)) {
         --color-main:  @main_color;
@@ -260,12 +336,15 @@
 @media (max-width: 1023px) {
     :root {
         body.mobile-screen {
-            --font-size-smallest: @body_font_size - 3;
+            --font-size-smallest: @body_font_size - 2;
             --font-size-small: @body_font_size;
             --font-size-normal: @body_font_size + 2;
             --font-size-medium: @body_font_size + 3;
             --font-size-large: @body_font_size + 6;
+            --font-size-extra-large: @body_font_size + 8;
             --font-size-extra-bigest: @body_font_size + 10;
+
+            --price-font-size: @price_font_size + 2;
 
             .uppercase() when not (@abt__ut2_general_use_titles_uppercase = true) {
                 --font-size-big: @headings_font_size;

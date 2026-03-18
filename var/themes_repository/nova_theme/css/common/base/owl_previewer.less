@@ -1,0 +1,80 @@
+.ty-owl-container-wrapper {
+    position: relative;
+}
+
+.ty-owl-container {
+    position: relative;
+}
+
+.ty-owl-controls {
+    padding-bottom: 0;
+    float: none;
+    position: static;
+}
+
+/* styling next and prev buttons */
+.owl-theme .owl-controls .owl-buttons div {
+    color: var(--cs-btn-tertiary-color);
+    font-size: var(--cs-font-size-small);
+    background: var(--cs-tertiary-button);
+}
+
+.ty-owl-previewer__container.owl-theme .owl-controls .owl-buttons div {
+    background: transparent;
+}
+
+.owl-theme .owl-controls-outside .owl-buttons {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    z-index: 1;
+}
+
+.owl-theme .owl-controls-outside .owl-buttons div {
+    position: absolute;
+    font-size: 20px;
+    line-height: 36px;
+    padding: 2px;
+    height: auto;
+    min-height: 36px;
+    width: auto;
+    min-width: 36px;
+    margin: 0;
+    transform: translateY(-20px);
+}
+
+.owl-theme .owl-controls-outside .owl-prev {
+    --cs-controls-outside-position-x: 0;
+
+    left: var(--cs-controls-outside-position-x);
+}
+
+.owl-theme .owl-controls-outside .owl-next {
+    --cs-controls-outside-position-x: 0;
+
+    right: var(--cs-controls-outside-position-x);
+}
+
+/** layout_data.max_width **/
+@media (min-width: 1468px) {
+    .owl-theme .owl-controls-outside .owl-prev,
+    .owl-theme .owl-controls-outside .owl-next {
+        --cs-controls-outside-position-x: -20px;
+    }
+}
+
+.owl-theme .owl-controls-outside .owl-buttons div .ty-icon {
+    display: inline-block;
+    transform: translateY(-2px);
+    vertical-align: middle;
+}
+
+/* clickable class fix problem with hover on touch devices */
+/* use it for non-touch hover action */
+.owl-theme .owl-controls.clickable .owl-buttons div:hover {
+    background: var(--cs-tertiary-button-hover);
+}
+
+.ty-owl-previewer__container.owl-theme .owl-controls.clickable .owl-buttons div:hover {
+    background: transparent;
+}

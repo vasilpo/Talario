@@ -25,7 +25,7 @@ _.abt__ut2.temporary.load_more_button_clicked = true;
 $(this).addClass('ut2-load-more-loading');
 let current_position = 0;
 $.ceAjax('request', $(this).data('ut2-load-more-url'), {
-save_history: _.abt__ut2.device !== 'mobile',
+save_history: true,
 result_ids: $(this).data('ut2-load-more-result-ids'),
 append: true,
 hidden: true,

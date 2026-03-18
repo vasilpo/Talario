@@ -1,0 +1,27 @@
+{
+    "title": "Nova Theme",
+    "description": "Nova Theme lets your store shine on all screen sizes, from phones to tablets to PCs, by adapting page layout on the fly. The theme has minimalistic look & feel sweetened with great typography and driven by the latest web design trends.",
+    "logo": "media/images/cart.png",
+    "mail": "media/images/invoice_logo.png",
+    "developer": "CS-Cart",
+    "favicon": "media/images/icons/favicon.ico",
+    "parent_theme": "responsive",
+    "settings_overrides": {
+        "Appearance": {
+            "products_per_page": 32,
+            "columns_in_products_list": 4,
+            "default_product_details_view": "default_template",
+            "default_products_view_templates": [
+                "products_multicolumns",
+                "products_without_options"
+            ]
+        },
+        "Thumbnails": {
+            "product_lists_thumbnail_width": 200,
+            "product_lists_thumbnail_height": 200,
+            "product_details_thumbnail_width": 480,
+            "product_cart_thumbnail_height": 120,
+            "product_quick_view_thumbnail_width": 480
+        }
+    }
+}

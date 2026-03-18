@@ -11,7 +11,6 @@
     $auth.user_type === "UserTypes::ADMIN"|enum
     && $config.tweaks.allow_global_individual_settings
     && fn_check_permissions("settings", "update", "admin", "POST")
-    && !"ULTIMATE:FREE"|fn_allowed_for
 )}
 {$allow_negative_amount = $settings.General.allow_negative_amount === "YesNo::YES"|enum}
 {$cm_value_decimal_class = ($allow_negative_amount) ? "cm-value-decimal-signed" : "cm-value-decimal"}
@@ -56,6 +55,7 @@
 
         <form id="form" action="{""|fn_url}" method="post" name="product_update_form" class="form-horizontal form-edit  cm-disable-empty-files {if $is_form_readonly}cm-hide-inputs{/if}" enctype="multipart/form-data"> {* product update form *}
             <input type="hidden" name="fake" value="1" />
+            <input type="hidden" class="{$no_hide_input_if_shared_product}" name="dispatch" value="products.update" />
             <input type="hidden" class="{$no_hide_input_if_shared_product}" name="selected_section" id="selected_section" value="{$smarty.request.selected_section}" />
             <input type="hidden" class="{$no_hide_input_if_shared_product}" name="product_id" value="{$id}" />
 
@@ -258,11 +258,71 @@
                                             image_pair_types=['N' => 'product_add_additional_image', 'M' => 'product_main_image', 'A' => 'product_additional_image']
                                             allow_update_files=!$is_shared_product && $allow_update_files|default:true
                                         }
-                                        <p class="muted description">{__("tt_views_products_update_images", ["[file_size]" => $image_file_size])}</p>
+                                        <p class="muted description">{__("tt_views_products_update_images", ["[file_size]" => $image_file_size, "[max_dimension]" => $max_image_dimension])}</p>
                                     </div>
                                 </div>
                             {/component}
                         {/hook}
+                        {if fn_is_allowed(constant("\Tygh\Licensing\Features::PRODUCT_VIDEOS"))}
+                            {hook name="products:update_product_videos"}
+                                {component name="configurable_page.field" entity="products" tab="detailed" section="information" field="videos"}
+                                    <div class="control-group">
+                                        <label class="control-label">{__("videos")}:</label>
+                                        <div class="controls">
+                                            {include "views/videos/picker/items.tpl"
+                                                items                    = $product_data.videos
+                                                object_id                = $product_data.product_id
+                                                object_data              = "product_data"
+                                                no_hide_input            =  $no_hide_input_if_shared_product
+                                                object_item_id_tag_level = $object_item_id_tag_level|default:2
+                                                allow_update             = !$is_shared_product && $allow_update_files|default:true
+                                            }
+                                        </div>
+                                    </div>
+                                {/component}
+                            {/hook}
+                            {hook name="products:update_product_videos_appearence"}
+                                {component name="configurable_page.field" entity="products" tab="detailed" section="information" field="show_videos_before_images"}
+                                {component
+                                        name           = "product.overridable_field_input"
+                                        type           = "SettingTypes::SELECTBOX"|enum
+                                        value          = $product_data.show_videos_before_images_raw
+                                        field_name     = "show_videos_before_images"
+                                        variants       = ["YesNO::YES"|enum => __("yes"), "YesNO::NO"|enum => __("no")]
+                                        disable_inputs = $disable_selectors
+                                        company_id     = $product_data.company_id|default:null
+                                    }
+                                        <div class="control-group">
+                                            <label class="control-label" for="elm_show_videos_before_images">{__("show_videos_before_images")}:</label>
+                                            <div class="controls">
+                                                <div>
+                                                    #INPUT#
+                                                </div>
+                                                <p class="muted description">{__("show_videos_before_images_tooltip")}</p>
+                                            </div>
+                                        </div>
+                                    {/component}
+                                {/component}
+                                {component name="configurable_page.field" entity="products" tab="detailed" section="information" field="autoplay_videos"}
+                                    {component
+                                        name           = "product.overridable_field_input"
+                                        type           = "SettingTypes::SELECTBOX"|enum
+                                        value          = $product_data.autoplay_videos_raw
+                                        field_name     = "autoplay_videos"
+                                        variants       = ["YesNO::YES"|enum => __("yes"), "YesNO::NO"|enum => __("no")]
+                                        disable_inputs = $disable_selectors
+                                        company_id     = $product_data.company_id|default:null
+                                    }
+                                        <div class="control-group">
+                                            <label class="control-label" for="elm_autoplay_videos">{__("autoplay_videos")}:</label>
+                                            <div class="controls">
+                                                #INPUT#
+                                            </div>
+                                        </div>
+                                    {/component}
+                                {/component}
+                            {/hook}
+                        {/if}
                     </div>
                 {/component}{* detailed :: information *}
 
@@ -801,7 +861,6 @@
                             "[settings_url]" => "settings.manage&section_id=Checkout"|fn_url,
                             "[icon]" => $icon_global_setting
                         ]) nofilter}
-                        </a>
                     </div>
                 {/if}
                 <!--content_detailed--></div> {* /content detailed *}
@@ -1030,4 +1089,48 @@
     });
   };
 </script>
+{/if}
+
+{if $id}
+    <script>
+        (function (_, $) {
+            var $form = $('form[name=product_update_form]');
+
+            $form.off('submit.check').on('submit.check', function (e) {
+                if (!$form.data('confirmed')) {
+                    {literal}
+
+                    let data = $(e.target).serializeArray().reduce(
+                        (data, {name, value}) => {
+                            data[name] = value;
+
+                            return data;
+                        },
+                        {is_ajax: 1}
+                    );
+                    {/literal}
+
+                    data.product_data = {
+                        category_ids: $('select[name="product_data[category_ids][]"]').val()
+                    };
+
+                    $.ceAjax('request', fn_url('products.update'), {
+                        method: 'post',
+                        data: data,
+                        hidden: true,
+                        caching: false,
+                        get_promise: true,
+                        callback: function(response) {
+                            if (!response.need_confirm) {
+                                $form.data('confirmed', true);
+                                $form.trigger('submit.check');
+                            }
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        })(Tygh, Tygh.$);
+    </script>
 {/if}

@@ -1,18 +1,19 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Helpdesk;
+use Tygh\Providers\LicensingProvider;
 use Tygh\Registry;
 use Tygh\Settings;
 use Tygh\BackendMenu;
@@ -302,11 +303,6 @@ $store_mode_trial = fn_get_storage_data('store_mode_trial');
 $license_number = fn_get_storage_data('store_mode_license');
 $product_state_suffix = fn_get_product_state_suffix($store_mode);
 
-if (fn_allowed_for('ULTIMATE:FREE')) {
-    $is_activated_free = fn_get_storage_data('free_mode', false);
-    Tygh::$app['view']->assign('is_activated_free', $is_activated_free);
-}
-
 if (empty($license_number)) {
     $license_number = Settings::instance()->getValue('license_number', 'Upgrade_center');;
 }
@@ -316,18 +312,26 @@ $license_number = Helpdesk::masqueLicenseNumber(
     Registry::ifGet('config.demo_mode', false)
 );
 
-Tygh::$app['view']->assign('store_mode_license', $license_number);
-Tygh::$app['view']->assign('license_errors', unserialize($license_errors));
-Tygh::$app['view']->assign('store_mode_errors', unserialize($store_mode_errors));
-Tygh::$app['view']->assign('store_mode', $store_mode);
-Tygh::$app['view']->assign('product_state_suffix', $product_state_suffix);
-Tygh::$app['view']->assign('store_mode_number_of_storefronts', count(fn_get_all_companies_ids()));
-Tygh::$app['view']->assign('store_mode_allowed_number_of_storefronts', fn_get_storage_data('allowed_number_of_stores'));
-Tygh::$app['view']->assign('hash_of_available_countries', fn_get_hash_of_available_countries());
-Tygh::$app['view']->assign('hash_of_phone_masks', fn_get_storage_data('cache_id'));
-Tygh::$app['view']->assign('product_version', PRODUCT_VERSION);
-Tygh::$app['view']->assign('product_edition', fn_get_edition_acronym(PRODUCT_EDITION));
-Tygh::$app['view']->assign('allowed_supported_image_extensions', ImageHelper::getSupportedFormats());
+Tygh::$app['view']->assign([
+    'store_mode_license'                       => $license_number,
+    'license_errors'                           => unserialize($license_errors),
+    'store_mode_errors'                        => unserialize($store_mode_errors),
+    'store_mode'                               => $store_mode,
+    'product_state_suffix'                     => $product_state_suffix,
+    'store_mode_number_of_storefronts'         => count(fn_get_all_companies_ids()),
+    'store_mode_allowed_number_of_storefronts' => fn_get_storage_data('allowed_number_of_stores'),
+    'hash_of_available_countries'              => fn_get_hash_of_available_countries(),
+    'hash_of_phone_masks'                      => fn_get_storage_data('cache_id'),
+    'product_version'                          => PRODUCT_VERSION,
+    'product_edition'                          => fn_get_edition_acronym(PRODUCT_EDITION),
+    'allowed_supported_image_extensions'       => ImageHelper::getSupportedFormats(),
+    'upgrade_feature'                          => Tygh::$app['session']['upgrade_feature'] ?? false,
+    'license_plan'                             => LicensingProvider::getLicensingService()->getCurrentPlan()->getKey(),
+]);
+
+if (!defined('AJAX_REQUEST')) {
+    unset(Tygh::$app['session']['upgrade_feature']);
+}
 
 if (!Registry::get('runtime.company_id') && Registry::get('runtime.controller') != 'auth' && !empty($license_errors) && empty($store_mode_errors)) {
     Tygh::$app['view']->assign('show_license_errors_dialog', true);
@@ -337,7 +341,27 @@ if (!Registry::get('runtime.company_id') && Registry::get('runtime.controller') 
     Tygh::$app['view']->assign('show_sm_dialog', true);
 }
 
+if (
+    empty(Tygh::$app['session']['last_status'])
+    || (
+        Tygh::$app['session']['last_status'] === 'INIT'
+        && (Tygh::$app['session']['last_status_timestamp'] ?? 0) < (TIME - SECONDS_IN_HOUR)
+    )
+) {
+    Helpdesk::auth();
+}
+
+$stats = base64_decode('PGltZyBjbGFzcz0ib25lLXBpeGVsLWJhY2tncm91bmQiIHNyYz0iaHR0cHM6Ly93d3cuY3MtY2FydC5jb20vaW1hZ2VzL2JhY2tncm91bmQuZ2lmIiBoZWlnaHQ9IjEiIHdpZHRoPSIxIiBhbHQ9IiIgLz4=');
+
+if (!empty(Tygh::$app['session']['stats'])) {
+    $stats .= implode('', Tygh::$app['session']['stats']);
+    unset(Tygh::$app['session']['stats']);
+}
+
+Tygh::$app['view']->assign('stats', $stats);
+
 fn_set_storage_data('store_mode_errors', null);
 fn_set_storage_data('license_errors', null);
 fn_set_storage_data('store_mode_license', null);
+
 /* /HIDE IT! */

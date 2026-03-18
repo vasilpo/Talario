@@ -1,1 +1,1 @@
-<th width="10%">{__("code_sdek")}</th>
+<th width="10%">{__("cities.code_sdek")}</th>

@@ -60,8 +60,8 @@ class MessageBuilder extends AMessageBuilder
     {
         $companies = array(
             0 => array(
-                'company_name' => 'Simtech',
-                'default_company_name' => 'Default Simtech',
+                'company_name' => 'Acme',
+                'default_company_name' => 'Default Acme',
                 'company_users_department' => 'company_users_department@example.com',
                 'default_company_users_department' => 'default_company_users_department@example.com',
                 'company_site_administrator' => 'company_site_administrator@example.com',
@@ -75,8 +75,8 @@ class MessageBuilder extends AMessageBuilder
                 'test_empty_email' => ''
             ),
             1 => array(
-                'company_name' => 'Simtech1',
-                'default_company_name' => 'Default Simtech1',
+                'company_name' => 'Acme1',
+                'default_company_name' => 'Default Acme1',
                 'company_users_department' => 'company_users_department1@example.com',
                 'default_company_users_department' => 'default_company_users_department1@example.com',
                 'company_site_administrator' => 'company_site_administrator1@example.com',

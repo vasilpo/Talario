@@ -1,30 +1,31 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Smarty\Template;
 use Tygh\ContextMenu\ContextMenu;
 use Tygh\Registry;
 
 defined('BOOTSTRAP') or die('Access denied');
 
 /**
- * @param array<string, string>     $params   Block params
- * @param string                    $content  Block content
- * @param \Smarty_Internal_Template $template Smarty template
+ * @param array<string, string> $params   Block params
+ * @param string                $content  Block content
+ * @param Template              $template Smarty template
  *
  * @return string
  */
-function smarty_component_context_menu_context_menu(array $params, $content, Smarty_Internal_Template $template)
+function smarty_component_context_menu_context_menu(array $params, $content, Template $template)
 {
     if (!isset($params['object'])) {
         return false;
@@ -51,5 +52,8 @@ function smarty_component_context_menu_context_menu(array $params, $content, Sma
         ]
     );
 
-    return $template->fetch($context_menu->getTemplate());
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
+    return $smarty->fetch($context_menu->getTemplate(), null, null, $template);
 }

@@ -27,7 +27,7 @@
             {hook name="checkout:items_list"}
 
                 {if !$cart.products.$key.extra.parent}
-                    <tr>
+                    <tr class="ty-cart-content__row">
                         <td class="ty-cart-content__product-elem ty-cart-content__image-block">
                             {if $runtime.mode == "cart" || $show_images}
                                 <div class="ty-cart-content__image cm-reload-{$obj_id}" id="product_image_update_{$obj_id}">
@@ -102,7 +102,7 @@
                                 {/hook}
                             {/capture}
                             {if $smarty.capture.product_info_update|trim}
-                                <div class="cm-reload-{$obj_id}" id="product_info_update_{$obj_id}">
+                                <div class="cm-reload-{$obj_id} ty-cart-items__product-info-update" id="product_info_update_{$obj_id}">
                                     {$smarty.capture.product_info_update nofilter}
                                 <!--product_info_update_{$obj_id}--></div>
                             {/if}

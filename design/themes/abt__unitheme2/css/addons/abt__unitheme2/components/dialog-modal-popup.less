@@ -20,26 +20,23 @@
 /* NOTICE:
 -> "border-radius" controlled through ".ut2_rounding_" mixins.
 -> "background" + "border-radius" + "box-shadow" given to main wrapper "::before" to avoid fuzzy/blurred bug in Chrome/Edge.
--> unique open states: "html.dialog-is-open", "html.notif-dialog-is-open", "html.select-variation-dialog-is-open".
--> mutual open state: "html.modal-is-open".
+-> unique open states: "html.dialog-is-open", "html.js_notif-dialog_-open", "html.js_select-variation-dialog_-open".
+-> mutual open state: "html.js_modal_-open".
 -> every opened dialog can have 2-4 states: ".js--dialog-state-_opened", ".js--dialog-state-_active", ".js--dialog-state-_ancestor", ".js--dialog-state-_parent".
  * */
 
-@var--dialog-modal__title-_line-height: calc(~'var(--font-size-big) + 2px'); // 26px
+@var--dialog-modal__title-_line-height: calc(var(--font-size-big) + 2px); // 26px
 @var--dialog-modal__viewport-v-spcing: 40px;
-@var--dialog-modal__header-_height: 50px;
 @var--dialog-modal__footer-_height: calc(~'var(--height-button) + var(--gap-sm) * 2'); // 70px
-@var--dialog-modal__footer-_height-_mobile: calc(~'var(--height-button) + 40px'); // 80px
-@var--dialog-modal__animation-_duration: 400ms;
+@var--dialog-modal__footer-_height-_mobile: calc(var(--height-button) + 40px); // 80px
 @var--dialog-modal__animation-_delay: 100ms;
 @var--dialog-modal-_right-panel__animation-_delay: 200ms;
-@var--dialog-modal__animation-_timing-function: cubic-bezier(.4,0,.2,1);
 
 .animation_dialog_mobile() {
-    animation: show_dialog_mobile @var--dialog-modal__animation-_duration @var--dialog-modal__animation-_timing-function @var--dialog-modal__animation-_delay forwards;
+    animation: show_dialog_mobile @dialog-modal-_duration @dialog-modal-_timing-func @var--dialog-modal__animation-_delay forwards;
 }
 .animation_dialog_right_panel() {
-    animation: show_dialog_right_panel @var--dialog-modal__animation-_duration @var--dialog-modal__animation-_timing-function @var--dialog-modal-_right-panel__animation-_delay forwards;
+    animation: show_dialog_right_panel @dialog-modal-_duration @dialog-modal-_timing-func @var--dialog-modal-_right-panel__animation-_delay forwards;
 }
 
 @keyframes show_dialog_mobile {
@@ -65,9 +62,9 @@
    [[[[ BEGIN ]]]] overlaying/z-index
 ==============================================================================*/
 .ui-widget-overlay {
-    background: black; // remove excessive image from parent theme
+    background: rgba(0, 0, 0, 0.6); // remove excessive image from parent theme
     //z-index: @big-z - 1 !important; // untune mega-menu
-    opacity: 0.6;
+    opacity: 1;
     touch-action: none;
 
     .ut2-sw & // main top level container
@@ -81,7 +78,7 @@
     z-index: @big-z !important;
 }
 
-html.select-variation-dialog-is-open {
+html.js_select-variation-dialog_-open {
     #tygh_main_container {
         z-index: initial; // fix visibility over "About Vendor" dialog
     }
@@ -104,8 +101,13 @@ html.select-variation-dialog-is-open {
     z-index: @big-z + 4 !important; // always on top
 }
 
-html.modal-is-open :is(.ui-dialog.ui-widget, .notification-content-extended).js--dialog-state-_active + .ui-widget-overlay {
-    z-index: @big-z - 1 !important; // fix broken/shifted overlay position
+html.js_modal_-open {
+    .ui-dialog.ui-widget,
+    .notification-content-extended {
+        &.js--dialog-state-_active + .ui-widget-overlay {
+            z-index: @big-z - 1 !important; // fix broken/shifted overlay position
+        }
+    }
 }
 
 .notification-container-dialog {
@@ -134,7 +136,8 @@ body .pac-container {
 }
 
 // in product sticky sidebar
-:is(.ut2-pb__right-wrapper, .ut2-pb__right, .litecheckout__ab_sticky-block):has(.ui-dialog.js--dialog-state-_opened) {
+.ut2-pb__right-wrapper:has(.ui-dialog.js--dialog-state-_opened),
+.litecheckout__ab_sticky-block:has(.ui-dialog.js--dialog-state-_opened) {
     @media (min-width: 768px) {
         z-index: @z-index + 4;
     }
@@ -173,7 +176,7 @@ body .pac-container {
 .ui-dialog.ui-widget,
 .notification-content-extended {
     font-family: @body_font; // reset ui lib style
-    color: @font; // reset ui lib style
+    color: var(--color-font); // reset ui lib style
     background: initial !important; // reset ui lib style & given to "::before"
     border-radius: initial !important; // reset ui lib style & given to "::before"
     box-shadow: initial; // reset ui lib style & given to "::before"
@@ -181,7 +184,8 @@ body .pac-container {
     padding: initial !important;
     margin: initial !important;
     overflow: initial !important; // should be "visible" to avoid bugs
-    min-height: initial;
+    min-height: initial !important;
+    max-height: initial !important;
     position: fixed !important;
     top: initial !important;
     right: initial !important;
@@ -192,7 +196,7 @@ body .pac-container {
     &::before {
         content: '';
         box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
-        background: @general_bg_color;
+        background: var(--color-general);
         position: absolute;
         z-index: -1;
         inline-size: 100%;
@@ -214,7 +218,7 @@ body .pac-container {
     inset-block-end: 0;
     transform: translate3d(0, 100%, 0);
 
-    html.select-variation-dialog-is-open & {
+    html.js_select-variation-dialog_-open & {
         .animation_dialog_mobile();
 
         &::before {
@@ -237,14 +241,14 @@ body .pac-container {
         inset-block-end: 0;
 
         pointer-events: none;
-        transition: opacity @var--dialog-modal__animation-_duration @var--dialog-modal__animation-_timing-function;
+        transition: opacity @dialog-modal-_duration @dialog-modal-_timing-func;
         opacity: 0;
     }
 
     // background
     &::after {
         content: "";
-        background: @general_bg_color;
+        background: var(--color-general);
         inline-size: 100%;
         block-size: 100%;
         position: absolute;
@@ -253,12 +257,12 @@ body .pac-container {
     }
 }
 
-.ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])),
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]),
 .notification-content-extended {
     min-inline-size: 600px;
     width: initial !important; // reset Responsive-theme 640px val for .notification-content-extended and ui-dialog scripted val
     max-width: initial; // reset Responsive-theme 930px val for .ui-dialog
-    //max-block-size: 100vh; // 1) originally fails ui-dialog script calculation (object-container/ui-dialog height and footer pos). 2) given to content wrapper
+    //max-block-size: 100dvh; // 1) originally fails ui-dialog script calculation (object-container/ui-dialog height and footer pos). 2) given to content wrapper
     height: initial !important;
 
     inset-block-start: 50% !important;
@@ -284,8 +288,8 @@ body .pac-container {
     }
 }
 
-.ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])) {
-    max-inline-size: min(930px, 80vw);
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) {
+    max-inline-size: min(var(--fluid-container-_max-width_-calc), 90vw);
 
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
         max-inline-size: initial;
@@ -303,7 +307,7 @@ html.dialog-is-open .ui-dialog.ui-widget:not(.abt__ut2_right-panel) {
         }
     }
 
-    &:not([class*=previewer]):not(:where([style*="display: none"], [style*="display:none"])) {
+    &:not([class*=previewer]):not([style*="display: none"]):not([style*="display:none"]) {
         @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
             .animation_dialog_mobile();
         }
@@ -322,7 +326,7 @@ html.dialog-is-open .ui-dialog.ui-widget:not(.abt__ut2_right-panel) {
         transform: translate3d(0, 100%, 0);
     }
 }
-html.notif-dialog-is-open .notification-content-extended:not(:where([style*="display: none"], [style*="display:none"])) {
+html.js_notif-dialog_-open .notification-content-extended:not([style*="display: none"]):not([style*="display:none"]) {
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
         .animation_dialog_mobile();
     }
@@ -331,8 +335,8 @@ html.notif-dialog-is-open .notification-content-extended:not(:where([style*="dis
 
 // "About Vendor" right sliding panel
 .ui-dialog.ui-widget.abt__ut2_right-panel {
-    width: min(500px, 100vw) !important;
-    height: 100vh !important;
+    width: min(600px, 100vw) !important;
+    height: 100dvh !important;
 
     inset-inline-start: initial !important;
     inset-inline-end: 0 !important;
@@ -354,7 +358,7 @@ html.dialog-is-open .ui-dialog.ui-widget.abt__ut2_right-panel.ui-widget-content 
         transform: translate3d(0, 0, 0) !important;
     }
 
-    &:not(:where([style*="display: none"], [style*="display:none"])) {
+    &:not([style*="display: none"]):not([style*="display:none"]) {
         .animation_dialog_right_panel();
     }
 }
@@ -394,7 +398,7 @@ html.dialog-is-open .ui-dialog.ui-widget.abt__ut2_right-panel.ui-widget-content 
 ==============================================================================*/
 .ui-dialog.ui-widget .ui-dialog-content,
 .notification-content-extended .notification-body-extended {
-    color: @font; // reset UI-lib & Responsive-theme declar
+    color: var(--color-font); // reset UI-lib & Responsive-theme declar
     outline: 0 none;
     box-shadow: initial; // given to main wrapper "::before"
     background: initial; // given to main wrapper "::before"
@@ -414,7 +418,7 @@ html.dialog-is-open .ui-dialog.ui-widget.abt__ut2_right-panel.ui-widget-content 
 }
 
 // crop bottom scrollbar corner (only desktop)
-body.desktop-screen .ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content,
+body.desktop-screen .ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-content,
 body.desktop-screen .notification-content-extended .notification-body-extended {
     @media (min-width: 768px) {
         border-end-end-radius: var(--border-radius-box) !important;
@@ -425,6 +429,7 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
 
 .ui-dialog.ui-widget .ui-dialog-content > .object-container,
 .notification-content-extended .ty-product-notification__body,
+.notification-content-extended .notification-extended-stuffing,
 .select-variation-dialog #ut2_select_variation_wrapper_svw // exists only on mobile
 {
     box-sizing: border-box;
@@ -432,12 +437,7 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
 
     overflow-x: hidden;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: @base10 transparent;
-    &::-webkit-scrollbar {
-        width: 5px;
-    }
+    .mxn_ut2-scroll_-tune();
 
     padding: var(--gap-s);
     width: unset;
@@ -448,59 +448,58 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
     max-height: unset;
 }
 
-.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container,
-.notification-content-extended .ty-product-notification__body {
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-content > .object-container,
+.notification-content-extended .ty-product-notification__body,
+.notification-content-extended .notification-extended-stuffing
+{
     height: unset !important; // reset harmful script fixed height, which in some cases is calculated incorrectly and cause useless scroll-bar
-    max-height: calc(~'100vh - @{var--dialog-modal__header-_height} - @{var--dialog-modal__viewport-v-spcing} * 2') !important;
+    max-height: calc(~'100dvh - @{dialog-popup__title-_height} - @{var--dialog-modal__viewport-v-spcing} * 2') !important;
 
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
-        max-height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+        max-height: calc(~'100dvh - @{dialog-popup__title-_height}') !important;
     }
 }
-.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content.ab__vg_video_popup > .object-container {
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-content.ab__vg_video_popup > .object-container {
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
-        height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+        height: calc(~'100dvh - @{dialog-popup__title-_height}') !important;
     }
 }
 .select-variation-dialog #ut2_select_variation_wrapper_svw // exists only on mobile
 {
-    max-height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+    max-height: calc(~'100dvh - @{dialog-popup__title-_height}') !important;
 }
 .ui-dialog.ui-widget.abt__ut2_right-panel.ui-widget-content .ui-dialog-content > .object-container {
-    height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+    height: calc(~'100dvh - @{dialog-popup__title-_height}') !important;
     padding-block-start: initial;
 }
 .ui-dialog.ui-widget.ui-widget-content[class*=previewer] .ui-dialog-content > .object-container {
-    height: calc(~'100dvh - @{var--dialog-modal__header-_height}') !important;
+    height: calc(~'100dvh - @{dialog-popup__title-_height}') !important;
 }
 
-// fallback for :has()
-.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container,
-.notification-content-extended .ty-product-notification__body {
-    padding-block-end: calc(~'@{var--dialog-modal__footer-_height} + var(--gap-sm)');
 
-    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
-        padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile} + var(--gap-sm)');
-    }
-}
-// fallback for :has()
-.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container:has(:not(.buttons-container)),
-.notification-content-extended:has(:not(.ty-product-notification__buttons)) .ty-product-notification__body {
-    padding-block-end: var(--gap-s);
-
-    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
-        padding-block-end: var(--gap-s);
-    }
-}
-// main rule with :has()
-.ui-dialog.ui-widget:not(:where(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-content > .object-container:has(.buttons-container:not(.object-container .hidden .buttons-container, .hidden.buttons-container)),
-.notification-content-extended:has(.ty-product-notification__buttons:not(.ty-product-notification__body .hidden .ty-product-notification__buttons, .hidden.ty-product-notification__buttons)) .ty-product-notification__body {
+/* [ BEGIN ] padding for footer, avoid :has(:not()) selector type */
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-content > .object-container:has(.buttons-container),
+.notification-content-extended:has(.ty-product-notification__buttons) .ty-product-notification__body,
+.notification-content-extended:has(.ty-product-notification__buttons) .notification-extended-stuffing
+{
     padding-block-end: calc(~'@{var--dialog-modal__footer-_height} + var(--gap-sm)'); // + footer spacing
 
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
         padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile} + var(--gap-sm)');
     }
 }
+
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-content > .object-container:has(.hidden .buttons-container),
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-content > .object-container:has(.hidden.buttons-container),
+.notification-content-extended:has(.hidden .ty-product-notification__buttons) .ty-product-notification__body,
+.notification-content-extended:has(.hidden.ty-product-notification__buttons) .ty-product-notification__body,
+.notification-content-extended:has(.hidden .ty-product-notification__buttons) .notification-extended-stuffing,
+.notification-content-extended:has(.hidden.ty-product-notification__buttons) .notification-extended-stuffing
+{
+    padding-block-end: var(--gap-s) !important;
+}
+/* [ END ] padding for footer, avoid :has(:not()) selector type */
+
 
 .ui-dialog.ui-widget .ui-dialog-content[id*=geo_maps_location] > .object-container {
     padding-inline: initial !important;
@@ -521,6 +520,16 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
     padding-block-end: calc(~'@{var--dialog-modal__footer-_height-_mobile} + var(--gap-sm)');
 }
 
+// Customer photos in product review
+.ui-dialog.ui-widget.ut2-customer_review .ui-dialog-content > .object-container {
+    @media (min-height: 768px) {
+        min-height: 600px;
+    }
+
+    @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
+        height: calc(~'100dvh - @{dialog-popup__title-_height}') !important; // full screen
+    }
+}
 /* [[[[ END ]]]] dialog-modal mid/content wrappers
 ==============================================================================*/
 
@@ -584,13 +593,6 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
             width: auto;
         }
     }
-
-    /* legacy
-    & > .ty-btn {
-        display: flex;
-        width: auto;
-        margin: 0;
-    }*/
 }
 
 // legacy
@@ -598,7 +600,7 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
     .ty-btn__secondary {
         @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
             background: transparent;
-            color: @font;
+            color: var(--color-font);
             box-shadow: inset 0 0 0 2px @secondary_button;
 
             &:hover {
@@ -611,24 +613,13 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
 // legacy
 .ui-dialog.ui-widget {
     //.buttons-container.picker,
-    .buttons-container
-    {
+    .buttons-container {
         @media (min-width: 768px) {
             .ty-btn__tertiary {
-                background: @general_bg_color;
+                background: var(--color-general);
             }
         }
     }
-
-    /*.buttons-container.picker > div {
-        margin: 0 var(--gap-s);
-        width: 100%;
-    }*/
-
-    /*.ty-section__body .buttons-container {
-        box-sizing: content-box;
-        border-radius: initial;
-    }*/
 }
 /* [[[[ END ]]]] dialog-modal footer/buttons-container
 ==============================================================================*/
@@ -667,10 +658,10 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
 .ui-dialog.ui-widget .ui-dialog-title,
 .notification-content-extended h1 {
     font-family: @headings_font;
-    font-size: calc(~'var(--font-size-big) - 2px'); // 22px
+    font-size: calc(var(--font-size-big) - 2px); // 22px
     line-height: @var--dialog-modal__title-_line-height;
     font-weight: @headings_font_weight;
-    color: @font;
+    color: var(--color-font);
     text-align: start;
 
     white-space: nowrap;
@@ -690,25 +681,24 @@ body.desktop-screen .notification-content-extended .notification-body-extended {
     float: initial;
 
     position: relative;
-    //z-index: 1;
 
     border: 0 none;
     border-block-end: 1px solid var(--color-base5);
     padding: initial;
-    padding-inline: var(--gap-s) @var--dialog-modal__header-_height;
-    padding-block-start: calc(~'var(--gap-xs) + 3px');
+    padding-inline: var(--gap-s) @dialog-popup__title-_height;
+    padding-block-start: calc(var(--gap-xs) + 3px);
     padding-block-end: var(--gap-xs);
     margin: initial;
 
     width: initial;
-    height: @var--dialog-modal__header-_height;
+    height: @dialog-popup__title-_height;
 
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
-        padding-inline-end: @var--dialog-modal__header-_height - 10;
+        padding-inline-end: @dialog-popup__title-_height - 10;
     }
 }
 
-.ui-dialog.ui-widget:not(:is(.abt__ut2_right-panel, [class*=previewer])) .ui-dialog-titlebar,
+.ui-dialog.ui-widget:not(.abt__ut2_right-panel):not([class*=previewer]) .ui-dialog-titlebar,
 body .notification-content-extended h1 // increase precedence
 {
     border-radius: var(--border-radius-box) var(--border-radius-box) 0 0;
@@ -740,6 +730,307 @@ html.dialog-is-open {
 ==============================================================================*/
 
 /* [[[[[ END ]]]]] UI Dialog / modal window
+##############################################################################*/
+
+
+
+
+
+
+
+/*##############################################################################
+   [[[[[ BEGIN ]]]]] pseudo Dialog
+##############################################################################*/
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] Fly-menu
+==============================================================================*/
+.ut2-sw-w {
+    background: var(--color-general);
+    box-shadow: 0 0 4px -1px rgba(0,0,0,.2), 0 0 5px 0 rgba(0,0,0,.14), 0 0 10px 0 rgba(0,0,0,.12);
+    inline-size: var(--lt-sticky-panel-width);
+    block-size: 100dvh;
+    position: fixed !important;
+    z-index: @big-z;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: block !important;
+
+    transition: visibility 0ms linear @dialog-modal-_duration, transform @dialog-modal-_duration @dialog-modal-_timing-func;
+    visibility: hidden;
+    transform: translate3d(calc(var(--flow-direction-factor-inline) * -100%), 0, 0);
+
+    @media (max-width: 500px) {
+        box-shadow: initial;
+    }
+
+    .ut2-sp-n.open + .ut2-sw-b:not(.hidden):not([style*="display: none;"]):not([style*="display:none;"]) + & {
+        transition-delay: 0ms;
+        visibility: visible;
+        transform: translate3d(0, 0, 0);
+
+        // page overlay
+        &::after {
+            opacity: 1;
+        }
+
+        .ut2-sp-n {
+            display: none;
+            opacity: 0;
+        }
+    }
+
+    // page overlay
+    &::after {
+        content: '';
+        background: rgba(0, 0, 0, 0.6);
+        position: fixed;
+        z-index: -1;
+        inset: 0;
+        inline-size: 200vw;
+        block-size: 100vh;
+
+        pointer-events: none;
+        transition: opacity @dialog-modal-_duration @dialog-modal-_timing-func;
+        opacity: 0;
+    }
+
+    // legacy obscure/inexplicit code
+    &.swipe-right {
+        left: auto;
+        right: 0;
+        transform: translateX(100%);
+
+        .ut2-sp-n {
+            right: auto;
+            left: -5.5rem;
+        }
+    }
+
+    .ut2-scroll {
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        .mxn_ut2-scroll_-tune();
+        background: var(--color-general);
+    }
+}
+
+// increase/higher precedence
+.ut2-sw-b[id^=dropdown] {
+    background: transparent;
+    position: fixed;
+    z-index: @big-z - 1;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    touch-action: none;
+}
+/* [[[[ END ]]]] Fly-menu
+==============================================================================*/
+
+
+
+
+
+/*==============================================================================
+   [[[[ BEGIN ]]]] ce-combination dropdown-box outside position (filters_modal, categories_modal, catalog_v_menu)
+==============================================================================*/
+// Dropdown-OneClick outside position
+.ut2-dropdown-outside-position {
+    inline-size: var(--lt-sticky-panel-width);
+    block-size: 100dvh;
+    max-width: 100%;
+    position: fixed;
+    z-index: @big-z;
+    inset-block-start: 0;
+
+    transition: transform @dialog-modal-_duration @dialog-modal-_timing-func;
+
+    &.lt-position {
+        inset-inline-start: 0;
+        transform: translate3d(calc(var(--flow-direction-factor-inline) * -100%), 0, 0);
+
+        // page overlay
+        &::after,
+        .ui-widget-overlay {
+            inset-inline-start: 0;
+        }
+    }
+
+    &.rt-position {
+        inset-inline-end: 0;
+        transform: translate3d(calc(var(--flow-direction-factor-inline) * 100%), 0, 0);
+
+        // page overlay
+        &::after,
+        .ui-widget-overlay {
+            inset-inline-end: 0;
+        }
+
+        .ty-dropdown-box__content .ty-product-filters__wrapper, // increase/higher precedence
+        .ut2-subcategories,
+        .ab-dotd-categories-filter // action page
+        {
+            scrollbar-width: none !important;
+
+            &::-webkit-scrollbar {
+                display: none !important;
+            }
+        }
+    }
+
+    // increase/higher precedence
+    &.js_open {
+        transform: translate3d(0, 0, 0) !important;
+
+        // page overlay
+        &::after {
+            opacity: 1;
+        }
+    }
+
+    // page overlay
+    &::after {
+        content: '';
+        background: rgba(0, 0, 0, 0.6);
+        position: fixed;
+        z-index: -1;
+        inset-block: 0;
+        inline-size: 200vw;
+        block-size: 100vh;
+
+        pointer-events: none;
+        transition: opacity @dialog-modal-_duration @dialog-modal-_timing-func;
+        opacity: 0;
+    }
+
+    .ui-widget-overlay {
+        background: transparent;
+        width: 200vw;
+        height: 100vh;
+        z-index: -2;
+        top: initial;
+        left: initial;
+        inset-block: 0;
+    }
+
+    .ty-dropdown-box__content[id] {
+        background: var(--color-general);
+        border-radius: initial;
+        min-width: initial;
+        inline-size: 100%;
+        block-size: 100%;
+        position: initial;
+        z-index: initial;
+        top: initial;
+        right: initial;
+        //display: block !important; // WARNING: permanent display value breaks events (toggle mechanics) of all dropdown-boxes
+
+        @media (max-width: 500px) {
+            box-shadow: initial;
+        }
+
+        &.js_forced-show {
+            display: block !important;
+        }
+    }
+
+    .ty-dropdown-box__title {
+        font-family: @headings_font;
+        font-size: var(--font-size-large);
+        font-weight: @headings_font_weight;
+        font-style: @headings_font_style;
+        .uppercase() when (@abt__ut2_general_use_titles_uppercase = true) {
+            text-transform: uppercase;
+        }
+        .uppercase();
+        background: var(--color-general); // cover page pseudo overlay through ::after
+
+        border: 0 none;
+        border-block-end: 1px solid var(--color-base5);
+        padding: initial;
+        padding-inline: var(--gap-sm) @dialog-popup__title-_height;
+        block-size: @dialog-popup__title-_height;
+        display: flex !important;
+        align-items: center;
+
+        // override legacy unfit/inapt style
+        &:hover {
+            background: var(--color-general) !important;
+        }
+    }
+
+    // increase/higher precedence
+    .ty-dropdown-box__title .ut2-btn-close {
+        inline-size: @dialog-popup__title-_height - 1;
+        block-size: @dialog-popup__title-_height - 1;
+        right: initial;
+        top: initial;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        pointer-events: none !important; // WARNING: buggy/failing toggler button
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ty-dropdown-box__content .ty-product-filters__wrapper, // increase/higher precedence
+    .ut2-subcategories,
+    .ab-dotd-categories-filter // action page
+    {
+        background: var(--color-general); // cover page pseudo overlay through ::after
+        border-radius: initial;
+        width: 100%;
+        height: calc(~'100dvh - @{dialog-popup__title-_height}');
+        max-height: initial !important; // reset/clean legacy unfit/inapt value
+        position: initial;
+        .mxn_ut2-scroll_-tune();
+    }
+
+    // increase/higher precedence
+    .ty-dropdown-box__content {
+        --footer-padding-bottom: max(var(--gap-s), env(safe-area-inset-bottom));
+
+        .ty-product-filters__wrapper {
+            padding-block-end: var(--gap-xxs);
+
+            &[data-ca-product-filters-status="active"] {
+                padding-bottom: calc(~'1px + var(--gap-sm) + var(--height-button) + var(--gap-xs) * 2');
+            }
+        }
+
+        .ty-product-filters__tools {
+            background: fade(@content_bg, 60%);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-block-start: 1px solid var(--color-base5);
+            padding: initial;
+            padding-inline: var(--gap-s);
+            padding-block-start: var(--gap-sm);
+            padding-block-end: calc(~'var(--gap-xs) * 2');
+            inline-size: 100%;
+            position: absolute;
+            z-index: 1;
+            inset-block-end: 0;
+            inset-inline: 0;
+        }
+    }
+
+    .ut2-subcategories,
+    .ab-dotd-categories-filter // action page
+    {
+        padding-block-start: var(--gap-sm); // similar to .ty-product-filters__wrapper in "All filters" dialog
+        padding-block-end: max(var(--gap-sm), env(safe-area-inset-bottom));
+        padding-inline: var(--gap-xxs);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+}
+/* [[[[ END ]]]] ce-combination dropdown-box outside position (filters_modal, categories_modal, catalog_v_menu)
+==============================================================================*/
+
+/* [[[[[ END ]]]]] pseudo Dialog
 ##############################################################################*/
 
 
@@ -800,7 +1091,7 @@ html.dialog-is-open {
 
 .notification-content {
     font-size: var(--font-size-normal);
-    line-height: calc(~'var(--font-size-normal) + 6px');
+    line-height: calc(var(--font-size-normal) + 6px);
 
     opacity: initial;
     box-shadow: 0 20px 30px rgba(0, 0, 0, 20%);
@@ -811,7 +1102,7 @@ html.dialog-is-open {
     min-block-size: calc(~'var(--gap-m) + var(--gap-xxs) * 2');
     padding: initial;
     padding-block: var(--gap-xs);
-    padding-inline: var(--gap-xs) calc(~'var(--gap-xs) * 5');
+    padding-inline: var(--gap-xs) calc(var(--gap-xs) * 5);
     margin: initial;
     margin-block: var(--gap-sm);
     margin-inline: initial;
@@ -833,7 +1124,7 @@ html.dialog-is-open {
         float: none;
         font-size: 0;
         line-height: 0;
-        color: @font;
+        color: var(--color-font);
 
         border-radius: 100%;
         background: fade(white, 50%);
@@ -851,7 +1142,7 @@ html.dialog-is-open {
         align-items: center;
         justify-content: center;
 
-        transition: all 150ms ease;
+        transition: transform @common-duration, opacity @common-duration;
         opacity: 0.85;
 
         &:before {
@@ -889,24 +1180,14 @@ html.dialog-is-open {
     &.alert-success,
     &.alert-warning,
     &.alert-error {
-        color: @font;
+        color: var(--color-font);
 
         a {
-            color: @font;
+            color: var(--color-font);
             text-decoration: underline;
         }
     }
 }
-
-
-/*==============================================================================
-   [[[[ BEGIN ]]]] content/stuffing element
-==============================================================================*/
-/*.js-ins--notif-content-_sku-copied {
-    text-transform: lowercase;
-}*/
-/* [[[[ END ]]]] content/stuffing element
-==============================================================================*/
 
 /* [[[[[ END ]]]]] Notification / Alert
 ##############################################################################*/
@@ -924,6 +1205,18 @@ html.dialog-is-open {
 /*==============================================================================
    [[[[ BEGIN ]]]] close-cross button
 ==============================================================================*/
+.ut2-dropdown-outside-position .ty-dropdown-box__title {
+    @media (hover: hover) and (pointer: fine) {
+        cursor: pointer;
+
+        &:hover {
+            .ut2-btn-close i {
+                .mxn_close-cross-btn_-hover();
+            }
+        }
+    }
+}
+
 span.close,
 .notification-content-extended h1 .cm-notification-close,
 .ui-icon-closethick,
@@ -935,20 +1228,21 @@ span.close,
     align-items: center;
     justify-content: center;
 
-    cursor: pointer;
-    transition: all .2s ease-in-out;
+    transition: transform @common-duration, color @common-duration, opacity @common-duration;
     opacity: initial !important;
 
-    &:hover {
-        color: @font !important;
-        transform: scale(0.9);
-        opacity: initial !important;
+    @media (hover: hover) and (pointer: fine) {
+        cursor: pointer;
+
+        &:hover {
+            .mxn_close-cross-btn_-hover();
+        }
     }
 
     &::before {
         content: '\e92e'!important;
         display: block !important;
-        font-size: 28px !important;
+        font-size: 24px !important;
         font-family: uni2-icons, sans-serif !important;
         font-style: normal !important;
         font-weight: normal !important;
@@ -962,8 +1256,8 @@ span.close,
 .notification-content-extended h1 [class*=close],
 .ut2_select_variation__title .ut2-btn-close {
     float: initial;
-    width: @var--dialog-modal__header-_height - 1;
-    height: @var--dialog-modal__header-_height - 1;
+    width: @dialog-popup__title-_height - 1;
+    height: @dialog-popup__title-_height - 1;
     position: absolute;
     top: initial;
     right: initial;
@@ -971,7 +1265,7 @@ span.close,
     inset-inline-end: 0;
 
     @media (max-width: 767px), (max-width: 1023px) and (orientation: landscape) and (hover:none) {
-        width: @var--dialog-modal__header-_height - 10;
+        width: @dialog-popup__title-_height - 10;
     }
 }
 
@@ -1014,6 +1308,18 @@ span.close,
    [[[[ BEGIN ]]]] dialog-modal misc content/stuffing
 ##############################################################################*/
 .ui-dialog.ui-widget .ui-dialog-content {
+    .grid-list.ut2-gl {
+        @media (min-height: 768px) and (hover: hover) and (pointer: fine) {
+            min-block-size: 650px;
+        }
+
+        // required products list
+        &.ut2-rp__grid .ut2-gl__wrap {
+            inline-size: calc(~'(var(--gl-thumbs-width) * 1px + var(--gap-half) * 2) * var(--gl-cols) + var(--gap-half) * (var(--gl-cols) - 1) + 17px');
+            margin-inline: auto;
+        }
+    }
+
     .ty-product-review-new-product-review {
         inline-size: var(--ty-product-review-popup-width, 560px);
         min-width: initial;
@@ -1081,11 +1387,6 @@ span.close,
             }
         }
     }
-    /*.ty-search-form__buttons-container.buttons-container {
-        border-radius: 0 0 0 0;
-        margin-left: -20px;
-        margin-right: -20px;
-    }*/
 
     .ui-button-icon-only,
     .ui-button-icons-only {
@@ -1107,7 +1408,9 @@ span.close,
     }
 }
 
-.notification-content-extended .ty-product-notification__body {
+.notification-content-extended .ty-product-notification__body,
+.notification-content-extended .notification-extended-stuffing
+{
     pre { // PHP error log in dialog
         background: contrast(@font, @content_bg, @base) !important;
     }
@@ -1115,30 +1418,18 @@ span.close,
 
 .ty-owl-previewer .ty-owl-previewer__container // increase precedence
 {
+    .owl-prev, .owl-next {
+        transform: initial;
+    }
+
     .owl-controls:not(.owl-controls-outside) .owl-buttons {
         max-width: unset;
+    }
 
-        div.owl-prev {
-            width: 20px;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-
-            &:before {
-                font-size: 18px;
-                content: "\f101";
-                font-family: 'uni2-icons', sans-serif;
-            }
-        }
-
-        div.owl-next {
-            width: 20px;
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
-
-            &:before {
-                font-size: 18px;
-                content: "\f10d";
-                font-family: 'uni2-icons', sans-serif;
-            }
-        }
+    .ty-owl-previewer__prev-icon, .ty-owl-previewer__next-icon {
+        margin: initial;
+        width: initial;
+        line-height: initial;
     }
 }
 
@@ -1157,7 +1448,6 @@ span.close,
 .ty-product-notification__amount {
     color: var(--color-font-lighten);
 }
-
 
 
 .ty-product-notification__subtotal {
@@ -1183,57 +1473,43 @@ span.close,
     align-items: flex-start;
     column-gap: var(--gap-s);
 
-    @media (max-width: 767px) {
-        display: block;
-    }
-
     &:last-child {
         margin-bottom: var(--gap-xxs);
     }
+}
+
+.ut2-product-notification__image {
+    max-width: 25%;
+    flex-shrink: 0;
 }
 
 .ty-product-notification__image {
     float: initial;
     margin: initial;
     padding: initial;
-    min-width: initial;
-    flex-shrink: 0;
-
-
-    @media (max-width: 767px) {
-        margin-inline: auto;
-        display: block;
-    }
 }
 
 .ty-product-notification__content {
     overflow: initial;
+    min-inline-size: 0;
+    flex-basis: 0;
     flex-grow: 1;
+
 
     .ut2-product-notification__head {
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
         column-gap: var(--gap-s);
         row-gap: var(--gap-xs);
-
-        @media (max-width: 767px) {
-            margin-block-start: var(--gap-xs);
-        }
-
-        @media (max-width: 360px) {
-            overflow-x: hidden;
-            flex-wrap: wrap;
-        }
     }
 
     .ut2-product-notification__head__title {
-        word-break: break-all; // prevent pushing next item out of container (container overflow) due to long non-wrapping text
-        flex: 1;
+        min-inline-size: 0;
+        flex-grow: 1;
+        flex-basis: 140px;
 
-        @media (max-width: 360px) {
-            word-break: initial;
-            max-inline-size: 100%; // prevent stretching item out of container due to long non-wrapping text
-        }
+        .mxn_good-wrap-text-containing-long-word();
     }
 
     .ty-product-notification__product-name {
@@ -1244,8 +1520,10 @@ span.close,
     }
 
     .ty-product-notification__price {
+        white-space: nowrap;
         float: none;
         margin: initial;
+        margin-inline-start: auto;
         flex-shrink: 0;
     }
 
@@ -1300,31 +1578,24 @@ span.close,
     padding-block-end: var(--gap-xs);
     overflow-x: hidden;
     overflow-y: auto;
-
-    &::-webkit-scrollbar {
-        width: 5px;
-    }
+    .mxn_ut2-scroll_-tune();
 
     .ut2_extra-link {
         display: flex;
         align-items: center;
         margin-top: var(--gap-s);
-        color: @font;
+        color: var(--color-font);
         font-size: var(--font-size-normal);
 
         span {
             text-decoration: underline;
-            color: @links;
+            color: var(--color-links);
         }
 
         i {
             font-size: var(--font-size-small);
             margin: 2px 0 0 2px;
-            color: @links;
-
-            html[dir="rtl"] & {
-                transform: scaleX(-1);
-            }
+            color: var(--color-links);
         }
     }
 
@@ -1338,6 +1609,7 @@ span.close,
     margin-block-end: var(--gap-s);
 
     .product_icon_lnk {
+        height: fit-content;
         margin-right: var(--gap-xs);
         flex-shrink: 0;
 
@@ -1358,9 +1630,15 @@ span.close,
         flex: 1;
         max-width: 600px;
         padding-inline-end: var(--gap-l);
-        color: @font;
+        color: var(--color-font);
 
         .ut2_line_clamp(3);
+    }
+
+    .stock-wrap {
+        .ty-control-group__label {
+            display: none;
+        }
     }
 }
 
@@ -1372,22 +1650,22 @@ span.close,
     .uppercase();
 
     font-family: @headings_font;
-    font-size: calc(~'var(--font-size-big) - 2px'); // 22px
+    font-size: calc(var(--font-size-big) - 2px); // 22px
     line-height: @var--dialog-modal__title-_line-height;
     font-weight: @headings_font_weight;
-    color: @font;
+    color: var(--color-font);
     text-align: start;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     width: 100%;
-    height: @var--dialog-modal__header-_height;
-    background: @general_bg_color;
-    border-block-end: 1px solid @base5;
-    padding-block-start: calc(~'var(--gap-xs) + 3px');
+    height: @dialog-popup__title-_height;
+    background: var(--color-general);
+    border-block-end: 1px solid var(--color-base5);
+    padding-block-start: calc(var(--gap-xs) + 3px);
     padding-block-end: var(--gap-xs);
     padding-inline-start: var(--gap-s);
-    padding-inline-end: @var--dialog-modal__header-_height - 10;
+    padding-inline-end: @dialog-popup__title-_height - 10;
     margin: initial;
 }
 
@@ -1413,8 +1691,10 @@ span.close,
 
     .ty-product-options {
         @media (min-width: 768px) {
-            column-count: 2;
-            column-gap: var(--gap-s);
+            &:has(> div:nth-child(2)) {
+                column-count: 2;
+                column-gap: var(--gap-s);
+            }
         }
         .ty-control-group {
             break-inside: avoid-column;
@@ -1431,8 +1711,10 @@ span.close,
         margin-right: initial;
         display: block;
     }
-    .ty-product-options__image--wrapper .ty-product-options__image {
-        max-width: 50px;
+    .ty-product-options__image--wrapper {
+        .ty-product-options__image {
+            max-width: 50px;
+        }
     }
     .ty-product-options select {
         @media (max-width: 576px) {
@@ -1446,6 +1728,7 @@ span.close,
     border-radius: 0;
 
     > div:first-child {
+        min-inline-size: 0;
         flex: 1;
     }
     > div:not(:last-child) {
@@ -1546,23 +1829,23 @@ span.close,
         border-end-end-radius: var(--border-radius-box);
         border-end-start-radius: var(--border-radius-box);
         position: initial !important;
-        margin-block-end: calc(~'var(--gap-xs) * -1');
-        margin-inline: calc(~'var(--gap-sm) * -1');
+        margin-block-end: calc(var(--gap-xs) * -1);
+        margin-inline: calc(var(--gap-sm) * -1);
         height: initial ;
         justify-content: initial;
 
         .ty-btn__secondary {
-            margin-inline-end: calc(~'var(--gap-xs) * -1');
+            margin-inline-end: calc(var(--gap-xs) * -1);
         }
+    }
+
+    .ty-pagination-container {
+        margin-block-end: var(--gap-s);
     }
 
     .ty-sort-container {
         display: block;
         margin-block-start: var(--gap-sm);
-    }
-
-    .ty-pagination-container {
-        margin-block-end: var(--gap-s);
     }
 
     input.ty-product-list__bulk {
@@ -1648,6 +1931,19 @@ span.close,
 
 
 /*==============================================================================
+   [[[ BEGIN ]]] quick view product (ui-dialog content)
+==============================================================================*/
+.ui-dialog-content#product_quick_view {
+    // hide garbage element from module "ab__seo_product_tabs"
+    #ab-spt-heading-navigation-tab {
+        display: none;
+    }
+}
+/* [[[ END ]]] quick view product (ui-dialog content)
+==============================================================================*/
+
+
+/*==============================================================================
    [[[ BEGIN ]]] quick view gift certificate (ui-dialog content)
 ==============================================================================*/
 .ui-dialog-content[id^=gift_cert_quick_view] {
@@ -1702,9 +1998,7 @@ span.close,
     .ut2-table-carrier {
         width: 100%;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        scrollbar-color: @base10 transparent;
+        .mxn_ut2-scroll_-tune();
     }
 
     .ty-table {

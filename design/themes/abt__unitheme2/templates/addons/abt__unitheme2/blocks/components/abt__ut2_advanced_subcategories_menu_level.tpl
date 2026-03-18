@@ -1,5 +1,5 @@
 <div class="ut2-items level-{$level}">
-{foreach from=$categories item=$category name=categories}
+{foreach from=$categories item=category name=categories}
     {if $level == 2 && $smarty.foreach.categories.iteration == $block.properties.abt__ut2_category_count_level_2+1}
         <div class="ut2-item ut2-more-btn" data-action="show"><span>+{$smarty.foreach.categories.total - $block.properties.abt__ut2_category_count_level_2}<span>{__("more")}</span><i class="ty-icon-down-open"></i></span></div>
         {$hidden_item = 'hidden-item hidden'}
@@ -7,7 +7,7 @@
         <div class="ut2-item ut2-more-btn" data-action="show"><span>+{$smarty.foreach.categories.total - $block.properties.abt__ut2_category_count_level_3}<span>{__("more")}</span><i class="ty-icon-down-open"></i></span></div>
         {$hidden_item = 'hidden-item hidden'}
     {/if}
-    {if $category.current}
+    {if $category.current || $abt__ut2_subcategories.simple_tree}
         {$parent = false}
     {/if}
 

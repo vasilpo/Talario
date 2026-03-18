@@ -1,5 +1,5 @@
 {if $content|trim}
-    <div class="ty-sidebox-important{if isset($hide_wrapper)} cm-hidden-wrapper{/if}{if $hide_wrapper} hidden{/if}{if $block.user_class} {$block.user_class}{/if}{if $content_alignment == "RIGHT"} ty-float-right{elseif $content_alignment == "LEFT"} ty-float-left{/if}">
+    <div class="ty-sidebox-important{if isset($hide_wrapper)} cm-hidden-wrapper{/if}{if $hide_wrapper} hidden{/if}{if $block.user_class} {$block.user_class}{/if}{if $content_alignment == "RIGHT"} ty-float-right{elseif $content_alignment == "LEFT"} ty-float-left{/if}"{if $block.snapping_id} id="snapping_id_{$block.snapping_id}"{/if}>
         <h3 class="ty-sidebox-important__title{if $header_class} {$header_class}{/if}">
             {hook name="wrapper:sidebox_important_title"}
             {if $smarty.capture.title && $smarty.capture.title|trim}
@@ -10,5 +10,5 @@
             {/hook}
         </h3>
         <div class="ty-sidebox-important__body">{$content|default:"&nbsp;" nofilter}</div>
-    </div>
+    {if $block.snapping_id}<!--snapping_id_{$block.snapping_id}-->{/if}</div>
 {/if}

@@ -80,6 +80,9 @@
           continue;
         }
         $.getScript(ext_scripts.eq(i).prop('src'));
+        setTimeout(() => {
+          $.ceEvent('trigger', 'ce.gdpr_cookie_ajaxdone', [$(_.doc)]);
+        }, 1000);
       }
     }
   }

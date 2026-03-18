@@ -2,12 +2,14 @@ import { params } from './params';
 import { state } from './state';
 import { html } from './html';
 import { bottomButtons } from './bottom_buttons';
+import { notifications } from './notifications';
 
 export const bottomPanel = {
     _activate: function () {
         state.isBottomPanelOpen = true;
         html._activatePanel();
         bottomButtons._hide();
+        notifications._position();
         bottomPanel._setOpenCookie(true);
     },
 
@@ -15,6 +17,7 @@ export const bottomPanel = {
         state.isBottomPanelOpen = false;
         html._deactivatePanel();
         bottomButtons._show();
+        notifications._position();
         bottomPanel._setOpenCookie(false);
     },
 

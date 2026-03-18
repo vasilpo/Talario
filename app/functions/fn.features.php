@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\ObjectStatuses;
@@ -1386,11 +1386,11 @@ function fn_update_product_feature($feature_data, $feature_id, $lang_code = DESC
     }
 
     // Add feature
-    if (empty($feature_data['internal_name']) && !empty($feature_data['description'])) {
+    if (empty($feature_id) && empty($feature_data['internal_name']) && !empty($feature_data['description'])) {
         $feature_data['internal_name'] = $feature_data['description'];
     }
 
-    if (empty($feature_data['description']) && !empty($feature_data['internal_name'])) {
+    if (empty($feature_id) && empty($feature_data['description']) && !empty($feature_data['internal_name'])) {
         $feature_data['description'] = $feature_data['internal_name'];
     }
 
@@ -2387,4 +2387,95 @@ function fn_get_product_features_internal_names(array $params = [], $lang_code =
         ProductFeatures::GROUP,
         $params['company_id']
     );
+}
+
+/**
+ * @param array<array{categories_path?: string, parent_id?: string|int, feature_type?: string}> $features Array of updating features
+ *
+ * @return array<array<string|int>>
+ */
+function fn_update_features_get_affected_entities($features)
+{
+    if (!$features) {
+        return [[], [], []];
+    }
+
+    $affected_products = [];
+    $affected_features = [];
+    $affected_categories = [];
+
+    foreach ($features as $id => $new_data) {
+        $feature_ids = [$id];
+        $removed_categories = null;
+        $old_data = db_get_row('SELECT parent_id, categories_path, feature_type FROM ?:product_features WHERE feature_id = ?i', $id);
+
+        $new_categories = array_filter(explode(',', $new_data['categories_path'] ?? ''));
+        $old_categories = array_filter(explode(',', $old_data['categories_path']));
+
+        if (
+            isset($new_data['parent_id'])
+            && !empty($new_data['parent_id']) && empty($old_data['parent_id'])
+            || !empty($new_data['parent_id']) && !empty($old_data['parent_id']) && (int) $new_data['parent_id'] !== (int) $old_data['parent_id']
+        ) {
+            $new_categories = explode(',', db_get_field('SELECT categories_path FROM ?:product_features WHERE feature_id = ?i', $new_data['parent_id']));
+        }
+
+        if (!isset($new_data['feature_type'])) {
+            $new_data['feature_type'] = $old_data['feature_type'];
+        }
+
+        if ($new_data['feature_type'] === ProductFeatures::GROUP) {
+            $ids = db_get_fields('SELECT feature_id FROM ?:product_features WHERE parent_id = ?i', $id);
+            $feature_ids = array_merge($feature_ids, $ids);
+        }
+
+        $new_categories = array_filter($new_categories);
+
+        if (empty($new_categories)) {
+            continue;
+        }
+
+        if (!empty($old_categories)) {
+            $removed_categories = array_diff($old_categories, $new_categories);
+
+            if (!$removed_categories) {
+                continue;
+            }
+
+            $product_ids = db_get_fields(
+                'SELECT DISTINCT pfv.product_id FROM ?:product_features_values AS pfv'
+                . ' INNER JOIN ?:products_categories AS pc'
+                    . ' ON pfv.product_id = pc.product_id'
+                . ' WHERE pfv.feature_id IN (?n)'
+                    . ' AND pc.category_id IN (?n)',
+                $feature_ids,
+                $removed_categories
+            );
+        } else {
+            $product_ids = db_get_fields(
+                'SELECT DISTINCT ?:product_features_values.product_id FROM ?:product_features_values'
+                . ' WHERE ?:product_features_values.feature_id IN (?n)'
+                    . ' AND product_id NOT IN ('
+                        . ' SELECT pfv.product_id FROM ?:product_features_values AS pfv'
+                        . ' LEFT JOIN ?:products_categories AS pc'
+                            . ' ON pfv.product_id = pc.product_id'
+                        . ' WHERE pfv.feature_id IN (?n)'
+                            . ' AND pc.category_id IN (?n)'
+                . ')',
+                $feature_ids,
+                $feature_ids,
+                $new_categories
+            );
+        }
+
+        if (!$product_ids) {
+            continue;
+        }
+
+        $affected_products = array_merge($affected_products, $product_ids);
+        $affected_features = array_merge($affected_features, $feature_ids);
+        $affected_categories = array_merge($affected_categories, $removed_categories ?? []);
+    }
+
+    return [array_unique($affected_products), array_unique($affected_features), array_unique($affected_categories)];
 }

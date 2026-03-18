@@ -11,7 +11,7 @@
     {else}
         {assign var="return_current_url" value=$config.current_url|escape:url}
     
-        <a title="{$title}" data-ca-target-id="new_thread_login_form" class="vc__l cm-dialog-opener cm-dialog-auto-size {$meta} {if "MULTIVENDOR"|fn_allowed_for} ty-vendor-communication__post-write{/if}" rel="nofollow">
+        <a title="{$title}" data-ca-target-id="new_thread_login_form{$obj_prefix}{$obj_id}" class="vc__l cm-dialog-opener cm-dialog-auto-size {$meta} {if "MULTIVENDOR"|fn_allowed_for} ty-vendor-communication__post-write{/if}" rel="nofollow">
             {include_ext file="common/abt__ut2_icon.tpl" class="ut2-icon-outline-announcement"}
             <span class="ajx-link">{$title}</span>
         </a>

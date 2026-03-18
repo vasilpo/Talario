@@ -25,14 +25,17 @@ class ReceiptFactoryTest extends ATestCase
     }
 
     /**
-     * @param array $order
-     * @param $currency
-     * @param bool $allocate_discount_by_unit
-     * @param $prices_with_taxes
-     * @param $total_discount_item_types_filter
-     * @param  $priority_item_type
-     * @param $expected
+     * @param array  $order                            Order data
+     * @param string $currency                         Currency value
+     * @param bool   $allocate_discount_by_unit        Whether to allocate discount by unit
+     * @param array  $prices_with_taxes                Prices with taxes
+     * @param array  $total_discount_item_types_filter If is set than the discount will be divided between items with these types
+     * @param string $priority_item_type               If total of priority items are more than order discount, discount will be applied only on th
+     * @param array  $expected                         Expected value
+     *
      * @dataProvider dpCreateReceiptFromOrder
+     *
+     * @throws \Exception
      */
     public function testCreateReceiptFromOrder(array $order, $currency, $allocate_discount_by_unit, $prices_with_taxes, $total_discount_item_types_filter, $priority_item_type, $expected)
     {

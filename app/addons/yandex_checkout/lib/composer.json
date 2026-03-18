@@ -1,7 +1,7 @@
 {
     "version": "0.0.1",
     "require": {
-        "yoomoney/yookassa-sdk-php": "2.12.0"
+        "yoomoney/yookassa-sdk-php": "2.13.0"
     },
     "replace": {
         "psr/log": "*"

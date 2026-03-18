@@ -2,12 +2,9 @@
     {if $feature.feature_type != "ProductFeatures::GROUP"|enum}
         {include_ext file="common/icon.tpl" class="ty-icon-help-circle" assign=link_text_icon}
         <div class="ty-product-feature">
-        <div class="ty-product-feature__label"><span>{$feature.description nofilter}</span>{if $feature.full_description|trim}{include file="common/popupbox.tpl" link_meta="ty-icon ty-icon-help-circle cm-dialog-auto-size ut2-append-body" id="ut2_features_dialog_`$feature.feature_id`" text=$feature.description content=$feature.full_description show_brackets=false}{/if}</div>
-
+        <div class="ty-product-feature__label"><span class="ut2-product-feature__label__name">{$feature.description nofilter}</span>{if $feature.full_description|trim}{include file="common/popupbox.tpl" link_meta="ty-icon ty-icon-help-circle cm-dialog-auto-size ut2-append-body" id="ut2_features_dialog_`$feature.feature_id`" text=$feature.description content=$feature.full_description show_brackets=false}{/if}</div>
         {$hide_affix = $feature.feature_type == "ProductFeatures::MULTIPLE_CHECKBOX"|enum}
-
-        {strip}
-        <div class="ty-product-feature__value">
+        {strip}<div class="ty-product-feature__value">
             {if $feature.prefix && !$hide_affix}<span class="ty-product-feature__prefix">{$feature.prefix}</span>{/if}
             {if $feature.feature_type == "ProductFeatures::SINGLE_CHECKBOX"|enum}
             {if $feature.value === "YesNo::YES"|enum}
@@ -36,7 +33,17 @@
                             {$filter_value="`$var.value_int|intval`-`$var.value_int|intval`"}
                         {/if}
                         {include file="views/products/components/ab__similar_filter.tpl" feature=$feature variant_id=$filter_value}
-                        {if $feature.filter_style == "ProductFilterStyles::COLOR"|enum && $var.color}<div class="abt__ut2_color_mark" style="background-color: {$var.color};width:15px;height:15px;display:inline-block;margin-top:2px;border-radius: 50%;{if $var.color == "#ffffff"}border: 1px solid{/if}"></div>&nbsp;{/if}
+                        {if $feature.filter_style == "ProductFilterStyles::COLOR"|enum && $var.color}
+                            {if $feature.filter_style == "ProductFilterStyles::COLOR"|enum && $var.color}
+                                {$color1 = $var.color|default:$white_color}
+                                {$color2 = ($var.abt__ut2_color_style === 'multicolor') ? ($var.abt__ut2_multicolor|default:$color1) : $color1}
+                                <div class="ut2-lv__color-variant" style="width: 20px;background: linear-gradient(120deg,{$color1} 50%, {$color2} 51%);{if $color1 == "#ffffff" || $color2 == "#ffffff"}border: 1px solid{/if}">
+                                    {if $var.abt__ut2_color_style === 'thumbnail'}
+                                        {include file="common/image.tpl" images=$var.image_pair image_width=64 height=64 no_ids=true lazy_load=false}
+                                    {/if}
+                                </div>&nbsp;
+                            {/if}
+                        {/if}
                         {hook name="abt__ut2_features:variant"}{$var.variant}{/hook}
                     {break}
                     {/if}
@@ -52,12 +59,10 @@
                 {/if}
                 <span class="ty-product-feature__suffix"> {$feature.suffix}</span>
             {/if}
-        </div>
-        {/strip}
+        </div>{/strip}
         </div>
     {/if}
 {/foreach}
-
 {foreach $product_features as $feature}
     {if $feature.feature_type == "ProductFeatures::GROUP"|enum && $feature.subfeatures}
         <div class="ty-product-feature-group">

@@ -2,6 +2,9 @@
 {strip}
 {$tag_level = $tag_level|default:"1"}
 {$is_unique_id = $is_unique_id|default:true}
+{$simple = $simple|default:false}
+{$but_class = $but_class|default:""}
+
 {$add_empty_item_on_click = ($is_unique_id) ? "Tygh.$('#box_' + this.id).cloneNode($tag_level, undefined, undefined, true);" : "Tygh.$('#box_' + this.id).cloneNode($tag_level);"}
 {if $on_add}
     {$add_empty_item_on_click = "`$add_empty_item_on_click` `$on_add`"}
@@ -18,7 +21,7 @@
         {/if}
 {/if}
 
-    {include file="buttons/remove_item.tpl" only_delete=$only_delete but_class="cm-delete-row"}
+    {include file="buttons/remove_item.tpl" only_delete=$only_delete but_class="cm-delete-row {$but_class}" simple=$simple}
 {if $only_delete != "Y"}
     </div>
 {/if}

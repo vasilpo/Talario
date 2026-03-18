@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /release-4.18.4/addons/paypal_commerce_platform.po\n"
-"X-Crowdin-File-ID: 9653\n"
-"PO-Revision-Date: 2025-05-27 09:08\n"
+"X-Crowdin-File: /release-4.20.1/addons/paypal_commerce_platform.po\n"
+"X-Crowdin-File-ID: 10217\n"
+"PO-Revision-Date: 2026-02-05 11:03\n"
 
 msgctxt "Addons::name::paypal_commerce_platform"
 msgid "PayPal Complete Payments (Multiparty)"
@@ -23,18 +23,6 @@ msgstr "Pazar yerleri için bir PayPal çözümü. Ödemeleri PayPal ve diğer y
 msgctxt "SettingsSections::paypal_commerce_platform::general"
 msgid "General"
 msgstr "Genel"
-
-msgctxt "SettingsOptions::paypal_commerce_platform::collect_payouts"
-msgid "Commission includes"
-msgstr "Komisyon şunları içerir:"
-
-msgctxt "SettingsVariants::paypal_commerce_platform::collect_payouts::N"
-msgid "Order commission"
-msgstr "sipariş komisyonu"
-
-msgctxt "SettingsVariants::paypal_commerce_platform::collect_payouts::Y"
-msgid "Order commission and unpaid payouts"
-msgstr "Sipariş komisyonu ve ödenmemiş ödemeler"
 
 msgctxt "SettingsOptions::paypal_commerce_platform::rma_refunded_order_status"
 msgid "Order status on refund"
@@ -72,10 +60,6 @@ msgctxt "Languages::paypal_commerce_platform.paypal_account"
 msgid "PayPal account"
 msgstr "Paypal hesabı"
 
-msgctxt "Languages::paypal_commerce_platform.paypal_account_short"
-msgid "PP a/c"
-msgstr "PP klima"
-
 msgctxt "Languages::paypal_commerce_platform.connected"
 msgid "Connected"
 msgstr "bağlı"
@@ -83,6 +67,14 @@ msgstr "bağlı"
 msgctxt "Languages::paypal_commerce_platform.not_connected"
 msgid "Not connected"
 msgstr "Bağlı değil"
+
+msgctxt "Languages::paypal_commerce_platform.ppcp_connectivity.description"
+msgid "Whether or not a vendor has connected their PayPal account to the marketplace."
+msgstr ""
+
+msgctxt "Languages::paypal_commerce_platform.ppcp_multiparty"
+msgid "PPCP (Multiparty)"
+msgstr ""
 
 msgctxt "Languages::paypal_commerce_platform.account_connected"
 msgid "Your PayPal account has been successfully connected to the store"

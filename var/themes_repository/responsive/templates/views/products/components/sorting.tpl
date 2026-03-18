@@ -46,9 +46,9 @@
 {if $pagination.total_items}
 {assign var="range_url" value=$config.current_url|fn_query_remove:"items_per_page":"page"}
 {assign var="product_steps" value=$settings.Appearance.columns_in_products_list|fn_get_product_pagination_steps:$settings.Appearance.products_per_page}
-<div class="ty-sort-dropdown">
+<div class="ty-sort-dropdown ty-product-steps-dropdown">
 <a id="sw_elm_pagination_steps" class="ty-sort-dropdown__wrapper cm-combination">{$pagination.items_per_page} {__("per_page")}{include_ext file="common/icon.tpl" class="ty-icon-down-micro ty-sort-dropdown__icon"}</a>
-    <ul id="elm_pagination_steps" class="ty-sort-dropdown__content cm-popup-box hidden">
+    <ul id="elm_pagination_steps" class="ty-sort-dropdown__content ty-product-steps-dropdown__content cm-popup-box hidden">
         {foreach from=$product_steps item="step"}
         {if $step != $pagination.items_per_page}
             <li class="ty-sort-dropdown__content-item">

@@ -16,7 +16,7 @@
 *******************************************************************************************/
 (function(_, $) {
 let prev_doc_width = 0;
-const fn_debounced__catalogSubmenuNotCascading2ndListColumnFilling = window.g_fn__debounceUnderscore_fs(fn__catalogSubmenuNotCascading2ndListColumnFilling, 200);
+const fn_debounced__catalogSubmenuNotCascading2ndListColumnFilling = window.fn_utility__debounceUnderscore_fs(fn__catalogSubmenuNotCascading2ndListColumnFilling, 100);
 function fn__catalogSubmenuNotCascading2ndListColumnFilling(flag__force) {
 const one_col_width = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--menu-col-min-width'));
 let new_doc_width = $(document).width();

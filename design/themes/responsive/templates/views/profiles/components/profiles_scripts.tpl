@@ -27,5 +27,38 @@
     });
     {/literal}
 
+    const selectors = [
+        'input[name="user_data[firstname]"]',
+        'input[name="user_data[lastname]"]'
+    ];
+
+    selectors.forEach(function (selector) {
+        const $input = $(selector);
+        const inputId = $input.attr('id');
+
+        if (inputId) {
+            const $label = $('label[for="' + inputId + '"]');
+            $label.addClass('cm-text-validator');
+        }
+    });
+
+    $(document).ready(function() {
+        $.ceFormValidator('registerValidator', {
+            class_name: 'cm-text-validator',
+            message: _.tr('js_validator_not_valid_text_field'),
+            func: function (id) {
+                const value = $('#' + id).val().trim();
+
+                if (value === '') return true;
+
+                {literal}
+                const regex = /^[\p{L}\p{M}\s'\-\d]+$/u;
+                {/literal}
+
+                return regex.test(value);
+            }
+        });
+    });
+
 }(Tygh, Tygh.$));
 </script>

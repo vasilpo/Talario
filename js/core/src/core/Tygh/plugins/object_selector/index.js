@@ -416,7 +416,7 @@ export const ceObjectSelectorInit = function ($) {
 
             MultipleSelection.prototype.bind = function (container, $container) {
                 this.$selection.on('click', function (e) {
-                    if (!$(e.target).hasClass('select2-search__field') && !$(e.target).hasClass('select2-selection__rendered')) {
+                    if ($(e.target).is(':button') || $(e.target).closest(':button').length > 0) {
                         // disable rendering dropdown if click was not on the search field
                         e.stopImmediatePropagation();
                     }

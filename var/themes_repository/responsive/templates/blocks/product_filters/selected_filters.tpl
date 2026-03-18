@@ -5,6 +5,13 @@
 {$ajax_div_ids = "product_filters_*,selected_filters_*,products_search_*,category_products_*,currencies_*,languages_*,product_features_*"}
 {$curl = $config.current_url}
 {$filter_base_url = $curl|fn_query_remove:"result_ids":"full_render":"filter_id":"view_all":"req_range_id":"features_hash":"subcats":"page":"total"}
+{$is_filters_selected = false}
+{foreach $items as $filter_prepare}
+    {if $filter_prepare.selected_variants || $filter_prepare.selected_range}
+        {$is_filters_selected = true}
+        {break}
+    {/if}
+{/foreach}
 
 <div class="ty-horizontal-product-filters ty-selected-product-filters cm-product-filters cm-horizontal-filters"
     data-ca-target-id="{$ajax_div_ids}"
@@ -15,7 +22,7 @@
     data-ca-tooltip-layout-selector = "[data-ca-tooltip-layout='true']"
     data-ce-tooltip-events-tooltip = "mouseenter"
     id="selected_filters_{$block.block_id}">
-<div class="ty-product-filters__wrapper">
+<div class="ty-product-filters__wrapper {if $is_filters_selected}ty-product-filters__wrapper--filters-selected{/if}">
 {foreach from=$items item="filter"}
 
     {if $filter.selected_variants || $filter.selected_range}
@@ -38,7 +45,7 @@
                         {include file="blocks/product_filters/components/product_filter_slider.tpl" filter_uid=$filter_uid filter=$filter}
                     {/if}
                 {else}
-                    {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter}
+                    {include file="blocks/product_filters/components/product_filter_variants.tpl" filter_uid=$filter_uid filter=$filter type="selected"}
                 {/if}
             {/hook}
             <div class="ty-product-filters__tools clearfix">

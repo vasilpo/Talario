@@ -6,6 +6,7 @@
         {$input_id = $input_id|default:"gdpr_agreements_{$type}{if $suffix}_{$suffix}{/if}{if $obj_prefix}{$obj_prefix}{/if}{if $obj_id}{$obj_id}{/if}"}
         {$gdpr_target_elem = "{$input_id}_label"}
         {$is_accept_gdpr_agreements_checked = ($user_data[$const_input_id] === "Y")}
+        {$link_popup_class = "`$link_popup_class` ty-license-agreement__link"}
 
         <div class="ty-gdpr-agreement {if $hidden}hidden{/if}" data-ca-gdpr-agreement="{$input_id}">
             <label

@@ -1,4 +1,6 @@
+{strip}
 {$html_class = ""}
+{$html_styles_string = ""}
 {hook name="index:index_container"}
 {$pb_is_bottom_panel_open = (
         $auth.user_type === "UserTypes::ADMIN"|enum
@@ -10,14 +12,26 @@
 {if $pb_is_bottom_panel_open}
     {$html_class = "`$html_class` bp-panel-active"}
 {/if}
-{$scroll_header = $config.scroll_header|default:false}
+{$scroll_header = $config.tweaks.scroll_header|default:false}
 
 {$html_class = ($backoffice_color_scheme && $backoffice_color_scheme === "BackofficeColorSchemeVariants::DARK"|enum)
     ? "`$html_class` cs-dark-theme" : "`$html_class` cs-light-theme"}
-<!DOCTYPE html>
+
+{$html_class = "`$html_class` cs-main-menu-`$main_menu_type`"}
+
+{if $config.tweaks.html_styles}
+    {foreach $config.tweaks.html_styles as $html_style_key => $html_style}
+        {$html_styles_string = "`$html_styles_string` `$html_style_key`: `$html_style`;"}
+    {/foreach}
+    {$html_styles_string = "style=\"`$html_styles_string|trim`\""}
+{/if}
+{/strip}<!DOCTYPE html>
 <html lang="en"
     dir="{$language_direction}"
     class="{$html_class}"
+{if $html_styles_string}
+    {$html_styles_string nofilter}
+{/if}
 >
 <head>
 {hook name="index:head"}
@@ -55,7 +69,7 @@ window.jsErrors = [];
 {include file="buttons/helpers.tpl"}
 
 {$class = "{if $smarty.const.ACCOUNT_TYPE === "vendor"} vendor-area{/if}"}
-<body {if $class}class="{$class}"{/if} data-ca-scroll-to-elm-offset="120" {if $config.body_attrs}{$config.body_attrs|render_tag_attrs nofilter}{/if}>
+<body {if $class}class="{$class}"{/if} data-ca-scroll-to-elm-offset="120" {if $config.tweaks.body_attrs}{$config.tweaks.body_attrs|render_tag_attrs nofilter}{/if}>
     {strip}<div id="tygh_settings" class="hidden" {""}
         data-ca-current-location="{$config.current_location}" {""}
         data-ca-area="A" {""}
@@ -110,6 +124,7 @@ window.jsErrors = [];
     {include file="common/loading_box.tpl"}
     {include file="common/scripts.tpl"}
     {/hook}
+    {include file="components/licensing/upgrade_popup.tpl" auto_open=true}
 </body>
 </html>
 {/hook}

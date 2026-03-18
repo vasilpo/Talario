@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5ac37e24a5a172604db0be8aecc94712
+class ComposerStaticInitca38438eafd77dc2e558c6974a62b5f3
 {
     public static $prefixLengthsPsr4 = array (
         'Y' => 
@@ -56,6 +56,7 @@ class ComposerStaticInit5ac37e24a5a172604db0be8aecc94712
         'YooKassa\\Common\\ResponseObject' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Common/ResponseObject.php',
         'YooKassa\\Helpers\\Config\\ConfigurationLoader' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Helpers/Config/ConfigurationLoader.php',
         'YooKassa\\Helpers\\Config\\ConfigurationLoaderInterface' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Helpers/Config/ConfigurationLoaderInterface.php',
+        'YooKassa\\Helpers\\FiscalizationProvider' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Helpers/FiscalizationProvider.php',
         'YooKassa\\Helpers\\ProductCode' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Helpers/ProductCode.php',
         'YooKassa\\Helpers\\Random' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Helpers/Random.php',
         'YooKassa\\Helpers\\RawHeadersParser' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Helpers/RawHeadersParser.php',
@@ -141,6 +142,7 @@ class ComposerStaticInit5ac37e24a5a172604db0be8aecc94712
         'YooKassa\\Model\\PaymentData\\PaymentDataInstallments' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataInstallments.php',
         'YooKassa\\Model\\PaymentData\\PaymentDataMobileBalance' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataMobileBalance.php',
         'YooKassa\\Model\\PaymentData\\PaymentDataQiwi' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataQiwi.php',
+        'YooKassa\\Model\\PaymentData\\PaymentDataSberBnpl' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataSberBnpl.php',
         'YooKassa\\Model\\PaymentData\\PaymentDataSberLoan' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataSberLoan.php',
         'YooKassa\\Model\\PaymentData\\PaymentDataSberbank' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataSberbank.php',
         'YooKassa\\Model\\PaymentData\\PaymentDataSbp' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentData/PaymentDataSbp.php',
@@ -167,6 +169,7 @@ class ComposerStaticInit5ac37e24a5a172604db0be8aecc94712
         'YooKassa\\Model\\PaymentMethod\\PaymentMethodMobileBalance' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodMobileBalance.php',
         'YooKassa\\Model\\PaymentMethod\\PaymentMethodPsb' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodPsb.php',
         'YooKassa\\Model\\PaymentMethod\\PaymentMethodQiwi' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodQiwi.php',
+        'YooKassa\\Model\\PaymentMethod\\PaymentMethodSberBnpl' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodSberBnpl.php',
         'YooKassa\\Model\\PaymentMethod\\PaymentMethodSberLoan' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodSberLoan.php',
         'YooKassa\\Model\\PaymentMethod\\PaymentMethodSberbank' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodSberbank.php',
         'YooKassa\\Model\\PaymentMethod\\PaymentMethodSbp' => __DIR__ . '/..' . '/yoomoney/yookassa-sdk-php/lib/Model/PaymentMethod/PaymentMethodSbp.php',
@@ -341,9 +344,9 @@ class ComposerStaticInit5ac37e24a5a172604db0be8aecc94712
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5ac37e24a5a172604db0be8aecc94712::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5ac37e24a5a172604db0be8aecc94712::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit5ac37e24a5a172604db0be8aecc94712::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitca38438eafd77dc2e558c6974a62b5f3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitca38438eafd77dc2e558c6974a62b5f3::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitca38438eafd77dc2e558c6974a62b5f3::$classMap;
 
         }, null, ClassLoader::class);
     }

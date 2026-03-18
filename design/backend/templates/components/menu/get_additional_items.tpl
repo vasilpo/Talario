@@ -1,6 +1,6 @@
 {if $smarty.const.ACCOUNT_TYPE !== "vendor"}
     {* Quick menu *}
-    {$enable_quick_menu = $config.enable_quick_menu|default:false}
+    {$enable_quick_menu = $config.tweaks.enable_quick_menu|default:false}
 
     {if $enable_quick_menu}
         {$quick_menu_items = [

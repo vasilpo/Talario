@@ -68,7 +68,8 @@ gl.classList.add('view');
 };
 $.ceEvent('on', 'abt__ut2.load_products_block_content', function(response){
 let elem = $(document.getElementById(response.key));
-if (elem.find('.cm-warehouse-block-depends-by-location').length){
+const isWrapped = elem.children().length === 1 && elem.children('[id^="snapping_id_"]').length === 1;
+if (elem.find('.cm-warehouse-block-depends-by-location').length || isWrapped){
 $($(elem.contents().unwrap()).contents().unwrap()).contents().unwrap();
 } else {
 $(elem.contents().unwrap()).contents().unwrap();

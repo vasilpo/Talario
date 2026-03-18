@@ -1,9 +1,16 @@
-{hook name="index:meta"}
+{strip}
+{$meta_data = [
+    name_viewport => [
+        name => "viewport",
+        content => "width=device-width, initial-scale=1"
+    ]
+]}
+{/strip}{hook name="index:meta"}
 {if $display_base_href}
 <base href="{$config.current_location}/" />
 {/if}
 <meta http-equiv="Content-Type" content="text/html; charset={$smarty.const.CHARSET}" data-ca-mode="{$store_trigger}" />
-<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+<meta name="viewport" content="{$meta_data.name_viewport.content}" />
 {hook name="index:meta_description"}
 <meta name="description" content="{$meta_description|default:$location_data.meta_description|html_entity_decode:$smarty.const.ENT_COMPAT:"UTF-8"}" />
 {/hook}

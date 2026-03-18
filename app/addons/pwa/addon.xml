@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>pwa</id>
+    <version>1.0</version>
+    <priority>50</priority>
+    <position>0</position>
+    <status>active</status>
+    <default_language>en</default_language>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <settings edition_type="ROOT,STOREFRONT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="pwa_configuration" edition_type="ROOT,STOREFRONT">
+                        <type>hidden</type>
+                        <default_value>a:2:{s:15:"manifest_status";s:1:"N";s:17:"manifest_app_name";s:0:"";}</default_value>
+                    </item>
+                    <item id="pwa_config" edition_type="ROOT,STOREFRONT">
+                        <type>template</type>
+                        <default_value>config.tpl</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+    <functions>
+        <item for="install">fn_pwa_install</item>
+    </functions>
+</addon>

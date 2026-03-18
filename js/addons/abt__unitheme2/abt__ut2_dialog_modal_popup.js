@@ -62,14 +62,14 @@ if ($('body').is('.sticky-panel')) {
 $('body').addClass('js_page-state_-dialog-with-sticky-bp');
 }
 window.g_fn__lockPage();
-$('html').addClass('modal-is-open');
+$('html').addClass('js_modal_-open');
 
 }
 window.g_var__opened_dialog_counter++;
 $new_active = $this_dialog.addClass('js--dialog-state-_opened js--dialog-state-_active');
 switch (modal_type) {
 case 'type-_select-variation':
-$('html').addClass('select-variation-dialog-is-open');
+$('html').addClass('js_select-variation-dialog_-open');
 $(document).on('click.add_to_cart_in_select_variation_dialog', '.select-variation-dialog .ty-btn__add-to-cart',
 function () {
 $.ceEvent('one', 'ce.ajaxdone', function () {
@@ -83,8 +83,8 @@ window.g_fn__hideDialog($new_active, 'type-_select-variation');
 });
 break;
 case 'type-_notif-extended':
-if ( !$('html').is('.notif-dialog-is-open') ) {
-$('html').addClass('notif-dialog-is-open');
+if ( !$('html').is('.js_notif-dialog_-open') ) {
+$('html').addClass('js_notif-dialog_-open');
 }
 break;
 }
@@ -97,8 +97,8 @@ let $parent_opened = {};
 let $new_active = {};
 let $child_active = {};
 if (
-(modal_type === 'type-_select-variation' && !$('html').is('.select-variation-dialog-is-open') && !$all_opened.filter('.select-variation-dialog').length) ||
-(modal_type === 'type-_notif-extended' && !$('html').is('.notif-dialog-is-open') && !$all_opened.filter('.notification-content-extended').length) ||
+(modal_type === 'type-_select-variation' && !$('html').is('.js_select-variation-dialog_-open') && !$all_opened.filter('.select-variation-dialog').length) ||
+(modal_type === 'type-_notif-extended' && !$('html').is('.js_notif-dialog_-open') && !$all_opened.filter('.notification-content-extended').length) ||
 (modal_type === 'type-_ui-dialog' && !$('html').is('.dialog-is-open') && !$all_opened.filter('.ui-dialog.ui-widget').length)
 ) {
 return;
@@ -114,18 +114,18 @@ window.g_var__opened_dialog_counter = $all_opened_except_this.length;
 switch (modal_type) {
 case 'type-_select-variation':
 $(document).off('click.add_to_cart_in_select_variation_dialog');
-$('html').removeClass('select-variation-dialog-is-open');
+$('html').removeClass('js_select-variation-dialog_-open');
 break;
 case 'type-_notif-extended':
 
 
 if (!$all_opened_except_this.filter('.notification-content-extended').length) {
-$('html').removeClass('notif-dialog-is-open');
+$('html').removeClass('js_notif-dialog_-open');
 }
 break;
 }
 if (window.g_var__opened_dialog_counter === 0) {
-$('html').removeClass('modal-is-open');
+$('html').removeClass('js_modal_-open');
 window.g_fn__unLockPage();
 if ($('body').is('.js_page-state_-dialog-with-sticky-bp')) {
 setTimeout(function () {
@@ -237,5 +237,16 @@ window.g_fn__showDialog($immediate_notif_dialog, 'type-_notif-extended');
 }
 }, 1000);
 });
+
+
+window.fn_alert = function (msg, not_strip) {
+msg = not_strip ? msg : fn_strip_tags(msg);
+$.ceNotification('show', {
+type: 'I',
+title: '',
+message: '<div class="notification-extended-stuffing">' + msg + '</div>',
+message_state: 'I'
+});
+}
 
 }(Tygh, Tygh.$));

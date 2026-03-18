@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Shippings\Services;
 
@@ -31,6 +31,12 @@ class Swisspost implements IService
      * @var array $_allow_multithreading
      */
     private $_allow_multithreading = false;
+    /**
+     * Stored shipping information
+     *
+     * @var array<string, array<string, string>> $shipping_info
+     */
+    private $shipping_info = [];
 
     private function _getZones($zone)
     {
@@ -59,7 +65,7 @@ class Swisspost implements IService
      */
     public function prepareData($shipping_info)
     {
-        $this->_shipping_info = $shipping_info;
+        $this->shipping_info = $shipping_info;
     }
 
      /**
@@ -106,10 +112,13 @@ class Swisspost implements IService
             'error' => false,
         );
 
-        $weight_data = fn_convert_weight_to_imperial_units($this->_shipping_info['package_info']['W']);
-        $shipping_settings = $this->_shipping_info['service_params'];
-        $location = $this->prepareAddress($this->_shipping_info['package_info']['location']);
-        $code = $this->_shipping_info['service_code'];
+        $weight_data = fn_convert_weight_to_imperial_units($this->shipping_info['package_info']['W']);
+        $shipping_settings = $this->shipping_info['service_params'];
+        /** @var array $location */
+        $location = $this->shipping_info['package_info']['location'];
+        $location = $this->prepareAddress($location);
+        /** @var string $code */
+        $code = $this->shipping_info['service_code'];
 
         $path = Registry::get('config.dir.root') . '/app/Tygh/Shippings/Services/swisspost/' . $code;
 

@@ -25,7 +25,7 @@
                  link_meta="ty-geo-maps__geolocation__opener"
                  text=__("geo_maps.select_your_city")
                  id="geo_maps_location_dialog_{$block_id}"
-                 content=""
+                 content=false
                  no_container=true
         }
     <!--geo_maps_location_block_{$block_id}--></div>

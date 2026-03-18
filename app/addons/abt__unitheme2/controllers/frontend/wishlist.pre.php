@@ -38,6 +38,7 @@ $cart_ids[] = $k;
 foreach ($cart_ids as $cart_id) {
 fn_delete_wishlist_product($wl, $cart_id);
 }
+fn_set_notification('W','',__('abt__ut2.notifications.product_removed_from_wishlist'));
 fn_save_cart_content($wl, $auth['user_id'], 'W');
 }
 }

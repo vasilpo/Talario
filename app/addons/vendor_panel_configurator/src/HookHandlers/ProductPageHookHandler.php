@@ -1,26 +1,24 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\VendorPanelConfigurator\HookHandlers;
 
-use Smarty_Internal_Template;
 use Tygh\Addons\VendorPanelConfigurator\Enum\PageEntity;
 use Tygh\Addons\VendorPanelConfigurator\ServiceProvider;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\UserTypes;
 use Tygh\Registry;
-use Tygh\Tygh;
 
 class ProductPageHookHandler
 {
@@ -93,9 +91,6 @@ class ProductPageHookHandler
      * @param string                         $section      Section of the field in the tab
      * @param string                         $field        Field identifier
      * @param array<string, string|bool|int> $field_config Field configuration
-     * @param array<string, string>          $params       Component parameters
-     * @param string                         $content      Output field content
-     * @param \Smarty_Internal_Template      $template     Template instance
      *
      * @return void
      *
@@ -106,10 +101,7 @@ class ProductPageHookHandler
         $tab,
         $section,
         $field,
-        array &$field_config,
-        array $params,
-        $content,
-        Smarty_Internal_Template $template
+        array &$field_config
     ) {
         if (
             !UserTypes::isVendor($this->user_type)
@@ -136,9 +128,6 @@ class ProductPageHookHandler
      * @param string                         $tab            Tab on the page
      * @param string                         $section        Section in the tab
      * @param array<string, string|bool|int> $section_config Section configuration
-     * @param array<string, string>          $params         Component parameters
-     * @param string                         $content        Output section content
-     * @param \Smarty_Internal_Template      $template       Template instance
      *
      * @return void
      *
@@ -148,10 +137,7 @@ class ProductPageHookHandler
         $entity,
         $tab,
         $section,
-        array &$section_config,
-        array $params,
-        $content,
-        Smarty_Internal_Template $template
+        array &$section_config
     ) {
         if (
             !UserTypes::isVendor($this->user_type)

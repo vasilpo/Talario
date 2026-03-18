@@ -44,7 +44,7 @@
                     {if $is_allowed_update_reply}
                         cm-no-hide-input
                     {/if}"
-                style="--text-length: {$product_review_reply.reply|count_characters:true};"
+                style="--text-length: {$product_review_reply.reply|default:0|count_characters:true};"
                 {if !$product_review_reply.reply_company_id && !$product_review_reply && $runtime.company_id}
                     autofocus
                 {/if}

@@ -31,8 +31,8 @@
     {$hide_qty_label=true}
     {$show_variations=true}
     {$show_sku_label=false}
-    {$image_width=$image_width|default:50}
-    {$image_height=$image_height|default:50}
+    {$image_width=$settings.Thumbnails.product_variant_mini_icon_width|default:50}
+    {$image_height=$settings.Thumbnails.product_variant_mini_icon_height|default:50}
 
     {hook name="products:product_variations_list_settings"}{/hook}
 
@@ -51,7 +51,7 @@
     <div class="ut2-variations-list__style"><input type="checkbox"/>{__("abt__ut2.menu.filling_variants.column_filling")}</div>
     {/if}
 
-    <table class="ut2-variations-list{if $block.properties.hide_add_to_cart_button == "YesNo::NO"|enum} ut2-vl-cart-bt{/if}{if $block.properties["product_variations.show_variation_thumbnails"] == "YesNo::YES"|enum} ut2-vl-var-thumb{/if}" style="--ut2-variations-list-image-width: {$image_width}px;" data-ca-sortable="true" data-ca-sort-list="[[1, 0]]">
+    <table class="ut2-variations-list{if $block.properties.hide_add_to_cart_button == "YesNo::NO"|enum} ut2-vl-cart-bt{/if}{if $block.properties["product_variations.show_variation_thumbnails"] == "YesNo::YES"|enum} ut2-vl-var-thumb{/if}" style="--ut2-variations-list-image-width: {$image_width}px;--ut2-variations-list-image-height: {$image_height}px;" data-ca-sortable="true" data-ca-sort-list="[[1, 0]]">
         <thead>
             <tr>
                 <th class="ut2-variations-list__title cm-tablesorter" data-ca-sortable-column="true" aria-sort="ask">{__("sort_by")} {__("price")}</th>

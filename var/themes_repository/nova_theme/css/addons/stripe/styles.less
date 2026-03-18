@@ -1,0 +1,37 @@
+@import "../../responsive/css/addons/stripe/styles.less";
+
+/* ==========================================================================
+Stripe
+========================================================================== */
+
+// design/themes/responsive/templates/addons/stripe/hooks/buttons/add_to_cart.post.tpl
+
+.stripe-payment-button--apple_pay {
+    --apple-pay-button-width: 100%; // --apple-pay-button-width: 140px;
+    --apple-pay-button-height: calc(var(--cs-buttons-font-size) * var(--ty-btn-line-height) + 12px * 2); // --apple-pay-button-height: 30px;
+    --apple-pay-button-border-radius: var(var(--cs-base-border-radius)); // --apple-pay-button-border-radius: 5px;
+}
+
+.ty-product-block__button .ty-btn.stripe-payment-button {
+    --ty-btn-line-height: 1.428571429;
+
+    padding: 0;
+    height: ~"calc(var(--cs-buttons-font-size) * var(--ty-btn-line-height) + 12px * 2)";
+}
+
+.stripe-payment-button {
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+.stripe-payment-button:not(.hidden) {
+    display: inline-flex;
+}
+
+// design/themes/nova_theme/templates/views/products/components/product_bottom_fixed.tpl
+.ty-product-bottom-fixed__add-to-cart .stripe-payment-button {
+    display: none;
+}
+
+/* /Stripe */

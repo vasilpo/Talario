@@ -1,0 +1,251 @@
+/** Convert Less variables to CSS custom properties (CSS variables) **/
+/** Example: @textColor -> --cs-text-color                          **/
+
+:root {
+    --cs-rounded-corners: @rounded_corners;
+    --cs-links: @links;
+    --cs-links-hover: @links_hover;
+    --cs-menu-links: @menu_links;
+    --cs-menu: @menu;
+    --cs-menu-hover: @menu_hover;
+    --cs-base: @base;
+    --cs-font: @font;
+    --cs-secondary-text: @secondary_text;
+    --cs-primary-button: @primary_button;
+    --cs-primary-button-hover: @primary_button_hover;
+    --cs-secondary-button: @secondary_button;
+    --cs-secondary-button-hover: @secondary_button_hover;
+    --cs-tertiary-button: @tertiary_button;
+    --cs-tertiary-button-hover: @tertiary_button_hover;
+    --cs-sidebar: @sidebar;
+    --cs-price: @price;
+    --cs-discount-label: @discount_label;
+    --cs-product-label: @product_label;
+    --cs-shipping-label: @shipping_label;
+    --cs-in-stock: @in_stock;
+    --cs-out-of-stock: @out_of_stock;
+    --cs-top-panel-links: @top_panel_links;
+    --cs-top-panel-links-hover: @top_panel_links_hover;
+    --cs-top-panel-text: @top_panel_text;
+    --cs-footer-text: @footer_text;
+    --cs-footer-text-hover: @footer_text_hover;
+    --cs-decorative: @decorative;
+
+
+    --cs-general-bg-color: @general_bg_color;
+    --cs-general-bg-image: @general_bg_image;
+    --cs-general-bg-repeat: @general_bg_repeat;
+    --cs-general-bg-scroll: @general_bg_scroll;
+
+    --cs-top-panel-bg: @top_panel_bg;
+    --cs-top-panel-bg-full: @top_panel_bg_full;
+    --cs-top-panel-bg-transparent: @top_panel_bg_transparent;
+    --cs-top-panel-bg-grad-stop: @top_panel_bg_grad_stop;
+
+    --cs-header-bg: @header_bg;
+    --cs-header-bg-full: @header_bg_full;
+    --cs-header-bg-transparent: @header_bg_transparent;
+    --cs-header-bg-grad-stop: @header_bg_grad_stop;
+
+    --cs-content-bg: @content_bg;
+    --cs-content-bg-full: @content_bg_full;
+    --cs-content-bg-transparent: @content_bg_transparent;
+
+    --cs-footer-bg: @footer_bg;
+    --cs-footer-bg-full: @footer_bg_full;
+    --cs-footer-bg-transparent: @footer_bg_transparent;
+    --cs-footer-bg-grad-stop: @footer_bg_grad_stop;
+
+    --cs-body-font: @body_font;
+    --cs-body-font-size: @body_font_size;
+    --cs-body-font-style: @body_font_style;
+    --cs-body-font-weight: @body_font_weight;
+    --cs-headings-font: @headings_font;
+    --cs-headings-font-size: @headings_font_size;
+    --cs-headings-font-decoration: @headings_font_decoration;
+    --cs-headings-font-style: @headings_font_style;
+    --cs-headings-font-weight: @headings_font_weight;
+    --cs-links-font: @links_font;
+    --cs-links-font-size: @links_font_size;
+    --cs-links-font-decoration: @links_font_decoration;
+    --cs-links-font-style: @links_font_style;
+    --cs-links-font-weight: @links_font_weight;
+    --cs-price-font: @price_font;
+    --cs-price-font-size: @price_font_size;
+    --cs-price-font-decoration: @price_font_decoration;
+    --cs-price-font-style: @price_font_style;
+    --cs-price-font-weight: @price_font_weight;
+    --cs-buttons-font: @buttons_font;
+    --cs-buttons-font-size: @buttons_font_size;
+    --cs-buttons-font-decoration: @buttons_font_decoration;
+    --cs-buttons-font-style: @buttons_font_style;
+    --cs-buttons-font-weight: @buttons_font_weight;
+
+    --cs-checkout-selected-control-border: @checkout_selected_control_border;
+    --cs-checkout-control-border: @checkout_control_border;
+    --cs-checkout-input-border: @checkout_input_border;
+    --cs-checkout-selected-input-border: @checkout_selected_input_border;
+    --cs-checkout-step-title: @checkout_step_title;
+    --cs-checkout-input-text: @checkout_input_text;
+    --cs-checkout-input-label: @checkout_input_label;
+    --cs-checkout-control-background: @checkout_control_background;
+    --cs-checkout-selected-control-background: @checkout_selected_control_background;
+    --cs-checkout-control-title: @checkout_control_title;
+    --cs-checkout-control-description: @checkout_control_description;
+    --cs-checkout-control-label: @checkout_control_label;
+    --cs-checkout-terms-background: @checkout_terms_background;
+    --cs-checkout-error: @checkout_error;
+    --cs-checkout-highlight: @checkout_highlight;
+    --cs-checkout-link: @checkout_link;
+
+
+
+    /** Bootstrap like variables **/
+
+    /** Variables **/
+    /** -------------------------------------------------- **/
+
+
+    /** Component sizing **/
+    /** ------------------------- **/
+    /** Based on 14px font-size and 20px line-height **/
+
+    --cs-font-size-large: @fontSizeLarge;
+    --cs-font-size-small: @fontSizeSmall;
+    --cs-font-size-mini: @fontSizeMini;
+
+    --cs-base-border-radius: @baseBorderRadius;
+    --cs-border-radius-small: @borderRadiusSmall;
+
+
+    /** Tables **/
+    /** ------------------------- **/
+    --cs-table-background-accent: @tableBackgroundAccent;
+
+    /** Buttons **/
+    /** ------------------------- **/
+    --cs-btn-color: @btnColor;
+    --cs-btn-color-highlight: @btnColorHighlight;
+    --cs-btn-background: @btnBackground;
+
+    --cs-btn-primary-color: @btnPrimaryColor;
+    --cs-btn-primary-color-highlight: @btnPrimaryColorHighlight;
+
+    --cs-btn-secondary-color: @btnSecondaryColor;
+    --cs-btn-secondary-color-highlight: @btnSecondaryColorHighlight;
+
+    --cs-btn-tertiary-color: @btnTertiaryColor;
+    --cs-btn-tertiary-color-highlight: @btnTertiaryColorHighlight;
+
+    --cs-btn-link-color: @btnLinkColor;
+    --cs-btn-link-color-highlight: @btnLinkColorHighlight;
+    --cs-btn-link-background: @btnLinkBackground;
+    --cs-btn-link-background-highlight: @btnLinkBackgroundHighlight;
+    --cs-btn-link-border: @btnLinkBorder;
+
+
+    /** Forms **/
+    /** ------------------------- **/
+    --cs-input-background: @inputBackground;
+    --cs-input-border: @inputBorder;
+    --cs-input-border-highlight: @inputBorderHighlight;
+    --cs-input-placeholder: @inputPlaceholder;
+    --cs-input-muted-text: @inputMutedText;
+    --cs-input-border-radius: @inputBorderRadius;
+
+    /** Dropdowns **/
+    /** ------------------------- **/
+
+    --cs-dropdown-link-color: @dropdownLinkColor;
+    --cs-dropdown-link-color-hover: @dropdownLinkColorHover;
+    --cs-dropdown-link-background-hover: @dropdownLinkBackgroundHover;
+
+
+
+    /** COMPONENT VARIABLES **/
+    /** -------------------------------------------------- **/
+
+
+    /** Form states and alerts **/
+    /** ------------------------- **/
+    --cs-success-text: @successText;
+    --cs-success-background: @successBackground;
+
+
+    /** Tooltips and popovers **/
+    /** ------------------------- **/
+    --cs-modal-font-family: @modalFontFamily;
+
+
+    /** New variables **/
+    --cs-shadow: @shadow;
+}
+
+
+
+/** Mixins **/
+
+/** Theme editor dynamic variables **/
+
+/** Rounded corners **/
+.roundedCornersRadiusMixin() when (@rounded_corners = true) {
+    --cs-base-rounded-corners-radius: var(--cs-base-border-radius);     /** var(--cs-base-rounded-corners-radius) **/
+    --cs-rounded-corners-radius-small: var(--cs-border-radius-small);   /** var(--cs-rounded-corners-radius-small) **/
+    --cs-input-rounded-corners-radius: var(--cs-input-border-radius);   /** var(--cs-input-rounded-corners-radius) **/
+}
+
+.roundedCornersRadiusMixin() when (@rounded_corners = false) {
+    --cs-base-rounded-corners-radius: 0;                                /** var(--cs-base-rounded-corners-radius) **/
+    --cs-rounded-corners-radius-small: 0;                               /** var(--cs-rounded-corners-radius-small) **/
+    --cs-input-rounded-corners-radius: 0;                               /** var(--cs-input-rounded-corners-radius) **/
+}
+
+
+/** Transparent/not transparent footer background **/
+.footerMenuBgIsTransparent() when(@footer_bg_transparent = true) {
+    --cs-footer-inner-background-color: transparent;
+    --cs-footer-inner-background-image: none;
+    --cs-footer-copyright-color: transparent;
+    --cs-footer-copyright-image: none;
+}
+
+.footerMenuBgIsTransparent() when(@footer_bg_transparent = false) {
+    --cs-footer-inner-background-color: var(--cs-footer-bg-grad-stop);
+    --cs-footer-inner-background-image: linear-gradient(to bottom, var(--cs-footer-bg-grad-stop), var(--cs-footer-bg-grad-stop));
+    --cs-footer-copyright-color: var(--cs-footer-bg);
+    --cs-footer-copyright-image: linear-gradient(to bottom, var(--cs-footer-bg), var(--cs-footer-bg));
+}
+
+
+:root {
+    .roundedCornersRadiusMixin();
+    .footerMenuBgIsTransparent();
+}
+
+
+/** Two columns for grid list on mobile.  **/
+/** Templates: **/
+/** - blocks/list_templates/grid_list.tpl **/
+/** - blocks/vendor_list_templates/featured_vendors.tpl **/
+/** - views/promotions/list.tpl **/
+@media screen and (max-width: 480px) {
+    .ty-columns(@columns);
+
+    .ty-columns (@index) when (@index > 0) {
+        .ty-columns(@index - 1);
+        .grid-list .ty-column@{index} {
+            width: percentage((100 / 2) * 0.01);
+        }
+    }
+    .ty-columns(0) { }
+} /** media 480 **/
+
+
+/** Lite checkout mixin (views/checkout/lite_checkout.less) **/
+.set_shadow (@color, @x, @y, @value) when (iscolor(@color)) {
+    box-shadow: @x @y 0 1px @color;
+}
+
+.set_shadow (@color, @x, @y, @value) when not (iscolor(@color)) {
+    box-shadow: @x @y 0 1px @value;
+}

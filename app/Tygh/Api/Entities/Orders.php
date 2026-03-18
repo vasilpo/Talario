@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Api\Entities;
 
@@ -176,7 +176,12 @@ class Orders extends AEntity
         if ($valid_params) {
 
             $cart['payment_id'] = $params['payment_id'];
-            $cart['storefront_id'] = StorefrontProvider::getStorefront()->storefront_id;
+
+            if (fn_allowed_for('MULTIVENDOR:ULTIMATE') && !empty($params['storefront_id'])) {
+                $cart['storefront_id'] = $params['storefront_id'];
+            } else {
+                $cart['storefront_id'] = StorefrontProvider::getStorefront()->storefront_id;
+            }
 
             $customer_auth = fn_fill_auth($cart['user_data'], [], false, 'C');
 
@@ -234,6 +239,8 @@ class Orders extends AEntity
                 }
             }
 
+            fn_check_order_entites_are_available_on_storefront($cart);
+
             $cart['calculate_shipping'] = true;
             fn_calculate_cart_content($cart, $customer_auth);
 
@@ -264,6 +271,10 @@ class Orders extends AEntity
 
                 $data['message'] = __('checkout.min_cart_subtotal_required', [
                     '[amount]' => $min_amount,
+                ]);
+            } elseif (!empty($cart['unavialable_entity'])) {
+                $data['message'] = __('checkout.chosen_entity_is_unavailable', [
+                    '[entity]' => $cart['unavialable_entity'],
                 ]);
             }
         }

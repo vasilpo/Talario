@@ -8,7 +8,7 @@
 
         <div class="ty-control-group">
             <label for="login_{$id}" class="ty-login__filed-label ty-control-group__label cm-required cm-trim cm-email">{__("email")}</label>
-            <input type="text" id="login_{$id}" name="user_login" size="30" value="{$user_login}" class="ty-login__input"/>
+            <input type="text" id="login_{$obj_prefix}{$obj_id}{$id}" name="user_login" size="30" value="{$user_login}" class="ty-login__input"/>
         </div>
 
         <div class="ty-control-group password-forgot">

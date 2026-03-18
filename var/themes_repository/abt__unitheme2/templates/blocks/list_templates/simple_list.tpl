@@ -39,7 +39,7 @@
             {assign var="name" value="name_$obj_id"}{$smarty.capture.$name nofilter}
             {assign var="sku" value="sku_$obj_id"}{$smarty.capture.$sku nofilter}
 
-            {include file="blocks/product_list_templates/components/average_rating.tpl"}
+            {include file="blocks/product_list_templates/components/average_rating.tpl" meta="" show_label_in_title=""}
 
             {assign var="product_amount" value="product_amount_`$obj_id`"}
             {$smarty.capture.$product_amount nofilter}

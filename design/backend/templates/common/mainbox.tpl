@@ -37,7 +37,7 @@
 {/if}
 
 {$show_select_storefront = !(isset($_REQUEST.show_select_storefront) && $_REQUEST.show_select_storefront === "N")}
-{if (fn_allowed_for('MULTIVENDOR:ULTIMATE'))}
+{if fn_allowed_for('MULTIVENDOR') && fn_is_allowed(constant("\Tygh\Licensing\Features::MULTIPLE_STOREFRONTS"))}
     {if !$runtime.is_multiple_storefronts}
         {$select_storefront = false}
     {/if}
@@ -71,7 +71,7 @@
     {$content_heading_title_class = "admin-content-heading__title--lg"}
 {/if}
 
-{$scroll_header = $config.scroll_header|default:false}
+{$scroll_header = $config.tweaks.scroll_header|default:false}
 
 <script>
 // Init ajax callback (rebuild)

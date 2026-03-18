@@ -43,7 +43,7 @@ class LockProvider implements ServiceProviderInterface
     public function register(Container $app)
     {
         $app['lock.factory'] = function (Container $app) {
-            $provider = Registry::ifGet('config.lock_backend', 'dummy');
+            $provider = Registry::get('config.lock_backend');
 
             if (!isset($app['lock.provider.' . $provider])) {
                 $provider = 'dummy';
@@ -57,15 +57,11 @@ class LockProvider implements ServiceProviderInterface
         };
 
         $app['lock.provider.database'] = function (Container $app) {
-            return new RetryTillSaveStore(
-                new DatabaseStore($app['db'])
-            );
+            return new DatabaseStore($app['db']);
         };
 
         $app['lock.provider.redis'] = function (Container $app) {
-            return new RetryTillSaveStore(
-                new RedisStore($app['lock.provider.redis.client'])
-            );
+            return new RedisStore($app['lock.provider.redis.client']);
         };
 
         $app['lock.provider.redis.client'] = function (Container $app) {
