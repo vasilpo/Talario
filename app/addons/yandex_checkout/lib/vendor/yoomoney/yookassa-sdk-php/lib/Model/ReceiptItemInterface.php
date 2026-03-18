@@ -42,8 +42,8 @@ use YooKassa\Model\Receipt\MarkQuantity;
  * @property-read MarkQuantity $mark_quantity Дробное количество маркированного товара (тег в 54 ФЗ — 1291)
  * @property-read float $amount Суммарная стоимость покупаемого товара в копейках/центах
  * @property-read AmountInterface $price Цена товара (тег в 54 ФЗ — 1079)
- * @property-read int $vatCode Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199)
- * @property-read int $vat_code Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199)
+ * @property-read int $vatCode Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199)
+ * @property-read int $vat_code Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199)
  * @property-read string $paymentSubject Признак предмета расчета (тег в 54 ФЗ — 1212)
  * @property-read string $payment_subject Признак предмета расчета (тег в 54 ФЗ — 1212)
  * @property-read string $paymentMode Признак способа расчета (тег в 54 ФЗ — 1214)
@@ -95,7 +95,7 @@ interface ReceiptItemInterface
 
     /**
      * Возвращает ставку НДС
-     * @return int|null Ставка НДС, число 1-10, или null, если ставка не задана
+     * @return int|null Ставка НДС, число 1-12, или null, если ставка не задана
      */
     public function getVatCode();
 

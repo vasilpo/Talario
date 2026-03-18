@@ -33,7 +33,7 @@
 	[id*="warehouses_stock_availability"] {
 		&:not(:empty) {
 			padding: var(--gap-sm);
-			border: 1px solid @base;
+			border: 1px solid var(--color-base);
 			background-color: @general_bg_color;
 			border-radius: var(--border-radius-box);
 		}
@@ -49,6 +49,6 @@
 	}
 
 	input[type="text"].ty-warehouses-stores-search__query {
-		border-color: @base5 !important;
+		border-color: var(--color-base5) !important;
 	}
 }

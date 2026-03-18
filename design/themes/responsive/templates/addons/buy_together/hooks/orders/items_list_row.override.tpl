@@ -29,7 +29,7 @@
 
                 <div class="ty-overflow-hidden ty-orders-detail__table-description-wrapper">
                     <div class="ty-ml-s ty-orders-detail__table-description">
-                        {if $product.is_accessible}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{/if}
+                        {if $product.is_accessible}<a class="ty-orders-detail__table-title" href="{"products.view?product_id=`$product.product_id`"|fn_url}">{/if}
                             {$product.product nofilter}
                         {if $product.is_accessible}</a>{/if}
 

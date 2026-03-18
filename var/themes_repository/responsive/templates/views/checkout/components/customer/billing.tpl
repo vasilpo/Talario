@@ -36,7 +36,7 @@
     </div>
 <!--litecheckout_use_billing_address_form--></div>
 
-<div class="litecheckout__container" id="litecheckout_billing_address_wrapper">
+<div class="litecheckout__container ty-lite-checkout__customer-billing-address_wrapper" id="litecheckout_billing_address_wrapper">
     <div class="{if !$use_billing_address}hidden{/if}" id="litecheckout_step_billing_address">
         <div class="litecheckout__group">
             <input

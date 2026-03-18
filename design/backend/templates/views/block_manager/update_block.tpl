@@ -123,7 +123,7 @@
                     <label class="control-label" for="block_{$html_id}_wrapper">{__("wrapper")}</label>
                     <div class="controls">
                     <select name="snapping_data[wrapper]" id="block_{$html_id}_wrapper">
-                        <option value="">--</option>
+                        <option value="">{__("none")}</option>
                         {foreach from=$block_scheme.wrappers item=w key=k}
                             <option value="{$k}" {if $block.wrapper == $k}selected="selected"{/if}>{$w.name}</option>
                         {/foreach}

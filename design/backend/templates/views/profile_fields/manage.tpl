@@ -129,45 +129,49 @@
                                 {$_required = "`$area`_required"}
                                 <td class="center" data-th="{__($area)} ({__("show")} / {__("required")})" data-ca-profile-fields-area-group="{$area}" width="{$area_col_width}%">
                                     {hook name="profile_fields:field_settings"}
-                                    <input type="hidden"
-                                        name="fields_data[{$field.field_id}][{$_show}]"
-                                        value="{if ($field.field_name === "email" && $field.is_default === "YesNo::YES"|enum)
-                                            || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)}{"YesNo::YES"|enum}{else}{"YesNo::NO"|enum}{/if}"
-                                    />
-                                    <input type="checkbox"
-                                        name="fields_data[{$field.field_id}][{$_show}]"
-                                        value="{"YesNo::YES"|enum}"
-                                        id="sw_req_{$area}_{$field.field_id}"
-                                        class="cm-switch-availability"
-                                        data-ca-profile-fields-area="{$area}"
-                                        {if $field.$_show === "YesNo::YES"|enum
-                                            || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)
-                                        }
-                                            checked="checked"
-                                        {/if}
-                                        {if ($field.field_name === "email" && $field.is_default === "YesNo::YES"|enum)
-                                            || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)
-                                        }
-                                            disabled="disabled"
-                                        {/if}
+                                    <div class="inline-block-basic">
+                                        <input type="hidden"
+                                            name="fields_data[{$field.field_id}][{$_show}]"
+                                            value="{if ($field.field_name === "email" && $field.is_default === "YesNo::YES"|enum)
+                                                || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)}{"YesNo::YES"|enum}{else}{"YesNo::NO"|enum}{/if}"
                                         />
-                                    <input type="hidden"
-                                        name="fields_data[{$field.field_id}][{$_required}]"
-                                        value="{if $field.field_name === "email" && $field.is_default === "YesNo::YES"|enum || $field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum}{"YesNo::YES"|enum}{else}{"YesNo::NO"|enum}{/if}"
-                                    />
-                                    <span id="req_{$area}_{$field.field_id}">
                                         <input type="checkbox"
-                                            name="fields_data[{$field.field_id}][{$_required}]"
+                                            name="fields_data[{$field.field_id}][{$_show}]"
                                             value="{"YesNo::YES"|enum}"
+                                            id="sw_req_{$area}_{$field.field_id}"
+                                            class="cm-switch-availability"
                                             data-ca-profile-fields-area="{$area}"
-                                            {if $field.$_required === "YesNo::YES"|enum}
+                                            {if $field.$_show === "YesNo::YES"|enum
+                                                || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)
+                                            }
                                                 checked="checked"
                                             {/if}
-                                            {if $field.field_name === "email" && $field.is_default === "YesNo::YES"|enum || $field.$_show === "YesNo::NO"|enum || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)}
+                                            {if ($field.field_name === "email" && $field.is_default === "YesNo::YES"|enum)
+                                                || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)
+                                            }
                                                 disabled="disabled"
                                             {/if}
+                                            />
+                                    </div>
+                                    <div class="inline-block-basic shift-left">
+                                        <input type="hidden"
+                                            name="fields_data[{$field.field_id}][{$_required}]"
+                                            value="{if $field.field_name === "email" && $field.is_default === "YesNo::YES"|enum || $field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum}{"YesNo::YES"|enum}{else}{"YesNo::NO"|enum}{/if}"
                                         />
-                                    </span>
+                                        <span id="req_{$area}_{$field.field_id}">
+                                            <input type="checkbox"
+                                                name="fields_data[{$field.field_id}][{$_required}]"
+                                                value="{"YesNo::YES"|enum}"
+                                                data-ca-profile-fields-area="{$area}"
+                                                {if $field.$_required === "YesNo::YES"|enum}
+                                                    checked="checked"
+                                                {/if}
+                                                {if $field.field_name === "email" && $field.is_default === "YesNo::YES"|enum || $field.$_show === "YesNo::NO"|enum || ($field.field_name === "company" && $field.profile_type === "ProfileTypes::CODE_SELLER"|enum)}
+                                                    disabled="disabled"
+                                                {/if}
+                                            />
+                                        </span>
+                                    </div>
                                     {/hook}
                                 </td>
                             {/foreach}

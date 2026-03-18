@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\RusTaxes\Receipt\Item as ReceiptItem;
 use Tygh\Addons\RusTaxes\TaxType;
@@ -39,7 +39,7 @@ function fn_rus_sdek_install()
     }
 
     $path = Registry::get('config.dir.root') . '/app/addons/rus_sdek/database/cities_sdek.csv';
-    fn_rus_cities_read_cities_by_chunk($path, RUS_CITIES_FILE_READ_CHUNK_SIZE, 'fn_rus_sdek_add_cities_in_table');
+    fn_cities_read_cities_by_chunk($path, CITIES_FILE_READ_CHUNK_SIZE, 'fn_rus_sdek_add_cities_in_table');
 }
 
 function fn_rus_sdek_uninstall()
@@ -423,7 +423,7 @@ function fn_rus_sdek_get_status($params = array(), $items_per_page = 0, $lang_co
     }
 
     $join = db_quote(' LEFT JOIN ?:rus_sdek_cities_link as b ON a.city_code = b.sdek_city_code');
-    $join .= db_quote(' LEFT JOIN ?:rus_city_descriptions as c ON b.city_id = c.city_id AND c.lang_code = ?s', $lang_code);
+    $join .= db_quote(' LEFT JOIN ?:city_descriptions as c ON b.city_id = c.city_id AND c.lang_code = ?s', $lang_code);
 
     $sort_by = !empty($params['sort_by']) ? $params['sort_by'] : 'order_id';
     $sort = 'asc';
@@ -486,6 +486,7 @@ function fn_sdek_normalize_tax_type($tax_type)
         TaxType::VAT_110 => 'vat10',
         TaxType::VAT_118 => 'vat18',
         TaxType::VAT_120 => 'vat20',
+        TaxType::VAT_122 => 'vat22',
     ];
 
     $tax_type = isset($map[$tax_type]) ? $map[$tax_type] : $tax_type;
@@ -520,6 +521,9 @@ function fn_sdek_calculate_tax_sum($tax_type, $price)
             break;
         case TaxType::VAT_20:
             $result = $price * 20 / 120;
+            break;
+        case TaxType::VAT_22:
+            $result = $price * 22 / 122;
             break;
         default:
             $result = 0;
@@ -649,7 +653,7 @@ function fn_rus_sdek_get_sdek_data($city_ids)
  */
 function fn_rus_sdek_add_cities_in_table($rows)
 {
-    $cities_hash = fn_rus_cities_get_all_cities($rows);
+    $cities_hash = fn_cities_get_all_cities($rows);
 
     foreach ($rows as $city_data) {
         $city_data['City'] = (string) trim($city_data['City']);

@@ -7,8 +7,8 @@
     {assign var="tbh" value=$settings.abt__ut2.product_list.$tmpl.image_height[$settings.ab__device]|default:$settings.Thumbnails.product_lists_thumbnail_height}
 
 	{$show_labels_in_title = false}
-    {$defaul_show_brand_logo = $settings.abt__ut2.product_list.products_without_options.show_brand_logo[$settings.ab__device] === "YesNo::YES"|enum}
-    {$show_brand_logo = $show_brand_logo|default:$defaul_show_brand_logo}
+    {$show_brand_name = $settings.abt__ut2.product_list.products_without_options.show_brand[$settings.ab__device] === "name"}
+    {$show_brand_logo = $settings.abt__ut2.product_list.products_without_options.show_brand[$settings.ab__device] === "logo"}
     {$button_type_add_to_cart = $settings.abt__ut2.product_list.$tmpl.show_button_add_to_cart[$settings.ab__device]}
 
 	{include file="blocks/product_list_templates/components/show_features_conditions.tpl"}
@@ -122,6 +122,9 @@
                         {/if}
                     <!--{$smarty.capture.abt__service_buttons_id}--></div>
                 </div>
+
+                {if $settings.ab__device === "mobile"}{hook name="products:color_variations"}{/hook}{/if}
+
                 <div class="ut2-pl__content">
                 {hook name="products:product_block_content"}
                     {if $js_product_var}
@@ -132,24 +135,28 @@
                     {* /res_delete_1 *}
 
                     <div class="ut2-pl__info">
-                        <div class="ut2-pl__item-name">
-                            {assign var="name" value="name_$obj_id"}
-                            {$smarty.capture.$name nofilter}
+                        <div class="ut2-pl__info__head-group">
+                            <div class="ut2-pl__info__head-group__main">
+                                <div class="ut2-pl__item-name">
+                                    {assign var="name" value="name_$obj_id"}
+                                    {$smarty.capture.$name nofilter}
+                                </div>
 
-                            {if $show_brand_logo && $settings.abt__ut2.general.brand_feature_id > 0}
-                                {$b_feature = $product.abt__ut2_features[$settings.abt__ut2.general.brand_feature_id]}
-                                {if $b_feature.variants[$b_feature.variant_id].image_pairs}
-                                    <div class="brand-img" style="height:20px">
-                                        {include file="common/image.tpl" image_height=20 images=$b_feature.variants[$b_feature.variant_id].image_pairs no_ids=true}
-                                    </div>
+                                <div class="ut2-pl__extra-block clearfix">
+                                    {include file="blocks/product_list_templates/components/average_rating.tpl" meta="" show_label_in_title=""}
+                                    {if $product.product_code}{assign var="sku" value="sku_$obj_id"}{$smarty.capture.$sku nofilter}{/if}
+                                </div>
+                            </div>
+                            <div class="ut2-pl__info__head-group__aside">
+                                {if $show_brand_logo && $settings.abt__ut2.general.brand_feature_id > 0}
+                                    {$b_feature = $product.abt__ut2_features[$settings.abt__ut2.general.brand_feature_id]}
+                                    {if $b_feature.variants[$b_feature.variant_id].image_pairs}
+                                        <div class="brand-img">
+                                            {include file="common/image.tpl" image_height=40 image_width=60 images=$b_feature.variants[$b_feature.variant_id].image_pairs no_ids=true}
+                                        </div>
+                                    {/if}
                                 {/if}
-                            {/if}
-                        </div>
-                        
-                        <div class="ut2-pl__extra-block clearfix">
-                            {include file="blocks/product_list_templates/components/average_rating.tpl"}
-
-                            {if $product.product_code}{assign var="sku" value="sku_$obj_id"}{$smarty.capture.$sku nofilter}{/if}
+                            </div>
                         </div>
 
 						{assign var="prod_descr" value="prod_descr_`$obj_id`"}
@@ -159,12 +166,14 @@
                             </div>
                         {/if}
 
+                        {if $settings.ab__device !== "mobile"}{hook name="products:color_variations"}{/hook}{/if}
+
                         {hook name="products:additional_info_before"}{/hook}
                         {hook name="products:additional_info"}{/hook}
                         {hook name="products:ab__s_pictograms_pos_1"}{/hook}
 
-						{if $show_features && !$hide_features && $product.abt__ut2_features && $settings.abt__ut2.product_list.$tmpl.item_bottom_content[$settings.ab__device] != 'none'}
-                            <div class="ut2-pl__feature">
+						{if $show_features && !$hide_features && $product.abt__ut2_features && $settings.abt__ut2.product_list.$tmpl.item_bottom_content[$settings.ab__device] !== "none"}
+                            <div class="ut2-features-list">
                                 {assign var="product_features" value="product_features_`$obj_id`"}
                                 {$smarty.capture.$product_features nofilter}
                             </div>

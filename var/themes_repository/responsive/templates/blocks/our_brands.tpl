@@ -13,6 +13,12 @@
     {$item_quantity_desktop_small = $item_quantity - 1}
     {$item_quantity_tablet = $item_quantity - 1}
 {/if}
+{$is_grayscale = $is_grayscale|default:true}
+{$show_carousel_wrapper = $show_carousel_wrapper|default:false}
+
+{if $show_carousel_wrapper}
+    <div class="ty-owl-container-wrapper {if $block.properties.outside_navigation === "YesNo::YES"|enum}ty-owl-container-wrapper--outside-navigation{/if}">
+{/if}
 
 {if $block.properties.outside_navigation == "Y"}
     <div class="owl-theme ty-owl-controls">
@@ -33,10 +39,24 @@
     data-ca-scroller-item-mobile="{$item_quantity_mobile}"
 >
     {foreach from=$brands item="brand" name="for_brands"}
-            {include file="common/image.tpl" assign="object_img" class="ty-grayscale" image_width=$block.properties.thumbnail_width image_height=$block.properties.thumbnail_width images=$brand.image_pair no_ids=true lazy_load=true obj_id="scr_`$block.block_id`000`$brand.variant_id`"}
+            {include file="common/image.tpl"
+                assign="object_img"
+                class=(($is_grayscale) ? "ty-grayscale" : "")
+                image_width=$block.properties.thumbnail_width
+                image_height=$block.properties.thumbnail_width
+                images=$brand.image_pair
+                no_ids=true
+                lazy_load=true
+                obj_id="scr_`$block.block_id`000`$brand.variant_id`"
+            }
             <div class="ty-center ty-scroller__item">
                 <a href="{"product_features.view?variant_id=`$brand.variant_id`"|fn_url}">{$object_img nofilter}</a>
             </div>
     {/foreach}
 </div>
+
+{if $show_carousel_wrapper}
+    </div>
+{/if}
+
 {include file="common/scroller_init.tpl" items=$brands prev_selector="#owl_prev_`$obj_prefix`" next_selector="#owl_next_`$obj_prefix`"}

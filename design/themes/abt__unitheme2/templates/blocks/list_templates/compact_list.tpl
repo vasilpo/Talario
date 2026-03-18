@@ -52,9 +52,9 @@
                             <div class="ty-compact-list__title">
                                 {assign var="name" value="name_$obj_id"}
 
-                                <span>{$smarty.capture.$name nofilter}</span>
+                                <div class="ty-compact-list__name">{$smarty.capture.$name nofilter}</div>
 
-                                {include file="blocks/product_list_templates/components/average_rating.tpl"}
+                                {include file="blocks/product_list_templates/components/average_rating.tpl" meta="" show_label_in_title=""}
     							
     							{if $settings.abt__ut2.product_list.short_list.show_sku[$settings.ab__device] === "YesNo::YES"|enum && $product.product_code}
     							    <div class="ty-compact-list__sku">

@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: no\n"
-"X-Crowdin-File: /release-4.18.4/addons/stripe_connect.po\n"
-"X-Crowdin-File-ID: 9687\n"
-"PO-Revision-Date: 2025-05-26 13:31\n"
+"X-Crowdin-File: /release-4.20.1/addons/stripe_connect.po\n"
+"X-Crowdin-File-ID: 10267\n"
+"PO-Revision-Date: 2026-02-05 12:42\n"
 
 msgctxt "Addons::name::stripe_connect"
 msgid "Stripe Connect payments"
@@ -23,18 +23,6 @@ msgstr "En Stripe-løsning for markedsplasser. Lar deg godta betalinger gjennom 
 msgctxt "SettingsSections::stripe_connect::general"
 msgid "General"
 msgstr "Generelt"
-
-msgctxt "SettingsOptions::stripe_connect::collect_payouts"
-msgid "Commission includes"
-msgstr "Provisjonen inkluderer"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::N"
-msgid "Order commission"
-msgstr "Ordre provisjon"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::Y"
-msgid "[Deprecated] Order commission and unpaid payouts"
-msgstr ""
 
 msgctxt "Languages::stripe_connect.stripe_connect"
 msgid "Stripe Connect"
@@ -87,6 +75,10 @@ msgstr "Koblet til"
 msgctxt "Languages::stripe_connect.not_connected"
 msgid "Not connected"
 msgstr "Ikke koblet til"
+
+msgctxt "Languages::stripe_connect.stripe_connectivity.description"
+msgid "Whether or not a vendor has connected their Stripe account to the marketplace."
+msgstr ""
 
 msgctxt "Languages::stripe_connect.account_connected"
 msgid "Your Stripe account has been successfully connected to the store"
@@ -219,10 +211,6 @@ msgstr "Stripe-prosessorparametere mangler"
 msgctxt "Languages::stripe_connect.account_was_deauthorized"
 msgid "Account of company \"[company]\" (company ID = [company_id]) was deauthorized"
 msgstr "Kontoen til selskapet \"[company]\" (firma-ID = [company_id]) ble fjernet fra autoriteten"
-
-msgctxt "Languages::stripe_connect.on"
-msgid "On"
-msgstr "På"
 
 msgctxt "Languages::stripe_connect.delay_transfer_of_funds"
 msgid "Delay transfer of funds"

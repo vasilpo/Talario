@@ -1,0 +1,21 @@
+{include file="design/themes/responsive/templates/views/categories/view.tpl"
+    block=$block
+    category_data=$category_data
+    products=$products
+    subcategories=$subcategories
+    product_columns=$product_columns
+    show_not_found_notification=$show_not_found_notification
+    show_no_products_block=$show_no_products_block
+    show_add_to_cart=true
+    show_quick_view_for_options=true
+    show_add_to_cart_secondary=false
+    show_list_buttons=true
+    show_features=false
+    show_total_product_reviews=true
+    layouts=$layouts
+    selected_layout=$selected_layout
+    runtime=$runtime
+    settings=$settings
+    config=$config
+    smarty=$smarty
+}

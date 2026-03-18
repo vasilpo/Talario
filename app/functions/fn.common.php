@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -40,6 +40,7 @@ use Tygh\Languages\Helper as LanguageHelper;
 use Tygh\Languages\Languages;
 use Tygh\Languages\Values as LanguageValues;
 use Tygh\Less;
+use Tygh\Licensing\Features;
 use Tygh\Notifications\Receivers\SearchCondition;
 use Tygh\Providers\EventDispatcherProvider;
 use Tygh\Providers\StorefrontProvider;
@@ -50,6 +51,7 @@ use Tygh\Storefront\Storefront;
 use Tygh\Themes\Styles;
 use Tygh\Themes\Themes;
 use Tygh\Tools\DateTimeHelper;
+use Tygh\Tools\Math;
 use Tygh\Tools\SecurityHelper;
 use Tygh\Tools\Url;
 use Tygh\Tygh;
@@ -873,7 +875,7 @@ function fn_format_price($price = 0, $currency = CART_PRIMARY_CURRENCY, $decimal
         $currency_settings = Registry::get('currencies.' . $currency);
         $decimals = !empty($currency_settings) ? $currency_settings['decimals'] + 0 : 2; //set default value if not exist
     }
-    $price = sprintf('%.' . $decimals . 'f', round((double) $price + 0.00000000001, $decimals));
+    $price = sprintf('%.' . $decimals . 'f', round((float) $price + 0.00000000001, $decimals));
 
     return $return_as_float ? (float) $price : $price;
 }
@@ -1527,6 +1529,30 @@ function fn_validate_email($email, $show_error = false)
     }
 
     return false;
+}
+
+/**
+ * Validate text field. Empty string will not be validated.
+ * Only letters, "'" and "-" allowed.
+ *
+ * @param string $string Text field to validate
+ *
+ * @return bool
+ */
+function fn_validate_text_field($string)
+{
+    if (!is_string($string)) {
+        return false;
+    }
+
+    if (
+        !empty($string)
+        && !preg_match('/^[\p{L}\p{M}\s\'\-\d]+$/u', $string)
+    ) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -3701,8 +3727,15 @@ function fn_substr($string, $start, $length = null, $encoding = 'UTF-8')
  */
 function fn_strlen($string, $encoding = 'UTF-8')
 {
+    if ($string === null) {
+        return 0;
+    }
+
     if (empty($encoding)) {
         $encoding = 'UTF-8';
+    }
+    if (empty($string)) {
+        return 0;
     }
 
     if (function_exists('mb_strlen')) {
@@ -5136,9 +5169,10 @@ function fn_delete_payment($payment_id)
     fn_set_hook('delete_payment_post', $payment_id, $result);
 
     /**
-     * Delete the certificate file (if exists).
+     * Delete the certificate and certificate key file (if exists).
      */
     fn_rm(Registry::get('config.dir.certificates') . $payment_id);
+    fn_rm(Registry::get('config.dir.certificate_keys') . $payment_id);
 
     return $result;
 }
@@ -5306,7 +5340,7 @@ function fn_install_theme($theme_name, $company_id = null, $install_layouts = tr
             $addon_layouts_path = fn_get_addon_layouts_path($addon_name, $theme_name);
             if ($addon_layouts_path) {
                 foreach($created_layouts as $layout_id) {
-                    Exim::instance($company_id, $layout_id)->importFromFile($addon_layouts_path);
+                    Exim::instance($company_id, $layout_id, $theme_name, $storefront_id)->importFromFile($addon_layouts_path);
                 }
             }
         }
@@ -5519,7 +5553,7 @@ function fn_delete_theme($theme_name)
             return true;
         }
     } else {
-        $error_text = (fn_allowed_for('ULTIMATE') || fn_allowed_for('MULTIVENDOR:ULTIMATE'))
+        $error_text = (fn_allowed_for('ULTIMATE') || fn_is_allowed(Features::MULTIPLE_STOREFRONTS))
             ? __('error_delete_theme_company')
             : __('cannot_remove_active_theme');
         fn_set_notification('E', __('error'), $error_text);
@@ -6140,7 +6174,7 @@ function __($var, $params = array(), $lang_code = CART_LANGUAGE)
 
             if (Registry::get('runtime.customization_mode.live_editor')) {
                 if (preg_match('/\[(lang) name\=([\w-]+?)\](.*?)\[\/\1\]/is', $var, $matches)) {
-                    $var = $matches[4];
+                    $var = $matches[4] ?? '';
                 }
             }
 
@@ -6153,7 +6187,7 @@ function __($var, $params = array(), $lang_code = CART_LANGUAGE)
             $var = isset($parts[$rule]) ? $parts[$rule] : $parts[0];
 
             if (Registry::get('runtime.customization_mode.live_editor') && !empty($matches)) {
-                $var = str_replace($matches[4], $var, $matches[0]);
+                $var = str_replace((string) $matches[4], $var, $matches[0]);
             }
         }
 
@@ -7281,11 +7315,11 @@ function fn_exim_prepare_data_to_convert($data)
     $_data = array();
     if (is_array($data) && is_callable('mb_encode_numericentity')) {
         foreach ($data as $k => $v) {
-            $key = mb_encode_numericentity($k, array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+            $key = mb_encode_numericentity($k, [0x80, 0xffff, 0, 0xffff], 'UTF-8');
             if (is_array($v)) {
                 $_data[$key] = fn_exim_prepare_data_to_convert($v);
             } else {
-                $_data[$key] = mb_encode_numericentity($v, array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+                $_data[$key] = mb_encode_numericentity((string) $v, [0x80, 0xffff, 0, 0xffff], 'UTF-8');
             }
         }
     } else {
@@ -8301,6 +8335,27 @@ function fn_get_licensed_mode_name($store_mode)
 
     if ($store_mode) {
         $name_parts[] = __("store_mode.{$store_mode}");
+    }
+    if (PRODUCT_BUILD) {
+        $name_parts[] = PRODUCT_BUILD;
+    }
+
+    return implode(' ', $name_parts);
+}
+
+/**
+ * Gets licensed plan name.
+ *
+ * @param string $plan Plan
+ *
+ * @return string
+ */
+function fn_get_licensed_plan_name($plan)
+{
+    $name_parts = [PRODUCT_NAME];
+
+    if ($plan) {
+        $name_parts[] = __("licensing.plans.{$plan}");
     }
     if (PRODUCT_BUILD) {
         $name_parts[] = PRODUCT_BUILD;
@@ -10101,4 +10156,35 @@ function fn_get_menu_item_styles_owner()
     }
 
     return false;
+}
+
+/**
+ * phpcs:ignore
+ * @param array  $params  Params
+ * @param string $content Content
+ * @param bool   $repeat  Repeat
+ * phpcs:ignore
+ * @return mixed|string|void
+ */
+function smarty_block_inline_script(array $params, $content, &$repeat)
+{
+    static $data = [];
+    if ($repeat == true) {
+        return;
+    }
+
+    if (defined('AJAX_REQUEST') || Registry::get('runtime.inside_scripts')) {
+        return $content;
+    }
+
+    $return = '';
+    if (empty($params['output'])) {
+        $data[] = $content;
+    } else {
+        foreach ($data as $script) {
+            $return .= $script . "\n";
+        }
+    }
+
+    return $return;
 }

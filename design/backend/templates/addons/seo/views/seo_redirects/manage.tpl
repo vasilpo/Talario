@@ -126,7 +126,7 @@
                     {else}
                         <a href="{$redirect.parsed_url}" target="_blank" class="link--monochrome">{$redirect.parsed_url}</a>
                     {/if}
-                <td width="20%" data-th="{__("type")}">
+                 <td width="20%" data-th="{__("type")}">
                     {__($seo_vars[$redirect.type].name)}
                 </td>
                 {if $addons.seo.single_url != "Y" && $languages|sizeof > 1}

@@ -82,9 +82,6 @@
                 </p>
                 {include file="common/share.tpl"}
             </div>
-            {if "ULTIMATE:FREE"|fn_allowed_for}
-                {$smarty.session.stats|reset|default:"" nofilter}
-            {/if}
         </div>
     </div>
 {/if}

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Providers;
 
@@ -18,8 +18,10 @@ use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Tygh\BlockManager\Layout;
 use Tygh\Common\Robots;
+use Tygh\Common\Llms;
 use Tygh\Embedded;
 use Tygh\Enum\SiteArea;
+use Tygh\Licensing\Features;
 use Tygh\Registry;
 use Tygh\Storefront\RelationsManager;
 use Tygh\Storefront\Factory;
@@ -72,7 +74,8 @@ class StorefrontProvider implements ServiceProviderInterface
                 $app['storefront.factory'],
                 $app['storefront.normalizer'],
                 $app['storefront.relations_manager'],
-                new Robots()
+                new Robots(),
+                new Llms()
             );
         };
 
@@ -82,7 +85,8 @@ class StorefrontProvider implements ServiceProviderInterface
                 $app['storefront.factory.init'],
                 $app['storefront.normalizer'],
                 $app['storefront.relations_manager.init'],
-                new Robots()
+                new Robots(),
+                new Llms()
             );
         };
 
@@ -294,7 +298,7 @@ class StorefrontProvider implements ServiceProviderInterface
 
         $app['storefront.switcher.is_enabled'] = function (Container $app) {
             return fn_check_change_storefront_permission()
-                && (fn_allowed_for('ULTIMATE') || fn_allowed_for('MULTIVENDOR:ULTIMATE'));
+                && (fn_allowed_for('ULTIMATE') || fn_is_allowed(Features::MULTIPLE_STOREFRONTS));
         };
 
         $app['storefront.switcher.preset_data.factory'] = function (Container $app) {

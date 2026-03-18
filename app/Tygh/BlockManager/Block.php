@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\BlockManager;
 
@@ -69,10 +69,29 @@ class Block extends CompanySingleton
             $condition
         );
 
+        $block_locations_map = db_get_hash_multi_array(
+            'SELECT bm_snapping.block_id, bm_locations.location_id, bm_locations_descriptions.name AS location_name,'
+                . ' bm_layouts.name AS layout_name, bm_layouts.layout_id AS layout_id, bm_layouts.theme_name AS theme_id'
+            . ' FROM ?:bm_snapping AS bm_snapping'
+            . ' INNER JOIN ?:bm_grids AS bm_grids ON bm_grids.grid_id = bm_snapping.grid_id'
+            . ' INNER JOIN ?:bm_containers AS bm_containers ON bm_containers.container_id = bm_grids.container_id'
+            . ' INNER JOIN ?:bm_locations AS bm_locations ON bm_locations.location_id = bm_containers.location_id'
+            . ' INNER JOIN ?:bm_locations_descriptions AS bm_locations_descriptions'
+                . ' ON bm_locations_descriptions.location_id = bm_locations.location_id AND bm_locations_descriptions.lang_code = ?s'
+            . ' INNER JOIN ?:bm_layouts AS bm_layouts ON bm_layouts.layout_id = bm_locations.layout_id'
+            . ' WHERE bm_snapping.block_id IN (?n) '
+            . ' GROUP BY bm_snapping.block_id, bm_locations.location_id',
+            ['block_id', 'location_id'],
+            $lang_code,
+            array_keys($blocks)
+        );
+
         foreach ($blocks as $block_id => $block_data) {
             if (!empty($blocks[$block_id]['properties'])) {
                 $blocks[$block_id]['properties'] = unserialize($block_data['properties']);
             }
+
+            $blocks[$block_id]['locations'] = isset($block_locations_map[$block_id]) ? $block_locations_map[$block_id] : [];
         }
 
         /**

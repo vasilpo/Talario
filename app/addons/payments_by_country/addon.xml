@@ -8,7 +8,6 @@
     <dependencies/>
     <default_language>en</default_language>
     <compatibility>
-        <core_edition>MULTIVENDOR</core_edition>
         <conflicts>payment_dependencies</conflicts>
     </compatibility>
     <queries>

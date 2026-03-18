@@ -1,0 +1,104 @@
+/** You might want to change the default_template.less **/
+
+.ty-price-num {
+    font-size: var(--cs-font-size-large);
+}
+
+.ty-list-price {
+    color: var(--cs-secondary-text);
+    font-size: var(--cs-font-size-small);
+}
+
+.ty-save-price {
+    color: var(--cs-success-text);
+}
+
+input.ty-value-changer__input {
+    margin-left: 4px;
+    margin-right: 4px;
+    padding-left: 0;
+    padding-right: 0;
+    border-color: transparent;
+    background: transparent;
+}
+
+input.ty-value-changer__input,
+.ui-dialog input[type="text"].ty-value-changer__input {
+    width: 38px; /** ~3.5 characters: Width + (Border + Padding) **/
+}
+
+input.ty-value-changer__input:hover {
+    border-color: var(--cs-input-border);
+}
+
+input.ty-value-changer__input:focus {
+    border-color: var(--cs-input-border-highlight);
+}
+
+input.ty-value-changer__input:hover,
+input.ty-value-changer__input:active,
+input.ty-value-changer__input:focus {
+    background: var(--cs-input-background);
+}
+
+.ty-helper-container input.ty-value-changer__input,
+.ui-dialog input.ty-value-changer__input {
+    height: 32px;
+}
+
+.ty-value-changer__increase,
+.ty-value-changer__decrease {
+    color: var(--cs-btn-link-color);
+    border-radius: var(--cs-input-rounded-corners-radius);
+}
+
+.ty-value-changer__increase {
+    margin-bottom: 0;
+}
+
+.no-touch .ty-value-changer__increase:hover,
+.no-touch .ty-value-changer__decrease:hover {
+    background: var(--cs-tertiary-button-hover);
+    color: var(--cs-btn-tertiary-color-highlight);
+}
+
+.no-touchevents .ty-value-changer__increase:hover,
+.no-touchevents .ty-value-changer__decrease:hover {
+    background: var(--cs-tertiary-button-hover);
+    color: var(--cs-btn-tertiary-color-highlight);
+}
+
+.ty-helper-container .ty-value-changer,
+.ui-dialog .ty-value-changer {
+    width: 118px; /** 2 * 36px + (38px + 8px) **/
+}
+
+.ty-helper-container .ty-value-changer__input,
+.ui-dialog .ty-value-changer__input {
+    float: right;
+}
+
+.ty-helper-container .ty-value-changer__increase,
+.ty-helper-container .ty-value-changer__decrease,
+.ui-dialog .ty-value-changer__increase,
+.ui-dialog .ty-value-changer__decrease {
+    box-sizing: border-box;
+    float: left;
+    width: 36px;
+    height: 32px;
+    font-size: 22px;
+    line-height: 27px;
+    background: var(--cs-btn-link-background);
+    color: var(--cs-btn-link-color);
+}
+
+.ty-helper-container .ty-value-changer__increase,
+.ui-dialog .ty-value-changer__increase {
+    border-right: 1px solid var(--cs-base);
+    float: right;
+}
+
+.ty-helper-container .ty-value-changer__decrease,
+.ui-dialog .ty-value-changer__decrease {
+    border-left: 1px solid var(--cs-base);
+}

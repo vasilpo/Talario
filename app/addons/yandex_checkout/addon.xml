@@ -8,6 +8,9 @@
     <auto_install>ULTIMATE,MULTIVENDOR</auto_install>
     <compatibility>
         <dependencies>rus_taxes</dependencies>
+        <php_version>
+            <max>8.2.99</max>
+        </php_version>
     </compatibility>
 
     <autoload>

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\StorefrontRestApi\ProfileFields\Manager as ProfileFieldsManager;
 use Tygh\Bootstrap;
@@ -971,7 +971,8 @@ function fn_storefront_rest_api_gather_additional_products_data(array $products,
         'get_icon'            => true,
         'get_additional'      => true,
         'get_discounts'       => true,
-        'features_display_on' => 'P',
+        'get_videos'          => true,
+        'features_display_on' => 'P'
     ];
 
     /**
@@ -1027,15 +1028,15 @@ function fn_storefront_rest_api_get_formatted_orders_statuses($lang_code, $addit
 /**
  * The "hybrid_auth_login_post" hook handler.
  *
- * @param array<string, string> $user_data    Information about user.
- * @param Hybrid_User_Profile   $auth_data    Authentication data from Oauth2 server.
- * @param int                   $provider_id  Provider identifier.
- * @param string                $redirect_url Current redirect url address.
- * @param string                $user_status  Current user login status.
+ * @param array<string, string>   $user_data    Information about user.
+ * @param Hybridauth\User\Profile $auth_data    Authentication data from Oauth2 server.
+ * @param int                     $provider_id  Provider identifier.
+ * @param string                  $redirect_url Current redirect url address.
+ * @param string                  $user_status  Current user login status.
  *
  * @return void
  */
-function fn_storefront_rest_api_hybrid_auth_login_post(array $user_data, Hybrid_User_Profile $auth_data, $provider_id, &$redirect_url, $user_status)
+function fn_storefront_rest_api_hybrid_auth_login_post(array $user_data, Hybridauth\User\Profile $auth_data, $provider_id, &$redirect_url, $user_status)
 {
     if (!$user_status) {
         return;

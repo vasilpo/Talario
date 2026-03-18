@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /release-4.18.4/addons/stripe_connect.po\n"
-"X-Crowdin-File-ID: 9687\n"
-"PO-Revision-Date: 2025-06-04 11:25\n"
+"X-Crowdin-File: /release-4.20.1/addons/stripe_connect.po\n"
+"X-Crowdin-File-ID: 10267\n"
+"PO-Revision-Date: 2026-02-16 12:11\n"
 
 msgctxt "Addons::name::stripe_connect"
 msgid "Stripe Connect payments"
@@ -23,18 +23,6 @@ msgstr "Модуль Stripe для маркетплейсов. Позволяе�
 msgctxt "SettingsSections::stripe_connect::general"
 msgid "General"
 msgstr "Общие"
-
-msgctxt "SettingsOptions::stripe_connect::collect_payouts"
-msgid "Commission includes"
-msgstr "Комиссия включает"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::N"
-msgid "Order commission"
-msgstr "Комиссия с заказа"
-
-msgctxt "SettingsVariants::stripe_connect::collect_payouts::Y"
-msgid "[Deprecated] Order commission and unpaid payouts"
-msgstr "[Не рекомендуется] Комиссия с заказа и невыплаченные выплаты"
 
 msgctxt "Languages::stripe_connect.stripe_connect"
 msgid "Stripe Connect"
@@ -87,6 +75,10 @@ msgstr "Подключена"
 msgctxt "Languages::stripe_connect.not_connected"
 msgid "Not connected"
 msgstr "Не подключена"
+
+msgctxt "Languages::stripe_connect.stripe_connectivity.description"
+msgid "Whether or not a vendor has connected their Stripe account to the marketplace."
+msgstr "Подключил ли продавец свой аккаунт Stripe к маркетплейсу."
 
 msgctxt "Languages::stripe_connect.account_connected"
 msgid "Your Stripe account has been successfully connected to the store"
@@ -219,10 +211,6 @@ msgstr "Отсутствуют параметры процессора Stripe"
 msgctxt "Languages::stripe_connect.account_was_deauthorized"
 msgid "Account of company \"[company]\" (company ID = [company_id]) was deauthorized"
 msgstr "Учётная запись Stripe компании \"[company]\" (company ID = [company_id]) была отключена"
-
-msgctxt "Languages::stripe_connect.on"
-msgid "On"
-msgstr "Вкл."
 
 msgctxt "Languages::stripe_connect.delay_transfer_of_funds"
 msgid "Delay transfer of funds"

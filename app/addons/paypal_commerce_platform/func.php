@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -301,13 +301,25 @@ function fn_paypal_commerce_platform_get_companies(
     array $params,
     array &$fields,
     array $sortings,
-    $condition,
+    &$condition,
     $join,
     array $auth,
     $lang_code,
     $group
 ) {
     $fields[] = db_quote('?:companies.paypal_commerce_platform_account_id');
+
+    if (empty($params['ppcp_connectivity'])) {
+        return;
+    }
+
+    $ppcp_values = (array) $params['ppcp_connectivity'];
+
+    if (in_array('connected', $ppcp_values) && !in_array('not_connected', $ppcp_values)) {
+        $condition .= db_quote(" AND ?:companies.paypal_commerce_platform_account_id != ''");
+    } elseif (!in_array('connected', $ppcp_values) && in_array('not_connected', $ppcp_values)) {
+        $condition .= db_quote(" AND ?:companies.paypal_commerce_platform_account_id = ''");
+    }
 }
 
 /**

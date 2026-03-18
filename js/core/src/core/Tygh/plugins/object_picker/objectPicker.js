@@ -193,7 +193,7 @@ export class ObjectPicker {
             width: this.options.width,
             allowClear: this.options.allowClear,
             closeOnSelect: this.options.closeOnSelect,
-            containerCssClass: this.options.containerCssClass,
+            selectionCssClass: this.options.selectionCssClass,
             dropdownCssClass: this.options.dropdownCssClass,
             showDropdown: this.options.showDropdown,
             language: {
@@ -237,7 +237,7 @@ export class ObjectPicker {
         };
 
         if (!this.options.showDropdown) {
-            options.containerCssClass += ' ' + this.options.containerHideCssClass + ' ';
+            options.selectionCssClass += ' ' + this.options.selectionHideCssClass + ' ';
             options.dropdownCssClass += ' ' + this.options.dropdownHideCssClass + ' ';
         }
 

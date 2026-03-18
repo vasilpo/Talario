@@ -1,10 +1,10 @@
-<ul class="ty-product-filters {if $collapse}hidden{/if}" id="content_{$filter_uid}">
+<ul class="ty-product-filters ty-product-filters--{$type} {if $collapse}hidden{/if}" id="content_{$filter_uid}">
 
     {if $filter.display_count && $filter.variants|count > $filter.display_count && $filter.filter_style !== "ProductFilterStyles::COLOR"|enum}
     <li>
         {script src="js/tygh/filter_table.js"}
 
-        <div class="ty-product-filters__search">
+        <div class="ty-product-filters__search ty-product-filters__search--{$type}">
         <input type="text" placeholder="{__("storefront_search_field")}" class="cm-autocomplete-off ty-input-text-medium" name="q" id="elm_search_{$filter_uid}" value="" />
         {include_ext file="common/icon.tpl"
             class="ty-icon-cancel-circle ty-product-filters__search-icon hidden"
@@ -59,7 +59,7 @@
                 <ul id="ranges_{$filter_uid}" {if $filter.display_count}style="max-height: {$filter.display_count * 2}em;"{/if} class="ty-product-filters__variants cm-filter-table" data-ca-input-id="elm_search_{$filter_uid}" data-ca-clear-id="elm_search_clear_{$filter_uid}" data-ca-empty-id="elm_search_empty_{$filter_uid}">
 
                     {foreach $filter.variants as $variant}
-                        <li class="cm-product-filters-checkbox-container ty-product-filters__group">
+                        <li class="cm-product-filters-checkbox-container ty-product-filters__group ty-product-filters__group--{$type}">
                             <label {if $variant.disabled} class="{if $variant.selected}ty-product-filters__empty-result{else}disabled{/if}"{/if}>
                                 <input class="cm-product-filters-checkbox"
                                        type="checkbox"

@@ -118,7 +118,7 @@
         {$stickers_capture_name = "ab__stickers_`$display_place_id`_`$obj_real_id`"}
         {$stickers_capture_content = $smarty.capture[$stickers_capture_name]}
 
-        {if trim(strip_tags($stickers_capture_content, "<div>"))}
+        {if trim(fn_ab__stickers_strip_tags($stickers_capture_content, "<div>"))}
             {$sticker_exists = true}
         {/if}
 

@@ -1,5 +1,5 @@
 <div class="btn-bar-left overlay-navbar-open-container">
-    <a role="button" class="btn mobile-menu-toggler">
+    <a role="button" class="btn mobile-menu__toggler" data-mobile-menu="toggler">
         {include_ext file="common/icon.tpl"
             class="icon icon-align-justify overlay-navbar-open"
         }

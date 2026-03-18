@@ -1,7 +1,7 @@
 {if $items}{strip}
-    {$actions_count_threshold_xl = $config.actions_menu.count_threshold_xl|default:3}
-    {$actions_count_threshold_xxl = $config.actions_menu.count_threshold_xxl|default:5}
-    {$actions_count_threshold_xxxl = $config.actions_menu.count_threshold_xxxl|default:7}
+    {$actions_count_threshold_xl = $config.tweaks.actions_menu.count_threshold_xl|default:3}
+    {$actions_count_threshold_xxl = $config.tweaks.actions_menu.count_threshold_xxl|default:5}
+    {$actions_count_threshold_xxxl = $config.tweaks.actions_menu.count_threshold_xxxl|default:7}
     {$icon_prefix = "icon-"}
     {$icon_prefix_length = $icon_prefix|strlen}
     {$button_characters_threshold = 30}

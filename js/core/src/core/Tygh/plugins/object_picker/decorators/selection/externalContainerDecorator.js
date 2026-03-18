@@ -49,7 +49,7 @@ ExternalContainerDecorator.prototype.update = function (decorated, data) {
     }
 
     if ($selections.length) {
-        Utils.appendMany(this.$externalSelectionContainer, $selections);
+        this.$externalSelectionContainer.append($selections);
     }
 
     if (selectionMap.size) {

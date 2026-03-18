@@ -27,11 +27,6 @@
  */
 function smarty_modifier_date_format($string, $format="%b %e, %Y", $default_date=null)
 {
-    /**
-    * Include the {@link shared.make_timestamp.php} plugin
-    */
-    require_once(SMARTY_PLUGINS_DIR . 'shared.make_timestamp.php');
-
     if ($string != '') {
         $timestamp = smarty_make_timestamp($string);
 

@@ -20,12 +20,19 @@
     {/if}
 
     {hook name="products:add_to_cart"}
+    {$preselected_options = $product.combination}
     {if $settings.ab__device === "mobile"}
-        <span class="ty-btn ut2-btn__options ty-btn__primary ty-btn__add-to-cart cm-ab-load-select-variation-content" data-ca-product-id="{$product.product_id}">{if $but_icon}<span><i class="{$but_icon}"></i></span>{/if}{if $but_text}<bdi>{__("add_to_cart")}</bdi>{/if}{if $but_icon}</span>{/if}
+        <span class="ty-btn ut2-btn__options ty-btn__primary ty-btn__add-to-cart cm-ab-load-select-variation-content" data-ca-product-id="{$product.product_id}"{if $preselected_options} data-ca-combination="{$preselected_options}"{/if}>{if $but_icon}<span><i class="{$but_icon}"></i></span>{/if}{if $but_text}<bdi>{__("add_to_cart")}</bdi>{/if}{if $but_icon}</span>{/if}
     {else}
         {ab__hide_content bot_type="ALL"}
+
+        {$href="products.ut2_select_variation?product_id={$product.product_id}&prev_url={$current_url}"}
+        {if $preselected_options}
+            {$href="`$href`&combination=`$preselected_options`"}
+        {/if}
+
         {include file="common/popupbox.tpl"
-        href="products.ut2_select_variation?product_id={$product.product_id}&prev_url={$current_url}"
+        href="$href"
         text=__("add_to_cart")
         id="ut2_select_variation_{$obj_prefix}{$product.product_id}"
         link_text=$but_text

@@ -13,7 +13,7 @@
     <meta property="og:image" content="{$variant_data.image_pair.icon.image_path}" />
 {else}
     {hook name="abt__unitheme:og_image"}
-        <meta property="og:image" content=" {$logos.theme.image.image_path}" />
+        <meta property="og:image" content="{$logos.theme.image.image_path}" />
     {/hook}
 {/if}
 

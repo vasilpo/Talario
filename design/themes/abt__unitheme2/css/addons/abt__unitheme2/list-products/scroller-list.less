@@ -15,7 +15,6 @@
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
 // Scroller list
-
 .owl-carousel.ty-scroller-list:not(.grid-list) {
     padding: 0;
 
@@ -24,17 +23,17 @@
     }
 
     // Mask
-    .ut2_product_image_mask() when (@abt__ut2_product_list_mask_images_gallery = true) and (@general_bg_color = #ffffff) {
+    .ut2_product_image_mask_margin() when (@abt__ut2_product_list_mask_images_gallery = true) and (@general_bg_image = @content_bg){
         .ut2-w-c-q__buttons {
             margin: var(--gap-xxs);
         }
     }
-    .ut2_product_image_mask();
+    .ut2_product_image_mask_margin();
 
     // Visible only active scroller elements
     &.active-scroll .owl-item:not(.active) {
         opacity: 0;
-        transition: opacity 1s ease-out;
+        transition: opacity 1000ms;
     }
 }
 
@@ -56,31 +55,10 @@
 }
 
 .ty-scroller-list__img-block {
+    border-radius: var(--border-radius-decreased);
     overflow: hidden;
 
-    .ut2_round() when (@abt__ut2_general_use_rounding = little) {
-        border-radius: calc(var(--border-radius-box) - 2px);
-    }
-    .ut2_round() when (@abt__ut2_general_use_rounding = full) {
-        border-radius: var(--border-radius-box);
-    }
-    .ut2_round();
-
     // Mask
-    .ut2_product_image_mask() when not (@general_bg_image = transparent) {
-        background: @general_bg_image;
-    }
-    .ut2_product_image_mask() when (@abt__ut2_product_list_mask_images_gallery = true) and (@general_bg_color = #ffffff) {
-        background: lighten(@fill-gray-box, 0.5%);
-
-        .ut2_product_image_mask_bg_ready() when (@general_bg_color = #ffffff) {
-            img.ty-pict {
-                mix-blend-mode: multiply;
-                filter: brightness(1.05);
-            }
-        }
-        .ut2_product_image_mask_bg_ready();
-    }
     .ut2_product_image_mask();
 }
 

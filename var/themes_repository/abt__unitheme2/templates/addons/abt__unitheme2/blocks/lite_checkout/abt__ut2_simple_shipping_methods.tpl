@@ -206,7 +206,13 @@
                                                 {if $group.all_edp_free_shipping || $group.shipping_no_required}
                                                     {if $show_content}
                                                         <p class="litecheckout__shipping-method__text ty-error-text">
-                                                            {if $content}
+                                                            {*{if $content}
+                                                                {$content nofilter}
+                                                            {else}
+                                                                {__("no_shipping_required")}
+                                                            {/if}*}
+                                                            {*working code from the parent theme file var/themes_repository/responsive/templates/views/checkout/components/shipping_rates.tpl*}
+                                                            {if !empty(trim($content))}
                                                                 {$content nofilter}
                                                             {else}
                                                                 {__("no_shipping_required")}
@@ -215,7 +221,8 @@
                                                     {/if}
                                                 {else}
                                                     <p class="litecheckout__shipping-method__text ty-error-text">
-                                                        {__("text_no_shipping_methods")}
+                                                        {*{__("text_no_shipping_methods")}*}
+                                                        {__("text_no_shipping_methods") nofilter}
                                                     </p>
                                                 {/if}
                                             </div>
@@ -225,7 +232,8 @@
                                         {if $cart.all_shippings_disabled || $group.shipping_disabled}
                                             <div class="litecheckout__item litecheckout__item--full">
                                                 <p class="litecheckout__shipping-method__text ty-error-text">
-                                                    {__("text_no_shipping_methods")}
+                                                    {*{__("text_no_shipping_methods")}*}
+                                                    {__("text_no_shipping_methods") nofilter}
                                                 </p>
                                             </div>
                                         {/if}

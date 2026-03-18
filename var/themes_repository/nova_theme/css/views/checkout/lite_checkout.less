@@ -1,0 +1,45 @@
+.litecheckout__select {
+    border-radius: var(--cs-input-rounded-corners-radius);
+}
+
+.litecheckout .litecheckout__input {
+    --ty-litecheckout-input-padding: 8px;
+
+    border-radius: var(--cs-input-rounded-corners-radius);
+    /** Same input height as parent theme (40px) **/
+    line-height: 1.3754882;
+}
+
+.litecheckout .litecheckout__input--selectable--select:not(:placeholder-shown),
+.litecheckout .litecheckout__input--selectable--select:focus,
+.litecheckout .litecheckout__input--selectable--select:focus-within {
+    --ty-litecheckout-input-selectable--select-not-placeholder-shown: 0 0 0 4px;
+}
+
+.litecheckout__label {
+    --litecheckout-label-width-percent: 100%;
+
+    left: 9px;
+    width: calc(var(--litecheckout-label-width-percent) - 18px);
+}
+
+.litecheckout__step-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.ty-input-append--litecheckout .litecheckout__input--mask-phone {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.ty-select-block__a--litecheckout {
+    border-top-right-radius: var(--cs-input-rounded-corners-radius);
+    border-bottom-right-radius: var(--cs-input-rounded-corners-radius);
+}
+
+.ty-litecheckout__customer-title {
+    margin-top: 16px;
+}
+
+/** Lite checkout mixin: css/tygh/less_functions.less **/

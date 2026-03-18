@@ -13,7 +13,7 @@
                 {/if}
             </dt>
             <dd class="ty-product-review-post-vendor-reply__body ty-dd ty-dialog-caret">
-                {$product_review.reply.reply}
+                {$product_review.reply.reply|escape|nl2br nofilter}
             </dd>
         </dl>
     </blockquote>

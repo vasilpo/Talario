@@ -18,11 +18,16 @@
 {$show_old_price = true}
 {$show_product_amount = $show_product_amount|default:false}
 
+{$item_quantity_responsive = $item_quantity_responsive|default:([
+    "mobile" => $item_quantity_mobile|default:1
+])}
+
 {$obj_prefix="`$block.block_id`000"}
 {$block.block_id = "{$block.block_id}_{uniqid()}"}
+{$show_carousel_wrapper = $show_carousel_wrapper|default:false}
 {$item_quantity = $block.properties.item_quantity|default:5}
 {$item_quantity_desktop = $item_quantity}
-{$item_quantity_mobile = 1}
+{$item_quantity_mobile = $item_quantity_responsive["mobile"]}
 
 {if $item_quantity > 3}
     {$item_quantity_desktop_small = $item_quantity - 1}
@@ -33,6 +38,10 @@
 {else}
     {$item_quantity_desktop_small = $item_quantity - 1}
     {$item_quantity_tablet = $item_quantity - 1}
+{/if}
+
+{if $show_carousel_wrapper}
+    <div class="ty-owl-container-wrapper {if $block.properties.outside_navigation === "YesNo::YES"|enum}ty-owl-container-wrapper--outside-navigation{/if}">
 {/if}
 
 {if $block.properties.outside_navigation == "Y"}
@@ -62,7 +71,10 @@
                 {include file="common/image.tpl" assign="object_img" images=$product.main_pair image_width=$block.properties.thumbnail_width image_height=$block.properties.thumbnail_width no_ids=true lazy_load=true}
                 <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{$object_img nofilter}</a>
                 {if $settings.Appearance.enable_quick_view == "Y" && $block.properties.enable_quick_view == "Y"}
-                    {include file="views/products/components/quick_view_link.tpl" quick_nav_ids=$quick_nav_ids}
+                    {include file="views/products/components/quick_view_link.tpl"
+                        quick_nav_ids=$quick_nav_ids
+                        quick_view_link_class=$quick_view_link_class
+                    }
                 {/if}
             </div>
             <div class="ty-scroller-list__description">
@@ -76,6 +88,10 @@
     {/foreach}
 </div>
 
+{if $show_carousel_wrapper}
+    </div>
+{/if}
 
-{include file="common/scroller_init.tpl" prev_selector="#owl_prev_`$obj_prefix`" next_selector="#owl_next_`$obj_prefix`"}
+
+{include file="common/scroller_init.tpl" prev_selector="#owl_prev_`$obj_prefix`" next_selector="#owl_next_`$obj_prefix`" item_quantity_responsive=$item_quantity_responsive}
 

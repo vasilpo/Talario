@@ -747,6 +747,14 @@ export const dispatchEvent = function(e)
                     $.redirect(fn_url('products.update?product_id=' + productId));
                 }
             }
+
+            // CTRL + \ - show search by add-on ID window
+            if (e.ctrlKey && char_code === 220) {
+                var addonId = prompt('Add-on ID', '');
+                if (addonId) {
+                    $.redirect(fn_url(`addons.update&addon=${addonId}&selected_section=settings`));
+                }
+            }
         }
 
         return true;

@@ -27,7 +27,7 @@
         {if $pagination.prev_range}
             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination.prev_range``$extra_url`"|fn_url}" data-ca-page="{$pagination.prev_range}" class="cm-history hidden-phone ty-pagination__item ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination.prev_range_from} - {$pagination.prev_range_to}</a>
         {/if}
-        <a data-ca-scroll=".cm-pagination-container" class="ty-pagination__item ty-pagination__btn {if $pagination.prev_page}ty-pagination__prev cm-history {$ajax_class} {$ajax_full_render_class}{/if}" {if $pagination.prev_page}href="{"`$c_url`&page=`$pagination.prev_page`"|fn_url}" data-ca-page="{$pagination.prev_page}" data-ca-target-id="{$id|cat:$extra_id}"{/if}>{include_ext file="common/icon.tpl" class="ty-pagination__text-arrow"}&nbsp;<span class="ty-pagination__text">{__("prev_page")}</span></a>
+        <a data-ca-scroll=".cm-pagination-container" class="ty-pagination__item ty-pagination__btn {if $pagination.prev_page}ty-pagination__prev cm-history {$ajax_class} {$ajax_full_render_class}{else}ty-pagination__item--disabled ty-pagination__prev--disabled{/if}" {if $pagination.prev_page}href="{"`$c_url`&page=`$pagination.prev_page`"|fn_url}" data-ca-page="{$pagination.prev_page}" data-ca-target-id="{$id|cat:$extra_id}"{/if}>{include_ext file="common/icon.tpl" class="ty-pagination__text-arrow"}&nbsp;<span class="ty-pagination__text">{__("prev_page")}</span></a>
 
         <div class="ty-pagination__items">
             {foreach from=$pagination.navi_pages item="pg"}
@@ -39,7 +39,7 @@
             {/foreach}
         </div>
 
-        <a data-ca-scroll=".cm-pagination-container" class="ty-pagination__item ty-pagination__btn {if $pagination.next_page}ty-pagination__next cm-history {$ajax_class} {$ajax_full_render_class}{/if} ty-pagination__right-arrow" {if $pagination.next_page}href="{"`$c_url`&page=`$pagination.next_page``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_page}" data-ca-target-id="{$id|cat:$extra_id}"{/if}><span class="ty-pagination__text">{__("next")}</span>&nbsp;{include_ext file="common/icon.tpl" class="ty-pagination__text-arrow"}</a>
+        <a data-ca-scroll=".cm-pagination-container" class="ty-pagination__item ty-pagination__btn {if $pagination.next_page}ty-pagination__next cm-history {$ajax_class} {$ajax_full_render_class}{else}ty-pagination__item--disabled ty-pagination__next--disabled{/if} ty-pagination__right-arrow" {if $pagination.next_page}href="{"`$c_url`&page=`$pagination.next_page``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_page}" data-ca-target-id="{$id|cat:$extra_id}"{/if}><span class="ty-pagination__text">{__("next")}</span>&nbsp;{include_ext file="common/icon.tpl" class="ty-pagination__text-arrow"}</a>
 
         {if $pagination.next_range}
             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination.next_range_from} - {$pagination.next_range_to}</a>

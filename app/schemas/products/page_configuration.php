@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\YesNo;
 use Tygh\Registry;
@@ -19,6 +19,7 @@ defined('BOOTSTRAP') or die('Access denied');
 
 $general_settings = Registry::get('settings.General');
 $checkout_settings = Registry::get('settings.Checkout');
+$appearance_settings = Registry::get('settings.Appearance');
 
 $schema = [
     'detailed'      => [
@@ -31,13 +32,28 @@ $schema = [
                 'title'       => 'information',
                 'position'    => 100,
                 'fields'      => [
-                    'product'          => ['is_optional' => false, 'title' => 'name', 'position' => 100],
-                    'company_id'       => ['is_optional' => false, 'title' => 'vendor', 'position' => 200],
-                    'category_ids'     => ['is_optional' => false, 'title' => 'categories', 'position' => 300],
-                    'price'            => ['is_optional' => false, 'title' => 'price', 'position' => 400],
-                    'full_description' => ['is_optional' => false, 'title' => 'full_description', 'position' => 500],
-                    'status'           => ['is_optional' => true, 'title' => 'status', 'position' => 600],
-                    'images'           => ['is_optional' => false, 'title' => 'images', 'position' => 700],
+                    'product'                   => ['is_optional' => false, 'title' => 'name', 'position' => 100],
+                    'company_id'                => ['is_optional' => false, 'title' => 'vendor', 'position' => 200],
+                    'category_ids'              => ['is_optional' => false, 'title' => 'categories', 'position' => 300],
+                    'price'                     => ['is_optional' => false, 'title' => 'price', 'position' => 400],
+                    'full_description'          => ['is_optional' => false, 'title' => 'full_description', 'position' => 500],
+                    'status'                    => ['is_optional' => true, 'title' => 'status', 'position' => 600],
+                    'images'                    => ['is_optional' => false, 'title' => 'images', 'position' => 700],
+                    'videos'                    => ['is_optional' => false, 'title' => 'videos', 'position' => 800],
+                    'show_videos_before_images' => [
+                        'is_optional' => true,
+                        'title' => 'show_videos_before_images',
+                        'position' => 900,
+                        $appearance_settings['global_show_videos_before_images'] !== null,
+                        'section' => 'Appearance'
+                    ],
+                    'autoplay_videos' => [
+                        'is_optional' => true,
+                        'title' => 'autoplay_videos',
+                        'position' => 950,
+                        $appearance_settings['global_autoplay_videos'] !== null,
+                        'section' => 'Appearance'
+                    ],
                 ],
             ],
             'options_settings'  => [

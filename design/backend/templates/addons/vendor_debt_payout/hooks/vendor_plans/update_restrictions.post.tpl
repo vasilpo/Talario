@@ -19,7 +19,6 @@
     $auth.user_type === "UserTypes::ADMIN"|enum
     && $config.tweaks.allow_global_individual_settings
     && fn_check_permissions("addons", "update", "admin", "POST")
-    && !"ULTIMATE:FREE"|fn_allowed_for
 )}
 
 {if $has_global_individual_settings_permission

@@ -25,10 +25,12 @@ activeElem.classList.remove('active');
 }
 let currentItemPosition = this.currentItem+1;
 this.counterElem.querySelector('*:nth-child('+currentItemPosition+')').classList.add('active');
+$.ceEvent('trigger', 'ce.product_image_gallery.image_changed');
 }
 }else{
 function updateCounter () {
 this.counterElem.innerHTML = Number(this.currentItem+1) + ' ' + _.tr('abt__ut2_of') + ' ' + Number(this.itemsAmount);
+$.ceEvent('trigger', 'ce.product_image_gallery.image_changed');
 }
 }
 let changeMoveAction = () => {

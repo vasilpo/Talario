@@ -10,15 +10,21 @@
 
 {if $show_place_order}
 
-    <div class="clearfix {if !$is_payment_step} checkout__block ty-checkout-block-terms{/if}">
-        {hook name="checkout:final_section_customer_notes"}
-        {/hook}
-    </div>
+    {capture name="checkout_final_section_customer_notes"}
+    {hook name="checkout:final_section_customer_notes"}
+    {/hook}
+    {/capture}
+
+    {if $smarty.capture.checkout_final_section_customer_notes|trim}
+        <div class="clearfix {if !$is_payment_step} checkout__block ty-checkout-block-terms{/if}">
+            {$smarty.capture.checkout_final_section_customer_notes nofilter}
+        </div>
+    {/if}
 
     <input type="hidden" name="update_steps" value="1" />
     
     {if !$iframe_mode}
-        <div class="litecheckout__item litecheckout__item--full litecheckout__submit-order">
+        <div class="litecheckout__item litecheckout__item--full litecheckout__submit-order litecheckout__submit-order-inner">
             {include
                 file="buttons/place_order.tpl"
                 but_name="dispatch[checkout.place_order]"
@@ -30,7 +36,7 @@
 
 {else}
 
-    <div class="litecheckout__item litecheckout__submit-order">
+    <div class="litecheckout__item litecheckout__submit-order litecheckout__submit-order-inner">
         {include file="buttons/continue_shopping.tpl" but_href=$continue_url|fn_url but_role="action"}
     </div>
     

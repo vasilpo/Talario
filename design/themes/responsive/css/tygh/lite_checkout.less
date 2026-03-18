@@ -341,7 +341,9 @@
     }
 
     & &__input {
-        padding: 8px 4px;
+        --ty-litecheckout-input-padding: 8px 4px;
+
+        padding: var(--ty-litecheckout-input-padding);
         border: 1px solid;
         .set_border_color(@checkout_input_border, #acbdcd);
 
@@ -423,7 +425,9 @@
                 &:not(:placeholder-shown),
                 &:focus,
                 &:focus-within {
-                    padding: initial;
+                    --ty-litecheckout-input-selectable--select-not-placeholder-shown: initial;
+
+                    padding: var(--ty-litecheckout-input-selectable--select-not-placeholder-shown);
                     .set_text_color(@checkout_input_text, #2e3a47);
                 }
                 &:hover {

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -19,6 +19,7 @@ use Tygh\Addons\DirectPayments\ServiceProvider;
 Tygh::$app->register(new ServiceProvider());
 
 fn_register_hooks(
+    'allow_place_order_check_payment',
     'get_route_runtime',
     'get_payments_pre',
     'user_init',
@@ -26,6 +27,7 @@ fn_register_hooks(
     'pre_extract_cart',
     'save_cart_content_pre',
     'save_cart_content_before_save',
+    'placement_routines',
     'user_session_products_condition',
     'get_promotions',
     'promotion_apply_before_get_promotions',
@@ -44,6 +46,7 @@ fn_register_hooks(
     'checkout_update_user_data_post',
     'prepare_repay_data',
     'stripe_data_loader_get_supported_payments_before',
+    'stripe_data_loader_load_payment_request_data_post',
     'geo_maps_get_product_shipping_methods_before_estimation',
     // storefront rest api hooks
     /** @see \fn_direct_payments_storefront_rest_api_get_empty_cart_post */

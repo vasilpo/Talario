@@ -30,7 +30,7 @@
                 >
                 <span class="ty-product-review-new-product-review-additional__terms-and-conditions-text">
                     {capture name="product_reviews_terms_link"}
-                        <a id="sw_product_reviews_terms_and_conditions_{$product_id}" class="cm-combination ty-dashed-link">
+                        <a id="sw_product_reviews_terms_and_conditions_{$product_id}" class="cm-combination ty-dashed-link ty-license-agreement__link">
                             {__("product_reviews.terms_n_conditions_name")}
                         </a>
                     {/capture}
@@ -39,7 +39,7 @@
             </label>
 
 
-            <div class="hidden" id="product_reviews_terms_and_conditions_{$product_id}">
+            <div class="ty-license-agreement__content hidden" id="product_reviews_terms_and_conditions_{$product_id}">
                 {__("product_reviews.terms_and_conditions_content") nofilter}
             </div>
         </div>

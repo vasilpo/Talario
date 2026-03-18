@@ -4,11 +4,11 @@
         {foreach $product.variation_features_variants as $feature}
             <div class="ty-control-group ty-product-options__item clearfix">
                 <label class="ty-control-group__label ty-product-options__item-label">{$feature.description}:</label>
-                <bdi>
+                <bdi class="ty-product-options__item-select-bdi">
                     {if $feature.prefix}
                         <span>{$feature.prefix}</span>
                     {/if}
-                    <select class="cm-ajax" data-ca-target-id="checkout*,cart*">
+                    <select class="ty-product-options__item-select cm-ajax" data-ca-target-id="checkout*,cart*">
                         {foreach $feature.variants as $variant}
                             {if $variant.product}
                                 <option data-ca-variant-id="{$variant.variant_id}"

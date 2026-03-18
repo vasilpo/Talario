@@ -60,11 +60,11 @@ public serialize(\YooKassa\Request\Deals\CreateDealRequestInterface $request) : 
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

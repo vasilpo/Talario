@@ -12,7 +12,6 @@
 {include_ext file="common/icon.tpl" class="icon-`$search.sort_order_rev`" assign=c_icon}
 {include_ext file="common/icon.tpl" class="icon-dummy" assign=c_dummy}
 {$return_url=$config.current_url|escape:"url"}
-{$name_col_width = ("MULTIVENDOR"|fn_allowed_for) ? "18%" : "40%"}
 
 {if $companies}
     {capture name="companies_table"}
@@ -29,15 +28,19 @@
                         data-ca-bulkedit-enable="[data-ca-bulkedit-expanded-object=true]"
                     />
                 </th>
-                <th width="8%"><a class="cm-ajax" href="{"`$c_url`&sort_by=id&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("id")}{if $search.sort_by === "id"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
-                <th width="{$name_col_width}"><a class="cm-ajax" href="{"`$c_url`&sort_by=company&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("name")}{if $search.sort_by === "company"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
-                {if "MULTIVENDOR"|fn_allowed_for}
-                    <th width="25%"><a class="cm-ajax" href="{"`$c_url`&sort_by=email&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("email")}{if $search.sort_by === "email"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
-                {/if}
+                <th width="40%"><div class="company-list__labels-th"><a class="cm-ajax" href="{"`$c_url`&sort_by=company&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("name")}{if $search.sort_by === "company"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a><a class="cm-ajax" href="{"`$c_url`&sort_by=id&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("id")}{if $search.sort_by === "id"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a>{if "MULTIVENDOR"|fn_allowed_for}<a class="cm-ajax" href="{"`$c_url`&sort_by=email&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("email")}{if $search.sort_by === "email"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a>{/if}{hook name="companies:company_additional_info_th"}{/hook}</div></th>
                 {if "ULTIMATE"|fn_allowed_for}
                     <th width="25%"><a class="cm-ajax" href="{"`$c_url`&sort_by=storefront&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("storefront_url")}{if $search.sort_by === "storefront"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
                 {/if}
-                <th><a class="cm-ajax nowrap" href="{"`$c_url`&sort_by=date&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents">{__("registered")}{if $search.sort_by === "date"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
+                <th><a class="cm-ajax" href="{"`$c_url`&sort_by=date&sort_order=`$search.sort_order_rev`"|fn_url}" data-ca-target-id="pagination_contents" title="{__("registered")}">{__("registered_short")}{if $search.sort_by === "date"}{$c_icon nofilter}{else}{$c_dummy nofilter}{/if}</a></th>
+                {capture name="companies_list_extra_data_th"}{hook name="companies:list_extra_data_th"}{/hook}{/capture}
+                {if $smarty.capture.companies_list_extra_data_th|trim}
+                    <th>
+                        <div class="company-list__labels-secondary-th">
+                            {$smarty.capture.companies_list_extra_data_th nofilter}
+                        </div>
+                    </th>
+                {/if}
                 {hook name="companies:list_extra_th"}{/hook}
                 <th width="4%" class="nowrap">&nbsp;</th>
                 {if "MULTIVENDOR"|fn_allowed_for}
@@ -48,6 +51,11 @@
             </tr>
             </thead>
             {foreach from=$companies item=company}
+            {* Get full add-on info *}
+            {include file="views/companies/components/company_full_info.tpl"
+                company=$company
+            }
+
             <tr class="cm-row-status-{if "MULTIVENDOR"|fn_allowed_for}{$company.status|lower}{else}{$company.storefront_status|lower}{/if} cm-longtap-target"
                     data-ct-company-id="{$company.company_id}"
                     data-ca-longtap-action="setCheckBox"
@@ -62,11 +70,23 @@
                         class="cm-item cm-item-status-{if "MULTIVENDOR"|fn_allowed_for}{$company.status|lower}{else}{$company.storefront_status|lower}{/if} hide"
                     />
                 </td>
-                <td width="8%" class="row-status table__first-column" data-th="{__("id")}"><a href="{"companies.update?company_id=`$company.company_id`"|fn_url}" class="link--monochrome">&nbsp;<span>{$company.company_id}</span>&nbsp;</a></td>
-                <td width="{$name_col_width}" class="row-status wrap" data-th="{__("name")}"><a href="{"companies.update?company_id=`$company.company_id`"|fn_url}" class="link--monochrome">{$company.company}</a></td>
-                {if "MULTIVENDOR"|fn_allowed_for}
-                    <td width="25%" class="row-status wrap" data-th="{__("email")}"><a href="mailto:{$company.email}" class="link--monochrome">{$company.email}</a></td>
-                {/if}
+                <td width="40%" class="row-status wrap" data-th="{__("name")} / {__("id")} {if "MULTIVENDOR"|fn_allowed_for}/ {__("email")}{/if}{hook name="companies:company_additional_info_th_mobile"}{/hook}" id="companies_manage_name_{$company.company_id}">
+                    <div>
+                        <a href="{"companies.update?company_id=`$company.company_id`"|fn_url}" class="link--monochrome" title="{$company_full_description}">{$company.company}</a>
+                        <span class="muted" title="{$company_full_description}"><small> #{$company.company_id}</small></span>
+                    </div>
+                    {if "MULTIVENDOR"|fn_allowed_for}
+                        <div>
+                            <a href="mailto:{$company.email}" class="link--monochrome text-small-adaptive" title="{$company_full_description}">{$company.email}</a>
+                        </div>
+                    {/if}
+                    {capture name="companies_company_additional_info"}{hook name="companies:company_additional_info"}{/hook}{/capture}
+                    {if $smarty.capture.companies_company_additional_info|trim}
+                        <div class="company-list__labels">
+                            {$smarty.capture.companies_company_additional_info nofilter}
+                        </div>
+                    {/if}
+                <!--companies_manage_name_{$company.company_id}--></td>
                 {if "ULTIMATE"|fn_allowed_for}
                     {$storefront_href = "http://`$company.storefront`"}
                     {if $company.storefront_status === "StorefrontStatuses::CLOSED"|enum && $company.store_access_key}
@@ -74,7 +94,15 @@
                     {/if}
                     <td width="25%" data-th="{__("storefront")}" id="storefront_url_{$company.company_id}"><a href="{$storefront_href}">{$company.storefront|puny_decode}</a><!--storefront_url_{$company.company_id}--></td>
                 {/if}
-                <td class="nowrap row-status" data-th="{__("registered")}">{$company.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</td>
+                <td class="row-status" data-th="{__("registered_short")}"><span class="text-small-adaptive">{$company.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</span></td>
+                {capture name="companies_list_extra_data_td"}{hook name="companies:list_extra_data_td"}{/hook}{/capture}
+                {if $smarty.capture.companies_list_extra_data_td|trim}
+                    <td class="row-status wrap" data-th="{hook name="companies:list_extra_data_th_mobile"}{/hook}">
+                        <div class="company-list__labels-secondary">
+                            {$smarty.capture.companies_list_extra_data_td nofilter}
+                        </div>
+                    </td>
+                {/if}
                 {hook name="companies:list_extra_td"}{/hook}
                 <td width="4%" class="nowrap" data-th="{__("tools")}">
                     {capture name="tools_items"}
@@ -183,10 +211,7 @@
 
 {capture name="adv_buttons"}
     {hook name="companies:manage_adv_buttons"}
-        {if $is_companies_limit_reached || "ULTIMATE:FREE"|fn_allowed_for}
-            {$title_suffix = ""|fn_get_product_state_suffix}
-            {$promo_popup_title = __("ultimate_or_storefront_license_required.`$title_suffix`", ["[product]" => $smarty.const.PRODUCT_NAME])}
-
+        {if $is_companies_limit_reached}
             {include file="common/tools.tpl"
                 tool_override_meta="btn btn-primary cm-dialog-opener cm-dialog-auto-height nav__actions-btn-primary"
                 tool_href="functionality_restrictions.ultimate_or_storefront_license_required"
@@ -195,7 +220,8 @@
                 title=$add_vendor_text
                 link_text=$add_vendor_text
                 icon="icon-plus"
-                meta_data="data-ca-dialog-title='{$promo_popup_title}'"}
+                meta_data="data-ca-dialog-title='{__("licensing.feature_not_allowed.title")}'"
+            }
         {else}
             {include file="common/tools.tpl"
                 tool_href="companies.add"

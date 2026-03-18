@@ -450,6 +450,9 @@ $default = 'rgb(0,0,0)';
 if (empty($color)) {
 return $default;
 }
+if (empty($opacity)) {
+$opacity = 1;
+}
 if (strpos($opacity, '%') !== false) {
 $opacity = (int) $opacity / 100;
 }
@@ -695,6 +698,14 @@ return $filtered;
 $filtered_settings = $fn_filter_settings($settings, $allowed_keys);
 }
 return $filtered_settings;
+}
+
+function fn_ab__stickers_strip_tags($string, $allowed_tags = null)
+{
+if (empty($string)) {
+return $string;
+}
+return strip_tags($string, $allowed_tags);
 }
 if (!function_exists('array_key_first')) {
 function array_key_first($arr)

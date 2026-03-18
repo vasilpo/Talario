@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 
 namespace Tygh\Addons\ProductVariations\HookHandlers;
@@ -1331,6 +1331,53 @@ class ProductsHookHandler
         }
 
         $exceptions = fn_get_product_exceptions($parent_product_id, $short_list);
+    }
+
+    /**
+     * The "update_product_videos" hook handler.
+     *
+     * Actions:
+     *      - Sync updated product video data for a child variations.
+     *
+     * @param int                              $product_id     Product ID.
+     * @param array<array<string, string|int>> $product_videos Product videos data.
+     *
+     * @return void
+     */
+    public function onUpdateProductVideos($product_id, $product_videos)
+    {
+        $product_id_map = ServiceProvider::getProductIdMap();
+
+        if (
+            empty($product_id)
+            || empty($product_videos)
+            || !$product_id_map->isVariationProduct($product_id)
+            || (!ServiceProvider::isAllowOwnImages() && $product_id_map->isChildProduct($product_id))
+        ) {
+            return;
+        }
+
+        ServiceProvider::getSyncService()->onTableChanged('videos_links', $product_id);
+    }
+
+    /**
+     * The "delete_video_pairs" hook handler.
+     *
+     * Actions:
+     *      - Sync deleted product video data for a child variations.
+     *
+     * @param int                $product_id Product ID.
+     * @param array<string, int> $pairs      Product video pairs.
+     *
+     * @return void
+     */
+    public function onDeleteProductVideos($product_id, array $pairs)
+    {
+        if (empty($product_id) || empty($pairs)) {
+            return;
+        }
+
+        ServiceProvider::getSyncService()->onTableChanged('videos_links', $product_id);
     }
 
     /**

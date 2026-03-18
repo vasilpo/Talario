@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\AXmlScheme;
 use Tygh\Addons\SchemesManager;
@@ -30,7 +30,6 @@ use Tygh\Providers\MarketplaceProvider;
 use Tygh\Providers\StorefrontProvider;
 use Tygh\Registry;
 use Tygh\Settings;
-use Tygh\Snapshot;
 use Tygh\Themes\Themes;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
@@ -295,234 +294,234 @@ function fn_install_addon($addon, $show_notification = true, $install_demo = fal
         return false;
     }
 
-    if ($addon_scheme != false) {
-        // Register custom classes
-        $addon_scheme->registerAutoloadEntries();
-
-        if ($addon_scheme->isPromo()) {
-
-            $texts = fn_get_addon_permissions_text();
-            fn_set_notification('E', __('error'), $texts['text']);
-
-            return false;
-        }
-
-        $_data = [
-            'addon'                   => $addon_scheme->getId(),
-            'priority'                => $addon_scheme->getPriority(),
-            'dependencies'            => implode(',', $addon_scheme->getDependencies()),
-            'conflicts'               => implode(',', $addon_scheme->getConflicts()),
-            'requirements'            => $addon_scheme->getRequirements(),
-            'version'                 => $addon_scheme->getVersion(),
-            'separate'                => (int) ($addon_scheme->getSettingsLayout() === 'separate'),
-            'has_icon'                => $addon_scheme->hasIcon(),
-            'unmanaged'               => $addon_scheme->getUnmanaged(),
-            'status'                  => ObjectStatuses::DISABLED,
-            'install_datetime'        => time(),
-            'marketplace_id'          => null,
-            'marketplace_license_key' => null,
-        ];
-
-        if ($addon_scheme instanceof XmlScheme3) {
-            $_data['marketplace_id'] = $addon_scheme->getMarketplaceProductID();
-            $_data['marketplace_license_key'] = $addon_scheme->getMarketplaceLicenseNumber();
-        }
-
-        // Check system requirements (needed versions, installed extensions, etc.)
-        if (!$addon_scheme->checkRequirements($_data['requirements'])) {
-            return false;
-        }
-
-        $dependencies = SchemesManager::getInstallDependencies($_data['addon']);
-        if (!empty($dependencies)) {
-            if (count($dependencies) === 1) {
-                $full_link = '';
-                foreach ($dependencies as $dependency_key => $dependency) {
-                    $url = fn_url('addons.update&addon=' . $dependency_key, SiteArea::ADMIN_PANEL);
-                    $full_link = '<a href="' . $url . '">' . $dependency . '</a>';
-                }
-                fn_set_notification(
-                    NotificationSeverity::WARNING,
-                    __('warning'),
-                    __(
-                        'text_addon_install_dependencies',
-                        [
-                            '[addon]' => $full_link,
-                        ]
-                    )
-                );
-            } else {
-                $all_urls = [];
-                foreach ($dependencies as $dependency_key => $dependency) {
-                    $url = fn_url('addons.update&addon=' . $dependency_key, SiteArea::ADMIN_PANEL);
-                    $all_urls[] = '<li><a href="' . $url . '">' . $dependency . '</a></li>';
-                }
-                fn_set_notification(
-                    NotificationSeverity::WARNING,
-                    __('warning'),
-                    __('addons.multiple_dependencies_required', ['[addon_list]' => implode('', $all_urls)])
-                );
-            }
-
-            return false;
-        }
-
-        if ($addon_scheme->callCustomFunctions('before_install') == false) {
-            fn_uninstall_addon($addon, false, $allow_unmanaged);
-
-            return false;
-        }
-
-        // Add add-on to registry
-        $is_addon_disabled = fn_is_addon_init_disabled($addon);
-
-        Registry::set(
-            'addons.' . $addon,
-            [
-                'status'      => ObjectStatuses::DISABLED,
-                'is_disabled' => $is_addon_disabled,
-                'priority'    => $_data['priority'],
-            ]
-        );
-
-        // Execute optional queries
-        if ($addon_scheme->processQueries('install', Registry::get('config.dir.addons') . $addon) == false) {
-            fn_uninstall_addon($addon, false, $allow_unmanaged, false);
-
-            return false;
-        }
-
-        if (fn_update_addon_settings($addon_scheme) == false) {
-            fn_uninstall_addon($addon, false, $allow_unmanaged);
-
-            return false;
-        }
-
-        db_query("REPLACE INTO ?:addons ?e", $_data);
-
-        foreach ($addon_scheme->getAddonTranslations() as $translation) {
-            db_query("REPLACE INTO ?:addon_descriptions ?e", array(
-                'lang_code' => $translation['lang_code'],
-                'addon' =>  $addon_scheme->getId(),
-                'name' => $translation['value'],
-                'description' => isset($translation['description']) ? $translation['description'] : ''
-            ));
-        }
-
-        foreach ($addon_scheme->getLanguages() as $lang_code => $_v) {
-            $lang_code = strtolower($lang_code);
-            $path = $addon_scheme->getPoPath($lang_code);
-            if (!empty($path)) {
-                Languages::installLanguagePack($path, array(
-                    'reinstall' => true,
-                    'validate_lang_code' => $lang_code
-                ));
-            }
-        }
-
-        // Install templates
-        fn_install_addon_templates($addon_scheme->getId());
-
-        // Put this addon settings to the registry
-        $settings = Settings::instance()->getValues($addon_scheme->getId(), Settings::ADDON_SECTION, false);
-        if (!empty($settings)) {
-            Registry::set('settings.' . $addon, $settings);
-            $addon_data = Registry::get('addons.' . $addon);
-            Registry::set('addons.' . $addon, fn_array_merge($addon_data, $settings));
-        }
-
-        fn_update_addon_language_variables($addon_scheme);
-
-        if (fn_allowed_for('ULTIMATE')) {
-            foreach (fn_get_all_companies_ids() as $company) {
-                ProductTabs::instance($company)->createAddonTabs($addon_scheme->getId(), $addon_scheme->getTabOrder());
-            }
-        } else {
-            ProductTabs::instance()->createAddonTabs($addon_scheme->getId(), $addon_scheme->getTabOrder());
-        }
-
-        $email_templates = $addon_scheme->getEmailTemplates();
-        $internal_templates = $addon_scheme->getInternalTemplates();
-        $document_templates = $addon_scheme->getDocumentTemplates();
-        $snippet_templates = $addon_scheme->getSnippetTemplates();
-
-        if ($email_templates) {
-            /** @var \Tygh\Template\Mail\Exim $email_exim */
-            $email_exim = \Tygh::$app['template.mail.exim'];
-            $email_exim->import($email_templates);
-        }
-
-        if ($internal_templates) {
-            /** @var \Tygh\Template\Internal\Exim $internal_exim */
-            $internal_exim = \Tygh::$app['template.internal.exim'];
-            $internal_exim->import($internal_templates);
-        }
-
-        if ($document_templates) {
-            /** @var \Tygh\Template\Document\Exim $document_exim */
-            $document_exim = \Tygh::$app['template.document.exim'];
-            $document_exim->import($document_templates);
-        }
-
-        if ($snippet_templates) {
-            /** @var \Tygh\Template\Snippet\Exim $snippet_exim */
-            $snippet_exim = \Tygh::$app['template.snippet.exim'];
-            $snippet_exim->import($snippet_templates);
-        }
-
-        // Execute custom functions
-        if ($addon_scheme->callCustomFunctions('install') == false) {
-            fn_uninstall_addon($addon, false, $allow_unmanaged);
-
-            return false;
-        }
-
-        if ($show_notification == true) {
-            fn_set_notification('N', __('notice'), __('text_addon_installed', array(
-                '[addon]' => $addon_scheme->getName()
-            )));
-        }
-
-        if ($_data['marketplace_license_key'] !== null) {
-            fn_update_addon_license_key($addon, $_data['marketplace_license_key']);
-        }
-        // If we need to activate addon after install, call "update status" procedure
-        if ($addon_scheme->getStatus() !== ObjectStatuses::DISABLED && !$is_addon_disabled) {
-            fn_update_addon_status($addon, $addon_scheme->getStatus(), false, true, $allow_unmanaged);
-        }
-
-        // Install layouts individually for each theme
-        fn_install_addon_layouts($addon);
-
-        // Clean cache
-        fn_clear_cache();
-
-
-
-        if ($install_demo) {
-            $addon_scheme->processQueries('demo', Registry::get('config.dir.addons') . $addon);
-            if ($addon_scheme->callCustomFunctions('demo') == false) {
-                fn_uninstall_addon($addon, false, $allow_unmanaged);
-
-                return false;
-            }
-        }
-
-        /**
-         * Allows you to perform additional actions after installing addon.
-         *
-         * @param string $addon             Addon to install
-         * @param bool   $show_notification Display notification if set to true
-         * @param bool   $install_demo      If defined as true, addon's demo data will be installed
-         * @param bool   $allow_unmanaged   Whether to allow installing unmanaged addons in non-console environment
-         */
-        fn_set_hook('install_addon_post', $addon, $show_notification, $install_demo, $allow_unmanaged);
-
-        return true;
-    } else {
+    if (!$addon_scheme) {
         // Addon was not installed because scheme is not exists.
         return false;
     }
+
+    // Register custom classes
+    $addon_scheme->registerAutoloadEntries();
+
+    if ($addon_scheme->isPromo()) {
+        $texts = fn_get_addon_permissions_text();
+        fn_set_notification(NotificationSeverity::ERROR, __('error'), $texts['text']);
+
+        return false;
+    }
+
+    $_data = [
+        'addon'                   => $addon_scheme->getId(),
+        'priority'                => $addon_scheme->getPriority(),
+        'dependencies'            => implode(',', $addon_scheme->getDependencies()),
+        'conflicts'               => implode(',', $addon_scheme->getConflicts()),
+        'requirements'            => $addon_scheme->getRequirements(),
+        'version'                 => $addon_scheme->getVersion(),
+        'separate'                => (int) ($addon_scheme->getSettingsLayout() === 'separate'),
+        'has_icon'                => $addon_scheme->hasIcon(),
+        'unmanaged'               => $addon_scheme->getUnmanaged(),
+        'status'                  => ObjectStatuses::DISABLED,
+        'install_datetime'        => time(),
+        'marketplace_id'          => null,
+        'marketplace_license_key' => null,
+    ];
+
+    if ($addon_scheme instanceof XmlScheme3) {
+        $_data['marketplace_id'] = $addon_scheme->getMarketplaceProductID();
+        $_data['marketplace_license_key'] = $addon_scheme->getMarketplaceLicenseNumber();
+    }
+
+    // Check system requirements (needed versions, installed extensions, etc.)
+    if (!$addon_scheme->checkRequirements($_data['requirements'])) {
+        return false;
+    }
+
+    $dependencies = SchemesManager::getInstallDependencies($_data['addon']);
+    if (!empty($dependencies)) {
+        if (count($dependencies) === 1) {
+            $full_link = '';
+            foreach ($dependencies as $dependency_key => $dependency) {
+                $url = fn_url('addons.update&addon=' . $dependency_key, SiteArea::ADMIN_PANEL);
+                $full_link = '<a href="' . $url . '">' . $dependency . '</a>';
+            }
+            fn_set_notification(
+                NotificationSeverity::WARNING,
+                __('warning'),
+                __(
+                    'text_addon_install_dependencies',
+                    [
+                        '[addon]' => $full_link,
+                    ]
+                )
+            );
+        } else {
+            $all_urls = [];
+            foreach ($dependencies as $dependency_key => $dependency) {
+                $url = fn_url('addons.update&addon=' . $dependency_key, SiteArea::ADMIN_PANEL);
+                $all_urls[] = '<li><a href="' . $url . '">' . $dependency . '</a></li>';
+            }
+            fn_set_notification(
+                NotificationSeverity::WARNING,
+                __('warning'),
+                __('addons.multiple_dependencies_required', ['[addon_list]' => implode('', $all_urls)])
+            );
+        }
+
+        return false;
+    }
+
+    if ($addon_scheme->callCustomFunctions('before_install') === false) {
+        fn_uninstall_addon($addon, false, $allow_unmanaged);
+
+        return false;
+    }
+
+    // Add add-on to registry
+    $is_addon_disabled = fn_is_addon_init_disabled($addon);
+
+    Registry::set(
+        'addons.' . $addon,
+        [
+            'status'      => ObjectStatuses::DISABLED,
+            'is_disabled' => $is_addon_disabled,
+            'priority'    => $_data['priority'],
+        ]
+    );
+
+    // Execute optional queries
+    if ($addon_scheme->processQueries('install', Registry::get('config.dir.addons') . $addon) === false) {
+        fn_uninstall_addon($addon, false, $allow_unmanaged, false);
+
+        return false;
+    }
+
+    if (fn_update_addon_settings($addon_scheme) === false) {
+        fn_uninstall_addon($addon, false, $allow_unmanaged);
+
+        return false;
+    }
+
+    db_query('REPLACE INTO ?:addons ?e', $_data);
+
+    foreach ($addon_scheme->getAddonTranslations() as $translation) {
+        db_query('REPLACE INTO ?:addon_descriptions ?e', [
+            'lang_code' => $translation['lang_code'],
+            'addon' =>  $addon_scheme->getId(),
+            'name' => $translation['value'],
+            'description' => isset($translation['description']) ? $translation['description'] : ''
+        ]);
+    }
+
+    //phpcs:ignore
+    foreach ($addon_scheme->getLanguages() as $lang_code => $_v) {
+        $lang_code = strtolower($lang_code);
+        $path = $addon_scheme->getPoPath($lang_code);
+        if (!empty($path)) {
+            Languages::installLanguagePack($path, [
+                'reinstall'          => true,
+                'validate_lang_code' => $lang_code
+            ]);
+        }
+    }
+
+    // Install templates
+    fn_install_addon_templates($addon_scheme->getId());
+
+    // Put this addon settings to the registry
+    $settings = Settings::instance()->getValues($addon_scheme->getId(), Settings::ADDON_SECTION, false);
+    if (!empty($settings)) {
+        Registry::set('settings.' . $addon, $settings);
+        $addon_data = Registry::get('addons.' . $addon);
+        Registry::set('addons.' . $addon, fn_array_merge($addon_data, $settings));
+    }
+
+    fn_update_addon_language_variables($addon_scheme);
+
+    if (fn_allowed_for('ULTIMATE')) {
+        foreach (fn_get_all_companies_ids() as $company) {
+            ProductTabs::instance($company)->createAddonTabs($addon_scheme->getId(), $addon_scheme->getTabOrder());
+        }
+    } else {
+        ProductTabs::instance()->createAddonTabs($addon_scheme->getId(), $addon_scheme->getTabOrder());
+    }
+
+    $email_templates = $addon_scheme->getEmailTemplates();
+    $internal_templates = $addon_scheme->getInternalTemplates();
+    $document_templates = $addon_scheme->getDocumentTemplates();
+    $snippet_templates = $addon_scheme->getSnippetTemplates();
+
+    if ($email_templates) {
+        /** @var \Tygh\Template\Mail\Exim $email_exim */
+        $email_exim = Tygh::$app['template.mail.exim'];
+        $email_exim->import($email_templates);
+    }
+
+    if ($internal_templates) {
+        /** @var \Tygh\Template\Internal\Exim $internal_exim */
+        $internal_exim = Tygh::$app['template.internal.exim'];
+        $internal_exim->import($internal_templates);
+    }
+
+    if ($document_templates) {
+        /** @var \Tygh\Template\Document\Exim $document_exim */
+        $document_exim = Tygh::$app['template.document.exim'];
+        $document_exim->import($document_templates);
+    }
+
+    if ($snippet_templates) {
+        /** @var \Tygh\Template\Snippet\Exim $snippet_exim */
+        $snippet_exim = Tygh::$app['template.snippet.exim'];
+        $snippet_exim->import($snippet_templates);
+    }
+
+    // Execute custom functions
+    if ($addon_scheme->callCustomFunctions('install') === false) {
+        fn_uninstall_addon($addon, false, $allow_unmanaged);
+
+        return false;
+    }
+
+    if ($show_notification === true) {
+        fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('text_addon_installed', [
+            '[addon]' => $addon_scheme->getName()
+        ]));
+    }
+
+    if ($_data['marketplace_license_key'] !== null) {
+        fn_update_addon_license_key($addon, $_data['marketplace_license_key']);
+    }
+    // If we need to activate addon after install, call "update status" procedure
+    if ($addon_scheme->getStatus() !== ObjectStatuses::DISABLED && !$is_addon_disabled) {
+        fn_update_addon_status($addon, $addon_scheme->getStatus(), false, true, $allow_unmanaged);
+    }
+
+    // Install layouts individually for each theme
+    fn_install_addon_layouts($addon);
+
+    // Clean cache
+    fn_clear_cache();
+
+
+
+    if ($install_demo) {
+        $addon_scheme->processQueries('demo', Registry::get('config.dir.addons') . $addon);
+        if ($addon_scheme->callCustomFunctions('demo') === false) {
+            fn_uninstall_addon($addon, false, $allow_unmanaged);
+
+            return false;
+        }
+    }
+
+    /**
+     * Allows you to perform additional actions after installing addon.
+     *
+     * @param string $addon             Addon to install
+     * @param bool   $show_notification Display notification if set to true
+     * @param bool   $install_demo      If defined as true, addon's demo data will be installed
+     * @param bool   $allow_unmanaged   Whether to allow installing unmanaged addons in non-console environment
+     */
+    fn_set_hook('install_addon_post', $addon, $show_notification, $install_demo, $allow_unmanaged);
+
+    return true;
 }
 
 /**
@@ -543,11 +542,9 @@ function fn_is_addon_init_disabled($addon_name)
         return false;
     }
     if ($init_addons === 'core') {
-        $allowed_addons = array_filter(Snapshot::getCoreAddons(), static function ($addon) {
-            $scheme = SchemesManager::getScheme($addon);
-            return $scheme && !$scheme->hasSupplier();
-        });
-        return !in_array($addon_name, $allowed_addons);
+        if (@fn_is_allowed($addon_name, true)) {
+            return true;
+        }
     }
     return false;
 }
@@ -841,19 +838,7 @@ function fn_update_addon_settings_originals($addon_id, $name, $type, $value)
  */
 function fn_check_addon_snapshot($addon, $mode = null)
 {
-    static $addons_snapshots = null;
-
-    $mode = isset($mode) ? $mode : fn_get_storage_data('store_mode');
-    $status = true;
-
-    if ($addons_snapshots === null) {
-        $addons_snapshots = fn_get_storage_data('addons_snapshots');
-        $addons_snapshots = explode(',', $addons_snapshots);
-    }
-
-    if (in_array(md5($addon . ':' . $mode), $addons_snapshots)) {
-        $status = false;
-    }
+    $status = @fn_is_allowed($addon, true);
 
     fn_set_hook('addon_snapshot', $addon, $status);
 
@@ -956,16 +941,30 @@ function fn_update_addon_status($addon, $status, $show_notification = true, $on_
             $addons = Registry::get('addons');
             foreach ($dependencies as $dependency => $display_name) {
                 if (!empty($addons[$dependency]['status']) && $addons[$dependency]['status'] != $new_status) {
-                    if ($new_status == 'A') {
-                        fn_set_notification('W', __('warning'), __('text_addon_enable_dependencies', array(
-                            '[addons]' => implode(',', $dependencies)
-                        )));
+                    if ($new_status === ObjectStatuses::ACTIVE) {
+                        fn_set_notification(
+                            NotificationSeverity::WARNING,
+                            __('warning'),
+                            __('text_addon_enable_dependencies', ['[addons]' => implode(',', $dependencies)])
+                        );
 
                     } else {
-                        fn_set_notification('W', __('warning'), __('text_addon_disable_dependencies', array(
-                            '[addons]' => implode(',', $dependencies)
-                        )));
+                        fn_set_notification(
+                            NotificationSeverity::WARNING,
+                            __('warning'),
+                            __('text_addon_disable_dependencies', ['[addons]' => implode(',', $dependencies)])
+                        );
                     }
+                    return $old_status;
+                }
+
+                if (empty($addons[$dependency]) && $new_status === ObjectStatuses::ACTIVE) {
+                    fn_set_notification(
+                        NotificationSeverity::WARNING,
+                        __('warning'),
+                        __('text_addon_enable_dependencies', ['[addons]' => implode(',', $dependencies)])
+                    );
+
                     return $old_status;
                 }
             }
@@ -2014,13 +2013,13 @@ function fn_install_addon_layouts($addon)
                 foreach (fn_get_all_companies_ids() as $company) {
                     $layouts = Layout::instance($company)->getList(array('theme_name' => $theme_name));
                     foreach ($layouts as $layout_id => $layout) {
-                        Exim::instance($company, $layout_id)->importFromFile($addon_layouts_path);
+                        Exim::instance($company, $layout_id, $theme_name)->importFromFile($addon_layouts_path);
                     }
                 }
             } else {
                 $layouts = Layout::instance()->getList(array('theme_name' => $theme_name));
                 foreach ($layouts as $layout_id => $layout) {
-                    Exim::instance(0, $layout_id)->importFromFile($addon_layouts_path);
+                    Exim::instance(0, $layout_id, $theme_name)->importFromFile($addon_layouts_path);
                 }
             }
         }

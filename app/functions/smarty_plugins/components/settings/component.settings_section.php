@@ -1,29 +1,30 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Smarty\Template;
 use Tygh\Registry;
 
 defined('BOOTSTRAP') or die('Access denied');
 
 /**
- * @param array<string, string>     $params   Block params
- * @param string                    $content  Block content
- * @param \Smarty_Internal_Template $template Smarty template
+ * @param array<string, string> $params   Block params
+ * @param string                $content  Block content
+ * @param Template              $template Smarty template
  *
  * @return string
  */
-function smarty_component_settings_settings_section(array $params, $content, Smarty_Internal_Template $template)
+function smarty_component_settings_settings_section(array $params, $content, Template $template)
 {
     $allow_global_individual_settings = Registry::ifGet('config.tweaks.allow_global_individual_settings', false) || !empty($params['allow_global_individual_settings']);
     $items = isset($params['subsection']) ? array_filter((array) $params['subsection']) : [];
@@ -84,5 +85,8 @@ function smarty_component_settings_settings_section(array $params, $content, Sma
         'items' => $items
     ]));
 
-    return $template->fetch('common/settings_section.tpl');
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
+    return $smarty->fetch('common/settings_section.tpl', null, null, $template);
 }

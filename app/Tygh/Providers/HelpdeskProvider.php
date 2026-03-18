@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Providers;
 
@@ -115,15 +115,6 @@ class HelpdeskProvider implements ServiceProviderInterface
                 self::getPermissionService()->reportConnection($connected_helpdesk_accounts);
             };
         };
-
-        $app['helpdesk.license_activate_mail_requester'] = static function ($app) {
-            return new LicenseActivateMailRequester(
-                Registry::get('user_info'),
-                self::getServiceUrl(),
-                new Http(),
-                Registry::get('settings.Upgrade_center.license_number')
-            );
-        };
     }
 
     /**
@@ -177,13 +168,5 @@ class HelpdeskProvider implements ServiceProviderInterface
     public static function getAccountConnectionReporter()
     {
         return Tygh::$app['helpdesk.connected_account_reporter'];
-    }
-
-    /**
-     * @return \Tygh\Helpdesk\LicenseActivateMailRequester
-     */
-    public static function getLicenseActivateMailRequester()
-    {
-        return Tygh::$app['helpdesk.license_activate_mail_requester'];
     }
 }

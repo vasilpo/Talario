@@ -13,7 +13,7 @@
             {/capture}
 
             {if $smarty.capture.$tab_content_capture|trim}
-                <li class="ty-popup-tabs__item">{include_ext file="common/icon.tpl" class="ty-icon-popup ty-popup-tabs__icon"}<a id="{$tab.html_id}" class="cm-dialog-opener" data-ca-target-id="content_block_popup_{$tab_id}" rel="nofollow">{$tab.name}</a></li>
+                <li class="ty-popup-tabs__item">{include_ext file="common/icon.tpl" class="ty-icon-popup ty-popup-tabs__icon"}<a id="{$tab.html_id}" class="cm-dialog-opener ty-popup-tabs__item-link" data-ca-target-id="content_block_popup_{$tab_id}" data-ca-max-width="980" rel="nofollow">{$tab.name}</a></li>
                 <div id="content_block_popup_{$tab_id}" class="hidden" title="{$tab.name}" data-ca-keep-in-place="true">
                     {$smarty.capture.$tab_content_capture nofilter}
                 </div>

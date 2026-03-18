@@ -17,15 +17,14 @@
 /* ------------------ ICONS --------------------- */
 
 @font-face {
-	font-family: 'uni2-icons';
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-	src: url('../../../media/fonts/addons/abt__unitheme2/uni2-icons.eot'); /* For IE6-8 */
-	src: local('Material Icons'),
-	local('MaterialIcons-Regular'),
-	url('../../../media/fonts/addons/abt__unitheme2/uni2-icons.woff') format('woff'),
-	url('../../../media/fonts/addons/abt__unitheme2/uni2-icons.ttf') format('truetype');
+    font-family: 'uni2-icons';
+    src:
+        url('../../../media/fonts/addons/abt__unitheme2/uni2-icons.ttf') format('truetype'),
+        url('../../../media/fonts/addons/abt__unitheme2/uni2-icons.woff') format('woff'),
+        url('../../../media/fonts/addons/abt__unitheme2/uni2-icons.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 [class*="ut2-icon-"], .ut2-icon, [class*="ut2-icon-"] [class*="path"] {
@@ -87,9 +86,8 @@
 .ty-icon-cancel-circle {
     font-size: 18px;
     line-height: 18px;
-    color: @links;
+    color: var(--color-links);
 }
-
 
 .ut2-icon-home_page:before {
     content: "\e96c";
@@ -547,6 +545,24 @@
     content: "\e98d";
     margin-left: -1em;
 }
+.ut2-icon-align-vertical-top:before {
+    content: "\e920";
+}
+.ut2-icon-align-vertical-center:before {
+    content: "\e98f";
+}
+.ut2-icon-align-vertical-bottom:before {
+    content: "\e990";
+}
+.ut2-icon-align-horizontal-left:before {
+    content: "\e991";
+}
+.ut2-icon-align-horizontal-center:before {
+    content: "\e992";
+}
+.ut2-icon-align-horizontal-right:before {
+    content: "\e993";
+}
 
 .ut2-icon-use_icon_cart {
     .ut2-icon();
@@ -597,6 +613,20 @@
 }
 .ut2_general_buttons_use_icon_cart();
 
+
+[class*=icon-left-open],
+[class*=icon-right-open],
+.ty-icon-left-circle,
+.ty-icon-right-circle,
+.ut2-icon-arrow_back_black,
+.ut2-icon-arrow_forward_black,
+.ut2-icon-outline-arrow_back,
+.ut2-icon-outline-arrow_forward {
+    html[dir="rtl"] & {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
+}
 
 #ab__video_gallery .ty-tabs__a {
 	&:before {

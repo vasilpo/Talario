@@ -33,9 +33,7 @@ function smarty_modifier_truncate($string, $length = 80, $etc = '...',
         return '';
 
     if (Registry::get('runtime.customization_mode.live_editor') && preg_match('/(\[lang name\=[\w-]+?\])(.*?)(\[\/lang\])/is', $string, $matches)) {
-        list(, $pre, , $string, $post) = $matches;
-    } else {
-        $pre = $post = '';
+        list(, , , $string) = $matches;
     }
 
     if (fn_strlen($string) > $length) {
@@ -46,7 +44,7 @@ function smarty_modifier_truncate($string, $length = 80, $etc = '...',
         if (!$middle) {
             return fn_substr($string, 0, $length) . $etc;
         } else {
-            return fn_substr($string, 0, $length / 2) . $etc . fn_substr($string, -$length / 2);
+            return fn_substr($string, 0, floor($length / 2)) . $etc . fn_substr($string, ceil(-$length / 2));
         }
     } else {
         return $string;

@@ -229,4 +229,47 @@ if(strpos($join,'?:product_features_values') !== false){
 $fields[] = '?:product_features_values.value_int';
 }
 }
+$fields[] = '?:product_feature_variants.abt__ut2_multicolor';
+$fields[] = '?:product_feature_variants.abt__ut2_color_style';
+}
+function fn_abt__unitheme2_get_filters_products_count_post($params, $lang_code, &$filters, $selected_filters)
+{
+$variant_ids = [];
+foreach ($filters as $filter) {
+if ($filter['variants']) {
+foreach ($filter['variants'] as $variant) {
+$variant_ids[] = $variant['variant_id'];
+}
+}
+}
+$variant_ids = array_unique($variant_ids);
+$variants = db_get_hash_array("SELECT * FROM ?:product_feature_variants WHERE variant_id IN (?n)", 'variant_id', $variant_ids);
+foreach ($filters as &$filter) {
+if ($filter['variants']) {
+$thumbnail_colors = [];
+foreach ($filter['variants'] as &$variant) {
+if (isset($variants[$variant['variant_id']])) {
+$variant = array_merge($variants[$variant['variant_id']], $variant);
+}
+if ($variant['abt__ut2_color_style'] == 'thumbnail'){
+$thumbnail_colors[] = $variant['variant_id'];
+}
+}
+$image_pairs = fn_get_image_pairs($thumbnail_colors, 'feature_variant', 'V', true, true, $lang_code);
+foreach ($image_pairs as $variant_id => $image_pair) {
+$filter['variants'][$variant_id]['image_pair'] = array_pop($image_pair);
+}
+}
+}
+}
+function fn_abt__unitheme2_get_product_features_list_before_select(&$fields){
+$fields .= ",fv.abt__ut2_color_style, fv.abt__ut2_multicolor";
+}
+function fn_abt__unitheme2_get_product_features_list_post(&$features_list){
+foreach ($features_list as &$feature){
+if (!empty($feature['variant_id'])){
+$feature['variants'][$feature['variant_id']]['abt__ut2_multicolor'] = $feature['abt__ut2_multicolor'];
+$feature['variants'][$feature['variant_id']]['abt__ut2_color_style'] = $feature['abt__ut2_color_style'];
+}
+}
 }

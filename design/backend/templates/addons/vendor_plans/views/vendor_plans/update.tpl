@@ -86,6 +86,8 @@
             <div class="controls">
                 <input id="elm_commission_{$id}" type="text" name="plan_data[commission]" class="input-mini" value="{$plan.commission}" size="4"> % + <input type="text" name="plan_data[fixed_commission]" value="{$plan.fixed_commission}" class="input-mini" size="4"> {$currencies.$primary_currency.symbol nofilter}</div>
         </div>
+
+        {hook name="vendor_plans:comission_extra"}{/hook}
     </div>
 
     <div id="content_plan_restrictions_{$id}">

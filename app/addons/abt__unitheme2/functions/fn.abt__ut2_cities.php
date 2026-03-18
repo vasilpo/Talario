@@ -18,7 +18,7 @@
 
 function fn_abt__unitheme2_get_cities_pre($params, $items_per_page, $lang_code, &$fields, $condition, &$join){
 if(AREA === 'A'){
-$join .= db_quote(' LEFT JOIN ?:abt__ut2_checkout_cities ON ?:abt__ut2_checkout_cities.city_id = ?:rus_cities.city_id');
+$join .= db_quote(' LEFT JOIN ?:abt__ut2_checkout_cities ON ?:abt__ut2_checkout_cities.city_id = ?:cities.city_id');
 $fields[] = '(?:abt__ut2_checkout_cities.city_id IS NOT NULL) as abt__ut2_use_for_checkout';
 }
 }
@@ -41,15 +41,15 @@ db_replace_into('abt__ut2_checkout_cities',$data);
 function fn_abt__ut2_get_cities($lang_code = CART_LANGUAGE){
 return db_get_hash_multi_array('SELECT
 ?:abt__ut2_checkout_cities.*,
-?:rus_city_descriptions.city,
+?:city_descriptions.city,
 ?:state_descriptions.state
 FROM ?:abt__ut2_checkout_cities
-LEFT JOIN ?:rus_city_descriptions ON ?:rus_city_descriptions.city_id = ?:abt__ut2_checkout_cities.city_id
-AND ?:rus_city_descriptions.lang_code = ?s
+LEFT JOIN ?:city_descriptions ON ?:city_descriptions.city_id = ?:abt__ut2_checkout_cities.city_id
+AND ?:city_descriptions.lang_code = ?s
 LEFT JOIN ?:states ON ?:abt__ut2_checkout_cities.state_code = ?:states.code
 AND ?:states.country_code = ?:abt__ut2_checkout_cities.country_code
 LEFT JOIN ?:state_descriptions ON ?:states.state_id = ?:state_descriptions.state_id
 AND ?:state_descriptions.lang_code = ?s
-WHERE ?:rus_city_descriptions.city IS NOT NULL'
+WHERE ?:city_descriptions.city IS NOT NULL'
 , ['country_code', 'city_id'], $lang_code,$lang_code);
 }

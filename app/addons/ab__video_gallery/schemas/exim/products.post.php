@@ -1,7 +1,7 @@
 <?php
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -15,9 +15,10 @@
 * website: https://cs-cart.alexbranding.com                                                *
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
-$schema['export_fields']['AB Set video as product image'] = array(
-'process_get' => array('fn_ab__vg_exim_get_replace_image', '#key', 'replace_image'),
-'process_put' => array('fn_ab__vg_exim_put_replace_image', '#key', 'replace_image', '#this'),
-'linked' => false,
-);
+defined('BOOTSTRAP') or die('Access denied');
+$schema['export_fields']['AB Set video as product image'] = [
+'process_get' => ['fn_ab__vg_exim_get_replace_image', '#key', 'replace_image'],
+'process_put' => ['fn_ab__vg_exim_put_replace_image', '#key', 'replace_image', '#this'],
+'linked' => false
+];
 return $schema;

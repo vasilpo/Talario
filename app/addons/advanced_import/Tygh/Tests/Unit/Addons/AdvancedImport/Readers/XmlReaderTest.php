@@ -13,13 +13,20 @@ class XmlReaderTest extends ATestCase
     protected function setUp(): void
     {
         $filePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'ym.xml';
-        $this->reader = new Xml($filePath, array('target_node' => 'yml_catalog->shop->offers->offer'));
+        $this->reader = new Xml($filePath, ['target_node' => 'yml_catalog->shop->offers->offer']);
     }
 
     public function testParse()
     {
         $result = $this->reader->parse();
         $expected = include(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'ym.php');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testParseWithLimit()
+    {
+        $result = $this->reader->parse(2);
+        $expected = include(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'ym_with_limit.php');
         $this->assertEquals($expected, $result);
     }
 }

@@ -1,0 +1,1 @@
+<!--content_product_filters_original_{$block.block_id}--></div>

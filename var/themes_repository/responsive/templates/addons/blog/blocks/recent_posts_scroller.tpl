@@ -3,6 +3,11 @@
 {if $items}
 
 {assign var="obj_prefix" value="`$block.block_id`000"}
+{$show_carousel_wrapper = $show_carousel_wrapper|default:false}
+
+{if $show_carousel_wrapper}
+    <div class="ty-owl-container-wrapper {if $block.properties.outside_navigation === "YesNo::YES"|enum}ty-owl-container-wrapper--outside-navigation{/if}">
+{/if}
 
 {if $block.properties.outside_navigation == "Y"}
     <div class="owl-theme ty-owl-controls">
@@ -28,7 +33,7 @@
                     </a>
                 </div>
 
-                <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}">{$page.page}</a>
+                <a href="{"pages.view?page_id=`$page.page_id`"|fn_url}" class="ty-blog-recent-posts-scroller__title">{$page.page}</a>
 
                 <div class="ty-blog__date">{$page.timestamp|date_format:"`$settings.Appearance.date_format`"}</div>
 
@@ -38,6 +43,10 @@
         </div>
     </div>
 </div>
+
+{if $show_carousel_wrapper}
+    </div>
+{/if}
 
 {include file="common/scroller_init_with_quantity.tpl" prev_selector="#owl_prev_`$obj_prefix`" next_selector="#owl_next_`$obj_prefix`"}
 

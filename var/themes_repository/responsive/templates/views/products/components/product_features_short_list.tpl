@@ -2,7 +2,7 @@
 {function name="feature_value"}
     {strip}
         {if $feature.features_hash && $feature.feature_type == "ProductFeatures::EXTENDED"|enum}
-            <a href="{"categories.view?category_id=`$product.main_category`&features_hash=`$feature.features_hash`"|fn_url}">
+            <a class="ty-features-list__item-link" href="{"categories.view?category_id=`$product.main_category`&features_hash=`$feature.features_hash`"|fn_url}">
         {/if}
         {if $feature.prefix}<span class="ty-features-list__item-prefix">{$feature.prefix}</span>{/if}
         {if $feature.feature_type == "ProductFeatures::DATE"|enum}

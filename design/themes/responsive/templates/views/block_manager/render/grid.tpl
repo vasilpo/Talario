@@ -12,7 +12,7 @@
     {if $grid.status == "A" && $content}
         {if $grid.alpha}<div class="{if $layout_data.layout_width != "fixed"}row-fluid{else}row{/if}">{/if}
             {$width = $fluid_width|default:$grid.width}
-            <div class="span{$width} {if $grid.offset}offset{$grid.offset}{/if} {$grid.user_class}" >
+            <div class="span{$width} {if $grid.offset}offset{$grid.offset}{/if} ty-cs-controller-{$runtime.controller} ty-cs-mode-{$runtime.mode} {if $runtime.action}ty-cs-action-{$runtime.action}{/if} {$grid.user_class}" >
                 {if $grid.wrapper}
 
                     {include file="views/block_manager/extract_nested_forms.tpl"

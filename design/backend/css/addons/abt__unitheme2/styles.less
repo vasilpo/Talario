@@ -14,8 +14,52 @@
 * website: https://cs-cart.alexbranding.com                                                *
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
+#content_general {
+.abt__ut2_vertical_image_align,
+.abt__ut2_vertical_background_align {
+display: inline-flex;
+width: fit-content;
+float: left;
+}
+.abt__ut2_horizontal_image_align,
+.abt__ut2_horizontal_background_align {
+width: fit-content;
+display: inline-flex;
+}
+}
+.abt__ut2_vertical_image_align,
+.abt__ut2_horizontal_image_align,
+.abt__ut2_vertical_background_align,
+.abt__ut2_horizontal_background_align {
+label {
+&.btn {
+font-weight: normal;
+}
+> i {
+font-size: 18px;
+}
+&:has(input[type="radio"]:checked) {
+color: var(--cs-text-color);
+background: var(--cs-btn-background-highlight);
+> i {
+color: var(--cs-link-color);
+}
+}
+}
+input[type="radio"] {
+display: none;
+}
+}
+#overlay_abt__ut2_image_v_position,
+#overlay_abt__ut2_image_h_position,
+#overlay_abt__ut2_background_v_position,
+#overlay_abt__ut2_background_h_position {
+&.btn-group {
+margin-left: 10px;
+}
+}
 #addon_abt__unitheme2installed .bg-icon, #addon_abt__unitheme2 .bg-icon {background-size: contain;background: transparent url('../../../media/images/addons/abt__unitheme2/logo.png') no-repeat center;border: none;}
-#addon_abt__unitheme2installed .bg-icon i, #addon_abt__unitheme2 .bg-icon i {display: none;} #addon_abt__unitheme2 .bg-addon-image {background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI+PCEtLVpHRjBaVG9nTWpBeU5TMHhNQzB4TmlBeE5UbzFNRG95T0RzZ2IzSmtaWEk2SURJek9UZzVPeUJwY0RvZ01UZzFMakl5TlM0ek15NHhPRE03SUdGa1pHOXVPaUJoWW5SZlgzVnVhWFJvWlcxbE1qc2dZbWxrT2lBeE1qSTFPeUJqYjJSbE9pQkJRa0V0T0hCS1RrVXdUR0V6TWxSb01YUnZhVXhEZWxCbE95QnlZem9nLS0+PGNpcmNsZSBjeD0iNSIgY3k9IjUiIHI9IjQiIGZpbGw9IiNjY2MiLz48L3N2Zz4=');}
+#addon_abt__unitheme2installed .bg-icon i, #addon_abt__unitheme2 .bg-icon i {display: none;} #addon_abt__unitheme2 .bg-addon-image {background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI+PCEtLVpHRjBaVG9nTWpBeU5pMHdNeTB4T0NBeE9EbzBNem94TURzZ2IzSmtaWEk2SURJek9UZzVPeUJwY0RvZ01UZzFMakl5TlM0ek15NHhORE03SUdGa1pHOXVPaUJoWW5SZlgzVnVhWFJvWlcxbE1qc2dZbWxrT2lBeE1qTXdPeUJqYjJSbE9pQkJRa0V0T0hCS1RrVXdUR0V6TWxSb01YUnZhVXhEZWxCbE95QnlZem9nLS0+PGNpcmNsZSBjeD0iNSIgY3k9IjUiIHI9IjQiIGZpbGw9IiNjY2MiLz48L3N2Zz4=');}
 #addon_abt__unitheme2 .addons-addon-icon__image--label {background: transparent url('../../../media/images/addons/abt__unitheme2/logo.png') no-repeat center;font-size: 0;}
 .abt-ut2-doc {
 border-radius: var(--cs-base-border-radius);
@@ -106,6 +150,22 @@ display: inline-block;
 }
 }
 form[name='banners_form'] {
+.cs-tooltip__icon, .cs-icon--type-question-sign {
+--cs-icon-size: 18px;
+opacity: 0.6;
+}
+.cs-icon.icon-remove-sign {
+display: inline;
+margin: initial;
+}
+.image-delete {
+position: relative;
+top: 3px;
+text-decoration: none !important;
++ .upload-filename {
+font-style: italic;
+}
+}
 .abt-ut2-banner-use-own-value {
 display: none;
 margin: 2px 15px;
@@ -146,10 +206,13 @@ display: none;
 }
 }
 [id$="_mobile"], [id$="_tablet"] {
-.control-group {
+> .control-group {
 position: relative;
 margin-bottom: 0;
 padding: 10px 10px 10px 50px;
+> .control-group + .control-group {
+margin-left: 210px;
+}
 &:before {
 content: "";
 border-left: 1px solid #eee;
@@ -173,6 +236,9 @@ margin-bottom: 2px;
 }
 .controls {
 margin-left: 220px;
+> input, > textarea[class*="span"] {
+max-width: 100%;
+}
 }
 .abt-ut2-banner-use-own-value.for_device + .controls {
 margin-left: 0;
@@ -193,7 +259,6 @@ pointer-events: none !important;
 a.cm-tooltip {
 pointer-events: visible !important;
 z-index: 1;
-margin-left: 5px;
 }
 &.disabled, &.disabled + .abt-ut2-banner-use-own-value.for_device {
 position: relative;
@@ -422,4 +487,29 @@ background: linear-gradient(135deg, #666 50%, #e6ac00 50%);
 span[data-ca-target-id*="_White"], a[name="White.less"] span.flag {
 .box-shadow(inset 0 0 3px 0 rgba(0, 0, 0, 0.3));
 background: linear-gradient(135deg, white 50%, black 50%);
+}
+.input-prepend--abt__ut2_multicolor {
+margin-top: 10px;
+input[type="checkbox"] {
+align-self: center;
+margin-left: 10px;
+}
+}
+[id^="box_feature_variants"] td, [id^="box_add_variants"] td{
+&[data-type="default"] {
+.second-color, .variant-color-image {
+display: none;
+}
+}
+&[data-type="thumbnail"] {
+.second-color, .first-color {
+display: none;
+}
+~ td {
+vertical-align: top;
+}
+}
+&[data-type="multicolor"] .variant-color-image {
+display: none;
+}
 }

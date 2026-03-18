@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\BlockManager;
 
@@ -633,9 +633,11 @@ class SchemesManager
     /**
      * Checks selected wrapper for specified grid and allows or denies usage of that wrapper.
      *
-     * @param array{s_layout: string|NULL, grid_id: int, container_id: int, parent_id: int, width: int, content_align: string, user_class: string, active_tab: string, alpha: int, omega: int, order: int} $object Object data
+     * @param array $object Object data
      *
      * @return bool True if wrapper is allowed, false - if forbidden.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
      */
     public static function isGridWrapperAvailable(array $object)
     {
@@ -647,6 +649,23 @@ class SchemesManager
             self::$grid_schemes = fn_get_schema('block_manager', 'grids');
         }
 
-        return in_array($object['wrapper'], self::$grid_schemes['wrappers']);
+        if (empty(self::$grid_schemes['wrappers']) || !is_array(self::$grid_schemes['wrappers'])) {
+            return false;
+        }
+
+        $templates = [];
+        foreach (self::$grid_schemes['wrappers'] as $wrapper) {
+            // For backward compatibility with old schema format
+            if (is_string($wrapper)) {
+                $templates[] = $wrapper;
+                continue;
+            }
+
+            if (is_array($wrapper) && !empty($wrapper['template'])) {
+                $templates[] = $wrapper['template'];
+            }
+        }
+
+        return in_array($object['wrapper'], $templates);
     }
 }

@@ -39,9 +39,19 @@
 {capture name="name_`$obj_id`"}
 {hook name="products:product_name"}
     {if $show_name}
-        {if $hide_links}<strong>{else}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="product-title" title="{$product.product|strip_tags}" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{if $show_labels_in_title}{hook name="products:dotd_product_label"}{/hook}{/if}{$product.product nofilter}{if $hide_links}</strong>{else}</a>{/if}
+        {if $hide_links}<strong>{else}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="product-title" title="{$product.product|strip_tags}" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{if $show_labels_in_title}{hook name="products:dotd_product_label"}{/hook}{/if}
+        {if $show_brand_name && $settings.abt__ut2.general.brand_feature_id > 0}
+            {$b_feature=$product.abt__ut2_features[$settings.abt__ut2.general.brand_feature_id]}
+            {if $b_feature.variants[$b_feature.variant_id].variant}<span class="brand-name">{$b_feature.variants[$b_feature.variant_id].variant}</span>{/if}
+        {/if}
+        {$product.product nofilter}{if $hide_links}</strong>{else}</a>{/if}
     {elseif $show_trunc_name}
-        {if $hide_links}<strong>{else}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="product-title" title="{$product.product|strip_tags}" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{if $show_labels_in_title}{hook name="products:dotd_product_label"}{/hook}{/if}{$product.product|truncate:180:"...":true nofilter}{if $hide_links}</strong>{else}</a>{/if}
+        {if $hide_links}<strong>{else}<a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="product-title" title="{$product.product|strip_tags}" {live_edit name="product:product:{$product.product_id}" phrase=$product.product}>{/if}{if $show_labels_in_title}{hook name="products:dotd_product_label"}{/hook}{/if}
+        {if $show_brand_name && $settings.abt__ut2.general.brand_feature_id > 0}
+            {$b_feature=$product.abt__ut2_features[$settings.abt__ut2.general.brand_feature_id]}
+            {if $b_feature.variants[$b_feature.variant_id].variant}<span class="brand-name">{$b_feature.variants[$b_feature.variant_id].variant}</span>{/if}
+        {/if}
+        <span>{$product.product|truncate:180:"...":true nofilter}</span>{if $hide_links}</strong>{else}</a>{/if}
     {/if}
 {/hook}
 {/capture}
@@ -256,9 +266,9 @@
 {capture name="prod_descr_`$obj_id`"}
     {if $show_descr}
         {if $product.short_description}
-            <div class="product-description" {live_edit name="product:short_description:{$product.product_id}"}>{$product.short_description|strip_tags nofilter}</div>
+            <div class="ut2-product-description" {live_edit name="product:short_description:{$product.product_id}"}>{$product.short_description|strip_tags nofilter}</div>
         {else}
-            <div class="product-description" {live_edit name="product:full_description:{$product.product_id}" phrase=$product.full_description}>{$product.full_description|strip_tags|truncate:300 nofilter}</div>
+            <div class="ut2-product-description" {live_edit name="product:full_description:{$product.product_id}" phrase=$product.full_description}>{$product.full_description|strip_tags|truncate:300 nofilter}</div>
         {/if}
     {/if}
 {/capture}
@@ -554,6 +564,7 @@
     <div class="cm-reload-{$obj_prefix}{$obj_id} js-product-options-{$obj_prefix}{$obj_id}" id="product_options_update_{$obj_prefix}{$obj_id}">
         <input type="hidden" name="appearance[show_product_options]" value="{$show_product_options}" />
         <input type="hidden" name="appearance[force_show_add_to_cart_button]" value="Y">
+        <input type="hidden" name="appearance[ut2_select_variation]" value="{$ut2_select_variation}">
         {hook name="products:product_option_content"}
             {if $disable_ids}
                 {$_disable_ids = "`$disable_ids``$obj_id`"}

@@ -53,6 +53,7 @@
                 <manufacturer_warranty>true</manufacturer_warranty>
                 <multiplicity>1</multiplicity>
                 <unit>шт</unit>
+                <selfClosed/>
             </offer>
             <offer id="128389" available="true" available-kiev="false" available-kharkov="true" type="vendor.model">
                 <url>https://example.com/catalog/avtoinstrument/ustroystva-zaryadnie-i-pusko-zaryadnie-dlya-akb/intertool-at-3010.html</url>
@@ -103,6 +104,12 @@
                 <multiplicity>1</multiplicity>
                 <unit>шт</unit>
             </offer>
+            <offer/>
+            <offer>
+                <model/>
+            </offer>
+            <offer id="128390" available="true" available-kiev="false" available-kharkov="true" type="vendor.model"/>
+            <offer/>
         </offers>
     </shop>
 </yml_catalog>

@@ -356,4 +356,5 @@ $schema['addons/abt__unitheme2/blocks/lite_checkout/abt__ut2_simple_payment_meth
 ],
 ],
 ];
+$schema['blocks/products/products.tpl']['bulk_modifier']['fn_gather_additional_products_data']['params']['get_additional'] = true;
 return $schema;

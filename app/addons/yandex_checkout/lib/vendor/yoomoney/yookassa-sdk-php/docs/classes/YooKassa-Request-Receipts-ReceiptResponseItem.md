@@ -47,8 +47,8 @@
 | public | [$productCode](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_productCode) |  | Код товара — уникальный номер, который присваивается экземпляру товара при маркировке (тег в 54 ФЗ — 1162) |
 | public | [$quantity](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_quantity) |  | Количество (тег в 54 ФЗ — 1023) |
 | public | [$supplier](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_supplier) |  | Информация о поставщике товара или услуги (тег в 54 ФЗ — 1224) |
-| public | [$vat_code](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_vat_code) |  | Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199) |
-| public | [$vatCode](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_vatCode) |  | Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199) |
+| public | [$vat_code](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_vat_code) |  | Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199) |
+| public | [$vatCode](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md#property_vatCode) |  | Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199) |
 
 ---
 ### Methods
@@ -468,7 +468,7 @@ MAX_PRODUCT_CODE_LENGTH = 96 : int
 ---
 ***Description***
 
-Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199)
+Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199)
 
 **Type:** <a href="../int"><abbr title="int">int</abbr></a>
 
@@ -480,7 +480,7 @@ MAX_PRODUCT_CODE_LENGTH = 96 : int
 ---
 ***Description***
 
-Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199)
+Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199)
 
 **Type:** <a href="../int"><abbr title="int">int</abbr></a>
 
@@ -926,7 +926,7 @@ public getVatCode() : int|null
 **Details:**
 * Inherited From: [\YooKassa\Request\Receipts\ReceiptResponseItem](../classes/YooKassa-Request-Receipts-ReceiptResponseItem.md)
 
-**Returns:** int|null - Ставка НДС, число 1-10, или null, если ставка не задана
+**Returns:** int|null - Ставка НДС, число 1-12, или null, если ставка не задана
 
 
 <a name="method_jsonSerialize" class="anchor"></a>
@@ -1451,7 +1451,7 @@ public setVatCode(int $value) : mixed
 ##### Parameters:
 | Type | Name | Description |
 | ---- | ---- | ----------- |
-| <code lang="php">int</code> | value  | Ставка НДС, число 1-10 |
+| <code lang="php">int</code> | value  | Ставка НДС, число 1-12 |
 
 ##### Throws:
 | Type | Description |
@@ -1508,11 +1508,11 @@ protected getUnknownProperties() : array
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

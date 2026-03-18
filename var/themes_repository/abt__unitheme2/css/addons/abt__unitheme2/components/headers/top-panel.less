@@ -15,15 +15,13 @@
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
 /*##############################################################################
-   [[[[[ BEGIN ]]]]] Top Panel region
+   [[[[ BEGIN ]]]] Top Panel region
 ##############################################################################*/
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] mixin & vars :: Top Panel region
+   [[[ BEGIN ]]] mixin & vars :: Top Panel region
 ==============================================================================*/
-@header-t-height: var(--ut2-top-panel-height, 0px); // header top
-
-.mxn--top-panel-_bg-color_-hover() when (@top_panel_bg = @general_bg_color) {
+.mxn_top-panel-_bg-color_-hover() when (@top_panel_bg = @general_bg_color) {
     //background: contrast(@top_panel_bg, @base, rgba(255, 255, 255, 0.2));
     @media (max-width: 1023px) {
         background: none;
@@ -32,7 +30,7 @@
         background: contrast(@top_panel_bg, @fill-gray-box, darken(@top_panel_bg, 3%));
     }
 }
-.mxn--top-panel-_bg-color_-hover() when not (@top_panel_bg = @general_bg_color) {
+.mxn_top-panel-_bg-color_-hover() when not (@top_panel_bg = @general_bg_color) {
     @media (max-width: 1023px) {
         background: none;
     }
@@ -41,11 +39,11 @@
     }
 }
 
-.mxn--top-panel-_text-color_-active-hover-opened() {
+.mxn_top-panel-_text-color_-active-hover-opened() {
     color: contrast(@top_panel_bg, @font, white);
 }
 
-.mxn--top-panel-dropdown-_bg-color_-hover() when (@top_panel_bg = @general_bg_color) {
+.mxn_top-panel__dropdown-_bg-color_-hover() when (@top_panel_bg = @general_bg_color) {
     @media (max-width: 1023px) {
         background: none;
     }
@@ -53,7 +51,7 @@
         background: var(--fill-gray);
     }
 }
-.mxn--top-panel-dropdown-_bg-color_-hover() when not (@top_panel_bg = @general_bg_color) {
+.mxn_top-panel__dropdown-_bg-color_-hover() when not (@top_panel_bg = @general_bg_color) {
     @media (max-width: 1023px) {
         background: none;
     }
@@ -62,138 +60,321 @@
     }
 }
 
-.mxn--top-panel-dropdown-_text-color() {
+.mxn_top-panel__dropdown-_text-color() {
     color: contrast(@general_bg_color, @font, white);
 }
 
-.mxn--top-panel-dropdown-_text-color_-active() {
+.mxn_top-panel__dropdown-_text-color_-active() {
     color: contrast(@general_bg_color, @lighten-font, rgba(255, 255, 255, 0.75));
 }
 
-.mxn--top-panel-dropdown-_text-color_-hover() {
+.mxn_top-panel__dropdown-_text-color_-hover() {
     color: contrast(@general_bg_color, @font, white);
 }
 
-.mxn--top-panel-_border-color() when (@top_panel_bg = @general_bg_color) {
+.mxn_top-panel-_border-color() when (@top_panel_bg = @general_bg_color) {
     border-color: contrast(@top_panel_bg, @base, rgba(255, 255, 255, .2));
 }
-.mxn--top-panel-_border-color() when not (@top_panel_bg = @general_bg_color) {
+.mxn_top-panel-_border-color() when not (@top_panel_bg = @general_bg_color) {
     border-color: contrast(@top_panel_bg, rgba(0, 0, 0, .07), rgba(255, 255, 255, .2));
 }
 
-@var--top-panel-link-btn-_padding-inline: var(--gap-xs);
+.mxn_top-panel__dropdown__popup-corner-arrow-to-btn-head() {
+    &.open {
+        z-index: 1000 !important; // above dropdown, similar to .ty-dropdown-box__title
 
-/* [[[[ END ]]]] mixin & vars :: Top Panel region
+        &::before,
+        &::after {
+            opacity: initial;
+        }
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        inline-size: 0;
+        block-size: 0;
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline-end: calc(var(--ut2-header__block-_common-inline-padding) - 3px); // + 1px - 4px
+        border-inline: 7px solid transparent;
+        opacity: 0;
+        pointer-events: none;
+
+        @media (max-width: 1023px) {
+            inset-inline: 0;
+            margin-inline: auto;
+        }
+    }
+
+    &::before {
+        border-block-end: 7px solid contrast(@general_bg_color, rgba(0, 0, 0, 0.15), @base5);
+        margin-block-end: 1px;
+    }
+
+    &::after {
+        border-block-end: 7px solid var(--fill-white);
+    }
+}
+
+/* [[[ END ]]] mixin & vars :: Top Panel region
 ==============================================================================*/
-
-
 
 
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] general wrappers
+   [[[ BEGIN ]]] grid system
 ==============================================================================*/
-.tygh-top-panel {
-    > div {
-        .ty-tygh & { // increase precedence
-            padding: initial; // override parent-theme unfit declaration
-        }
+.tygh-top-panel:has(.top-grid) {
+    --top-panel__block-_height: calc(var(--ut2-top-panel-height) - 1px);
+
+    &::before,
+    &::after {
+        content: initial;
     }
-    .top-grid { // container
+
+    // general wraper, background & border getter
+    > [class*=container] {
         border-block-end-width: 1px;
         border-block-end-style: solid;
-        .mxn--top-panel-_border-color();
+        .mxn_top-panel-_border-color();
+        max-block-size: calc(var(--ut2-top-panel-height) * 2);
+
+        // reset/clean parent-theme unfit/inapt value
+        padding: initial;
+        margin: initial;
+
+        // hide empty panel if all blocks are disabled
+        &:not(:has(*)) {
+            display: none;
+        }
 
         &::before,
         &::after {
-            content: none;
+            content: initial;
         }
 
-        &.container-fluid-row-no-limit > .row-fluid {
-            padding: 0 var(--gap-s);
-        }
+        // front page section/row (.container-fluid-row or .row-fluid) and container at the same time
+        > div {
+            // increase/higher precedence
+            #tygh_main_container & {
+                width: initial;
+                min-width: @fluidContainerMinWidth;
+                max-width: var(--fluid-container-_max-width_-calc);
+                padding: initial;
+                padding-inline: calc(var(--fluid-container-_padding_one-side) - var(--ut2-header__block-_common-inline-padding));
+                margin: 0 auto;
+                position: relative; // offset parent for: 1) search bar in 2nd-row mode in 0..1023 in Default; 2) v-menu dropdown
 
-        & > [class^=container]:last-child > .row-fluid, &[class^=container] > .row-fluid { // sections wrapper
-            width: auto;
-            height: var(--ut2-top-panel-height, 0px);
-            max-height: @header-t-height * 2 + 1;
-            display: flex;
-            flex-flow: row wrap;
-            column-gap: var(--gap-xs);
-            row-gap: 1px;
-            justify-content: flex-end;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                column-gap: var(--gap-xs);
 
-            @media (max-width: 1023px) {
-                column-gap: var(--gap-s);
+                // compensate for zeroed blocks inline padding
+                @media (max-width: 1023px) {
+                    padding-inline: var(--fluid-container-_padding_one-side);
+                    column-gap: var(--gap-sm);
+                }
             }
 
             &::before,
             &::after {
-                content: none;
+                content: initial;
+            }
+        }
+
+        .row-fluid,
+        [class*=span].span16 {
+            // increase/higher precedence
+            .ty-helper-container & {
+                block-size: initial; // double-rowing is permitted
+                width: 100%;
+                min-width: 0;
+                max-width: initial;
+                flex-shrink: 1; // exception to general case
+                flex-grow: 1;
+                flex-wrap: wrap;
+                row-gap: 1px;
+            }
+        }
+
+        .row-fluid,
+        [class*=span],
+        [class*=span] > [class*=ty-float],
+        [class*=span] > [class*=hidden-],
+        [class*=span] > .bm-block-manager__block,
+        [class*=span] > .bm-block-manager__block .bm-block-manager__block-content,
+        [class*=span] > [id^=snapping_id_]
+        {
+            flex-shrink: 0; // general case
+            display: flex;
+            align-items: center;
+        }
+
+        // exception to general case
+        [class*=span] > .bm-block-manager__block .bm-block-manager__block-content {
+            // increase/higher precedence
+            .ty-helper-container & {
+                width: 100%;
+                min-width: 0;
+                flex-shrink: 1;
+                flex-grow: 1;
+            }
+        }
+
+        [class*=span],
+        [class*=span] > [class*=ty-float],
+        [class*=span] > [class*=hidden-],
+        [class*=span] > .bm-block-manager__block,
+        [class*=span] > .bm-block-manager__block .bm-block-manager__block-content,
+        [class*=span] > [id^=snapping_id_]
+        {
+            block-size: var(--top-panel__block-_height);
+        }
+
+        .row-fluid,
+        [class*=span] {
+            margin: initial;
+            padding: initial;
+            column-gap: var(--gap-xs);
+
+            // compensate for zeroed blocks inline padding
+            @media (max-width: 1023px) {
+                column-gap: var(--gap-sm);
             }
 
-            .row-fluid {
-                display: contents;
+            &::before,
+            &::after {
+                content: initial;
+            }
+        }
 
-                &::before,
-                &::after {
-                    content: none;
+        // layout editor section
+        [class*=span] {
+            // reset/clean parent-theme unfit/inapt value
+            float: initial;
+            min-height: initial;
+            width: initial;
+
+            // section alignment option
+            &:has(> .ty-float-right) {
+                // increase/higher precedence
+                #tygh_main_container & {
+                    margin-inline-start: auto;
+                    margin-inline-end: initial;
+                    justify-content: end;
+
+                    ~ [class*=span] {
+                        margin-inline-start: initial;
+                    }
+                }
+            }
+
+            // reset/clean parent-theme unfit/inapt value
+            > [class*=ty-float] {
+                float: initial;
+                max-width: initial;
+            }
+        }
+    }
+
+
+    /* [ BEGIN ] block main/root wrapper */
+    .mxn_block-manager-_general();
+
+    .ty-geo-maps__geolocation,
+    .top-quick-links,
+    .top-currencies,
+    .top-languages {
+        block-size: var(--top-panel__block-_height);
+        flex-shrink: 0; // general case
+        display: flex;
+        align-items: center;
+    }
+    /* [ END ] block main/root wrapper */
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [[ BEGIN ]] improve double-row arrangement for ".top-links-grid" section and ".top-quick-links" block
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// increase/higher precedence
+#tygh_container .tygh-top-panel .top-links-grid {
+    @media (min-width: 1025px) {
+        display: contents !important;
+
+        .top-quick-links,
+        .top-quick-links .bm-block-manager__block-content,
+        .ty-text-links-wrapper,
+        .ty-text-links-wrapper > .ty-text-links {
+            display: contents !important;
+        }
+
+        .top-quick-links {
+            .bm-block-manager__menu-wrapper {
+                display: none;
+            }
+
+            .ty-text-links-wrapper > .ty-text-links:not(.ty-text-links_show_inline) {
+                .ty-text-links__item,
+                .ty-text-links {
+                    display: contents !important;
+                }
+
+                .ty-text-links__a {
+                    margin-inline-end: calc(~'(var(--gap-xs) - 1px) * -1');
+                }
+
+                .ty-text-links__item:last-child > .ty-text-links__a:only-child {
+                    margin-inline-end: initial;
+                }
+            }
+
+            .ty-text-links-wrapper > .ty-text-links.ty-text-links_show_inline {
+                > .ty-text-links__item:not(:last-child) {
+                    margin-inline-end: calc(~'(var(--gap-xs) - 1px) * -1');
                 }
             }
         }
 
-        [class*="span"] {
-            float: none;
-            min-height: 0;
-            width: auto;
-            margin: 0;
+        // WARNING: don't edit/correct "ty-float-righ" strings
+        > [class*=ty-float-righ] {
+            margin-inline-start: auto;
 
-            &:not(.top-grid-location):not(.top-links-grid) {
-                display: contents;
-            }
-
-            &.top-grid-location,
-            &.top-links-grid {
-                display: flex;
-                flex-flow: row wrap;
-                column-gap: var(--gap-sm);
-
-                @media (max-width: 834px) {
-                    column-gap: var(--gap-xs);
-                }
-                @media (max-width: 640px) {
-                    column-gap: var(--gap-xxs);
+            &.top-quick-links {
+                .ty-text-links-wrapper > .ty-text-links:not(.ty-text-links_show_inline) > .ty-text-links__item:first-child > .ty-text-links__a,
+                .ty-text-links-wrapper > .ty-text-links.ty-text-links_show_inline > .ty-text-links__item:first-child {
+                    margin-inline-start: auto;
                 }
             }
 
-            &.top-grid-location {
-                margin-inline-end: auto;
-                flex-shrink: 0;
-            }
+            &:not(.bm-block-manager__block--disabled) {
+                ~ [class*=ty-float-righ] {
+                    margin-inline-start: initial !important;
+                }
 
-            &.top-links-grid {
-                display: contents;
-                flex-shrink: 1;
-            }
-
-            // reset
-            .ty-float-left,
-            .ty-float-right {
-                //float: none;
-                max-width: none;
+                ~ [class*=ty-float-righ].top-quick-links {
+                    .ty-text-links-wrapper > .ty-text-links:not(.ty-text-links_show_inline) > .ty-text-links__item:first-child > .ty-text-links__a,
+                    .ty-text-links-wrapper > .ty-text-links.ty-text-links_show_inline > .ty-text-links__item:first-child {
+                        margin-inline-start: initial;
+                    }
+                }
             }
         }
     }
 }
-/* [[[[ END ]]]] general wrappers
+/* [[ END ]] improve double-row arrangement for ".top-links-grid" section and ".top-quick-links" block
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* [[[ END ]]] grid system
 ==============================================================================*/
 
 
 
-
-
 /*==============================================================================
-   [[[[ BEGIN ]]]] generalizing/grouping link & text rules
+   [[[ BEGIN ]]] generalizing/grouping link & text rules
 ==============================================================================*/
 .tygh-top-panel {
     // caption + links (except dropdown)
@@ -206,11 +387,11 @@
     a.ty-languages__item, // languages (plain-list mode)
     a.ty-currencies__item // currencies (plain-list mode)
     {
-        padding: 0;
+        padding: initial;
         border: 0 none;
-        border-radius: 0;
-        float: none;
-        height: @header-t-height;
+        border-radius: initial;
+        float: initial;
+        block-size: var(--top-panel__block-_height);
         white-space: nowrap;
         flex: 0 0 auto;
         display: flex;
@@ -238,15 +419,15 @@
         padding-block: 0;
 
         @media (min-width: 1024px) {
-            padding-inline: @var--top-panel-link-btn-_padding-inline;
+            padding-inline: var(--ut2-header__block-_common-inline-padding);
         }
 
         &:hover,
         &.open,
         &.open:hover {
             text-decoration: none;
-            .mxn--top-panel-_text-color_-active-hover-opened();
-            .mxn--top-panel-_bg-color_-hover();
+            .mxn_top-panel-_text-color_-active-hover-opened();
+            .mxn_top-panel-_bg-color_-hover();
 
         }
     }
@@ -254,8 +435,8 @@
     {
         @media (min-width: 1024px) {
             .no-touch & {
-                .mxn--top-panel-_text-color_-active-hover-opened();
-                .mxn--top-panel-_bg-color_-hover();
+                .mxn_top-panel-_text-color_-active-hover-opened();
+                .mxn_top-panel-_bg-color_-hover();
             }
         }
     }
@@ -268,10 +449,10 @@
     {
         text-decoration: none;
         background: initial;
-        .mxn--top-panel-_text-color_-active-hover-opened();
+        .mxn_top-panel-_text-color_-active-hover-opened();
 
         &:hover {
-            .mxn--top-panel-_bg-color_-hover();
+            .mxn_top-panel-_bg-color_-hover();
         }
     }
 
@@ -290,7 +471,7 @@
         position: static;
     }
 }
-/* [[[[ END ]]]] generalizing/grouping link & text rules
+/* [[[ END ]]] generalizing/grouping link & text rules
 ==============================================================================*/
 
 
@@ -298,26 +479,31 @@
 
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] geolocation
+   [[[ BEGIN ]]] geolocation
 ==============================================================================*/
 .tygh-top-panel {
-    .ty-geo-maps__geolocation {
-        .ty-icon {
-            color: contrast(@top_panel_bg, @font, white);
+    .ty-geo-maps__geolocation__opener {
+        > span:has([class*=ty-icon-]) {
+            display: contents;
         }
+    }
+
+    // for compatibility with earlier versions ".ty-icon" selector cannot be used
+    [class*=ty-icon-] {
+        color: contrast(@top_panel_bg, @links, white);
+        margin-block-start: -1px;
     }
 
     .ty-geo-maps__geolocation__opener-text {
         overflow: visible;
-    }
 
-    [class*="span"]:first-child {
-        .ty-geo-maps__geolocation {
-            margin-inline-start: calc(~'(var(--gap-xs) - @{var--top-panel-link-btn-_padding-inline}) * -1');
+        // reset/clean parent-theme unfit/inapt value
+        .ty-geo-maps__geolocation__location {
+            display: initial;
         }
     }
 }
-/* [[[[ END ]]]] geolocation
+/* [[[ END ]]] geolocation
 ==============================================================================*/
 
 
@@ -325,70 +511,106 @@
 
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] dropdown
+   [[[ BEGIN ]]] dropdown
 ==============================================================================*/
-.tygh-top-panel .top-links-grid // raise priority
+.tygh-top-panel > [class*=container] // raise priority
 {
-    .mxn--top-panel__dropdown() {
-        animation: none !important;
+    .mxn_define-popup-_side-offset() when (@abt__ut2_general_use_rounding = do_not_use) {
+        --top-panel__dropdown__popup-_side-offset: 0px;
+    }
+    .mxn_define-popup-_side-offset() when not (@abt__ut2_general_use_rounding = do_not_use) {
+        .mxn_check-fluid-container-_max-width() when (@fluidContainerMaxWidth = auto) {
+            --top-panel__dropdown__popup-_side-offset: calc(~'(var(--fluid-container-_padding_one-side) - var(--ut2-header__block-_common-inline-padding) - 3px) * -1');
+
+            @media (max-width: 1023px) {
+                --top-panel__dropdown__popup-_side-offset: calc(~'(var(--fluid-container-_padding_one-side) - 3px) * -1');
+            }
+        }
+        .mxn_check-fluid-container-_max-width() when not (@fluidContainerMaxWidth = auto) {
+            --top-panel__dropdown__popup-_side-offset: calc(var(--border-radius-box) * -1);
+
+            @media (max-width: @fluidContainerMaxWidth + 34) {
+                --top-panel__dropdown__popup-_side-offset: calc(~'(var(--fluid-container-_padding_one-side) - var(--ut2-header__block-_common-inline-padding) - 3px) * -1');
+            }
+            @media (max-width: 1023px) {
+                --top-panel__dropdown__popup-_side-offset: calc(~'(var(--fluid-container-_padding_one-side) - 3px) * -1');
+            }
+        }
+        .mxn_check-fluid-container-_max-width();
+    }
+    .mxn_define-popup-_side-offset();
+
+    --top-panel__dropdown__popup-_min-min-width: calc(~'14px + var(--gap-xs) * 2 + var(--gap-xxs) * 2'); // 44px
+
+    .mxn_top-panel__dropdown__popup() {
+        background: var(--color-general);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 15px 0 rgba(0, 0, 0, 0.3);
+        border: 0 none;
+        border-radius: var(--border-radius-box);
+
         position: absolute;
         z-index: 999; // above h-menu dropdown. WARNING: z-index > 999 for dropdown may cause closing failure when outside click
         top: 100% !important;
-        right: calc(~'var(--border-radius-box) * -1') !important;
-        left: auto !important;
-        border-radius: var(--border-radius-box) !important;
-        min-width: calc(~'100% + var(--border-radius-box) * 2');
-        max-width: @fluidContainerMinWidth;
+        left: var(--top-panel__dropdown__popup-_side-offset) !important;
+        right: initial !important;
+
         width: max-content; // to stretch Quick Links dropdown
-        overflow: visible; // to show angle/corner
+        min-width: max(calc(~'100% + var(--top-panel__dropdown__popup-_side-offset) * -2'), var(--top-panel__dropdown__popup-_min-min-width));
+        max-width: min(calc(~'var(--fluid-container-_max-width_-calc) - var(--fluidContainerPadding)'), calc(~'100dvw - var(--fluidContainerPadding)'));
         margin: initial;
-        border: 0 none;
-        background: @general_bg_color;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 15px 0 rgba(0, 0, 0, 0.3);
+
+        overflow: visible; // to show angle/corner
+        //animation: none !important; // rm popup animation globally
     }
 
-    .mxn--top-panel__dropdown__link() {
+    .mxn_top-panel__dropdown__link() {
         background: initial;
-        .mxn--top-panel-dropdown-_text-color();
+        .mxn_top-panel__dropdown-_text-color();
         border-radius: var(--border-radius-box);
         padding: 0;
         padding-block: 7px;
-        padding-inline: @var--top-panel-link-btn-_padding-inline;
+        padding-inline: var(--gap-xs);
 
         &:hover {
-            .mxn--top-panel-dropdown-_bg-color_-hover();
-            .mxn--top-panel-dropdown-_text-color_-hover();
+            .mxn_top-panel__dropdown-_bg-color_-hover();
+            .mxn_top-panel__dropdown-_text-color_-hover();
         }
     }
 
     li.ty-text-links__item--inline.ty-text-links__subitems > ul.ty-text-links, // inline quick links (dropdown mode) popup list
     .ty-select-block // languages + currencies
     {
-        .mxn--top-panel__dropdown();
+        .mxn_top-panel__dropdown__popup();
+    }
+    .ty-float-right {
+        li.ty-text-links__item--inline.ty-text-links__subitems > ul.ty-text-links,
+        .ty-select-block {
+            left: initial !important;
+            right: var(--top-panel__dropdown__popup-_side-offset) !important;
+        }
     }
 
     // similar to languages & currencies .ty-select-block__list
     li.ty-text-links__item--inline.ty-text-links__subitems > ul.ty-text-links {
         padding: var(--gap-xxs);
-
-        .caret(14px, 24px, @general_bg_color, rgba(0, 0, 0, 0.1));
-        &::before,
-        &::after {
-            right: calc(~'var(--border-radius-box) + @{var--top-panel-link-btn-_padding-inline} - 3px'); // + 1px - 4px
-        }
     }
 
     // quick links all (list level 0). raise priority
-    .top-quick-links .ty-text-links-wrapper > ul.ty-text-links {
-        @media (max-width: 1024px) {
-            .mxn--top-panel__dropdown();
-            padding: var(--gap-xxs);
-            display: block !important;
+    .top-quick-links {
+        &.ty-float-right {
+            .ty-text-links-wrapper > ul.ty-text-links {
+                @media (max-width: 1024px) {
+                    left: initial !important;
+                    right: var(--top-panel__dropdown__popup-_side-offset) !important;
+                }
+            }
+        }
 
-            .caret(14px, 24px, @general_bg_color, rgba(0, 0, 0, 0.1));
-            &::before,
-            &::after {
-                right: calc(~'var(--border-radius-box) + @{var--top-panel-link-btn-_padding-inline} - 3px'); // + 1px - 4px
+        .ty-text-links-wrapper > ul.ty-text-links {
+            @media (max-width: 1024px) {
+                .mxn_top-panel__dropdown__popup();
+                padding: var(--gap-xxs);
+                display: block !important;
             }
         }
     }
@@ -415,7 +637,7 @@
         ul.ty-text-links {
             @media (max-width: 1024px) {
                 display: block;
-                margin-inline-start: calc(@var--top-panel-link-btn-_padding-inline * 1.5);
+                margin-inline-start: calc(~'var(--gap-xs) * 1.5');
             }
         }
     }
@@ -428,20 +650,15 @@
             border-radius: initial;
             position: initial;
             top: initial;
-            right: initial;
+            right: initial !important;
             min-width: initial;
             max-width: initial;
             padding: initial;
-            margin-inline-start: calc(@var--top-panel-link-btn-_padding-inline * 1.5);
+            margin-inline-start: calc(~'var(--gap-xs) * 1.5');
             display: block;
 
-            &::before,
-            &::after {
-                content: none;
-            }
-
             ul.ty-text-links {
-                margin-inline-start: @var--top-panel-link-btn-_padding-inline;
+                margin-inline-start: var(--gap-xs);
             }
         }
     }
@@ -450,13 +667,13 @@
     .ty-text-links__item--submenu a.ty-text-links__a--submenu, // inline quick links (dropdown mode) popup head
     .ty-select-block__list-item a.ty-select-block__list-a // languages + currencies
     {
-        .mxn--top-panel__dropdown__link();
+        .mxn_top-panel__dropdown__link();
     }
     li.ty-text-links__item:not(.ty-text-links__item--inline):not(.ty-text-links__item--submenu) a.ty-text-links__a, // inline quick links (plain-list mode)
     li.ty-text-links__item--inline a.ty-text-links__a--inline // inline quick links (dropdown mode)
     {
         @media (max-width: 1024px) {
-            .mxn--top-panel__dropdown__link();
+            .mxn_top-panel__dropdown__link();
         }
     }
 
@@ -464,13 +681,13 @@
     .ty-text-links__item--submenu.active a.ty-text-links__a--submenu, // inline quick links (dropdown mode) popup head
     .ty-select-block__list-item a.ty-select-block__list-a.is-active // languages + currencies
     {
-        .mxn--top-panel-dropdown-_text-color_-active();
+        .mxn_top-panel__dropdown-_text-color_-active();
     }
     li.ty-text-links__item:not(.ty-text-links__item--inline):not(.ty-text-links__item--submenu).active a.ty-text-links__a, // inline quick links (plain-list mode)
     li.ty-text-links__item--inline.active a.ty-text-links__a--inline // inline quick links (dropdown mode)
     {
         @media (max-width: 1024px) {
-            .mxn--top-panel-dropdown-_text-color_-active();
+            .mxn_top-panel__dropdown-_text-color_-active();
         }
     }
 
@@ -479,7 +696,7 @@
     .ty-select-block__list-item a.ty-select-block__list-a // languages + currencies
     {
         &:hover {
-            .mxn--top-panel-dropdown-_text-color_-hover();
+            .mxn_top-panel__dropdown-_text-color_-hover();
         }
     }
     li.ty-text-links__item:not(.ty-text-links__item--inline):not(.ty-text-links__item--submenu) a.ty-text-links__a, // inline quick links (plain-list mode)
@@ -487,37 +704,34 @@
     {
         @media (max-width: 1024px) {
             &:hover {
-                .mxn--top-panel-dropdown-_text-color_-hover();
+                .mxn_top-panel__dropdown-_text-color_-hover();
             }
         }
     }
 }
-/* [[[[ END ]]]] dropdown
+/* [[[ END ]]] dropdown
 ==============================================================================*/
 
-/* [[[[[ BEGIN ]]]]] Top Panel region
+/* [[[[ BEGIN ]]]] Top Panel region
 ##############################################################################*/
-
-
 
 
 
 
 
 /*##############################################################################
-   [[[[[ BEGIN ]]]]] Quick Links block
+   [[[[ BEGIN ]]]] Quick Links block
 ##############################################################################*/
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] location Top Panel
+   [[[ BEGIN ]]] Top Panel location
 ==============================================================================*/
 .tygh-top-panel .top-quick-links // increase precedence
 {
     .ty-text-links-wrapper {
         border: 0 none;
 
-        @media (max-width: 1024px)
-        {
+        @media (max-width: 1024px) {
             position: relative;
         }
     }
@@ -527,21 +741,25 @@
 
         @media (max-width: 1024px) {
             display: flex;
+            overflow: clip; // truncate arrow shifted right
+            position: relative;
 
-            &.visible-phone { // override other harmful rule
+            // similar to .ab__ut2--select-block__head
+            min-inline-size: 30px;
+            justify-content: center;
+
+            // override other harmful rule
+            &.visible-phone {
                 display: flex !important;
             }
+
             &:not(.open) {
-                & ~ ul.ty-text-links
-                {
+                & ~ ul.ty-text-links {
                     display: none !important;
                 }
             }
-        }
 
-        &::before,
-        &::after {
-            content: none;
+            .mxn_top-panel__dropdown__popup-corner-arrow-to-btn-head();
         }
 
         .ty-icon-short-list {
@@ -568,7 +786,9 @@
 
         // dropdown mode
         &.ty-text-links_show_inline {
-            border-radius: 0;
+            @media (min-width: 1025px) {
+                border-radius: 0;
+            }
         }
     }
 
@@ -601,23 +821,39 @@
             &.ty-text-links__subitems.ty-level-0 {
                 position: relative;
 
-                @media (min-width: 1024px) {
-                    .no-touch &:hover {
-                        & > ul.ty-text-links {
-                            display: block;
+                @media (min-width: 1024px) and (hover: hover) {
+                    &:hover {
+                        z-index: 1000 !important; // above dropdown, similar to .ty-dropdown-box__title
+
+                        &::before,
+                        &::after {
+                            opacity: initial;
                         }
 
                         a.ty-text-links__a--subitems {
-                            &:after {
+                            &::after {
                                 content: "\e904";
                             }
                         }
+
+                        > ul.ty-text-links {
+                            display: block;
+                            z-index: -1 !important; // 999, above h-menu
+                        }
                     }
+
+                    .mxn_top-panel__dropdown__popup-corner-arrow-to-btn-head();
                 }
 
-                a.ty-text-links__a--subitems // inline quick links (dropdown mode) popup head
+                a.ty-text-links__a--subitems // inline quick links (dropdown mode) popup btn-head
                 {
-                    &:after {
+                    @media (min-width: 1024px) {
+                        // similar to .ab__ut2--select-block__head
+                        min-inline-size: 30px;
+                        justify-content: center;
+                    }
+
+                    &::after {
                         @media (min-width: 1024px) {
                             .ut2-icon();
                             content: "\e908";
@@ -627,14 +863,14 @@
                     }
                 }
 
-                & > ul.ty-text-links {
+                > ul.ty-text-links {
                     display: none;
                 }
             }
         }
     }
 }
-/* [[[[ END ]]]] location Top Panel
+/* [[[ END ]]] Top Panel location
 ==============================================================================*/
 
 
@@ -642,7 +878,7 @@
 
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] location Footer
+   [[[ BEGIN ]]] Footer location
 ==============================================================================*/
 .tygh-footer .ty-text-links-wrapper {
     border: 0 none;
@@ -675,10 +911,10 @@
         .bg_color();
     }
 }
-/* [[[[ END ]]]] location Footer
+/* [[[ END ]]] Footer location
 ==============================================================================*/
 
-/* [[[[[ BEGIN ]]]]] Quick Links block
+/* [[[[ BEGIN ]]]] Quick Links block
 ##############################################################################*/
 
 
@@ -688,15 +924,15 @@
 
 
 /*##############################################################################
-   [[[[[ BEGIN ]]]]] Currencies + Languages blocks (Top Pnel. Fly Menu)
+   [[[[ BEGIN ]]]] Currencies + Languages blocks (Top Pnel. Fly Menu)
 ##############################################################################*/
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] global
+   [[[ BEGIN ]]] global
 ==============================================================================*/
 .top-currencies,
 .top-languages {
-    margin: 0;
+    margin: initial;
 }
 
 // increase/higher precedence
@@ -754,6 +990,12 @@
             max-inline-size: 120px; // checking text: Pounds Sterling
         }
 
+        .ab__ut2--select-block__head__text__symbol {
+            padding-block: 3px;
+            display: inline-block;
+            overflow: clip;
+        }
+
         .ty-select-block__arrow {
             width: initial;
             margin-inline-end: -4px;
@@ -771,12 +1013,7 @@
 
             max-block-size: calc(~'(var(--link-font-size) + 2px + 14px) * 5 + var(--gap-xxs) * 2'); // 5 items
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: @base10 transparent;
-            &::-webkit-scrollbar {
-                width: 5px;
-            }
+            .mxn_ut2-scroll_-tune();
         }
 
         .ty-select-block__list-a {
@@ -872,12 +1109,12 @@
         }
     }
 }
-/* [[[[ END ]]]] global
+/* [[[ END ]]] global
 ==============================================================================*/
 
 
 /*==============================================================================
-   [[[[ BEGIN ]]]] Top Pnel only
+   [[[ BEGIN ]]] Top Pnel only
 ==============================================================================*/
 .tygh-top-panel {
     .ab__ut2--currencies,
@@ -900,37 +1137,13 @@
         }
 
         .ab__ut2--select-block__head {
-            /* [ BEGIN ] arrow-corner for opened popup */
-            &.open {
-                &::before,
-                &::after {
-                    opacity: initial;
-                }
-            }
+            overflow: clip; // truncate arrow shifted right
 
-            &::before,
-            &::after {
-                content: '';
-                display: block;
-                inline-size: 0;
-                block-size: 0;
-                position: absolute;
-                inset-block-end: 0;
-                inset-inline-end: calc(~'@{var--top-panel-link-btn-_padding-inline} - 3px'); // + 1px - 4px
-                border-inline: 7px solid transparent;
-                opacity: 0;
-                pointer-events: none;
-            }
+            // for proper arrow-corner and popup mutual alignment
+            min-inline-size: 30px;
+            justify-content: center;
 
-            &::before {
-                border-block-end: 7px solid rgba(0, 0, 0, 0.1);
-                margin-block-end: 1px;
-            }
-
-            &::after {
-                border-block-end: 7px solid var(--fill-white);
-            }
-            /* [ END ] arrow-corner for opened popup */
+            .mxn_top-panel__dropdown__popup-corner-arrow-to-btn-head();
 
             // btn-head arrow-corner
             > span::after {
@@ -943,7 +1156,7 @@
         }
 
         .ty-select-wrapper .ty-select-block__list {
-            max-block-size: calc(~'100dvh - (var(--ut2-top-panel-height) + 1) - var(--gap-m)'); // var(--gap-m) = spacing to window bottom edge
+            max-block-size: calc(~'100dvh - var(--ut2-top-panel-height) - var(--gap-m)'); // var(--gap-m) = spacing to window bottom edge
         }
     }
 
@@ -994,8 +1207,8 @@
     }
 }
 
-/* [[[[ END ]]]] Top Pnel only
+/* [[[ END ]]] Top Pnel only
 ==============================================================================*/
 
-/* [[[[[ BEGIN ]]]]] Currencies + Languages blocks (Top Pnel. Fly Menu)
+/* [[[[ BEGIN ]]]] Currencies + Languages blocks (Top Pnel. Fly Menu)
 ##############################################################################*/

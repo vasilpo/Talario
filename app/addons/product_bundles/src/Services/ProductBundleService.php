@@ -1,26 +1,29 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\ProductBundles\Services;
 
+use Tygh;
 use Tygh\Addons\ProductBundles\Enum\DiscountType;
 use Tygh\Addons\ProductBundles\ServiceProvider;
 use Tygh\Addons\ProductVariations\ServiceProvider as ProductVariationsServiceProvider;
 use Tygh\Enum\ImagePairTypes;
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Enum\ProductTracking;
 use Tygh\Enum\SiteArea;
+use Tygh\Enum\UserTypes;
 use Tygh\Enum\YesNo;
 use Tygh\Languages\Languages;
 use Tygh\Registry;
@@ -662,6 +665,65 @@ class ProductBundleService
     }
 
     /**
+     * Checks whether update is allowed.
+     *
+     * @param int $bundle_id Product bundle identifier
+     *
+     * @return bool
+     */
+    public function checkBundleUpdateAllowed($bundle_id)
+    {
+        $result = true;
+
+        /**
+         * Executes before rules for restricting access to product bundle update,
+         * allows changing current result or runtime params before the rules are applied.
+         *
+         * @param int  $bundle_id Product bundle identifier
+         * @param bool $result    Whether product bundle update is allowed
+         */
+        fn_set_hook('check_product_bundle_update_allowed_pre', $bundle_id, $result);
+
+        if (fn_allowed_for('MULTIVENDOR') && !empty($bundle_id)) {
+            $auth = Tygh::$app['session']['auth'];
+
+            if (
+                !empty($auth['user_type']) && $auth['user_type'] === UserTypes::VENDOR && !empty($auth['company_id'])
+            ) {
+                $bundle_company_id = $this->getBundleCompanyId($bundle_id);
+
+                $result = $bundle_company_id && (int) $auth['company_id'] === $bundle_company_id;
+            }
+        }
+
+        /**
+         * Executes afters rules for restricting access to product bundle update, allows changing result.
+         *
+         * @param int  $bundle_id Product bundle identifier
+         * @param bool $result    Whether product bundle update is allowed
+         */
+        fn_set_hook('check_product_bundle_update_allowed_post', $bundle_id, $result);
+
+        return $result;
+    }
+
+    /**
+     * Fetches product bundle owner ID.
+     *
+     * @param int $bundle_id Product bundle identifier
+     *
+     * @return int|false
+     */
+    public function getBundleCompanyId($bundle_id)
+    {
+        if (empty($bundle_id)) {
+            return false;
+        }
+
+        return (int) db_get_field('SELECT company_id FROM ?:product_bundles WHERE bundle_id = ?i', $bundle_id);
+    }
+
+    /**
      * Updates bundle information or creating new bundle.
      *
      * @param array<string, array<string, string>> $bundle_data Bundle info.
@@ -672,6 +734,13 @@ class ProductBundleService
     public function updateBundle(array $bundle_data, $bundle_id = 0)
     {
         SecurityHelper::sanitizeObjectData('product_bundle', $bundle_data);
+
+        $allow_update = $this->checkBundleUpdateAllowed($bundle_id);
+
+        if (!$allow_update) {
+            fn_set_notification(NotificationSeverity::ERROR, __('error'), __('access_denied'));
+            return $bundle_id;
+        }
 
         $bundle_products = [];
         if (isset($bundle_data['products'])) {

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Navigation\LastView;
 
@@ -333,7 +333,7 @@ class Backend extends ACommon
 
             fn_redirect(Registry::get('runtime.controller') . '.' . Registry::get('runtime.mode') . '?' . http_build_query($params));
         } elseif ($this->_action === 'delete_view' && !empty($params['view_id'])) {
-            db_query('DELETE FROM ?:views WHERE view_id = ?i', $params['view_id']);
+            db_query('DELETE FROM ?:views WHERE view_id = ?i AND user_id = ?i', $params['view_id'], $this->_auth['user_id']);
         } elseif ($this->_action === 'reset_view') {
             db_query('UPDATE ?:views SET active = ?s WHERE user_id = ?i AND object = ?s', YesNo::NO, $this->_auth['user_id'], $object);
         } elseif ($this->_action === 'set_default_view' && !empty($params['view_id'])) {

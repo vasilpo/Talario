@@ -10,6 +10,8 @@
     {/if}
 {/if}
 
+{$max_uploaded_image_dimension = $config.tweaks.max_uploaded_image_dimension|default:0}
+
 <script>
     (function(_, $) {
         $.extend(_, {
@@ -17,12 +19,14 @@
             files_upload_max_size_bytes: '{$upload_max_filesize|fn_return_bytes}',
 
             post_max_size_mbytes: '{$post_max_size}',
-            files_upload_max_size_mbytes: '{$upload_max_filesize}'
+            files_upload_max_size_mbytes: '{$upload_max_filesize}',
+            max_uploaded_image_dimension: '{$max_uploaded_image_dimension}',
         });
 
         _.tr({
             file_is_too_large: '{__("file_is_too_large")|escape:"javascript"}',
-            files_are_too_large: '{__("files_are_too_large")|escape:"javascript"}'
+            files_are_too_large: '{__("files_are_too_large")|escape:"javascript"}',
+            text_not_allowed_to_upload_image_with_dimensions: '{__("text_not_allowed_to_upload_image_with_dimensions")|escape:"javascript"}',
         });
     }(Tygh, Tygh.$));
 </script>

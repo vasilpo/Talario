@@ -4,46 +4,24 @@
 Select 2
 ========================================================================== */
 
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
-    color: var(--cs-text-inverse-color);
-    background: var(--cs-main-color);
-}
-
 .select2-container.select2-container--open .select2-dropdown {
     z-index: 1200;
-}
-.select2-search--dropdown .select2-search__field {
-    padding: 0 10px;
-    min-height: 30px;
 }
 
 .select2-container .select2-selection--single {
     height: var(--cs-input-height);
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-
-.select2-container--default .select2-selection--single,
-.select2-container--default .select2-selection--multiple {
-    border-color: var(--cs-input-border);
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-    padding-left: 0;
-    padding-right: 0;
-}
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
-    display: flex;
+    margin: 0;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: var(--cs-base-line-height);
+    line-height: ~"calc(var(--cs-input-height) - 2px)";
 }
 
-.select2-container--default .select2-selection--single .select2-selection__clear {
-    order: 1;
-    margin-left: auto;
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: ~"calc(var(--cs-input-height) - 4px)";
 }
 
 .select2-container .select2-selection--multiple {
@@ -61,15 +39,15 @@ Select 2
 }
 
 .select2-container .select2-search--inline .select2-search__field {
-    border: 0px;
+    margin-bottom: 0;
+    height: 20px;
     box-shadow: none;
     font-size: var(--cs-base-font-size);
-    margin-top: 0;
-    text-indent: 5px;
-    padding: 0;
+    margin-top: 5px;
+    border-radius: 0;
 }
 
-.object-picker__simple--advanced .select2-search__field {
+.object-picker__simple--advanced .select2-container .select2-search--inline .select2-search__field {
     // --cs-object-picker-advanced-btn-width: (1px + round(var(--cs-base-line-height) / 1.5385)) * 2 + 20px;
     // --cs-object-picker-advanced-btn-width: (1px + 13px) * 2 + 20px;
     --cs-object-picker-advanced-btn-width: 48px;
@@ -260,6 +238,7 @@ Select 2
                 display: inline-block;
                 min-width: 20px;
                 height: 20px;
+                margin-top: 5px;
                 margin-left: 8px;
                 margin-right: 10px;
             }
@@ -340,7 +319,6 @@ Select 2
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    height: 30px;
 }
 .object-customer-add .select2-container .select2-selection--multiple .select2-selection__rendered {
     display: list-item;
@@ -446,7 +424,7 @@ select#customer_add {
 
 .object-categories-add {
     position: relative;
-    
+
     &--fix-width {
         min-width: 350px;
     }
@@ -459,14 +437,13 @@ select#customer_add {
                 vertical-align: middle;
             }
             .select2-selection__choice {
-                padding-left: 0;
                 border-color: transparent;
                 background-color: transparent;
                 margin-top: 0;
                 float: none;
                 position: relative;
                 margin-bottom: 3px;
-                margin-right: 0;
+                margin-left: 0;
                 transition: transform 0.3s cubic-bezier(.25,.8,.25,1);
                 max-width: 1020px;
                 min-height: 36px;
@@ -497,9 +474,10 @@ select#customer_add {
                     padding-right: 6px;
                     font-size: var(--cs-base-font-size);
                     line-height: 2.5;
+                    border-color: transparent;
                 }
                 &:first-child:not(.no-bold) .select2__category {
-                    
+
                     &-name,
                     &-parents,
                     &-company {
@@ -550,15 +528,13 @@ select#customer_add {
                 display: inline-block;
                 width: var(--cs-icon-size);
                 height: var(--cs-icon-size);
-                vertical-align: middle;
                 text-align: center;
                 margin-left: 5px;
             }
             &__field {
                 width: 98% !important;
                 width: ~"calc(100% - 20px) !important";
-                height: ~"calc(var(--cs-input-height) - 2px)";
-                margin-top: 0;
+                height: ~"calc(var(--cs-input-height) - 2px - 5px)";
             }
         }
     }
@@ -576,6 +552,10 @@ select#customer_add {
 .object-categories-add--bulk-edit 
 {
     .select2 .select2-selection.select2-selection {
+        display: flex;
+        flex-direction: column;
+        padding-right: 0;
+        padding-bottom: 0;
         border: 0;
         background-color: transparent;
 

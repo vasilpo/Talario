@@ -131,7 +131,7 @@
 | 91 | \YooKassa\Model\PaymentMethodType::PSB | Будет удален в следующих версиях |
 | 96 | \YooKassa\Model\PaymentMethodType::INSTALLMENTS | Будет удален в следующих версиях |
 | 101 | \YooKassa\Model\PaymentMethodType::WECHAT | Будет удален в следующих версиях |
-| 110 | \YooKassa\Model\PaymentMethodType::UNKNOWN | Не используется для реальных платежей |
+| 113 | \YooKassa\Model\PaymentMethodType::UNKNOWN | Не используется для реальных платежей |
 <a id="lib/Model/Payout/PayoutCancellationDetailsPartyCode.php"></a>
 #### [lib/Model/Payout/PayoutCancellationDetailsPartyCode.php](../../lib/Model/Payout/PayoutCancellationDetailsPartyCode.php)
 | Line | Element | Description |
@@ -177,11 +177,11 @@
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

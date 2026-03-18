@@ -5,7 +5,7 @@
         {if $category_data.category}
         <h1 class="ty-mainbox-title">
             {hook name="wrapper:categories_title"}
-				<span>{$category_data.category nofilter}</span>
+				{$category_data.category nofilter}
             {/hook}
         </h1>
         {/if}

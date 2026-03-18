@@ -24,6 +24,9 @@
         "name": "Francois One",
         "generic-family": "sans-serif"
     }, {
+        "name": "Inter",
+        "generic-family": "sans-serif"
+    }, {
         "name": "Lato",
         "generic-family": "sans-serif"
     }, {

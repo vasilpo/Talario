@@ -1,0 +1,1 @@
+{include file="components/navbar_mobile/navbar_mobile.tpl"}

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\DirectPayments\Cart;
 
@@ -28,6 +28,8 @@ class Service
     const SESSION_CART_FIELD = '__cart';
     const SESSION_CURRENT_VENDOR_FIELD = '__cart_current_vendor_id';
     const SESSION_IS_SEPARATE_CHECKOUT_FIELD = '__cart_is_separate_checkout';
+    const SESSION_SHIPPING_HASH_FIELD = '__shipping_hash';
+    const SESSION_LEGACY_SHIPPING_HASH_FIELD = 'shipping_hash';
     const DEFAULT_VENDOR_ID = 0;
 
     /** @var bool flag separate checkout */
@@ -69,6 +71,23 @@ class Service
 
         $this->initCarts();
 
+        $vendor_id = $this->getVendorIdFromRequestOrSession() ?? $vendor_id;
+        $this->setCurrentVendorId($vendor_id);
+    }
+
+    /**
+     * Get vendor_id from session or request.
+     *
+     * @return string|null
+     */
+    private function getVendorIdFromRequestOrSession()
+    {
+        $vendor_id = $this->getVendorIdFromRequest() ?? null;
+
+        if ($vendor_id !== null) {
+            return $vendor_id;
+        }
+
         if (
             isset($_SESSION[self::SESSION_CURRENT_VENDOR_FIELD])
             && $this->isVendorExist($_SESSION[self::SESSION_CURRENT_VENDOR_FIELD])
@@ -76,7 +95,27 @@ class Service
             $vendor_id = (int) $_SESSION[self::SESSION_CURRENT_VENDOR_FIELD];
         }
 
-        $this->setCurrentVendorId($vendor_id);
+        return $vendor_id;
+    }
+
+    /**
+     * Get vendor_id from request.
+     *
+     * @return string|null
+     */
+    public function getVendorIdFromRequest()
+    {
+        /** @var string|null $vendor_id */
+        $vendor_id = $_REQUEST['vendor_id'] ?? null;
+
+        if (
+            !isset($vendor_id) || !$this->isVendorExist((int) $vendor_id)
+            || !isset($_REQUEST['dispatch']) || !fn_direct_payments_check_dispatch_permissions('use_vendor_id_from_request', $_REQUEST['dispatch'])
+        ) {
+            return null;
+        }
+
+        return $vendor_id;
     }
 
     /**
@@ -97,6 +136,24 @@ class Service
         $this->setRuntimeVendorId($vendor_id);
 
         return $_SESSION[self::SESSION_CART_FIELD][$vendor_id];
+    }
+
+    /**
+     * Get shipping hash
+     *
+     * @param null|int $vendor_id Vendor identifier
+     *
+     * @return array
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
+     */
+    public function &getShippingHash($vendor_id = null)
+    {
+        if ($vendor_id === null || !$this->isVendorExist($vendor_id)) {
+            $vendor_id = $this->current_vendor_id;
+        }
+
+        return $_SESSION[self::SESSION_SHIPPING_HASH_FIELD][$vendor_id];
     }
 
     /**
@@ -153,13 +210,14 @@ class Service
     }
 
     /**
-     * Load cart in session
+     * Override cart and data associated to it in session by data for current vendor
      *
      * @return void
      */
-    public function loadSessionCart()
+    public function overrideSessionDataByVendorData()
     {
         $_SESSION[self::SESSION_LEGACY_CART_FIELD] = &$this->getCart();
+        $_SESSION[self::SESSION_LEGACY_SHIPPING_HASH_FIELD] = &$this->getShippingHash();
     }
 
     /**

@@ -34,7 +34,7 @@ use YooKassa\Model\SelfEmployed\SelfEmployedConfirmation;
 /**
  * Класс билдера объектов запросов к API на создание самозанятого
  *
- * @todo @example 02-builder.php 11 78 Пример использования билдера
+ * @example 02-builder.php 229 18 Пример использования билдера
  *
  * @package YooKassa
  */

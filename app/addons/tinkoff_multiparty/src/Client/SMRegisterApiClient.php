@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\TinkoffMultiparty\Client;
 
@@ -26,7 +26,7 @@ use Tygh\Registry;
 class SMRegisterApiClient
 {
     /** @var string $endpoint */
-    protected $endpoint = 'https://sm-register.tinkoff.ru/';
+    protected $endpoint = 'https://acqapi.tinkoff.ru/';
 
     /** @var string $username */
     protected $username;
@@ -34,16 +34,26 @@ class SMRegisterApiClient
     /** @var string $password */
     protected $password;
 
+    /** @var string $certificate_filename */
+    protected $certificate_filename;
+
+    /** @var string $certificate_key_filename */
+    protected $certificate_key_filename;
+
     /**
      * Constructor of EACQMultipartyClient class.
      *
-     * @param string $username Username
-     * @param string $password Password
+     * @param string $username                 Username
+     * @param string $password                 Password
+     * @param string $certificate_filename     MTLS certificate path
+     * @param string $certificate_key_filename Certificate private key path
      */
-    public function __construct($username, $password)
+    public function __construct($username, $password, $certificate_filename, $certificate_key_filename)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->certificate_filename = $certificate_filename;
+        $this->certificate_key_filename = $certificate_key_filename;
     }
 
     /**
@@ -55,7 +65,7 @@ class SMRegisterApiClient
      */
     public function registerShopCode(array $request_body)
     {
-        $path = 'register';
+        $path = 'sm-register/register';
         $method = Http::POST;
 
         $authorization_body = [
@@ -140,7 +150,15 @@ class SMRegisterApiClient
                 $answer = Http::get($this->endpoint . $path, $params, ['headers' => $headers]);
                 break;
             case Http::POST:
-                $answer = Http::post($this->endpoint . $path, http_build_query($params), ['headers' => $headers]);
+                $answer = Http::post(
+                    $this->endpoint . $path,
+                    http_build_query($params),
+                    [
+                        'headers' => $headers,
+                        'ssl_cert' => $this->certificate_filename,
+                        'ssl_key' => $this->certificate_key_filename,
+                    ]
+                );
                 break;
             default:
                 $answer = '';
@@ -174,7 +192,15 @@ class SMRegisterApiClient
                 $answer = Http::get($this->endpoint . $path, $params, ['headers' => $headers]);
                 break;
             case Http::POST:
-                $answer = Http::post($this->endpoint . $path, $params, ['headers' => $headers]);
+                $answer = Http::post(
+                    $this->endpoint . $path,
+                    $params,
+                    [
+                        'headers' => $headers,
+                        'ssl_cert' => $this->certificate_filename,
+                        'ssl_key' => $this->certificate_key_filename,
+                    ]
+                );
                 break;
             default:
                 $answer = '';

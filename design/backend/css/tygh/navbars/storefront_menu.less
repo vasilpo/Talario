@@ -1,8 +1,17 @@
 .logo-menu__btn-inner {
-    justify-content: flex-start;
-    width: ~"calc(var(--main-menu-width) - 16px * 2)"; // max-width: 208px;
+    display: flex;
+    height: 34px;
 }
 
+html.cs-main-menu-dropdown .logo-menu__btn-inner {
+    justify-content: center;
+}
+
+.cs-main-menu-dropdown .logo-menu__logo {
+    object-position: 50% 50%;
+}
+
+// Normal logo
 .logo-menu__logo {
     max-height: 100%;
     object-fit: contain;
@@ -24,4 +33,38 @@
     .logo-menu__logo--dark {
         display: block;
     }
+}
+
+// Short logo
+.logo-menu__logo-short {
+    max-height: 100%;
+    object-fit: contain;
+    object-position: left;
+}
+
+@media (prefers-color-scheme: light) {
+    .logo-menu__logo-short--light {
+        display: block;
+    }
+    .logo-menu__logo-short--dark {
+        display: none;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .logo-menu__logo-short--light {
+        display: none;
+    }
+    .logo-menu__logo-short--dark {
+        display: block;
+    }
+}
+
+.cs-main-menu-dropdown .logo-menu__logo--menu-type-collapse,
+.cs-main-menu-dropdown .logo-menu__logo-short--menu-type-collapse { 
+    display: none;
+}
+
+.cs-main-menu-collapse .logo-menu__logo--menu-type-dropdown,
+.cs-main-menu-collapse .logo-menu__logo-short--menu-type-dropdown {
+    display: none;
 }

@@ -26,7 +26,7 @@
                     <h3 class="ty-sitemap__section-sub-title">{$name}</h3>
                     <ul>
                         {foreach from=$section item=link}
-                            <li><a href="{$link.link_href|fn_url}">{$link.link}</a></li>
+                            <li><a href="{$link.link_href|fn_url}" class="ty-sitemap__link">{$link.link}</a></li>
                         {/foreach}
                     </ul>
                 {/foreach}

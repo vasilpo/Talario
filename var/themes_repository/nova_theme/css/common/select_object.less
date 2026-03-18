@@ -1,0 +1,30 @@
+.ty-select-block {
+    padding-top: calc(var(--cs-base-border-radius) * 0.66667);
+    padding-bottom: calc(var(--cs-base-border-radius) * 0.66667);
+    border-width: 0;
+    box-shadow: var(--cs-shadow);
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.ty-select-block__a:hover {
+    background: transparent;
+    color: var(--cs-top-panel-links);
+}
+
+.ty-select-block__a.open, .ty-select-block__a.open:hover {
+    background: transparent;
+    color: var(--cs-btn-link-color-highlight);
+}
+
+.ty-select-block__a.open .ty-select-block__arrow {
+    color: var(--cs-btn-link-color-highlight);
+}
+
+.ty-select-block__arrow {
+    font-size: 16px;
+    vertical-align: bottom;
+}
+
+.ty-select-block__list-a {
+    color: var(--cs-btn-link-color);
+}

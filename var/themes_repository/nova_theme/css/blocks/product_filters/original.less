@@ -1,0 +1,208 @@
+.ty-product-filters__wrapper {
+    background: transparent;
+}
+
+/** Hide tooltip filter on mobile **/
+@media (max-width: 767px) {
+    .ty-product-filters__tooltip-original {
+        display: none !important;
+    }
+}
+
+/** Hide desktop Reset filter button on mobile **/
+.ty-product-filters__tools {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .ty-product-filters__tools {
+        display: block;
+    }
+}
+
+.ty-product-filters__title {
+    color: var(--cs-btn-link-color);
+}
+
+.ty-product-filters__title .ty-icon-cancel-circle {
+    font-size: 20px;
+    line-height: 11px;
+}
+
+.ty-product-filters__title .ty-icon-cancel-circle:hover {
+    color: var(--cs-btn-link-color-highlight);
+}
+
+.ty-product-filters__switch {
+    padding-left: 0;
+    padding-right: 0;
+    border-bottom-width: 0;
+}
+
+.ty-product-filters__reset-button {
+    color: var(--cs-btn-link-color);
+}
+
+.ty-product-filters__reset-button:hover {
+    color: var(--cs-btn-link-color-highlight);
+}
+
+.ty-product-filters__reset-icon {
+    left: -20px;
+}
+
+/** Filters top panel on mobile **/
+/** Show Filters button on mobile top panel **/
+.ty-product-filters__top-panel {
+    display: flex;
+    margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+    .ty-product-filters__top-panel {
+        display: none;
+    }
+}
+
+/** Top panel filter link **/
+.ty-product-filters__top-panel-link {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    width: 50%;
+    flex-shrink: 0;
+    position: relative;
+}
+
+/** Top panel filter badge **/
+.ty-product-filters__top-panel-link-badge {
+    box-sizing: border-box;
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    padding: 0 4px;
+    max-width: 80px;
+    min-width: 17px;
+    background: var(--cs-discount-label);
+    font-size: var(--cs-font-size-small);
+    font-weight: normal;
+    line-height: normal;
+    text-align: center;
+    color: #fff;
+    border-radius: 99px;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ty-product-filters__top-panel-link-badge:empty {
+    display: none;
+}
+
+.ty-product-filters__top-panel-link-text {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/** Hide Reset button by default on mobile top panel **/
+.ty-product-filters__top-panel-reset {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 50%;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.ty-product-filters__top-panel-reset--hide {
+    display: none;
+}
+
+.ty-product-filters__top-panel-reset-text {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/** /Filters top panel on mobile **/
+
+
+/** Filters popup on mobile **/
+/** Hide desktop filters on mobile **/
+.ty-product-filters__outer {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .ty-product-filters__outer {
+        display: block;
+    }
+}
+
+/** Show filters on mobile (fallback) **/
+.ty-product-filters__outer.ui-dialog-content {
+    display: block;
+}
+
+/** Decrease top gap in filter popup **/
+.ty-product-filters__outer .object-container {
+    padding-top: 0;
+}
+
+/** Disable object container bottom padding **/
+@media (max-width: 767px) {
+    html.dialog-is-open.dialog--no-scroll .ty-product-filters__outer .object-container:after {
+        padding-bottom: 0;
+    }
+}
+
+/** Hide mobile Reset filter button on desktop **/
+.ty-product-filters__tools-top {
+    display: flex;
+}
+
+@media (min-width: 768px) {
+    .ty-product-filters__tools-top {
+        display: none;
+    }
+}
+
+/** Hide mobile Reset filter button without layout shift if no filters selected **/
+.ty-product-filters__tools-top--hide {
+    visibility: hidden;
+}
+
+/** Small mobile Reset filter button **/
+.ty-product-filters__reset-button-top {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/** Show products button on mobile **/
+.ty-product-filters__outer-bottom {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 5;
+    background: var(--cs-general-bg-color);
+    border-top: 1px solid var(--cs-base);
+}
+
+@media (min-width: 768px) {
+    .ty-product-filters__outer-bottom {
+        display: none;
+    }
+}
+
+/** Add padding for Show products button wrapper **/
+.ty-product-filters__outer-bottom-inner {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+/** Full width for Show products button **/
+.ty-product-filters__show-products {
+    display: block;
+    width: 100%;
+}
+/** /Filters popup on mobile **/

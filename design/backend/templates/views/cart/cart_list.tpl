@@ -39,6 +39,7 @@
                     </th>
                     <th width="14%">
                         {include file="common/table_col_head.tpl" type="date"}
+                    </th>
                     <th width="11%">
                         {include file="common/table_col_head.tpl" text=__("cart")}
                     </th>

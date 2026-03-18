@@ -231,6 +231,12 @@ strong {
     font-size: var(--cs-font-size-large);
 }
 
+@media (min-width: 1033px) and (max-width: 1440px) {
+    .text-small-adaptive {
+        font-size: var(--cs-font-size-small);
+    }
+}
+
 .uppercase {
     text-transform: uppercase;
 }
@@ -331,6 +337,12 @@ strong {
     padding-right: 6px;
     font-size: var(--cs-font-size-mini);
     color: var(--cs-placeholder-text);
+}
+
+.view-status--type.view-status.status--long:before,
+.status-dropdown--type.status-dropdown.status--long:before,
+.status-link--type.status-link.status--long:before { 
+    padding-right: 2px;
 }
 
 .status-link--type.status-link:before { 

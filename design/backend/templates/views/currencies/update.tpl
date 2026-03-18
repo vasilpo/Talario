@@ -3,7 +3,8 @@
 {else}
     {assign var="id" value="0"}    
 {/if}
-{$tabs_count = (fn_allowed_for("MULTIVENDOR:ULTIMATE") || $is_sharing_enabled) ? 2 : 1}
+{$is_multiple_storefronts_allowed = fn_allowed_for('MULTIVENDOR') && fn_is_allowed(constant("\Tygh\Licensing\Features::MULTIPLE_STOREFRONTS"))}
+{$tabs_count = ($is_multiple_storefronts_allowed || $is_sharing_enabled) ? 2 : 1}
 
 <div id="content_group{$id}">
 
@@ -15,7 +16,7 @@
 <div class="tabs cm-j-tabs tabs--enable-fill tabs--count-{$tabs_count}">
     <ul class="nav nav-tabs">
         <li id="tab_general_{$id}" class="cm-js active"><a>{__("general")}</a></li>
-        {if fn_allowed_for("MULTIVENDOR:ULTIMATE") || $is_sharing_enabled}
+        {if $is_multiple_storefronts_allowed || $is_sharing_enabled}
             <li id="tab_storefronts_{$id}" class="cm-js"><a>{__("storefronts")}</a></li>
         {/if}
     </ul>
@@ -103,7 +104,7 @@
     </fieldset>
 <!--content_tab_general_{$id}--></div>
 
-    {if fn_allowed_for("MULTIVENDOR:ULTIMATE")|| $is_sharing_enabled}
+    {if $is_multiple_storefronts_allowed || $is_sharing_enabled}
         <div class="hidden" id="content_tab_storefronts_{$id}">
             {$add_storefront_text = __("add_storefronts")}
             {include file="pickers/storefronts/picker.tpl"

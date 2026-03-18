@@ -28,6 +28,10 @@
     A block represents a certain content type (e.g. products)
     and uses a certain template to display it (e.g. list with thumbnails).
 *}
+{strip}
+{$html_tag_class = []}
+
+{include file="common/index_config.tpl"}
 {$pb_is_bottom_panel_open = (
         $auth.user_type === "UserTypes::ADMIN"|enum
         || $auth.user_type === "UserTypes::VENDOR"|enum
@@ -36,12 +40,26 @@
     && $smarty.cookies.pb_is_bottom_panel_open|default:"1"
 }
 {$is_theme_editor_open = $runtime.customization_mode.theme_editor}
-<!DOCTYPE html>
-<html {hook name="index:html_tag"}{/hook}
-    lang="{$smarty.const.CART_LANGUAGE}"
-    dir="{$language_direction}"
-    class="{if $pb_is_bottom_panel_open}bp-panel-active{/if} {if $is_theme_editor_open}te-theme-editor-active{/if}"
->
+{$is_dialog_mobile_bottom = $is_dialog_mobile_bottom|default:false}
+
+{if $pb_is_bottom_panel_open}
+    {$html_tag_class[] = "bp-panel-active"}
+{/if}
+{if $is_theme_editor_open}
+    {$html_tag_class[] = "te-theme-editor-active"}
+{/if}
+{if $is_dialog_mobile_bottom}
+    {$html_tag_class[] = "dialog-mobile-bottom"}
+{/if}
+{if $runtime.controller === "products" && $runtime.mode === "view"}
+    {$html_tag_class[] = "ty-root--products-view"}
+{/if}
+{if $runtime.controller === "checkout" && $runtime.mode === "cart"}
+    {$html_tag_class[] = "ty-root--checkout-cart"}
+{/if}
+
+{/strip}<!DOCTYPE html>
+<html {hook name="index:html_tag"}{/hook} lang="{$smarty.const.CART_LANGUAGE}" dir="{$language_direction}" class="{" "|implode:$html_tag_class}">
 <head>
 {capture name="page_title"}
 {hook name="index:title"}
@@ -120,6 +138,7 @@ window.onerror = function(message, source, lineno, colno, error) {
         <!--tygh_main_container--></div>
 
         {hook name="index:footer"}{/hook}
+        {include file="common/index_footer.tpl"}
         <!--tygh_container--></div>
 
         {include file="common/scripts.tpl"}

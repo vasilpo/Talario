@@ -3,7 +3,7 @@
 {script src="js/tygh/cart_content.js"}
 
 {if $carts}
-    <h1 class="ty-mainbox-title {if $carts|count > 1}ty-mve-title{/if}">{__("cart_contents")}
+    <h1 class="ty-mainbox-title {if $carts|count > 1}ty-mve-title{/if}">{$cart_content_title|default:__("cart_contents")}
         {if $carts|count > 1}
             <div class="ty-mve-total ty-float-right"
                  id="checkout_totals_header_general">
@@ -25,6 +25,8 @@
                  payment_methods=$group_payment_methods.$vendor_id
         }
     {/foreach}
+
+    {include file="views/checkout/components/cart_bottom_fixed.tpl"}
 {else}
     <p class="ty-no-items">{__("text_cart_empty")}</p>
 

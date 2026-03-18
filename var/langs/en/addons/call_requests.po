@@ -77,6 +77,10 @@ msgctxt "Languages::call_requests.request_call"
 msgid "Request call"
 msgstr "Request call"
 
+msgctxt "Languages::call_requests.request_call_short"
+msgid "Request call"
+msgstr "Request call"
+
 msgctxt "Languages::call_requests.buy_now_with_one_click"
 msgid "Buy now with 1-click"
 msgstr "Buy now with 1-click"

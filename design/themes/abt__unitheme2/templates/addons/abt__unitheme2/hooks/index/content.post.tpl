@@ -73,6 +73,7 @@
 
                 </form>
             </div>
+                <div class="ut2-sticky-panel__item__overlay"></div>
         </div>
         {/if}
 
@@ -149,6 +150,7 @@
                             <!--cart_content_{$dropdown_id}--></div>
                         {/hook}
                     </div>
+                    <div class="ut2-sticky-panel__item__overlay"></div>
             <!--cart_status_{$dropdown_id}--></div>
         </div>
         {/if}
@@ -250,6 +252,7 @@
                             {/if}
                         </div>
                 <!--account_info_{$block_snapping_id_replacement}--></div>
+                    <div class="ut2-sticky-panel__item__overlay"></div>
                 </div>
             </div>
         {/if}
@@ -288,11 +291,12 @@
                                     <p><small>Email</small><a href="mailto:{$settings.Company.company_orders_department|trim}" style="font-weight:normal;font-size: inherit;">{$settings.Company.company_orders_department}</a></p>
                                 {/if}
                                 {if $settings.Company.company_country|fn_get_country_name || $settings.Company.company_city || $settings.Company.company_address}
-                                    <p><small>{__("address")}</small><div>{$settings.Company.company_country|fn_get_country_name}, {$settings.Company.company_city}, {$settings.Company.company_address}</div></p>
+                                    <p><small>{__("address")}</small>{$settings.Company.company_country|fn_get_country_name}, {$settings.Company.company_city}, {$settings.Company.company_address}</p>
                                 {/if}
                             </div>
                         {/if}
                     </div>
+                    <div class="ut2-sticky-panel__item__overlay"></div>
                 </div>
             </div>
         {/if}

@@ -50,6 +50,43 @@
 <div class="approve-disapprove"
     data-ca-approve-disapprove="container"
     data-ca-approve-disapprove-dispatch="{$dispatch}">
+    {* Approve *}
+    {if $approve_reason_name}
+        {* Approve dropdown *}
+        <div class="btn-group dropleft approve-disapprove__btn-group">
+            <a class="dropdown-toggle {$approve_btn_class}" data-toggle="dropdown">
+                {include_ext file="common/icon.tpl" class=$approve_btn_icon}
+                {$approve_btn_text}
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu approve-disapprove__dropdown">
+                <div class="approve-disapprove__content">
+                    <textarea class="approve-disapprove__reason"
+                        name="{$approve_reason_name}"
+                        placeholder="{__("type_comments_here")}"
+                        data-ca-approve-disapprove="approve_reason"
+                    ></textarea>
+                </div>
+                <div class="approve-disapprove__footer">
+                    {btn type="button"
+                        id="`$dispatch`_`$id`_approve"
+                        class="btn btn-primary approve-disapprove__btn"
+                        text=__("approve")
+                        data=$approve_data
+                    }
+                </div>
+            </ul>
+        </div>
+    {else}
+        {btn type="button"
+            id="`$dispatch`_`$id`_approve"
+            class=$approve_btn_class
+            text=$approve_btn_text
+            icon=$approve_btn_icon
+            data=$approve_data
+        }
+    {/if}
+
     {* Disapprove *}
     {if $disapprove_reason_name}
         {* Disapprove dropdown *}
@@ -85,43 +122,6 @@
             text=$disapprove_btn_text
             icon=$disapprove_btn_icon
             data=$disapprove_data
-        }
-    {/if}
-
-    {* Approve *}
-    {if $approve_reason_name}
-        {* Approve dropdown *}
-        <div class="btn-group dropleft approve-disapprove__btn-group">
-            <a class="dropdown-toggle {$approve_btn_class}" data-toggle="dropdown">
-                {include_ext file="common/icon.tpl" class=$approve_btn_icon}
-                {$approve_btn_text}
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu approve-disapprove__dropdown">
-                <div class="approve-disapprove__content">
-                    <textarea class="approve-disapprove__reason"
-                        name="{$approve_reason_name}"
-                        placeholder="{__("type_comments_here")}"
-                        data-ca-approve-disapprove="approve_reason"
-                    ></textarea>
-                </div>
-                <div class="approve-disapprove__footer">
-                    {btn type="button"
-                        id="`$dispatch`_`$id`_approve"
-                        class="btn btn-primary approve-disapprove__btn"
-                        text=__("approve")
-                        data=$approve_data
-                    }
-                </div>
-            </ul>
-        </div>
-    {else}
-        {btn type="button"
-            id="`$dispatch`_`$id`_approve"
-            class=$approve_btn_class
-            text=$approve_btn_text
-            icon=$approve_btn_icon
-            data=$approve_data
         }
     {/if}
 </div>

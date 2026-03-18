@@ -70,7 +70,7 @@
                 {$obj_id=$product.product_id}
                 {$obj_id_prefix="`$obj_prefix``$product.product_id`"}
 
-                {include file="common/product_data.tpl" product=$product show_select_variations_button=false}
+                {include file="common/product_data.tpl" product=$product show_select_variations_button=false is_variation_list_item=true}
 
                 {hook name="products:product_variations_list"}
                     <tr class="ty-variations-list__item">

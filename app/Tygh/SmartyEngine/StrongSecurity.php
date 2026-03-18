@@ -1,45 +1,26 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 // phpcs:ignoreFile
 
 namespace Tygh\SmartyEngine;
 
-class StrongSecurity extends \Smarty_Security
+class StrongSecurity extends \Smarty\Security
 {
     /**
      * @var null|array<string, bool>
      */
     public static $allowed_functions = null;
-
-    /**
-     * Check if PHP function is trusted.
-     *
-     * @param string $function_name Function name
-     * @param object $compiler      Compiler object
-     *
-     * @return boolean                 true if function is trusted
-     */
-    public function isTrustedPhpFunction($function_name, $compiler)
-    {
-        if (static::isFunctionAllowed($function_name)) {
-            return true;
-        }
-
-        $compiler->trigger_template_error("PHP function '{$function_name}' not allowed by security setting");
-        return false;
-    }
-
 
     /**
      * Check if static class is trusted.
@@ -76,7 +57,7 @@ class StrongSecurity extends \Smarty_Security
      *
      * @return bool True if modifier is trusted
      */
-    public function isTrustedPhpModifier($modifier_name, $compiler)
+    public function isTrustedModifier($modifier_name, $compiler)
     {
         if (static::isFunctionAllowed($modifier_name)) {
             return true;
@@ -108,19 +89,6 @@ class StrongSecurity extends \Smarty_Security
      * @return bool True if special $smarty variable is trusted
      */
     public function isTrustedSpecialSmartyVar($var_name, $compiler)
-    {
-        return true;
-    }
-
-    /**
-     * Check if modifier plugin is trusted.
-     *
-     * @param string $modifier_name Modifier name
-     * @param object $compiler      Compiler object
-     *
-     * @return bool True if modifier plugin is trusted
-     */
-    public function isTrustedModifier($modifier_name, $compiler)
     {
         return true;
     }
@@ -171,18 +139,6 @@ class StrongSecurity extends \Smarty_Security
      * @return bool True if URI is trusted
      */
     public function isTrustedUri($uri)
-    {
-        return true;
-    }
-
-    /**
-     * Check if directory of file resource is trusted.
-     *
-     * @param string $filepath File path
-     *
-     * @return bool True if directory is trusted
-     */
-    public function isTrustedPHPDir($filepath)
     {
         return true;
     }

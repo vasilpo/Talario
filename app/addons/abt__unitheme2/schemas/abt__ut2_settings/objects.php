@@ -301,14 +301,18 @@ $schema = [
 'type' => 'selectbox',
 'position' => 200,
 'class' => 'input-large',
-'value' => 'bottom',
+'value' => [
+'desktop' => 'bottom',
+'tablet' => 'bottom',
+'mobile' => 'bottom',
+],
 'variants' => [
 'bottom',
 'top',
 'none',
 ],
 'variants_as_language_variable' => YesNo::YES,
-'is_for_all_devices' => YesNo::YES,
+'is_for_all_devices' => YesNo::NO
 ],
 'show_sticky_panel_filters_and_categories' => [
 'type' => 'checkbox',
@@ -607,18 +611,24 @@ $schema = [
 'mobile' => YesNo::NO,
 ],
 ],
-'show_brand_logo' => [
-'type' => 'checkbox',
-'position' => 160,
+'show_brand' => [
+'type' => 'selectbox',
+'class' => 'input-large',
+'position' => 170,
+'variants' => [
+'none',
+'name',
+'logo',
+],
 'disabled' => [
 'desktop' => YesNo::NO,
 'tablet' => YesNo::NO,
-'mobile' => YesNo::YES,
+'mobile' => YesNo::NO,
 ],
 'value' => [
-'desktop' => YesNo::NO,
-'tablet' => YesNo::NO,
-'mobile' => YesNo::NO,
+'desktop' => 'none',
+'tablet' => 'none',
+'mobile' => 'none',
 ],
 ],
 'show_gallery' => [
@@ -757,13 +767,24 @@ $schema = [
 'mobile' => YesNo::YES,
 ],
 ],
-'show_brand_logo' => [
-'type' => 'checkbox',
+'show_brand' => [
+'type' => 'selectbox',
+'class' => 'input-large',
 'position' => 220,
+'variants' => [
+'none',
+'name',
+'logo',
+],
+'disabled' => [
+'desktop' => YesNo::NO,
+'tablet' => YesNo::NO,
+'mobile' => YesNo::NO,
+],
 'value' => [
-'desktop' => YesNo::YES,
-'tablet' => YesNo::YES,
-'mobile' => YesNo::YES,
+'desktop' => 'none',
+'tablet' => 'none',
+'mobile' => 'none',
 ],
 ],
 'show_gallery' => [
@@ -1040,11 +1061,27 @@ $schema = [
 'value' => '10',
 'is_for_all_devices' => YesNo::YES,
 ],
+'display_color_separately' => [
+'type' => 'selectbox',
+'class' => 'input-large',
+'position' => 30,
+'value' => 'dont_display',
+'variants' => [
+'dont_display',
+'color',
+'thumbnails',
+],
+'is_for_all_devices' => YesNo::YES,
+],
 'display_as_links' => [
 'type' => 'checkbox',
 'position' => 30,
-'value' => YesNo::NO,
-'is_for_all_devices' => YesNo::YES,
+'value' => [
+'desktop' => YesNo::NO,
+'tablet' => YesNo::NO,
+'mobile' => YesNo::NO,
+],
+'is_for_all_devices' => YesNo::NO,
 ],
 'allow_variations_selection' => [
 'type' => 'checkbox',
@@ -1468,8 +1505,23 @@ $schema = [
 ],
 ],
 ],
-'load_more' => [
+'product_reviews' => [
 'position' => 400,
+'items' => [
+'filter_by_creation_time' => [
+'type' => 'checkbox',
+'position' => 100,
+'value' => [
+'desktop' => YesNo::YES,
+'tablet' => YesNo::YES,
+'mobile' => YesNo::YES,
+],
+'is_for_all_devices' => YesNo::NO,
+],
+],
+],
+'load_more' => [
+'position' => 500,
 'items' => [
 'product_list' => [
 'type' => 'checkbox',

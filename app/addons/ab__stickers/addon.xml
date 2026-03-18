@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
 <id>ab__stickers</id>
-<version>3.0.1</version>
+<version>3.0.2</version>
 <priority>2020</priority>
 <position>0</position>
 <status>active</status>
@@ -17,7 +17,7 @@
 <supplier_page>ab__am.addons</supplier_page>
 <supplier_link>https://cs-cart.alexbranding.com</supplier_link>
 <ab>
-<hash>8e3627a64e98932ee2478c4c0442741c57117195, 2025-07-14 19:16:40</hash>
+<hash>ecd00f48ba98932ff73e386b006dd9c7c5d3cb50, 2025-10-30 11:05:43</hash>
 <compatibility>
 <dependencies>
 <ab__addons_manager><min>2.5.6</min></ab__addons_manager>
@@ -61,7 +61,7 @@
 <item id="BL_output_type"><type>hidden</type><default_value>column</default_value></item>
 <item id="BR_output_type"><type>hidden</type><default_value>column</default_value></item>
 <item id="code"><type>hidden</type><default_value>ABA-uYERYFjwsVPhkRRTDlejb</default_value></item>
-<item id="build"><type>hidden</type><default_value>1232</default_value></item>
+<item id="build"><type>hidden</type><default_value>1250</default_value></item>
 </items>
 </section>
 <section id="text_stickers">

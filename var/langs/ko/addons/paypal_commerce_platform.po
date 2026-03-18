@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: ko\n"
-"X-Crowdin-File: /release-4.18.4/addons/paypal_commerce_platform.po\n"
-"X-Crowdin-File-ID: 9653\n"
-"PO-Revision-Date: 2025-05-26 13:31\n"
+"X-Crowdin-File: /release-4.20.1/addons/paypal_commerce_platform.po\n"
+"X-Crowdin-File-ID: 10217\n"
+"PO-Revision-Date: 2026-02-05 11:05\n"
 
 msgctxt "Addons::name::paypal_commerce_platform"
 msgid "PayPal Complete Payments (Multiparty)"
@@ -23,18 +23,6 @@ msgstr "마켓플레이스를 위한 PayPal 솔루션입니다. PayPal 및 기�
 msgctxt "SettingsSections::paypal_commerce_platform::general"
 msgid "General"
 msgstr "일반적인"
-
-msgctxt "SettingsOptions::paypal_commerce_platform::collect_payouts"
-msgid "Commission includes"
-msgstr "수수료 포함"
-
-msgctxt "SettingsVariants::paypal_commerce_platform::collect_payouts::N"
-msgid "Order commission"
-msgstr "주문 수수료"
-
-msgctxt "SettingsVariants::paypal_commerce_platform::collect_payouts::Y"
-msgid "Order commission and unpaid payouts"
-msgstr "주문 수수료 및 미지급 대금"
 
 msgctxt "SettingsOptions::paypal_commerce_platform::rma_refunded_order_status"
 msgid "Order status on refund"
@@ -72,10 +60,6 @@ msgctxt "Languages::paypal_commerce_platform.paypal_account"
 msgid "PayPal account"
 msgstr "페이팔 계정"
 
-msgctxt "Languages::paypal_commerce_platform.paypal_account_short"
-msgid "PP a/c"
-msgstr "PP 에어컨"
-
 msgctxt "Languages::paypal_commerce_platform.connected"
 msgid "Connected"
 msgstr "연결됨"
@@ -83,6 +67,14 @@ msgstr "연결됨"
 msgctxt "Languages::paypal_commerce_platform.not_connected"
 msgid "Not connected"
 msgstr "연결되지 않은"
+
+msgctxt "Languages::paypal_commerce_platform.ppcp_connectivity.description"
+msgid "Whether or not a vendor has connected their PayPal account to the marketplace."
+msgstr ""
+
+msgctxt "Languages::paypal_commerce_platform.ppcp_multiparty"
+msgid "PPCP (Multiparty)"
+msgstr ""
 
 msgctxt "Languages::paypal_commerce_platform.account_connected"
 msgid "Your PayPal account has been successfully connected to the store"

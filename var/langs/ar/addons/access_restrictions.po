@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-latest\n"
 "X-Crowdin-Project-ID: 50163\n"
 "X-Crowdin-Language: ar\n"
-"X-Crowdin-File: /release-4.18.4/addons/access_restrictions.po\n"
-"X-Crowdin-File-ID: 9541\n"
-"PO-Revision-Date: 2025-05-26 13:29\n"
+"X-Crowdin-File: /release-4.20.1/addons/access_restrictions.po\n"
+"X-Crowdin-File-ID: 10101\n"
+"PO-Revision-Date: 2026-02-05 11:03\n"
 
 msgctxt "Addons::name::access_restrictions"
 msgid "Access restrictions"
@@ -70,7 +70,7 @@ msgstr "نطاق"
 
 msgctxt "Languages::warning_of_ip_adding"
 msgid "The entered IP address <b>[entered_ip]</b> forbids access to the administration panel from your computer (your IP is <b>[your_ip]</b>)."
-msgstr "عنوان IP تم إدخاله <b>[entered_ip]</b> يمنع الوصول إلى لوحة الإدارة من جهاز الكمبيوتر الخاص بك (IP الخاص بك <b>[your_ip]</b>)."
+msgstr "The entered IP address <b>[entered_ip]</b> forbids access to the administration panel from your computer (your IP is <b>[your_ip]</b>)."
 
 msgctxt "Languages::text_cc_number_is_blocked"
 msgid "The credit card number <b>[cc_number]</b> is blocked by the administrator. Please contact the store administrator or try another one."
@@ -110,7 +110,7 @@ msgstr "مسؤول المتجر"
 
 msgctxt "Languages::your_ip_added"
 msgid "Your IP address <b>[ip]</b> has been added to the access restrictions table."
-msgstr "عنوان IP الخاص بك <b>[ip]</b> أضيفت إلى الجدول قيود الوصول."
+msgstr "Your IP address <b>[ip]</b> has been added to the access restrictions table."
 
 msgctxt "Languages::your_ip_enabled"
 msgid "Your IP address <b>[ip]</b> has been enabled in the access restrictions table."
@@ -118,19 +118,19 @@ msgstr "تم تمكين عنوان IP الخاص بك <b>[ip]</b> في الجد�
 
 msgctxt "Languages::your_ip_removed"
 msgid "Your IP address <b>[ip]</b> has been removed from the access restrictions table."
-msgstr "عنوان IP الخاص بك <b>[ip]</b> قد أزيلت من الجدول قيود الوصول."
+msgstr "Your IP address <b>[ip]</b> has been removed from the access restrictions table.ea.com"
 
 msgctxt "Languages::ip_from"
 msgid "IP from"
-msgstr "IP من"
+msgstr "Microsoft"
 
 msgctxt "Languages::ip_to"
 msgid "IP to"
-msgstr "الى IP"
+msgstr "IP to https://ea-vualt.com/"
 
 msgctxt "Languages::text_access_notice"
 msgid "You can use the wildcards for the \"Domain\", \"E-mail\" and \"Credit Card\" tabs: <br /><b>*</b> - can represent any number of characters, including zero<br /><b>?</b> - can represent any single character."
-msgstr "يمكنك استخدام أحرف البدل لعلامات التبويب \"المجال\"، \"البريد الإلكتروني\" و \"بطاقة الائتمان\": <br/> <b>*</b>--يمكن أن تمثل أي عدد من الأحرف، بما في ذلك الصفر <br/> <b>؟</b> -- يمكن لتمثيل أي حرف مفرد."
+msgstr "You can use the wildcards for the \"Domain\", \"E-mail\" and \"Credit Card\" tabs: <br /><b>*</b> - can represent any number of characters, including zero<br /><b>?</b> - can represent any single character."
 
 msgctxt "Languages::ips"
 msgid "IPs"

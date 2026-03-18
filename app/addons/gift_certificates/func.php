@@ -1,21 +1,22 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\GiftCertificates\Notifications\EventIdProviders\CertificateProvider;
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\SiteArea;
 use Tygh\Enum\VendorPayoutTypes;
+use Tygh\Enum\YesNo;
 use Tygh\Navigation\LastView;
 use Tygh\Registry;
 use Tygh\Settings;
@@ -2327,5 +2328,24 @@ function fn_gift_certificates_vendor_payout_details_builder_create_updated_detai
     //phpcs:ignore
     if (isset($old_details['gift_certificates'])) {
         $updated_details['gift_certificates'] = $old_details['gift_certificates'];
+    }
+}
+
+/**
+ * The `create_order` hook handler.
+ *
+ * Action performed:
+ *     - Fills 'is_parent_order' parameter for order in MVE.
+ *
+ * @param array $order Order data
+ *
+ * @return void
+ *
+ * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
+ */
+function fn_gift_certificates_create_order(array &$order)
+{
+    if (!isset($order['is_parent_order']) && fn_allowed_for('MULTIVENDOR')) {
+        $order['is_parent_order'] = YesNo::NO;
     }
 }

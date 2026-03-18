@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Addons\RusSdek2;
 
@@ -81,7 +81,7 @@ class Installer implements InstallerInterface
         }
 
         $path = Registry::get('config.dir.root') . '/app/addons/rus_sdek2/database/cities_sdek.csv';
-        fn_rus_cities_read_cities_by_chunk($path, RUS_CITIES_FILE_READ_CHUNK_SIZE, __NAMESPACE__ . '\Installer::addCitiesInTable');
+        fn_cities_read_cities_by_chunk($path, CITIES_FILE_READ_CHUNK_SIZE, __NAMESPACE__ . '\Installer::addCitiesInTable');
     }
 
     /**
@@ -108,7 +108,7 @@ class Installer implements InstallerInterface
      */
     public static function addCitiesInTable(array $rows)
     {
-        $cities_hash = fn_rus_cities_get_all_cities($rows);
+        $cities_hash = fn_cities_get_all_cities($rows);
 
         foreach ($rows as $city_data) {
             $city_data['City'] = trim($city_data['City']);

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Shippings\Services;
 
@@ -54,36 +54,6 @@ class Sdek2 implements IService, IPickupService
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint
      */
     protected $shipping_info;
-
-    /**
-     * Stack for errors occured during the preparing rates process
-     *
-     * @var array<string>
-     */
-    private $error_stack = [];
-
-    /**
-     * @var array<string>
-     */
-    protected static $error_descriptions = [
-        '0' => 'Внутренняя ошибка на сервере. Обратитесь к программистам компании СДЭК для исправления',
-        '1' => 'Указанная вами версия API не поддерживается',
-        '2' => 'Ошибка авторизации',
-        '3' => 'Невозможно осуществить доставку по этому направлению при заданных условиях',
-        '4' => 'Ошибка при указании параметров места ',
-        '5' => 'Не задано ни одного места для отправления',
-        '6' => 'Не задан тариф или список тарифов',
-        '7' => 'Не задан город-отправитель',
-        '8' => 'Не задан город-получатель',
-        '9' => 'При авторизации не задана дата планируемой отправки',
-        '10' => 'Ошибка задания режима доставки',
-        '11' => 'Неправильно задан формат данных',
-        '12' => 'Ошибка декодирования данных. Ожидается <json или jsop>',
-        '13' => 'Почтовый индекс города-отправителя отсутствует в базе СДЭК',
-        '14' => 'Невозможно однозначно идентифицировать город-отправитель по почтовому индексу',
-        '15' => 'Почтовый индекс города-получателя отсутствует в базе СДЭК',
-        '16' => 'Невозможно однозначно идентифицировать город-получатель по почтовому индексу',
-    ];
 
     /**
      * Current Company id environment
@@ -412,32 +382,48 @@ class Sdek2 implements IService, IPickupService
             'error' => false,
         ];
 
-        if (!empty($response)) {
-            $result = json_decode($response);
-            $result_array = json_decode(json_encode($result), true);
+        if (empty($response)) {
+            $return['error'] = __('rus_sdek2.empty_response');
+            return $return;
+        }
 
-            if (empty($this->error_stack) && !empty($result_array)) {
-                $rates = $this->getSdekRates($result_array);
+        $result_array = json_decode($response, true);
 
-                if (empty($rates)) {
-                    $return['error'] = __('rus_sdek2.no_postamat_available');
+        if (json_last_error() !== JSON_ERROR_NONE || empty($result_array)) {
+            $return['error'] = __('rus_sdek2.invalid_response');
+            return $return;
+        }
+
+        if (!empty($result_array['requests']) && is_array($result_array['requests'])) {
+            foreach ($result_array['requests'] as $req) {
+                if (!empty($req['errors'])) {
+                    $return['error'] = $this->processErrors($response);
+                    $this->storeShippingData(['clear' => true]);
                     return $return;
                 }
-                $this->storeShippingData($rates);
+            }
+        }
 
-                if (!empty($rates['price'])) {
-                    $return['cost'] = $rates['price'];
+        if (!empty($result_array['errors']) || !empty($result_array['error'])) {
+            $return['error'] = $this->processErrors($response);
+            $this->storeShippingData(['clear' => true]);
+            return $return;
+        }
 
-                    if (!empty($rates['date'])) {
-                        $return['delivery_time'] = $rates['date'];
-                    }
-                } else {
-                    $this->internalError(__('xml_error'));
-                    $return['error'] = $this->processErrors($result_array);
-                }
-            } else {
-                $return['error'] = $this->processErrors($result_array);
-                $this->storeShippingData(['clear' => true]);
+        $rates = $this->getSdekRates($result_array);
+
+        if (empty($rates)) {
+            $return['error'] = __('rus_sdek2.no_tariffs_available');
+            return $return;
+        }
+
+        $this->storeShippingData($rates);
+
+        if (!empty($rates['price'])) {
+            $return['cost'] = $rates['price'];
+
+            if (!empty($rates['date'])) {
+                $return['delivery_time'] = $rates['date'];
             }
         }
 
@@ -578,27 +564,57 @@ class Sdek2 implements IService, IPickupService
      */
     public function processErrors($response)
     {
-        // Parse JSON message returned by the sdek post server.
-        $return = false;
+        $messages = [];
 
-        if (!empty($response['error'])) {
-            if (!empty($response['error'][0]['code'])) {
-                $status_code = $response['error'][0]['code'];
-                if (empty($response['error'][0]['text'])) {
-                    $return = !empty(self::$error_descriptions[$status_code]) ? self::$error_descriptions[$status_code] : __('rus_sdek2.error_calculate');
-                } else {
-                    $return = $response['error'][0]['text'];
+        $response = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return __('rus_sdek2.error_calculate');
+        }
+
+        // Check errors in requests
+        if (!empty($response['requests']) && is_array($response['requests'])) {
+            foreach ($response['requests'] as $req) {
+                if (!empty($req['errors']) && is_array($req['errors'])) {
+                    foreach ($req['errors'] as $error) {
+                        if (!empty($error['message'])) {
+                            $messages[] = $error['message'];
+                        } elseif (!empty($error['code'])) {
+                            $messages[] = $error['code'];
+                        }
+                    }
                 }
             }
         }
 
-        if (!empty($this->error_stack)) {
-            foreach ($this->error_stack as $error) {
-                $return .= '; ' . $error;
+        // Check multiple errors
+        if (!empty($response['errors']) && is_array($response['errors'])) {
+            foreach ($response['errors'] as $error) {
+                if (!empty($error['message'])) {
+                    $messages[] = $error['message'];
+                } elseif (!empty($error['code'])) {
+                    $messages[] = $error['code'];
+                }
             }
         }
 
-        return $return;
+        // Check single errors
+        if (!empty($response['error'])) {
+            if (is_array($response['error'])) {
+                foreach ($response['error'] as $error) {
+                    if (!empty($error['message'])) {
+                        $messages[] = $error['message'];
+                    } elseif (!empty($error['text'])) {
+                        $messages[] = $error['text'];
+                    }
+                }
+            }
+        }
+
+        if (empty($messages)) {
+            return __('rus_sdek2.error_calculate');
+        }
+
+        return implode('; ', $messages);
     }
 
     /**
@@ -617,17 +633,5 @@ class Sdek2 implements IService, IPickupService
         }
 
         return [];
-    }
-
-    /**
-     * Collects errors during preparing and processing request
-     *
-     * @param string $error Internal error
-     *
-     * @return void
-     */
-    private function internalError($error)
-    {
-        $this->error_stack[] = $error;
     }
 }

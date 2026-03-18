@@ -1096,25 +1096,69 @@ msgctxt "Languages::abt__ut2.banner.params.background_image_size.variants.contai
 msgid "Resize the background image to make sure the image is fully visible inside of the block"
 msgstr "Із збереженням пропорцій, щоб картинка повністю вміщувалась всередині блоку"
 
-msgctxt "Languages::abt__ut2.banner.params.image_position"
-msgid "Vertical Position for (Images, Videos, Products)"
-msgstr "Позиція по вертикалі для (зображень, відео, товарів)"
+msgctxt "Languages::abt__ut2.banner.params.image_v_position"
+msgid "Object position (Image, Video, Products)"
+msgstr "Положення об'єкта (зображення, відео, товари)"
 
-msgctxt "Languages::abt__ut2.banner.params.image_position.tooltip"
-msgid "Setting influences on the main and background images simultaneously"
-msgstr "Налаштування впливає на основне і фонове зображення одночасно"
+msgctxt "Languages::abt__ut2.banner.params.image_v_position.tooltip"
+msgid "The setting affects the position of the object (image, video, products) in the banner area. There is a possibility to select the vertical and horizontal position"
+msgstr "Налаштування впливає на положення об'єкта (зображення, відео, товари) в області банера. Доступний вибір положення по вертикалі та горизонталі"
 
-msgctxt "Languages::abt__ut2.banner.params.image_position.variants.top"
+msgctxt "Languages::abt__ut2.banner.params.image_v_position.variants.top"
 msgid "Top"
 msgstr "Зверху"
 
-msgctxt "Languages::abt__ut2.banner.params.image_position.variants.center"
+msgctxt "Languages::abt__ut2.banner.params.image_v_position.variants.center"
 msgid "Center"
 msgstr "По центру"
 
-msgctxt "Languages::abt__ut2.banner.params.image_position.variants.bottom"
+msgctxt "Languages::abt__ut2.banner.params.image_v_position.variants.bottom"
 msgid "Bottom"
 msgstr "Знизу"
+
+msgctxt "Languages::abt__ut2.banner.params.image_h_position.variants.left"
+msgid "Left"
+msgstr "Ліворуч"
+
+msgctxt "Languages::abt__ut2.banner.params.image_h_position.variants.center"
+msgid "Center"
+msgstr "По центру"
+
+msgctxt "Languages::abt__ut2.banner.params.image_h_position.variants.right"
+msgid "Right"
+msgstr "Праворуч"
+
+msgctxt "Languages::abt__ut2.banner.params.background_v_position"
+msgid "Background position"
+msgstr "Позиція фона"
+
+msgctxt "Languages::abt__ut2.banner.params.background_v_position.tooltip"
+msgid "The setting affects the position of the background in the banner area. There is a possibility to select the vertical and horizontal position"
+msgstr "Налаштування впливає на положення фону в області банера. Доступний вибір положення по вертикалі та горизонталі"
+
+msgctxt "Languages::abt__ut2.banner.params.background_v_position.variants.top"
+msgid "Top"
+msgstr "Зверху"
+
+msgctxt "Languages::abt__ut2.banner.params.background_v_position.variants.center"
+msgid "Center"
+msgstr "По центру"
+
+msgctxt "Languages::abt__ut2.banner.params.background_v_position.variants.bottom"
+msgid "Bottom"
+msgstr "Знизу"
+
+msgctxt "Languages::abt__ut2.banner.params.background_h_position.variants.left"
+msgid "Left"
+msgstr "Ліворуч"
+
+msgctxt "Languages::abt__ut2.banner.params.background_h_position.variants.center"
+msgid "Center"
+msgstr "По центру"
+
+msgctxt "Languages::abt__ut2.banner.params.background_h_position.variants.right"
+msgid "Right"
+msgstr "Праворуч"
 
 msgctxt "Languages::abt__ut2.banner.params.background_color"
 msgid "Background color"
@@ -1463,6 +1507,18 @@ msgstr "Групування"
 msgctxt "Languages::abt__ut2.banner.banner_groups_has_been_updating_successfully"
 msgid "Banner groups has been updating successfully"
 msgstr "Групи банерiв були успiшно оновленi"
+
+msgctxt "Languages::abt__ut2.banner.banner_counter"
+msgid "[n] banner|[n] banners"
+msgstr "[n] банер|[n] банера|[n] банерiв"
+
+msgctxt "Languages::abt__ut2.banner.add_banners_to_group"
+msgid "Add banners"
+msgstr "Додати банери"
+
+msgctxt "Languages::abt__ut2.banner.update_banners_list"
+msgid "Edit banners list"
+msgstr "Редагувати список банерiв"
 
 msgctxt "Languages::abt__ut2.sort_by_null_asc"
 msgid "Without sorting"
@@ -1873,7 +1929,7 @@ msgid "Before products"
 msgstr "Вище товарного блоку"
 
 msgctxt "Languages::abt__ut2.settings.category.description_position.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.category.show_sticky_panel_filters_and_categories"
@@ -1909,7 +1965,7 @@ msgid "Before products"
 msgstr "Вище товарного блоку"
 
 msgctxt "Languages::abt__ut2.settings.features.description_position.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.product_list"
@@ -2105,7 +2161,7 @@ msgid "Allow to display \"Add to Cart\" button"
 msgstr "Дозволити відображення кнопки \"Купити\""
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_button_add_to_cart.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_button_add_to_cart.variants.icon"
@@ -2141,7 +2197,7 @@ msgid "Select the fields that will be used as additional information about the p
 msgstr "Оберіть, що буде застосовуватись у якості інформації про товар"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.grid_item_bottom_content.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.grid_item_bottom_content.variants.description"
@@ -2168,13 +2224,25 @@ msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_co
 msgid "Show additional information on hover"
 msgstr "Відображати додаткову інформацію при наведенні"
 
-msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_brand_logo"
-msgid "Show brand logo"
-msgstr "Відображати логотип бренда"
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_brand"
+msgid "Show brand"
+msgstr "Відображати бренд"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_brand.variants.none"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_brand.variants.name"
+msgid "Name"
+msgstr "Назва"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_brand.variants.logo"
+msgid "Logo"
+msgstr "Логотип"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_multicolumns.show_brand_logo.tooltip"
-msgid "Allow to display brand logo. There following steps are required:<br>* assign option \"Brand feature ID\" in the \"General\" section of theme settings;<br>* at feature set the checkbox \"Show in product list\";<br>* load an image for feature variant Brand."
-msgstr "Дозволити відображення логотипу бренду. Необхідно виконати наступне:<br>* налаштувати опцію \"ID характеристики бренду\" в секції \"Загальні\" налаштувань теми;<br>* у хар-ки поставити чекбокс \"Показувати у списку товарів\";<br>* завантажити зображення для варіантів характеристики Бренд."
+msgid "Allow to display brand name or logo. The following steps are required:<br>* assign option \"Brand feature ID\" in the \"General\" section of theme settings;<br>* at the feature set the checkbox \"Show in product list\";<br>* load an image for feature variant Brand."
+msgstr "Дозволити відображення назви або логотипу бренду. Необхідно виконати наступне:<br>* налаштувати опцію \"ID характеристики бренду\" в секції \"Загальні\" налаштувань теми;<br>* у хар-ки поставити чекбокс \"Показувати у списку товарів\";<br>* завантажити зображення для варіантів характеристики Бренд."
 
 msgctxt "Languages::abt__ut2.settings.product_list.show_you_save"
 msgid "Show \"You save\""
@@ -2293,7 +2361,7 @@ msgid "Allow to display \"Add to Cart\" button"
 msgstr "Дозволити відображення кнопки \"Купити\""
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_button_add_to_cart.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_button_add_to_cart.variants.icon_button"
@@ -2356,13 +2424,25 @@ msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show
 msgid "Allow display of product options"
 msgstr "Дозволити відображення опцій товару"
 
-msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_brand_logo"
-msgid "Show brand logo"
-msgstr "Відображати логотип бренда"
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_brand"
+msgid "Show brand"
+msgstr "Відображати бренд"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_brand.variants.none"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_brand.variants.name"
+msgid "Name"
+msgstr "Назва"
+
+msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_brand.variants.logo"
+msgid "Logo"
+msgstr "Логотип"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.show_brand_logo.tooltip"
-msgid "Allow to display brand logo. There following steps are required:<br>* assign option \"Brand feature ID\" in the \"General\" section of theme settings;<br>* at feature set the checkbox \"Show in product list\";<br>* load an image for feature variant Brand."
-msgstr "Дозволити відображення логотипу бренду. Необхідно виконати наступне:<br>* налаштувати опцію \"ID характеристики бренду\" в секції \"Загальні\" налаштувань теми;<br>* у хар-ки поставити чекбокс \"Показувати у списку товарів\";<br>* завантажити зображення для варіантів характеристики Бренд."
+msgid "Allow to display brand name or logo. The following steps are required:<br>* assign option \"Brand feature ID\" in the \"General\" section of theme settings;<br>* at the feature set the checkbox \"Show in product list\";<br>* load an image for feature variant Brand."
+msgstr "Дозволити відображення назви або логотипу бренду. Необхідно виконати наступне:<br>* налаштувати опцію \"ID характеристики бренду\" в секції \"Загальні\" налаштувань теми;<br>* у хар-ки поставити чекбокс \"Показувати у списку товарів\";<br>* завантажити зображення для варіантів характеристики Бренд."
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.grid_item_bottom_content"
 msgid "Content under description"
@@ -2373,7 +2453,7 @@ msgid "Select, what fields will be used as the additional information of the pro
 msgstr "Оберіть, що буде застосовуватись у якості додаткової інформації про товар"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.grid_item_bottom_content.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.product_list.products_without_options.grid_item_bottom_content.variants.features"
@@ -2481,7 +2561,7 @@ msgid "Allow to display \"Add to Cart\" button"
 msgstr "Дозволити відображення кнопки \"Купити\""
 
 msgctxt "Languages::abt__ut2.settings.product_list.short_list.show_button_add_to_cart.variants.none"
-msgid "Don't display"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.product_list.short_list.show_button_add_to_cart.variants.icon"
@@ -2681,8 +2761,8 @@ msgid "The maximum quantity of the displayed products variations"
 msgstr "Максимальна кількість варіацій товарів, що відображаються"
 
 msgctxt "Languages::abt__ut2.settings.product_list.product_variations.limit.tooltip"
-msgid "Specify the number of available variations, that will be shown for the product in the list, if more variations are available, than specified in the setting, the remaining amount will be indicated in brackets (+ N more). Value <code>0</code> in setting will block the display of variations."
-msgstr "Зазначте кількість доступних варіацій, які будуть показані для товару в списку. Якщо доступно більше варіацій ніж зазначено в налаштуваннях, то залишок варіацій буде вказано в дужках (ще +N). Значення <code>0</code> заблокує відображення варіацій."
+msgid "Specify the number of available variations, that will be shown for the product in the list. If you specify quantity more than the fixed one, the button \"+N\" will appear. The rest variations will be displayed after clicking the button."
+msgstr "Зазначте кількість доступних варіацій, які будуть показані для товару в списку. Якщо ви зазначите більшу кількість за фіксовану, то буде відображатись кнопка \"+N\", при натисканні на яку, буде відображено решту варіацій."
 
 msgctxt "Languages::abt__ut2.settings.product_list.product_variations.display_as_links"
 msgid "Display as links"
@@ -2861,7 +2941,7 @@ msgid "Allow to display name or logo of the product brand. For proper work of th
 msgstr "Дозволити відображення назви або логотипу бренда товару. Для роботи налаштування Ви повинні правильно вказати значення налаштування \"ID характеристики бренду\" у вкладці \"Загальні\""
 
 msgctxt "Languages::abt__ut2.settings.products.view.show_brand_format.variants.none"
-msgid "Don't show"
+msgid "Do not display"
 msgstr "Не відображати"
 
 msgctxt "Languages::abt__ut2.settings.products.view.show_brand_format.variants.name"
@@ -3057,7 +3137,7 @@ msgid "3"
 msgstr "3"
 
 msgctxt "Languages::abt__ut2.settings.products.addon_buy_together_group"
-msgid "\"Buy together\" addon"
+msgid "\"Buy together\" add-on"
 msgstr "Модуль \"Комбінації товарів\""
 
 msgctxt "Languages::abt__ut2.settings.products.addon_buy_together_group_description"
@@ -3081,7 +3161,7 @@ msgid "As product tab"
 msgstr "Як вкладка товару"
 
 msgctxt "Languages::abt__ut2.settings.products.addon_required_products_group"
-msgid "\"Required products\" addon"
+msgid "\"Required products\" add-on"
 msgstr "Модуль \"Обов'язкові товари\""
 
 msgctxt "Languages::abt__ut2.settings.products.addon_required_products_group_description"
@@ -3117,11 +3197,11 @@ msgid "Specify the quantity products to display in a row (only for \"Grid\")"
 msgstr "Зазначте кількість для відображення товарів в ряд (тільки для \"Сітки\")"
 
 msgctxt "Languages::abt__ut2.settings.products.addon_social_buttons_group"
-msgid "Addon \"Social buttons\""
+msgid "\"Social buttons\" add-on"
 msgstr "Модуль \"Соціальні кнопки\""
 
 msgctxt "Languages::abt__ut2.settings.products.addon_social_buttons_group_description"
-msgid "Native CS-Cart addon \"Social Buttons\" displays Share buttons widgets for social networks"
+msgid "Native CS-Cart add-on \"Social Buttons\" displays Share buttons widgets for social networks"
 msgstr "Нативний модуль CS-Cart \"Соціальні кнопки\" відображає віджети кнопок Поділитись для соціальних мереж"
 
 msgctxt "Languages::abt__ut2.settings.products.addon_social_buttons.view"
@@ -3220,15 +3300,15 @@ msgid "Show more"
 msgstr "Показати ще"
 
 msgctxt "Languages::abt__ut2.settings.addons"
-msgid "Addons"
+msgid "Add-ons"
 msgstr "Модулі"
 
 msgctxt "Languages::abt__ut2.settings.addons_description"
-msgid "Here are setting, that affect on appearance of different addons pages in theme"
+msgid "Here are setting, that affect on appearance of different add-ons pages in theme"
 msgstr "Тут наведені налаштування, які впливають на відображення сторонніх модулів"
 
 msgctxt "Languages::abt__ut2.settings.addons.wishlist_products_group"
-msgid "\"Wish List\" addon"
+msgid "\"Wish List\" add-on"
 msgstr "Модуль \"Список побажань\""
 
 msgctxt "Languages::abt__ut2.settings.addons.wishlist_products_group_description"
@@ -3311,6 +3391,50 @@ msgctxt "Languages::abt__ut2.settings.general.skeleton_sizes.default_height"
 msgid "Height by default for all blocks"
 msgstr "Висота за замовчуванням для усіх блоків"
 
+msgctxt "Languages::abt__ut2.settings.product_list.product_variations.display_color_separately"
+msgid "Type of variations view"
+msgstr "Тип відображення варіацій"
+
+msgctxt "Languages::abt__ut2.settings.product_list.product_variations.display_color_separately.variants.dont_display"
+msgid "Do not display"
+msgstr "Не відображати"
+
+msgctxt "Languages::abt__ut2.settings.product_list.product_variations.display_color_separately.variants.color"
+msgid "Colors"
+msgstr "Кольори"
+
+msgctxt "Languages::abt__ut2.settings.product_list.product_variations.display_color_separately.variants.thumbnails"
+msgid "Thumbnails"
+msgstr "Мініатюри"
+
+msgctxt "Languages::abt__ut2.settings.product_reviews"
+msgid "Product reviews"
+msgstr "Відгуки про товари"
+
+msgctxt "Languages::abt__ut2.settings.product_reviews_description"
+msgid "The settings affect the appearance of product reviews"
+msgstr "Налаштування впливають на зовнішній вигляд відгуків про товари"
+
+msgctxt "Languages::abt__ut2.settings.product_reviews.filter_by_creation_time"
+msgid "Filter reviews by creation time"
+msgstr "Сортувати відгуки по даті створення"
+
+msgctxt "Languages::abt__ut2.variant_color_style.default"
+msgid "Default"
+msgstr "За замовчуванням"
+
+msgctxt "Languages::abt__ut2.variant_color_style.multicolor"
+msgid "Multicolor"
+msgstr "Подвійний колір"
+
+msgctxt "Languages::abt__ut2.variant_color_style.thumbnail"
+msgid "Thumbnail"
+msgstr "Мініатюра"
+
+msgctxt "Languages::abt__ut2.variant_color_style"
+msgid "Display style"
+msgstr "Стиль отображения"
+
 msgctxt "Languages::ab__ut2.search_similar"
 msgid "Find similar"
 msgstr "Знайти схожі"
@@ -3344,7 +3468,7 @@ msgid "Use rounding corners of elements (buttons, icons, form fields etc.)"
 msgstr "Застосувати заокруглення кутів елементів (кнопки, іконки, поля форм тощо)"
 
 msgctxt "Languages::abt__ut2.less_settings.general.use_rounding.variants.do_not_use"
-msgid "Don't use"
+msgid "Do not use"
 msgstr "Не застосовувати"
 
 msgctxt "Languages::abt__ut2.less_settings.general.use_rounding.variants.little"
@@ -3364,7 +3488,7 @@ msgid "Allows to round the corners of blocks, windows, banners. The roundness ra
 msgstr "Дозволяє заокруглити кути блоків, вікон, банерів. Радіус заокруглення залежить від значення налаштування \"Заокруглити кути для елементів інтерфейсу\"."
 
 msgctxt "Languages::abt__ut2.less_settings.general.use_rounding_blocks.variants.do_not_use"
-msgid "Don't use"
+msgid "Do not use"
 msgstr "Не застосовувати"
 
 msgctxt "Languages::abt__ut2.less_settings.general.use_rounding_blocks.variants.little"
@@ -3716,7 +3840,7 @@ msgid "Use"
 msgstr "Застосувати"
 
 msgctxt "Languages::abt__ut2.less_settings.product_list.use_elements_alignment.variants.do_not_use"
-msgid "Don't use"
+msgid "Do not use"
 msgstr "Не застосовувати"
 
 msgctxt "Languages::abt__ut2.less_settings.product_list.extend_grid_item_on_hover"
@@ -4256,7 +4380,7 @@ msgid "We recommend to update the used color scheme (Style) settings!"
 msgstr "Необхідно оновити налаштування схем кольорів!"
 
 msgctxt "Languages::abt__ut2.upgrade_notifications.4.10.4.b.added_new_less_settings.text"
-msgid "<p>In this version, we have significantly expanded the settings for \"color schemes\" and grouped them into tabs corresponding to their place of application and functional purpose.</p> <p><b>IMPORTANT!!!</b></p> <p>After the upgrade, your current color scheme will work as before. To use the new settings you need to perform one of the variants: <ol> <li>or adjust the current used color scheme. To do this, go to the page AB: Add-ons → AB: UniTheme2 → Color scheme settings, select the active color scheme and set the necessary values for all settings;</li> <li>or create a new color scheme using the \"Theme Editor\" based on the color schemes available in this version.</li> </ol> </p> <p>List of new color scheme settings (AB: Addons → AB: UniTheme2 → Color scheme settings): <ul> <li>General → Display headers in capital letters;</li> <li>General → Buttons → Display text in capital letters;</li> <li>General → Buttons → Add shadow;</li> <li>General → Buttons → Add bulk;</li> <li>General → Labels (stickers) → Use border style;</li> <li>General → Labels (stickers) → Add shadow;</li> <li>General → Labels (stickers) → Add shadow for text;</li> <li>Containers → Header → Add dividing strips;</li> <li>Containers → Header → Color for hovering over a first level menu item;</li> <li>Containers → Header → Color for hovering over the elements \"Categories\", \"Account\" and \"Cart\";</li> <li>Containers → Header → The color of the icons for elements \"Categories\", \"Account\" and \"Cart\";</li> <li>Product → Set individual color for \"Add to cart\" button.</li> </ul> <p>"
+msgid "<p>In this version, we have significantly expanded the settings for \"color schemes\" and grouped them into tabs corresponding to their place of application and functional purpose.</p> <p><b>IMPORTANT!!!</b></p> <p>After the upgrade, your current color scheme will work as before. To use the new settings you need to perform one of the variants: <ol> <li>or adjust the current used color scheme. To do this, go to the page AB: Add-ons → AB: UniTheme2 → Color scheme settings, select the active color scheme and set the necessary values for all settings;</li> <li>or create a new color scheme using the \"Theme Editor\" based on the color schemes available in this version.</li> </ol> </p> <p>List of new color scheme settings (AB: Add-ons → AB: UniTheme2 → Color scheme settings): <ul> <li>General → Display headers in capital letters;</li> <li>General → Buttons → Display text in capital letters;</li> <li>General → Buttons → Add shadow;</li> <li>General → Buttons → Add bulk;</li> <li>General → Labels (stickers) → Use border style;</li> <li>General → Labels (stickers) → Add shadow;</li> <li>General → Labels (stickers) → Add shadow for text;</li> <li>Containers → Header → Add dividing strips;</li> <li>Containers → Header → Color for hovering over a first level menu item;</li> <li>Containers → Header → Color for hovering over the elements \"Categories\", \"Account\" and \"Cart\";</li> <li>Containers → Header → The color of the icons for elements \"Categories\", \"Account\" and \"Cart\";</li> <li>Product → Set individual color for \"Add to cart\" button.</li> </ul> <p>"
 msgstr "<p>В цій версії ми значно розширили налаштування \"схем кольорів\" і розгрупували їх по вкладкам, що відповідають їх місцю застосування і функціональному призначенню.</p>"
 "<p><b>ВАЖЛИВО!!!</b></p>"
 "<p>Після оновлення Ваша діюча \"схема кольорів\" буде працювати як і раніше. Для застосування нових налаштувань Вам необхідно виконати один із варіантів:"
@@ -4354,5 +4478,125 @@ msgstr "Для правильної роботи UniTheme2 на CS-Cart Multi-Ve
 msgctxt "Languages::abt__ut2.errors.is_correctly_installed.mv.disabled"
 msgid "For correct working of UniTheme2 on the CS-Cart Multi-Vendor (used by you) enable add-on UniTheme2 for Multi-Vendor edition of CS-Cart (comes with the theme for this edition) and try again"
 msgstr "Для правильної роботи UniTheme2 на CS-Cart Multi-Vendor (використовується у Вас) увімкніть модуль UniTheme2 для Multi-Vendor редакції CS-Cart (входить до поставки теми для цієї редакції) і повторіть спробу"
+
+msgctxt "Languages::abt__ut2.review_periods.overall"
+msgid "Overall"
+msgstr "Усі"
+
+msgctxt "Languages::abt__ut2.review_periods.last_30_days"
+msgid "Last 30 days"
+msgstr "Останні 30 днів"
+
+msgctxt "Languages::abt__ut2.review_periods.last_60_days"
+msgid "Last 60 days"
+msgstr "Останні 60 днів"
+
+msgctxt "Languages::abt__ut2.review_periods.last_year"
+msgid "Last Year"
+msgstr "За минулий рік"
+
+msgctxt "Languages::abt__ut2.product_reviews.filter.rating"
+msgid "Rating"
+msgstr "Рейтинг"
+
+msgctxt "Languages::abt__ut2.product_reviews.filter.rating.all_ratings"
+msgid "All ratings"
+msgstr "Усі оцінки"
+
+msgctxt "Languages::abt__ut2.product_reviews.filter.rating.n_stars"
+msgid "[n] star|[n] stars"
+msgstr "[n] зірка|[n] зірки|[n] зірок"
+
+msgctxt "Languages::abt__ut2.periods.n_months"
+msgid "[n] month|[n] months"
+msgstr "[n] місяць|[n] місяці|[n] місяців"
+
+msgctxt "Languages::abt__ut2.periods.n_years"
+msgid "[n] year|[n] years"
+msgstr "[n] рік|[n] роки|[n] років"
+
+msgctxt "Languages::abt__ut2.product_reviews.filter.only_buyers"
+msgid "Only buyers"
+msgstr "Лише покупці"
+
+msgctxt "Languages::abt__ut2.product_reviews.copy_link"
+msgid "Copy link"
+msgstr "Скопіювати посилання"
+
+msgctxt "Languages::abt__ut2.product_reviews.most_helpfull_reviews.positive"
+msgid "Most Helpful Positive Review"
+msgstr "Найкорисніший позитивний відгук"
+
+msgctxt "Languages::abt__ut2.product_reviews.most_helpfull_reviews.critical"
+msgid "Most Helpful Critical Review"
+msgstr "Найкорисніший негативний відгук"
+
+msgctxt "Languages::abt__ut2.product_reviews.more_than_x_time_in_use"
+msgid "More then [time] in use"
+msgstr "Більше ніж [time] у використанні"
+
+msgctxt "Languages::abt__ut2.product_reviews.is_helpfull"
+msgid "Helpfull?"
+msgstr "Корисний?"
+
+msgctxt "Languages::abt__ut2.product_reviews.customer_photos"
+msgid "Customer photos"
+msgstr "Фотографії покупця"
+
+msgctxt "Languages::abt__ut2.product_reviews.all_photos"
+msgid "All photos"
+msgstr "Усі фотографії"
+
+msgctxt "Languages::abt__ut2.product_reviews.most_helpfull"
+msgid "Most helpfull"
+msgstr "Найкорисніший"
+
+msgctxt "Languages::abt__ut2.product_reviews.we_found_n_reviews"
+msgid "We found [n] review|We found [n] reviews"
+msgstr "Знайдено [n] відгук|Знайдено [n] відгука|Знайдено [n] відгуків"
+
+msgctxt "Languages::abt__ut2.product_reviews.showing_n_of_n_reviews"
+msgid "Showing [count] of [n] review|Showing [count] of [n] reviews"
+msgstr "Показано [count] з [n] відгука|Показано [count] з [n] відгуків|Показано [count] з [n] відгуків"
+
+msgctxt "Languages::abt__ut2.product_reviews.show_n_more_reviews"
+msgid "Show [n] more review|Show [n] more reviews"
+msgstr "Показати ще [n] відгук|Показати ще [n] відгука|Показати ще [n] відгуків"
+
+msgctxt "Languages::abt__ut2.product_reviews.review_model"
+msgid "Model review"
+msgstr "Відгук на модель"
+
+msgctxt "Languages::abt__ut2.product_reviews.matching_photos_found"
+msgid "We found [n] matching photo|We found [n] matching photos|We found [n] matching photos"
+msgstr "Знайдено [n] відповідну фотографію|Знайдено [n] відповідних фотографій|Знайдено [n] відповідних фотографій"
+
+msgctxt "Languages::abt__ut2.product_reviews.all_reviews"
+msgid "All reviews"
+msgstr "Всі відгуки"
+
+msgctxt "Languages::abt__ut2.product_reviews.customer_review"
+msgid "Customer review"
+msgstr "Відгук користувача"
+
+msgctxt "Languages::abt__ut2.product_reviews.photo_n_of"
+msgid "Photo [n] of"
+msgstr "Фотографія [n] з"
+
+msgctxt "Languages::abt__ut2.product_reviews.found_this_helpfull"
+msgid "[n] found this helpful|[n] found this helpful"
+msgstr "[n] вважає це корисним|[n] вважають це корисним|[n] вважають це корисним"
+
+msgctxt "Languages::abt__ut2.link_copied"
+msgid "Link copied"
+msgstr "Посилання скопійовано"
+
+msgctxt "Languages::abt__ut2.notifications.product_removed_from_comparison_list"
+msgid "Product has been removed from the comparison list"
+msgstr "Товар видалено зі списку порівняння"
+
+msgctxt "Languages::abt__ut2.notifications.product_removed_from_wishlist"
+msgid "Product has been removed from the wishlist"
+msgstr "Товар видалено зі списку побажань"
 
 #. Alexbranding. Do not modify this file manually!

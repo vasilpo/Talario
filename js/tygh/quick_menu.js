@@ -10,6 +10,7 @@
         if (jelm.closest('.cm-delete-section').length && jelm.parents('#quick_menu').length) {
           var root = jelm.parents('tr:first');
           $.ceAjax('request', fn_url('tools.remove_quick_menu_item'), {
+            method: 'post',
             data: {
               id: root.data('caQmItem'),
               parent_id: root.data('caQmParentId')

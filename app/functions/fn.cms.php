@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\BlockManager\Block;
 use Tygh\Enum\NotificationSeverity;
@@ -1317,7 +1317,9 @@ function fn_top_menu_form($top_menu, $level = 0, &$active = NULL)
 
         $top_menu[$k]['item'] = $v['descr'];
         $top_menu[$k]['href'] = $v['param'];
-        $top_menu[$k]['new_window'] = YesNo::toBool($v['param_6']);
+        if (isset($v['param_6'])) {
+            $top_menu[$k]['new_window'] = YesNo::toBool($v['param_6']);
+        }
         $top_menu[$k]['level'] = $level;
 
         unset($top_menu[$k]['descr'], $top_menu[$k]['param']);
@@ -1406,7 +1408,7 @@ function fn_top_menu_is_current_url($url, $active_for = '')
                 (!isset($params['path']) && !isset($current_params['path']))
                 || trim($params['path'], '/') === trim($current_params['path'], '/'))
                 && ((!isset($params['query']))
-                || preg_match('/\b' . preg_quote($params['query']) . '\b/i', $current_params['query']))
+                || preg_match('/\b' . preg_quote($params['query']) . '\b/i', $current_params['query'] ?? ''))
             ) {
                 $active = true;
             }

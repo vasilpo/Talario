@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Backend\Cache;
 
@@ -70,16 +70,18 @@ class Database extends ABackend
     {
         $fname = $name . '.' . $cache_level;
 
-        if (!empty($data)) {
-            $this->db->raw = true;
-            $this->db->query('REPLACE INTO ?:cache ?e', [
-                'name'       => $fname,
-                'company_id' => $this->_company_id,
-                'data'       => serialize($data),
-                'tags'       => $name,
-                'expiry'     => $this->getCacheExpiryTime($condition, $cache_level, $ttl, 0)
-            ]);
+        if (empty($data) && empty($condition['is_empty_allowed'])) {
+            return;
         }
+
+        $this->db->raw = true;
+        $this->db->query('REPLACE INTO ?:cache ?e', [
+            'name'       => $fname,
+            'company_id' => $this->_company_id,
+            'data'       => serialize($data),
+            'tags'       => $name,
+            'expiry'     => $this->getCacheExpiryTime($condition, $cache_level, $ttl, 0)
+        ]);
     }
 
     /** @inheritDoc */

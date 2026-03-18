@@ -6,7 +6,7 @@
 
         <div class="ty-control-group">
             <label for="{$action}_comment" class="ty-control-group__title">{__("type_comments_here")}</label>
-            <textarea id="{$action}_comment" name="anonymization_request[comment]" class="ty-input-textarea cm-focus" autofocus rows="5" cols="100"></textarea>
+            <textarea id="{$action}_comment" name="anonymization_request[comment]" class="ty-input-textarea cm-focus ty-width-full" autofocus rows="5" cols="100"></textarea>
         </div>
 
         <div class="buttons-container">

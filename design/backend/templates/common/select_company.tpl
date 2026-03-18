@@ -1,9 +1,8 @@
-{$switcher_param_name = "switch_company_id"}
+{$switcher_param_name = $switcher_param_name|default:(fn_allowed_for("MULTIVENDOR:ULTIMATE") ? "s_storefront" : "switch_company_id")}
 {$switcher_data_name = "company_id"}
 {$switcher_title = {__("pick_store")}}
 
 {if fn_allowed_for("MULTIVENDOR:ULTIMATE")}
-    {$switcher_param_name = "s_storefront"}
     {$switcher_data_name = "storefront_id"}
     {$switcher_title = {__("select_storefront", ["[store]" => ""])}}
 {/if}

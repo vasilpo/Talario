@@ -132,8 +132,4 @@ hide_titles=true
 {include file="views/localizations/components/select.tpl" data_name="banner_data[localization]" data_from=$banner.localization}
 {include file="common/select_status.tpl" input_name="banner_data[status]" id="elm_banner_status" obj_id=$id obj=$banner hidden=true}
 {/hook}
-<!--content_general--></div>
-<div id="content_addons" class="hidden clearfix">
-{hook name="banners:detailed_content"}
-{/hook}
 {/if}

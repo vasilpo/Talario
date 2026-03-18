@@ -122,7 +122,7 @@ class Client extends BaseClient
     /**
      * Текущая версия библиотеки
      */
-    const SDK_VERSION = '2.12.0';
+    const SDK_VERSION = '2.13.0';
 
     /**
      * Получить список платежей магазина
@@ -585,7 +585,7 @@ class Client extends BaseClient
      *
      * Запрос позволяет подписаться на уведомления о событии (например, на переход платежа в статус successed).
      *
-     * @example 01-client.php 192 33 Создание Webhook
+     * @example 01-client.php 191 34 Создание Webhook
      *
      * @param Webhook|array $request
      * @param string|null $idempotencyKey [Ключ идемпотентности](https://yookassa.ru/developers/using-api/basics?lang=php#idempotence)
@@ -644,7 +644,7 @@ class Client extends BaseClient
      * Запрос позволяет отписаться от уведомлений о событии для переданного OAuth-токена.
      * Чтобы удалить webhook, вам нужно передать в запросе его идентификатор.
      *
-     * @example 01-client.php 192 33 Удаление Webhook
+     * @example 01-client.php 191 34 Удаление Webhook
      *
      * @param string $webhookId Идентификатор Webhook
      * @param string|null $idempotencyKey [Ключ идемпотентности](https://yookassa.ru/developers/using-api/basics?lang=php#idempotence)
@@ -691,7 +691,7 @@ class Client extends BaseClient
      *
      * Запрос позволяет узнать, какие webhook есть для переданного OAuth-токена.
      *
-     * @example 01-client.php 192 33 Список созданных Webhook
+     * @example 01-client.php 191 34 Список созданных Webhook
      *
      * @return WebhookListResponse|null
      *
@@ -1090,7 +1090,7 @@ class Client extends BaseClient
      * @throws UnauthorizedException Неверное имя пользователя или пароль или невалидный OAuth-токен при аутентификации.
      * @throws ExtensionNotFoundException Требуемое PHP расширение не установлено.
      *
-     * @example 01-client.php 358 27 Запрос на создание выплаты
+     * @example 01-client.php 359 26 Запрос на создание выплаты
      */
     public function createPayout($payout, $idempotenceKey = null)
     {

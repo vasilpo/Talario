@@ -322,7 +322,7 @@
         {include file="views/shippings/calculate_cost.tpl"}
     <!--content_rate_calculation--></div>
 
-    {if fn_allowed_for("MULTIVENDOR:ULTIMATE")|| $is_sharing_enabled}
+    {if fn_allowed_for('MULTIVENDOR') && fn_is_allowed(constant("\Tygh\Licensing\Features::MULTIPLE_STOREFRONTS")) || $is_sharing_enabled}
         <div class="hidden {if !$allow_save} cm-hide-inputs{/if}" id="content_storefronts">
             {$add_storefront_text = __("add_storefronts")}
             {include file="pickers/storefronts/picker.tpl"

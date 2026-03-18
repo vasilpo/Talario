@@ -46,7 +46,7 @@ use YooKassa\Model\SafeDeal;
 /**
  * Класс объекта запроса к API на проведение новой сделки
  *
- * @todo: @example 02-builder.php 11 78 Пример использования билдера
+ * @example 02-builder.php 185 19 Пример использования билдера
  *
  * @package YooKassa
  *

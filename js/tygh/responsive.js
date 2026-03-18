@@ -10,6 +10,9 @@
       winWidth: function () {
         return $(window).width();
       },
+      winHeight: function () {
+        return $(window).height();
+      },
       windowFullWidth: function () {
         return window.innerWidth;
       },
@@ -123,8 +126,13 @@
         // Add an event to open the submenu.
         $(_.doc).on(whichEvent, '.cm-responsive-menu-toggle', function (e) {
           e.preventDefault();
-          $(this).toggleClass('ty-menu__item-toggle-active');
-          $(this).parent().find('.cm-responsive-menu-submenu').first().toggleClass('ty-menu__items-show');
+          if ($(this).data('caTreeMenu')) {
+            $(this).toggleClass('ty-tree-menu__item-toggle-active');
+            $(this).parent().find('.cm-responsive-menu-submenu').first().toggleClass('ty-tree-menu__items-show');
+          } else {
+            $(this).toggleClass('ty-menu__item-toggle-active');
+            $(this).parent().find('.cm-responsive-menu-submenu').first().toggleClass('ty-menu__items-show');
+          }
         });
         $('html').data('caResponsiveMenu', true);
       },
@@ -240,51 +248,90 @@
         }
       },
       resizeDialog: function () {
-        var dlg = $('.ui-dialog');
-        var $contentElem = $(dlg).find('.ui-dialog-content');
-        if (ui.winWidth() > breakpoints.tablet) {
-          $contentElem.data('caDialogAutoHeight', false);
-          return;
-        }
-        $contentElem.data('caDialogAutoHeight', true);
-        $('.ui-widget-overlay').css({
-          'min-height': $(window).height()
-        });
-        $(dlg).css({
-          'position': 'absolute',
-          'width': $(window).width() - 20,
-          'left': '10px',
-          'top': '10px',
-          'max-height': 'none',
-          'height': 'auto',
-          'margin-bottom': '10px'
-        });
+        const $dialogs = $('.ui-dialog');
+        const $notificationContentExtended = $('.cm-notification-content.notification-content-extended');
+        const isDialogBottom = $('html').hasClass('dialog-mobile-bottom');
+        if ($dialogs.length) {
+          const $contentElems = $('.ui-dialog-content', $dialogs);
+          if (ui.winWidth() > breakpoints.tablet) {
+            $contentElems.data('caDialogAutoHeight', false);
+            return;
+          }
+          $contentElems.data('caDialogAutoHeight', true);
+          $('.ui-widget-overlay').css({
+            'min-height': $(window).height()
+          });
+          $dialogs.css({
+            'position': 'absolute',
+            'width': isDialogBottom ? ui.winWidth() : ui.winWidth() - 20,
+            'left': isDialogBottom ? '0px' : '10px',
+            'top': '10px',
+            'max-height': 'none',
+            'height': 'auto',
+            'margin-bottom': isDialogBottom ? '0px' : '10px'
+          });
 
-        // calculate title width
-        $(dlg).find('.ui-dialog-title').css({
-          'width': $(window).width() - 80
-        });
-        $contentElem.css({
-          'height': 'auto',
-          'max-height': 'none'
-        });
-        $(dlg).find('.object-container').css({
-          'height': 'auto'
-        });
-        $(dlg).find('.buttons-container').css({
-          'position': 'relative',
-          'top': 'auto',
-          'left': '0px',
-          'right': '0px',
-          'bottom': '0px',
-          'width': 'auto'
-        });
-        $('.cm-notification-content.notification-content-extended').each(function (id, elm) {
-          $.ceNotification('position', $(elm), false);
-        });
+          // calculate title width
+          if (!isDialogBottom) {
+            $('.ui-dialog-title', $dialogs).css({
+              'width': ui.winWidth() - 80
+            });
+          }
+          $contentElems.css({
+            'height': 'auto',
+            'max-height': 'none'
+          });
+
+          // Divide the dialogs into no scroll and scroll dialog
+          let $noScrollDialog = $();
+          let $scrollDialog = $();
+          $dialogs.each(function () {
+            if ($("[data-ca-target-id=\"".concat($('.ui-widget-content', $(this)).attr('id'), "\"]")).first().hasClass('cm-dialog-no-scroll')) {
+              $noScrollDialog = $noScrollDialog.add($(this));
+            } else {
+              $scrollDialog = $scrollDialog.add($(this));
+            }
+          });
+
+          // Styles for no scroll dialog
+          $('.buttons-container', $noScrollDialog).css({
+            'top': 'auto',
+            'left': '0px',
+            'right': '0px',
+            'bottom': '0px',
+            'width': 'auto'
+          });
+
+          // Styles for scroll dialog
+          $('.object-container', $scrollDialog).css({
+            'height': 'auto'
+          });
+          $('.buttons-container', $scrollDialog).css({
+            'position': 'relative',
+            'top': 'auto',
+            'left': '0px',
+            'right': '0px',
+            'bottom': '0px',
+            'width': 'auto'
+          });
+          if (isDialogBottom) {
+            $dialogs.each(function () {
+              const dialogHeight = Math.ceil($(this).outerHeight(true));
+              $(this).css({
+                'top': dialogHeight < ui.winHeight() ? "".concat(ui.winHeight() - dialogHeight, "px") : '20px'
+              });
+            });
+          }
+        }
+        if ($notificationContentExtended.length > 0) {
+          $notificationContentExtended.each(function (id, elm) {
+            $.ceNotification('position', $(elm), false);
+          });
+        }
       },
       responsiveDialog: function () {
         $.ceEvent('on', 'ce.dialogshow', function () {
+          toggleDialogNoScroll();
           if (ui.winWidth() <= breakpoints.tablet) {
             var currentScrollPosition = $(document).scrollTop();
             ui.resizeDialog();
@@ -301,6 +348,15 @@
             ;
           }
         });
+        $.ceEvent('on', 'ce.dialogclose', function () {
+          toggleDialogNoScroll();
+        });
+        $.ceEvent('on', 'ce.dialogdestroy', function () {
+          toggleDialogNoScroll();
+        });
+        function toggleDialogNoScroll() {
+          return $('html').toggleClass('dialog--no-scroll', $.ceDialog('get_last').length > 0 && $("[data-ca-target-id=\"".concat($.ceDialog('get_last').attr('id'), "\"]")).first().hasClass('cm-dialog-no-scroll'));
+        }
       },
       responsiveFilters: function (e) {
         var filtersContent = $('.cm-horizontal-filters-content');
@@ -321,6 +377,14 @@
               }
             }, 1);
           });
+
+          // Destroy the filter popups on the desktop
+          const $productFiltersPopup = $('[data-ca-product-filters="popup"].ui-dialog-content');
+          if ($productFiltersPopup.length > 0) {
+            $productFiltersPopup.each(function () {
+              $(this).ceDialog('destroy');
+            });
+          }
         }
       },
       responsiveInlineTextLinksLargeTouch: function (e) {

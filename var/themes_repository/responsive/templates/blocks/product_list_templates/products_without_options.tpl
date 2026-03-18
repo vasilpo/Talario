@@ -4,7 +4,7 @@
 show_name=true 
 show_sku=false 
 show_rating=true 
-show_features=true 
+show_features=$show_features|default:true
 show_prod_descr=true 
 show_old_price=true 
 show_price=true 
@@ -17,6 +17,7 @@ show_shipping_label=true
 show_product_amount=true 
 show_product_edp=true 
 show_add_to_cart=true 
-show_list_buttons=true 
+show_list_buttons=$show_list_buttons|default:true
+show_quick_view_for_options=$show_quick_view_for_options
 show_descr=true 
 but_role="action"}

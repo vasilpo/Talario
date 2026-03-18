@@ -1,7 +1,7 @@
 <?php
 /*******************************************************************************************
 *   ___  _          ______                     _ _                _                        *
-*  / _ \| |         | ___ \                   | (_)              | |              © 2024   *
+*  / _ \| |         | ___ \                   | (_)              | |              © 2025   *
 * / /_\ | | _____  _| |_/ /_ __ __ _ _ __   __| |_ _ __   __ _   | |_ ___  __ _ _ __ ___   *
 * |  _  | |/ _ \ \/ / ___ \ '__/ _` | '_ \ / _` | | '_ \ / _` |  | __/ _ \/ _` | '_ ` _ \  *
 * | | | | |  __/>  <| |_/ / | | (_| | | | | (_| | | | | | (_| |  | ||  __/ (_| | | | | | | *
@@ -15,14 +15,13 @@
 * website: https://cs-cart.alexbranding.com                                                *
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
-if (!defined('BOOTSTRAP')) {
-die('Access denied');
-}
-fn_register_hooks('get_products'
-, 'get_products_post'
-, 'delete_product_post'
-, 'update_product_post'
-, 'clone_product'
-, 'seo_get_schema_org_markup_items_post'
-, 'init_templater_post'
+defined('BOOTSTRAP') or die('Access denied');
+fn_register_hooks(
+'get_products',
+'get_products_post',
+'delete_product_post',
+'update_product_post',
+'clone_product',
+'seo_get_schema_org_markup_items_post',
+'init_templater_post'
 );

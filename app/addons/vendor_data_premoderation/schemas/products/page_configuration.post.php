@@ -1,19 +1,20 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Addons\VendorDataPremoderation\State;
 use Tygh\Addons\VendorDataPremoderation\StateFactory;
+use Tygh\SmartyEngine\Core;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -35,7 +36,7 @@ if (isset($schema['detailed']['sections']['information']['fields']['category_ids
         'conditions' => [
             'product_id' => StateFactory::OBJECT_ID_PLACEHOLDER,
         ],
-        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Smarty_Internal_Template $template) {
+        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Core $core) {
             $category_ids = array_column($initial_state->getSourceData($field_config['source']['table']), 'category_id');
             $categories_data = fn_get_categories_list_with_parents($category_ids, DESCR_SL);
 
@@ -48,9 +49,12 @@ if (isset($schema['detailed']['sections']['information']['fields']['category_ids
                 return implode(' / ', $parents_path);
             }, $categories_data);
 
-            $template->assign('category_paths', $category_paths);
+            $core->assign('category_paths', $category_paths);
 
-            return $template->fetch('addons/vendor_data_premoderation/components/product_page/fields/category_ids.tpl');
+            /** @var \Tygh\SmartyEngine\Core $smarty */
+            $smarty = $core->getSmarty();
+
+            return $smarty->fetch('addons/vendor_data_premoderation/components/product_page/fields/category_ids.tpl', null, null, $core);
         },
     ];
 }
@@ -82,19 +86,48 @@ if (isset($schema['detailed']['sections']['information']['fields']['images'])) {
         'conditions' => [
             'product_id' => StateFactory::OBJECT_ID_PLACEHOLDER,
         ],
-        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Smarty_Internal_Template $template) {
+        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Core $core) {
             $initial_pair_ids = array_column($initial_state->getSourceData($field_config['source']['table']), 'pair_id');
             $current_pair_ids = array_column($current_state->getSourceData($field_config['source']['table']), 'pair_id');
 
             $deleted_ids = array_diff($initial_pair_ids, $current_pair_ids);
             $added_ids = array_diff($current_pair_ids, $initial_pair_ids);
 
-            $template->assign([
+            $core->assign([
                 'deleted_ids' => $deleted_ids,
                 'added_ids'   => $added_ids,
             ]);
 
-            return $template->fetch('addons/vendor_data_premoderation/components/product_page/fields/images.tpl');
+            /** @var \Tygh\SmartyEngine\Core $smarty */
+            $smarty = $core->getSmarty();
+
+            return $smarty->fetch('addons/vendor_data_premoderation/components/product_page/fields/images.tpl', null, null, $core);
+        },
+    ];
+}
+
+if ($schema['detailed']['sections']['information']['fields']['videos']) {
+    $schema['detailed']['sections']['information']['fields']['videos']['source'] = [
+        'table'      => 'videos_links',
+        'conditions' => [
+            'product_id' => StateFactory::OBJECT_ID_PLACEHOLDER,
+        ],
+        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Core $core) {
+            $initial_pair_ids = array_column($initial_state->getSourceData($field_config['source']['table']), 'video_id');
+            $current_pair_ids = array_column($current_state->getSourceData($field_config['source']['table']), 'video_id');
+
+            $deleted_ids = array_diff($initial_pair_ids, $current_pair_ids);
+            $added_ids = array_diff($current_pair_ids, $initial_pair_ids);
+
+            $core->assign([
+                'deleted_ids' => $deleted_ids,
+                'added_ids'   => $added_ids,
+            ]);
+
+            /** @var \Tygh\SmartyEngine\Core $smarty */
+            $smarty = $core->getSmarty();
+
+            return $smarty->fetch('addons/vendor_data_premoderation/components/product_page/fields/videos.tpl', null, null, $core);
         },
     ];
 }
@@ -170,19 +203,21 @@ if (isset($schema['attachments']['sections']['main']['fields']['attachments'])) 
             'object_id'   => StateFactory::OBJECT_ID_PLACEHOLDER,
             'object_type' => 'product',
         ],
-        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Smarty_Internal_Template $template) {
+        'processing' => static function ($product_id, $field_config, State $initial_state, State $current_state, Core $core) {
             $initial_attachment_ids = array_column($initial_state->getSourceData($field_config['source']['table']), 'attachment_id');
             $current_attachment_ids = array_column($current_state->getSourceData($field_config['source']['table']), 'attachment_id');
 
             $deleted_ids = array_diff($initial_attachment_ids, $current_attachment_ids);
             $added_ids = array_diff($current_attachment_ids, $initial_attachment_ids);
 
-            $template->assign([
+            /** @var \Tygh\SmartyEngine\Core $smarty */
+            $smarty = $core->getSmarty();
+            $smarty->assign([
                 'deleted_ids' => $deleted_ids,
                 'added_ids'   => $added_ids,
             ]);
 
-            return $template->fetch('addons/vendor_data_premoderation/components/product_page/fields/attachments.tpl');
+            return $smarty->fetch('addons/vendor_data_premoderation/components/product_page/fields/attachments.tpl', null, null, $core);
         },
     ];
 }

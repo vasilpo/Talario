@@ -51,7 +51,6 @@
              data-ca-toggling-by="payments_form_wrapper_{$payment.payment_id}"
              data-ca-hideble="true"
         >
-            <input type="hidden" name="payment_id" value="{$payment_id}"/>
             <input type="hidden" name="result_ids" value="{$result_ids}"/>
             <input type="hidden" name="dispatch" value="checkout.place_order"/>
             <input type="hidden" name="customer_notes" value=""/>
@@ -59,8 +58,6 @@
             {if $order_id}
                 <input type="hidden" name="order_id" value="{$order_id}"/>
             {/if}
-
-            <input type="hidden" name="payment_id" value="{$payment.payment_id}"/>
 
             {if $payment.template}
                 {capture name="payment_template"}

@@ -2,16 +2,17 @@
     "packages": [
         {
             "name": "yoomoney/yookassa-sdk-php",
-            "version": "2.12.0",
-            "version_normalized": "2.12.0.0",
+            "version": "2.13.0",
+            "version_normalized": "2.13.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.yoomoney.ru/scm/sdk/yookassa-sdk-php.git",
-                "reference": "61ac9c7ebdf60f28b58e64cc0fc86283687d937f"
+                "reference": "846375280694d418025ba9ec5bcdbdfac6773932"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://git.yoomoney.ru/rest/api/latest/projects/SDK/repos/yookassa-sdk-php/archive?at=refs%2Ftags%2F2.12.0&format=zip"
+                "url": "https://git.yoomoney.ru/rest/api/latest/projects/SDK/repos/yookassa-sdk-php/archive?at=refs%2Ftags%2F2.13.0&format=zip",
+                "reference": "846375280694d418025ba9ec5bcdbdfac6773932"
             },
             "require": {
                 "ext-curl": "*",
@@ -28,7 +29,7 @@
                 "phpunit/phpunit": "^4.8 || ^5.7",
                 "squizlabs/php_codesniffer": "*"
             },
-            "time": "2025-01-17T12:54:00+00:00",
+            "time": "2025-12-17T09:05:11+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {

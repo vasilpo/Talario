@@ -86,6 +86,7 @@
         insert_image: '{__("insert_image")|escape:"javascript"}',
         image_url: '{__("image_url")|escape:"javascript"}',
         loading: '{__("loading")|escape:"javascript"}',
+        js_validator_not_valid_text_field: '{__("js_validator_not_valid_text_field")|escape:"javascript"}',
 
         text_editing_raw: '{__("text_editing", ['skip_live_editor' => true])|escape:"javascript"}',
         save_raw: '{__("save", ['skip_live_editor' => true])|escape:"javascript"}',
@@ -190,8 +191,12 @@
 
 {script src="js/tygh/phone_mask.js"}
 
+{* Service worker extendable via add-ons *}
+{$service_worker_scripts = []}
 
 {hook name="index:scripts"}
 {/hook}
 
 {/scripts}
+
+{script src="js/tygh/service_worker_register.js?current_location={$config.current_location|escape:'url'}&scripts={","|implode:$service_worker_scripts}"}

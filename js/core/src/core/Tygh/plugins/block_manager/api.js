@@ -40,7 +40,6 @@ export const api = {
 
             if (action === 'move') {
                 controllerData.dispatch = 'tools';
-                controllerData.method = 'get';
                 mode = 'update_position';
             } else if (action === 'delete') {
                 mode = 'delete_block';

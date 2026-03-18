@@ -1,5 +1,4 @@
-Debugging Console {#chapter.debugging.console}
-=================
+# Debugging Console
 
 There is a debugging console included with Smarty. The console informs
 you of all the [included](./language-builtin-functions/language-function-include.md) templates,
@@ -11,8 +10,7 @@ of the console.
 
 Set [`$debugging`](../programmers/api-variables/variable-debugging.md) to TRUE in Smarty, and if needed
 set [`$debug_tpl`](../programmers/api-variables/variable-debug-template.md) to the template resource
-path to `debug.tpl` (this is in [`SMARTY_DIR`](../programmers/smarty-constants.md) by
-default). When you load the page, a Javascript console window will pop
+path to `debug.tpl`. When you load the page, a Javascript console window will pop
 up and give you the names of all the included templates and assigned
 variables for the current page.
 

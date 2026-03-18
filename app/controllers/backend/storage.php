@@ -1,17 +1,18 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Tygh\Enum\NotificationSeverity;
 use Tygh\Registry;
 use Tygh\Settings;
 use Tygh\Storage;
@@ -88,6 +89,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return array(CONTROLLER_STATUS_OK, 'storage.cdn');
     }
 
+    if ($mode === 'clear_cache') {
+        fn_clear_cache();
+        fn_clear_template_cache();
+        fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('cache_cleared'));
+
+        if (empty($_REQUEST['redirect_url'])) {
+            $_REQUEST['redirect_url'] = 'index.index';
+        }
+
+        return [CONTROLLER_STATUS_REDIRECT];
+    }
+
+    if ($mode === 'clear_thumbnails') {
+        Storage::instance('images')->deleteDir('thumbnails');
+        fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('thumbnails_removed'));
+
+        if (empty($_REQUEST['redirect_url'])) {
+            $_REQUEST['redirect_url'] = 'index.index';
+        }
+
+        return [CONTROLLER_STATUS_REDIRECT];
+    }
+
     return;
 }
 
@@ -103,29 +127,6 @@ if ($mode == 'manage') {
     Tygh::$app['view']->assign('amazon_data', array(
         'regions' => fn_get_amazon_regions()
     ));
-
-} elseif ($mode == 'clear_cache') {
-
-    fn_clear_cache();
-    fn_clear_template_cache();
-    fn_set_notification('N', __('notice'), __('cache_cleared'));
-
-    if (empty($_REQUEST['redirect_url'])) {
-        $_REQUEST['redirect_url'] = 'index.index';
-    }
-
-    return array(CONTROLLER_STATUS_REDIRECT);
-
-} elseif ($mode == 'clear_thumbnails') {
-
-    Storage::instance('images')->deleteDir('thumbnails');
-    fn_set_notification('N', __('notice'), __('thumbnails_removed'));
-
-    if (empty($_REQUEST['redirect_url'])) {
-        $_REQUEST['redirect_url'] = 'index.index';
-    }
-
-    return array(CONTROLLER_STATUS_REDIRECT);
 
 } elseif ($mode == 'cdn') {
 

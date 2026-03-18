@@ -8,6 +8,7 @@
 {else}
     {script src="js/tygh/exceptions.js"}
     {assign var="return_current_url" value=$config.current_url|escape:url}
+    {$price_first = $price_first|default:false}
     <div class="ty-compare">
         <div class="ty-compare__wrapper">
             <table class="ty-compare-products">
@@ -30,7 +31,7 @@
                         </div>
 
                         <div class="ty-compare-products__item">
-                            <a href="{"products.view?product_id=`$compare_product_id`"|fn_url}">{$product.product nofilter}</a>
+                            <a href="{"products.view?product_id=`$compare_product_id`"|fn_url}" class="ty-compare-products__title" title="{$product.product|strip_tags}">{$product.product nofilter}</a>
                             {hook name="products:product_additional_info"}
                             {/hook}
                         </div>
@@ -39,17 +40,34 @@
                         {assign var="obj_id" value=$product.product_id}
                         {include file="common/product_data.tpl" product=$product show_old_price=true show_price_values=true show_price=true show_clean_price=true}
                         <div class="ty-compare-products__item">
+                            {if $price_first}
+                                {assign var="price" value="price_`$obj_id`"}
+                                {$smarty.capture.$price nofilter}
+                            {/if}
+
                             {assign var="old_price" value="old_price_`$obj_id`"}
                             {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
 
-                            {assign var="price" value="price_`$obj_id`"}
-                            {$smarty.capture.$price nofilter}
+                            {if !$price_first}
+                                {assign var="price" value="price_`$obj_id`"}
+                                {$smarty.capture.$price nofilter}
+                            {/if}
 
                             {assign var="clean_price" value="clean_price_`$obj_id`"}
                             {$smarty.capture.$clean_price nofilter}
                         </div>
 
-                        <div class="ty-compare-products__item">{include file="blocks/list_templates/simple_list.tpl" min_qty=true product=$product show_add_to_cart=true but_role="action" hide_price=true}</div>
+                        <div class="ty-compare-products__item">
+                            {include file="blocks/list_templates/simple_list.tpl"
+                                hide_qty=$hide_qty
+                                min_qty=true
+                                product=$product
+                                show_add_to_cart=true
+                                but_role="action"
+                                hide_price=true
+                                hide_compare_list_button=true
+                            }
+                        </div>
                     </td>
                     {/foreach}
                 </tr>

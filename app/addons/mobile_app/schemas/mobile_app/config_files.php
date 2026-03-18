@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -74,7 +74,13 @@ $schema = [
         'path'      => implode(DIRECTORY_SEPARATOR, ['src', 'config', 'index.js']),
         'variables' => [
             '[apiKey]'                     => 'app_settings.utility.apiKey',
+            '[apiVersions]'                => static function (array $settings) {
+                return !empty($settings['app_settings']['utility']['apiVersions'])
+                    ? "['" . implode("','", $settings['app_settings']['utility']['apiVersions']) . "']"
+                    : '[]';
+            },
             '[baseUrl]'                    => 'app_settings.utility.baseUrl',
+            '[baseUrlNonVersioned]'        => 'app_settings.utility.baseUrlNonVersioned',
             '[siteUrl]'                    => 'app_settings.utility.siteUrl',
             '[shopName]'                   => 'app_settings.utility.shopName',
             '[version]'                    => 'app_settings.utility.version',
@@ -338,8 +344,12 @@ $schema['index.js']['content'] = <<<'IND'
 export default {
   // API KEY
   apiKey: '[apiKey]',
+  // API KEY
+  apiVersions: [apiVersions],
   // API URL
   baseUrl: '[baseUrl]',
+  // API URL NON VERSIONED
+  baseUrlNonVersioned: '[baseUrlNonVersioned]',
   // SITE URL
   siteUrl: '[siteUrl]',
   // SHOP NAME

@@ -47,8 +47,6 @@ array                         $config                       Runtime configuratio
     {capture name="adv_buttons"}
         {hook name="storefronts:manage_adv_buttons"}
             {if $is_storefronts_limit_reached}
-                {$promo_popup_title = __("mve_ultimate_license_required", ["[product]" => $smarty.const.PRODUCT_NAME])}
-
                 {include file="common/tools.tpl"
                     tool_override_meta="btn btn-primary cm-dialog-opener cm-dialog-auto-size"
                     tool_href="functionality_restrictions.mve_ultimate_license_required"
@@ -57,7 +55,7 @@ array                         $config                       Runtime configuratio
                     title=__("add_storefront")
                     link_text=__("add_storefront")
                     icon="icon-plus"
-                    meta_data="data-ca-dialog-title='$promo_popup_title'"
+                    meta_data="data-ca-dialog-title='{__("licensing.feature_not_allowed.title")}'"
                 }
             {else}
                 {include file="common/tools.tpl"

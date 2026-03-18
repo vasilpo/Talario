@@ -172,8 +172,6 @@
 {capture name="buttons"}
     {hook name="storefronts:update_buttons"}
         {if ($runtime.mode === "add" && $is_storefronts_limit_reached)}
-            {$promo_popup_title = __("mve_ultimate_license_required", ["[product]" => $smarty.const.PRODUCT_NAME])}
-
             {include file="common/tools.tpl"
                 tool_override_meta="btn btn-primary cm-dialog-opener cm-dialog-auto-size"
                 tool_href="functionality_restrictions.mve_ultimate_license_required"
@@ -182,7 +180,7 @@
                 title=__("add_storefront")
                 link_text=__("create")
                 icon=" "
-                meta_data="data-ca-dialog-title='$promo_popup_title'"
+                meta_data="data-ca-dialog-title='{__("licensing.feature_not_allowed.title")}'"
             }
         {else}
             {include file="buttons/save_cancel.tpl"

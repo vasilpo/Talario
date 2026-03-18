@@ -15,10 +15,13 @@
         </div>
     {/foreach}
 {else}
+    {if $callback_url}
+        {$callback_url = $callback_url|ltrim:"/\\"}
+    {/if}
     {foreach $storefront_ids as $storefront_id}
         <div class="control-group">
             {include file="common/widget_copy.tpl"
-                widget_copy_code_text=($callback_url|default:"auth.process?hauth_done={$provider_name}&storefront_id={$storefront_id}")|fn_url:("SiteArea::STOREFRONT"|enum):$protocol
+                widget_copy_code_text=($callback_url|default:"auth.process&storefront_id={$storefront_id}")|fn_url:("SiteArea::STOREFRONT"|enum):$protocol
             }
         </div>
     {/foreach}

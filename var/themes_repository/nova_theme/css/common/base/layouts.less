@@ -1,0 +1,134 @@
+/** Top panel **/
+
+/** Increase height of top panel buttons **/
+.tygh-top-panel .ty-select-block__a {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.tygh-top-panel .ty-geo-maps__geolocation__opener {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+@media (max-width: 1024px) {
+    .tygh-top-panel .ty-text-links-btn {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .tygh-top-panel .ty-text-links__a--level-0 {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
+.tygh-top-panel .ty-dropdown-box__title {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+/** /Increase height of top panel buttons **/
+
+/** common/select_object.tpl **/
+.tygh-top-panel .ty-select-block__a {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429; /** 16 / 4 **/
+    vertical-align: bottom;
+}
+
+.tygh-top-panel .ty-select-block__a-flag {
+    vertical-align: bottom;
+}
+
+.tygh-top-panel .ty-select-block__a-item {
+    vertical-align: bottom;
+}
+
+/** blocks/currencies.tpl **/
+.tygh-top-panel .ty-currencies__item {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429;
+}
+
+/** blocks/languages.tpl **/
+.tygh-top-panel .ty-languages__item {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429;
+}
+
+/** blocks/my_account.tpl **/
+.tygh-top-panel .ty-account-info__title {
+    font-size: var(--cs-font-size-small);
+}
+
+.tygh-top-panel .ty-dropdown-box .ty-icon-down-micro {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429;
+    vertical-align: bottom;
+}
+
+.tygh-top-panel .ty-account-info__title-icon {
+    font-size: var(--cs-body-font-size);
+    vertical-align: bottom;
+}
+
+/** blocks/menu/text_links.tpl **/
+.tygh-top-panel .ty-text-links-btn {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429;
+}
+
+.tygh-top-panel .ty-text-links-btn__icon {
+    vertical-align: bottom;
+    font-size: var(--cs-body-font-size);
+}
+
+@media (min-width: 1025px) {
+    .tygh-top-panel .ty-text-links__a--level-0 {
+        font-size: var(--cs-font-size-small);
+        line-height: 1.1428571429;
+    }
+}
+
+/** blocks/wrappers/onclick_dropdown.tpl **/
+.tygh-top-panel .ty-dropdown-box__title {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429;
+}
+
+/** addons/geo_maps/blocks/customer_location.tpl **/
+.tygh-top-panel .ty-geo-maps__geolocation__opener {
+    font-size: var(--cs-font-size-small);
+    line-height: 1.1428571429;
+}
+
+.tygh-top-panel .ty-icon-location-arrow {
+    font-size: var(--cs-body-font-size);
+}
+
+
+
+/** Header **/
+.tygh-header > div {
+    padding-top: 16px;
+}
+
+
+
+/** Footer **/
+/** (empty) **/
+
+
+
+/** templates/index.tpl **/
+:root {
+    --ty-tygh-padding-bottom-1: 0px;
+    --ty-tygh-padding-bottom-2: 0px;
+}
+
+.ty-tygh {
+    padding-bottom: calc(var(--ty-tygh-padding-bottom-1) + var(--ty-tygh-padding-bottom-2));
+}

@@ -134,7 +134,10 @@ $abt__ut_fields[] = '?:banners.abt__ut2_title_font_size';
 $abt__ut_fields[] = '?:banners.abt__ut2_title_font_weight';
 $abt__ut_fields[] = '?:banners.abt__ut2_title_tag';
 $abt__ut_fields[] = '?:banners.abt__ut2_background_image_size';
-$abt__ut_fields[] = '?:banners.abt__ut2_image_position';
+$abt__ut_fields[] = '?:banners.abt__ut2_image_v_position';
+$abt__ut_fields[] = '?:banners.abt__ut2_image_h_position';
+$abt__ut_fields[] = '?:banners.abt__ut2_background_v_position';
+$abt__ut_fields[] = '?:banners.abt__ut2_background_h_position';
 $abt__ut_fields[] = '?:banners.abt__ut2_title_shadow';
 $abt__ut_fields[] = '?:banners.abt__ut2_description_font_size';
 $abt__ut_fields[] = '?:banners.abt__ut2_description_color';
@@ -362,18 +365,20 @@ $_REQUEST['abt__ut2_last_banner_id'] = db_get_field('SELECT MAX(banner_id) FROM 
 }
 function fn_abt__ut2_get_banners_tree($params, $lang_code){
 list($banners) = fn_get_banners($params, $lang_code);
+$banner_groups = fn_abt__ut2_get_banner_groups_list();
 $banners_tree = [];
+foreach ($banner_groups as $group_id => $group){
+$items = [];
 foreach ($banners as $key => $banner){
-if (!empty($banner['group_id'])){
-if (empty($banners_tree[$banner['group_id']]['group_name'])){
-$banners_tree[$banner['group_id']]['group_name'] = db_get_field(
-'SELECT group_name FROM ?:abt__ut2_banner_group_descriptions WHERE banner_group_id = ?i AND lang_code = ?s',
-$banner['group_id'],
-$lang_code);
-}
-$banners_tree[$banner['group_id']]['items'][] = $banner;
+if (!empty($banner['group_id']) && $banner['group_id'] == $group_id){
+$items[] = $banner;
 unset($banners[$key]);
 }
+}
+$banners_tree[$group_id] = [
+'group_name' => $group,
+'items' => $items,
+];
 }
 foreach ($banners as $banner){
 $banners_tree[] = $banner;
@@ -387,9 +392,9 @@ fn_set_notification('W', __('warning'), __('abt__ut2.messages.group_field_must_b
 return false;
 } else {
 if (!empty($params['banner_group_id'])){
-db_query('REPLACE INTO ?:abt__ut2_banner_group_descriptions VALUES(?i,?s,?s)',
-$params['banner_group_id'],
+db_query('UPDATE ?:abt__ut2_banner_group_descriptions SET group_name = ?s WHERE banner_group_id = ?i AND lang_code = ?s',
 $params['banner_group_name'],
+$params['banner_group_id'],
 $lang_code
 );
 } else {
@@ -405,11 +410,11 @@ $lang
 return $new_banner_group_id;
 }
 }
-return true;
+return $params['banner_group_id'];
 }
 function fn_abt__ut2_get_banner_groups_list()
 {
-return db_get_hash_single_array('SELECT banner_group_id, group_name FROM ?:abt__ut2_banner_group_descriptions WHERE lang_code = ?s', ['banner_group_id', 'group_name'] ,CART_LANGUAGE);
+return db_get_hash_single_array('SELECT banner_group_id, group_name FROM ?:abt__ut2_banner_group_descriptions WHERE lang_code = ?s', ['banner_group_id', 'group_name'] ,DESCR_SL);
 }
 function fn_abt__ut2_delete_banner_group($group_id)
 {
@@ -419,6 +424,7 @@ db_query('DELETE FROM ?:abt__ut2_banner_groups WHERE banner_group_id = ?i', $gro
 }
 function fn_abt__ut2_group_banners($banner_ids, $group_id = 0){
 if (!empty($banner_ids)){
+db_query('UPDATE ?:banners SET group_id = 0 WHERE group_id = (?n)', $group_id);
 db_query('UPDATE ?:banners SET group_id = ?i WHERE banner_id IN (?n)', $group_id, $banner_ids);
 }
 }

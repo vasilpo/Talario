@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 
 use Tygh\Addons\OnboardingGuide\OnboardingGuide;
@@ -103,6 +103,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /** @var string $new_theme_style */
         $new_theme_style = $_REQUEST['style'];
+
+        $theme_settings = Themes::factory($new_theme_name)->getSettingsOverrides();
+
+        if ($old_theme_name !== $new_theme_name && !empty($theme_settings)) {
+            Tygh::$app['ajax']->assign(
+                'force_redirection',
+                fn_url('themes.manage?show_conflicts=Y&theme_name=' . $new_theme_name . '&style=' . $new_theme_style)
+            );
+            return [CONTROLLER_STATUS_REDIRECT];
+        }
 
         $company_id = fn_get_runtime_company_id();
 

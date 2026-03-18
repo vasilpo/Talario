@@ -15,80 +15,96 @@
 *   email: info@alexbranding.com                                                           *
 *******************************************************************************************/
 
-.ut2-three-columns {
+.--three-columns {
 
-    --rt-col-width: max(15vw, 750px);
+    &:not(.ut2-pb-mobile) {
+        @media (min-width: 1367px) {
+            --rt-col-width: 400px;
+            --rt-col-flex-width: 60%;
 
-    @media (max-width: 1400px) {
-        --rt-col-width: 620px;
-    }
-    @media (max-width: 940px) {
-        --rt-col-width: 50%;
-    }
-
-    .ut2-pb__content-wrapper {
-        @media (min-width: 650px) and (max-width: 767px) {
-            flex-flow: row-reverse;
-        }
-
-        .ut2-pb__first {
-            gap: 0;
-
-            > div:not(:last-of-type) {
-                margin-block-end: var(--gap-xs);
+            .ut2_min_width_viewport() when (@fluidContainerMaxWidth >= 1401) {
+                --rt-col-width: 450px;
             }
+            .ut2_min_width_viewport();
         }
-    }
-
-    @media (min-width: 980px) {
-        .ut2-pb__first, .ut2-pb__second {
-            max-width: calc(~"50% - var(--gap-s)/2");
+        @media (min-width: 900px) and (max-width: 1366px) {
+            --rt-col-width: 350px;
+            --rt-col-flex-width: 50%;
         }
-    }
-
-    .ut2-pb__first {
-        .contrast_background();
-
-        @media (max-width: 940px) {
-            order: 1;
+        @media (max-width: 899px) {
+            --rt-col-width: 100%;
         }
-    }
-
-    .ut2-pb__second {
-        order: 0;
     }
 
     .ut2-pb__title {
-        flex-direction: column;
+        margin-block-end: 0;
 
-        ::-webkit-scrollbar {
-            height: 0;
-        }
         h1 {
-            width: 100%;
-
-            @media (max-width: 899px) {
-                margin-bottom: var(--gap-xs);
-            }
+            inline-size: 100%;
         }
     }
-    .ut2-pb__top-ss {
-        width: 100%;
-        padding-bottom: 0;
-        align-items: center;
-    }
-    div.ut2-pb__rating {
+
+    .ut2-pb__rating {
         flex: 1 0 auto;
-        margin-left: 0;
-        padding: 3px 0;
+    }
 
-        @media (min-width: 900px) {
-            align-items: center;
+    .ut2-pb__wrapper {
+        row-gap: var(--gap-s);
+    }
+
+    .ut2-pb__img-wrapper {
+        display: grid;
+        grid-template-columns: min(calc(var(--pd-image-gallery-width) * 1px),var(--rt-col-flex-width)) 1fr;
+        grid-gap: var(--gap-s);
+        height: fit-content;
+        margin-block-end: 0;
+
+        @media (max-width: 1023px) and (hover: hover) {
+            display: flex;
         }
-        a {
-            box-shadow: none;
-            padding: 0;
+    }
+
+    .ut2-pb__content-wrapper {
+        grid-column: 2;
+        grid-row: span 3;
+    }
+
+    .ut2-pb__aside {
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        min-width: 100%;
+        max-width: var(--rt-col-width);
+        padding: var(--gap-sm);
+        gap: var(--gap-sm);
+
+        .contrast_background();
+
+        > div {
+            flex-grow: 1;
+            width: 100%;
+            margin-block-start: 0;
         }
+        > div:not(:has(.ty-product-options)):not(:has(.ty-reward-group.hidden)) {
+            margin-block-start: 0;
+        }
+    }
+
+    .ut2-pb__main-content-box {
+        flex-flow: column;
+        height: fit-content;
+        width: var(--rt-col-width, 100%);
+        gap: unset;
+
+        > div:not(:last-of-type):not(.ut2-pb__advanced-options) {
+            width: 100%;
+            margin-block-end: var(--gap-sm);
+        }
+    }
+
+    .ut2-pb__tabs-wrapper {
+        grid-column: 1;
+        max-width: 100%;
     }
 
     .ut2-pb__note {
@@ -102,22 +118,13 @@
     }
 
     .ut2-pb__custom-block {
-        order: 3;
+        border-top: 1px solid var(--color-base);
+        padding-block-start: var(--gap-s);
     }
 
-    .ut2-pb__options .ty-control-group__label,
-    .ut2-pb__advanced-options .ty-control-group__label,
-    .ut2-pb__advanced-options .ty-control-group__item {
-        font-size: var(--font-size-normal);
-        padding: 4px 0;
-    }
-
-    .ty-popup-tabs {
-        margin-bottom: var(--gap-s);
-
-        @media (min-width: 900px) {
-            justify-content: flex-end;
-        }
+    .ut2-pb__button {
+        border-block-start: 1px solid var(--color-base);
+        border-top: unset;
     }
 
     @media (min-width: 768px) {

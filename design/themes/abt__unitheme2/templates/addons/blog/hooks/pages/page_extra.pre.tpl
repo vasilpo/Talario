@@ -20,7 +20,7 @@
                                 {$subpage.page}
                                 </h2>
                             </a>
-                            <div class="ut2-blog__date"><i class="ty-icon-calendar"></i> {$subpage.timestamp|date_format:"%B %e, %Y"}</div>
+                            <div class="ut2-blog__date"><i class="ty-icon-calendar"></i> {$subpage.timestamp|date_format:"`$settings.Appearance.date_format`"}</div>
                         </div>
                         <div class="ty-wysiwyg-content">
                             <p>{$subpage.spoiler|strip_tags|truncate:360:"..." nofilter}</p>

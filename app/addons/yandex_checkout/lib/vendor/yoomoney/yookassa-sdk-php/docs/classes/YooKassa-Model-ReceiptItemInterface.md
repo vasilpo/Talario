@@ -52,8 +52,8 @@ Interface ReceiptItemInterface
 | property-read |  | Дробное количество маркированного товара (тег в 54 ФЗ — 1291) |
 | property-read |  | Суммарная стоимость покупаемого товара в копейках/центах |
 | property-read |  | Цена товара (тег в 54 ФЗ — 1079) |
-| property-read |  | Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199) |
-| property-read |  | Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199) |
+| property-read |  | Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199) |
+| property-read |  | Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199) |
 | property-read |  | Признак предмета расчета (тег в 54 ФЗ — 1212) |
 | property-read |  | Признак предмета расчета (тег в 54 ФЗ — 1212) |
 | property-read |  | Признак способа расчета (тег в 54 ФЗ — 1214) |
@@ -161,7 +161,7 @@ public getVatCode() : int|null
 **Details:**
 * Inherited From: [\YooKassa\Model\ReceiptItemInterface](../classes/YooKassa-Model-ReceiptItemInterface.md)
 
-**Returns:** int|null - Ставка НДС, число 1-10, или null, если ставка не задана
+**Returns:** int|null - Ставка НДС, число 1-12, или null, если ставка не задана
 
 
 <a name="method_getPaymentSubject" class="anchor"></a>
@@ -431,11 +431,11 @@ public isShipping() : bool
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

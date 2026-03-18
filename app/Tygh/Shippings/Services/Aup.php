@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Shippings\Services;
 
@@ -88,7 +88,12 @@ class Aup implements IService
      * @var float Exchange rate for Canadian dollar
      */
     private static $exchange_rate;
-
+    /**
+     * Stored shipping information
+     *
+     * @var array<string, array<string, string>|string> $shipping_info
+     */
+    private $shipping_info = [];
     /**
      * @inheritdoc
      */
@@ -102,7 +107,7 @@ class Aup implements IService
      */
     public function prepareData($shipping_info)
     {
-        $this->_shipping_info = $shipping_info;
+        $this->shipping_info = $shipping_info;
 
         $this->settings = $shipping_info['service_params'];
 
@@ -213,7 +218,7 @@ class Aup implements IService
 
         $request = [
             'country_code'  => $this->package['location']['country'],
-            'service_code'  => $this->_shipping_info['service_code'],
+            'service_code'  => $this->shipping_info['service_code'],
             'weight'        => $this->prepareWeight(),
             'from_postcode' => $this->package['origination']['zipcode'],
             'to_postcode'   => $this->package['location']['zipcode'],
@@ -246,7 +251,9 @@ class Aup implements IService
      */
     private function detectPostageDetails()
     {
-        list(, $postage_type, ) = explode('_', $this->_shipping_info['service_code']);
+        /** @var string $service_code */
+        $service_code = $this->shipping_info['service_code'];
+        list(, $postage_type, ) = explode('_', $service_code);
 
         $postage_type = $postage_type == 'PARCEL' ? self::TYPE_PARCEL : self::TYPE_LETTER;
 
@@ -368,11 +375,11 @@ class Aup implements IService
             );
 
             foreach ($this->package['packages'] as $package) {
-                $box = array(
-                    'width' => $this->settings['width'],
-                    'height' => $this->settings['height'],
-                    'length' => $this->settings['length'],
-                );
+                $box = [
+                    'width' =>  empty($this->settings['width']) ? 0 : $this->settings['width'],
+                    'height' => empty($this->settings['height']) ? 0 : $this->settings['height'],
+                    'length' => empty($this->settings['length']) ? 0 : $this->settings['length'],
+                ];
 
                 foreach(array_keys($box) as $dimension) {
                     if (!empty($package['shipping_params']['box_' . $dimension])) {

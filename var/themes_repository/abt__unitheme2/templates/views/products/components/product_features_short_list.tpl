@@ -44,7 +44,7 @@
 
 {if $features}
     {strip}
-        {if !$no_container}<div class="ty-features-list">{/if}
+        {if !$no_container}<div class="ut2-features-list">{/if}
         {foreach from=$features name=features_list item=feature}
             {if $feature_image}
                 {assign var="obj_id" value=$feature.variant_id}

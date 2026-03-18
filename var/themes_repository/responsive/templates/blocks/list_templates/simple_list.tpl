@@ -1,6 +1,7 @@
 {if $product}
     {assign var="obj_id" value=$obj_id|default:$product.product_id}
     {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
+    {$show_space_after_old_price = $show_space_after_old_price|default:true}
     {include file="common/product_data.tpl" obj_id=$obj_id product=$product}
     <div class="ty-simple-list clearfix">
         {assign var="form_open" value="form_open_`$obj_id`"}
@@ -16,13 +17,20 @@
 
             {if !$hide_price}
                 <div class="ty-simple-list__price clearfix">
-                    {if $show_old_price || $show_clean_price || $show_list_discount}
-                        {assign var="old_price" value="old_price_`$obj_id`"}
-                        {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}&nbsp;{/if}
+                    {if $price_first}
+                        {assign var="price" value="price_`$obj_id`"}
+                        {$smarty.capture.$price nofilter}
                     {/if}
 
-                    {assign var="price" value="price_`$obj_id`"}
-                    {$smarty.capture.$price nofilter}
+                    {if $show_old_price || $show_clean_price || $show_list_discount}
+                        {assign var="old_price" value="old_price_`$obj_id`"}
+                        {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{if $show_space_after_old_price}&nbsp;{/if}{/if}
+                    {/if}
+
+                    {if !$price_first}
+                        {assign var="price" value="price_`$obj_id`"}
+                        {$smarty.capture.$price nofilter}
+                    {/if}
 
                     {if $show_old_price || $show_clean_price || $show_list_discount}
                         {assign var="clean_price" value="clean_price_`$obj_id`"}

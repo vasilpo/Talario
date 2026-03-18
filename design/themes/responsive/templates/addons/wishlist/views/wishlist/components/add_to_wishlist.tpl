@@ -17,8 +17,14 @@
     {$but_meta                      = $wishlist_but_meta|default:               "ty-btn__text ty-add-to-wish"}
 {/if}
 
+{if $quick_view}
+    {$but_meta = "`$but_meta` ty-add-to-wish--quick-view"}
+{elseif $details_page}
+    {$but_meta = "`$but_meta` ty-add-to-wish--details-page"}
+{/if}
+
 {if $enable_grouping_buttons_product
-    && (($runtime.mode === "view" && $product.details_layout === "bigpicture_template") || $quick_view)
+    && (($runtime.controller === "products" && $runtime.mode === "view" && !isset($block.properties.template) && $product.details_layout === "bigpicture_template") || $quick_view)
 }
     <br class="ty-wishlist-add-to-wishlist__new-line" />
 {/if}

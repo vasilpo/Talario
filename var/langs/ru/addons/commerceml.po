@@ -8,9 +8,9 @@ msgstr ""
 "X-Crowdin-Project: cs-cart-ru\n"
 "X-Crowdin-Project-ID: 54044\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /release-4.18.4/addons/commerceml.po\n"
-"X-Crowdin-File-ID: 9753\n"
-"PO-Revision-Date: 2025-05-26 13:37\n"
+"X-Crowdin-File: /release-4.20.1/addons/commerceml.po\n"
+"X-Crowdin-File-ID: 10319\n"
+"PO-Revision-Date: 2026-02-13 10:59\n"
 
 msgctxt "Addons::name::commerceml"
 msgid "CommerceML (1C, MoySklad, Business.ru)"
@@ -1007,4 +1007,56 @@ msgstr "Чтобы подключить вашу CRM к CS-Cart, перейди�
 msgctxt "Languages::commerceml.the_file_does_not_exist"
 msgid "The file [file] does not exist."
 msgstr "Файла [file] не существует."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names"
+msgid "Names of product features"
+msgstr "Названия характеристик товара"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.internal"
+msgid "Use names from CRM in CS-Cart admin panel"
+msgstr "Использовать названия из CRM в панели администратора CS-Cart"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.internal.tooltip"
+msgid "Internal feature names in CS-Cart will always change match those in your CRM. You can safely edit display names for the storefront."
+msgstr "Внутреннее имя (\"Название\") характеристики в CS-Cart всегда будет совпадать с его аналогом в CRM. Но вы сможете поменять \"Название на витрине\"."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.both"
+msgid "Use names from CRM everywhere in CS-Cart"
+msgstr "Использовать название из CRM везде в CS-Cart"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.both.tooltip"
+msgid "Feature names in CS-Cart will change to match the names in your CRM. Any changes to feature names on the CS-Cart end will be lost."
+msgstr "Названия характеристик в CS-Cart будут меняться после изменений в CRM. Любые изменения в названиях на стороне CS-Cart будут потеряны."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.no"
+msgid "Do not use names from CRM"
+msgstr "Не использовать названия из CRM"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_names.no.tooltip"
+msgid "Feature names will come from CRM only on first import. Subsequent changes in the CRM won't affect existing feature names in CS-Cart."
+msgstr "Названия характеристик попадут в CS-Cart только при первом импотре. Последующие изменения в CRM никак не повлияют на уже имеющиеся названия характеристик в CS-Cart."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names"
+msgid "Names of feature variants"
+msgstr "Названия вариантов характеристик"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.yes"
+msgid "Use names from CRM"
+msgstr "Использовать названия из CRM"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.yes.tooltip"
+msgid "Feature variant names will always be updated from the CRM. Your edits will be lost on import."
+msgstr "Названия вариантов характеристик всегда будут браться из CRM. Любые ваши изменения пропадут при последующем импорте."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.no"
+msgid "Do not use names from CRM"
+msgstr "Не использовать названия из CRM"
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature_variant_names.no.tooltip"
+msgid "Feature variant names will come from CRM only on first import. Useful if you plan to change their names in CS-Cart."
+msgstr "Названия вариантов характеристик импортируются из CRM только при первом импорте. Это полезно, если вы планируете в будущем поменять названия в CS-Cart."
+
+msgctxt "Languages::commerceml.cml_catalog_sync_feature.vendor_notice"
+msgid "The settings about the names of product features and their variants only affect the product features that belong to you, not to the marketplace."
+msgstr "Настройки о названиях характеристик и их вариантов повлияют только на те характеристики, которые принадлежат вам, а не маркетплейсу."
 

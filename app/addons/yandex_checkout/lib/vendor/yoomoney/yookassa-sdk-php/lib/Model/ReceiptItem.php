@@ -49,8 +49,8 @@ use YooKassa\Model\Receipt\ReceiptItemMeasure;
  * @property Supplier $supplier Информация о поставщике товара или услуги (тег в 54 ФЗ — 1224)
  * @property string $agentType Тип посредника, реализующего товар или услугу
  * @property string $agent_type Тип посредника, реализующего товар или услугу
- * @property int $vatCode Ставка НДС (тег в 54 ФЗ — 1199), число 1-10
- * @property int $vat_code Ставка НДС (тег в 54 ФЗ — 1199), число 1-10
+ * @property int $vatCode Ставка НДС (тег в 54 ФЗ — 1199), число 1-12
+ * @property int $vat_code Ставка НДС (тег в 54 ФЗ — 1199), число 1-12
  * @property string $paymentSubject Признак предмета расчета (тег в 54 ФЗ — 1212)
  * @property string $payment_subject Признак предмета расчета (тег в 54 ФЗ — 1212)
  * @property string $paymentMode Признак способа расчета (тег в 54 ФЗ — 1214)
@@ -109,7 +109,7 @@ class ReceiptItem extends AbstractObject implements ReceiptItemInterface
     private $_amount;
 
     /**
-     * @var int Ставка НДС, число 1-10 (тег в 54 ФЗ — 1199)
+     * @var int Ставка НДС, число 1-12 (тег в 54 ФЗ — 1199)
      */
     private $_vatCode;
 
@@ -308,7 +308,7 @@ class ReceiptItem extends AbstractObject implements ReceiptItemInterface
 
     /**
      * Возвращает ставку НДС
-     * @return int|null Ставка НДС, число 1-10, или null, если ставка не задана
+     * @return int|null Ставка НДС, число 1-12, или null, если ставка не задана
      */
     public function getVatCode()
     {
@@ -318,7 +318,7 @@ class ReceiptItem extends AbstractObject implements ReceiptItemInterface
     /**
      * Устанавливает ставку НДС
      *
-     * @param int $value Ставка НДС, число 1-10
+     * @param int $value Ставка НДС, число 1-12
      *
      * @throws InvalidPropertyValueException Выбрасывается если в качестве аргумента было передано число меньше одного
      * или больше шести
@@ -335,7 +335,7 @@ class ReceiptItem extends AbstractObject implements ReceiptItemInterface
                 'ReceiptItem.vatId',
                 $value
             );
-        } elseif ($value < 1 || $value > 10) {
+        } elseif ($value < 1 || $value > 12) {
             throw new InvalidPropertyValueException(
                 'Invalid vatId value in ReceiptItem',
                 0,

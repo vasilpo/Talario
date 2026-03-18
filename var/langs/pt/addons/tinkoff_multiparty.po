@@ -332,6 +332,30 @@ msgctxt "Languages::addons.tinkoff_multiparty.marketplace_inn.description"
 msgid "The INN of the marketplace is required to send receipts"
 msgstr "The INN of the marketplace is required to send receipts"
 
+msgctxt "Languages::addons.tinkoff_multiparty.mtls_certificate"
+msgid "mTLS certificate"
+msgstr "mTLS certificate"
+
+msgctxt "Languages::addons.tinkoff_multiparty.mtls_certificate.description"
+msgid "Upload your mTLS-certificate (.pem file) for secure connection with T-Bank API (see the instruction <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>here</u></a>)."
+msgstr "Upload your mTLS-certificate (.pem file) for secure connection with T-Bank API (see the instruction <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>here</u></a>)."
+
+msgctxt "Languages::addons.tinkoff_multiparty.private_key"
+msgid "Private key"
+msgstr "Private key"
+
+msgctxt "Languages::addons.tinkoff_multiparty.private_key.description"
+msgid "Upload your private key (.key file). It is saved when the certificate is issued (see the instruction <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>here</u></a>)."
+msgstr "Upload your private key (.key file). It is saved when the certificate is issued (see the instruction <a target=\"_blank\" href=\"https://developer.tbank.ru/docs/intro/manuals/certificates\"><u>here</u></a>)."
+
+msgctxt "Languages::addons.tinkoff_multiparty.settings_instruction"
+msgid "<p>To register sellers, first get the IP address of your server whitelisted with T-Bank:</p><p>1. Request the IP address of your server from your hosting support.<p>2. Send this to T-Bank using one of the following ways:</p><ul><li>Send an email to <b>acq_help@tbank.ru</b> with your INN, company name, and your server IP address.</li><li>Sign in to <a href=\"https://business.tbank.ru/sme/dashboard\" target=\"_blank\"><u>T-Business support chat</u></a> and send the IP address of your server in the chat.</li></ul>"
+msgstr "<p>To register sellers, first get the IP address of your server whitelisted with T-Bank:</p><p>1. Request the IP address of your server from your hosting support.<p>2. Send this to T-Bank using one of the following ways:</p><ul><li>Send an email to <b>acq_help@tbank.ru</b> with your INN, company name, and your server IP address.</li><li>Sign in to <a href=\"https://business.tbank.ru/sme/dashboard\" target=\"_blank\"><u>T-Business support chat</u></a> and send the IP address of your server in the chat.</li></ul>"
+
+msgctxt "Languages::addons.tinkoff_multiparty.shopcode_is_not_registered_no_cert_or_key"
+msgid "Vendor registration failed.<p>To register your vendors, get your mTLS-certificate and private key to from T-Bank and add them to the payment method.</p><a class=\"btn btn-default\" target=\"_blank\" href=\"[url]\">Go to payment methods configuration</a>"
+msgstr "Vendor registration failed.<p>To register your vendors, get your mTLS-certificate and private key to from T-Bank and add them to the payment method.</p><a class=\"btn btn-default\" target=\"_blank\" href=\"[url]\">Go to payment methods configuration</a>"
+
 msgctxt "Languages::addons.tinkoff_multiparty.full_refunded.notification"
 msgid "The refund did not cause an error: [errorCode]"
 msgstr "The refund did not cause an error: [errorCode]"

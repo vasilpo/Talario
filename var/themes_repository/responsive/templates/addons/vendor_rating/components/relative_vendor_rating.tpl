@@ -14,17 +14,17 @@
     <span class="ty-vendor-rating">
         {if $rating >= $addons.vendor_rating.bronze_rating_lower_limit && $rating < $addons.vendor_rating.silver_rating_lower_limit}
             {include_ext file="common/icon.tpl"
-                class="ty-vendor-rating-icon ty-vendor-rating-icon--bronze"
+                class="ty-icon-vendor-rating ty-vendor-rating-icon ty-vendor-rating-icon--bronze"
                 title="{__('vendor_rating.vendor_rating')}: `$rating`%"
             }
         {elseif $rating >= $addons.vendor_rating.silver_rating_lower_limit && $rating < $addons.vendor_rating.gold_rating_lower_limit}
             {include_ext file="common/icon.tpl"
-                class="ty-vendor-rating-icon ty-vendor-rating-icon--silver"
+                class="ty-icon-vendor-rating ty-vendor-rating-icon ty-vendor-rating-icon--silver"
                 title="{__('vendor_rating.vendor_rating')}: `$rating`%"
             }
         {elseif $rating >= $addons.vendor_rating.gold_rating_lower_limit}
             {include_ext file="common/icon.tpl"
-                class="ty-vendor-rating-icon ty-vendor-rating-icon--gold"
+                class="ty-icon-vendor-rating ty-vendor-rating-icon ty-vendor-rating-icon--gold"
                 title="{__('vendor_rating.vendor_rating')}: `$rating`%"
             }
         {/if}

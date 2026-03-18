@@ -1,20 +1,19 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\SiteArea;
-use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -30,33 +29,29 @@ if ($mode === 'login_provider' || $mode === 'link_provider') {
     }
 
     exit;
-} elseif ($mode === 'processlive') { // workaround for Microsoft Redirect URI limitations (see \Hybrid_Provider_Adapter::login line ~ 168)
-    $lib_path = Registry::get('config.dir.addons') . 'hybrid_auth/lib/';
-    $request = $_REQUEST;
-    $request['hauth_done'] = 'Live';
-
-    try {
-        Hybrid_Endpoint::process($request);
-    } catch (Exception $e) {
-        fn_set_notification(NotificationSeverity::ERROR, __('error'), $e->getMessage());
-        Tygh::$app['view']->display('addons/hybrid_auth/views/auth/login_error.tpl');
-
-        exit;
-    }
 } elseif ($mode === 'process') {
-    $lib_path = Registry::get('config.dir.addons') . 'hybrid_auth/lib/';
-
     try {
-        Hybrid_Endpoint::process();
+        $hybridauth = fn_hybrid_auth_init();
+        $redirect_url = !empty(Tygh::$app['session']['hybrid_auth']['return_to_url'])
+            ? Tygh::$app['session']['hybrid_auth']['return_to_url']
+            : fn_url();
+
+        if (!empty($provider = Tygh::$app['session']['hybrid_auth']['provider'])) {
+            $hybridauth->authenticate($provider);
+            unset(Tygh::$app['session']['hybrid_auth']['provider']);
+        }
+
+        return [CONTROLLER_STATUS_REDIRECT, $redirect_url];
     } catch (Exception $e) {
         fn_set_notification(NotificationSeverity::ERROR, __('error'), $e->getMessage());
         Tygh::$app['view']->display('addons/hybrid_auth/views/auth/login_error.tpl');
 
         exit;
     }
+
 } elseif ($mode === 'logout') {
     // Remove Hybrid auth data
-    unset(Tygh::$app['session']['HA::CONFIG'], Tygh::$app['session']['HA::STORE']);
+    unset(Tygh::$app['session']['HYBRIDAUTH::STORAGE']);
 
 } elseif ($mode === 'connect_social') {
     $email = !empty(Tygh::$app['session']['hybrid_auth']['email']) ? Tygh::$app['session']['hybrid_auth']['email'] : '';
@@ -79,7 +74,7 @@ if ($mode === 'login_provider' || $mode === 'link_provider') {
     $user_id = fn_is_user_exists(0, ['email' => $email]);
 
     if (!empty($user_id)) {
-        $user_data = fn_get_user_short_info($user_id);
+        $user_data = fn_get_user_short_info((int) $user_id);
 
         $user_login = $user_data['email'];
     } else {

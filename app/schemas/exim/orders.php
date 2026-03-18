@@ -1,17 +1,18 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+use Tygh\Licensing\Features;
 use Tygh\Registry;
 
 include_once(Registry::get('config.dir.schemas') . 'exim/orders.functions.php');
@@ -239,7 +240,7 @@ if (fn_allowed_for('MULTIVENDOR')) {
     }
 }
 
-if (fn_allowed_for('MULTIVENDOR:ULTIMATE')) {
+if (fn_allowed_for('MULTIVENDOR') && fn_is_allowed(Features::MULTIPLE_STOREFRONTS)) {
     $schema['pre_export_process']['set_storefront_id_condition'] = [
         'function'    => 'fn_exim_orders_set_storefront_condition',
         'args'        => ['$conditions'],

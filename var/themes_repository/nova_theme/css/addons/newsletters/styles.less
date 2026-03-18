@@ -1,0 +1,227 @@
+@import "../../responsive/css/addons/newsletters/styles.less";
+
+/* ==========================================================================
+Newsletters
+========================================================================== */
+
+/** ======================================== Newsletter subscription form (advanced) **/
+
+.ty-footer-form-block {
+    margin-top: 25px;
+}
+
+.ty-footer-form-block .ty-footer-form-block__title {
+    font-size: 16px !important;
+    font-family: var(--cs-headings-font);
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 38px;
+}
+
+.ty-footer-form-block.ty-footer-newsletters-block {
+    margin-top: 37px;
+    margin-bottom: 27px;
+}
+
+.ty-footer-form-block.ty-footer-newsletters-block .ty-footer-form-block__title {
+    display: none;
+}
+
+@media screen and (max-width: 1120px) {
+    .footer-stay-connected .ty-grid {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .footer-stay-connected .ty-grid .ty-float-left {
+        float: none;
+    }
+
+    .footer-stay-connected .ty-grid .ty-footer-form-block {
+        text-align: center;
+        margin-top: 32px;
+        margin-bottom: 12px;
+    }
+
+    .footer-stay-connected .ty-grid .ty-footer-form-block .ty-footer-form-block__title {
+        margin-bottom: 3px;
+    }
+
+    .footer-stay-connected .ty-float-right {
+        float: none;
+    }
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form {
+    width: auto;
+    display: inline-block;
+    vertical-align: top;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form h1,
+form[name="subscribe_form"] .ty-footer-form-block__form h2,
+form[name="subscribe_form"] .ty-footer-form-block__form h3,
+form[name="subscribe_form"] .ty-footer-form-block__form h4,
+form[name="subscribe_form"] .ty-footer-form-block__form h5,
+form[name="subscribe_form"] .ty-footer-form-block__form h6 {
+    margin: 0;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form .ty-block {
+    font-size: var(--cs-font-size-small);
+    line-height: 120%;
+    text-transform: none;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form h3 {
+    font-size: 24px;
+    font-family: var(--cs-body-font);
+    line-height: normal;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form h3 .ty-block {
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form.with-side {
+    --ty-with-side-icon-font-size: 28px;
+
+    position: relative;
+    /** calc(var(--ty-with-side-icon-font-size) + 24px + 13px) **/
+    padding-left: calc(var(--ty-with-side-icon-font-size) + 37px);
+    width: 36.5%;
+    text-align: left !important;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form.with-side i,
+form[name="subscribe_form"] .ty-footer-form-block__form.with-side .ty-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: var(--ty-with-side-icon-font-size);
+    height: calc(var(--ty-with-side-icon-font-size) + 24px);
+    width: calc(var(--ty-with-side-icon-font-size) + 24px);
+    line-height: 52px;
+    text-align: center;
+    border-radius: var(--cs-base-rounded-corners-radius);
+    background: #fff;
+    color: var(--cs-footer-text);
+}
+
+@media screen and (max-width: 960px) {
+    form[name="subscribe_form"] .ty-footer-form-block__form.with-side {
+        display: block;
+        margin-right: auto !important;
+        margin-left: auto !important;
+        padding-right: 0;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    form[name="subscribe_form"] .ty-footer-form-block__form.with-side {
+        width: 70%;
+    }
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form + .ty-footer-form-block__form {
+    width: 53.5%;
+}
+
+@media screen and (max-width: 960px) {
+    form[name="subscribe_form"] .ty-footer-form-block__form + .ty-footer-form-block__form {
+        display: block;
+        margin-right: auto !important;
+        margin-left: auto !important;
+        width: 53.5%;
+    }
+}
+
+@media screen and (max-width: 766px) {
+    form[name="subscribe_form"] .ty-footer-form-block__form + .ty-footer-form-block__form {
+        width: 85%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    form[name="subscribe_form"] .ty-footer-form-block__form + .ty-footer-form-block__form {
+        width: 100%;
+    }
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form input[type="text"],
+form[name="subscribe_form"] .ty-footer-form-block__form .ty-btn {
+    --ty-subscribe-button-padding: 12px 8px 12px 8px;
+    --ty-subscribe-button-size: 16px;
+
+    padding: var(--ty-subscribe-button-padding);
+    font-size: var(--ty-subscribe-button-size);
+    line-height: 1.25;
+}
+
+
+form[name="subscribe_form"] .ty-footer-form-block__form input[type="text"] {
+    height: auto;
+    width: 100%;
+    color: var(--cs-font);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form input[type="text"] .cm-hint {
+    color: var(--cs-secondary-text);
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form input[type="text"]:focus {
+    border-color: var(--cs-input-border);
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form input[type="text"] + .ty-btn-go {
+    height: 34px;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form input[type="text"] + .ty-btn-go .ty-btn-go__icon {
+    top: 7px;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form > div {
+    vertical-align: top;
+    display: inline-block;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form > div.hidden {
+    display: none;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form .ty-footer-form-block__input {
+    margin-top: 6px;
+    width: 60%;
+}
+
+form[name="subscribe_form"] .ty-footer-form-block__form .ty-footer-form-block__button {
+    margin-top: 6px;
+}
+
+.ty-btn__subscribe {
+    --ty-subscribe-button: var(--cs-tertiary-button);
+
+    background: var(--ty-subscribe-button);
+    color: var(--cs-btn-tertiary-color);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.ty-btn__subscribe:hover {
+    color: var(--cs-btn-tertiary-color);
+}
+
+.ty-btn__subscribe.ty-btn__text {
+    color: var(--ty-subscribe-button);
+}
+
+.litecheckout__newsletters {
+    margin-top: 24px;
+}
+
+/* /Newsletters */

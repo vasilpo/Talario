@@ -14,6 +14,7 @@ PaymentDataB2bSberbankVatDataRate - Налоговая ставка НДС
 - 10 - 10%
 - 18 - 18%
 - 20 - 20%
+- 22 - 22%
 
 ---
 ### Constants
@@ -24,6 +25,7 @@ PaymentDataB2bSberbankVatDataRate - Налоговая ставка НДС
 | public | [RATE_10](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_10) |  | 10% |
 | public | [RATE_18](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_18) |  | 18% |
 | public | [RATE_20](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_20) |  | 20% |
+| public | [RATE_22](../classes/YooKassa-Model-PaymentData-B2b-Sberbank-VatDataRate.md#constant_RATE_22) |  | 22% - С 1 января 2026 года ставка НДС 22% применяется вместо ставки 20%. |
 
 ---
 ### Properties
@@ -91,6 +93,15 @@ RATE_18 = '18'
 
 ```php
 RATE_20 = '20'
+```
+
+
+<a name="constant_RATE_22" class="anchor"></a>
+###### RATE_22
+22% - С 1 января 2026 года ставка НДС 22% применяется вместо ставки 20%.
+
+```php
+RATE_22 = '22'
 ```
 
 
@@ -175,11 +186,11 @@ Static public valueExists(mixed $value) : bool
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

@@ -1,32 +1,35 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
+//phpcs:ignore
+use Smarty\Exception as SmartyException;
+use Smarty\Template;
 use Tygh\Registry;
 
 defined('BOOTSTRAP') or die('Access denied');
 
 /**
- * @param array<string, string>     $params  Block params
- * @param string                    $content Block content
- * @param \Smarty_Internal_Template $tempale Smarty template
+ * @param array<string, string> $params   Block params
+ * @param string                $content  Block content
+ * @param Template              $template Smarty template
  *
  * @throws Exception       Internal smarty rendering error.
  * @throws SmartyException If unable to load template.
  *
  * @return string
  */
-function smarty_component_vendor_debt_payout_select_grace_period_to_refill_balance(array $params, $content, Smarty_Internal_Template $tempale)
+function smarty_component_vendor_debt_payout_select_grace_period_to_refill_balance(array $params, $content, Template $template)
 {
     if (Registry::get('addons.vendor_debt_payout.global_grace_period_to_refill_balance') !== null) {
         return '';
@@ -61,7 +64,7 @@ function smarty_component_vendor_debt_payout_select_grace_period_to_refill_balan
         ];
     }
 
-    $tempale->assign([
+    $template->assign([
         'component_id'            => 'lowers_allowed_balance',
         'name'                    => isset($params['input_name']) ? $params['input_name'] : 'plan_data[grace_period_to_refill_balance]',
         'variants'                => $variants,
@@ -71,5 +74,8 @@ function smarty_component_vendor_debt_payout_select_grace_period_to_refill_balan
         'custom_input_attributes' => $custom_input_attributes
     ]);
 
-    return $tempale->fetch('components/default_custom.tpl');
+    /** @var \Tygh\SmartyEngine\Core $smarty */
+    $smarty = $template->getSmarty();
+
+    return $smarty->fetch('components/default_custom.tpl', null, null, $template);
 }

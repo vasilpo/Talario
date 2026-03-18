@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Enum\SiteArea;
@@ -163,33 +163,11 @@ return [
                 return false;
             }
 
-            $todo_data = [
+            return [
                 'action_text' => __('helpdesk_account.sign_in'),
                 'text'        => __('helpdesk_account.signed_out_message'),
                 'action_url'  => Tygh::$app['helpdesk.connect_url']
             ];
-
-            if (!fn_allowed_for('ULTIMATE:FREE')) {
-                return $todo_data;
-            }
-
-            $is_activated_ult_free = fn_get_storage_data('free_mode', false);
-            $show_activate_ult_free = !$is_activated_ult_free
-                && YesNo::toBool($auth['is_root'])
-                && !$auth['company_id']
-                && Registry::get('settings.Upgrade_center.license_number');
-
-
-            if ($show_activate_ult_free) {
-                $todo_data = [
-                    'action_text'    => __('helpdesk_account.sign_up'),
-                    'text'           => __('helpdesk_account.activate_free_license_short_message'),
-                    'action_url'     => 'helpdesk_connector.activate_license_mail_request',
-                    'is_ajax_action' => true
-                ];
-            }
-
-            return $todo_data;
         }
     ],
     'upgrade_center_core_upgrade_available' => [

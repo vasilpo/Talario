@@ -1,0 +1,417 @@
+/** Styles for user-defined CSS classes **/
+
+/** 1. General **/
+
+/** General header **/
+@media (min-width: 768px) and (max-width: 1365px) {
+    .top-cart-content {
+        float: none;
+    }
+}
+
+.top-cart-content .ty-dropdown-box__content {
+    border-top-left-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.top-cart-content .ty-dropdown-box__title {
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.top-cart-content .ty-dropdown-box__title.open {
+    border-bottom-left-radius: var(--cs-base-rounded-corners-radius);
+    border-bottom-right-radius: var(--cs-base-rounded-corners-radius);
+}
+
+/** General footer **/
+.footer-copyright {
+    background-color: var(--cs-footer-copyright-color);
+    background-image: var(--cs-footer-copyright-image);
+}
+
+
+/** 2. Default location **/
+
+/** Top panel default location **/
+@media (max-width: 1024px) {
+    .top-links-grid .ty-geo-maps__geolocation .ty-geo-maps__geolocation__opener {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .top-links-grid .ty-geo-maps__geolocation .ty-geo-maps__geolocation__opener:hover {
+        background: transparent;
+    }
+}
+
+.no-touch .top-links-grid .ty-text-links__a--submenu:hover {
+    background: var(--cs-dropdown-link-background-hover);
+    color: var(--cs-dropdown-link-color-hover);
+}
+
+.top-links-grid .ty-text-links_show_inline .ty-level-0 > .ty-text-links {
+    padding-top: calc(var(--cs-base-border-radius) * 0.66667);
+    padding-bottom: calc(var(--cs-base-border-radius) * 0.66667);
+}
+
+@media (max-width: 1024px) {
+    .top-links-grid .ty-text-links_show_inline .ty-level-0 > .ty-text-links {
+        padding: 2px 0;
+    }
+}
+
+@media (min-width: 1025px) {
+    .no-touch .top-links-grid .ty-text-links__a--inline:hover,
+    .no-touch .top-links-grid .ty-text-links__subitems:hover .ty-text-links__a--subitems {
+        background: transparent;
+    }
+
+    .top-links-grid .ty-text-links__a--inline.ty-text-links__a--active,
+    .top-links-grid .ty-text-links__a--inline.ty-text-links__a--active:hover {
+        background: var(--cs-general-bg-color);
+    }
+}
+
+@media (min-width: 375px) {
+    .top-my-account .ty-dropdown-box__content {
+        min-width: 300px;
+    }
+}
+
+/** Header default location **/
+.top-menu-grid {
+    padding-top: 16px;
+}
+
+@media (max-width: 767px) {
+    .top-menu-grid {
+        padding-top: 0;
+    }
+}
+
+.content-menu .ty-tree-menu__item.ty-menu-item__item-show-small {
+    display: none !important;
+}
+
+/** Footer default location **/
+.footer-stay-connected {
+    background: var(--cs-primary-button);
+}
+
+@media (min-width: 768px) {
+    .ty-footer-menu {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+}
+
+
+/** 3. Homepage location **/
+.homepage-banners {
+    margin-top: var(--space-m);
+    margin-bottom: var(--space-l);
+}
+
+@media (min-width: 768px) {
+    .homepage-banners {
+        margin-top: 0;
+    }
+}
+
+/** Homepage banners mini/middle **/
+.ty-homepage-banners-mini-wrapper-grid,
+.ty-homepage-banners-middle-wrapper-grid,
+.ty-homepage-banners-bottom-wrapper-grid {
+    margin: var(--space-l) 0 var(--space-s) 0;
+}
+
+.ty-homepage-banners-mini-wrapper-grid .row-fluid {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .ty-homepage-banners-mini-wrapper-grid .row-fluid {
+        gap: normal;
+    }
+}
+
+.ty-homepage-banners-mini-grid,
+.ty-homepage-banners-middle-grid,
+.ty-homepage-banners-bottom-grid {
+    margin-bottom: 20px;
+}
+
+.ty-homepage-banners-mini-grid {
+    --ty-homepage-banners-mini-grid-flex-basis-percent: 50%;
+
+    flex-basis: calc(var(--ty-homepage-banners-mini-grid-flex-basis-percent) - 10px);
+}
+
+@media (min-width: 768px) {
+    .ty-homepage-banners-mini-grid {
+        flex-basis: auto;
+    }
+}
+
+.ty-homepage-banners-mini .ty-banner__image-wrapper,
+.ty-homepage-banners-middle .ty-banner__image-wrapper,
+.ty-homepage-banners-bottom .ty-banner__image-wrapper {
+    margin-bottom: 0;
+}
+
+/** Brands **/
+.homepage-our-brands .ty-mainbox-simple-title {
+    margin-bottom: var(--space-m);
+}
+
+.our-brands-grid {
+    margin-bottom: 0;
+}
+
+
+/** 4. Main menu location **/
+/** (empty) **/
+
+
+/** 5. My account location **/
+@media (max-width: 768px) {
+    .content-my-account .ty-account-info__item {
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--cs-base);
+    }
+
+    .content-my-account .ty-account-info__item:last-child {
+        border-bottom-color: transparent;
+    }
+
+    .content-my-account .ty-account-info__a {
+        display: block;
+        padding: 13px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-text-links .ty-text-links__item {
+        margin: 0;
+        padding: 0;
+        border-bottom: 1px solid var(--cs-base);
+    }
+
+    .content-text-links .ty-text-links__item:last-child {
+        border-bottom-color: transparent;
+    }
+
+    .content-text-links .ty-text-links__a {
+        display: block;
+        padding: 13px 0;
+    }
+
+    .content-text-links .ty-text-links__a:not([href]) {
+        margin-top: 40px;
+        padding: 0;
+        font-size: var(--cs-font-size-mini);
+        color: var(--cs-secondary-text);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .content-text-links .ty-text-links .ty-level-1 {
+        margin-left: 0;
+    }
+}
+
+
+/** 6. Products location **/
+/** (empty) **/
+
+
+/** 7. Categories location **/
+/** (empty) **/
+
+
+/** 8. Cart location **/
+/** (empty) **/
+
+
+/** 9. Checkout location **/
+.litecheckout__footer .footer-copyright {
+    background: var(--cs-footer-bg);
+}
+
+.litecheckout__footer .ty-logo-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.litecheckout__footer .bottom-copyright {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 767px) {
+    .litecheckout__footer .bottom-copyright {
+        text-align: center;
+    }
+}
+
+
+/** 10. Auth location **/
+/** (empty) **/
+
+
+/** 11. Profiles location **/
+/** (empty) **/
+
+
+/** 12. Successful registration location **/
+/** (empty) **/
+
+
+/** 13. Order landing page location **/
+/** (empty) **/
+
+
+/** 14. Pages location **/
+.ty-blog-grid * {
+    font-size: 16px;
+}
+
+
+/** 15. Vendor store location **/
+/** (empty) **/
+
+
+/** 16. Vendor application form location **/
+/** (empty) **/
+
+
+/** 17. Gift certificates location **/
+/** (empty) **/
+
+
+/** 18. 404 location **/
+/** (empty) **/
+
+
+/** 19. Search results location **/
+/** (empty) **/
+
+
+/** 20. Blog location **/
+/** (empty) **/
+
+
+/** 21. Vendors plans **/
+/** (empty) **/
+
+
+/** Hide grids on mobile **/
+:root {
+    /** Main menu controller **/
+    --ty-menus-top-panel-grid-display: none;
+    --ty-menus-header-grid-display: block;
+    --ty-menus-footer-grid-display: none;
+    --ty-menus-top-logo-grid-display: none;
+
+    /** Products controller **/
+    --ty-products-top-panel-grid-display: none;
+    --ty-products-header-grid-display: none;
+    --ty-products-footer-grid-display: block;
+    --ty-products-top-logo-grid-display: block;
+
+    /** Categories controller **/
+    --ty-categories-top-panel-grid-display: none;
+    --ty-categories-footer-grid-display: block;
+    --ty-categories-top-logo-grid-display: none;
+
+    /** Checkout controller **/
+    --ty-checkout-top-panel-grid-display: block;
+    --ty-checkout-header-grid-display: none;
+    --ty-checkout-footer-grid-display: block;
+    --ty-checkout-top-logo-grid-display: none;
+
+    /** Profiles controller **/
+    --ty-profiles-top-panel-grid-display: block;
+    --ty-profiles-header-grid-display: none;
+    --ty-profiles-footer-grid-display: block;
+    --ty-profiles-top-logo-grid-display: block;
+}
+
+@media (max-width: 767px) {
+    /** Main menu **/
+    .ty-cs-controller-menus.ty-top-panel-grid-responsive {
+        display: var(--ty-menus-top-panel-grid-display);
+    }
+    .ty-cs-controller-menus.ty-header-grid-responsive {
+        display: var(--ty-menus-header-grid-display);
+    }
+    .ty-cs-controller-menus.ty-footer-grid-responsive {
+        display: var(--ty-menus-footer-grid-display);
+    }
+    .ty-cs-controller-menus.ty-top-logo-grid-responsive[class*="span"],
+    .row-fluid .ty-cs-controller-menus.ty-top-logo-grid-responsive[class*="span"] {
+        display: var(--ty-menus-top-logo-grid-display);
+    }
+
+    /** Products **/
+    .ty-cs-controller-products.ty-top-panel-grid-responsive {
+        display: var(--ty-products-top-panel-grid-display);
+    }
+    .ty-cs-controller-products.ty-header-grid-responsive {
+        display: var(--ty-products-header-grid-display);
+    }
+    .ty-cs-controller-products.ty-footer-grid-responsive {
+        display: var(--ty-products-footer-grid-display);
+    }
+    .ty-cs-controller-products.ty-top-logo-grid-responsive[class*="span"],
+    .row-fluid .ty-cs-controller-products.ty-top-logo-grid-responsive[class*="span"] {
+        display: var(--ty-products-top-logo-grid-display);
+    }
+
+    /** Categories **/
+    .ty-cs-controller-categories.ty-top-panel-grid-responsive {
+        display: var(--ty-categories-top-panel-grid-display);
+    }
+    .ty-cs-controller-categories.ty-footer-grid-responsive {
+        display: var(--ty-categories-footer-grid-display);
+    }
+    .ty-cs-controller-categories.ty-top-logo-grid-responsive[class*="span"],
+    .row-fluid .ty-cs-controller-categories.ty-top-logo-grid-responsive[class*="span"] {
+        display: var(--ty-categories-top-logo-grid-display);
+    }
+    .ty-cs-controller-categories.ty-top-logo-grid-responsive[class*="span"],
+    .row-fluid .ty-cs-controller-categories.ty-top-logo-grid-responsive[class*="span"] {
+        display: var(--ty-categories-top-logo-grid-display);
+    }
+
+    /** Checkout **/
+    .ty-cs-controller-checkout.ty-top-panel-grid-responsive {
+        display: var(--ty-checkout-top-panel-grid-display);
+    }
+    .ty-cs-controller-checkout.ty-header-grid-responsive {
+        display: var(--ty-checkout-header-grid-display);
+    }
+    .ty-cs-controller-checkout.ty-footer-grid-responsive {
+        display: var(--ty-checkout-footer-grid-display);
+    }
+    .ty-cs-controller-checkout.ty-top-logo-grid-responsive[class*="span"],
+    .row-fluid .ty-cs-controller-checkout.ty-top-logo-grid-responsive[class*="span"] {
+        display: var(--ty-checkout-top-logo-grid-display);
+    }
+
+    /** Profiles **/
+    .ty-cs-controller-profiles.ty-top-panel-grid-responsive {
+        display: var(--ty-profiles-top-panel-grid-display);
+    }
+    .ty-cs-controller-profiles.ty-header-grid-responsive {
+        display: var(--ty-profiles-header-grid-display);
+    }
+    .ty-cs-controller-profiles.ty-footer-grid-responsive {
+        display: var(--ty-profiles-footer-grid-display);
+    }
+    .ty-cs-controller-profiles.ty-top-logo-grid-responsive[class*="span"],
+    .row-fluid .ty-cs-controller-profiles.ty-top-logo-grid-responsive[class*="span"] {
+        display: var(--ty-profiles-top-logo-grid-display);
+    }
+}

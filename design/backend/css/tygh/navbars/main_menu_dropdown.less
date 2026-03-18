@@ -1,0 +1,272 @@
+// Structure
+// ---
+// 1.   .main-menu.main-menu--ui-menu
+// 2.       .main-menu__item.main-menu__item--ui-menu-item
+// 3.           .main-menu__link-wrapper.main-menu__link-wrapper--ui-menu-item-wrapper
+// 4.               .main-menu__link
+// 5.                   .main-menu__link-icon
+// 6.                   .main-menu__link-content 
+//
+// 7.       .main-menu__accordion-heading.main-menu__link-wrapper--ui-menu-item-wrapper
+// 8.           .main-menu__accordion-heading-icon--ui-menu-icon
+// 9.           .main-menu__link.main-menu__link--icon
+// 10.               .main-menu__link-icon
+// 11.                   .main-menu__icon
+// 12.           .main-menu__link.main-menu__link--with-icon
+// 13.               .main-menu__link-content
+// 14.           .main-menu.main-menu--ui-menu (nested)
+
+// General
+// Container styles
+.cs-main-menu-dropdown .cs-main-menu {
+    box-shadow: 1px 0 0 var(--cs-table-border);
+}
+
+// 1.
+// Reset jQuery UI Menu widget content
+.ui-widget.ui-widget-content.main-menu--ui-menu {
+    border-width: 0;
+}
+
+// Reset Bootstrap collapse
+html.cs-main-menu-dropdown .main-menu.collapse {
+    height: auto;
+    overflow: visible;
+}
+
+// 2.
+// Reset jQuery UI Menu menu item
+.ui-menu .ui-menu-item.main-menu__item--ui-menu-item {
+    padding: 0;
+}
+
+// Submenu header wrapper
+// Reset jQuery UI Menu menu item state disabled
+.main-menu__item--title-divider.ui-state-disabled {
+    opacity: 0.7;
+}
+
+// Hide submenu header wrapper on collapse menu
+html.cs-main-menu-collapse .main-menu__item--title-divider {
+    display: none;
+}
+
+// 3.
+// Reset jQuery UI Menu menu item state active
+.ui-state-active.main-menu__link-wrapper--ui-menu-item-wrapper,
+.ui-widget-content .ui-state-active.main-menu__link-wrapper--ui-menu-item-wrapper,
+.ui-widget-header .ui-state-active.main-menu__link-wrapper--ui-menu-item-wrapper,
+a.ui-button.main-menu__link-wrapper--ui-menu-item-wrapper:active,
+.ui-button.main-menu__link-wrapper--ui-menu-item-wrapper:active,
+.ui-button.ui-state-active.main-menu__link-wrapper--ui-menu-item-wrapper:hover {
+    border-width: 0;
+    background: linear-gradient(var(--cs-inverse-shadow50-color), var(--cs-inverse-shadow50-color)), var(--cs-menu-sidebar-color-active);
+}
+
+// 4.
+// Reset jQuery UI Menu widget content link
+.ui-widget-content a.main-menu__link {
+    color: var(--cs-text-color);
+}
+
+// 8. Submenu caret icon
+.main-menu__accordion-heading-icon--ui-menu-icon {
+    text-indent: unset;
+}
+
+.ui-widget-content .ui-icon.main-menu__accordion-heading-icon--ui-menu-icon {
+    background: none;
+}
+
+.main-menu__accordion-heading-icon--ui-menu-icon:after {
+    content: url('../templates/icons/chevron_right.svg');
+}
+
+.cs-dark-theme .main-menu__accordion-heading-icon--ui-menu-icon:after {
+    filter: invert();
+}
+
+html[dir="rtl"] .main-menu__accordion-heading-icon--ui-menu-icon {
+    transform: scaleX(-1);
+}
+
+
+// Level 2, 3
+// 1.
+// Reset jQuery UI Menu widget content and triangle area for level 2, 3
+.main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu,
+.main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu {
+    --main-menu-button-height: ~"calc(var(--main-menu-button-size) - 10px)";
+    --main-menu-menu-item-height: ~"calc(20px + 6px * 2)";
+    --main-menu-top-large: -1px;
+    --main-menu-top-small: ~"calc(var(--main-menu-button-height) - 1px)";
+    --main-menu-bottom-large: auto;
+    --main-menu-bottom-small: auto;
+    --main-menu-transform-skew-x-coefficient: 1;
+    --main-menu-transform-skew-x-text-direction: 1;
+    --main-menu-transform-origin-first: top;
+    --main-menu-max-item-lines-before: 6;
+
+    min-width: var(--main-menu-dropdown-width);
+    border: 1px solid var(--cs-dropdown-border);
+    border-radius: var(--cs-base-border-radius);
+    padding: 4px;
+}
+
+// Useful for open developer tools #1
+@media (min-width: 768px) and (max-height: 750px) {
+    .main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu,
+    .main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu {
+        --main-menu-menu-item-height: ~"calc(20px + 4px * 2)";
+    }
+}
+
+// Triangle area for collision submenu for level 2, 3
+.main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu--dropdown-flipped,
+.main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu--dropdown-flipped {
+    --main-menu-top-large: auto;
+    --main-menu-top-small: auto;
+    --main-menu-bottom-large: -1px;
+    --main-menu-bottom-small: ~"calc(var(--main-menu-button-height) - 1px)";
+    --main-menu-transform-skew-x-coefficient: -1;
+    --main-menu-transform-origin-first: bottom;
+}
+
+// Triangle area for RTL for level 2, 3
+html[dir="rtl"] .main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu,
+html[dir="rtl"] .main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu {
+    --main-menu-transform-skew-x-text-direction: -1;
+}
+
+// Big triangle area that makes it easier to select a submenu for level 2, 3
+.main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu:before,
+.main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu:before {
+    content: '';
+    position: absolute;
+    top: var(--main-menu-top-large);
+    bottom: var(--main-menu-bottom-large);
+    left: ~"calc(-0.6 * var(--main-menu-button-size))";
+    width: 100%;
+    max-width: ~"calc(0.6 * var(--main-menu-button-size))";
+    height: ~"calc(100% + 1px - 4px)";
+    max-height: ~"calc(var(--main-menu-menu-item-height) * var(--main-menu-max-item-lines-before) + 4px)";
+    transform: ~"skewX(calc(13deg * var(--main-menu-transform-skew-x-coefficient) * var(--main-menu-transform-skew-x-text-direction)))";
+    transform-origin: var(--main-menu-transform-origin-first) left;
+}
+
+// Small triangle area that makes it easier to select a submenu for level 2, 3
+.main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu:after,
+.main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 12px;
+    top: var(--main-menu-top-small);
+    bottom: var(--main-menu-bottom-small);
+    left: calc(-0.8 * var(--main-menu-button-size));
+    transform: ~"skewX(calc(40deg * var(--main-menu-transform-skew-x-coefficient) * var(--main-menu-transform-skew-x-text-direction))) rotate(calc(20deg * var(--main-menu-transform-skew-x-coefficient) * var(--main-menu-transform-skew-x-text-direction)))";
+    transform-origin: var(--main-menu-transform-origin-first) right;
+}
+
+.main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu--disable-triangle-area:before,
+.main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu--disable-triangle-area:before,
+.main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu--disable-triangle-area:after,
+.main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu--disable-triangle-area:after {
+    display: none;
+}
+
+// 3.
+// Reset menu collapse for level 2, 3
+.main-menu-2__accordion-heading.main-menu__link-wrapper--ui-menu-item-wrapper,
+.main-menu-2__link-wrapper.main-menu__link-wrapper--ui-menu-item-wrapper,
+.main-menu-3__link-wrapper.main-menu__link-wrapper--ui-menu-item-wrapper {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+// Reset jQuery UI Menu focus/active state for menu item for level 2, 3
+.ui-menu .ui-state-focus.main-menu-2__accordion-heading,
+.ui-menu .ui-state-focus.main-menu-2__link-wrapper,
+.ui-menu .ui-state-focus.main-menu-3__link-wrapper,
+.ui-menu .ui-state-active.main-menu-2__accordion-heading,
+.ui-menu .ui-state-active.main-menu-2__link-wrapper,
+.ui-menu .ui-state-active.main-menu-3__link-wrapper {
+    margin: 0;
+}
+
+// 4.
+// Menu item link for level 2, 3
+.main-menu__link-wrapper--ui-menu-item-wrapper .main-menu-2__link,
+.main-menu__link-wrapper--ui-menu-item-wrapper .main-menu-3__link {
+    padding-left: var(--cs-main-menu-link-padding-left);
+}
+
+
+// Level 1
+// 1.
+// Reset jQuery UI Menu widget content for level 1
+.ui-widget.ui-widget-content.main-menu--ui-menu.main-menu-1 {
+    background: transparent;
+}
+
+// 3. Border radius for menu item without submenu for level 1
+.cs-main-menu-dropdown .main-menu-1__link-wrapper {
+    border-radius: var(--cs-base-border-radius);
+}
+
+// Reset jQuery UI Menu focus/active state for level 1
+.ui-menu .ui-state-focus.main-menu-1__accordion-heading,
+.ui-menu .ui-state-focus.main-menu-1__link-wrapper,
+.ui-menu .ui-state-active.main-menu-1__accordion-heading,
+.ui-menu .ui-state-active.main-menu-1__link-wrapper {
+    margin: 0 8px;
+}
+
+// 4.
+// Big menu item button for level 1
+.cs-main-menu-dropdown .main-menu-1__link.main-menu-1__link {
+    --cs-main-menu-1-link-dropdown-y: 10px;
+
+    padding: var(--cs-main-menu-1-link-dropdown-y) 15px;
+}
+
+// Useful for open developer tools #2
+// var(--cs-tablet-breakpoint) + 1px
+@media (min-width: 768px) and (max-height: 750px) {
+    .cs-main-menu-dropdown .main-menu-1__link.main-menu-1__link {
+        --cs-main-menu-1-link-dropdown-y: 8px;
+    }
+
+    .main-menu-2.ui-widget.ui-widget-content.main-menu--ui-menu,
+    .main-menu-3.ui-widget.ui-widget-content.main-menu--ui-menu {
+        --main-menu-button-height: ~"calc(var(--main-menu-button-size) - 10px - 4px)";
+    }
+}
+
+.cs-main-menu-dropdown .main-menu-1__link--icon.main-menu-1__link--icon {
+    padding-right: 15px;
+}
+
+// Hide menu item text for level 1
+.cs-main-menu-dropdown .main-menu-1__link--with-icon {
+    display: none;
+    background: red;
+}
+
+// 6.
+// Hide menu item text for menu item without submenu for level 1
+.cs-main-menu-dropdown .main-menu-1__link-content {
+    display: none;
+}
+
+// 8.
+// Hide submenu triangle icon for level 1
+.main-menu-1__accordion-heading .main-menu__accordion-heading-icon--ui-menu-icon {
+    display: none;
+}
+
+// 9.
+html.cs-main-menu-dropdown .main-menu__link-wrapper--ui-menu-item-wrapper:not(.ui-state-active) .main-menu-1__link--icon:not(.main-menu-1__link--icon--active):not(:hover):not(:focus),
+html.cs-main-menu-dropdown .main-menu__link-wrapper--ui-menu-item-wrapper:not(.ui-state-active) .main-menu-1__link:not(.main-menu-1__link--icon):not(:hover):not(:focus) .main-menu-1__link-icon {
+    opacity: 0.7;
+}

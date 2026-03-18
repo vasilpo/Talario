@@ -1,0 +1,92 @@
+.ui-dialog {
+    --cs-notification-padding: 16px;
+}
+
+@media (min-width: 768px) {
+    .ui-dialog {
+        --cs-notification-padding: 32px;
+    }
+}
+
+.object-container {
+    padding: calc(var(--cs-notification-padding) / 2) var(--cs-notification-padding) var(--cs-notification-padding) var(--cs-notification-padding);
+}
+
+.ui-widget-content.ui-dialog {
+    max-width: 980px;
+    box-shadow: var(--cs-shadow);
+}
+
+html.dialog-mobile-bottom .ui-widget-content.ui-dialog {
+    --cs-dialog-radius: var(--cs-base-rounded-corners-radius) var(--cs-base-rounded-corners-radius) 0 0;
+
+    border-radius: var(--cs-dialog-radius);
+}
+
+@media (min-width: 768px) {
+    html.dialog-mobile-bottom .ui-widget-content.ui-dialog {
+        --cs-dialog-radius: var(--cs-base-rounded-corners-radius);
+    }
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: var(--cs-notification-padding) var(--cs-notification-padding) calc(var(--cs-notification-padding) / 2) var(--cs-notification-padding);
+    border-bottom-width: 0;
+    background: transparent;
+}
+
+div.ui-dialog .ui-dialog-title {
+    --ui-dialog-title-max-width-percent: 100%;
+
+    /** calc(100% - 36px - 8px) **/
+    max-width: calc(var(--ui-dialog-title-max-width-percent) - 28px); /** 100% - Dialog close width - Margin **/
+    color: var(--cs-font);
+    font-weight: var(--cs-headings-font-weight);
+    font-size: var(--cs-headings-font-size);
+    padding-right: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    margin: 0;
+    top: var(--cs-notification-padding);
+    right: var(--cs-notification-padding);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+.ui-dialog .buttons-container {
+    margin: 0 calc(var(--cs-notification-padding) * -1);
+    padding: calc(var(--cs-notification-padding) / 2) var(--cs-notification-padding) var(--cs-notification-padding) var(--cs-notification-padding);
+    background: transparent;
+    border-radius: var(--cs-base-rounded-corners-radius);
+}
+
+@media (max-width: 767px) {
+    html.dialog--no-scroll .ui-dialog .buttons-container {
+        background: #fff;
+        border-radius: 0px;
+    }
+}
+
+.ui-dialog .buttons-container.picker {
+    background: transparent;
+}
+
+.buttons-container-picker {
+    border-width: 0;
+}
+
+.ui-widget-header .ui-icon-closethick {
+    color: var(--cs-btn-link-color);
+    margin: 0;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.ui-widget-header .ui-icon-closethick:before {
+    content: "\e5cd";
+}

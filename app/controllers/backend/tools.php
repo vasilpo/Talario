@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Snapshot;
 use Tygh\Languages\Languages;
@@ -75,43 +75,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($mode === 'remove_quick_menu_item') {
+        $where = '';
+
+        if ((int) $_REQUEST['parent_id'] === 0) {
+            $where = db_quote(' OR parent_id = ?i', $_REQUEST['id']);
+            $delete_ids = db_get_fields('SELECT menu_id FROM ?:quick_menu WHERE parent_id = ?i', $_REQUEST['id']);
+            db_query("DELETE FROM ?:common_descriptions WHERE object_id IN (?n) AND object_holder = 'quick_menu'", $delete_ids);
+        }
+
+        db_query('DELETE FROM ?:quick_menu WHERE menu_id = ?i ?p', $_REQUEST['id'], $where);
+        db_query("DELETE FROM ?:common_descriptions WHERE object_id = ?i AND object_holder = 'quick_menu'", $_REQUEST['id']);
+
+        Tygh::$app['view']->assign('quick_menu', fn_get_quick_menu_data());
+        Tygh::$app['view']->display('common/quick_menu.tpl');
+        exit;
+    }
+
+    if ($mode === 'update_position') {
+        if (db_has_table($_REQUEST['table'])) {
+            $table_name = $_REQUEST['table'];
+        } else {
+            exit;
+        }
+
+        $table_fields = fn_get_table_fields($table_name);
+        $id_name = $_REQUEST['id_name'];
+        $ids = explode(',', $_REQUEST['ids']);
+        $positions = explode(',', $_REQUEST['positions']);
+        $fields = [$id_name, 'position'];
+
+        if (empty($table_fields) || count(array_intersect($table_fields, $fields)) !== count($fields)) {
+            exit;
+        }
+
+        foreach ($ids as $k => $id) {
+            db_query("UPDATE ?:$table_name SET position = ?i WHERE ?w", $positions[$k], [$id_name => $id]);
+        }
+
+        fn_set_notification('N', __('notice'), __('positions_updated'));
+
+        exit;
+    }
+
     return;
-}
-
-if ($mode === 'phpinfo') {
-    phpinfo();
-    exit;
-}
-
-if ($mode === 'show_quick_menu') {
-    Tygh::$app['view']->display('common/quick_menu.tpl');
-    exit;
-}
-
-if ($mode === 'get_quick_menu_variant') {
-    if (!defined('AJAX_REQUEST')) {
-        return [CONTROLLER_STATUS_REDIRECT, 'index.index'];
-    }
-
-    Tygh::$app['ajax']->assign('description', db_get_field("SELECT description FROM ?:common_descriptions WHERE object_id = ?i AND object_holder = 'quick_menu' AND lang_code = ?s", $_REQUEST['id'], DESCR_SL));
-    exit;
-}
-
-if ($mode === 'remove_quick_menu_item') {
-    $where = '';
-
-    if ((int) $_REQUEST['parent_id'] === 0) {
-        $where = db_quote(' OR parent_id = ?i', $_REQUEST['id']);
-        $delete_ids = db_get_fields('SELECT menu_id FROM ?:quick_menu WHERE parent_id = ?i', $_REQUEST['id']);
-        db_query("DELETE FROM ?:common_descriptions WHERE object_id IN (?n) AND object_holder = 'quick_menu'", $delete_ids);
-    }
-
-    db_query('DELETE FROM ?:quick_menu WHERE menu_id = ?i ?p', $_REQUEST['id'], $where);
-    db_query("DELETE FROM ?:common_descriptions WHERE object_id = ?i AND object_holder = 'quick_menu'", $_REQUEST['id']);
-
-    Tygh::$app['view']->assign('quick_menu', fn_get_quick_menu_data());
-    Tygh::$app['view']->display('common/quick_menu.tpl');
-    exit;
 }
 
 if ($mode === 'cleanup_history') {
@@ -129,29 +136,29 @@ if ($mode === 'store_mode') { // Open/close the store
     exit;
 }
 
-if ($mode === 'update_position') {
-    if (db_has_table($_REQUEST['table'])) {
-        $table_name = $_REQUEST['table'];
-    } else {
-        exit;
+if ($mode === 'phpinfo') {
+    phpinfo();
+    exit;
+}
+
+if ($mode === 'show_quick_menu') {
+    Tygh::$app['view']->display('common/quick_menu.tpl');
+    exit;
+}
+
+if ($mode === 'get_quick_menu_variant') {
+    if (!defined('AJAX_REQUEST')) {
+        return [CONTROLLER_STATUS_REDIRECT, 'index.index'];
     }
 
-    $table_fields = fn_get_table_fields($table_name);
-    $id_name = $_REQUEST['id_name'];
-    $ids = explode(',', $_REQUEST['ids']);
-    $positions = explode(',', $_REQUEST['positions']);
-    $fields = [$id_name, 'position'];
-
-    if (empty($table_fields) || count(array_intersect($table_fields, $fields)) !== count($fields)) {
-        exit;
-    }
-
-    foreach ($ids as $k => $id) {
-        db_query("UPDATE ?:$table_name SET position = ?i WHERE ?w", $positions[$k], [$id_name => $id]);
-    }
-
-    fn_set_notification('N', __('notice'), __('positions_updated'));
-
+    Tygh::$app['ajax']->assign(
+        'description',
+        db_get_field(
+            'SELECT description FROM ?:common_descriptions WHERE object_id = ?i AND object_holder = "quick_menu" AND lang_code = ?s',
+            $_REQUEST['id'],
+            DESCR_SL
+        )
+    );
     exit;
 }
 

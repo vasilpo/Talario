@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Registry;
 
@@ -41,6 +41,7 @@ defined('BOOTSTRAP') or die('Access denied');
 $schema = [
     'administration.view' => [
         'clear_cache' => [
+            'class' => 'cm-post',
             'href' => 'storage.clear_cache?redirect_url=' . urlencode(Registry::get('config.current_url')),
             'text' => __('actions.clear_cache'),
             'position' => 100
@@ -231,6 +232,13 @@ $schema = [
             'position' => 300
         ]
     ],
+    'robots.manage' => [
+        'seo_llms' => [
+            'href'     => 'llms.manage',
+            'text'     => __('actions.seo_llms'),
+            'position' => 100
+        ]
+    ],
     'shippings.manage' => [
         'destinations' => [
             'href' => 'destinations.manage',
@@ -283,18 +291,14 @@ $schema = [
             'text' => __('actions.product_tabs'),
             'position' => 300
         ],
-        'clone_theme' => [ // For admin: the 'target_id' will be updated in the themes controllers
-            'type' => 'dialog',
-            'text' => __('clone_theme'),
-            'target_id' => 'content_elm_clone_theme_',
-            'position' => 400
-        ],
         'clear_cache' => [
+            'class' => 'cm-post',
             'href' => 'storage.clear_cache?redirect_url=' . urlencode(Registry::get('config.current_url')),
             'text' => __('actions.clear_cache'),
             'position' => 500
         ],
         'clear_thumbnails' => [
+            'class' => 'cm-post',
             'href' => 'storage.clear_thumbnails?redirect_url=' . urlencode(Registry::get('config.current_url')),
             'text' => __('actions.clear_thumbnails'),
             'position' => 600
@@ -309,13 +313,11 @@ $schema = [
     ],
 ];
 
-if (!fn_allowed_for('ULTIMATE:FREE')) {
-    $schema['datakeeper.manage']['cdn_settings'] = [
-        'href' => 'storage.cdn',
-        'text' => __('actions.cdn_settings'),
-        'position' => 300
-    ];
-}
+$schema['datakeeper.manage']['cdn_settings'] = [
+    'href' => 'storage.cdn',
+    'text' => __('actions.cdn_settings'),
+    'position' => 300
+];
 
 if (!Registry::get('config.tweaks.disable_localizations')) {
     $schema['shippings.manage']['localizations'] = [

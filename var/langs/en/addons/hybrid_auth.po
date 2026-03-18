@@ -9,8 +9,8 @@ msgid "Social login"
 msgstr "Social login"
 
 msgctxt "Addons::description::hybrid_auth"
-msgid "Adds the Social Login feature; allows customers use Facebook, Twitter, etc. to log in on the store"
-msgstr "Adds the Social Login feature; allows customers use Facebook, Twitter, etc. to log in on the store"
+msgid "Adds the Social Login feature; allows customers use Facebook, X, Google, etc. to log in on the store"
+msgstr "Adds the Social Login feature; allows customers use Facebook, X, Google, etc. to log in on the store"
 
 msgctxt "SettingsSections::hybrid_auth::general"
 msgid "General"
@@ -31,10 +31,6 @@ msgstr "Autogeneration email"
 msgctxt "SettingsTooltips::hybrid_auth::autogen_email"
 msgid "Enables the email auto generation in case that a social network does not pass the address."
 msgstr "Enables the email auto generation in case that a social network does not pass the address."
-
-msgctxt "Languages::hybrid_auth_menu_description"
-msgid "Connect users via Facebook, Twitter, Google, etc."
-msgstr "Connect users via Facebook, Twitter, Google, etc."
 
 msgctxt "Languages::hybrid_auth"
 msgid "Social login"
@@ -152,6 +148,10 @@ msgctxt "Languages::public_key"
 msgid "Public key"
 msgstr "Public key"
 
+msgctxt "Languages::client_secret"
+msgid "Client secret"
+msgstr "Client secret"
+
 msgctxt "Languages::paypal_seamless"
 msgid "Use seamless checkout"
 msgstr "Use seamless checkout"
@@ -188,9 +188,9 @@ msgctxt "Languages::hybrid_auth.instruction_paypal"
 msgid "Use the application ID and Secret key that you've received after creating an application on <a href='https://developer.paypal.com/developer/applications' target='_blank'>PayPal Developers</a>."
 msgstr "Use the application ID and Secret key that you've received after creating an application on <a href='https://developer.paypal.com/developer/applications' target='_blank'>PayPal Developers</a>."
 
-msgctxt "Languages::hybrid_auth.instruction_twitter"
-msgid "Use ID (Consumer key) and Secret key that you've received after creating an application on <a href='https://apps.twitter.com/' target='_blank'>Twitter</a>."
-msgstr "Use ID (Consumer key) and Secret key that you've received after creating an application on <a href='https://apps.twitter.com/' target='_blank'>Twitter</a>."
+msgctxt "Languages::hybrid_auth.instruction_x"
+msgid "Use ID (Consumer key) and Secret key that you've received after creating an application on <a href='https://developer.x.com/' target='_blank'>X</a>."
+msgstr "Use ID (Consumer key) and Secret key that you've received after creating an application on <a href='https://developer.x.com/' target='_blank'>X</a>."
 
 msgctxt "Languages::hybrid_auth.instruction_yahoo"
 msgid "Use ID (Identificator) and Secret key that you've received after creating an application on <a href='https://developer.yahoo.com/apps/create/' target='_blank'>Yahoo</a>."
@@ -207,6 +207,18 @@ msgstr "Use ID (Consumer key) and Secret key that you've received after creating
 msgctxt "Languages::hybrid_auth.instruction_foursquare"
 msgid "Use the application ID and Secret key that you've received after creating an application on <a href='https://foursquare.com/developers/apps' target='_blank'>Fousquare</a>."
 msgstr "Use the application ID and Secret key that you've received after creating an application on <a href='https://foursquare.com/developers/apps' target='_blank'>Fousquare</a>."
+
+msgctxt "Languages::hybrid_auth.instruction_telegram"
+msgid "Use the bot ID (name) and Secret token that you've received after creating a bot in Telegram app. Also you should set domain using '/setdomain'. See: <a href='https://core.telegram.org/bots' target='_blank'>Telegram bots</a>."
+msgstr "Use the bot ID (name) and Secret token that you've received after creating a bot in Telegram app. Also you should set domain using '/setdomain'. See: <a href='https://core.telegram.org/bots' target='_blank'>Telegram bots</a>."
+
+msgctxt "Languages::hybrid_auth.telegram.bot_id"
+msgid "Bot ID (name)"
+msgstr "Bot ID (name)"
+
+msgctxt "Languages::hybrid_auth.telegram.bot_token"
+msgid "Bot token"
+msgstr "Bot token"
 
 msgctxt "Languages::email_template.hybrid_auth_create_profile"
 msgid "Create user profile via social login"
@@ -243,3 +255,7 @@ msgstr "v2"
 msgctxt "Languages::hybrid_auth.instruction_paypal_application"
 msgid "Use the application ID and Secret key that you've received after creating an application on <a href='https://developer.paypal.com/developer/applications' target='_blank'>PayPal Developers</a>. Please enable all Personal Profile scope attributes and at least one scope attribute in Address and in Account Information in your PayPal application settings."
 msgstr "Use the application ID and Secret key that you've received after creating an application on <a href='https://developer.paypal.com/developer/applications' target='_blank'>PayPal Developers</a>. Please enable all Personal Profile scope attributes and at least one scope attribute in Address and in Account Information in your PayPal application settings."
+
+msgctxt "Languages::hybrid_auth_menu_description"
+msgid "Connect users via Facebook, X, Google, etc."
+msgstr "Connect users via Facebook, X, Google, etc."

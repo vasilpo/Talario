@@ -26,9 +26,9 @@
             ),
         ),
         'yoomoney/yookassa-sdk-php' => array(
-            'pretty_version' => '2.12.0',
-            'version' => '2.12.0.0',
-            'reference' => '61ac9c7ebdf60f28b58e64cc0fc86283687d937f',
+            'pretty_version' => '2.13.0',
+            'version' => '2.13.0.0',
+            'reference' => '846375280694d418025ba9ec5bcdbdfac6773932',
             'type' => 'library',
             'install_path' => __DIR__ . '/../yoomoney/yookassa-sdk-php',
             'aliases' => array(),

@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Enum\NotificationSeverity;
 use Tygh\Http;
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($mode == 'delete_certificate') {
+    if ($mode === 'delete_certificate') {
         if (!empty($_REQUEST['payment_id'])) {
             $payment_data = fn_get_payment_method_data($_REQUEST['payment_id']);
 
@@ -53,7 +53,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        return array(CONTROLLER_STATUS_REDIRECT, 'payments.processor?payment_id=' . $_REQUEST['payment_id']);
+        return [CONTROLLER_STATUS_REDIRECT, 'payments.processor?payment_id=' . $_REQUEST['payment_id']];
+    }
+
+    if ($mode === 'delete_certificate_key') {
+        if (!empty($_REQUEST['payment_id'])) {
+            $payment_data = fn_get_payment_method_data($_REQUEST['payment_id']);
+
+            if ($payment_data['processor_params']['certificate_key_filename']) {
+                fn_rm(Registry::get('config.dir.certificate_keys') . $_REQUEST['payment_id']);
+                $payment_data['processor_params']['certificate_key_filename'] = '';
+
+                fn_update_payment($payment_data, $_REQUEST['payment_id']);
+            }
+        }
+
+        return [CONTROLLER_STATUS_REDIRECT, 'payments.processor?payment_id=' . $_REQUEST['payment_id']];
     }
 
     if (
@@ -118,6 +133,10 @@ if ($mode == 'processor') {
 
     if (!empty($processor_data['processor_params']['certificate_filename'])) {
         $processor_data['processor_params']['certificate_filename'] = fn_basename($processor_data['processor_params']['certificate_filename']);
+    }
+
+    if (!empty($processor_data['processor_params']['certificate_key_filename'])) {
+        $processor_data['processor_params']['certificate_key_filename'] = fn_basename($processor_data['processor_params']['certificate_key_filename']);
     }
 
     $view = Tygh::$app['view'];

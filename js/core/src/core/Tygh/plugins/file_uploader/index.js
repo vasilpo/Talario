@@ -522,6 +522,27 @@ $.extend(FileUploader.prototype, {
             self.registerCustomAltUpdateEvent(addedFile);
             self.expandAltTextarea(addedFile);
         });
+
+        this.dropzone.on('thumbnail', function (file) {
+            if (
+                file.status !== 'uploading'
+                || file.size === null
+                || (
+                    (typeof file.width === 'undefined'
+                        || file.width <= _.max_uploaded_image_dimension)
+                    && (typeof file.heght === 'undefined'
+                        || file.heght <= _.max_uploaded_image_dimension)
+                )
+            ) {
+                return;
+            }
+            $.ceNotification('show', {
+                type: 'E',
+                title: _.tr('error'),
+                message: _.tr('text_not_allowed_to_upload_image_with_dimensions').replaceAll('[dimension]', _.max_uploaded_image_dimension)
+            });
+            this.removeFile(file);
+        });
     },
 
     getImageDataIndex: function (added_file) {

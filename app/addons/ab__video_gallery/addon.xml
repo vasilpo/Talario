@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
 <id>ab__video_gallery</id>
-<version>3.7.0</version>
+<version>3.7.1</version>
 <priority>2017</priority>
 <position>0</position>
 <status>active</status>
@@ -22,10 +22,10 @@
 <core_edition>ULTIMATE,MULTIVENDOR</core_edition>
 </compatibility>
 <ab>
-<hash>1a416ad48d98932de0462a9dd3d5f6e19063d869, 2024-08-16 17:35:08</hash>
+<hash>9219b282ff98932bdcd1ec136e27010707612a83, 2025-10-28 15:06:42</hash>
 <compatibility>
 <dependencies>
-<ab__addons_manager><min>2.5.2</min></ab__addons_manager>
+<ab__addons_manager><min>2.5.6</min></ab__addons_manager>
 <abt__unitheme2><min>4.18.1.b</min></abt__unitheme2>
 <abt__youpitheme><min>4.15.2.b</min></abt__youpitheme>
 </dependencies>
@@ -84,7 +84,7 @@
 <default_value>Y</default_value>
 </item>
 <item id="code"><type>hidden</type><default_value>ABA-1mRdWjgN7nuXwzY7Mxxj0</default_value></item>
-<item id="build"><type>hidden</type><default_value>1171</default_value></item>
+<item id="build"><type>hidden</type><default_value>1249</default_value></item>
 </items>
 </section>
 </sections>

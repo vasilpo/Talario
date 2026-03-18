@@ -1,0 +1,1 @@
+{style src="addons/upsell/styles.less"}

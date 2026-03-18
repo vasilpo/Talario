@@ -35,6 +35,7 @@
             {include file="views/checkout/components/steps/customer.tpl"
                 show_title=$show_customer_fields_first
                 show_information=$show_customer_fields_first
+                is_checkout_customer_title_fill=$is_checkout_customer_title_fill
                 show_address=false
                 show_notes=false
             }
@@ -44,6 +45,7 @@
             {include file="views/checkout/components/steps/customer.tpl"
                 show_title=!$show_customer_fields_first
                 show_information=!$show_customer_fields_first
+                is_checkout_customer_title_fill=$is_checkout_customer_title_fill
                 show_address=true
                 show_notes=true
             }

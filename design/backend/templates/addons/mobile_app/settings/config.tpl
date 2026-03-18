@@ -187,7 +187,7 @@
 
         {foreach $image_types as $image_type_data}
             <div class="control-group">
-                <label class="control-label">{__("mobile_app.`$image_type_data.name`")}</label>
+                <label class="control-label">{__("mobile_app.`$image_type_data.name`")}:</label>
                 <div class="controls">
                     {include file="common/attach_images.tpl" image_name=$image_type_data.name image_object_type=$image_type_data.type image_pair=$app_images[$image_type_data.type] hide_alt=true hide_thumbnails=true no_thumbnail=true}
                     {if !$image_type_data.no_tooltip}

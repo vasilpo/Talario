@@ -1,29 +1,31 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
+
+use Smarty\Template;
 
 defined('BOOTSTRAP') or die('Access denied');
 
 /**
  * Outputs configurable page section.
  *
- * @param array<string, string>     $params   Component parameters
- * @param string                    $content  Output field content
- * @param \Smarty_Internal_Template $template Template instance
+ * @param array<string, string> $params   Component parameters
+ * @param string                $content  Output field content
+ * @param Template              $template Template instance
  *
  * @return string
  */
-function smarty_component_configurable_page_section(array $params, $content, Smarty_Internal_Template $template)
+function smarty_component_configurable_page_section(array $params, $content, Template $template)
 {
     if (
         !isset($params['entity'], $params['tab'], $params['section'])
@@ -61,7 +63,7 @@ function smarty_component_configurable_page_section(array $params, $content, Sma
      * @param array<string, string|bool|int> $section_config Section configuration
      * @param array<string, string>          $params         Component parameters
      * @param string                         $content        Output section content
-     * @param \Smarty_Internal_Template      $template       Template instance
+     * @param Template                       $template       Template instance
      */
     fn_set_hook(
         'smarty_component_configurable_page_section_before_output',

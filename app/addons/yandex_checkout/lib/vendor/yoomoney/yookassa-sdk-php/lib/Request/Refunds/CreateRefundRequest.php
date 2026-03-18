@@ -38,7 +38,7 @@ use YooKassa\Model\SourceInterface;
 /**
  * Класс объекта запроса для создания возврата
  *
- * @example 02-builder.php 148 35 Пример использования билдера
+ * @example 02-builder.php 149 34 Пример использования билдера
  *
  * @property string $paymentId Айди платежа для которого создаётся возврат
  * @property AmountInterface $amount Сумма возврата

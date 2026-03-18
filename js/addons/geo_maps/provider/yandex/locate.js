@@ -26,7 +26,9 @@
     getLocationByCoords: function (lat, lng) {
       var self = geolocate,
         d = $.Deferred();
-      geo_maps_yandex.geocode([lat, lng]).then(d.resolve).fail(d.reject);
+      geo_maps_yandex.geocode([lat, lng], {
+        kind: 'locality'
+      }).then(d.resolve).fail(d.reject);
       return d.then(self._extractLocationFromGeocodeResponse).then(self._getStateCode).promise();
     },
     _extractLocationFromGeocodeResponse: function (res) {

@@ -44,6 +44,7 @@
                         {/if}
                         <select
                             name="product_data[{$bundle_product.product_id}_{$bundle_product_key}][product_features][{$feature.feature_id}]"
+                            class="ty-product-options__item-select"
                         >
                             {foreach $feature.variants as $variant}
                                 {if $variant.product && ($variant.product.amount || $allow_negative_amount)}

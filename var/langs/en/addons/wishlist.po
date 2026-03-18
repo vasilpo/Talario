@@ -59,3 +59,7 @@ msgstr "This product is already in the wish list"
 msgctxt "Languages::wishlist_products"
 msgid "Wish list products"
 msgstr "Wish list products"
+
+msgctxt "Languages::wishlist.navbar_mobile.text"
+msgid "Wish list"
+msgstr "Wish list"

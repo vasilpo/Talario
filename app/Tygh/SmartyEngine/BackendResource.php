@@ -1,36 +1,35 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\SmartyEngine;
 
+use Smarty\Smarty;
 use Tygh\Registry;
-use Smarty_Template_Source;
-use Smarty_Internal_Template;
 
 class BackendResource extends FileResource
 {
     /**
      * build template filepath by traversing the template_dir array
      *
-     * @param Smarty_Template_Source   $source    source object
-     * @param Smarty_Internal_Template $_template template object
+     * @param string $file      File
+     * @param Smarty $smarty    Source object
+     * @param bool   $is_config Is config
      *
      * @return string fully qualified filepath
      */
-    protected function buildFilepath(Smarty_Template_Source $source, Smarty_Internal_Template $_template = null)
+    public function getFilePath($file, Smarty $smarty, bool $is_config = false)
     {
-        $file = $source->name;
         $_directory = Registry::get('config.dir.design_backend') . 'templates/';
 
         // resolve relative path
@@ -58,13 +57,13 @@ class BackendResource extends FileResource
         // relative file name?
         if (!preg_match('/^([\/\\\\]|[a-zA-Z]:[\/\\\\])/', $file)) {
             $_filepath = $_directory . $file;
-            if ($this->fileExists($source, $_filepath)) {
+            if ($this->fileExists($_filepath)) {
                 return $this->normalizePath($_filepath);
             }
         }
 
         // try absolute filepath
-        if ($this->fileExists($source, $file)) {
+        if ($this->fileExists($file)) {
             return $file;
         }
 
@@ -75,16 +74,13 @@ class BackendResource extends FileResource
     /**
      * Test is file exists and save timestamp
      *
-     * @param Smarty_Template_Source $source Source object
-     * @param string                 $file   File name
+     * @param string $file File name
      *
      * @return bool                   true if file exists
      */
-    protected function fileExists(Smarty_Template_Source $source, $file)
+    protected function fileExists($file)
     {
-        $source->timestamp = is_file($file) ? filemtime($file) : false;
-
-        return $source->exists = !!$source->timestamp;
+        return is_file($file);
     }
 
     /**

@@ -1,20 +1,21 @@
 <?php
 /***************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- ****************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- ****************************************************************************/
+*                                                                          *
+*   © 2012 ООО "Эком Системы"                                              *
+*                                                                          *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
+*                                                                          *
+****************************************************************************
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 namespace Tygh\Storefront;
 
 use Tygh\BlockManager\Layout;
+use Tygh\Common\Llms;
 use Tygh\Common\OperationResult;
 use Tygh\Common\Robots;
 use Tygh\Database\Connection;
@@ -51,6 +52,11 @@ class Repository
     protected $robots;
 
     /**
+     * @var \Tygh\Common\Llms
+     */
+    protected $llms;
+
+    /**
      * @var \Tygh\Storefront\Storefront[]
      */
     protected $cache_by_url = [];
@@ -85,13 +91,15 @@ class Repository
         Factory $factory,
         Normalizer $normalizer,
         RelationsManager $relation_manager,
-        Robots $robots
+        Robots $robots,
+        Llms $llms
     ) {
         $this->db = $db;
         $this->factory = $factory;
         $this->normalizer = $normalizer;
         $this->relations_manager = $relation_manager;
         $this->robots = $robots;
+        $this->llms = $llms;
     }
 
     /**
@@ -541,6 +549,7 @@ class Repository
         $this->deleteLogos($storefront->storefront_id);
         $this->deleteCategories($storefront->storefront_id);
         $this->deleteRobotsData($storefront->storefront_id);
+        $this->deleteLlmsData($storefront->storefront_id);
         $this->clearInnerCache();
 
         /**
@@ -1105,6 +1114,18 @@ class Repository
     protected function deleteRobotsData($storefront_id)
     {
         $this->robots->deleteRobotsDataByStorefrontId($storefront_id);
+    }
+
+    /**
+     * Deletes llms.txt data assigned to a stofefront
+     *
+     * @param int $storefront_id Storefront identifier
+     *
+     * @return void
+     */
+    protected function deleteLlmsData($storefront_id)
+    {
+        $this->llms->deleteLlmsDataByStorefrontId($storefront_id);
     }
 
     /**

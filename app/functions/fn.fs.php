@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 use Tygh\Bootstrap;
 use Tygh\Http;
@@ -817,17 +817,21 @@ function fn_put_contents($location, $content, $base_dir = '', $file_perm = DEFAU
 /**
  * Get data from url
  *
- * @param string $val
- * @return array $val
+ * phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint
+ *
+ * @param string   $val     URL value
+ * @param int|null $timeout Timeout for getting data.
+ *
+ * @return array{name: mixed|string, path: string, size: int, type: string, url: string}|false
  */
-function fn_get_url_data($val)
+function fn_get_url_data($val, $timeout = null)
 {
     if (!preg_match('/:\/\//', $val)) {
         $val = 'http://' . $val;
     }
 
     $result = false;
-    $_data = fn_get_contents($val);
+    $_data = fn_get_contents($val, '', $timeout);
 
     if (!empty($_data)) {
         $result = [

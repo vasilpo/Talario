@@ -276,7 +276,7 @@ DEFAULT_ATTEMPTS_COUNT = 3
 Текущая версия библиотеки
 
 ```php
-SDK_VERSION = '2.12.0'
+SDK_VERSION = '2.13.0'
 ```
 
 
@@ -451,6 +451,7 @@ public addWebhook(\YooKassa\Model\Webhook\Webhook|array $request, string|null $i
 Создание Webhook:
 
 ```php
+// Работа с Webhook
 // В данном примере мы устанавливаем вебхуки для succeeded и canceled уведомлений.
 // А так же проверяем, не установлены ли уже вебхуки. И если установлены на неверный адрес, удаляем.
 $client->setAuthToken('token_XXXXXXX');
@@ -865,7 +866,6 @@ public createPayout(\YooKassa\Request\Payouts\CreatePayoutRequestInterface|array
 Запрос на создание выплаты:
 
 ```php
-// Создание выплаты
 $request = array(
     'amount' => array(
         'value' => '80.00',
@@ -1978,6 +1978,7 @@ public getWebhooks() : \YooKassa\Request\Webhook\WebhookListResponse|null
 Список созданных Webhook:
 
 ```php
+// Работа с Webhook
 // В данном примере мы устанавливаем вебхуки для succeeded и canceled уведомлений.
 // А так же проверяем, не установлены ли уже вебхуки. И если установлены на неверный адрес, удаляем.
 $client->setAuthToken('token_XXXXXXX');
@@ -2139,6 +2140,7 @@ public removeWebhook(string $webhookId, string|null $idempotencyKey = null) : \Y
 Удаление Webhook:
 
 ```php
+// Работа с Webhook
 // В данном примере мы устанавливаем вебхуки для succeeded и canceled уведомлений.
 // А так же проверяем, не установлены ли уже вебхуки. И если установлены на неверный адрес, удаляем.
 $client->setAuthToken('token_XXXXXXX');
@@ -2496,11 +2498,11 @@ protected handleError(\YooKassa\Common\ResponseObject $response) : mixed
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

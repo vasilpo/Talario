@@ -96,7 +96,7 @@
 					{hook name="products:ab__s_pictograms_pos_1"}{/hook}
     			</div>
 
-				<div class="ut2-pb__right">
+				<div class="ut2-pb__right-wrapper">
                     {assign var="form_open" value="form_open_`$obj_id`"}
                     {$smarty.capture.$form_open nofilter}
     
@@ -142,7 +142,7 @@
     	                </div>
                     {if $capture_options_vs_qty}{/capture}{/if}
     
-                    <div class="ut2-pb__advanced-options clearfix">
+                    <div class="ut2-pb__advanced-options">
     	                {if $capture_options_vs_qty}{capture name="product_options"}{$smarty.capture.product_options nofilter}{/if}
     	                {assign var="advanced_options" value="advanced_options_`$obj_id`"}
     	                {$smarty.capture.$advanced_options nofilter}

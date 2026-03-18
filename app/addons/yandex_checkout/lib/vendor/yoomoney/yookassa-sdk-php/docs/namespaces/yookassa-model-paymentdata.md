@@ -25,6 +25,7 @@
 | [\YooKassa\Model\PaymentData\PaymentDataMobileBalance](../classes/YooKassa-Model-PaymentData-PaymentDataMobileBalance.md) | PaymentDataMobileBalance Платежные данные для проведения оплаты балансом телефона. |
 | [\YooKassa\Model\PaymentData\PaymentDataQiwi](../classes/YooKassa-Model-PaymentData-PaymentDataQiwi.md) | PaymentDataQiwi Платежные данные для проведения оплаты Qiwi. |
 | [\YooKassa\Model\PaymentData\PaymentDataSberbank](../classes/YooKassa-Model-PaymentData-PaymentDataSberbank.md) | PaymentDataSberbank Платежные данные для проведения оплаты при помощи Сбербанк Онлайн. |
+| [\YooKassa\Model\PaymentData\PaymentDataSberBnpl](../classes/YooKassa-Model-PaymentData-PaymentDataSberBnpl.md) | Класс, представляющий модель PaymentDataSberBnpl. |
 | [\YooKassa\Model\PaymentData\PaymentDataSberLoan](../classes/YooKassa-Model-PaymentData-PaymentDataSberLoan.md) | Данные используемые для создания метода оплаты. |
 | [\YooKassa\Model\PaymentData\PaymentDataSbp](../classes/YooKassa-Model-PaymentData-PaymentDataSbp.md) | Данные используемые для создания метода оплаты. |
 | [\YooKassa\Model\PaymentData\PaymentDataTinkoffBank](../classes/YooKassa-Model-PaymentData-PaymentDataTinkoffBank.md) | Данные используемые для создания метода оплаты. |
@@ -42,11 +43,11 @@
 
 ### Reports
 * [Errors - 0](../reports/errors.md)
-* [Markers - 1](../reports/markers.md)
+* [Markers - 0](../reports/markers.md)
 * [Deprecated - 43](../reports/deprecated.md)
 
 ---
 
-This document was automatically generated from source code comments on 2025-01-17 using [phpDocumentor](http://www.phpdoc.org/)
+This document was automatically generated from source code comments on 2025-12-17 using [phpDocumentor](http://www.phpdoc.org/)
 
 &copy; 2025 YooMoney

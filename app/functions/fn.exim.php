@@ -1,16 +1,16 @@
 <?php
 /***************************************************************************
 *                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*   © 2012 ООО "Эком Системы"                                              *
 *                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
+* Это коммерческое программное обеспечение. Только пользователи, которые   *
+* приобрели действующую лицензию и согласились с условиями лицензионного   *
+* соглашения, могут устанавливать и использовать эту программу.            *
 *                                                                          *
 ****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+* ПОЖАЛУЙСТА, ВНИМАТЕЛЬНО ПРОЧТИТЕ ПОЛНЫЙ ТЕКСТ ЛИЦЕНЗИОННОГО СОГЛАШЕНИЯ   *
+* В ФАЙЛЕ "copyright.txt", ПРЕДОСТАВЛЕННОМ ВМЕСТЕ С ЭТИМ ДИСТРИБУТИВОМ.    *
+***************************************************************************/
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -1330,6 +1330,97 @@ function fn_exim_get_all_images_url($product_id, $lang_code)
     );
 }
 
+/**
+ * Gets object all videos URLs for export.
+ *
+ * @param int    $object_id   Object ID
+ * @param string $object_type Object type
+ * @param string $delimiter   Delimiter
+ *
+ * @return string
+ */
+function fn_exim_get_all_videos_url($object_id, $object_type, $delimiter)
+{
+    $delimiter = empty($delimiter) ? '///' : $delimiter;
+
+    $videos_urls = '';
+    $skipped_videos_count = 0;
+    $video_manager = Tygh::$app['video.video_manager'];
+    $videos = $video_manager->getVideos($object_id, $object_type);
+
+    foreach ($videos as $video) {
+        $source = $video['source'];
+
+        if ($video_manager->isAvailableProvider($source)) {
+            $video_url_constructor = $video_manager->getSourceConstructor($source);
+
+            if (!empty($video['video_url_id'])) {
+                $urls = $video_url_constructor->buildVideoUrlById($video['video_url_id']);
+
+                if (isset($urls['video_url'])) {
+                    $videos_urls = empty($videos_urls) ? $urls['video_url'] : $videos_urls . $delimiter . $urls['video_url'];
+
+                    continue;
+                }
+            }
+        }
+        ++$skipped_videos_count;
+    }
+
+    if (!empty($skipped_videos_count)) {
+        fn_set_notification(NotificationSeverity::NOTICE, __('notice'), __('error_exim_export_videos'));
+    }
+
+    return $videos_urls;
+}
+
+/**
+ * Set imported videos to object.
+ *
+ * @param int    $object_id   Object ID
+ * @param string $object_type Object type
+ * @param bool   $is_new      Flag specifying that this is a new object.
+ * @param string $videos      Imported videos URLs separated with dilimiter.
+ * @param string $delimiter   Delimiter
+ *
+ * @return void
+ */
+function fn_exim_set_videos($object_id, $object_type, $is_new, $videos, $delimiter)
+{
+    $delimiter = empty($delimiter) ? '///' : $delimiter;
+
+    // phpcs:disable SlevomatCodingStandard.ControlStructures.EarlyExit
+    if (is_string($videos) && fn_string_not_empty($videos)) {
+        $video_manager = Tygh::$app['video.video_manager'];
+        $video_data = [
+            'video_data' => [],
+        ];
+        $videos = explode($delimiter, $videos);
+
+        $last_video_pos = db_get_field(
+            'SELECT MAX(position) FROM ?:videos_links WHERE object_id = ?i AND object_type = ?s',
+            $object_id,
+            $object_type
+        );
+        $started_position = (empty($last_video_pos) || $is_new) ? 0 :  (int) $last_video_pos + 1;
+
+        foreach ($videos as $video) {
+            $video_data['video_data'][] = [
+                'video_url_id' => $video,
+                'source'       => $video_manager->getSourceNameByVideoUrl($video),
+            ];
+        }
+
+        $video_manager->deleteVideoPairs($object_id, ['object_type' => $object_type]);
+
+        $skipped_videos_count = $video_manager->updateVideos($object_id, $object_type, $video_data, $started_position);
+
+        if (!empty($skipped_videos_count)) {
+            fn_set_notification(NotificationSeverity::WARNING, __('warning'), __('error_exim_get_videos'));
+        }
+    }
+}
+
 //
 // Get absolute url to the detailed image
 // Parameters:
@@ -1785,8 +1876,9 @@ function fn_exim_export_build_conditions($pattern, $options)
 
 function fn_exim_quote(&$value, $quote = "'")
 {
-    if (is_string($value)) {
-        $value = $quote . $value . $quote;
+    if (is_string($value) && $quote) {
+        $value = db_quote('?s', $value);
+        $value = $quote . substr($value, 1, -1) . $quote;
     } elseif (is_array($value) && !empty($value)) {
         foreach ($value as $k => &$v) {
             fn_exim_quote($v, $quote);

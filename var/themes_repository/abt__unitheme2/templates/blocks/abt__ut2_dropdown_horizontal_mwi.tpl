@@ -3,7 +3,7 @@
 {strip}
 {if $items}
     <div class="ut2-h__menu ut2-menu{if $block.properties.abt_menu_long_names === "YesNo::YES"|enum} multi-line-1st-item{/if}{if $block.properties.abt__menu_add_horizontal_scroll_sections|default:{"YesNo::YES"|enum} === "YesNo::YES"|enum} ut2-m-slider{/if}" style="--ut2-horizontal-menu-block-height: {$block.properties.abt__ut2_menu_min_height|default:430}px;">
-        {*<div class="ty-menu__wrapper">*}
+        <div class="ut2-h__menu__in">
 
             {if $settings.ab__device === "desktop"}
 			<a href="javascript:void(0);" onclick="$(this).next().toggleClass('view');$(this).toggleClass('open');" class="ut2-h__menu__burger{if $block.properties.open_on_sticky_panel_button === "Y"} cm-external-triggered{/if}"><i class="ut2-icon-outline-menu"></i></a>
@@ -60,7 +60,7 @@
 
             </ul>
 
-        {*</div>*}
+        </div>
     </div>
 {/if}
 {/strip}
