@@ -159,7 +159,7 @@
     .ty-btn {
         color: @sd-cta-version-2-button-color;
         background: @sd-cta-version-2-button-background;
-        border-radius: 6px;
+        border-radius: 100px;
         padding: 15px 35px;
         min-width: min(280px, 100%);
         box-shadow: none;
@@ -386,6 +386,24 @@
     }
 }
 
+.sd-banner-text .sd-cta__buttons {
+  justify-content: center !important;
+  text-align: left;
+  width: 100%;
+  align-self: stretch;
+
+  .ty-btn {
+    background: @sd-cta-version-3-button-background;
+    min-height: 55px;
+    width: 100%;
+    font-size: 18px;
+    padding: 0 50px;
+
+    &:hover {
+      background: darken(@sd-cta-version-3-button-background, 5%);
+    }
+  }
+}
 [class*="span"] .ty-search-block:not(.ut2-sw-w .ty-search-block) input.ty-search-block__input {
   border: 1px solid #bebebe !important;
 }

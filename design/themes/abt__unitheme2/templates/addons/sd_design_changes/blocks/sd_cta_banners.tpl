@@ -19,6 +19,11 @@
                 {$block.content.text|replace:"%%MOBILE_BANNERS%%":$smarty.capture.banners_html nofilter}
             </div>
 
+            {include file="design/themes/abt__unitheme2/templates/addons/exikane_changes/components/guest_banner.tpl"
+                banner_title=__("exikane_changes.guest_banner_title")
+                banner_text=__("exikane_changes.guest_banner_text")
+            }
+
             {if $block.content.button_main_url}
                 <div class="sd-cta__buttons">
                     {if $block.content.button_main_label}
