@@ -1,0 +1,20 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgctxt "Addons::name::seo_adjustments"
+msgid "SEO adjustments"
+msgstr "SEO-правки"
+
+msgctxt "Addons::description::seo_adjustments"
+msgid "SEO-related storefront template adjustments."
+msgstr "SEO-правки шаблонов витрины."
+
+msgctxt "Languages::seo_adjustments.registration_title"
+msgid "Registration"
+msgstr "Регистрация"
+
+msgctxt "Languages::seo_adjustments.registration_bonus_text"
+msgid "Get 500 bonus points and cashback with every payment. 1 point = 1 ruble."
+msgstr "Дарим 500 баллов и кэшбек с каждой оплаты. 1 балл = 1₽."
