@@ -314,6 +314,123 @@
     }
 }
 
+.sd-cta-version-3-banner-hero {
+    --fz-l: 16px;
+    background: linear-gradient(90deg, #fcfbf6 0%, #fffaf0 100%);
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
+    gap: 24px;
+    padding: 28px 28px 18px;
+    overflow: hidden;
+
+    @media (min-width: @mq-tablet) and (max-width: @mq-tablet-land) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: @mq-tablet - 1) {
+        --fz-l: 14px;
+        padding: 20px 20px 16px;
+        gap: 16px;
+    }
+
+    .sd-cta__text {
+        gap: 20px;
+        align-self: stretch;
+        justify-content: center;
+        max-width: 640px;
+
+        @media (max-width: @mq-tablet - 1) {
+            gap: 14px;
+        }
+    }
+
+    .sd-cta__description {
+        gap: 16px;
+    }
+
+    .sd-cta__description,
+    .sd-cta__description > * {
+        max-width: 100%;
+    }
+
+    .sd-cta__description {
+        .sd-cta-banner {
+            margin: 0 auto;
+
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    }
+
+    .sd-cta__image {
+        align-self: end;
+        justify-self: end;
+        width: min(100%, 520px);
+
+        .sd-cta-banner {
+            text-align: right;
+        }
+
+        img {
+            width: 100%;
+            max-width: 520px;
+            height: auto;
+        }
+    }
+
+    .exikane-guest-banner {
+        max-width: 500px;
+    }
+
+    .sd-cta__buttons {
+        margin-top: -2px;
+    }
+
+    h1,
+    h2 {
+        max-width: 640px;
+        margin: 0;
+        color: @sd-cta-version-3-font-color;
+        font-family: @font_heading_default_museo;
+        font-weight: 700;
+        line-height: 0.98;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+
+        @media (max-width: @mq-tablet - 1) {
+            line-height: 1.02;
+            text-wrap: pretty;
+        }
+
+        em,
+        span,
+        strong {
+            color: @sd-cta-version-3-h2-color;
+            font-style: normal;
+            font-weight: inherit;
+        }
+    }
+
+    h1 {
+        font-size: clamp(30px, 5vw, 58px);
+    }
+
+    h2 {
+        font-size: clamp(28px, 4.8vw, 54px);
+    }
+
+    p {
+        margin: 0;
+        max-width: 560px;
+        color: @sd-cta-version-3-font-color;
+        font-size: var(--fz-l);
+        font-weight: 400;
+        line-height: 1.35;
+    }
+}
+
 // Preserve CTA typography when CS-Cart wraps the block into an extra snapping container.
 [id^="snapping_id_"] > .sd-cta {
     .sd-cta__description {
@@ -382,6 +499,39 @@
             font-size: var(--fz-l);
             font-weight: 400;
             line-height: 1.3;
+        }
+    }
+
+    &.sd-cta-version-3-banner-hero {
+        h1,
+        h2 {
+            color: @sd-cta-version-3-font-color;
+            font-family: @font_heading_default_museo;
+            font-weight: 700;
+            line-height: 0.98;
+
+            em,
+            span,
+            strong {
+                color: @sd-cta-version-3-h2-color;
+                font-style: normal;
+                font-weight: inherit;
+            }
+        }
+
+        h1 {
+            font-size: clamp(30px, 5vw, 58px);
+        }
+
+        h2 {
+            font-size: clamp(28px, 4.8vw, 54px);
+        }
+
+        p {
+            color: @sd-cta-version-3-font-color;
+            font-size: var(--fz-l);
+            font-weight: 400;
+            line-height: 1.35;
         }
     }
 }

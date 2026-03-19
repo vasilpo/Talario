@@ -13,7 +13,7 @@
             {/foreach}
         {/if}
     {/capture}
-    <div class="sd-cta sd-cta-version-3">
+    <div class="sd-cta sd-cta-version-3 sd-cta-version-3-banner-hero">
         <div class="sd-cta__text">
             <div class="sd-cta__description">
                 {$block.content.text|replace:"%%MOBILE_BANNERS%%":$smarty.capture.banners_html nofilter}
