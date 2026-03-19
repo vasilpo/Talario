@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************************
  *                                                                          *
  *   © Simtech Development Ltd.                                             *
@@ -84,6 +85,20 @@ $schema['sd_cta_block_banners'] = [
 
 $schema['sd_banner_text'] = [
     'content' => [
+        'button_main' => [
+            'type' => 'input',
+            'default_value' => '',
+            'option_name' => 'sd_design_changes.option.button_main'
+        ],
+        'button_main_url' => [
+            'type' => 'input',
+            'default_value' => '',
+            'option_name' => 'sd_design_changes.option.button_main_url'
+        ],
+        'button_main_label' => [
+            'type' => 'input',
+            'option_name' => 'sd_design_changes.option.button_main_label'
+        ],
         'items' => [
             'remove_indent' => true,
             'hide_label' => true,

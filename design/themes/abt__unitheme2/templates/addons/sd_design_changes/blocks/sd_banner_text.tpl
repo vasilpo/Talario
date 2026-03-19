@@ -21,6 +21,25 @@
                     </div>
                 {/if}
             </div>
+            {if $block.content.button_main_url}
+                <div class="sd-cta__buttons">
+                    {if $block.content.button_main_label}
+                        <span class="sd-cta-version-3__label-container">
+                    {/if}
+                    <a href="{$block.content.button_main_url|fn_url}" class="ty-btn ty-btn__primary">
+                        {$block.content.button_main}
+
+                    </a>
+                    {if $block.content.button_main_label}
+                        <span class="sd-cta-version-3__label">
+                            {$block.content.button_main_label nofilter}
+                        </span>
+                    {/if}
+                    {if $block.content.button_main_label}
+                        </span>
+                    {/if}
+                </div>
+            {/if}
         </div>
         {break}
     {/foreach}
