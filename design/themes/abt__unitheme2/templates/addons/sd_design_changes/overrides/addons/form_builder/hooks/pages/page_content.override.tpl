@@ -196,7 +196,7 @@
             </div>
         </div>
     {/if}
-    {hook name="pages:page_content"}{/hook}
+
 {elseif $page.page_type == $smarty.const.PAGE_TYPE_FORM && $page.page_id !== $addons.sd_design_changes.apply_vendor_page_id}
 {if $smarty.request.sent == "Y"}
 
