@@ -98,12 +98,12 @@
     padding-bottom: var(--gap-l);
     border-radius: 20px;
     min-height: var(--block-height);
-    padding-right: 10px !important;
-    padding-left: 10px !important;
 
     @media (max-width: @mq-large-phone) {
         --block-height: 267px;
         --fz-xxxl: 26px;
+        padding-right: 10px !important;
+        padding-left: 10px !important;
         text-align: center;
     }
 
@@ -590,4 +590,7 @@
 }
 [class*="span"] .ty-search-block:not(.ut2-sw-w .ty-search-block) input.ty-search-block__input {
   border: 1px solid #bebebe !important;
+}
+p:empty {
+  display: none !important;
 }
