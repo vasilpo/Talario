@@ -1,0 +1,53 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::lr_age_normalizer"
+msgid "LR age normalizer"
+msgstr "LR age normalizer"
+
+msgctxt "Addons::description::lr_age_normalizer"
+msgid "Synchronizes exact age values from a source feature into a target age feature."
+msgstr "Synchronizes exact age values from a source feature into a target age feature."
+
+msgctxt "SettingsSections::lr_age_normalizer::general"
+msgid "General"
+msgstr "General"
+
+msgctxt "SettingsOptions::lr_age_normalizer::age_feature_id"
+msgid "Age feature ID"
+msgstr "Source age feature ID"
+
+msgctxt "SettingsTooltips::lr_age_normalizer::age_feature_id"
+msgid "Specify the ID of the source product feature that contains raw age variants."
+msgstr "Specify the ID of the source product feature that contains raw age variants."
+
+msgctxt "SettingsOptions::lr_age_normalizer::age_target_feature_id"
+msgid "Target age feature ID"
+msgstr "Target age feature ID"
+
+msgctxt "SettingsTooltips::lr_age_normalizer::age_target_feature_id"
+msgid "Specify the ID of the multiple-checkbox target feature that stores exact ages from 1 to 16."
+msgstr "Specify the ID of the multiple-checkbox target feature that stores exact ages from 1 to 16."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_converter_feature_ids_are_not_configured"
+msgid "The age feature converter cannot run because source or target feature ID is empty."
+msgstr "The age feature converter cannot run because source or target feature ID is empty."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_converter_target_variants_are_missing"
+msgid "The age feature converter cannot complete because target feature #[target_feature_id] does not contain all canonical variants."
+msgstr "The age feature converter cannot complete because target feature #[target_feature_id] does not contain all canonical variants."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_converter_completed"
+msgid "Age feature conversion finished. Updated: [updated], unchanged: [unchanged], skipped product IDs: [skipped]."
+msgstr "Age feature conversion finished. Updated: [updated], unchanged: [unchanged], skipped product IDs: [skipped]."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_sync_unmapped"
+msgid "Age feature sync skipped for product #[product_id], source feature #[feature_id], target feature #[target_feature_id]. Unrecognized values: [values]."
+msgstr "Age feature sync skipped for product #[product_id], source feature #[feature_id], target feature #[target_feature_id]. Unrecognized values: [values]."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_sync_missing_target_variants"
+msgid "Age feature sync skipped for product #[product_id], source feature #[feature_id], target feature #[target_feature_id]. Missing target ages: [values]."
+msgstr "Age feature sync skipped for product #[product_id], source feature #[feature_id], target feature #[target_feature_id]. Missing target ages: [values]."

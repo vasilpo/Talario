@@ -1,0 +1,53 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::lr_age_normalizer"
+msgid "LR age normalizer"
+msgstr "LR age normalizer"
+
+msgctxt "Addons::description::lr_age_normalizer"
+msgid "Synchronizes exact age values from a source feature into a target age feature."
+msgstr "Синхронизирует точные возраста из исходной характеристики в целевую характеристику возраста."
+
+msgctxt "SettingsSections::lr_age_normalizer::general"
+msgid "General"
+msgstr "Общие"
+
+msgctxt "SettingsOptions::lr_age_normalizer::age_feature_id"
+msgid "Age feature ID"
+msgstr "ID исходной характеристики возраста"
+
+msgctxt "SettingsTooltips::lr_age_normalizer::age_feature_id"
+msgid "Specify the ID of the source product feature that contains raw age variants."
+msgstr "Укажите ID исходной характеристики товара, в которой хранятся сырые возрастные варианты."
+
+msgctxt "SettingsOptions::lr_age_normalizer::age_target_feature_id"
+msgid "Target age feature ID"
+msgstr "ID целевой характеристики возраста"
+
+msgctxt "SettingsTooltips::lr_age_normalizer::age_target_feature_id"
+msgid "Specify the ID of the multiple-checkbox target feature that stores exact ages from 1 to 16."
+msgstr "Укажите ID целевой характеристики типа multiple-checkbox, в которой хранятся точные возраста от 1 до 16."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_converter_feature_ids_are_not_configured"
+msgid "The age feature converter cannot run because source or target feature ID is empty."
+msgstr "Конвертер возраста не может быть запущен, потому что не заполнен ID исходной или целевой характеристики."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_converter_target_variants_are_missing"
+msgid "The age feature converter cannot complete because target feature #[target_feature_id] does not contain all canonical variants."
+msgstr "Конвертер возраста не может быть завершен, потому что в целевой характеристике #[target_feature_id] отсутствуют все нужные варианты возрастов."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_converter_completed"
+msgid "Age feature conversion finished. Updated: [updated], unchanged: [unchanged], skipped product IDs: [skipped]."
+msgstr "Конвертация возраста завершена. Обновлено: [updated], без изменений: [unchanged], ID пропущенных: [skipped]."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_sync_unmapped"
+msgid "Age feature sync skipped for product #[product_id], source feature #[feature_id], target feature #[target_feature_id]. Unrecognized values: [values]."
+msgstr "Синхронизация возраста пропущена для товара #[product_id], исходная характеристика #[feature_id], целевая характеристика #[target_feature_id]. Нераспознанные значения: [values]."
+
+msgctxt "Languages::lr_age_normalizer.age_feature_sync_missing_target_variants"
+msgid "Age feature sync skipped for product #[product_id], source feature #[feature_id], target feature #[target_feature_id]. Missing target ages: [values]."
+msgstr "Синхронизация возраста пропущена для товара #[product_id], исходная характеристика #[feature_id], целевая характеристика #[target_feature_id]. В целевой характеристике отсутствуют возраста: [values]."
