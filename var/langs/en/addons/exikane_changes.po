@@ -89,3 +89,7 @@ msgstr "Enter your password"
 msgctxt "Languages::exikane_changes.create_profile"
 msgid "Create profile"
 msgstr "Create profile"
+
+msgctxt "Languages::exikane_changes.support"
+msgid "Support"
+msgstr "Support"
