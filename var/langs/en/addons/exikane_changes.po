@@ -17,6 +17,7 @@ msgstr ""
 "3. Theme-specific overrides for ABT Unitheme2.\n"
 "4. Small storefront and backend interface customizations."
 
+
 msgctxt "Languages::exikane_changes.partner_banner_title"
 msgid "Get partner contacts and 200 bonuses from Talario"
 msgstr "Get partner contacts and 200 bonuses from Talario"

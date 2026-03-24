@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>lr_age_normalizer</id>
+    <version>1.0</version>
+    <priority>4294967294</priority>
+    <position>0</position>
+    <status>active</status>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <default_language>en</default_language>
+    <has_icon>Y</has_icon>
+    <supplier>Larionov.tech</supplier>
+    <supplier_link>https://larionov.tech</supplier_link>
+    <email>exikane.larionov@gmail.com</email>
+    <settings edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="age_feature_id">
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="age_target_feature_id">
+                        <type>input</type>
+                        <default_value>566</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>
