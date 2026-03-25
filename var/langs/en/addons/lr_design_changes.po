@@ -1,0 +1,45 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+
+msgctxt "Addons::name::lr_design_changes"
+msgid "LR design changes"
+msgstr "LR design changes"
+
+msgctxt "Addons::description::lr_design_changes"
+msgid "Provides custom design blocks for Talario."
+msgstr "Provides custom design blocks for Talario."
+
+msgctxt "Languages::block_lr_cta_block_banners_right"
+msgid "LR: CTA block with right banners"
+msgstr "LR: CTA block with right banners"
+
+msgctxt "Languages::lr_cta_banners_right"
+msgid "LR: CTA block with right banners"
+msgstr "LR: CTA block with right banners"
+
+msgctxt "Languages::lr_design_changes.option.button_main"
+msgid "Main button"
+msgstr "Main button"
+
+msgctxt "Languages::lr_design_changes.option.button_main_url"
+msgid "Main button URL"
+msgstr "Main button URL"
+
+msgctxt "Languages::lr_design_changes.option.button_secondary"
+msgid "Secondary button"
+msgstr "Secondary button"
+
+msgctxt "Languages::lr_design_changes.option.button_secondary_url"
+msgid "Secondary button URL"
+msgstr "Secondary button URL"
+
+msgctxt "Languages::lr_design_changes.option.buttons_only_for_registered"
+msgid "Buttons only for registered users"
+msgstr "Buttons only for registered users"
+
+msgctxt "Languages::lr_design_changes.option.button_main_label"
+msgid "Label on main button"
+msgstr "Label on main button"
