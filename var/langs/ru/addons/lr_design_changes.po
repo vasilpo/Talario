@@ -1,0 +1,45 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::lr_design_changes"
+msgid "LR design changes"
+msgstr "Изменения дизайна"
+
+msgctxt "Addons::description::lr_design_changes"
+msgid "Provides custom design blocks for Talario."
+msgstr "Добавляет кастомные дизайн-блоки для Talario."
+
+msgctxt "Languages::block_lr_cta_block_banners_right"
+msgid "LR: CTA block with right banners"
+msgstr "LR: CTA-блок с баннерами справа"
+
+msgctxt "Languages::lr_cta_banners_right"
+msgid "LR: CTA block with right banners"
+msgstr "LR: CTA-блок с баннерами справа"
+
+msgctxt "Languages::lr_design_changes.option.button_main"
+msgid "Main button"
+msgstr "Главная кнопка"
+
+msgctxt "Languages::lr_design_changes.option.button_main_url"
+msgid "Main button URL"
+msgstr "URL главной кнопки"
+
+msgctxt "Languages::lr_design_changes.option.button_secondary"
+msgid "Secondary button"
+msgstr "Вспомогательная кнопка"
+
+msgctxt "Languages::lr_design_changes.option.button_secondary_url"
+msgid "Secondary button URL"
+msgstr "URL вспомогательной кнопки"
+
+msgctxt "Languages::lr_design_changes.option.buttons_only_for_registered"
+msgid "Buttons only for registered users"
+msgstr "Кнопки только для зарегистрированных"
+
+msgctxt "Languages::lr_design_changes.option.button_main_label"
+msgid "Label on main button"
+msgstr "Лейбл на главной кнопке"

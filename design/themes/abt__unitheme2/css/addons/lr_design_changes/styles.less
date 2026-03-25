@@ -1,0 +1,94 @@
+.lr-cta-banners-right {
+    .sd-cta__image {
+      align-self: center !important;
+    }
+    .lr-cta-banners-right__media {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 170px;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    &.lr-cta-banners-right--single {
+        .lr-cta-banners-right__media {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    .lr-cta-banners-right__main,
+    .lr-cta-banners-right__side,
+    .lr-cta-banners-right__side-item {
+        min-width: 0;
+    }
+
+    .lr-cta-banners-right__main {
+        height: 100%;
+    }
+
+    .lr-cta-banners-right__side {
+        display: grid;
+        align-content: stretch;
+        gap: 16px;
+    }
+
+    .lr-cta-banners-right__side-item {
+        height: 100%;
+    }
+
+    .sd-cta-banner,
+    .sd-cta-banner a,
+    .sd-cta-banner .ty-pict {
+        display: block;
+        height: 100%;
+    }
+
+    .sd-cta-banner img {
+        width: 100%;
+        max-width: none;
+        height: auto;
+    }
+
+    @media (max-width: 1279px) {
+        .lr-cta-banners-right__media {
+            grid-template-columns: minmax(0, 1fr) 150px;
+            gap: 12px;
+        }
+
+        .lr-cta-banners-right__side {
+            gap: 12px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .lr-cta-banners-right__media {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+.sd-cta-version-3-banner-hero.lr-cta-banners-right {
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 700px) !important;
+
+    .sd-cta__image {
+        width: min(100%, 760px) !important;
+        max-width: none;
+    }
+
+    .lr-cta-banners-right__media {
+        width: 100%;
+    }
+
+    .lr-cta-banners-right__main,
+    .lr-cta-banners-right__main .sd-cta-banner,
+    .lr-cta-banners-right__main .sd-cta-banner a,
+    .lr-cta-banners-right__main .ty-pict {
+        width: 100%;
+    }
+
+    .sd-cta__image img,
+    .lr-cta-banners-right__main img,
+    .lr-cta-banners-right__side img {
+        max-width: none !important;
+        width: 100%;
+    }
+}
