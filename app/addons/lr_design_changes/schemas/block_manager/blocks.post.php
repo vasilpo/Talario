@@ -78,4 +78,16 @@ $schema['lr_cta_block_banners_right'] = [
     'brief_info_function' => 'fn_block_get_block_with_items_info',
 ];
 
+$schema['lr_vendor_block_product_tab'] = [
+    'templates' => [
+        'addons/lr_design_changes/blocks/lr_vendor_block_product_tab.tpl' => [],
+    ],
+];
+
+$schema['lr_motivation_block_product_tab'] = [
+    'templates' => [
+        'addons/lr_design_changes/blocks/lr_motivation_block_product_tab.tpl' => [],
+    ],
+];
+
 return $schema;

@@ -1,4 +1,12 @@
 {if $block.content.text && $items}
+    {assign var="category_name" value=$category_data.category|default:""|strtolower}
+    {assign var="cta_text" value=$block.content.text}
+
+    {if $category_name}
+        {assign var="cta_text" value=$cta_text|replace:"%%CATEGORY_NAME%%":$category_name}
+        {assign var="cta_text" value=$cta_text|replace:"карате":$category_name}
+    {/if}
+
     {capture name="banners_html"}
         {foreach $items as $item}
             {$banner_url = $item.abt__ut2_url|default:$item.url}
@@ -18,7 +26,7 @@
     <div class="sd-cta sd-cta-version-3 sd-cta-version-3-banner-hero lr-cta-banners-right{if $items|count < 2} lr-cta-banners-right--single{/if}">
         <div class="sd-cta__text">
             <div class="sd-cta__description">
-                {$block.content.text|replace:"%%MOBILE_BANNERS%%":$smarty.capture.banners_html nofilter}
+                {$cta_text|replace:"%%MOBILE_BANNERS%%":$smarty.capture.banners_html nofilter}
             </div>
 
             {if $block.content.button_main_url}
