@@ -20,6 +20,10 @@ msgctxt "Languages::lr_search_analytics.generate_report"
 msgid "Generate report"
 msgstr "Generate report"
 
+msgctxt "Languages::lr_search_analytics.generate_report_description"
+msgid "To generate a search report, click the button:"
+msgstr "To generate a search report, click the button:"
+
 msgctxt "Languages::lr_search_analytics.report.query"
 msgid "Query"
 msgstr "Query"
