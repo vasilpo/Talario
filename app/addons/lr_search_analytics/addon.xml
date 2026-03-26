@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>lr_search_analytics</id>
+    <version>1.0.0</version>
+    <priority>1000</priority>
+    <position>0</position>
+    <status>active</status>
+    <default_language>en</default_language>
+    <has_icon>Y</has_icon>
+    <supplier>Larionov.tech</supplier>
+    <supplier_link>https://larionov.tech</supplier_link>
+    <email>exikane.larionov@gmail.com</email>
+    <queries>
+        <item for="install">DROP TABLE IF EXISTS ?:lr_search_analytics;</item>
+        <item for="install">
+            CREATE TABLE ?:lr_search_analytics (
+                search_analytics_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                query VARCHAR(255) NOT NULL DEFAULT '',
+                search_count INT UNSIGNED NOT NULL DEFAULT 0,
+                found_products_count INT UNSIGNED NOT NULL DEFAULT 0,
+                last_searched_at INT UNSIGNED NOT NULL DEFAULT 0,
+                PRIMARY KEY (search_analytics_id),
+                UNIQUE KEY uq_query (query)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+        </item>
+        <item for="uninstall">DROP TABLE IF EXISTS ?:lr_search_analytics;</item>
+    </queries>
+    <settings edition_type="ROOT,STOREFRONT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="report">
+                        <type>template</type>
+                        <default_value>report.tpl</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>

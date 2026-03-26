@@ -12,6 +12,18 @@ msgctxt "Addons::description::lr_design_changes"
 msgid "Provides custom design blocks for Talario."
 msgstr "Добавляет кастомные дизайн-блоки для Talario."
 
+msgctxt "SettingsSections::lr_design_changes::general"
+msgid "General"
+msgstr "Общие"
+
+msgctxt "SettingsOptions::lr_design_changes::empty_search_redirect_page_id"
+msgid "Redirect page ID for empty search results"
+msgstr "ID страницы для редиректа при пустом результате поиска"
+
+msgctxt "SettingsTooltips::lr_design_changes::empty_search_redirect_page_id"
+msgid "Specify the page ID that users should be redirected to when product search returns no results."
+msgstr "Укажите ID страницы, на которую нужно перенаправлять пользователя, если поиск товаров не дал результатов."
+
 msgctxt "Languages::block_lr_cta_block_banners_right"
 msgid "LR: CTA block with right banners"
 msgstr "LR: CTA-блок с баннерами справа"
@@ -43,3 +55,11 @@ msgstr "Кнопки только для зарегистрированных"
 msgctxt "Languages::lr_design_changes.option.button_main_label"
 msgid "Label on main button"
 msgstr "Лейбл на главной кнопке"
+
+msgctxt "Languages::lr_design_changes.exception_404_eyebrow"
+msgid "We don't have this class on Talario yet"
+msgstr "Пока у нас нет этого занятия"
+
+msgctxt "Languages::lr_design_changes.exception_404_title"
+msgid "Very soon, even more interesting clubs and sections will appear on Talario!"
+msgstr "Очень скоро на Talario появится ещё больше интересных кружков и секций!"
