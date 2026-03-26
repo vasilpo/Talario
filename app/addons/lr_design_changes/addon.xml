@@ -7,6 +7,20 @@
     <status>active</status>
     <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
     <default_language>en</default_language>
+
+    <settings edition_type="ROOT,STOREFRONT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="empty_search_redirect_page_id">
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+
     <has_icon>Y</has_icon>
     <supplier>Larionov.tech</supplier>
     <supplier_link>https://larionov.tech</supplier_link>

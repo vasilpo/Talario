@@ -12,6 +12,18 @@ msgctxt "Addons::description::lr_design_changes"
 msgid "Provides custom design blocks for Talario."
 msgstr "Provides custom design blocks for Talario."
 
+msgctxt "SettingsSections::lr_design_changes::general"
+msgid "General"
+msgstr "General"
+
+msgctxt "SettingsOptions::lr_design_changes::empty_search_redirect_page_id"
+msgid "Redirect page ID for empty search results"
+msgstr "Redirect page ID for empty search results"
+
+msgctxt "SettingsTooltips::lr_design_changes::empty_search_redirect_page_id"
+msgid "Specify the page ID that users should be redirected to when product search returns no results."
+msgstr "Specify the page ID that users should be redirected to when product search returns no results."
+
 msgctxt "Languages::block_lr_cta_block_banners_right"
 msgid "LR: CTA block with right banners"
 msgstr "LR: CTA block with right banners"
