@@ -43,3 +43,11 @@ msgstr "Кнопки только для зарегистрированных"
 msgctxt "Languages::lr_design_changes.option.button_main_label"
 msgid "Label on main button"
 msgstr "Лейбл на главной кнопке"
+
+msgctxt "Languages::lr_design_changes.exception_404_eyebrow"
+msgid "We don't have this class on Talario yet"
+msgstr "Пока у нас нет этого занятия"
+
+msgctxt "Languages::lr_design_changes.exception_404_title"
+msgid "Very soon, even more interesting clubs and sections will appear on Talario!"
+msgstr "Очень скоро на Talario появится ещё больше интересных кружков и секций!"
