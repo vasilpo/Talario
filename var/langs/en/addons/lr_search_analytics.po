@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+"PO-Revision-Date: 2026-03-26 00:00+0000\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "Addons::name::lr_search_analytics"
+msgid "Search analytics"
+msgstr "Search analytics"
+
+msgctxt "Addons::description::lr_search_analytics"
+msgid "Aggregates storefront product search queries and exports a CSV report."
+msgstr "Aggregates storefront product search queries and exports a CSV report."
+
+msgctxt "Languages::lr_search_analytics.generate_report"
+msgid "Generate report"
+msgstr "Generate report"
+
+msgctxt "Languages::lr_search_analytics.generate_report_description"
+msgid "To generate a search report, click the button:"
+msgstr "To generate a search report, click the button:"
+
+msgctxt "Languages::lr_search_analytics.report.query"
+msgid "Query"
+msgstr "Query"
+
+msgctxt "Languages::lr_search_analytics.report.search_count"
+msgid "Search count"
+msgstr "Search count"
+
+msgctxt "Languages::lr_search_analytics.report.found_products_count"
+msgid "Found products count"
+msgstr "Found products count"
+
+msgctxt "Languages::lr_search_analytics.report.last_searched_at"
+msgid "Last searched at"
+msgstr "Last searched at"
