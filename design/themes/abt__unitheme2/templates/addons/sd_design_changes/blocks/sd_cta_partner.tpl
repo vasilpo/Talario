@@ -1,6 +1,6 @@
-{$excluded_dispatches = ['profiles.update', 'orders.search', 'product_features.compare', 'vendor_communication.threads', 'reward_points.userlog', 'wishlist.view', 'orders.details']}
+{$excluded_dispatches = ['profiles.update', 'orders.search', 'product_features.compare', 'vendor_communication.threads', 'reward_points.userlog', 'wishlist.view', 'orders.details', 'products.search']}
 
-{if $block.content.text && !in_array($smarty.request.dispatch, $excluded_dispatches) && $exception_status != "404"}
+{if $block.content.text && !in_array($smarty.request.dispatch, $excluded_dispatches)}
     <div class="sd-cta sd-cta-version-2">
         <div class="sd-cta__description">
             {$block.content.text nofilter}

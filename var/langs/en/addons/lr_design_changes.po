@@ -12,6 +12,18 @@ msgctxt "Addons::description::lr_design_changes"
 msgid "Provides custom design blocks for Talario."
 msgstr "Provides custom design blocks for Talario."
 
+msgctxt "SettingsSections::lr_design_changes::general"
+msgid "General"
+msgstr "General"
+
+msgctxt "SettingsOptions::lr_design_changes::recommended_product_ids"
+msgid "Recommended product IDs for empty search results"
+msgstr "Recommended product IDs for empty search results"
+
+msgctxt "SettingsTooltips::lr_design_changes::recommended_product_ids"
+msgid "Specify product IDs separated by commas. The first 3 valid products will be displayed."
+msgstr "Specify product IDs separated by commas. The first 3 valid products will be displayed."
+
 msgctxt "Languages::block_lr_cta_block_banners_right"
 msgid "LR: CTA block with right banners"
 msgstr "LR: CTA block with right banners"
@@ -51,3 +63,7 @@ msgstr "We don't have this class on Talario yet"
 msgctxt "Languages::lr_design_changes.exception_404_title"
 msgid "Very soon, even more interesting clubs and sections will appear on Talario!"
 msgstr "Very soon, even more interesting clubs and sections will appear on Talario!"
+
+msgctxt "Languages::lr_design_changes.search_recommended_title"
+msgid "Meanwhile, we recommend"
+msgstr "Meanwhile, we recommend"
