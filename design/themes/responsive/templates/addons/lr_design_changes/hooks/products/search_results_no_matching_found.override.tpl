@@ -12,32 +12,3 @@
         }
     </div>
 </div>
-
-{if $lr_design_changes_recommended_products}
-    <div class="ty-exception">
-        <div class="ty-exception__title-info">
-            <h2 class="ty-exception__title">{__("lr_design_changes.search_recommended_title")}</h2>
-        </div>
-
-        {include file="blocks/list_templates/grid_list.tpl"
-            products=$lr_design_changes_recommended_products
-            columns=3
-            no_pagination=true
-            no_sorting=true
-            no_ids=true
-            obj_prefix="lr_design_changes_recommended_"
-            show_name=true
-            show_old_price=true
-            show_price=true
-            show_rating=true
-            show_clean_price=true
-            show_list_discount=true
-            show_add_to_cart=true
-            but_role="action"
-            show_features=false
-            show_product_labels=true
-            show_discount_label=true
-            show_shipping_label=true
-        }
-    </div>
-{/if}

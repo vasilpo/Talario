@@ -12,9 +12,9 @@
         <sections>
             <section id="general">
                 <items>
-                    <item id="recommended_product_ids">
+                    <item id="empty_search_redirect_page_id">
                         <type>input</type>
-                        <default_value>1,2,3</default_value>
+                        <default_value></default_value>
                     </item>
                 </items>
             </section>
