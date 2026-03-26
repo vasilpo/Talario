@@ -28,9 +28,9 @@ msgctxt "Languages::lr_search_analytics.report.search_count"
 msgid "Search count"
 msgstr "Search count"
 
-msgctxt "Languages::lr_search_analytics.report.not_found_count"
-msgid "Not found count"
-msgstr "Not found count"
+msgctxt "Languages::lr_search_analytics.report.found_products_count"
+msgid "Found products count"
+msgstr "Found products count"
 
 msgctxt "Languages::lr_search_analytics.report.last_searched_at"
 msgid "Last searched at"

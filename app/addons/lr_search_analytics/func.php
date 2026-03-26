@@ -31,9 +31,9 @@ function fn_lr_search_analytics_get_products_post(array &$products, array &$para
         return;
     }
 
-    $search_count = isset($params['total_items']) ? (int) $params['total_items'] : count($products);
+    $found_products_count = isset($params['total_items']) ? (int) $params['total_items'] : count($products);
 
-    fn_lr_search_analytics_track_query($query, $search_count === 0);
+    fn_lr_search_analytics_track_query($query, $found_products_count);
 }
 
 /**
@@ -79,15 +79,15 @@ function fn_lr_search_analytics_prepare_query($query)
 /**
  * Saves aggregated analytics for a search query.
  *
- * @param string $query        Normalized query
- * @param bool   $is_not_found Whether the search returned zero items
+ * @param string $query                Normalized query
+ * @param int    $found_products_count Number of found products
  *
  * @return void
  */
-function fn_lr_search_analytics_track_query($query, $is_not_found)
+function fn_lr_search_analytics_track_query($query, $found_products_count)
 {
     $existing_record = db_get_row(
-        'SELECT search_analytics_id, search_count, not_found_count'
+        'SELECT search_analytics_id, search_count, found_products_count'
         . ' FROM ?:lr_search_analytics'
         . ' WHERE query = ?s',
         $query
@@ -96,10 +96,10 @@ function fn_lr_search_analytics_track_query($query, $is_not_found)
     if ($existing_record) {
         db_query(
             'UPDATE ?:lr_search_analytics'
-            . ' SET search_count = ?i, not_found_count = ?i, last_searched_at = ?i'
+            . ' SET search_count = ?i, found_products_count = ?i, last_searched_at = ?i'
             . ' WHERE search_analytics_id = ?i',
             (int) $existing_record['search_count'] + 1,
-            (int) $existing_record['not_found_count'] + ($is_not_found ? 1 : 0),
+            (int) $existing_record['found_products_count'] + $found_products_count,
             TIME,
             (int) $existing_record['search_analytics_id']
         );
@@ -110,10 +110,10 @@ function fn_lr_search_analytics_track_query($query, $is_not_found)
     db_query(
         'INSERT INTO ?:lr_search_analytics ?e',
         [
-            'query'            => $query,
-            'search_count'     => 1,
-            'not_found_count'  => $is_not_found ? 1 : 0,
-            'last_searched_at' => TIME,
+            'query'                => $query,
+            'search_count'         => 1,
+            'found_products_count' => $found_products_count,
+            'last_searched_at'     => TIME,
         ]
     );
 }
@@ -126,7 +126,7 @@ function fn_lr_search_analytics_track_query($query, $is_not_found)
 function fn_lr_search_analytics_get_report_rows()
 {
     return db_get_array(
-        'SELECT query, search_count, not_found_count, last_searched_at'
+        'SELECT query, search_count, found_products_count, last_searched_at'
         . ' FROM ?:lr_search_analytics'
         . ' ORDER BY search_count DESC, query ASC'
     );
@@ -153,7 +153,7 @@ function fn_lr_search_analytics_export_report()
     fputcsv($stream, [
         __('lr_search_analytics.report.query'),
         __('lr_search_analytics.report.search_count'),
-        __('lr_search_analytics.report.not_found_count'),
+        __('lr_search_analytics.report.found_products_count'),
         __('lr_search_analytics.report.last_searched_at'),
     ]);
 
@@ -161,7 +161,7 @@ function fn_lr_search_analytics_export_report()
         fputcsv($stream, [
             $row['query'],
             (int) $row['search_count'],
-            (int) $row['not_found_count'],
+            (int) $row['found_products_count'],
             date('Y-m-d H:i:s', (int) $row['last_searched_at']),
         ]);
     }

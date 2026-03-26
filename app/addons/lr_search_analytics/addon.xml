@@ -6,6 +6,10 @@
     <position>0</position>
     <status>active</status>
     <default_language>en</default_language>
+    <has_icon>Y</has_icon>
+    <supplier>Larionov.tech</supplier>
+    <supplier_link>https://larionov.tech</supplier_link>
+    <email>exikane.larionov@gmail.com</email>
     <queries>
         <item for="install">DROP TABLE IF EXISTS ?:lr_search_analytics;</item>
         <item for="install">
@@ -13,7 +17,7 @@
                 search_analytics_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
                 query VARCHAR(255) NOT NULL DEFAULT '',
                 search_count INT UNSIGNED NOT NULL DEFAULT 0,
-                not_found_count INT UNSIGNED NOT NULL DEFAULT 0,
+                found_products_count INT UNSIGNED NOT NULL DEFAULT 0,
                 last_searched_at INT UNSIGNED NOT NULL DEFAULT 0,
                 PRIMARY KEY (search_analytics_id),
                 UNIQUE KEY uq_query (query)
