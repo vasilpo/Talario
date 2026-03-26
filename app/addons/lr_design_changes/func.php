@@ -29,8 +29,6 @@ function fn_lr_design_changes_get_search_recommended_products(string $product_id
     [$products, $search] = fn_get_products([
         'pid' => $product_ids,
         'extend' => ['description'],
-        'force_get_by_ids' => true,
-        'apply_limit' => true,
     ], count($product_ids), CART_LANGUAGE);
 
     if (empty($products) || empty($search['total_items'])) {
