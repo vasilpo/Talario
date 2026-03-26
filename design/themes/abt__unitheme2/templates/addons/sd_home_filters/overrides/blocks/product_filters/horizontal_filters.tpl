@@ -46,6 +46,7 @@
             {foreach from=$items item="filter" name="filters"}
 
                 {$filter_uid = "`$block.block_id`_`$filter.filter_id`"}
+                {$is_age_filter = $filter.filter_id == $sd_home_filters_age_filter_id}
 
                 {$reset_url = ""}
                 {if $filter.selected_variants || $filter.selected_range}
@@ -56,10 +57,10 @@
                     {/if}
                 {/if}
 
-                <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
-                    <div id="sw_elm_filter_{$filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination {if $filter.selected_variants || $filter.selected_range}active{/if}{if $filter.selected_variants|sizeof > 0} selected{/if}">{$filter.filter}{if $filter.selected_variants}<span>{$filter.selected_variants|sizeof}</span>{/if}<i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
+                    <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
+                        <div id="sw_elm_filter_{$filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination {if $filter.selected_variants || $filter.selected_range}active{/if}{if $filter.selected_variants|sizeof > 0} selected{/if}">{$filter.filter}{if $filter.selected_variants}<span>{$filter.selected_variants|sizeof}</span>{/if}<i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
                     {if $settings.ab__device !== 'mobile'}
-                        <div id="elm_filter_{$filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content cm-smart-position-h">
+                        <div id="elm_filter_{$filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content cm-smart-position-h {if $is_age_filter}sd-home-filters__age-filter{/if}">
                             <div class="ty-horizontal-product-filters-dropdown__title">
                                 <a href="javascript:void(0);" rel="nofollow" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$filter_uid}"><i class="ut2-icon-baseline-close"></i></span></a>
                             </div>
@@ -135,6 +136,7 @@
                     {foreach from=$items item="filter" name="filters"}
 
                         {$filter_uid = "`$block.block_id`_`$filter.filter_id`"}
+                        {$is_age_filter = $filter.filter_id == $sd_home_filters_age_filter_id}
 
                         {$reset_url = ""}
                         {if $filter.selected_variants || $filter.selected_range}
@@ -145,7 +147,7 @@
                             {/if}
                         {/if}
 
-                        <div id="elm_filter_{$filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content">
+                        <div id="elm_filter_{$filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content cm-horizontal-filters-content {if $is_age_filter}sd-home-filters__age-filter{/if}">
                             <div class="ty-horizontal-product-filters-dropdown__title">
                                 <span>{$filter.filter}</span>
                                 <a href="javascript:void(0);" rel="nofollow" class="ut2-btn-close cm-external-click" data-ca-external-click-id="sw_elm_filter_{$filter_uid}"><i class="ut2-icon-baseline-close"></i></span></a>

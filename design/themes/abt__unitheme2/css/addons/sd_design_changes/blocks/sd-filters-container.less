@@ -59,4 +59,33 @@
         padding-left: var(--container-gap);
         padding-right: var(--container-gap);
     }
+
+    .sd-home-filters__age-filter {
+        .ty-product-filters__variants {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 12px;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .ty-product-filters__group {
+            margin: 5px 0;
+        }
+
+        .ut2-more-btn,
+        .ut2-filters__search {
+            display: none;
+        }
+
+        .items-more {
+            --ut2-product-filter-variant-list-_max-height_-shortened: none;
+        }
+
+        @media (max-width: @mq-large-phone) {
+            .ty-product-filters__variants {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
 }
