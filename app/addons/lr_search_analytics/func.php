@@ -99,7 +99,7 @@ function fn_lr_search_analytics_track_query($query, $found_products_count)
             . ' SET search_count = ?i, found_products_count = ?i, last_searched_at = ?i'
             . ' WHERE search_analytics_id = ?i',
             (int) $existing_record['search_count'] + 1,
-            (int) $existing_record['found_products_count'] + $found_products_count,
+            $found_products_count,
             TIME,
             (int) $existing_record['search_analytics_id']
         );
