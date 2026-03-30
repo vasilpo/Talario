@@ -1,4 +1,8 @@
 .lr-cta-banners-right {
+    .lr-cta-banners-right__mobile {
+        display: none;
+    }
+
     .lr-cta-banners-right__media {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 170px;
@@ -56,8 +60,29 @@
     }
 
     @media (max-width: 767px) {
+        .lr-cta-banners-right__mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .lr-cta-banners-right__mobile-main,
+        .lr-cta-banners-right__mobile-side,
+        .lr-cta-banners-right__mobile-side .lr-cta-banners-right__side-item {
+            width: 100%;
+        }
+
+        .lr-cta-banners-right__mobile-side {
+            display: grid;
+            gap: 12px;
+        }
+
         .lr-cta-banners-right__media {
             grid-template-columns: 1fr;
+        }
+
+        .sd-cta__image {
+            display: none;
         }
     }
 }
