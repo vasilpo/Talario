@@ -106,4 +106,29 @@ class AgeFeatureRepository
             $product_id
         );
     }
+
+    /**
+     * Gets selected variant identifiers for a product feature across products.
+     *
+     * @param int             $feature_id  Feature identifier
+     * @param array<int, int> $product_ids Product identifiers
+     *
+     * @return array<int, int>
+     */
+    public function getSelectedVariantIdsByProductIds(int $feature_id, array $product_ids): array
+    {
+        $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+
+        if (empty($product_ids)) {
+            return [];
+        }
+
+        return db_get_fields(
+            'SELECT DISTINCT variant_id FROM ?:product_features_values'
+            . ' WHERE feature_id = ?i AND product_id IN (?n) AND variant_id > 0'
+            . ' ORDER BY variant_id',
+            $feature_id,
+            $product_ids
+        );
+    }
 }

@@ -10,6 +10,7 @@
 namespace Tygh\Addons\LrAgeNormalizer\Service;
 
 use Tygh\Addons\LrAgeNormalizer\Repository\AgeFeatureRepository;
+use Tygh\Addons\ProductVariations\ServiceProvider as ProductVariationsServiceProvider;
 use Tygh\Enum\ProductFeatures;
 
 class AgeFeatureConverter
@@ -118,7 +119,29 @@ class AgeFeatureConverter
     public function syncProduct(int $product_id, int $source_feature_id, int $target_feature_id): array
     {
         $preview = $this->preview($source_feature_id, $target_feature_id);
-        return $this->syncProductByPreview($product_id, $target_feature_id, $preview);
+        $grouped_product_ids = $this->getGroupedProductIds($product_id);
+        $result = null;
+
+        foreach ($grouped_product_ids as $grouped_product_id) {
+            $sync_result = $this->syncProductByPreview(
+                (int) $grouped_product_id,
+                $target_feature_id,
+                $preview,
+                $grouped_product_ids
+            );
+
+            if ((int) $grouped_product_id === $product_id) {
+                $result = $sync_result;
+            }
+        }
+
+        return $result ?: [
+            'status' => 'unchanged',
+            'product_id' => $product_id,
+            'target_variant_ids' => [],
+            'unmapped_values' => [],
+            'missing_target_ages' => [],
+        ];
     }
 
     /**
@@ -132,7 +155,9 @@ class AgeFeatureConverter
     public function convert(int $source_feature_id, int $target_feature_id): array
     {
         $preview = $this->preview($source_feature_id, $target_feature_id);
-        $product_ids = $this->repository->getAffectedProductIds($source_feature_id);
+        $product_ids = $this->expandProductIdsWithVariationGroupProducts(
+            $this->repository->getAffectedProductIds($source_feature_id)
+        );
         $result = [
             'source_feature_id' => $source_feature_id,
             'target_feature_id' => $target_feature_id,
@@ -184,17 +209,28 @@ class AgeFeatureConverter
      *
      * @return array<string, mixed>
      */
-    protected function syncProductByPreview(int $product_id, int $target_feature_id, array $preview): array
-    {
+    protected function syncProductByPreview(
+        int $product_id,
+        int $target_feature_id,
+        array $preview,
+        ?array $source_product_ids = null
+    ): array {
         $rows_by_variant_id = [];
 
         foreach ($preview['rows'] as $row) {
             $rows_by_variant_id[$row['variant_id']] = $row;
         }
 
+        if ($source_product_ids === null) {
+            $source_product_ids = $this->getGroupedProductIds($product_id);
+        }
+
         $selected_variant_ids = array_map(
             'intval',
-            $this->repository->getSelectedVariantIds((int) $preview['source_feature_id'], $product_id)
+            $this->repository->getSelectedVariantIdsByProductIds(
+                (int) $preview['source_feature_id'],
+                $source_product_ids
+            )
         );
         $result = [
             'status' => 'unchanged',
@@ -270,6 +306,63 @@ class AgeFeatureConverter
         $result['status'] = 'updated';
 
         return $result;
+    }
+
+    /**
+     * Gets all product identifiers from the same variation group.
+     *
+     * @param int $product_id Product identifier
+     *
+     * @return array<int, int>
+     */
+    protected function getGroupedProductIds(int $product_id): array
+    {
+        if ($product_id <= 0) {
+            return [];
+        }
+
+        $grouped_product_ids = ProductVariationsServiceProvider::getProductIdMap()
+            ->getVariationSubGroupProductIds($product_id);
+
+        if (empty($grouped_product_ids)) {
+            return [$product_id];
+        }
+
+        return array_values(array_unique(array_map('intval', $grouped_product_ids)));
+    }
+
+    /**
+     * Expands products with all items from their variation groups.
+     *
+     * @param array<int, int> $product_ids Product identifiers
+     *
+     * @return array<int, int>
+     */
+    protected function expandProductIdsWithVariationGroupProducts(array $product_ids): array
+    {
+        $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+
+        if (empty($product_ids)) {
+            return [];
+        }
+
+        $group_repository = ProductVariationsServiceProvider::getGroupRepository();
+        $group_ids = array_values(array_unique(array_map(
+            'intval',
+            $group_repository->findGroupIdsByProductIds($product_ids)
+        )));
+
+        if (empty($group_ids)) {
+            sort($product_ids);
+
+            return $product_ids;
+        }
+
+        $group_product_ids = array_map('intval', $group_repository->findGroupProductIdsByGroupIds($group_ids));
+        $product_ids = array_values(array_unique(array_merge($product_ids, $group_product_ids)));
+        sort($product_ids);
+
+        return $product_ids;
     }
 
     /**
