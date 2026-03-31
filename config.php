@@ -434,10 +434,10 @@ defined('QUICK_LOGIN_PASSWORD_TTL') or define('QUICK_LOGIN_PASSWORD_TTL', 120);
 defined('COOKIE_ALIVE_TIME') or define('COOKIE_ALIVE_TIME', SECONDS_IN_DAY * 7); // one week
 
 // Session live time
-defined('SESSION_ALIVE_TIME') or define('SESSION_ALIVE_TIME', SECONDS_IN_HOUR * 2); // 2 hours
+defined('SESSION_ALIVE_TIME') or define('SESSION_ALIVE_TIME', SECONDS_IN_DAY * 365); // 1 year
 
 // Sessions storage live time
-defined('SESSIONS_STORAGE_ALIVE_TIME') or define('SESSIONS_STORAGE_ALIVE_TIME', SECONDS_IN_DAY * 7 * 2); // 2 weeks
+defined('SESSIONS_STORAGE_ALIVE_TIME') or define('SESSIONS_STORAGE_ALIVE_TIME', SECONDS_IN_DAY * 365); // 1 year
 
 // Number of seconds after last session update, while user considered as online
 defined('SESSION_ONLINE') or define('SESSION_ONLINE', 60 * 5); // 5 minutes
@@ -459,7 +459,7 @@ defined('POPULARITY_BUY') or define('POPULARITY_BUY', 10);
 
 // Session options
 // defined('SESS_VALIDATE_IP') or define('SESS_VALIDATE_IP', true); // link session ID with ip address
-defined('SESS_VALIDATE_UA') or define('SESS_VALIDATE_UA', true); // link session ID with user-agent
+// defined('SESS_VALIDATE_UA') or define('SESS_VALIDATE_UA', true); // link session ID with user-agent
 
 defined('DB_MAX_ROW_SIZE') or define('DB_MAX_ROW_SIZE', 10000);
 defined('DB_ROWS_PER_PASS') or define('DB_ROWS_PER_PASS', 400);
