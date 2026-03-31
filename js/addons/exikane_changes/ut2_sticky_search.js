@@ -3,6 +3,25 @@
         return _.abt__ut2 && _.abt__ut2.controller === 'index' && _.abt__ut2.mode === 'index';
     }
 
+    function resetStickySearchInput($input) {
+        if (!$input.length) {
+            return;
+        }
+
+        var input = $input.get(0);
+
+        // Keep the field in active mode so CS-Cart submits `q`, not `hint_q`.
+        $input.removeClass('cm-hint').addClass('cm-hint-focused').val('');
+
+        if (input && input.defaultValue === $input.ceHint('_get_hint_value')) {
+            input.defaultValue = '';
+        }
+
+        if ((input.name || '').indexOf('hint_') === 0) {
+            input.name = input.name.replace(/^hint_/, '');
+        }
+    }
+
     function toggleStickySearch($btn) {
         var btnId = $btn.prop('id') || '';
         var prefixMatch = btnId.match(/^(on_|off_|sw_)/);
@@ -33,7 +52,7 @@
             if ($input.length) {
                 // Always reset the mobile sticky search input on open
                 // to avoid persisting the previous query across toggles/page reloads.
-                $input.val('').attr('value', '').trigger('input').trigger('change');
+                resetStickySearchInput($input);
                 setTimeout(function () {
                     $input.trigger('focus');
                 }, 0);
