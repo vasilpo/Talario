@@ -16,6 +16,7 @@ use Tygh\Registry;
 
 $schema['vkontakte'] = [
     'provider' => 'Vkontakte',
+    'callback' => fn_url('/auth/vkontakte'),
     'keys' => [
         'id' => [
             'db_field' => 'app_id',
@@ -28,6 +29,13 @@ $schema['vkontakte'] = [
             'type' => 'input',
             'label' => 'secret_key',
             'required' => true
+        ]
+    ],
+    'params' => [
+        'vkontakte_callback' => [
+            'type' => 'template',
+            'template' => 'addons/hybrid_auth/components/callback_url.tpl',
+            'callback_url' => '/auth/vkontakte',
         ]
     ],
     'adapter' => 'Tygh\Addons\RusHybridAuth\Providers\Vkontakte',
