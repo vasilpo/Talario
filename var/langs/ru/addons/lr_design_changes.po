@@ -63,3 +63,11 @@ msgstr "Пока у нас нет этого занятия"
 msgctxt "Languages::lr_design_changes.exception_404_title"
 msgid "Very soon, even more interesting clubs and sections will appear on Talario!"
 msgstr "Очень скоро на Talario появится ещё больше интересных кружков и секций!"
+
+msgctxt "Languages::lr_design_changes.reward_points_balance_notice"
+msgid "On your account: [points], you can pay up to [percent]% of the lesson cost."
+msgstr "<strong>На вашем счете</strong>: [points], можно оплатить до [percent]% стоимости занятия."
+
+msgctxt "Languages::lr_design_changes.reward_points_cashback_tooltip"
+msgid "Cashback for this order will be credited as bonus points after successful payment."
+msgstr "Кешбек за этот заказ будет начислен бонусными баллами после успешной оплаты."
