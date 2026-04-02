@@ -56,9 +56,27 @@ $schema['sd_cta_block'] = [
 
 $schema['sd_cta_block_banners'] = [
     'content' => array_merge($base_config, [
+        'registered_text' => [
+            'type' => 'text',
+            'option_name' => 'sd_design_changes.option.registered_text'
+        ],
+        'registered_button_main' => [
+            'type' => 'input',
+            'default_value' => '',
+            'option_name' => 'sd_design_changes.option.registered_button_main'
+        ],
+        'registered_button_main_url' => [
+            'type' => 'input',
+            'default_value' => '',
+            'option_name' => 'sd_design_changes.option.registered_button_main_url'
+        ],
         'button_main_label' => [
             'type' => 'input',
             'option_name' => 'sd_design_changes.option.button_main_label'
+        ],
+        'registered_button_main_label' => [
+            'type' => 'input',
+            'option_name' => 'sd_design_changes.option.registered_button_main_label'
         ],
         'items' => [
             'remove_indent' => true,

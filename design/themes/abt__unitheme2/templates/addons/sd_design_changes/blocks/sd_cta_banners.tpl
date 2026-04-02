@@ -1,4 +1,24 @@
-{if $block.content.text && $items}
+{assign var="cta_text" value=$block.content.text}
+{assign var="cta_button_text" value=$block.content.button_main}
+{assign var="cta_button_url" value=$block.content.button_main_url}
+{assign var="cta_button_label" value=$block.content.button_main_label}
+
+{if $auth.user_id}
+    {if $block.content.registered_text}
+        {assign var="cta_text" value=$block.content.registered_text}
+    {/if}
+    {if $block.content.registered_button_main}
+        {assign var="cta_button_text" value=$block.content.registered_button_main}
+    {/if}
+    {if $block.content.registered_button_main_url}
+        {assign var="cta_button_url" value=$block.content.registered_button_main_url}
+    {/if}
+    {if $block.content.registered_button_main_label}
+        {assign var="cta_button_label" value=$block.content.registered_button_main_label}
+    {/if}
+{/if}
+
+{if $cta_text && $items}
     {capture name="banners_html"}
         {if $items}
             {foreach $items as $item}
@@ -16,29 +36,30 @@
     <div class="sd-cta sd-cta-version-3 sd-cta-version-3-banner-hero">
         <div class="sd-cta__text">
             <div class="sd-cta__description">
-                {$block.content.text|replace:"%%MOBILE_BANNERS%%":$smarty.capture.banners_html nofilter}
+                {$cta_text|replace:"%%MOBILE_BANNERS%%":$smarty.capture.banners_html nofilter}
             </div>
+            {if !$auth.user_id}
+                {include file="design/themes/abt__unitheme2/templates/addons/exikane_changes/components/guest_banner.tpl"
+                    banner_title=__("exikane_changes.guest_banner_title")
+                    banner_text=__("exikane_changes.guest_banner_text")
+                }
+            {/if}
 
-            {include file="design/themes/abt__unitheme2/templates/addons/exikane_changes/components/guest_banner.tpl"
-                banner_title=__("exikane_changes.guest_banner_title")
-                banner_text=__("exikane_changes.guest_banner_text")
-            }
-
-            {if $block.content.button_main_url}
+            {if $cta_button_url}
                 <div class="sd-cta__buttons">
-                    {if $block.content.button_main_label}
+                    {if $cta_button_label}
                         <span class="sd-cta-version-3__label-container">
                     {/if}
-                    <a href="{$block.content.button_main_url|fn_url}" class="ty-btn ty-btn__primary">
-                        {$block.content.button_main}
+                    <a href="{$cta_button_url|fn_url}" class="ty-btn ty-btn__primary">
+                        {$cta_button_text}
 
                     </a>
-                    {if $block.content.button_main_label}
+                    {if $cta_button_label}
                         <span class="sd-cta-version-3__label">
-                            {$block.content.button_main_label nofilter}
+                            {$cta_button_label nofilter}
                         </span>
                     {/if}
-                    {if $block.content.button_main_label}
+                    {if $cta_button_label}
                         </span>
                     {/if}
                 </div>
