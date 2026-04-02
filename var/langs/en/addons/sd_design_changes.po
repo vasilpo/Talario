@@ -23,3 +23,19 @@ msgstr "Metro profile field"
 msgctxt "Languages::sd_design_changes.product_address"
 msgid "Lesson address"
 msgstr "Lesson address"
+
+msgctxt "Languages::sd_design_changes.option.registered_text"
+msgid "Text for registered users"
+msgstr "Text for registered users"
+
+msgctxt "Languages::sd_design_changes.option.registered_button_main"
+msgid "Main button for registered users"
+msgstr "Main button for registered users"
+
+msgctxt "Languages::sd_design_changes.option.registered_button_main_url"
+msgid "Main button URL for registered users"
+msgstr "Main button URL for registered users"
+
+msgctxt "Languages::sd_design_changes.option.registered_button_main_label"
+msgid "Label on main button for registered users"
+msgstr "Label on main button for registered users"
