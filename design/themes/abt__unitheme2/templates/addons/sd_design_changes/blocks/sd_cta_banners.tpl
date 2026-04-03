@@ -7,15 +7,9 @@
     {if $block.content.registered_text}
         {assign var="cta_text" value=$block.content.registered_text}
     {/if}
-    {if $block.content.registered_button_main}
-        {assign var="cta_button_text" value=$block.content.registered_button_main}
-    {/if}
-    {if $block.content.registered_button_main_url}
-        {assign var="cta_button_url" value=$block.content.registered_button_main_url}
-    {/if}
-    {if $block.content.registered_button_main_label}
-        {assign var="cta_button_label" value=$block.content.registered_button_main_label}
-    {/if}
+    {assign var="cta_button_text" value=$block.content.registered_button_main}
+    {assign var="cta_button_url" value=$block.content.registered_button_main_url}
+    {assign var="cta_button_label" value=$block.content.registered_button_main_label}
 {/if}
 
 {if $cta_text && $items}
