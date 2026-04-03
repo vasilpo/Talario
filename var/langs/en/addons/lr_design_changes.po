@@ -36,9 +36,21 @@ msgctxt "Languages::lr_design_changes.option.button_main"
 msgid "Main button"
 msgstr "Main button"
 
+msgctxt "Languages::lr_design_changes.option.registered_text"
+msgid "Text for registered users"
+msgstr "Text for registered users"
+
+msgctxt "Languages::lr_design_changes.option.registered_button_main"
+msgid "Main button for registered users"
+msgstr "Main button for registered users"
+
 msgctxt "Languages::lr_design_changes.option.button_main_url"
 msgid "Main button URL"
 msgstr "Main button URL"
+
+msgctxt "Languages::lr_design_changes.option.registered_button_main_url"
+msgid "Main button URL for registered users"
+msgstr "Main button URL for registered users"
 
 msgctxt "Languages::lr_design_changes.option.button_secondary"
 msgid "Secondary button"
@@ -55,6 +67,10 @@ msgstr "Buttons only for registered users"
 msgctxt "Languages::lr_design_changes.option.button_main_label"
 msgid "Label on main button"
 msgstr "Label on main button"
+
+msgctxt "Languages::lr_design_changes.option.registered_button_main_label"
+msgid "Label on main button for registered users"
+msgstr "Label on main button for registered users"
 
 msgctxt "Languages::lr_design_changes.exception_404_eyebrow"
 msgid "We don't have this class on Talario yet"
