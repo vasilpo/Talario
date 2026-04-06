@@ -81,7 +81,7 @@
 
                 {if !$sd_home_filters_products_dropdown_inserted && $filter.filter_id == $sd_home_filters_category_filter_id}
                     {$sd_home_filters_products_dropdown_inserted = true}
-                    <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
+                    <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item hidden" data-ca-home-filters-products-dropdown>
                         <div id="sw_elm_filter_{$sd_home_filters_products_filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination">{"sd_home_filters.products_filter_title"|__}<span data-ca-subcategory-count class="hidden"></span><i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
                         {if $settings.ab__device !== 'mobile'}
                             <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content custom-content cm-horizontal-filters-content cm-smart-position-h">
@@ -107,7 +107,7 @@
             {/foreach}
 
             {if !$sd_home_filters_products_dropdown_inserted}
-                <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item">
+                <div class="ut2__horizontal-product-filters-dropdown ut2-scroll-item hidden" data-ca-home-filters-products-dropdown>
                     <div id="sw_elm_filter_{$sd_home_filters_products_filter_uid}" class="ty-horizontal-product-filters-dropdown__wrapper {if $settings.ab__device !== 'desktop'}cm-abt--ut2-toggle-scroll{/if} cm-combination">{"sd_home_filters.products_filter_title"|__}<span data-ca-subcategory-count class="hidden"></span><i class="ty-horizontal-product-filters-dropdown__icon ty-icon-down-micro"></i></div>
                     {if $settings.ab__device !== 'mobile'}
                         <div id="elm_filter_{$sd_home_filters_products_filter_uid}" class="cm-popup-box hidden ty-horizontal-product-filters-dropdown__content custom-content cm-horizontal-filters-content cm-smart-position-h">
