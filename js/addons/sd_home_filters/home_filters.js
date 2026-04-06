@@ -104,6 +104,10 @@
         return $('#sd_home_filters_products_' + config.block_id);
     }
 
+    function get_products_dropdown($container, config) {
+        return $container.find('[data-ca-home-filters-products-dropdown]');
+    }
+
     function get_search_form() {
         return $('form[name="search_form"]').first();
     }
@@ -203,6 +207,17 @@
         set_stored_subcategory_ids($container, current_selected_ids);
     }
 
+    function set_products_dropdown_visibility($container, config, is_visible) {
+        var $products_dropdown = get_products_dropdown($container, config);
+
+        if (!$products_dropdown.length) {
+            return;
+        }
+
+        $products_dropdown.toggleClass('hidden', !is_visible);
+        $(window).trigger('resize');
+    }
+
     // Render the placeholder for the custom dropdown when subcategories are not available yet.
     function set_placeholder($container, config, text) {
         var $products_container = get_products_container($container, config);
@@ -228,6 +243,7 @@
                 )
             );
 
+        set_products_dropdown_visibility($container, config, false);
         update_subcategory_state($container, config, stored_subcategory_ids);
     }
 
@@ -286,6 +302,7 @@
         $wrapper.append($list);
         $products_container.empty().append($wrapper);
 
+        set_products_dropdown_visibility($container, config, items.length > 0);
         update_subcategory_state($container, config);
     }
 

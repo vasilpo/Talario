@@ -8,9 +8,9 @@
 
 {if $runtime.mode == "add" && $settings.General.quick_registration == "YesNo::YES"|enum}
     <div class="ty-account">
-        <p>{__("seo_adjustments.registration_bonus_text")}</p>
-
         <form name="profiles_register_form" enctype="multipart/form-data" action="{""|fn_url}" method="post">
+            {include file="addons/hybrid_auth/views/auth/components/account_update_buttons.tpl"}
+            <p>{__("seo_adjustments.registration_bonus_text")}</p>
             {include file="views/profiles/components/profile_fields.tpl" section="C" nothing_extra="YesNo::YES"|enum}
             {include file="views/profiles/components/profiles_account.tpl" nothing_extra="YesNo::YES"|enum location="checkout"}
 
@@ -39,6 +39,7 @@
     {capture name="tabsbox"}
         <div class="ty-profile-field ty-account form-wrap" id="content_general">
             <form name="profile_form" enctype="multipart/form-data" action="{""|fn_url}" method="post">
+                {include file="addons/hybrid_auth/views/auth/components/account_update_buttons.tpl"}
                 <input id="selected_section" type="hidden" value="general" name="selected_section"/>
                 <input id="default_card_id" type="hidden" value="" name="default_cc"/>
                 <input type="hidden" name="profile_id" value="{$user_data.profile_id}" />
@@ -138,7 +139,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            
+
                                 {foreach $usergroups as $usergroup}
                                     {if $user_data.usergroups[$usergroup.usergroup_id]}
                                         {$ug_status = $user_data.usergroups[$usergroup.usergroup_id].status}
