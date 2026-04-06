@@ -87,3 +87,7 @@ msgstr "On your account: [points], you can pay up to [percent]% of the lesson co
 msgctxt "Languages::lr_design_changes.reward_points_cashback_tooltip"
 msgid "Cashback for this order will be credited as bonus points after successful payment."
 msgstr "Cashback for this order will be credited as bonus points after successful payment."
+
+msgctxt "Languages::lr_design_changes.hybrid_auth_social_login_sign_in"
+msgid "Sign in via social network"
+msgstr "Sign in via social network"

@@ -87,3 +87,7 @@ msgstr "<strong>На вашем счете</strong>: [points], можно опл
 msgctxt "Languages::lr_design_changes.reward_points_cashback_tooltip"
 msgid "Cashback for this order will be credited as bonus points after successful payment."
 msgstr "Кешбек за этот заказ будет начислен бонусными баллами после успешной оплаты."
+
+msgctxt "Languages::lr_design_changes.hybrid_auth_social_login_sign_in"
+msgid "Sign in via social network"
+msgstr "Войти через соц. сеть"
