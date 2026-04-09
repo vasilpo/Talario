@@ -32,6 +32,14 @@ msgctxt "Languages::lr_cta_banners_right"
 msgid "LR: CTA block with right banners"
 msgstr "LR: CTA block with right banners"
 
+msgctxt "Languages::block_lr_homepage_catalog"
+msgid "LR: Homepage catalog"
+msgstr "LR: Homepage catalog"
+
+msgctxt "Languages::lr_homepage_catalog"
+msgid "LR: Homepage catalog"
+msgstr "LR: Homepage catalog"
+
 msgctxt "Languages::lr_design_changes.option.button_main"
 msgid "Main button"
 msgstr "Main button"
@@ -71,6 +79,14 @@ msgstr "Label on main button"
 msgctxt "Languages::lr_design_changes.option.registered_button_main_label"
 msgid "Label on main button for registered users"
 msgstr "Label on main button for registered users"
+
+msgctxt "Languages::lr_design_changes.option.default_category_id"
+msgid "Default category ID"
+msgstr "Default category ID"
+
+msgctxt "Languages::lr_design_changes.homepage_catalog_filters_title"
+msgid "Activity filters"
+msgstr "Activity filters"
 
 msgctxt "Languages::lr_design_changes.exception_404_eyebrow"
 msgid "We don't have this class on Talario yet"

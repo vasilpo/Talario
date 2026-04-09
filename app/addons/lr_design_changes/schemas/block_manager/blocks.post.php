@@ -108,4 +108,18 @@ $schema['lr_motivation_block_product_tab'] = [
     ],
 ];
 
+$schema['lr_homepage_catalog'] = [
+    'content' => [
+        'catalog_data' => [
+            'type' => 'function',
+            'function' => ['fn_lr_design_changes_get_homepage_catalog_data'],
+        ],
+    ],
+    'templates' => [
+        'addons/lr_design_changes/blocks/homepage_catalog.tpl' => [],
+    ],
+    'wrappers' => 'blocks/wrappers',
+    'show_on_locations' => ['index.index'],
+];
+
 return $schema;
