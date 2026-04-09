@@ -3,6 +3,7 @@
 {$sorting = ""|fn_get_products_sorting}
 {$sorting_orders = ""|fn_get_products_sorting_orders}
 {$avail_sorting = $settings.Appearance.available_product_list_sortings}
+{$layouts = ""|fn_get_products_views:false:false}
 
 {if !$config.tweaks.disable_dhtml}
     {$ajax_class = "cm-ajax"}
@@ -58,6 +59,23 @@
                             {/foreach}
                         </ul>
                     </div>
+                </div>
+            {/if}
+
+            {if !(($category_data.selected_views|count == 1) || ($category_data.selected_views|count == 0 && ""|fn_get_products_views:true|count <= 1))}
+                <div class="ty-sort-container__views-icons">
+                    {foreach from=$layouts key="layout" item="item"}
+                        {if ($category_data.selected_views.$layout) || (!$category_data.selected_views && $item.active)}
+                            {if $layout == $selected_layout}
+                                {$sort_order = $search.sort_order_rev}
+                            {else}
+                                {$sort_order = $search.sort_order}
+                            {/if}
+                            <a class="ty-sort-container__views-a cm-ajax-full-render {$ajax_class} {if $layout == $selected_layout}active{/if}" data-ca-target-id="{$pagination_id}" href="{"`$curl`&sort_by=`$search.sort_by`&sort_order=`$sort_order`&layout=`$layout`"|fn_url}" rel="nofollow">
+                                {include_ext file="common/icon.tpl" class="ut2-icon-`$layout|replace:'_':'-'`"}
+                            </a>
+                        {/if}
+                    {/foreach}
                 </div>
             {/if}
         </div>
