@@ -28,6 +28,8 @@ defined('BOOTSTRAP') or die('Access denied');
 function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, array $block_schema): array
 {
     $request = $_REQUEST;
+    $categories_tree = fn_get_categories_tree(0, false, CART_LANGUAGE);
+
     [$products, $search] = fn_get_products(
         $request,
         Registry::get('settings.Appearance.products_per_page')
@@ -42,11 +44,12 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
         'get_features'    => false,
     ]);
 
-    $show_no_products_block = !empty($filters_params['features_hash']) && empty($products);
+    $show_no_products_block = !empty($request['features_hash']) && empty($products);
     fn_filters_handle_search_result($request, $products, $search);
     [$filters] = fn_product_filters_get_filters_products_count($request, CART_LANGUAGE);
 
     return [
+        'categories_tree'          => $categories_tree,
         'filters'                  => $filters,
         'products'                 => $products,
         'request'                  => $request,

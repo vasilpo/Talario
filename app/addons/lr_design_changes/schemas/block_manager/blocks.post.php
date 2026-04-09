@@ -110,11 +110,6 @@ $schema['lr_motivation_block_product_tab'] = [
 
 $schema['lr_homepage_catalog'] = [
     'content' => [
-        'default_category_id' => [
-            'type' => 'input',
-            'default_value' => '267',
-            'option_name' => 'lr_design_changes.option.default_category_id',
-        ],
         'catalog_data' => [
             'type' => 'function',
             'function' => ['fn_lr_design_changes_get_homepage_catalog_data'],
