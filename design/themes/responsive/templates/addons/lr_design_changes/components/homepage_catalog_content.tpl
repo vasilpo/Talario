@@ -27,7 +27,6 @@
 {$homepage_catalog_mobile_filters_block.snapping_id = "`$block.block_id`_mobile"}
 {$homepage_catalog_mobile_filters_block.user_class = "ut2-filters hidden-desktop hidden-tablet rt-position"}
 {$homepage_catalog_category_data = $category_data}
-{$homepage_catalog_category_data.selected_views = ["products_without_options" => true]}
 
 <div class="lr-homepage-catalog-layout">
     <div class="lr-homepage-catalog-layout__sidebar side-grid ut2-bottom">
@@ -112,7 +111,9 @@
         }
 
         <div class="ut2-cat-container">
+            {$homepage_catalog_ajax_wrapper_id = "homepage_catalog_content_`$block.block_id`"}
             <div class="cat-view-grid" id="category_products_{$block.block_id}">
+                <div id="{$homepage_catalog_ajax_wrapper_id}">
                 {if $products}
                     {if $homepage_catalog_category_data.product_columns}
                         {assign var="product_columns" value=$homepage_catalog_category_data.product_columns}
@@ -120,20 +121,36 @@
                         {assign var="product_columns" value=$settings.Appearance.columns_in_products_list}
                     {/if}
                     {$category_data = $homepage_catalog_category_data}
-                    {$id = $catalog_data.target_id}
+                    {$id = $homepage_catalog_ajax_wrapper_id}
+                    {$selected_layout = $catalog_data.selected_layout}
+                    {$layouts = ""|fn_get_products_views:false:0}
+                    {$homepage_catalog_current_url = $config.current_url}
+                    {$homepage_catalog_full_render = $full_render|default:null}
+
+                    {if strpos($config.current_url, "?") === false}
+                        {$config.current_url = $config.current_url|fn_link_attach:"dispatch=index.index"}
+                    {/if}
+
+                    {$full_render = true}
 
                     {include file="addons/lr_design_changes/components/homepage_catalog_sorting.tpl"
                         category_data=$category_data
                         request=$request
                         search=$search
-                        target_id=$catalog_data.target_id
+                        selected_layout=$selected_layout
+                        target_id=$id
                         base_url=$config.current_url
                     }
 
-                    {include file="design/themes/abt__unitheme2/templates/blocks/product_list_templates/products_without_options.tpl"
-                        columns=$product_columns
-                        no_sorting=true
-                    }
+                    {if $layouts.$selected_layout.template}
+                        {include file="`$layouts.$selected_layout.template`"
+                            columns=$product_columns
+                            no_sorting=true
+                        }
+                    {/if}
+
+                    {$config.current_url = $homepage_catalog_current_url}
+                    {$full_render = $homepage_catalog_full_render}
                 {elseif !$show_not_found_notification && $request.features_hash}
                     {include file="common/no_items.tpl"
                         text_no_found=__("text_no_products_found")
@@ -145,6 +162,7 @@
                         text_no_found=__("text_no_products")
                     }
                 {/if}
+                <!--{$homepage_catalog_ajax_wrapper_id}--></div>
             <!--category_products_{$block.block_id}--></div>
         </div>
     </div>

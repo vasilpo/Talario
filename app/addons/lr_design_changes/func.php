@@ -16,6 +16,15 @@ use Tygh\Registry;
 
 defined('BOOTSTRAP') or die('Access denied');
 
+/**
+ * Builds homepage catalog block data.
+ *
+ * @param mixed $value        Unused block content value.
+ * @param array $block        Block configuration.
+ * @param array $block_schema Block schema.
+ *
+ * @return array<string, mixed>
+ */
 function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, array $block_schema): array
 {
     $default_category_id = (int) ($block['content']['default_category_id'] ?? 0);
@@ -32,6 +41,14 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
     }
 
     $request = fn_lr_design_changes_get_homepage_catalog_request();
+    $layout_request = $request;
+    $layout_request['category_id'] = $default_category_id;
+
+    if ($layout_request['layout'] === '') {
+        $layout_request['layout'] = 'products_multicolumns';
+    }
+
+    $selected_layout = fn_get_products_layout($layout_request);
     $products_params = fn_lr_design_changes_get_homepage_catalog_products_params($default_category_id, $request);
     $filters_params = fn_lr_design_changes_get_homepage_catalog_filters_params($default_category_id, $request, $block);
 
@@ -73,12 +90,17 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
         'products'                 => $products,
         'request'                  => $request,
         'search'                   => $search,
-        'selected_layout'          => 'products_without_options',
+        'selected_layout'          => $selected_layout,
         'show_no_products_block'   => $show_no_products_block,
         'target_id'                => 'lr_homepage_catalog_' . $block['block_id'],
     ];
 }
 
+/**
+ * Gets supported request params for homepage catalog.
+ *
+ * @return array<string, int|string>
+ */
 function fn_lr_design_changes_get_homepage_catalog_request(): array
 {
     $request = [
@@ -96,6 +118,14 @@ function fn_lr_design_changes_get_homepage_catalog_request(): array
     return $request;
 }
 
+/**
+ * Builds product search params for homepage catalog.
+ *
+ * @param int                $category_id Category identifier.
+ * @param array<string, int|string> $request     Sanitized request params.
+ *
+ * @return array<string, mixed>
+ */
 function fn_lr_design_changes_get_homepage_catalog_products_params(int $category_id, array $request): array
 {
     $params = [
@@ -129,6 +159,15 @@ function fn_lr_design_changes_get_homepage_catalog_products_params(int $category
     return $params;
 }
 
+/**
+ * Builds filter params for homepage catalog.
+ *
+ * @param int                     $category_id Category identifier.
+ * @param array<string, int|string> $request     Sanitized request params.
+ * @param array                   $block       Block configuration.
+ *
+ * @return array<string, mixed>
+ */
 function fn_lr_design_changes_get_homepage_catalog_filters_params(int $category_id, array $request, array $block): array
 {
     $block_data = $block;
@@ -150,6 +189,14 @@ function fn_lr_design_changes_get_homepage_catalog_filters_params(int $category_
     return $params;
 }
 
+/**
+ * Gets category data for homepage catalog root category.
+ *
+ * @param int   $category_id Category identifier.
+ * @param array $auth        Current auth data.
+ *
+ * @return array<string, mixed>
+ */
 function fn_lr_design_changes_get_homepage_catalog_category_data(int $category_id, array $auth): array
 {
     $statuses = [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN];
@@ -174,6 +221,13 @@ function fn_lr_design_changes_get_homepage_catalog_category_data(int $category_i
     return (array) fn_get_category_data($category_id, CART_LANGUAGE, '*', true, false, false);
 }
 
+/**
+ * Gets categories tree for homepage catalog navigation.
+ *
+ * @param int $default_category_id Selected category identifier.
+ *
+ * @return array<int, array<string, mixed>>
+ */
 function fn_lr_design_changes_get_homepage_catalog_categories_tree(int $default_category_id): array
 {
     $categories_tree = fn_get_categories_tree(0, false, CART_LANGUAGE);
@@ -187,6 +241,14 @@ function fn_lr_design_changes_get_homepage_catalog_categories_tree(int $default_
     return $categories_tree;
 }
 
+/**
+ * Marks active branch in categories tree.
+ *
+ * @param array<int, array<string, mixed>> $categories_tree      Categories tree.
+ * @param int                              $default_category_id Selected category identifier.
+ *
+ * @return bool
+ */
 function fn_lr_design_changes_mark_active_category_in_tree(array &$categories_tree, int $default_category_id): bool
 {
     $is_active_branch = false;
