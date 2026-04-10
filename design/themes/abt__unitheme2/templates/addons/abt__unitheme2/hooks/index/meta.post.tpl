@@ -1,7 +1,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="{""|fn_abt__ut2_get_locale}" />
 <meta property="og:title" content="{$smarty.capture.page_title|strip|trim nofilter}" />
-<meta property="og:description" content="{$meta_description|html_entity_decode:$smarty.const.ENT_COMPAT:"UTF-8"|default:$location_data.meta_description}" />
+<meta property="og:description" content="{$meta_description|default:$location_data.meta_description|default:""|html_entity_decode:$smarty.const.ENT_COMPAT:"UTF-8"}" />
 <meta property="og:url" content="{$config.current_url|fn_url}" />
 {if $runtime.controller == 'categories' && $category_data && $category_data.main_pair}
     <meta property="og:image" content="{$category_data.main_pair.detailed.image_path}" />
