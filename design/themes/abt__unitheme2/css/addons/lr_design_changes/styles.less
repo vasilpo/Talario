@@ -194,9 +194,35 @@
     .top-sticky-panel__filters {
         margin-bottom: 16px;
     }
-  .lr-homepage-catalog-layout__sidebar.side-grid.ut2-bottom {
-    display: none;
-  }
+
+    .lr-homepage-catalog-layout__sidebar.side-grid.ut2-bottom {
+        display: none;
+    }
+
+    .lr-homepage-catalog-layout .ut2-load-more-container.ut2-load-more-auto {
+        .ut2-load-more {
+            max-width: 320px;
+            margin: 0 auto;
+            padding-inline: var(--gap-m);
+            background: @secondary_button;
+
+            .show_button_gradient_fill() when (@abt__ut2_general_buttons_use_gradient = true) {
+                background: linear-gradient(0deg, @secondary_button, lighten(@secondary_button, 8%));
+            }
+            .show_button_gradient_fill();
+
+            .loader {
+                width: calc(var(--height-button) / 2);
+                height: calc(var(--height-button) / 2);
+                margin-left: calc(var(--gap-xs) * -1);
+                margin-right: var(--gap-xs);
+            }
+
+            .loader-text {
+                display: inline;
+            }
+        }
+    }
 }
 
 @media (min-width: 768px) {
