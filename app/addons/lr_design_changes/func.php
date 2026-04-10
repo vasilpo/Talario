@@ -9,10 +9,8 @@
 *                                                                         *
 ***************************************************************************/
 
-use Tygh\Enum\ObjectStatuses;
-use Tygh\Enum\YesNo;
-use Tygh\Providers\StorefrontProvider;
 use Tygh\Registry;
+use Tygh\Tygh;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -27,11 +25,23 @@ defined('BOOTSTRAP') or die('Access denied');
  */
 function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, array $block_schema): array
 {
-    $request = $_REQUEST;
-    $categories_tree = fn_get_categories_tree(0, false, CART_LANGUAGE);
+    $params = $_REQUEST;
+
+    $selected_layout = fn_get_products_layout($params);
+    $categories_tree = fn_get_categories_tree(0, false);
+
+    $view = Tygh::$app['view'] ?? null;
+    $product_list_template = fn_lr_design_changes_get_homepage_catalog_product_list_template($selected_layout);
+
+    if ($view && $product_list_template) {
+        $products_block = $block;
+        $products_block['type'] = 'products';
+        $products_block['properties']['template'] = $product_list_template;
+        $view->assign('block', $products_block);
+    }
 
     [$products, $search] = fn_get_products(
-        $request,
+        $params,
         Registry::get('settings.Appearance.products_per_page')
     );
 
@@ -44,18 +54,37 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
         'get_features'    => false,
     ]);
 
-    $show_no_products_block = !empty($request['features_hash']) && empty($products);
-    fn_filters_handle_search_result($request, $products, $search);
-    [$filters] = fn_product_filters_get_filters_products_count($request, CART_LANGUAGE);
+    $show_no_products_block = !empty($params['features_hash']) && empty($products);
+    fn_filters_handle_search_result($params, $products, $search);
+    [$filters] = fn_product_filters_get_filters_products_count($params);
 
     return [
         'categories_tree'          => $categories_tree,
         'filters'                  => $filters,
         'products'                 => $products,
-        'request'                  => $request,
+        'request'                  => $params,
         'search'                   => $search,
-        'selected_layout'          => fn_get_products_layout($request),
+        'selected_layout'          => $selected_layout,
         'show_no_products_block'   => $show_no_products_block,
         'target_id'                => 'lr_homepage_catalog_' . $block['block_id'],
     ];
+}
+
+/**
+ * Resolves product list template path for add-ons that depend on block template context.
+ *
+ * @param string $selected_layout Product layout identifier.
+ *
+ * @return string
+ */
+function fn_lr_design_changes_get_homepage_catalog_product_list_template($selected_layout)
+{
+    $templates = [
+        'grid_list' => 'blocks/products/ab__grid_list.tpl',
+        'products_multicolumns' => 'blocks/products/products_multicolumns.tpl',
+        'products_without_options' => 'blocks/products/products.tpl',
+        'short_list' => 'blocks/products/short_list.tpl',
+    ];
+
+    return $templates[$selected_layout] ?? '';
 }
