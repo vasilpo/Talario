@@ -11,6 +11,7 @@
 
 use Tygh\Registry;
 use Tygh\Tygh;
+use Tygh\Enum\YesNo;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -37,6 +38,7 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
         $products_block = $block;
         $products_block['type'] = 'products';
         $products_block['properties']['template'] = $product_list_template;
+        $products_block['properties']['show_short_desc'] = YesNo::YES;
         $view->assign('block', $products_block);
     }
 
