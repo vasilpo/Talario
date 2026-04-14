@@ -22,17 +22,8 @@
 {$homepage_catalog_mobile_filters_block.snapping_id = "`$block.block_id`_mobile"}
 {$homepage_catalog_mobile_filters_block.user_class = "ut2-filters hidden-desktop hidden-tablet rt-position"}
 
-<div class="lr-homepage-catalog-layout">
+<div class="lr-homepage-catalog-layout" id="homepage_catalog">
     <div class="lr-homepage-catalog-layout__sidebar side-grid ut2-bottom">
-        {if $catalog_data.categories_tree}
-            <div class="lr-homepage-catalog-layout__categories ut2-subcategories-block">
-                {include file="design/themes/abt__unitheme2/templates/blocks/categories/categories_dropdown_vertical.tpl"
-                    block=$homepage_catalog_categories_block
-                    items=$catalog_data.categories_tree
-                }
-            </div>
-        {/if}
-
         <div class="ty-sidebox lr-homepage-catalog-layout__filters ut2-sidebox-important ut2-filters hidden-phone">
             <div class="ut2-sidebox-important__title">
                 <span class="ut2-sidebox-important__title-wrapper">{__("lr_design_changes.homepage_catalog_filters_title")}</span>
