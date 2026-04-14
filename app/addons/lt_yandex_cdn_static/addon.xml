@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>lt_yandex_cdn_static</id>
+    <version>1.0.0</version>
+    <priority>31000</priority>
+    <position>96</position>
+    <status>disabled</status>
+    <default_language>en</default_language>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <has_icon>Y</has_icon>
+    <supplier>Larionov.tech</supplier>
+    <supplier_link>https://larionov.tech</supplier_link>
+    <email>exikane.larionov@gmail.com</email>
+
+    <functions>
+        <item for="uninstall">fn_lt_yandex_cdn_static_uninstall</item>
+    </functions>
+</addon>

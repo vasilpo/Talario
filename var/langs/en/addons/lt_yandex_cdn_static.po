@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"PO-Revision-Date: 2026-04-14 00:00+0000\n"
+
+msgctxt "Addons::name::lt_yandex_cdn_static"
+msgid "Larionov.tech: Yandex CDN"
+msgstr "Larionov.tech: Yandex CDN"
+
+msgctxt "Addons::description::lt_yandex_cdn_static"
+msgid "Adds Yandex Cloud CDN integration for local CS-Cart static files. Configure the module on the <a href=\"admin.php?dispatch=storage.cdn\">CDN settings page</a>."
+msgstr "Adds Yandex Cloud CDN integration for local CS-Cart static files. Configure the module on the <a href=\"admin.php?dispatch=storage.cdn\">CDN settings page</a>."
+
+msgctxt "Languages::lt_yandex_cdn_static.service"
+msgid "Service"
+msgstr "Service"
+
+msgctxt "Languages::lt_yandex_cdn_static.service_amazon"
+msgid "Amazon"
+msgstr "Amazon"
+
+msgctxt "Languages::lt_yandex_cdn_static.service_yandex"
+msgid "Yandex"
+msgstr "Yandex"
+
+msgctxt "Languages::lt_yandex_cdn_static.yandex_cname_description"
+msgid "Enter the public CDN domain configured in Yandex Cloud CDN. Example: static.example.com"
+msgstr "Enter your public CDN domain configured in Yandex Cloud CDN, e.g. static.example.com. Do not enter a provider host such as *.yccdn.ru."
+
+msgctxt "Languages::lt_yandex_cdn_static.yandex_cdn_instruction"
+msgid "<strong>Before enabling Yandex CDN:</strong><br>1. Create a CDN resource in Yandex Cloud.<br>2. Attach a certificate for your CDN domain to that resource.<br>3. Create a DNS CNAME from your CDN domain to the provider host issued by Yandex.<br>4. Enter your public CDN domain here, save the settings, and only then enable CDN."
+msgstr "<strong>Before enabling Yandex CDN:</strong><ol><li><strong>Create a resource in Cloud CDN</strong> and specify your store as the origin plus the CDN domain that will serve static files, e.g. <code>static.example.com</code>. See: <a href=\"https://yandex.cloud/en/docs/cdn/operations/resources/create-resource\" target=\"_blank\" rel=\"noopener noreferrer\">create a resource</a>.</li><li><strong>Attach a certificate</strong> for your CDN domain to that resource. If you do not have one yet, create it in Certificate Manager, complete the DNS validation, and wait for the status to change to <code>Issued</code>. See: <a href=\"https://yandex.cloud/en/docs/certificate-manager/operations/managed/cert-create\" target=\"_blank\" rel=\"noopener noreferrer\">create a certificate</a>, <a href=\"https://yandex.cloud/en/docs/certificate-manager/operations/managed/cert-validate\" target=\"_blank\" rel=\"noopener noreferrer\">validate the domain</a>, <a href=\"https://yandex.cloud/en/docs/cdn/operations/resources/configure-basics\" target=\"_blank\" rel=\"noopener noreferrer\">configure the certificate in CDN</a>.</li><li><strong>Create a DNS CNAME</strong> from your CDN domain to the provider host shown by Yandex in the CDN resource. Important: in this CS-Cart setting you must enter your public domain such as <code>static.example.com</code>, not the provider host like <code>*.yccdn.ru</code>. See: <a href=\"https://yandex.cloud/en/docs/cdn/quickstart\" target=\"_blank\" rel=\"noopener noreferrer\">CDN quickstart</a>.</li><li><strong>Wait for DNS and certificate propagation</strong> and then check that a URL like <code>https://static.example.com/js/tygh/core.js</code> opens without TLS errors.</li><li><strong>Only after that</strong> enter your public CDN domain here, save the settings, and then enable CDN on the storefront.</li></ol>"
+
+msgctxt "Languages::lt_yandex_cdn_static.addon_settings_redirect_notice"
+msgid "This add-on is configured on the CDN settings page."
+msgstr "This add-on is configured on the CDN settings page."
+
+msgctxt "Languages::lt_yandex_cdn_static.open_cdn_settings"
+msgid "Open CDN settings"
+msgstr "Open CDN settings"
