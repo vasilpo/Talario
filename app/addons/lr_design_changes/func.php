@@ -59,6 +59,7 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
     $show_no_products_block = !empty($params['features_hash']) && empty($products);
     fn_filters_handle_search_result($params, $products, $search);
     [$filters] = fn_product_filters_get_filters_products_count($params);
+    $filters = fn_lr_design_changes_sort_homepage_catalog_filters($filters);
 
     return [
         'categories_tree'          => $categories_tree,
@@ -89,4 +90,25 @@ function fn_lr_design_changes_get_homepage_catalog_product_list_template($select
     ];
 
     return $templates[$selected_layout] ?? '';
+}
+
+/**
+ * Moves the category filter to the first position in homepage catalog filters.
+ *
+ * @param array<int|string, array<string, mixed>> $filters Homepage catalog filters.
+ *
+ * @return array<int|string, array<string, mixed>>
+ */
+function fn_lr_design_changes_sort_homepage_catalog_filters(array $filters): array
+{
+    $category_filter_id = (int) Registry::get('addons.sd_home_filters.category_filter_id');
+
+    if ($category_filter_id <= 0 || empty($filters[$category_filter_id])) {
+        return $filters;
+    }
+
+    $category_filter = [$category_filter_id => $filters[$category_filter_id]];
+    unset($filters[$category_filter_id]);
+
+    return $category_filter + $filters;
 }

@@ -44,7 +44,7 @@
                     {if $cta_button_label}
                         <span class="sd-cta-version-3__label-container">
                     {/if}
-                    <a href="{$cta_button_url|fn_url}" class="ty-btn ty-btn__primary">
+                     <a href="javascript:void(0);" class="ty-btn ty-btn__primary cm-scroll" data-ca-scroll="#homepage_catalog">
                         {$cta_button_text}
 
                     </a>
