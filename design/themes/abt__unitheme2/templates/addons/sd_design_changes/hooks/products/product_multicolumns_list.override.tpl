@@ -122,10 +122,12 @@
 
 
         {if $settings.abt__ut2.product_list.$tmpl.show_amount[$settings.ab__device] === "YesNo::YES"|enum}
-            <div class="ut2-gl__amount">
-                {assign var="product_amount" value="product_amount_{$obj_id}"}
-                {$smarty.capture.$product_amount nofilter}
-            </div>
+            {assign var="product_amount" value="product_amount_{$obj_id}"}
+            {if $smarty.capture.$product_amount|trim}
+                <div class="ut2-gl__amount">
+                    {$smarty.capture.$product_amount nofilter}
+                </div>
+            {/if}
         {/if}
 
         {if ($show_features || $show_descr) && ($product.short_description || $product.abt__ut2_features)}
