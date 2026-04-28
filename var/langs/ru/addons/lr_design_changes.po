@@ -40,6 +40,14 @@ msgctxt "Languages::lr_homepage_catalog"
 msgid "LR: Homepage catalog"
 msgstr "LR: Каталог на главной"
 
+msgctxt "Languages::block_lr_homepage_search_filters"
+msgid "LR: Homepage search filters"
+msgstr "LR: Фильтры поиска на главной"
+
+msgctxt "Languages::lr_homepage_search_filters"
+msgid "LR: Homepage search filters"
+msgstr "LR: Фильтры поиска на главной"
+
 msgctxt "Languages::lr_design_changes.option.button_main"
 msgid "Main button"
 msgstr "Главная кнопка"
@@ -84,9 +92,49 @@ msgctxt "Languages::lr_design_changes.option.default_category_id"
 msgid "Default category ID"
 msgstr "ID категории по умолчанию"
 
+msgctxt "Languages::lr_design_changes.option.city_filter_id"
+msgid "City filter ID"
+msgstr "ID фильтра города"
+
+msgctxt "Languages::lr_design_changes.option.age_filter_id"
+msgid "Age filter ID"
+msgstr "ID фильтра возраста"
+
+msgctxt "Languages::lr_design_changes.option.category_filter_id"
+msgid "Category filter ID"
+msgstr "ID фильтра категории"
+
+msgctxt "Languages::lr_design_changes.option.free_trial_filter_id"
+msgid "Free trial filter ID"
+msgstr "ID фильтра бесплатного занятия"
+
+msgctxt "Languages::lr_design_changes.option.products_dropdown_limit"
+msgid "Products dropdown limit"
+msgstr "Лимит занятий в выпадающем списке"
+
 msgctxt "Languages::lr_design_changes.homepage_catalog_filters_title"
 msgid "Activity filters"
 msgstr "Фильтры занятий"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_show_results"
+msgid "Show results"
+msgstr "Показать результаты"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_products_title"
+msgid "Products"
+msgstr "Занятия"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_apply_filters_placeholder"
+msgid "Apply filters"
+msgstr "Примените фильтры"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_no_products"
+msgid "No products found"
+msgstr "Занятия не найдены"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_loading_products"
+msgid "Loading products"
+msgstr "Загрузка занятий"
 
 msgctxt "Languages::lr_design_changes.exception_404_eyebrow"
 msgid "We don't have this class on Talario yet"

@@ -115,11 +115,71 @@ $schema['lr_homepage_catalog'] = [
             'function' => ['fn_lr_design_changes_get_homepage_catalog_data'],
         ],
     ],
+    'settings' => [
+        'category_filter_id' => [
+            'type' => 'input',
+            'default_value' => '316',
+            'option_name' => 'lr_design_changes.option.category_filter_id',
+        ],
+    ],
     'templates' => [
         'addons/lr_design_changes/blocks/homepage_catalog.tpl' => [],
     ],
     'wrappers' => 'blocks/wrappers',
     'show_on_locations' => ['index.index'],
+];
+
+$schema['lr_homepage_search_filters'] = [
+    'content' => [
+        'filter_data' => [
+            'type' => 'function',
+            'function' => ['fn_lr_design_changes_get_homepage_search_filters_data'],
+        ],
+    ],
+    'settings' => [
+        'city_filter_id' => [
+            'type' => 'input',
+            'default_value' => '321',
+            'option_name' => 'lr_design_changes.option.city_filter_id',
+        ],
+        'age_filter_id' => [
+            'type' => 'input',
+            'default_value' => '322',
+            'option_name' => 'lr_design_changes.option.age_filter_id',
+        ],
+        'category_filter_id' => [
+            'type' => 'input',
+            'default_value' => '316',
+            'option_name' => 'lr_design_changes.option.category_filter_id',
+        ],
+        'free_trial_filter_id' => [
+            'type' => 'input',
+            'default_value' => '319',
+            'option_name' => 'lr_design_changes.option.free_trial_filter_id',
+        ],
+        'products_dropdown_limit' => [
+            'type' => 'input',
+            'default_value' => '10',
+            'option_name' => 'lr_design_changes.option.products_dropdown_limit',
+        ],
+    ],
+    'templates' => [
+        'addons/lr_design_changes/blocks/homepage_search_filters.tpl' => [],
+    ],
+    'wrappers' => 'blocks/wrappers',
+    'show_on_locations' => ['index.index'],
+    'cache' => [
+        'update_handlers' => [
+            'categories',
+            'category_descriptions',
+            'product_filters',
+            'product_filter_descriptions',
+            'product_feature_variants',
+            'product_feature_variant_descriptions',
+            'product_features',
+            'product_features_descriptions',
+        ],
+    ],
 ];
 
 return $schema;
