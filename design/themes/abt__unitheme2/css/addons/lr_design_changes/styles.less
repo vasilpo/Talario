@@ -154,6 +154,56 @@
     text-align: center;
 }
 
+.lr-homepage-search-filters__apply {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.lr-homepage-search-filters-highlighted {
+    background: #c49f30 !important;
+    color: #fff !important;
+    box-shadow: unset !important;
+}
+
+.lr-homepage-search-filters__products-content {
+    padding-block: 20px !important;
+}
+
+.lr-homepage-search-filters__age-filter {
+    .ty-product-filters__variants {
+        column-count: 2;
+        column-gap: 12px;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .ty-product-filters__group {
+        margin: 5px 0;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .ut2-more-btn,
+    .ut2-filters__search {
+        display: none;
+    }
+
+    .items-more {
+        --ut2-product-filter-variant-list-_max-height_-shortened: none;
+    }
+
+    @media (max-width: 567px) {
+        .ty-product-filters__variants {
+            padding: 10px;
+        }
+    }
+}
+
+[data-ca-lr-homepage-search-filters-products-dropdown].hidden {
+    display: none !important;
+}
+
 .lr-homepage-catalog-layout {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);

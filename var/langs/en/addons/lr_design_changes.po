@@ -40,6 +40,14 @@ msgctxt "Languages::lr_homepage_catalog"
 msgid "LR: Homepage catalog"
 msgstr "LR: Homepage catalog"
 
+msgctxt "Languages::block_lr_homepage_search_filters"
+msgid "LR: Homepage search filters"
+msgstr "LR: Homepage search filters"
+
+msgctxt "Languages::lr_homepage_search_filters"
+msgid "LR: Homepage search filters"
+msgstr "LR: Homepage search filters"
+
 msgctxt "Languages::lr_design_changes.option.button_main"
 msgid "Main button"
 msgstr "Main button"
@@ -84,9 +92,49 @@ msgctxt "Languages::lr_design_changes.option.default_category_id"
 msgid "Default category ID"
 msgstr "Default category ID"
 
+msgctxt "Languages::lr_design_changes.option.city_filter_id"
+msgid "City filter ID"
+msgstr "City filter ID"
+
+msgctxt "Languages::lr_design_changes.option.age_filter_id"
+msgid "Age filter ID"
+msgstr "Age filter ID"
+
+msgctxt "Languages::lr_design_changes.option.category_filter_id"
+msgid "Category filter ID"
+msgstr "Category filter ID"
+
+msgctxt "Languages::lr_design_changes.option.free_trial_filter_id"
+msgid "Free trial filter ID"
+msgstr "Free trial filter ID"
+
+msgctxt "Languages::lr_design_changes.option.products_dropdown_limit"
+msgid "Products dropdown limit"
+msgstr "Products dropdown limit"
+
 msgctxt "Languages::lr_design_changes.homepage_catalog_filters_title"
 msgid "Activity filters"
 msgstr "Activity filters"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_show_results"
+msgid "Show results"
+msgstr "Show results"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_products_title"
+msgid "Products"
+msgstr "Products"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_apply_filters_placeholder"
+msgid "Apply filters"
+msgstr "Apply filters"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_no_products"
+msgid "No products found"
+msgstr "No products found"
+
+msgctxt "Languages::lr_design_changes.homepage_search_filters_loading_products"
+msgid "Loading products"
+msgstr "Loading products"
 
 msgctxt "Languages::lr_design_changes.exception_404_eyebrow"
 msgid "We don't have this class on Talario yet"
