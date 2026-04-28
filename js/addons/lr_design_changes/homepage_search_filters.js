@@ -73,7 +73,10 @@
     }
 
     function get_search_form() {
-        return $('form[name="search_form"]').first();
+        var $forms = $('form[name="search_form"]');
+        var $visible_forms = $forms.filter(':visible');
+
+        return $visible_forms.length ? $visible_forms.first() : $forms.first();
     }
 
     function get_search_params($search_form) {
@@ -85,7 +88,14 @@
         }
 
         $.each($search_form.serializeArray(), function (index, field) {
-            if (!field.name || field.name === 'dispatch' || field.name === 'features_hash') {
+            if (
+                !field.name
+                || field.name === 'dispatch'
+                || field.name === 'features_hash'
+                || field.name === 'cid'
+                || field.name === 'category_id'
+                || field.name === 'search_performed'
+            ) {
                 return;
             }
 
@@ -99,7 +109,6 @@
         }
 
         search_params.q = search_query;
-        search_params.search_performed = 'Y';
 
         return search_params;
     }
@@ -126,7 +135,7 @@
             return $.attachToUrl(url, 'features_hash=' + encodeURIComponent(features_hash));
         }
 
-        return $.attachToUrl(url, 'q=');
+        return url;
     }
 
     function get_products_container(config) {
@@ -333,40 +342,58 @@
         });
     }
 
+    function go_to_search($container, config, $search_form) {
+        var selected_product_ids = get_selected_product_ids(get_products_container(config));
+        var search_params = get_search_params($search_form);
+        var category_names = get_category_names($container, config);
+
+        if (selected_product_ids.length) {
+            $.ceAjax('request', config.request_endpoint, {
+                method: 'get',
+                hidden: true,
+                caching: false,
+                result_ids: '',
+                data: {
+                    features_hash: get_features_hash($container),
+                    category_names: category_names,
+                    category_filter_id: config.category_filter_id,
+                    products_dropdown_limit: config.products_limit,
+                    selected_category_ids: selected_product_ids,
+                    search_params: search_params
+                },
+                callback: function (response) {
+                    var products_response = response && response.lr_homepage_search_filters_products
+                        ? response.lr_homepage_search_filters_products
+                        : {};
+
+                    window.location.href = products_response.search_url || attach_params(get_search_url($container, config), search_params);
+                }
+            });
+
+            return;
+        }
+
+        window.location.href = attach_params(get_search_url($container, config), search_params);
+    }
+
     function bind_apply_button($container, config) {
         $container.off('click.lr_homepage_search_filters', '[data-ca-lr-homepage-search-filters-apply]');
         $container.on('click.lr_homepage_search_filters', '[data-ca-lr-homepage-search-filters-apply]', function () {
-            var selected_product_ids = get_selected_product_ids(get_products_container(config));
-            var search_params = get_search_params(get_search_form());
-            var category_names = get_category_names($container, config);
+            go_to_search($container, config, get_search_form());
+        });
+    }
 
-            if (selected_product_ids.length) {
-                $.ceAjax('request', config.request_endpoint, {
-                    method: 'get',
-                    hidden: true,
-                    caching: false,
-                    result_ids: '',
-                    data: {
-                        features_hash: get_features_hash($container),
-                        category_names: category_names,
-                        category_filter_id: config.category_filter_id,
-                        products_dropdown_limit: config.products_limit,
-                        selected_category_ids: selected_product_ids,
-                        search_params: search_params
-                    },
-                    callback: function (response) {
-                        var products_response = response && response.lr_homepage_search_filters_products
-                            ? response.lr_homepage_search_filters_products
-                            : {};
+    function bind_search_form($container, config) {
+        var $search_form = get_search_form();
 
-                        window.location.href = products_response.search_url || attach_params(get_search_url($container, config), search_params);
-                    }
-                });
+        if (!$search_form.length) {
+            return;
+        }
 
-                return;
-            }
-
-            window.location.href = attach_params(get_search_url($container, config), search_params);
+        $search_form.off('submit.lr_homepage_search_filters');
+        $search_form.on('submit.lr_homepage_search_filters', function (event) {
+            event.preventDefault();
+            go_to_search($container, config, $(this));
         });
     }
 
@@ -394,6 +421,7 @@
             });
 
             bind_apply_button($container, config);
+            bind_search_form($container, config);
             update_filters_state($container);
             load_products($container, config);
         });
