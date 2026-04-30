@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+"PO-Revision-Date: 2026-04-30 00:00+0000\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "Addons::name::lt_yandex_metrika_goals"
+msgid "Larionov.tech: Yandex Metrika conversion goals"
+msgstr "Larionov.tech: Yandex Metrika conversion goals"
+
+msgctxt "Addons::description::lt_yandex_metrika_goals"
+msgid "Sends custom Yandex Metrika goals for successful user registration, partner registration, and storefront search."
+msgstr "Sends custom Yandex Metrika goals for successful user registration, partner registration, and storefront search."
