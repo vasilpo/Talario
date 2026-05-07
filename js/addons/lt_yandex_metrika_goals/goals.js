@@ -47,6 +47,10 @@
     } catch (err) {}
   };
 
+  var isPersistentGoal = function (goal) {
+    return goal.name === 'site_search';
+  };
+
   var appendGoals = function (goals) {
     _.ltYandexMetrikaGoals.pendingGoals = _.ltYandexMetrikaGoals.pendingGoals || [];
 
@@ -81,7 +85,10 @@
       return true;
     }
 
-    if (processedGoals[normalizedGoal.key] || isGoalStored(normalizedGoal.key)) {
+    if (
+      processedGoals[normalizedGoal.key]
+      || (isPersistentGoal(normalizedGoal) && isGoalStored(normalizedGoal.key))
+    ) {
       return true;
     }
 
@@ -94,7 +101,10 @@
     });
 
     processedGoals[normalizedGoal.key] = true;
-    storeGoal(normalizedGoal.key);
+
+    if (isPersistentGoal(normalizedGoal)) {
+      storeGoal(normalizedGoal.key);
+    }
 
     return true;
   };
