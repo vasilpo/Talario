@@ -237,7 +237,7 @@ function fn_lt_yandex_metrika_goals_queue_recent_profile_registration_from_page(
     }
 
     $referer = isset($_SERVER['HTTP_REFERER']) ? (string) $_SERVER['HTTP_REFERER'] : '';
-    $is_registration_landing = $mode === 'success_add' || strpos($referer, 'dispatch=profiles.add') !== false;
+    $is_registration_landing = fn_lt_yandex_metrika_goals_is_profile_registration_landing($mode, $referer);
     if (!$is_registration_landing) {
         return;
     }
@@ -250,6 +250,31 @@ function fn_lt_yandex_metrika_goals_queue_recent_profile_registration_from_page(
     }
 
     fn_lt_yandex_metrika_goals_queue_user_registration_goal($user_id, true);
+}
+
+/**
+ * Checks whether the current profile page was opened immediately after the storefront registration form.
+ *
+ * @param string $mode    Current profiles controller mode
+ * @param string $referer HTTP referer URL
+ *
+ * @return bool
+ */
+function fn_lt_yandex_metrika_goals_is_profile_registration_landing(string $mode, string $referer): bool
+{
+    if ($mode === 'success_add') {
+        return true;
+    }
+
+    if ($referer === '') {
+        return false;
+    }
+
+    $normalized_referer = strtolower(rawurldecode($referer));
+
+    return strpos($normalized_referer, 'dispatch=profiles.add') !== false
+        || strpos($normalized_referer, 'profiles.add') !== false
+        || strpos($normalized_referer, '/profiles-add') !== false;
 }
 
 /**
