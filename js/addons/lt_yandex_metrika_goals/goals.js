@@ -75,6 +75,7 @@
 
   var reachGoal = function (goal) {
     var normalizedGoal = normalizeGoal(goal);
+    var counterId = getCounterId();
 
     if (!normalizedGoal.name || !normalizedGoal.key) {
       return true;
@@ -88,7 +89,9 @@
       return false;
     }
 
-    ym(getCounterId(), 'reachGoal', normalizedGoal.name);
+    ym(counterId, 'getClientID', function () {
+      ym(counterId, 'reachGoal', normalizedGoal.name, {});
+    });
 
     processedGoals[normalizedGoal.key] = true;
     storeGoal(normalizedGoal.key);
