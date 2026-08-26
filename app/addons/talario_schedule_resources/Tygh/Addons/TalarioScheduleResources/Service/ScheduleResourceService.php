@@ -126,21 +126,37 @@ class ScheduleResourceService
         if (!$this->products->exists($product_id, $resource_id)) { $this->products->add($product_id, $resource_id); }
     }
 
-    public function removeProductResource($product_id, $resource_id, $admin_company_id = null) { $this->getResource($resource_id, $admin_company_id); $this->products->remove($product_id, $resource_id); }
+    public function removeProductResource($product_id, $resource_id, $admin_company_id = null)
+    {
+        $resource = $this->getResource($resource_id, $admin_company_id);
+        $product = $this->products->findProduct($product_id);
+        if (!$product) { throw new InvalidArgumentException('Product does not exist'); }
+        $this->assertCompany($product['company_id'], $resource['company_id']);
+        $this->products->remove($product_id, $resource_id);
+    }
     public function getResourcesForProduct($product_id, $admin_company_id = null)
     {
         $product = $this->products->findProduct($product_id);
         if (!$product) { throw new InvalidArgumentException('Product does not exist'); }
         $this->assertCompany($product['company_id'], $this->actingCompanyId($admin_company_id));
-        return $this->products->findResourcesByProduct($product_id);
+        return $this->products->findResourcesByProduct($product_id, $product['company_id']);
     }
-    public function getProductsForResource($resource_id, $admin_company_id = null) { $this->getResource($resource_id, $admin_company_id); return $this->products->findProductsByResource($resource_id); }
+    public function getProductsForResource($resource_id, $admin_company_id = null)
+    {
+        $resource = $this->getResource($resource_id, $admin_company_id);
+        return $this->products->findProductsByResource($resource_id, $resource['company_id']);
+    }
 
     public function createOccurrence(array $data, $admin_company_id = null)
     {
         $resource = $this->getResource($data['resource_id'], $admin_company_id);
         $rule = empty($data['rule_id']) ? null : $this->requireRule($data['rule_id']);
         if ($rule && (int) $rule['resource_id'] !== (int) $resource['resource_id']) { throw new InvalidArgumentException('Rule does not belong to resource'); }
+        if ($rule) {
+            $data['location_id'] = $rule['location_id'];
+        } elseif (empty($data['location_id'])) {
+            throw new InvalidArgumentException('Location is required for an occurrence without a rule');
+        }
         $this->assertLocationCompany($data['location_id'], $resource['company_id']);
         if ((int) $data['capacity'] <= 0) { throw new InvalidArgumentException('Capacity must be positive'); }
         if (new DateTimeImmutable($data['ends_at']) <= new DateTimeImmutable($data['starts_at'])) { throw new InvalidArgumentException('Occurrence end must be after start'); }
