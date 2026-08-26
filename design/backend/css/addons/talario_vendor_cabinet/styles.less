@@ -1,0 +1,22 @@
+.talario-cabinet { max-width: 1280px; }
+.talario-dashboard__header { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:24px; }
+.talario-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:24px; }
+.talario-stat, .talario-todo, .talario-class-card { background:#fff; border:1px solid #e3e8ee; border-radius:10px; box-shadow:0 2px 8px rgba(30,45,60,.05); }
+.talario-stat { color:#2f3d4a; padding:22px; text-decoration:none; }
+.talario-stat:hover { border-color:#1f6fb2; text-decoration:none; }
+.talario-stat strong { display:block; font-size:32px; line-height:1.15; margin-bottom:8px; }
+.talario-stat span { color:#667786; }
+.talario-todo { padding:24px; }
+.talario-todo h2 { margin-top:0; }
+.talario-filters { display:flex; flex-wrap:wrap; gap:8px; }
+.talario-class-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.talario-class-card { overflow:hidden; }
+.talario-class-card__image { background:#f3f5f7; height:200px; overflow:hidden; }
+.talario-class-card__image img { width:100%; height:100%; object-fit:cover; }
+.talario-class-card__body { padding:18px; }
+.talario-class-card__heading, .talario-class-card__meta { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.talario-class-card__heading h3 { font-size:18px; line-height:1.35; margin:0 0 10px; }
+.talario-class-card__meta { align-items:center; margin:18px 0; }
+.talario-more { cursor:pointer; font-size:18px; letter-spacing:2px; }
+@media (max-width: 980px) { .talario-stats { grid-template-columns:repeat(2,1fr); } .talario-class-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width: 600px) { .talario-dashboard__header { align-items:stretch; flex-direction:column; } .talario-stats, .talario-class-grid { grid-template-columns:1fr; } }

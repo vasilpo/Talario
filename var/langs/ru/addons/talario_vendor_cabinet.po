@@ -1,0 +1,82 @@
+msgid ""
+msgstr "Project-Id-Version: talario_vendor_cabinet\\nContent-Type: text/plain; charset=UTF-8\\nLanguage: ru\\n"
+
+msgctxt "Languages::talario_vendor_cabinet.home"
+msgid "Главная"
+msgstr "Главная"
+
+msgctxt "Languages::talario_vendor_cabinet.classes"
+msgid "Занятия"
+msgstr "Занятия"
+
+msgctxt "Languages::talario_vendor_cabinet.bookings"
+msgid "Бронирования"
+msgstr "Бронирования"
+
+msgctxt "Languages::talario_vendor_cabinet.centers"
+msgid "Центры / Адреса"
+msgstr "Центры / Адреса"
+
+msgctxt "Languages::talario_vendor_cabinet.profile"
+msgid "Профиль"
+msgstr "Профиль"
+
+msgctxt "Languages::talario_vendor_cabinet.support"
+msgid "Поддержка"
+msgstr "Поддержка"
+
+msgctxt "Languages::talario_vendor_cabinet.dashboard_intro"
+msgid "Управляйте занятиями и бронированиями в одном месте."
+msgstr "Управляйте занятиями и бронированиями в одном месте."
+
+msgctxt "Languages::talario_vendor_cabinet.add_class"
+msgid "Добавить занятие"
+msgstr "Добавить занятие"
+
+msgctxt "Languages::talario_vendor_cabinet.active_classes"
+msgid "Активные занятия"
+msgstr "Активные занятия"
+
+msgctxt "Languages::talario_vendor_cabinet.pending"
+msgid "На проверке"
+msgstr "На проверке"
+
+msgctxt "Languages::talario_vendor_cabinet.disabled_classes"
+msgid "Черновики / выключенные"
+msgstr "Черновики / выключенные"
+
+msgctxt "Languages::talario_vendor_cabinet.new_bookings"
+msgid "Новые бронирования"
+msgstr "Новые бронирования"
+
+msgctxt "Languages::talario_vendor_cabinet.todo"
+msgid "Что нужно сделать"
+msgstr "Что нужно сделать"
+
+msgctxt "Languages::talario_vendor_cabinet.todo_pending"
+msgid "Дождаться проверки занятий: [1]"
+msgstr "Дождаться проверки занятий: [1]"
+
+msgctxt "Languages::talario_vendor_cabinet.todo_disabled"
+msgid "Проверить и опубликовать занятия: [1]"
+msgstr "Проверить и опубликовать занятия: [1]"
+
+msgctxt "Languages::talario_vendor_cabinet.todo_empty"
+msgid "Сейчас нет обязательных действий."
+msgstr "Сейчас нет обязательных действий."
+
+msgctxt "Languages::talario_vendor_cabinet.filters"
+msgid "Фильтры занятий"
+msgstr "Фильтры занятий"
+
+msgctxt "Languages::talario_vendor_cabinet.published"
+msgid "Опубликованные"
+msgstr "Опубликованные"
+
+msgctxt "Languages::talario_vendor_cabinet.age"
+msgid "Возраст"
+msgstr "Возраст"
+
+msgctxt "Languages::talario_vendor_cabinet.disabled"
+msgid "Выключено"
+msgstr "Выключено"
