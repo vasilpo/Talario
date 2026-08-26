@@ -14,7 +14,8 @@ if (!$company_id) {
 if ($mode === 'manage') {
     $filter = isset($_REQUEST['talario_status']) ? (string) $_REQUEST['talario_status'] : 'all';
     $params = [
-        'company_id' => $company_id,
+        'company_id'               => $company_id,
+        'include_child_variations' => false,
         'page'       => isset($_REQUEST['page']) ? max(1, (int) $_REQUEST['page']) : 1,
         'extend'     => ['description'],
     ];

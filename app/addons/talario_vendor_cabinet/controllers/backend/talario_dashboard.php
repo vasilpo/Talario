@@ -13,16 +13,19 @@ if (!$company_id) {
 
 if ($mode === 'manage') {
     $counts = array_fill_keys(['active', 'pending', 'disabled', 'bookings'], 0);
-    $statuses = db_get_hash_single_array(
-        'SELECT status, COUNT(*) AS amount FROM ?:products WHERE company_id = ?i GROUP BY status',
-        ['status', 'amount'],
-        $company_id
-    );
+    $status_groups = [
+        'active'   => [ObjectStatuses::ACTIVE],
+        'pending'  => [ProductStatuses::REQUIRES_APPROVAL],
+        'disabled' => [ObjectStatuses::DISABLED, ObjectStatuses::HIDDEN, ProductStatuses::DISAPPROVED],
+    ];
 
-    $counts['active'] = (int) ($statuses[ObjectStatuses::ACTIVE] ?? 0);
-    $counts['pending'] = (int) ($statuses[ProductStatuses::REQUIRES_APPROVAL] ?? 0);
-    foreach ([ObjectStatuses::DISABLED, ObjectStatuses::HIDDEN, ProductStatuses::DISAPPROVED] as $status) {
-        $counts['disabled'] += (int) ($statuses[$status] ?? 0);
+    foreach ($status_groups as $count_key => $statuses) {
+        [, $search] = fn_get_products([
+            'company_id'               => $company_id,
+            'status'                   => $statuses,
+            'include_child_variations' => false,
+        ], 1, DESCR_SL);
+        $counts[$count_key] = (int) $search['total_items'];
     }
 
     Tygh::$app['view']->assign('talario_counts', $counts);
