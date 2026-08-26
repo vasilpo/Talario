@@ -1,0 +1,60 @@
+name: Deploy development to dev_copy
+
+on:
+  push:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-development
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Configure SSH
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$BEGET_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$BEGET_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy development
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes "$BEGET_USER@$BEGET_HOST" <<'EOF'
+            set -e
+            cd /home/t/tyman5tb/talario.ru/public_html/dev_copy
+
+            if [ "$(git rev-parse --abbrev-ref HEAD)" != "development" ]; then
+              echo "ERROR: dev_copy is not on development branch"
+              exit 1
+            fi
+
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "ERROR: dev_copy has local changes; refusing to overwrite them"
+              git status --short
+              exit 1
+            fi
+
+            git remote set-url origin https://github.com/vasilpo/Talario.git
+            git pull --ff-only origin development
+            echo "DEPLOY_OK $(git rev-parse --short HEAD)"
+          EOF
