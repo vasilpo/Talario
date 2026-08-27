@@ -19,6 +19,14 @@ $normalize_center_description = static function ($value) {
     $value = preg_replace('/\s+/u', ' ', $value);
     $value = trim((string) $value);
 
+    if ($value === '') {
+        return '';
+    }
+
+    if (preg_match('/^(.+?[.!?])(?:\s|$)/u', $value, $matches)) {
+        $value = trim($matches[1]);
+    }
+
     if (function_exists('mb_substr')) {
         return mb_substr($value, 0, 180, 'UTF-8');
     }
