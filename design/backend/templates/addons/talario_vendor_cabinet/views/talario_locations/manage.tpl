@@ -15,8 +15,8 @@
             <div class="control-group">
                 <label class="control-label" for="elm_talario_center_description">О центре:</label>
                 <div class="controls">
-                    <textarea id="elm_talario_center_description" name="center_data[company_description]" rows="5" class="input-xxlarge">{$talario_center.company_description}</textarea>
-                    <p class="muted description">Коротко расскажите, чем занимается центр и что важно знать родителям.</p>
+                    <input type="text" id="elm_talario_center_description" name="center_data[company_description]" value="{$talario_center.company_description}" maxlength="180" class="input-xxlarge" />
+                    <p class="muted description">Необязательно. Одним предложением расскажите родителям, чем занимается ваш центр.</p>
                 </div>
             </div>
             <div class="buttons-container">
