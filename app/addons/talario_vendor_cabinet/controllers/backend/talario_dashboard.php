@@ -50,10 +50,7 @@ if ($mode === 'manage') {
     );
 
     $vendor_payouts = VendorPayouts::instance(['vendor' => $company_id]);
-    [$current_balance] = $vendor_payouts->getBalance([
-        'time_from' => 0,
-        'time_to'   => TIME,
-    ]);
+    [$current_balance] = $vendor_payouts->getBalance();
 
     $recent_orders = db_get_array(
         'SELECT order_id, timestamp, total, status, firstname, lastname FROM ?:orders WHERE company_id = ?i ORDER BY timestamp DESC LIMIT 5',
