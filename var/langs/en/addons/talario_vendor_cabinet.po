@@ -80,3 +80,31 @@ msgstr "Age"
 msgctxt "Languages::talario_vendor_cabinet.disabled"
 msgid "Disabled"
 msgstr "Disabled"
+
+msgctxt "Languages::talario_vendor_cabinet.locations_intro"
+msgid "Add the addresses where your classes take place."
+msgstr "Add the addresses where your classes take place."
+
+msgctxt "Languages::talario_vendor_cabinet.add_location"
+msgid "Add address"
+msgstr "Add address"
+
+msgctxt "Languages::talario_vendor_cabinet.location"
+msgid "Center address"
+msgstr "Center address"
+
+msgctxt "Languages::talario_vendor_cabinet.address_details"
+msgid "How to find / address details"
+msgstr "How to find / address details"
+
+msgctxt "Languages::talario_vendor_cabinet.no_locations"
+msgid "No addresses yet."
+msgstr "No addresses yet."
+
+msgctxt "Languages::talario_vendor_cabinet.location_saved"
+msgid "Address saved."
+msgstr "Address saved."
+
+msgctxt "Languages::talario_vendor_cabinet.location_required_fields"
+msgid "Fill in the name and address."
+msgstr "Fill in the name and address."

@@ -80,3 +80,31 @@ msgstr "Возраст"
 msgctxt "Languages::talario_vendor_cabinet.disabled"
 msgid "Выключено"
 msgstr "Выключено"
+
+msgctxt "Languages::talario_vendor_cabinet.locations_intro"
+msgid "Добавьте адреса, где проходят ваши занятия."
+msgstr "Добавьте адреса, где проходят ваши занятия."
+
+msgctxt "Languages::talario_vendor_cabinet.add_location"
+msgid "Добавить адрес"
+msgstr "Добавить адрес"
+
+msgctxt "Languages::talario_vendor_cabinet.location"
+msgid "Адрес центра"
+msgstr "Адрес центра"
+
+msgctxt "Languages::talario_vendor_cabinet.address_details"
+msgid "Как найти / детали адреса"
+msgstr "Как найти / детали адреса"
+
+msgctxt "Languages::talario_vendor_cabinet.no_locations"
+msgid "Адресов пока нет."
+msgstr "Адресов пока нет."
+
+msgctxt "Languages::talario_vendor_cabinet.location_saved"
+msgid "Адрес сохранён."
+msgstr "Адрес сохранён."
+
+msgctxt "Languages::talario_vendor_cabinet.location_required_fields"
+msgid "Заполните название и адрес."
+msgstr "Заполните название и адрес."

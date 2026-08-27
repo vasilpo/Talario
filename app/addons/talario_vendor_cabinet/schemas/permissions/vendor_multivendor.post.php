@@ -8,5 +8,12 @@ $schema['controllers']['talario_dashboard'] = [
 $schema['controllers']['talario_classes'] = [
     'modes' => ['manage' => ['permissions' => 'manage_catalog']],
 ];
+$schema['controllers']['talario_locations'] = [
+    'modes' => [
+        'manage' => ['permissions' => true],
+        'update' => ['permissions' => true],
+        'update_status' => ['permissions' => true],
+    ],
+];
 
 return $schema;
