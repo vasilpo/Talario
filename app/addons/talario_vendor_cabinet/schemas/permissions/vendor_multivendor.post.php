@@ -15,5 +15,8 @@ $schema['controllers']['talario_locations'] = [
         'update_status' => ['permissions' => true],
     ],
 ];
+$schema['controllers']['talario_support'] = [
+    'modes' => ['manage' => ['permissions' => true]],
+];
 
 return $schema;
