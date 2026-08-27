@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="4.0">
     <id>talario_vendor_cabinet</id>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <priority>11000</priority>
     <dependencies>vendor_data_premoderation,talario_schedule_resources</dependencies>
     <status>disabled</status>

@@ -9,7 +9,7 @@ if (!Registry::get('runtime.company_id')) {
 }
 
 $schema['central'] = [
-    'talario' => [
+    'seller_tools' => [
         'position' => 100,
         'title'    => 'Talario',
         'icon'     => 'home',
