@@ -3,6 +3,7 @@
 use Tygh\Enum\Addons\VendorDataPremoderation\ProductStatuses;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Tygh;
+use Tygh\VendorPayouts;
 
 defined('BOOTSTRAP') or die('Access denied');
 
@@ -28,5 +29,38 @@ if ($mode === 'manage') {
         $counts[$count_key] = (int) $search['total_items'];
     }
 
-    Tygh::$app['view']->assign('talario_counts', $counts);
+    $time_from = strtotime('-30 days');
+    $time_to = TIME;
+    $settled_statuses = fn_get_settled_order_statuses();
+
+    $counts['bookings'] = (int) db_get_field(
+        'SELECT COUNT(*) FROM ?:orders WHERE company_id = ?i AND timestamp >= ?i AND timestamp <= ?i AND status IN (?a)',
+        $company_id,
+        $time_from,
+        $time_to,
+        $settled_statuses
+    );
+
+    $sales_30_days = (float) db_get_field(
+        'SELECT COALESCE(SUM(total), 0) FROM ?:orders WHERE company_id = ?i AND timestamp >= ?i AND timestamp <= ?i AND status IN (?a)',
+        $company_id,
+        $time_from,
+        $time_to,
+        $settled_statuses
+    );
+
+    $vendor_payouts = VendorPayouts::instance(['vendor' => $company_id]);
+    [$current_balance] = $vendor_payouts->getBalance();
+
+    $recent_orders = db_get_array(
+        'SELECT order_id, timestamp, total, status, firstname, lastname FROM ?:orders WHERE company_id = ?i ORDER BY timestamp DESC LIMIT 5',
+        $company_id
+    );
+
+    Tygh::$app['view']->assign([
+        'talario_counts'          => $counts,
+        'talario_sales_30_days'   => $sales_30_days,
+        'talario_current_balance' => (float) $current_balance,
+        'talario_recent_orders'   => $recent_orders,
+    ]);
 }

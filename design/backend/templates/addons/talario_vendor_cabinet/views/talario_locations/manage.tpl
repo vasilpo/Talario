@@ -11,7 +11,6 @@
                 <tr>
                     <th>{__("name")}</th>
                     <th>{__("address")}</th>
-                    <th>{__("status")}</th>
                     <th class="right">&nbsp;</th>
                 </tr>
             </thead>
@@ -22,13 +21,7 @@
                     <td>
                         {$location.address}
                         {if $location.address_details}<div class="muted">{$location.address_details}</div>{/if}
-                    </td>
-                    <td>
-                        {if $location.status === "A"}
-                            <span class="label label-success">{__("active")}</span>
-                        {else}
-                            <span class="label">{__("disabled")}</span>
-                        {/if}
+                        {if $location.status !== "A"}<div class="muted">Приостановлен</div>{/if}
                     </td>
                     <td class="right nowrap">
                         <a class="btn" href="{"talario_locations.update?location_id=`$location.location_id`"|fn_url}">{__("edit")}</a>
@@ -37,7 +30,7 @@
                             <input type="hidden" name="location_id" value="{$location.location_id}" />
                             <input type="hidden" name="status" value="{if $location.status === "A"}D{else}A{/if}" />
                             <button type="submit" class="btn">
-                                {if $location.status === "A"}{__("disable")}{else}{__("enable")}{/if}
+                                {if $location.status === "A"}Приостановить{else}Активировать{/if}
                             </button>
                         </form>
                     </td>
@@ -50,4 +43,4 @@
     {/if}
 </div>
 {/capture}
-{include file="common/mainbox.tpl" title=__("talario_vendor_cabinet.centers") content=$smarty.capture.mainbox}
+{include file="common/mainbox.tpl" title=__("talario_vendor_cabinet.center") content=$smarty.capture.mainbox}

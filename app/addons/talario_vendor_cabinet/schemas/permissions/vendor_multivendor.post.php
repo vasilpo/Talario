@@ -15,6 +15,15 @@ $schema['controllers']['talario_locations'] = [
         'update_status' => ['permissions' => true],
     ],
 ];
+$schema['controllers']['talario_messages'] = [
+    'modes' => ['manage' => ['permissions' => true]],
+];
+$schema['controllers']['talario_notifications'] = [
+    'modes' => ['manage' => ['permissions' => true]],
+];
+$schema['controllers']['talario_documents'] = [
+    'modes' => ['manage' => ['permissions' => true]],
+];
 $schema['controllers']['talario_support'] = [
     'modes' => ['manage' => ['permissions' => true]],
 ];

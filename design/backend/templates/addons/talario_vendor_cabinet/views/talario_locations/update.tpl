@@ -9,6 +9,7 @@
         <label class="control-label cm-required" for="elm_talario_location_name">{__("name")}:</label>
         <div class="controls">
             <input type="text" id="elm_talario_location_name" name="location_data[name]" value="{$talario_location.name}" class="input-large" />
+            <p class="muted">{__("talario_vendor_cabinet.center_name_help")}</p>
         </div>
     </div>
 
@@ -23,16 +24,7 @@
         <label class="control-label" for="elm_talario_location_details">{__("talario_vendor_cabinet.address_details")}:</label>
         <div class="controls">
             <textarea id="elm_talario_location_details" name="location_data[address_details]" rows="4" class="input-xlarge">{$talario_location.address_details}</textarea>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label" for="elm_talario_location_status">{__("status")}:</label>
-        <div class="controls">
-            <select id="elm_talario_location_status" name="location_data[status]">
-                <option value="A" {if $talario_location.status === "A"}selected="selected"{/if}>{__("active")}</option>
-                <option value="D" {if $talario_location.status === "D"}selected="selected"{/if}>{__("disabled")}</option>
-            </select>
+            <p class="muted">{__("talario_vendor_cabinet.address_details_help")}</p>
         </div>
     </div>
 
