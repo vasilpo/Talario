@@ -1,5 +1,17 @@
 msgid ""
-msgstr "Project-Id-Version: talario_vendor_cabinet\\nContent-Type: text/plain; charset=UTF-8\\nLanguage: ru\\n"
+msgstr ""
+"Project-Id-Version: talario_vendor_cabinet\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+
+msgctxt "Addons::name::talario_vendor_cabinet"
+msgid "Talario Vendor Cabinet"
+msgstr "Кабинет партнёра Talario"
+
+msgctxt "Addons::description::talario_vendor_cabinet"
+msgid "Simplified vendor cabinet for Talario"
+msgstr "Упрощённый кабинет партнёра Talario"
 
 msgctxt "Languages::talario_vendor_cabinet.home"
 msgid "Главная"

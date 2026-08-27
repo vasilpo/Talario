@@ -1,5 +1,17 @@
 msgid ""
-msgstr "Project-Id-Version: talario_vendor_cabinet\\nContent-Type: text/plain; charset=UTF-8\\nLanguage: en\\n"
+msgstr ""
+"Project-Id-Version: talario_vendor_cabinet\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "Addons::name::talario_vendor_cabinet"
+msgid "Talario Vendor Cabinet"
+msgstr "Talario Vendor Cabinet"
+
+msgctxt "Addons::description::talario_vendor_cabinet"
+msgid "Simplified vendor cabinet for Talario"
+msgstr "Simplified vendor cabinet for Talario"
 
 msgctxt "Languages::talario_vendor_cabinet.home"
 msgid "Home"
