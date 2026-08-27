@@ -1,6 +1,5 @@
 {capture name="mainbox"}
 <div class="talario-cabinet">
-    <h3>Документы</h3>
     <p class="muted">Здесь будут доступны документы, принятые при регистрации партнёра.</p>
     <table class="table table-middle">
         <tbody>
@@ -13,4 +12,4 @@
     <p class="muted">Ссылки на конкретные версии документов подключим к данным регистрации, чтобы партнёр видел именно тот текст, который был принят.</p>
 </div>
 {/capture}
-{include file="common/mainbox.tpl" title=__("talario_vendor_cabinet.documents") content=$smarty.capture.mainbox}
+{include file="common/mainbox.tpl" title="Документы" content=$smarty.capture.mainbox}

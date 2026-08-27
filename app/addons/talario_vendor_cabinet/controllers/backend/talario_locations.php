@@ -14,11 +14,31 @@ if (!$company_id) {
 
 $service = new ScheduleResourceService();
 
+$normalize_center_description = static function ($value) {
+    $value = html_entity_decode(strip_tags((string) $value), ENT_QUOTES, 'UTF-8');
+    $value = preg_replace('/\s+/u', ' ', $value);
+    $value = trim((string) $value);
+
+    if ($value === '') {
+        return '';
+    }
+
+    if (preg_match('/^(.+?[.!?])(?:\s|$)/u', $value, $matches)) {
+        $value = trim($matches[1]);
+    }
+
+    if (function_exists('mb_substr')) {
+        return mb_substr($value, 0, 180, 'UTF-8');
+    }
+
+    return substr($value, 0, 180);
+};
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mode === 'update_center') {
         $center_data = isset($_REQUEST['center_data']) && is_array($_REQUEST['center_data']) ? $_REQUEST['center_data'] : [];
         $company = trim((string) ($center_data['company'] ?? ''));
-        $description = trim((string) ($center_data['company_description'] ?? ''));
+        $description = $normalize_center_description($center_data['company_description'] ?? '');
 
         if ($company === '') {
             fn_set_notification('E', __('error'), 'Укажите, как называется ваш центр.');
@@ -81,9 +101,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if ($mode === 'manage') {
     try {
+        $center = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
+        if (is_array($center)) {
+            $center['company_description'] = $normalize_center_description($center['company_description'] ?? '');
+        }
+
         Tygh::$app['view']->assign([
             'talario_locations' => $service->getLocations(),
-            'talario_center' => fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]),
+            'talario_center' => $center,
         ]);
     } catch (RuntimeException $e) {
         return [CONTROLLER_STATUS_DENIED];
