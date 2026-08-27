@@ -3,8 +3,11 @@
     <div class="talario-dashboard__header">
         <div>
             <h3>Поддержка Talario</h3>
-            <p class="muted">Если возник вопрос по кабинету, занятиям или бронированиям, свяжитесь с нами.</p>
-            <p><strong>Василий Погонин</strong><br><a href="tel:+79169012302">+7 916 901-23-02</a><br>Звонок, MAX или Telegram</p>
+            <p class="muted">Напишите администратору Talario прямо из личного кабинета или отправьте письмо на partners@talario.ru.</p>
+            <p>
+                <a class="btn btn-primary" href="{"vendor_communication.threads?communication_type=vendor_to_admin"|fn_url}">Написать администратору</a>
+                <a class="btn" href="mailto:partners@talario.ru">partners@talario.ru</a>
+            </p>
         </div>
     </div>
 </div>
