@@ -1,0 +1,110 @@
+msgid ""
+msgstr "Project-Id-Version: talario_vendor_cabinet\\nContent-Type: text/plain; charset=UTF-8\\nLanguage: en\\n"
+
+msgctxt "Languages::talario_vendor_cabinet.home"
+msgid "Home"
+msgstr "Home"
+
+msgctxt "Languages::talario_vendor_cabinet.classes"
+msgid "Classes"
+msgstr "Classes"
+
+msgctxt "Languages::talario_vendor_cabinet.bookings"
+msgid "Bookings"
+msgstr "Bookings"
+
+msgctxt "Languages::talario_vendor_cabinet.centers"
+msgid "Centers / Addresses"
+msgstr "Centers / Addresses"
+
+msgctxt "Languages::talario_vendor_cabinet.profile"
+msgid "Profile"
+msgstr "Profile"
+
+msgctxt "Languages::talario_vendor_cabinet.support"
+msgid "Support"
+msgstr "Support"
+
+msgctxt "Languages::talario_vendor_cabinet.dashboard_intro"
+msgid "Manage your classes and bookings in one place."
+msgstr "Manage your classes and bookings in one place."
+
+msgctxt "Languages::talario_vendor_cabinet.add_class"
+msgid "Add class"
+msgstr "Add class"
+
+msgctxt "Languages::talario_vendor_cabinet.active_classes"
+msgid "Active classes"
+msgstr "Active classes"
+
+msgctxt "Languages::talario_vendor_cabinet.pending"
+msgid "Pending review"
+msgstr "Pending review"
+
+msgctxt "Languages::talario_vendor_cabinet.disabled_classes"
+msgid "Drafts / disabled"
+msgstr "Drafts / disabled"
+
+msgctxt "Languages::talario_vendor_cabinet.new_bookings"
+msgid "New bookings"
+msgstr "New bookings"
+
+msgctxt "Languages::talario_vendor_cabinet.todo"
+msgid "What needs to be done"
+msgstr "What needs to be done"
+
+msgctxt "Languages::talario_vendor_cabinet.todo_pending"
+msgid "Wait for class review: [1]"
+msgstr "Wait for class review: [1]"
+
+msgctxt "Languages::talario_vendor_cabinet.todo_disabled"
+msgid "Review and publish classes: [1]"
+msgstr "Review and publish classes: [1]"
+
+msgctxt "Languages::talario_vendor_cabinet.todo_empty"
+msgid "There are no required actions right now."
+msgstr "There are no required actions right now."
+
+msgctxt "Languages::talario_vendor_cabinet.filters"
+msgid "Class filters"
+msgstr "Class filters"
+
+msgctxt "Languages::talario_vendor_cabinet.published"
+msgid "Published"
+msgstr "Published"
+
+msgctxt "Languages::talario_vendor_cabinet.age"
+msgid "Age"
+msgstr "Age"
+
+msgctxt "Languages::talario_vendor_cabinet.disabled"
+msgid "Disabled"
+msgstr "Disabled"
+
+msgctxt "Languages::talario_vendor_cabinet.locations_intro"
+msgid "Add the addresses where your classes take place."
+msgstr "Add the addresses where your classes take place."
+
+msgctxt "Languages::talario_vendor_cabinet.add_location"
+msgid "Add address"
+msgstr "Add address"
+
+msgctxt "Languages::talario_vendor_cabinet.location"
+msgid "Center address"
+msgstr "Center address"
+
+msgctxt "Languages::talario_vendor_cabinet.address_details"
+msgid "How to find / address details"
+msgstr "How to find / address details"
+
+msgctxt "Languages::talario_vendor_cabinet.no_locations"
+msgid "No addresses yet."
+msgstr "No addresses yet."
+
+msgctxt "Languages::talario_vendor_cabinet.location_saved"
+msgid "Address saved."
+msgstr "Address saved."
+
+msgctxt "Languages::talario_vendor_cabinet.location_required_fields"
+msgid "Fill in the name and address."
+msgstr "Fill in the name and address."

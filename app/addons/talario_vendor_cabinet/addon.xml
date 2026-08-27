@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>talario_vendor_cabinet</id>
+    <version>1.0.1</version>
+    <priority>11000</priority>
+    <dependencies>vendor_data_premoderation,talario_schedule_resources</dependencies>
+    <status>disabled</status>
+    <default_language>ru</default_language>
+    <compatibility>
+        <core_edition>MULTIVENDOR</core_edition>
+        <core_version>
+            <min>4.16.1</min>
+        </core_version>
+    </compatibility>
+</addon>
