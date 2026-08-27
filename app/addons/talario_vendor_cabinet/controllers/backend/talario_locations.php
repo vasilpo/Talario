@@ -15,22 +15,37 @@ if (!$company_id) {
 $service = new ScheduleResourceService();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($mode === 'update_center') {
+        $center_data = isset($_REQUEST['center_data']) && is_array($_REQUEST['center_data']) ? $_REQUEST['center_data'] : [];
+        $company = trim((string) ($center_data['company'] ?? ''));
+        $description = trim((string) ($center_data['company_description'] ?? ''));
+
+        if ($company === '') {
+            fn_set_notification('E', __('error'), 'Укажите, как называется ваш центр.');
+            return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
+        }
+
+        fn_update_company([
+            'company' => $company,
+            'company_description' => $description,
+        ], $company_id, DESCR_SL);
+
+        fn_set_notification('N', __('notice'), 'Информация о центре сохранена.');
+        return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
+    }
+
     if ($mode === 'update') {
         $location_id = isset($_REQUEST['location_id']) ? (int) $_REQUEST['location_id'] : 0;
-        $data = isset($_REQUEST['location_data']) && is_array($_REQUEST['location_data'])
-            ? $_REQUEST['location_data']
-            : [];
+        $data = isset($_REQUEST['location_data']) && is_array($_REQUEST['location_data']) ? $_REQUEST['location_data'] : [];
 
         $data['name'] = trim((string) ($data['name'] ?? ''));
         $data['address'] = trim((string) ($data['address'] ?? ''));
         $data['address_details'] = trim((string) ($data['address_details'] ?? ''));
-        $data['status'] = (($data['status'] ?? 'A') === 'D') ? 'D' : 'A';
+        $data['status'] = 'A';
 
         if ($data['name'] === '' || $data['address'] === '') {
             fn_set_notification('E', __('error'), __('talario_vendor_cabinet.location_required_fields'));
-            $redirect = $location_id
-                ? 'talario_locations.update?location_id=' . $location_id
-                : 'talario_locations.update';
+            $redirect = $location_id ? 'talario_locations.update?location_id=' . $location_id : 'talario_locations.update';
             return [CONTROLLER_STATUS_REDIRECT, $redirect];
         }
 
@@ -53,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mode === 'update_status') {
         $location_id = isset($_REQUEST['location_id']) ? (int) $_REQUEST['location_id'] : 0;
         $status = (isset($_REQUEST['status']) && $_REQUEST['status'] === 'A') ? 'A' : 'D';
-
         try {
             $service->updateLocation($location_id, ['status' => $status]);
         } catch (InvalidArgumentException $e) {
@@ -61,21 +75,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (RuntimeException $e) {
             return [CONTROLLER_STATUS_DENIED];
         }
-
         return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
     }
 }
 
 if ($mode === 'manage') {
     try {
-        Tygh::$app['view']->assign('talario_locations', $service->getLocations());
+        Tygh::$app['view']->assign([
+            'talario_locations' => $service->getLocations(),
+            'talario_center' => fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]),
+        ]);
     } catch (RuntimeException $e) {
         return [CONTROLLER_STATUS_DENIED];
     }
 } elseif ($mode === 'update') {
     $location_id = isset($_REQUEST['location_id']) ? (int) $_REQUEST['location_id'] : 0;
     $location = ['status' => 'A'];
-
     if ($location_id) {
         try {
             $location = $service->getLocation($location_id);
@@ -85,6 +100,5 @@ if ($mode === 'manage') {
             return [CONTROLLER_STATUS_DENIED];
         }
     }
-
     Tygh::$app['view']->assign('talario_location', $location);
 }

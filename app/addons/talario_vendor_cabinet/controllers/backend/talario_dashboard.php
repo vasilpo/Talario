@@ -1,5 +1,6 @@
 <?php
 
+use Tygh\Addons\TalarioScheduleResources\Service\ScheduleResourceService;
 use Tygh\Enum\Addons\VendorDataPremoderation\ProductStatuses;
 use Tygh\Enum\ObjectStatuses;
 use Tygh\Tygh;
@@ -57,10 +58,18 @@ if ($mode === 'manage') {
         $company_id
     );
 
+    $center = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
+    $locations = (new ScheduleResourceService())->getLocations();
+    $has_center_info = !empty($center['company']);
+    $has_branch = !empty($locations);
+
     Tygh::$app['view']->assign([
         'talario_counts'          => $counts,
         'talario_sales_30_days'   => $sales_30_days,
         'talario_current_balance' => (float) $current_balance,
         'talario_recent_orders'   => $recent_orders,
+        'talario_has_center_info' => $has_center_info,
+        'talario_has_branch'      => $has_branch,
+        'talario_onboarding_done' => $has_center_info && $has_branch,
     ]);
 }

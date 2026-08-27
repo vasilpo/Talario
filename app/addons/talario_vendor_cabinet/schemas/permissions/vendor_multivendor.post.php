@@ -12,6 +12,7 @@ $schema['controllers']['talario_locations'] = [
     'modes' => [
         'manage' => ['permissions' => true],
         'update' => ['permissions' => true],
+        'update_center' => ['permissions' => true],
         'update_status' => ['permissions' => true],
     ],
 ];
@@ -19,6 +20,9 @@ $schema['controllers']['talario_messages'] = [
     'modes' => ['manage' => ['permissions' => true]],
 ];
 $schema['controllers']['talario_notifications'] = [
+    'modes' => ['manage' => ['permissions' => true]],
+];
+$schema['controllers']['talario_profile'] = [
     'modes' => ['manage' => ['permissions' => true]],
 ];
 $schema['controllers']['talario_documents'] = [

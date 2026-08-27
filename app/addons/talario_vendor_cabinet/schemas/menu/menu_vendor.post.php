@@ -9,10 +9,23 @@ if (!$company_id) {
     return $schema;
 }
 
+// The vendor cabinet fully owns its central menu. Core menu validation removes
+// custom top-level sections, so disable it only for this vendor-panel request.
+Registry::set('config.tweaks.validate_menu', false);
+
 $schema['central'] = [
-    'products' => [
+    'seller_tools' => [
         'position'  => 100,
-        'title'     => __('talario_vendor_cabinet.classes'),
+        'title'     => 'Центр',
+        'href'      => 'talario_locations.manage',
+        'alt'       => 'talario_locations.update',
+        'icon'      => 'map_marker',
+        'items'     => [],
+        'is_custom' => true,
+    ],
+    'products' => [
+        'position'  => 200,
+        'title'     => 'Занятия',
         'href'      => 'talario_classes.manage',
         'alt'       => 'products.add,products.update',
         'icon'      => 'tag',
@@ -20,25 +33,16 @@ $schema['central'] = [
         'is_custom' => true,
     ],
     'orders' => [
-        'position'  => 200,
-        'title'     => __('talario_vendor_cabinet.bookings'),
+        'position'  => 300,
+        'title'     => 'Бронирования',
         'href'      => 'ec_table_booking_system.booked_orders',
         'icon'      => 'calendar',
         'items'     => [],
         'is_custom' => true,
     ],
-    'seller_tools' => [
-        'position'  => 300,
-        'title'     => __('talario_vendor_cabinet.center'),
-        'href'      => 'talario_locations.manage',
-        'alt'       => 'talario_locations.update',
-        'icon'      => 'map_marker',
-        'items'     => [],
-        'is_custom' => true,
-    ],
     'talario_messages' => [
         'position'  => 400,
-        'title'     => __('talario_vendor_cabinet.messages'),
+        'title'     => 'Сообщения',
         'href'      => 'talario_messages.manage',
         'icon'      => 'comments',
         'items'     => [],
@@ -46,7 +50,7 @@ $schema['central'] = [
     ],
     'talario_notifications' => [
         'position'  => 500,
-        'title'     => __('talario_vendor_cabinet.notifications'),
+        'title'     => 'Уведомления',
         'href'      => 'talario_notifications.manage',
         'icon'      => 'bell',
         'items'     => [],
@@ -54,7 +58,7 @@ $schema['central'] = [
     ],
     'talario_finance' => [
         'position'  => 600,
-        'title'     => __('talario_vendor_cabinet.finance'),
+        'title'     => 'Финансы',
         'href'      => 'companies.balance',
         'icon'      => 'money',
         'items'     => [],
@@ -62,15 +66,15 @@ $schema['central'] = [
     ],
     'settings' => [
         'position'  => 700,
-        'title'     => __('talario_vendor_cabinet.profile'),
-        'href'      => 'companies.update?company_id=' . $company_id,
+        'title'     => 'Профиль',
+        'href'      => 'talario_profile.manage',
         'icon'      => 'user',
         'items'     => [],
         'is_custom' => true,
     ],
     'talario_documents' => [
         'position'  => 800,
-        'title'     => __('talario_vendor_cabinet.documents'),
+        'title'     => 'Документы',
         'href'      => 'talario_documents.manage',
         'icon'      => 'file_text',
         'items'     => [],
@@ -78,7 +82,7 @@ $schema['central'] = [
     ],
     'content' => [
         'position'  => 900,
-        'title'     => __('talario_vendor_cabinet.support'),
+        'title'     => 'Поддержка',
         'href'      => 'talario_support.manage',
         'icon'      => 'life_ring',
         'items'     => [],
