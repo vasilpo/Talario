@@ -1,3 +1,8 @@
+{if $talario_class.product_id}
+    {$talario_class_page_title = "Редактировать занятие"}
+{else}
+    {$talario_class_page_title = "Новое занятие"}
+{/if}
 {capture name="mainbox"}
 <div class="talario-cabinet talario-class-editor">
     <form action="{""|fn_url}" method="post" enctype="multipart/form-data" class="form-horizontal form-edit" name="talario_class_form">
@@ -106,4 +111,4 @@
     </form>
 </div>
 {/capture}
-{include file="common/mainbox.tpl" title={if $talario_class.product_id}"Редактировать занятие"{else}"Новое занятие"{/if} content=$smarty.capture.mainbox}
+{include file="common/mainbox.tpl" title=$talario_class_page_title content=$smarty.capture.mainbox}
