@@ -24,13 +24,13 @@ function fn_talario_vendor_cabinet_ensure_center_storage()
     );
 
     $fields = fn_get_table_fields('talario_vendor_centers');
-    if (!isset($fields['address'])) {
+    if (!in_array('address', $fields, true)) {
         db_query("ALTER TABLE ?:talario_vendor_centers ADD `address` varchar(500) NOT NULL DEFAULT '' AFTER `description`");
     }
-    if (!isset($fields['address_details'])) {
+    if (!in_array('address_details', $fields, true)) {
         db_query('ALTER TABLE ?:talario_vendor_centers ADD `address_details` text NULL AFTER `address`');
     }
-    if (!isset($fields['primary_location_id'])) {
+    if (!in_array('primary_location_id', $fields, true)) {
         db_query('ALTER TABLE ?:talario_vendor_centers ADD `primary_location_id` int unsigned NOT NULL DEFAULT 0 AFTER `address_details`');
     }
 
