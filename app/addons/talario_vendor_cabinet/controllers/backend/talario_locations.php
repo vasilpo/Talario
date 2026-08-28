@@ -27,27 +27,58 @@ $normalize_center_description = static function ($value) {
         $value = trim($matches[1]);
     }
 
-    if (function_exists('mb_substr')) {
-        return mb_substr($value, 0, 180, 'UTF-8');
-    }
-
-    return substr($value, 0, 180);
+    return function_exists('mb_substr')
+        ? mb_substr($value, 0, 180, 'UTF-8')
+        : substr($value, 0, 180);
 };
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mode === 'update_center') {
-        $center_data = isset($_REQUEST['center_data']) && is_array($_REQUEST['center_data']) ? $_REQUEST['center_data'] : [];
+        $center_data = isset($_REQUEST['center_data']) && is_array($_REQUEST['center_data'])
+            ? $_REQUEST['center_data']
+            : [];
+        $center = fn_talario_vendor_cabinet_get_center($company_id);
+
         $name = trim((string) ($center_data['name'] ?? ''));
         $description = $normalize_center_description($center_data['description'] ?? '');
+        $address = trim((string) ($center_data['address'] ?? ''));
+        $address_details = trim((string) ($center_data['address_details'] ?? ''));
 
-        if ($name === '') {
-            fn_set_notification('E', __('error'), 'Укажите название центра.');
+        if ($name === '' || $address === '') {
+            fn_set_notification('E', __('error'), 'Укажите название центра и основной адрес.');
             return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
         }
 
-        fn_talario_vendor_cabinet_update_center($company_id, $name, $description);
+        try {
+            $primary_location_id = (int) ($center['primary_location_id'] ?? 0);
+            $location_data = [
+                'name' => $name,
+                'address' => $address,
+                'address_details' => $address_details,
+                'status' => 'A',
+            ];
 
-        fn_set_notification('N', __('notice'), 'Информация о центре сохранена.');
+            if ($primary_location_id && $service->locationBelongsToCompany($primary_location_id, $company_id)) {
+                $service->updateLocation($primary_location_id, $location_data);
+            } else {
+                $primary_location_id = (int) $service->createLocation($location_data);
+            }
+
+            fn_talario_vendor_cabinet_update_center($company_id, [
+                'name' => $name,
+                'description' => $description,
+                'address' => $address,
+                'address_details' => $address_details,
+                'primary_location_id' => $primary_location_id,
+            ]);
+
+            fn_set_notification('N', __('notice'), 'Информация о центре сохранена.');
+        } catch (InvalidArgumentException $e) {
+            fn_set_notification('E', __('error'), $e->getMessage());
+        } catch (RuntimeException $e) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
+
         return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
     }
 
@@ -60,8 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data['address_details'] = trim((string) ($data['address_details'] ?? ''));
         $data['status'] = 'A';
 
-        if ($data['name'] === '' || $data['address'] === '') {
-            fn_set_notification('E', __('error'), __('talario_vendor_cabinet.location_required_fields'));
+        if ($data['address'] === '') {
+            fn_set_notification('E', __('error'), 'Укажите адрес филиала.');
             $redirect = $location_id ? 'talario_locations.update?location_id=' . $location_id : 'talario_locations.update';
             return [CONTROLLER_STATUS_REDIRECT, $redirect];
         }
@@ -84,6 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($mode === 'update_status') {
         $location_id = isset($_REQUEST['location_id']) ? (int) $_REQUEST['location_id'] : 0;
+        $center = fn_talario_vendor_cabinet_get_center($company_id);
+        if ($location_id === (int) ($center['primary_location_id'] ?? 0)) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
+
         $status = (isset($_REQUEST['status']) && $_REQUEST['status'] === 'A') ? 'A' : 'D';
         try {
             $service->updateLocation($location_id, ['status' => $status]);
@@ -106,8 +142,28 @@ if ($mode === 'manage') {
         }
         $center['description'] = $normalize_center_description($center['description'] ?? '');
 
+        $locations = $service->getLocations();
+        $primary_location_id = (int) ($center['primary_location_id'] ?? 0);
+        if ($primary_location_id) {
+            foreach ($locations as $location) {
+                if ((int) $location['location_id'] === $primary_location_id) {
+                    if (empty($center['address'])) {
+                        $center['address'] = (string) $location['address'];
+                    }
+                    if (empty($center['address_details'])) {
+                        $center['address_details'] = (string) $location['address_details'];
+                    }
+                    break;
+                }
+            }
+        }
+
+        $branches = array_values(array_filter($locations, static function (array $location) use ($primary_location_id) {
+            return (int) $location['location_id'] !== $primary_location_id;
+        }));
+
         Tygh::$app['view']->assign([
-            'talario_locations' => $service->getLocations(),
+            'talario_locations' => $branches,
             'talario_center' => $center,
         ]);
     } catch (RuntimeException $e) {
@@ -115,6 +171,11 @@ if ($mode === 'manage') {
     }
 } elseif ($mode === 'update') {
     $location_id = isset($_REQUEST['location_id']) ? (int) $_REQUEST['location_id'] : 0;
+    $center = fn_talario_vendor_cabinet_get_center($company_id);
+    if ($location_id && $location_id === (int) ($center['primary_location_id'] ?? 0)) {
+        return [CONTROLLER_STATUS_NO_PAGE];
+    }
+
     $location = ['status' => 'A'];
     if ($location_id) {
         try {
