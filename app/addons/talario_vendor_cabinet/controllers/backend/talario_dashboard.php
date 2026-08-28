@@ -58,9 +58,10 @@ if ($mode === 'manage') {
         $company_id
     );
 
-    $center = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
+    $company_data = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
+    $center = fn_talario_vendor_cabinet_get_center($company_id);
     $locations = (new ScheduleResourceService())->getLocations();
-    $has_center_info = !empty($center['company']);
+    $has_center_info = !empty($center['name']);
     $has_branch = !empty($locations);
 
     Tygh::$app['view']->assign([
@@ -70,6 +71,7 @@ if ($mode === 'manage') {
         'talario_recent_orders'   => $recent_orders,
         'talario_has_center_info' => $has_center_info,
         'talario_has_branch'      => $has_branch,
-        'talario_onboarding_done' => $has_center_info && $has_branch,
+        'talario_partner_name'    => (string) ($company_data['company'] ?? ''),
+        'talario_center_name'     => (string) ($center['name'] ?? ''),
     ]);
 }
