@@ -9,8 +9,6 @@ if (!$company_id) {
     return $schema;
 }
 
-// The vendor cabinet fully owns its central menu. Core menu validation removes
-// custom top-level sections, so disable it only for this vendor-panel request.
 Registry::set('config.tweaks.validate_menu', false);
 
 $schema['central'] = [
@@ -43,7 +41,8 @@ $schema['central'] = [
     'talario_messages' => [
         'position'  => 400,
         'title'     => 'Сообщения',
-        'href'      => 'talario_messages.manage',
+        'href'      => 'vendor_communication.threads?communication_type=vendor_to_admin',
+        'alt'       => 'vendor_communication.view,vendor_communication.create_thread,vendor_communication.threads',
         'icon'      => 'comments',
         'items'     => [],
         'is_custom' => true,
@@ -59,7 +58,7 @@ $schema['central'] = [
     'talario_finance' => [
         'position'  => 600,
         'title'     => 'Финансы',
-        'href'      => 'companies.balance',
+        'href'      => 'talario_finance.manage',
         'icon'      => 'money',
         'items'     => [],
         'is_custom' => true,
@@ -77,14 +76,6 @@ $schema['central'] = [
         'title'     => 'Документы',
         'href'      => 'talario_documents.manage',
         'icon'      => 'file_text',
-        'items'     => [],
-        'is_custom' => true,
-    ],
-    'content' => [
-        'position'  => 900,
-        'title'     => 'Поддержка',
-        'href'      => 'talario_support.manage',
-        'icon'      => 'life_ring',
         'items'     => [],
         'is_custom' => true,
     ],
