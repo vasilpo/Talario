@@ -6,7 +6,11 @@ $schema['controllers']['talario_dashboard'] = [
     'modes' => ['manage' => ['permissions' => true]],
 ];
 $schema['controllers']['talario_classes'] = [
-    'modes' => ['manage' => ['permissions' => 'manage_catalog']],
+    'modes' => [
+        'manage' => ['permissions' => 'manage_catalog'],
+        'schedule' => ['permissions' => 'manage_catalog'],
+        'save_schedule' => ['permissions' => 'manage_catalog'],
+    ],
 ];
 $schema['controllers']['talario_locations'] = [
     'modes' => [
