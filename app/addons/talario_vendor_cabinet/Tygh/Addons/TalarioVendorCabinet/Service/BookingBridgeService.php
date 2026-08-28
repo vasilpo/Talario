@@ -76,7 +76,7 @@ class BookingBridgeService
             throw new InvalidArgumentException('Добавьте хотя бы один день и время занятия.');
         }
 
-        $resource_id = $this->ensureResource($product_id, $company_id);
+        $resource_id = $this->ensureResource($product_id);
         $this->syncRules($resource_id, $location_id, $from_date, $to_date, $duration, $days);
         $this->syncEcarter($product_id, $from_date, $to_date, $duration, $days);
 
@@ -112,7 +112,7 @@ class BookingBridgeService
 
         $resources = $this->schedule_resources->getResourcesForProduct($product_id);
         if ($resources) {
-            $resource_id = (int) $resources[0]['resource_id'];
+            $resource_id = (int) $resources[0];
             $rules = $this->schedule_resources->getRules($resource_id);
             foreach ($rules as $rule) {
                 if (($rule['status'] ?? 'D') !== 'A') {
@@ -137,11 +137,11 @@ class BookingBridgeService
         return $result;
     }
 
-    private function ensureResource($product_id, $company_id)
+    private function ensureResource($product_id)
     {
         $resources = $this->schedule_resources->getResourcesForProduct($product_id);
         if ($resources) {
-            return (int) $resources[0]['resource_id'];
+            return (int) $resources[0];
         }
 
         $product_name = (string) db_get_field(
@@ -171,8 +171,6 @@ class BookingBridgeService
             if (!isset($existing_by_weekday[$weekday])) {
                 $existing_by_weekday[$weekday] = $rule;
             } elseif (($rule['status'] ?? '') === 'A') {
-                // Bridge v1 supports one rule per weekday. Disable legacy duplicates
-                // so the resource remains deterministic for this product.
                 $this->schedule_resources->disableRule((int) $rule['rule_id']);
             }
         }
@@ -249,8 +247,6 @@ class BookingBridgeService
 
         db_query('REPLACE INTO ?:ec_table_booking_system ?e', $row);
 
-        // Ecarter applies these flags when its native product form is saved.
-        // The bridge must mirror them because the vendor never opens that form.
         db_query(
             'UPDATE ?:products SET tracking = ?s, is_edp = ?s WHERE product_id = ?i',
             'D',
@@ -274,11 +270,14 @@ class BookingBridgeService
                 throw new InvalidArgumentException('Количество мест должно быть больше нуля.');
             }
 
-            $start = DateTimeImmutable::createFromFormat('H:i', $start_time);
+            $start = DateTimeImmutable::createFromFormat('!H:i', $start_time);
             if (!$start) {
                 throw new InvalidArgumentException('Укажите корректное время занятия.');
             }
             $end = $start->modify('+' . (int) $duration . ' minutes');
+            if ($end->format('Y-m-d') !== $start->format('Y-m-d')) {
+                throw new InvalidArgumentException('Занятие не может переходить на следующий день.');
+            }
 
             $days[$weekday] = [
                 'start_time' => $start_time,
