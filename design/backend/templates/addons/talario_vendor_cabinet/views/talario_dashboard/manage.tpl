@@ -1,23 +1,16 @@
 {capture name="mainbox"}
 <div class="talario-cabinet">
     <div class="talario-dashboard__header">
-        <p class="muted">Управляйте центром, занятиями и бронированиями в одном месте.</p>
+        <div>
+            <strong class="talario-dashboard__partner">{$talario_partner_name}</strong>
+            {if $talario_center_name}<span class="muted"> ({$talario_center_name})</span>{/if}
+        </div>
         {if $talario_has_branch}
             <a class="btn btn-primary btn-large" href="{"products.add"|fn_url}">+ Добавить занятие</a>
         {else}
             <a class="btn btn-primary btn-large" href="{"talario_locations.manage"|fn_url}">Настроить центр</a>
         {/if}
     </div>
-
-    {if !$talario_onboarding_done}
-        <section class="talario-todo">
-            <h2>Настройте кабинет</h2>
-            <p>✓ Регистрационные данные получены</p>
-            <p>{if $talario_has_center_info}✓{else}1.{/if} <a href="{"talario_locations.manage"|fn_url}">Заполните информацию о центре</a></p>
-            <p>{if $talario_has_branch}✓{else}2.{/if} <a href="{"talario_locations.manage"|fn_url}">Добавьте филиал</a></p>
-            <p class="muted">После этого можно будет добавлять занятия и привязывать их к филиалам.</p>
-        </section>
-    {/if}
 
     <div class="talario-stats">
         <a href="{"talario_classes.manage?talario_status=active"|fn_url}" class="talario-stat"><strong>{$talario_counts.active}</strong><span>Активные занятия</span></a>
@@ -26,29 +19,31 @@
         <a href="{"ec_table_booking_system.booked_orders"|fn_url}" class="talario-stat"><strong>{$talario_counts.bookings}</strong><span>Бронирования за 30 дней</span></a>
     </div>
 
-    {if $talario_onboarding_done}
-        <section class="talario-todo">
-            <h2>Что нужно сделать</h2>
-            {if $talario_counts.pending}
-                <p>Дождаться проверки занятий: {$talario_counts.pending}</p>
-            {elseif $talario_counts.disabled}
-                <p>Проверить и опубликовать занятия: {$talario_counts.disabled}</p>
-            {else}
-                <p>Сейчас нет обязательных действий.</p>
-            {/if}
-        </section>
-    {/if}
+    <section class="talario-todo">
+        <h2>Что нужно сделать</h2>
+        {if !$talario_has_center_info}
+            <p><a href="{"talario_locations.manage"|fn_url}">Заполнить информацию о центре</a></p>
+        {elseif !$talario_has_branch}
+            <p><a href="{"talario_locations.manage"|fn_url}">Добавить филиал</a></p>
+        {elseif $talario_counts.pending}
+            <p>Дождаться проверки занятий: {$talario_counts.pending}</p>
+        {elseif $talario_counts.disabled}
+            <p>Проверить и опубликовать занятия: {$talario_counts.disabled}</p>
+        {else}
+            <p>Сейчас нет обязательных действий.</p>
+        {/if}
+    </section>
 
     <section class="talario-todo">
         <h2>Аналитика</h2>
         <div class="talario-stats">
-            <a href="{"companies.balance"|fn_url}" class="talario-stat">
+            <a href="{"talario_finance.manage"|fn_url}" class="talario-stat">
                 <strong>{include file="common/price.tpl" value=$talario_current_balance}</strong>
-                <span>Текущий баланс</span>
+                <span>К выплате</span>
             </a>
             <div class="talario-stat">
                 <strong>{include file="common/price.tpl" value=$talario_sales_30_days}</strong>
-                <span>Продажи за 30 дней</span>
+                <span>Оплачено клиентами за 30 дней</span>
             </div>
             <div class="talario-stat">
                 <strong>{$talario_counts.bookings}</strong>
