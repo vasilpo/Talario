@@ -2,8 +2,14 @@
 
 use Tygh\Addons\TalarioScheduleResources\Service\ScheduleResourceService;
 use Tygh\Addons\TalarioVendorCabinet\Service\BookingBridgeService;
+use Tygh\Addons\ProductVariations\Product\FeaturePurposes;
+use Tygh\Addons\ProductVariations\Product\Group\GroupFeatureCollection;
+use Tygh\Addons\ProductVariations\Request\GenerateProductsAndAttachToGroupRequest;
+use Tygh\Addons\ProductVariations\Request\GenerateProductsAndCreateGroupRequest;
+use Tygh\Addons\ProductVariations\ServiceProvider as VariationsServiceProvider;
 use Tygh\Enum\Addons\VendorDataPremoderation\ProductStatuses;
 use Tygh\Enum\ObjectStatuses;
+use Tygh\Registry;
 use Tygh\Tygh;
 
 defined('BOOTSTRAP') or die('Access denied');
@@ -103,6 +109,148 @@ $get_editor_context = static function ($product = null) use ($company_id) {
     ];
 };
 
+$get_variation_axes = static function ($category_id, $product_id = 0) {
+    $feature_ids = [];
+    if ($product_id) {
+        $group_id = VariationsServiceProvider::getGroupRepository()->findGroupIdByProductId($product_id);
+        if ($group_id) {
+            $feature_ids = VariationsServiceProvider::getGroupRepository()
+                ->findGroupFeatureCollectionByGroupId($group_id)
+                ->getFeatureIds();
+        }
+    }
+
+    $params = [
+        'exclude_group' => true,
+        'variants' => true,
+        'plain' => true,
+        'statuses' => [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN],
+        'purpose' => FeaturePurposes::getAll(),
+    ];
+    if ($feature_ids) {
+        $params['feature_id'] = $feature_ids;
+    } elseif ($category_id) {
+        $params['category_ids'] = [(int) $category_id];
+    } else {
+        return [];
+    }
+    [$features] = fn_get_product_features($params, 0, DESCR_SL);
+    return array_values(array_filter($features, static function (array $feature) {
+        return !empty($feature['variants']) && in_array($feature['purpose'], FeaturePurposes::getAll(), true);
+    }));
+};
+
+$sync_variations = static function ($product_id, array $rows, array $delete_ids) use ($company_id, $get_variation_axes) {
+    $service = VariationsServiceProvider::getService();
+    $group_repository = VariationsServiceProvider::getGroupRepository();
+    $product_repository = VariationsServiceProvider::getProductRepository();
+    $group_id = $group_repository->findGroupIdByProductId($product_id);
+
+    foreach (array_unique(array_map('intval', $delete_ids)) as $delete_id) {
+        if (!$delete_id || !$group_id || $delete_id === (int) $product_id) {
+            continue;
+        }
+        $owned = (int) db_get_field(
+            'SELECT p.company_id FROM ?:products p INNER JOIN ?:product_variation_group_products gp '
+            . 'ON gp.product_id = p.product_id WHERE gp.group_id = ?i AND p.product_id = ?i',
+            $group_id,
+            $delete_id
+        );
+        if ($owned !== $company_id) {
+            throw new RuntimeException('Cross-company variation operation is forbidden');
+        }
+        $result = $service->detachProductFromGroup($group_id, $delete_id);
+        if ($result->isFailure()) {
+            throw new InvalidArgumentException(implode(' ', $result->getErrors()));
+        }
+        fn_delete_product($delete_id);
+    }
+
+    if (!$rows) {
+        return;
+    }
+    $category_id = (int) db_get_field(
+        'SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC LIMIT 1',
+        $product_id
+    );
+    $axes = $get_variation_axes($category_id, $product_id);
+    $allowed = [];
+    foreach ($axes as $axis) {
+        foreach ((array) $axis['variants'] as $variant) {
+            $allowed[(int) $axis['feature_id']][(int) $variant['variant_id']] = true;
+        }
+    }
+
+    $feature_ids = [];
+    $combination_feature_ids = null;
+    $combination_prices = [];
+    foreach ($rows as $row) {
+        if (!is_array($row)) {
+            continue;
+        }
+        $price_raw = str_replace(',', '.', trim((string) ($row['price'] ?? '')));
+        $variants = array_filter(array_map('intval', (array) ($row['variants'] ?? [])));
+        if (!$variants || !is_numeric($price_raw) || (float) $price_raw < 0) {
+            throw new InvalidArgumentException('Заполните все особенности и цену варианта.');
+        }
+        foreach ($variants as $feature_id => $variant_id) {
+            $feature_id = (int) $feature_id;
+            if (empty($allowed[$feature_id][$variant_id])) {
+                throw new InvalidArgumentException('Выбрана недоступная особенность варианта.');
+            }
+            $feature_ids[$feature_id] = $feature_id;
+        }
+        $row_feature_ids = array_map('intval', array_keys($variants));
+        sort($row_feature_ids);
+        if ($combination_feature_ids === null) {
+            $combination_feature_ids = $row_feature_ids;
+        } elseif ($row_feature_ids !== $combination_feature_ids) {
+            throw new InvalidArgumentException('Во всех сочетаниях нужно заполнить одинаковые особенности.');
+        }
+        $combination_id = $product_repository->generateCombinationId(array_values($variants));
+        $combination_prices[$combination_id] = (float) $price_raw;
+    }
+    if (!$combination_prices) {
+        return;
+    }
+
+    if ($group_id) {
+        $request = GenerateProductsAndAttachToGroupRequest::create(
+            $group_id,
+            $product_id,
+            array_keys($combination_prices)
+        );
+        $result = $service->generateProductsAndAttachToGroup($request);
+    } else {
+        $features = $product_repository->findFeatures(array_values($feature_ids));
+        $request = GenerateProductsAndCreateGroupRequest::create(
+            $product_id,
+            array_keys($combination_prices),
+            GroupFeatureCollection::createFromFeatureList($features)
+        );
+        $result = $service->generateProductsAndCreateGroup($request);
+    }
+    if ($result->isFailure()) {
+        throw new InvalidArgumentException(implode(' ', $result->getErrors()));
+    }
+
+    $group_id = $group_repository->findGroupIdByProductId($product_id);
+    $group_product_ids = $group_repository->findGroupById($group_id)->getProductIds();
+    foreach ($group_product_ids as $variation_id) {
+        if ((int) $variation_id === (int) $product_id) {
+            continue;
+        }
+        $variant_ids = db_get_fields(
+            'SELECT variant_id FROM ?:product_features_values WHERE product_id = ?i AND variant_id > 0 ORDER BY feature_id',
+            $variation_id
+        );
+        $combination_id = $product_repository->generateCombinationId(array_map('intval', $variant_ids));
+        if (array_key_exists($combination_id, $combination_prices)) {
+            fn_update_product(['price' => $combination_prices[$combination_id]], $variation_id, DESCR_SL);
+        }
+    }
+};
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mode === 'save_class') {
         fn_trusted_vars('class_data');
@@ -122,6 +270,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = (string) ($_REQUEST['save_action'] ?? 'draft');
         if (!in_array($action, ['draft', 'preview', 'submit'], true)) {
             return [CONTROLLER_STATUS_DENIED];
+        }
+        if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action !== 'submit') {
+            fn_set_notification(
+                'W',
+                __('warning'),
+                'Штатная модерация CS-Cart не хранит отдельную черновую версию опубликованного занятия. '
+                . 'Чтобы не снять текущую карточку с витрины, изменения не сохранены. '
+                . 'Их можно передать только кнопкой «Отправить на проверку».'
+            );
+            return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id];
         }
         $price_raw = str_replace(',', '.', trim((string) ($class_data['price'] ?? '0')));
         $price = is_numeric($price_raw) ? (float) $price_raw : -1;
@@ -165,11 +323,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $validated_variation_prices[$variation_id] = (float) $variation_price_raw;
             }
-            if ($validated_variation_prices) {
-                // Zero is deliberately not filtered out: a free option must make
-                // the catalog's "from" price equal to 0 ₽.
-                $price = min($validated_variation_prices);
-            }
             $location = $locations_by_id[$location_id];
             $product_data = [
                 'product' => $name,
@@ -182,17 +335,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'meta_keywords' => trim((string) ($class_data['meta_keywords'] ?? '')),
                 'address' => (string) $location['address'],
                 'zero_price_action' => 'P',
-                // A save and a preview are always private. Only an explicit submit
-                // moves the activity into the existing premoderation workflow.
-                'status' => $action === 'submit'
-                    ? ProductStatuses::REQUIRES_APPROVAL
-                    : ObjectStatuses::HIDDEN,
             ];
+            // New activities start privately. Existing product status is deliberately
+            // omitted: vendor_data_premoderation owns all published-product transitions.
+            if (!$existing) {
+                $product_data['status'] = ObjectStatuses::HIDDEN;
+            }
 
             $saved_product_id = fn_update_product($product_data, $product_id, DESCR_SL);
             if ($saved_product_id) {
-                foreach ($validated_variation_prices as $variation_id => $variation_price) {
-                    fn_update_product(['price' => $variation_price], $variation_id, DESCR_SL);
+                try {
+                    foreach ($validated_variation_prices as $variation_id => $variation_price) {
+                        fn_update_product(['price' => $variation_price], $variation_id, DESCR_SL);
+                    }
+                    $sync_variations(
+                        (int) $saved_product_id,
+                        isset($class_data['new_variations']) && is_array($class_data['new_variations'])
+                            ? $class_data['new_variations']
+                            : [],
+                        isset($class_data['delete_variations']) && is_array($class_data['delete_variations'])
+                            ? $class_data['delete_variations']
+                            : []
+                    );
+                } catch (InvalidArgumentException $e) {
+                    fn_set_notification('E', __('error'), $e->getMessage());
+                    return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
+                } catch (RuntimeException $e) {
+                    return [CONTROLLER_STATUS_DENIED];
+                }
+
+                $variation_min_price = db_get_field(
+                    'SELECT MIN(pp.price) FROM ?:product_variation_group_products parent '
+                    . 'INNER JOIN ?:product_variation_group_products child ON child.group_id = parent.group_id '
+                    . 'INNER JOIN ?:product_prices pp ON pp.product_id = child.product_id '
+                    . 'AND pp.lower_limit = 1 AND pp.usergroup_id = 0 '
+                    . 'WHERE parent.product_id = ?i AND child.product_id <> ?i',
+                    $saved_product_id,
+                    $saved_product_id
+                );
+                if ($variation_min_price !== null) {
+                    fn_update_product(['price' => (float) $variation_min_price], $saved_product_id, DESCR_SL);
+                }
+                if ($action === 'submit' && function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
+                    fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
                 }
                 fn_set_notification(
                     'N',
@@ -202,12 +387,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         : 'Черновик занятия сохранён.'
                 );
                 if ($action === 'preview') {
-                    $preview_url = fn_get_preview_url(
-                        'products.view?product_id=' . (int) $saved_product_id,
-                        ['status' => ObjectStatuses::HIDDEN],
-                        (int) Tygh::$app['session']['auth']['user_id']
-                    );
-                    return [CONTROLLER_STATUS_REDIRECT, $preview_url, true];
+                    return [
+                        CONTROLLER_STATUS_REDIRECT,
+                        'talario_classes.update?product_id=' . (int) $saved_product_id . '&open_preview=1'
+                    ];
                 }
                 return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
             }
@@ -312,7 +495,38 @@ if ($mode === 'manage') {
         'talario_class_categories' => $context['categories'],
         'talario_class_location_id' => $context['selected_location_id'],
         'talario_class_category_id' => $context['selected_category_id'],
+        'talario_variation_axes' => $get_variation_axes(
+            (int) $context['selected_category_id'],
+            (int) $product['product_id']
+        ),
     ]);
+    if ($product_id && !empty($_REQUEST['open_preview'])) {
+        $preview_product = fn_get_product_data(
+            $product_id,
+            Tygh::$app['session']['auth'],
+            DESCR_SL,
+            '',
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+        );
+        if ($preview_product && (int) $preview_product['company_id'] === $company_id) {
+            $storefront_repository = Tygh::$app['storefront.repository'];
+            $storefront = $storefront_repository->findByCompanyId($company_id);
+            $storefront = empty($storefront) ? $storefront_repository->findDefault() : $storefront;
+            $language = Registry::get('settings.Appearance.frontend_default_language');
+            Tygh::$app['view']->assign('talario_preview_url', fn_get_preview_url(
+                'products.view?product_id=' . $product_id . '&storefront_id=' . (int) $storefront->storefront_id,
+                $preview_product,
+                (int) Tygh::$app['session']['auth']['user_id'],
+                $language
+            ));
+        }
+    }
 } elseif ($mode === 'schedule') {
     $product_id = isset($_REQUEST['product_id']) ? (int) $_REQUEST['product_id'] : 0;
     $product = $load_owned_product($product_id);

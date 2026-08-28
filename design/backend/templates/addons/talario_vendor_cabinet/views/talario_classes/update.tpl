@@ -29,18 +29,47 @@
                     <div class="controls">
                         <p class="muted description">Особенности вариантов берутся из настроенных для занятия характеристик. Цена «от» будет выбрана автоматически.</p>
                         <table class="table table-middle">
-                            <thead><tr><th>Вариант</th><th>Цена, ₽</th></tr></thead>
+                            <thead><tr><th>Вариант</th><th>Цена, ₽</th><th></th></tr></thead>
                             <tbody>
                             {foreach $talario_class.variations as $variation}
                                 <tr>
                                     <td>{$variation.product}</td>
                                     <td><input type="number" min="0" step="0.01" name="class_data[variation_prices][{$variation.product_id}]" value="{$variation.price}" class="input-small" /></td>
+                                    <td><label class="checkbox"><input type="checkbox" name="class_data[delete_variations][]" value="{$variation.product_id}" /> Удалить</label></td>
                                 </tr>
                             {/foreach}
                             </tbody>
                         </table>
                     </div>
                 </div>
+            {/if}
+
+            {if $talario_class.product_id && $talario_variation_axes}
+                <div class="control-group">
+                    <label class="control-label">Добавить варианты:</label>
+                    <div class="controls">
+                        <p class="muted description">Добавьте только те сочетания, которые вы действительно проводите. Новые сочетания не создаются автоматически.</p>
+                        <table class="table table-middle" id="talario_new_variations">
+                            <thead><tr>{foreach $talario_variation_axes as $axis}<th>{$axis.description|default:$axis.internal_name}</th>{/foreach}<th>Цена, ₽</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                        <script type="text/x-talario-template" id="talario_variation_row_template">
+                            <tr>
+                                {foreach $talario_variation_axes as $axis}
+                                    <td><select data-name="class_data[new_variations][__INDEX__][variants][{$axis.feature_id}]" class="input-medium">
+                                        <option value="">—</option>
+                                        {foreach $axis.variants as $variant}<option value="{$variant.variant_id}">{$variant.variant}</option>{/foreach}
+                                    </select></td>
+                                {/foreach}
+                                <td><input data-name="class_data[new_variations][__INDEX__][price]" type="number" min="0" step="0.01" class="input-small" /></td>
+                                <td><button type="button" class="btn cm-talario-remove-variation">Удалить</button></td>
+                            </tr>
+                        </script>
+                        <button type="button" class="btn" id="talario_add_variation">Добавить сочетание</button>
+                    </div>
+                </div>
+            {elseif !$talario_class.product_id}
+                <div class="control-group"><div class="controls muted">Сначала сохраните основные данные как черновик — после этого можно будет добавить варианты.</div></div>
             {/if}
 
             <div class="control-group">
@@ -112,6 +141,8 @@
                         existing_pairs=(($talario_class.main_pair) ? [$talario_class.main_pair] : []) + $talario_class.image_pairs|default:[]
                         file_name="file"
                         image_pair_types=['N' => 'product_add_additional_image', 'M' => 'product_main_image', 'A' => 'product_additional_image']
+                        image_object_id=$talario_class.product_id
+                        allow_update_files=true
                     }
                     <p class="muted description">Добавьте несколько фото и отметьте главное — оно будет видно в каталоге.</p>
                 </div>
@@ -124,10 +155,25 @@
                 <a class="btn" href="{"talario_classes.schedule?product_id=`$talario_class.product_id`"|fn_url}">Расписание</a>
             {/if}
             <button type="submit" name="save_action" value="draft" class="btn">Сохранить черновик</button>
-            <button type="submit" name="save_action" value="preview" formtarget="_blank" class="btn">Предварительный просмотр</button>
+            <button type="submit" name="save_action" value="preview" class="btn">Предварительный просмотр</button>
             <button type="submit" name="save_action" value="submit" class="btn btn-primary">Отправить на проверку</button>
         </div>
     </form>
 </div>
+<script>
+(function (_, $) {
+    var index = 0;
+    $('#talario_add_variation').on('click', function () {
+        var html = $('#talario_variation_row_template').html().replace(/__INDEX__/g, index++);
+        var $row = $(html);
+        $row.find('[data-name]').each(function () { this.name = $(this).data('name'); });
+        $('#talario_new_variations tbody').append($row);
+    });
+    $(document).on('click', '.cm-talario-remove-variation', function () { $(this).closest('tr').remove(); });
+    {if $talario_preview_url}
+        window.open({$talario_preview_url|json_encode nofilter}, '_blank', 'noopener');
+    {/if}
+}(Tygh, Tygh.$));
+</script>
 {/capture}
 {include file="common/mainbox.tpl" title=$talario_class_page_title content=$smarty.capture.mainbox}
