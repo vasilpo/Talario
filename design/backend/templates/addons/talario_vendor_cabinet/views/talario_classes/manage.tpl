@@ -21,7 +21,10 @@
                         <h3>{$product.product}</h3>
                         <div class="dropdown">
                             <a class="dropdown-toggle talario-more" data-toggle="dropdown" aria-label="{__("more")}">•••</a>
-                            <ul class="dropdown-menu pull-right"><li><a href="{"products.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a></li></ul>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a href="{"products.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a></li>
+                                <li><a href="{"talario_classes.schedule?product_id=`$product.product_id`"|fn_url}">Расписание</a></li>
+                            </ul>
                         </div>
                     </div>
                     {if $product.talario_age}<p class="muted">{__("talario_vendor_cabinet.age")}: {$product.talario_age}</p>{/if}
@@ -31,7 +34,10 @@
                             {if $product.status === "A"}{__("talario_vendor_cabinet.published")}{elseif $product.status === "R"}{__("talario_vendor_cabinet.pending")}{else}{__("talario_vendor_cabinet.disabled")}{/if}
                         </span>
                     </div>
-                    <a class="btn btn-block" href="{"products.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a>
+                    <div class="talario-class-card__actions">
+                        <a class="btn btn-block" href="{"products.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a>
+                        <a class="btn btn-block" href="{"talario_classes.schedule?product_id=`$product.product_id`"|fn_url}">Расписание</a>
+                    </div>
                 </div>
             </article>
         {/foreach}
