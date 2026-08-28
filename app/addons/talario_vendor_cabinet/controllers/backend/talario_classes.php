@@ -1,7 +1,5 @@
 <?php
 
-use InvalidArgumentException;
-use RuntimeException;
 use Tygh\Addons\TalarioScheduleResources\Service\ScheduleResourceService;
 use Tygh\Addons\TalarioVendorCabinet\Service\BookingBridgeService;
 use Tygh\Enum\Addons\VendorDataPremoderation\ProductStatuses;
@@ -43,6 +41,21 @@ $load_owned_product = static function ($product_id) use ($company_id) {
         $product_id
     );
     $product['main_pair'] = fn_get_image_pairs($product_id, 'product', 'M', true, true, DESCR_SL);
+    $product['image_pairs'] = fn_get_image_pairs($product_id, 'product', 'A', true, true, DESCR_SL);
+    $product['variations'] = db_get_array(
+        'SELECT p.product_id, pd.product, pp.price FROM ?:products AS p '
+        . 'INNER JOIN ?:product_variation_group_products AS v ON v.product_id = p.product_id '
+        . 'INNER JOIN ?:product_variation_group_products AS parent ON parent.group_id = v.group_id '
+        . 'AND parent.product_id = ?i '
+        . 'LEFT JOIN ?:product_descriptions AS pd ON pd.product_id = p.product_id AND pd.lang_code = ?s '
+        . 'LEFT JOIN ?:product_prices AS pp ON pp.product_id = p.product_id AND pp.lower_limit = 1 '
+        . 'AND pp.usergroup_id = 0 WHERE p.product_id <> ?i AND p.company_id = ?i '
+        . 'GROUP BY p.product_id ORDER BY p.product_id',
+        $product_id,
+        DESCR_SL,
+        $product_id,
+        $company_id
+    );
 
     return $product;
 };
@@ -106,6 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = trim((string) ($class_data['product'] ?? ''));
         $location_id = (int) ($class_data['location_id'] ?? 0);
         $category_id = (int) ($class_data['category_id'] ?? 0);
+        $action = (string) ($_REQUEST['save_action'] ?? 'draft');
+        if (!in_array($action, ['draft', 'preview', 'submit'], true)) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
         $price_raw = str_replace(',', '.', trim((string) ($class_data['price'] ?? '0')));
         $price = is_numeric($price_raw) ? (float) $price_raw : -1;
 
@@ -125,6 +142,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($price < 0) {
             fn_set_notification('E', __('error'), 'Укажите корректную цену от 0 ₽.');
         } else {
+            $variation_prices = isset($class_data['variation_prices']) && is_array($class_data['variation_prices'])
+                ? $class_data['variation_prices']
+                : [];
+            $validated_variation_prices = [];
+            foreach ($variation_prices as $variation_id => $variation_price_raw) {
+                $variation_id = (int) $variation_id;
+                $variation_price_raw = str_replace(',', '.', trim((string) $variation_price_raw));
+                $variation_company_id = (int) db_get_field(
+                    'SELECT child.company_id FROM ?:products AS child '
+                    . 'INNER JOIN ?:product_variation_group_products AS child_group '
+                    . 'ON child_group.product_id = child.product_id '
+                    . 'INNER JOIN ?:product_variation_group_products AS parent_group '
+                    . 'ON parent_group.group_id = child_group.group_id AND parent_group.product_id = ?i '
+                    . 'WHERE child.product_id = ?i',
+                    $product_id,
+                    $variation_id
+                );
+                if (!$variation_id || $variation_company_id !== $company_id || !is_numeric($variation_price_raw)
+                    || (float) $variation_price_raw < 0) {
+                    return [CONTROLLER_STATUS_DENIED];
+                }
+                $validated_variation_prices[$variation_id] = (float) $variation_price_raw;
+            }
+            if ($validated_variation_prices) {
+                // Zero is deliberately not filtered out: a free option must make
+                // the catalog's "from" price equal to 0 ₽.
+                $price = min($validated_variation_prices);
+            }
             $location = $locations_by_id[$location_id];
             $product_data = [
                 'product' => $name,
@@ -137,18 +182,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'meta_keywords' => trim((string) ($class_data['meta_keywords'] ?? '')),
                 'address' => (string) $location['address'],
                 'zero_price_action' => 'P',
-                'status' => $existing ? (string) $existing['status'] : ObjectStatuses::ACTIVE,
+                // A save and a preview are always private. Only an explicit submit
+                // moves the activity into the existing premoderation workflow.
+                'status' => $action === 'submit'
+                    ? ProductStatuses::REQUIRES_APPROVAL
+                    : ObjectStatuses::HIDDEN,
             ];
 
             $saved_product_id = fn_update_product($product_data, $product_id, DESCR_SL);
             if ($saved_product_id) {
+                foreach ($validated_variation_prices as $variation_id => $variation_price) {
+                    fn_update_product(['price' => $variation_price], $variation_id, DESCR_SL);
+                }
                 fn_set_notification(
                     'N',
                     __('notice'),
-                    $product_id
-                        ? 'Занятие сохранено. Если изменения требуют проверки, Talario опубликует их после модерации.'
-                        : 'Занятие создано и отправлено на проверку Talario.'
+                    $action === 'submit'
+                        ? 'Занятие отправлено на проверку Talario.'
+                        : 'Черновик занятия сохранён.'
                 );
+                if ($action === 'preview') {
+                    $preview_url = fn_get_preview_url(
+                        'products.view?product_id=' . (int) $saved_product_id,
+                        ['status' => ObjectStatuses::HIDDEN],
+                        (int) Tygh::$app['session']['auth']['user_id']
+                    );
+                    return [CONTROLLER_STATUS_REDIRECT, $preview_url, true];
+                }
                 return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
             }
 
@@ -242,6 +302,7 @@ if ($mode === 'manage') {
             'address' => '',
             'price' => 0,
             'main_pair' => [],
+            'image_pairs' => [],
         ];
     }
 

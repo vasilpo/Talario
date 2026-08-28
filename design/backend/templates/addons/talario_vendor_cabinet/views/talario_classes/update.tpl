@@ -7,6 +7,7 @@
 <div class="talario-cabinet talario-class-editor">
     <form action="{""|fn_url}" method="post" enctype="multipart/form-data" class="form-horizontal form-edit" name="talario_class_form">
         <input type="hidden" name="dispatch" value="talario_classes.save_class" />
+        <input type="hidden" name="security_hash" value="{$security_hash}" />
         {if $talario_class.product_id}
             <input type="hidden" name="product_id" value="{$talario_class.product_id}" />
         {/if}
@@ -21,6 +22,26 @@
                     <input type="text" id="elm_talario_class_name" name="class_data[product]" value="{$talario_class.product}" class="input-xxlarge" />
                 </div>
             </div>
+
+            {if $talario_class.variations}
+                <div class="control-group">
+                    <label class="control-label">Варианты занятия:</label>
+                    <div class="controls">
+                        <p class="muted description">Особенности вариантов берутся из настроенных для занятия характеристик. Цена «от» будет выбрана автоматически.</p>
+                        <table class="table table-middle">
+                            <thead><tr><th>Вариант</th><th>Цена, ₽</th></tr></thead>
+                            <tbody>
+                            {foreach $talario_class.variations as $variation}
+                                <tr>
+                                    <td>{$variation.product}</td>
+                                    <td><input type="number" min="0" step="0.01" name="class_data[variation_prices][{$variation.product_id}]" value="{$variation.price}" class="input-small" /></td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {/if}
 
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_class_location">Адрес занятия:</label>
@@ -87,16 +108,12 @@
             <div class="control-group">
                 <label class="control-label">Фото занятия:</label>
                 <div class="controls talario-class-image">
-                    {include file="common/attach_images.tpl"
-                        image_key="0"
-                        image_name="product_main"
-                        image_object_type="product"
-                        image_object_id=$talario_class.product_id
-                        image_pair=$talario_class.main_pair
-                        image_type="M"
-                        hide_titles=true
+                    {include file="common/form_file_uploader.tpl"
+                        existing_pairs=(($talario_class.main_pair) ? [$talario_class.main_pair] : []) + $talario_class.image_pairs|default:[]
+                        file_name="file"
+                        image_pair_types=['N' => 'product_add_additional_image', 'M' => 'product_main_image', 'A' => 'product_additional_image']
                     }
-                    <p class="muted description">Добавьте основное фото, которое будет видно на витрине.</p>
+                    <p class="muted description">Добавьте несколько фото и отметьте главное — оно будет видно в каталоге.</p>
                 </div>
             </div>
         </section>
@@ -106,7 +123,9 @@
             {if $talario_class.product_id}
                 <a class="btn" href="{"talario_classes.schedule?product_id=`$talario_class.product_id`"|fn_url}">Расписание</a>
             {/if}
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <button type="submit" name="save_action" value="draft" class="btn">Сохранить черновик</button>
+            <button type="submit" name="save_action" value="preview" formtarget="_blank" class="btn">Предварительный просмотр</button>
+            <button type="submit" name="save_action" value="submit" class="btn btn-primary">Отправить на проверку</button>
         </div>
     </form>
 </div>

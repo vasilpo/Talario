@@ -38,11 +38,11 @@ class BookingBridgeService
             throw new InvalidArgumentException('Выберите филиал.');
         }
 
-        $from_date = $this->normalizeDate($data['from_date'] ?? '');
-        $to_date = $this->normalizeDate($data['to_date'] ?? '');
-        if ($to_date < $from_date) {
-            throw new InvalidArgumentException('Дата окончания не может быть раньше даты начала.');
-        }
+        // The validity period is an implementation detail. Partners must not be
+        // able to accidentally create an expired (or excessively long) calendar.
+        $today = new DateTimeImmutable('today');
+        $from_date = $today->format('Y-m-d');
+        $to_date = $today->modify('+1 year')->format('Y-m-d');
 
         $duration = (int) ($data['duration_minutes'] ?? 0);
         if ($duration <= 0 || $duration > 1440) {
