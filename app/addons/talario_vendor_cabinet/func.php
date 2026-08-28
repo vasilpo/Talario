@@ -167,7 +167,21 @@ function fn_talario_vendor_cabinet_vendor_data_premoderation_request_approval_fo
         $target_id = (int) reset($product_ids);
         \Tygh\Registry::set('talario_vendor_cabinet.draft_guard.product_id', $target_id, true);
     }
-    $product_ids = array_values(array_filter($product_ids, static function ($product_id) use ($target_id) {
-        return (int) $product_id !== $target_id;
+    $company_id = (int) ($guard['company_id'] ?? 0);
+    $product_ids = array_values(array_filter($product_ids, static function ($product_id) use ($target_id, $company_id) {
+        $product_id = (int) $product_id;
+        if ($product_id === $target_id) {
+            return false;
+        }
+        $is_guarded_variation = (bool) db_get_field(
+            'SELECT 1 FROM ?:product_variation_group_products target '
+            . 'INNER JOIN ?:product_variation_group_products child ON child.group_id = target.group_id '
+            . 'INNER JOIN ?:products p ON p.product_id = child.product_id AND p.company_id = ?i '
+            . 'WHERE target.product_id = ?i AND child.product_id = ?i',
+            $company_id,
+            $target_id,
+            $product_id
+        );
+        return !$is_guarded_variation;
     }));
 }

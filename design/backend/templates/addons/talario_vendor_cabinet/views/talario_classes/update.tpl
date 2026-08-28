@@ -155,7 +155,7 @@
                 <a class="btn" href="{"talario_classes.schedule?product_id=`$talario_class.product_id`"|fn_url}">Расписание</a>
             {/if}
             <button type="submit" name="save_action" value="draft" class="btn">Сохранить черновик</button>
-            <button type="submit" name="save_action" value="preview" class="btn" onclick="this.form.target='talario_class_preview'; window.open('about:blank', 'talario_class_preview');">Предварительный просмотр</button>
+            <button type="button" id="talario_preview_button" class="btn">Предварительный просмотр</button>
             <button type="submit" name="save_action" value="submit" class="btn btn-primary">Отправить на проверку</button>
         </div>
     </form>
@@ -170,11 +170,32 @@
         $('#talario_new_variations tbody').append($row);
     });
     $(document).on('click', '.cm-talario-remove-variation', function () { $(this).closest('tr').remove(); });
+    $('#talario_preview_button').on('click', function () {
+        var form = this.form;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        var previewWindow = window.open('about:blank', 'talario_class_preview');
+        if (!previewWindow) {
+            return;
+        }
+        var action = document.createElement('input');
+        action.type = 'hidden';
+        action.name = 'save_action';
+        action.value = 'preview';
+        form.appendChild(action);
+        form.target = 'talario_class_preview';
+        form.submit();
+        form.target = '';
+        form.removeChild(action);
+    });
     {if $talario_preview_url}
         var updateUrl = {"talario_classes.update?product_id=`$talario_class.product_id`"|fn_url|json_encode nofilter};
         if (window.opener && !window.opener.closed) {
             window.opener.location.replace(updateUrl);
         }
+        window.opener = null;
         window.location.replace({$talario_preview_url|json_encode nofilter});
     {/if}
 }(Tygh, Tygh.$));

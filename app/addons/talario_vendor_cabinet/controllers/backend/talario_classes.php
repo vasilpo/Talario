@@ -140,15 +140,22 @@ $get_variation_axes = static function ($category_id, $product_id = 0) {
     }));
 };
 
-$sync_variations = static function ($product_id, array $rows, array $delete_ids) use ($company_id, $get_variation_axes) {
+$sync_variations = static function (
+    $product_id,
+    array $rows,
+    array $delete_ids,
+    $validate_only = false,
+    $category_id = 0
+) use ($company_id, $get_variation_axes) {
     $service = VariationsServiceProvider::getService();
     $group_repository = VariationsServiceProvider::getGroupRepository();
     $product_repository = VariationsServiceProvider::getProductRepository();
     $group_id = $group_repository->findGroupIdByProductId($product_id);
 
+    $validated_delete_ids = [];
     foreach (array_unique(array_map('intval', $delete_ids)) as $delete_id) {
         if (!$delete_id || !$group_id || $delete_id === (int) $product_id) {
-            continue;
+            throw new InvalidArgumentException('Нельзя удалить родительское занятие или неизвестный вариант.');
         }
         $owned = (int) db_get_field(
             'SELECT p.company_id FROM ?:products p INNER JOIN ?:product_variation_group_products gp '
@@ -159,19 +166,11 @@ $sync_variations = static function ($product_id, array $rows, array $delete_ids)
         if ($owned !== $company_id) {
             throw new RuntimeException('Cross-company variation operation is forbidden');
         }
-        $result = $service->detachProductFromGroup($group_id, $delete_id);
-        if ($result->isFailure()) {
-            throw new InvalidArgumentException(implode(' ', $result->getErrors()));
-        }
-        fn_delete_product($delete_id);
+        $validated_delete_ids[] = $delete_id;
     }
 
-    if (!$rows) {
-        return;
-    }
-    $category_id = (int) db_get_field(
-        'SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC LIMIT 1',
-        $product_id
+    $category_id = $category_id ?: (int) db_get_field(
+        'SELECT category_id FROM ?:products_categories WHERE product_id = ?i ORDER BY link_type DESC LIMIT 1', $product_id
     );
     $axes = $get_variation_axes($category_id, $product_id);
     $allowed = [];
@@ -212,6 +211,17 @@ $sync_variations = static function ($product_id, array $rows, array $delete_ids)
             throw new InvalidArgumentException('Такое сочетание добавлено больше одного раза.');
         }
         $combination_prices[$combination_id] = (float) $price_raw;
+    }
+    if ($validate_only) {
+        return;
+    }
+
+    foreach ($validated_delete_ids as $delete_id) {
+        $result = $service->detachProductFromGroup($group_id, $delete_id);
+        if ($result->isFailure()) {
+            throw new InvalidArgumentException(implode(' ', $result->getErrors()));
+        }
+        fn_delete_product($delete_id);
     }
     if (!$combination_prices) {
         return;
@@ -376,43 +386,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $product_data['status'] = ObjectStatuses::HIDDEN;
             }
 
-            db_query('START TRANSACTION');
+            $new_variations = isset($class_data['new_variations']) && is_array($class_data['new_variations'])
+                ? $class_data['new_variations']
+                : [];
+            $delete_variations = isset($class_data['delete_variations']) && is_array($class_data['delete_variations'])
+                ? $class_data['delete_variations']
+                : [];
+            try {
+                // Validate every variation and deletion before fn_update_product can touch images.
+                $sync_variations($product_id, $new_variations, $delete_variations, true, $category_id);
+            } catch (InvalidArgumentException $e) {
+                fn_set_notification('E', __('error'), $e->getMessage());
+                return [CONTROLLER_STATUS_REDIRECT, $product_id
+                    ? 'talario_classes.update?product_id=' . $product_id
+                    : 'talario_classes.add'];
+            } catch (RuntimeException $e) {
+                return [CONTROLLER_STATUS_DENIED];
+            }
+
+            $guarded = $action !== 'submit';
+            $transaction_open = false;
+            $saved_product_id = 0;
+            $save_succeeded = false;
+            $premoderation_before = [];
+            if ($guarded && $product_id && function_exists('fn_vendor_data_premoderation_get_premoderation')) {
+                $before_ids = [$product_id];
+                $before_group_id = VariationsServiceProvider::getGroupRepository()->findGroupIdByProductId($product_id);
+                if ($before_group_id) {
+                    $before_ids = VariationsServiceProvider::getGroupRepository()
+                        ->findGroupById($before_group_id)
+                        ->getProductIds();
+                }
+                $premoderation_before = array_map('intval', array_keys(
+                    (array) fn_vendor_data_premoderation_get_premoderation($before_ids)
+                ));
+            }
             if ($action !== 'submit') {
                 Registry::set('talario_vendor_cabinet.draft_guard', [
                     'enabled' => true,
                     'product_id' => $product_id,
+                    'company_id' => $company_id,
                 ], true);
             }
             try {
+                db_query('START TRANSACTION');
+                $transaction_open = true;
                 $saved_product_id = fn_update_product($product_data, $product_id, DESCR_SL);
-            } catch (Throwable $e) {
-                db_query('ROLLBACK');
-                throw $e;
-            } finally {
-                Registry::del('talario_vendor_cabinet.draft_guard');
-            }
-            if ($saved_product_id) {
-                try {
-                    foreach ($validated_variation_prices as $variation_id => $variation_price) {
-                        fn_update_product(['price' => $variation_price], $variation_id, DESCR_SL);
-                    }
-                    $sync_variations(
-                        (int) $saved_product_id,
-                        isset($class_data['new_variations']) && is_array($class_data['new_variations'])
-                            ? $class_data['new_variations']
-                            : [],
-                        isset($class_data['delete_variations']) && is_array($class_data['delete_variations'])
-                            ? $class_data['delete_variations']
-                            : []
-                    );
-                } catch (InvalidArgumentException $e) {
-                    db_query('ROLLBACK');
-                    fn_set_notification('E', __('error'), $e->getMessage());
-                    return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
-                } catch (RuntimeException $e) {
-                    db_query('ROLLBACK');
-                    return [CONTROLLER_STATUS_DENIED];
+                if (!$saved_product_id) {
+                    throw new RuntimeException('Не удалось сохранить занятие.');
                 }
+                if ($guarded && !$product_id) {
+                    Registry::set('talario_vendor_cabinet.draft_guard.product_id', (int) $saved_product_id, true);
+                }
+
+                foreach ($validated_variation_prices as $variation_id => $variation_price) {
+                    fn_update_product(['price' => $variation_price], $variation_id, DESCR_SL);
+                }
+                $sync_variations(
+                    (int) $saved_product_id,
+                    $new_variations,
+                    $delete_variations
+                );
 
                 $variation_min_price = db_get_field(
                     'SELECT MIN(pp.price) FROM ?:product_variation_group_products parent '
@@ -426,7 +460,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($variation_min_price !== null) {
                     fn_update_product(['price' => (float) $variation_min_price], $saved_product_id, DESCR_SL);
                 }
+
+                if ($guarded) {
+                    $affected_ids = [(int) $saved_product_id];
+                    $group_id = VariationsServiceProvider::getGroupRepository()
+                        ->findGroupIdByProductId((int) $saved_product_id);
+                    if ($group_id) {
+                        $affected_ids = VariationsServiceProvider::getGroupRepository()
+                            ->findGroupById($group_id)
+                            ->getProductIds();
+                    }
+                    $pending_ids = db_get_fields(
+                        'SELECT product_id FROM ?:products WHERE product_id IN (?n) AND status = ?s',
+                        $affected_ids,
+                        ProductStatuses::REQUIRES_APPROVAL
+                    );
+                    if ($pending_ids) {
+                        $new_premoderation_ids = array_values(array_diff(
+                            array_map('intval', $pending_ids),
+                            $premoderation_before
+                        ));
+                        if ($new_premoderation_ids) {
+                            db_query(
+                                'UPDATE ?:products SET status = ?s WHERE product_id IN (?n)',
+                                ObjectStatuses::HIDDEN,
+                                $new_premoderation_ids
+                            );
+                        }
+                        if ($new_premoderation_ids
+                            && function_exists('fn_vendor_data_premoderation_delete_premoderation')) {
+                            fn_vendor_data_premoderation_delete_premoderation($new_premoderation_ids);
+                        }
+                    }
+                } else {
+                    $actual_status = (string) db_get_field(
+                        'SELECT status FROM ?:products WHERE product_id = ?i', $saved_product_id
+                    );
+                    if ($actual_status !== ProductStatuses::REQUIRES_APPROVAL
+                        && function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
+                        fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
+                    }
+                    $actual_status = (string) db_get_field(
+                        'SELECT status FROM ?:products WHERE product_id = ?i', $saved_product_id
+                    );
+                    if ($actual_status !== ProductStatuses::REQUIRES_APPROVAL) {
+                        throw new RuntimeException('Занятие не удалось отправить на проверку.');
+                    }
+                }
                 db_query('COMMIT');
+                $transaction_open = false;
+                $save_succeeded = true;
+            } catch (Throwable $e) {
+                if ($transaction_open) {
+                    db_query('ROLLBACK');
+                    $transaction_open = false;
+                }
+                fn_set_notification('E', __('error'), $e->getMessage());
+            } finally {
+                Registry::del('talario_vendor_cabinet.draft_guard');
+                if ($transaction_open) {
+                    db_query('ROLLBACK');
+                }
+            }
+
+            if ($saved_product_id && $save_succeeded) {
                 fn_set_notification(
                     'N',
                     __('notice'),
@@ -442,9 +539,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
             }
-
-            db_query('ROLLBACK');
-            fn_set_notification('E', __('error'), 'Не удалось сохранить занятие.');
         }
 
         $redirect = $product_id
