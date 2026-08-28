@@ -6,7 +6,7 @@
 
         <div class="form-horizontal form-edit cm-hide-inputs">
             <div class="control-group">
-                <label class="control-label">Название / ФИО:</label>
+                <label class="control-label">Юридическое название / ФИО:</label>
                 <div class="controls"><input type="text" value="{$talario_company.company}" disabled="disabled" class="input-xlarge" /></div>
             </div>
             <div class="control-group">
@@ -29,16 +29,8 @@
                 <label class="control-label">Город:</label>
                 <div class="controls"><input type="text" value="{$talario_company.city}" disabled="disabled" class="input-xlarge" /></div>
             </div>
-
-            {include file="views/profiles/components/profile_fields.tpl"
-                section="C"
-                default_data_name="company_data"
-                profile_data=$talario_company
-                nothing_extra=true
-                hide_inputs=true
-            }
         </div>
-        <p class="muted">Если регистрационные данные изменились, напишите администратору Таларио.</p>
+        <p class="muted">Если регистрационные данные изменились, напишите администратору Таларио через раздел «Сообщения».</p>
     </section>
 </div>
 {/capture}

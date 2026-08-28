@@ -71,14 +71,6 @@ $schema['central'] = [
         'items'     => [],
         'is_custom' => true,
     ],
-    'talario_documents' => [
-        'position'  => 800,
-        'title'     => 'Документы',
-        'href'      => 'talario_documents.manage',
-        'icon'      => 'file_text',
-        'items'     => [],
-        'is_custom' => true,
-    ],
 ];
 
 return $schema;

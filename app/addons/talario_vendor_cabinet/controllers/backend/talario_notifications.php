@@ -10,5 +10,19 @@ if (!fn_get_runtime_company_id()) {
 
 if ($mode === 'manage') {
     $notifications_center = Tygh::$app['notifications_center'];
-    Tygh::$app['view']->assign('talario_notifications_count', (int) $notifications_center->getCount());
+    $notifications = $notifications_center->get([
+        'sort_by' => 'pinned_timestamp',
+    ], 50);
+
+    $items = [];
+    foreach ($notifications as $notification) {
+        $item = $notification->toArray();
+        $item['action_url'] = $notifications_center->getActionUrl($notification->action_url, $notification->area);
+        $items[] = $item;
+    }
+
+    Tygh::$app['view']->assign([
+        'talario_notifications' => $items,
+        'talario_notifications_count' => count($items),
+    ]);
 }
