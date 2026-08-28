@@ -135,4 +135,32 @@ msgstr "Филиал сохранён."
 
 msgctxt "Languages::talario_vendor_cabinet.location_required_fields"
 msgid "Заполните название центра и адрес филиала."
-msgstr "Заполните название центра и адрес филиала."
+msgstr "Укажите адрес филиала."
+
+msgctxt "Languages::vendor_data_premoderation.products_sent_to_premoderation"
+msgid "Your changes have been saved. Before your product is added to the product catalog, it must be approved by the store administration. Follow <a href=\"[product_approval_url]\">this link</a> to view products that require approval.|Your changes have been saved. Before your products are added to the product catalog, they must be approved by the store administration. Follow <a href=\"[product_approval_url]\">this link</a> to view products that require approval."
+msgstr "Изменения сохранены. Занятие отправлено на проверку Talario и появится на витрине после одобрения.|Изменения сохранены. Занятия отправлены на проверку Talario и появятся на витрине после одобрения."
+
+msgctxt "Languages::vendor_data_premoderation.notification.approved.title"
+msgid "Your product has been approved|Your products have been approved"
+msgstr "Занятие опубликовано|Занятия опубликованы"
+
+msgctxt "Languages::vendor_data_premoderation.notification.approved.message"
+msgid "\"[product]\" has been approved by the store administration and added to the product catalog. Click here to view this product.|[n] products have been approved by the store administration and added to the product catalog. Click here to view these products."
+msgstr "Занятие «[product]» прошло проверку Talario и опубликовано на витрине. Нажмите, чтобы открыть его.|[n] занятия прошли проверку Talario и опубликованы на витрине. Нажмите, чтобы открыть их.|[n] занятий прошли проверку Talario и опубликованы на витрине. Нажмите, чтобы открыть их."
+
+msgctxt "Languages::vendor_data_premoderation.notification.disapproved.title"
+msgid "Your product has been disapproved|Your products have been disapproved"
+msgstr "Занятие нужно доработать|Занятия нужно доработать"
+
+msgctxt "Languages::vendor_data_premoderation.notification.disapproved.message"
+msgid "\"[product]\" has been disapproved by the store administration. Click here to view this product.|[n] products have been disapproved by the store administration. Click here to view these products."
+msgstr "Talario вернул занятие «[product]» на доработку. Нажмите, чтобы открыть его.|Talario вернул [n] занятия на доработку. Нажмите, чтобы открыть их.|Talario вернул [n] занятий на доработку. Нажмите, чтобы открыть их."
+
+msgctxt "Languages::product_approval_status_approved"
+msgid "Your product [product] has been approved by the store administration and added to the product catalog. Now shoppers can order this product in the store."
+msgstr "Занятие [product] прошло проверку Talario и опубликовано. Теперь родители могут записаться на него."
+
+msgctxt "Languages::product_approval_status_disapproved"
+msgid "Your product [product] has been disapproved by the store administration"
+msgstr "Занятие [product] возвращено Talario на доработку"

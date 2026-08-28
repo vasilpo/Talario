@@ -7,7 +7,7 @@
             <a class="btn {if $talario_filter === "pending"}btn-primary{/if}" href="{"talario_classes.manage?talario_status=pending"|fn_url}">{__("talario_vendor_cabinet.pending")}</a>
             <a class="btn {if $talario_filter === "disabled"}btn-primary{/if}" href="{"talario_classes.manage?talario_status=disabled"|fn_url}">{__("talario_vendor_cabinet.disabled_classes")}</a>
         </nav>
-        <a class="btn btn-primary btn-large" href="{"products.add"|fn_url}">+ {__("talario_vendor_cabinet.add_class")}</a>
+        <a class="btn btn-primary btn-large" href="{"talario_classes.add"|fn_url}">+ {__("talario_vendor_cabinet.add_class")}</a>
     </div>
     {if $talario_products}
         <div class="talario-class-grid">
@@ -22,7 +22,7 @@
                         <div class="dropdown">
                             <a class="dropdown-toggle talario-more" data-toggle="dropdown" aria-label="{__("more")}">•••</a>
                             <ul class="dropdown-menu pull-right">
-                                <li><a href="{"products.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a></li>
+                                <li><a href="{"talario_classes.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a></li>
                                 <li><a href="{"talario_classes.schedule?product_id=`$product.product_id`"|fn_url}">Расписание</a></li>
                             </ul>
                         </div>
@@ -35,7 +35,7 @@
                         </span>
                     </div>
                     <div class="talario-class-card__actions">
-                        <a class="btn btn-block" href="{"products.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a>
+                        <a class="btn btn-block" href="{"talario_classes.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a>
                         <a class="btn btn-block" href="{"talario_classes.schedule?product_id=`$product.product_id`"|fn_url}">Расписание</a>
                     </div>
                 </div>

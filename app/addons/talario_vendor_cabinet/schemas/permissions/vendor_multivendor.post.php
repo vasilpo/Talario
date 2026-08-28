@@ -8,6 +8,9 @@ $schema['controllers']['talario_dashboard'] = [
 $schema['controllers']['talario_classes'] = [
     'modes' => [
         'manage' => ['permissions' => 'manage_catalog'],
+        'add' => ['permissions' => 'manage_catalog'],
+        'update' => ['permissions' => 'manage_catalog'],
+        'save_class' => ['permissions' => 'manage_catalog'],
         'schedule' => ['permissions' => 'manage_catalog'],
         'save_schedule' => ['permissions' => 'manage_catalog'],
     ],

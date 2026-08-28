@@ -1,16 +1,18 @@
 {capture name="mainbox"}
 <div class="talario-cabinet">
     <section class="talario-todo">
-        <h2>Информация о центре</h2>
-        <p class="muted">Эта информация будет использоваться во всех ваших занятиях.</p>
+        <h2>Центр</h2>
+        <p class="muted">Эти данные будут использоваться в занятиях по умолчанию.</p>
         <form action="{""|fn_url}" method="post" class="form-horizontal form-edit">
             <input type="hidden" name="dispatch" value="talario_locations.update_center" />
+
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_center_name">Название центра:</label>
                 <div class="controls">
                     <input type="text" id="elm_talario_center_name" name="center_data[name]" value="{$talario_center.name}" class="input-xxlarge" />
                 </div>
             </div>
+
             <div class="control-group">
                 <label class="control-label" for="elm_talario_center_description">О центре:</label>
                 <div class="controls">
@@ -18,8 +20,25 @@
                     <p class="muted description">Одним предложением расскажите родителям, чем занимается ваш центр.</p>
                 </div>
             </div>
+
+            <div class="control-group">
+                <label class="control-label cm-required" for="elm_talario_center_address">Адрес:</label>
+                <div class="controls">
+                    <input type="text" id="elm_talario_center_address" name="center_data[address]" value="{$talario_center.address}" class="input-xxlarge" />
+                    <p class="muted description">Основной адрес, где проходят занятия.</p>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="elm_talario_center_details">Как найти:</label>
+                <div class="controls">
+                    <textarea id="elm_talario_center_details" name="center_data[address_details]" rows="3" class="input-xxlarge">{$talario_center.address_details}</textarea>
+                    <p class="muted description">Напишите так, чтобы клиентам было легко вас найти: вход, этаж или ориентир.</p>
+                </div>
+            </div>
+
             <div class="buttons-container">
-                <button type="submit" class="btn btn-primary">Сохранить информацию о центре</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
             </div>
         </form>
     </section>
@@ -28,7 +47,7 @@
         <div class="talario-dashboard__header">
             <div>
                 <h2>Филиалы</h2>
-                <p class="muted">Добавьте адреса, где проходят занятия. Один центр может иметь несколько филиалов.</p>
+                <p class="muted">Если занятия проходят ещё по другим адресам, добавьте их здесь. Это необязательно.</p>
             </div>
             <a class="btn btn-primary" href="{"talario_locations.update"|fn_url}">+ Добавить филиал</a>
         </div>
@@ -45,7 +64,7 @@
                 <tbody>
                 {foreach $talario_locations as $location}
                     <tr>
-                        <td><strong>{$location.name}</strong></td>
+                        <td><strong>{if $location.name}{$location.name}{else}Филиал{/if}</strong></td>
                         <td>
                             {$location.address}
                             {if $location.address_details}<div class="muted">{$location.address_details}</div>{/if}
@@ -65,7 +84,7 @@
                 </tbody>
             </table>
         {else}
-            <div class="no-items">Филиалов пока нет.</div>
+            <div class="no-items">Дополнительных филиалов пока нет.</div>
         {/if}
     </section>
 </div>
