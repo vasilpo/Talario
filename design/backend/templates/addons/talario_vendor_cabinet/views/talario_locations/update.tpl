@@ -6,10 +6,10 @@
     {/if}
 
     <div class="control-group">
-        <label class="control-label cm-required" for="elm_talario_location_name">Название филиала:</label>
+        <label class="control-label" for="elm_talario_location_name">Название:</label>
         <div class="controls">
             <input type="text" id="elm_talario_location_name" name="location_data[name]" value="{$talario_location.name}" class="input-large" />
-            <p class="muted">Напишите название или ориентир, по которому вы отличаете этот филиал от других.</p>
+            <p class="muted">Необязательно. Укажите название, если так удобнее отличать один филиал от другого.</p>
         </div>
     </div>
 
@@ -17,7 +17,6 @@
         <label class="control-label cm-required" for="elm_talario_location_address">Адрес:</label>
         <div class="controls">
             <input type="text" id="elm_talario_location_address" name="location_data[address]" value="{$talario_location.address}" class="input-xlarge" />
-            <p class="muted">Укажите полный адрес, где проходят занятия.</p>
         </div>
     </div>
 
