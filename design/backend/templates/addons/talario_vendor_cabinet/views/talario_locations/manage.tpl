@@ -2,21 +2,20 @@
 <div class="talario-cabinet">
     <section class="talario-todo">
         <h2>Информация о центре</h2>
-        <p class="muted">Сначала заполните общую информацию о центре. Она будет использоваться во всех ваших занятиях.</p>
+        <p class="muted">Эта информация будет использоваться во всех ваших занятиях.</p>
         <form action="{""|fn_url}" method="post" class="form-horizontal form-edit">
             <input type="hidden" name="dispatch" value="talario_locations.update_center" />
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_center_name">Название центра:</label>
                 <div class="controls">
-                    <input type="text" id="elm_talario_center_name" name="center_data[company]" value="{$talario_center.company}" class="input-xlarge" />
-                    <p class="muted description">Как называется ваш центр</p>
+                    <input type="text" id="elm_talario_center_name" name="center_data[name]" value="{$talario_center.name}" class="input-xxlarge" />
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="elm_talario_center_description">О центре:</label>
                 <div class="controls">
-                    <input type="text" id="elm_talario_center_description" name="center_data[company_description]" value="{$talario_center.company_description}" maxlength="180" class="input-xxlarge" />
-                    <p class="muted description">Необязательно. Одним предложением расскажите родителям, чем занимается ваш центр.</p>
+                    <input type="text" id="elm_talario_center_description" name="center_data[description]" value="{$talario_center.description}" maxlength="180" class="input-xxlarge" />
+                    <p class="muted description">Одним предложением расскажите родителям, чем занимается ваш центр.</p>
                 </div>
             </div>
             <div class="buttons-container">
