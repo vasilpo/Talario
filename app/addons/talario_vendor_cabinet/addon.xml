@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <addon scheme="4.0">
     <id>talario_vendor_cabinet</id>
-    <version>1.2.2</version>
+    <version>1.3.0</version>
     <priority>11000</priority>
-    <dependencies>vendor_data_premoderation,talario_schedule_resources,vendor_communication</dependencies>
+    <dependencies>vendor_data_premoderation,talario_schedule_resources,vendor_communication,ec_table_booking_system</dependencies>
     <status>disabled</status>
     <default_language>ru</default_language>
     <compatibility>
