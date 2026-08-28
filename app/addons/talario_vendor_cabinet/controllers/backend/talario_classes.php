@@ -208,6 +208,9 @@ $sync_variations = static function ($product_id, array $rows, array $delete_ids)
             throw new InvalidArgumentException('Во всех сочетаниях нужно заполнить одинаковые особенности.');
         }
         $combination_id = $product_repository->generateCombinationId(array_values($variants));
+        if (array_key_exists($combination_id, $combination_prices)) {
+            throw new InvalidArgumentException('Такое сочетание добавлено больше одного раза.');
+        }
         $combination_prices[$combination_id] = (float) $price_raw;
     }
     if (!$combination_prices) {
@@ -240,14 +243,22 @@ $sync_variations = static function ($product_id, array $rows, array $delete_ids)
         if ((int) $variation_id === (int) $product_id) {
             continue;
         }
+        $group_feature_ids = $group_repository->findGroupFeatureCollectionByGroupId($group_id)->getFeatureIds();
+        sort($group_feature_ids);
         $variant_ids = db_get_fields(
-            'SELECT variant_id FROM ?:product_features_values WHERE product_id = ?i AND variant_id > 0 ORDER BY feature_id',
-            $variation_id
+            'SELECT variant_id FROM ?:product_features_values WHERE product_id = ?i '
+            . 'AND feature_id IN (?n) AND variant_id > 0 ORDER BY feature_id',
+            $variation_id,
+            $group_feature_ids
         );
         $combination_id = $product_repository->generateCombinationId(array_map('intval', $variant_ids));
         if (array_key_exists($combination_id, $combination_prices)) {
             fn_update_product(['price' => $combination_prices[$combination_id]], $variation_id, DESCR_SL);
+            unset($combination_prices[$combination_id]);
         }
+    }
+    if ($combination_prices) {
+        throw new InvalidArgumentException('Не удалось сопоставить созданный вариант с выбранным сочетанием.');
     }
 };
 
@@ -271,7 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!in_array($action, ['draft', 'preview', 'submit'], true)) {
             return [CONTROLLER_STATUS_DENIED];
         }
-        if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action !== 'submit') {
+        if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'draft') {
             fn_set_notification(
                 'W',
                 __('warning'),
@@ -280,6 +291,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 . 'Их можно передать только кнопкой «Отправить на проверку».'
             );
             return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id];
+        }
+        if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'preview') {
+            fn_set_notification('W', __('warning'), 'Предварительный просмотр показывает текущую опубликованную версию; несохранённые изменения в неё не вошли.');
+            return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id . '&open_preview=1'];
         }
         $price_raw = str_replace(',', '.', trim((string) ($class_data['price'] ?? '0')));
         $price = is_numeric($price_raw) ? (float) $price_raw : -1;
@@ -324,6 +339,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $validated_variation_prices[$variation_id] = (float) $variation_price_raw;
             }
             $location = $locations_by_id[$location_id];
+            $removed_pair_ids = array_values(array_unique(array_filter(array_map(
+                'intval',
+                (array) ($_REQUEST['product_data']['removed_image_pair_ids'] ?? [])
+            ))));
+            if ($removed_pair_ids) {
+                if (!$product_id) {
+                    return [CONTROLLER_STATUS_DENIED];
+                }
+                $owned_pair_ids = db_get_fields(
+                    'SELECT pair_id FROM ?:images_links WHERE pair_id IN (?n) AND object_id = ?i AND object_type = ?s',
+                    $removed_pair_ids,
+                    $product_id,
+                    'product'
+                );
+                if (array_diff($removed_pair_ids, array_map('intval', $owned_pair_ids))) {
+                    return [CONTROLLER_STATUS_DENIED];
+                }
+            }
             $product_data = [
                 'product' => $name,
                 'company_id' => $company_id,
@@ -335,6 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'meta_keywords' => trim((string) ($class_data['meta_keywords'] ?? '')),
                 'address' => (string) $location['address'],
                 'zero_price_action' => 'P',
+                'removed_image_pair_ids' => $removed_pair_ids,
             ];
             // New activities start privately. Existing product status is deliberately
             // omitted: vendor_data_premoderation owns all published-product transitions.
@@ -342,7 +376,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $product_data['status'] = ObjectStatuses::HIDDEN;
             }
 
-            $saved_product_id = fn_update_product($product_data, $product_id, DESCR_SL);
+            db_query('START TRANSACTION');
+            if ($action !== 'submit') {
+                Registry::set('talario_vendor_cabinet.draft_guard', [
+                    'enabled' => true,
+                    'product_id' => $product_id,
+                ], true);
+            }
+            try {
+                $saved_product_id = fn_update_product($product_data, $product_id, DESCR_SL);
+            } catch (Throwable $e) {
+                db_query('ROLLBACK');
+                throw $e;
+            } finally {
+                Registry::del('talario_vendor_cabinet.draft_guard');
+            }
             if ($saved_product_id) {
                 try {
                     foreach ($validated_variation_prices as $variation_id => $variation_price) {
@@ -358,9 +406,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             : []
                     );
                 } catch (InvalidArgumentException $e) {
+                    db_query('ROLLBACK');
                     fn_set_notification('E', __('error'), $e->getMessage());
                     return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
                 } catch (RuntimeException $e) {
+                    db_query('ROLLBACK');
                     return [CONTROLLER_STATUS_DENIED];
                 }
 
@@ -376,9 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($variation_min_price !== null) {
                     fn_update_product(['price' => (float) $variation_min_price], $saved_product_id, DESCR_SL);
                 }
-                if ($action === 'submit' && function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
-                    fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
-                }
+                db_query('COMMIT');
                 fn_set_notification(
                     'N',
                     __('notice'),
@@ -395,6 +443,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
             }
 
+            db_query('ROLLBACK');
             fn_set_notification('E', __('error'), 'Не удалось сохранить занятие.');
         }
 

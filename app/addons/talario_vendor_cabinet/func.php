@@ -148,3 +148,26 @@ function fn_talario_vendor_cabinet_get_allowed_categories()
 
     return $result;
 }
+
+/**
+ * Prevents only the automatic approval request produced while Talario saves a
+ * draft. The controller always removes this request-scoped guard in finally.
+ */
+function fn_talario_vendor_cabinet_vendor_data_premoderation_request_approval_for_products_pre(
+    array &$product_ids,
+    $update_product
+) {
+    $guard = \Tygh\Registry::ifGet('talario_vendor_cabinet.draft_guard', []);
+    if (empty($guard['enabled']) || empty($product_ids)) {
+        return;
+    }
+
+    $target_id = (int) ($guard['product_id'] ?? 0);
+    if (!$target_id) {
+        $target_id = (int) reset($product_ids);
+        \Tygh\Registry::set('talario_vendor_cabinet.draft_guard.product_id', $target_id, true);
+    }
+    $product_ids = array_values(array_filter($product_ids, static function ($product_id) use ($target_id) {
+        return (int) $product_id !== $target_id;
+    }));
+}

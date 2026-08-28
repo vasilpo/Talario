@@ -155,7 +155,7 @@
                 <a class="btn" href="{"talario_classes.schedule?product_id=`$talario_class.product_id`"|fn_url}">Расписание</a>
             {/if}
             <button type="submit" name="save_action" value="draft" class="btn">Сохранить черновик</button>
-            <button type="submit" name="save_action" value="preview" class="btn">Предварительный просмотр</button>
+            <button type="submit" name="save_action" value="preview" class="btn" onclick="this.form.target='talario_class_preview'; window.open('about:blank', 'talario_class_preview');">Предварительный просмотр</button>
             <button type="submit" name="save_action" value="submit" class="btn btn-primary">Отправить на проверку</button>
         </div>
     </form>
@@ -171,7 +171,11 @@
     });
     $(document).on('click', '.cm-talario-remove-variation', function () { $(this).closest('tr').remove(); });
     {if $talario_preview_url}
-        window.open({$talario_preview_url|json_encode nofilter}, '_blank', 'noopener');
+        var updateUrl = {"talario_classes.update?product_id=`$talario_class.product_id`"|fn_url|json_encode nofilter};
+        if (window.opener && !window.opener.closed) {
+            window.opener.location.replace(updateUrl);
+        }
+        window.location.replace({$talario_preview_url|json_encode nofilter});
     {/if}
 }(Tygh, Tygh.$));
 </script>
