@@ -10,6 +10,10 @@
                 <div class="controls"><input type="text" value="{$talario_company.company}" disabled="disabled" class="input-xlarge" /></div>
             </div>
             <div class="control-group">
+                <label class="control-label">ИНН:</label>
+                <div class="controls"><input type="text" value="{$talario_company.tax_number}" disabled="disabled" class="input-xlarge" /></div>
+            </div>
+            <div class="control-group">
                 <label class="control-label">E-mail:</label>
                 <div class="controls"><input type="text" value="{$talario_company.email}" disabled="disabled" class="input-xlarge" /></div>
             </div>
@@ -34,7 +38,7 @@
                 hide_inputs=true
             }
         </div>
-        <p class="muted">Если регистрационные данные изменились, напишите администратору Talario.</p>
+        <p class="muted">Если регистрационные данные изменились, напишите администратору Таларио.</p>
     </section>
 </div>
 {/capture}
