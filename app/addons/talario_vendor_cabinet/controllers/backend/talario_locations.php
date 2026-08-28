@@ -37,18 +37,15 @@ $normalize_center_description = static function ($value) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mode === 'update_center') {
         $center_data = isset($_REQUEST['center_data']) && is_array($_REQUEST['center_data']) ? $_REQUEST['center_data'] : [];
-        $company = trim((string) ($center_data['company'] ?? ''));
-        $description = $normalize_center_description($center_data['company_description'] ?? '');
+        $name = trim((string) ($center_data['name'] ?? ''));
+        $description = $normalize_center_description($center_data['description'] ?? '');
 
-        if ($company === '') {
-            fn_set_notification('E', __('error'), 'Укажите, как называется ваш центр.');
+        if ($name === '') {
+            fn_set_notification('E', __('error'), 'Укажите название центра.');
             return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
         }
 
-        fn_update_company([
-            'company' => $company,
-            'company_description' => $description,
-        ], $company_id, DESCR_SL);
+        fn_talario_vendor_cabinet_update_center($company_id, $name, $description);
 
         fn_set_notification('N', __('notice'), 'Информация о центре сохранена.');
         return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
@@ -101,10 +98,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if ($mode === 'manage') {
     try {
-        $center = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
-        if (is_array($center)) {
-            $center['company_description'] = $normalize_center_description($center['company_description'] ?? '');
+        $center = fn_talario_vendor_cabinet_get_center($company_id);
+        $company_data = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
+
+        if (empty($center['name']) && !empty($company_data['company'])) {
+            $center['name'] = (string) $company_data['company'];
         }
+        $center['description'] = $normalize_center_description($center['description'] ?? '');
 
         Tygh::$app['view']->assign([
             'talario_locations' => $service->getLocations(),
