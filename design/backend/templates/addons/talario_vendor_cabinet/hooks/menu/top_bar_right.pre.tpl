@@ -1,4 +1,8 @@
-{$talario_header_company_id = $auth.company_id|default:$runtime.company_id}
+{$talario_header_company_id = $runtime.company_id|default:$auth.company_id}
+{if !$talario_header_company_id && $auth.user_id}
+    {$talario_header_user = $auth.user_id|fn_get_user_info}
+    {$talario_header_company_id = $talario_header_user.company_id}
+{/if}
 {if $talario_header_company_id}
     {$talario_header_company = $talario_header_company_id|fn_get_company_data}
     {$talario_header_center_name = $talario_header_company_id|fn_talario_vendor_cabinet_get_center_name}
