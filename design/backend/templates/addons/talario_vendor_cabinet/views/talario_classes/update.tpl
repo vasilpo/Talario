@@ -5,6 +5,9 @@
 {/if}
 {capture name="mainbox"}
 <div class="talario-cabinet talario-class-editor">
+    {if $talario_class.talario_revision_comment}
+        <div class="alert alert-warning"><strong>Занятие нужно доработать.</strong><br />Комментарий Talario: {$talario_class.talario_revision_comment}</div>
+    {/if}
     <form action="{""|fn_url}" method="post" enctype="multipart/form-data" class="form-horizontal form-edit" name="talario_class_form">
         <input type="hidden" name="dispatch" value="talario_classes.save_class" />
         <input type="hidden" name="security_hash" value="{$security_hash}" />
@@ -15,7 +18,7 @@
         <section class="talario-todo">
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_class_name">
-                    Название
+                    Название занятия
                     <span class="cm-tooltip talario-help" title="Как называется ваше занятие. Это название клиенты увидят на витрине.">?</span>:
                 </label>
                 <div class="controls">
@@ -73,8 +76,14 @@
             {/if}
 
             <div class="control-group">
-                <label class="control-label cm-required" for="elm_talario_class_location">Адрес занятия:</label>
+                <label class="control-label cm-required" for="elm_talario_class_location">Где проходит занятие:</label>
                 <div class="controls">
+                    {if $talario_class_locations|count == 1}
+                        {foreach $talario_class_locations as $location}
+                            <input type="hidden" name="class_data[location_id]" value="{$location.location_id}" />
+                            <strong>{$location.address}</strong>
+                        {/foreach}
+                    {else}
                     <select id="elm_talario_class_location" name="class_data[location_id]" class="input-xxlarge" required>
                         {foreach $talario_class_locations as $location}
                             <option value="{$location.location_id}" {if $location.location_id == $talario_class_location_id}selected="selected"{/if}>
@@ -82,6 +91,7 @@
                             </option>
                         {/foreach}
                     </select>
+                    {/if}
                     <p class="muted description">Адрес берётся из раздела «Центр». Если адресов несколько, выберите нужный.</p>
                 </div>
             </div>
@@ -103,23 +113,28 @@
                 <label class="control-label cm-required" for="elm_talario_class_price">Цена от:</label>
                 <div class="controls">
                     <div class="input-append">
-                        <input type="number" min="0" step="0.01" id="elm_talario_class_price" name="class_data[price]" value="{$talario_class.price}" class="input-small" required />
-                        <span class="add-on">₽</span>
+                        {if $talario_class.variations}
+                            <input type="hidden" name="class_data[price]" value="{$talario_class.price}" />
+                            <strong>{$talario_class.price} ₽</strong>
+                        {else}
+                            <input type="number" min="0" step="0.01" id="elm_talario_class_price" name="class_data[price]" value="{$talario_class.price}" class="input-small" required />
+                            <span class="add-on">₽</span>
+                        {/if}
                     </div>
-                    <p class="muted description">Укажите самую низкую стоимость занятия. Если есть бесплатное пробное занятие, укажите 0 ₽. Эта цена будет показана в каталоге по умолчанию.</p>
+                    <p class="muted description">{if $talario_class.variations}Рассчитана автоматически по самому доступному варианту.{else}Укажите стоимость; бесплатное занятие — 0 ₽.{/if}</p>
                 </div>
             </div>
 
             <div class="control-group">
-                <label class="control-label" for="elm_talario_class_age">Возраст в каталоге:</label>
+                <label class="control-label" for="elm_talario_class_age">Короткая подпись в каталоге:</label>
                 <div class="controls">
                     <input type="text" id="elm_talario_class_age" name="class_data[catalog_age]" value="{$talario_class.short_description|strip_tags}" class="input-xlarge" />
-                    <p class="muted description">Напишите коротко, для какого возраста занятие, например «с 4 лет» или «7–10 лет». Этот текст увидят в карточке каталога.</p>
+                    <p class="muted description">Кратко опишите главное: возраст, формат или пользу занятия. Этот текст виден в каталоге.</p>
                 </div>
             </div>
 
             <div class="control-group">
-                <label class="control-label" for="elm_talario_class_description">Описание:</label>
+                <label class="control-label" for="elm_talario_class_description">О занятии:</label>
                 <div class="controls">
                     <textarea id="elm_talario_class_description" name="class_data[full_description]" rows="10" class="input-xxlarge">{$talario_class.full_description}</textarea>
                     <p class="muted description">Расскажите родителям, чем занимаются дети, как проходит занятие и что важно знать перед записью.</p>
@@ -127,7 +142,7 @@
             </div>
 
             <div class="control-group">
-                <label class="control-label" for="elm_talario_class_keywords">Ключевые слова:</label>
+                <label class="control-label" for="elm_talario_class_keywords">Ключевые слова для поиска:</label>
                 <div class="controls">
                     <input type="text" id="elm_talario_class_keywords" name="class_data[meta_keywords]" value="{$talario_class.meta_keywords}" class="input-xxlarge" />
                     <p class="muted description">По каким словам родители могут искать ваше занятие. Перечислите слова и короткие фразы через запятую.</p>

@@ -128,7 +128,7 @@ function fn_talario_vendor_cabinet_get_allowed_categories()
     $rows = db_get_array(
         'SELECT c.category_id, cd.category FROM ?:categories AS c '
         . 'INNER JOIN ?:category_descriptions AS cd ON cd.category_id = c.category_id AND cd.lang_code = ?s '
-        . 'WHERE cd.category IN (?a) AND c.status = ?s',
+        . 'WHERE cd.category IN (?a) AND c.status = ?s AND c.parent_id = 0',
         DESCR_SL,
         $names,
         'A'

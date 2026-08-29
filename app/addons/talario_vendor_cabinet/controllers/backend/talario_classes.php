@@ -64,6 +64,10 @@ $load_owned_product = static function ($product_id) use ($company_id) {
         $product_id,
         $company_id
     );
+    if (function_exists('fn_vendor_data_premoderation_get_premoderation')) {
+        $premoderation = fn_vendor_data_premoderation_get_premoderation([$product_id]);
+        $product['talario_revision_comment'] = trim((string) ($premoderation[$product_id]['reason'] ?? ''));
+    }
 
     return $product;
 };
@@ -223,6 +227,7 @@ $sync_variations = static function (
         if ($result->isFailure()) {
             throw new InvalidArgumentException(implode(' ', $result->getErrors()));
         }
+        (new BookingBridgeService())->detachProduct($delete_id, $company_id);
         fn_delete_product($delete_id);
     }
     if (!$combination_prices) {
@@ -272,6 +277,7 @@ $sync_variations = static function (
     if ($combination_prices) {
         throw new InvalidArgumentException('Не удалось сопоставить созданный вариант с выбранным сочетанием.');
     }
+    (new BookingBridgeService())->syncProductVariants($product_id, $company_id);
 };
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -167,6 +167,49 @@ class ScheduleResourceService
     public function getOccurrence($id, $admin_company_id = null) { $item = $this->occurrences->find($id); if (!$item) { throw new InvalidArgumentException('Occurrence does not exist'); } $this->getResource($item['resource_id'], $admin_company_id); return $item; }
     public function getOccurrences($resource_id, $from, $to, $admin_company_id = null) { $this->getResource($resource_id, $admin_company_id); if (new DateTimeImmutable($to) <= new DateTimeImmutable($from)) { throw new InvalidArgumentException('Invalid date range'); } return $this->occurrences->findByResourceAndRange($resource_id, $from, $to); }
 
+    public function syncOccurrencesFromRules($resource_id, $from, $to, $admin_company_id = null)
+    {
+        $this->getResource($resource_id, $admin_company_id);
+        $rules = $this->rules->findByResource($resource_id);
+        $range_start = new DateTimeImmutable($from . ' 00:00:00');
+        $range_end = new DateTimeImmutable($to . ' 23:59:59');
+        $starts = [];
+        foreach ($rules as $rule) {
+            if (($rule['status'] ?? 'D') !== 'A') {
+                continue;
+            }
+            for ($date = $range_start; $date <= $range_end; $date = $date->modify('+1 day')) {
+                if ((int) $date->format('N') !== (int) $rule['weekday']) {
+                    continue;
+                }
+                $date_string = $date->format('Y-m-d');
+                if ($date_string < $rule['valid_from'] || $date_string > $rule['valid_to']) {
+                    continue;
+                }
+                $start = new DateTimeImmutable($date_string . ' ' . substr($rule['starts_time'], 0, 5) . ':00');
+                $end = $start->modify('+' . (int) $rule['duration_minutes'] . ' minutes');
+                $starts[] = $start->format('Y-m-d H:i:s');
+                $this->occurrences->upsert([
+                    'resource_id' => (int) $resource_id,
+                    'rule_id' => (int) $rule['rule_id'],
+                    'location_id' => (int) $rule['location_id'],
+                    'starts_at' => $start->format('Y-m-d H:i:s'),
+                    'ends_at' => $end->format('Y-m-d H:i:s'),
+                    'capacity' => (int) $rule['capacity'],
+                    'status' => 'A',
+                    'created_at' => TIME,
+                    'updated_at' => TIME,
+                ]);
+            }
+        }
+        $this->occurrences->disableExcept(
+            $resource_id,
+            $range_start->format('Y-m-d H:i:s'),
+            $range_end->modify('+1 second')->format('Y-m-d H:i:s'),
+            $starts
+        );
+    }
+
     private function actingCompanyId($admin_company_id)
     {
         $runtime_company_id = (int) Registry::get('runtime.company_id');

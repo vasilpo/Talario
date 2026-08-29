@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <h3>Дни и время</h3>
+        <h3>Когда проходят занятия</h3>
         <table class="table table-middle talario-schedule-table">
             <thead><tr><th>День</th><th>Проходит</th><th>Начало</th><th>Мест</th></tr></thead>
             <tbody>
