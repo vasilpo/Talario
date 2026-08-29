@@ -19,7 +19,7 @@
                     <span class="cm-tooltip talario-help" title="Как называется ваше занятие. Это название клиенты увидят на витрине.">?</span>:
                 </label>
                 <div class="controls">
-                    <input type="text" id="elm_talario_class_name" name="class_data[product]" value="{$talario_class.product}" class="input-xxlarge" />
+                    <input type="text" id="elm_talario_class_name" name="class_data[product]" value="{$talario_class.product}" class="input-xxlarge" required />
                 </div>
             </div>
 
@@ -34,7 +34,7 @@
                             {foreach $talario_class.variations as $variation}
                                 <tr>
                                     <td>{$variation.product}</td>
-                                    <td><input type="number" min="0" step="0.01" name="class_data[variation_prices][{$variation.product_id}]" value="{$variation.price}" class="input-small" /></td>
+                                    <td><input type="number" min="0" step="0.01" name="class_data[variation_prices][{$variation.product_id}]" value="{$variation.price}" class="input-small" required /></td>
                                     <td><label class="checkbox"><input type="checkbox" name="class_data[delete_variations][]" value="{$variation.product_id}" /> Удалить</label></td>
                                 </tr>
                             {/foreach}
@@ -56,12 +56,12 @@
                         <script type="text/x-talario-template" id="talario_variation_row_template">
                             <tr>
                                 {foreach $talario_variation_axes as $axis}
-                                    <td><select data-name="class_data[new_variations][__INDEX__][variants][{$axis.feature_id}]" class="input-medium">
+                                    <td><select data-name="class_data[new_variations][__INDEX__][variants][{$axis.feature_id}]" class="input-medium" required>
                                         <option value="">—</option>
                                         {foreach $axis.variants as $variant}<option value="{$variant.variant_id}">{$variant.variant}</option>{/foreach}
                                     </select></td>
                                 {/foreach}
-                                <td><input data-name="class_data[new_variations][__INDEX__][price]" type="number" min="0" step="0.01" class="input-small" /></td>
+                                <td><input data-name="class_data[new_variations][__INDEX__][price]" type="number" min="0" step="0.01" class="input-small" required /></td>
                                 <td><button type="button" class="btn cm-talario-remove-variation">Удалить</button></td>
                             </tr>
                         </script>
@@ -75,7 +75,7 @@
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_class_location">Адрес занятия:</label>
                 <div class="controls">
-                    <select id="elm_talario_class_location" name="class_data[location_id]" class="input-xxlarge">
+                    <select id="elm_talario_class_location" name="class_data[location_id]" class="input-xxlarge" required>
                         {foreach $talario_class_locations as $location}
                             <option value="{$location.location_id}" {if $location.location_id == $talario_class_location_id}selected="selected"{/if}>
                                 {if $location.name}{$location.name} — {/if}{$location.address}
@@ -89,7 +89,7 @@
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_class_category">Категория:</label>
                 <div class="controls">
-                    <select id="elm_talario_class_category" name="class_data[category_id]" class="input-xlarge">
+                    <select id="elm_talario_class_category" name="class_data[category_id]" class="input-xlarge" required>
                         <option value="">Выберите категорию</option>
                         {foreach $talario_class_categories as $category}
                             <option value="{$category.category_id}" {if $category.category_id == $talario_class_category_id}selected="selected"{/if}>{$category.category}</option>
@@ -103,7 +103,7 @@
                 <label class="control-label cm-required" for="elm_talario_class_price">Цена от:</label>
                 <div class="controls">
                     <div class="input-append">
-                        <input type="text" id="elm_talario_class_price" name="class_data[price]" value="{$talario_class.price}" class="input-small" />
+                        <input type="number" min="0" step="0.01" id="elm_talario_class_price" name="class_data[price]" value="{$talario_class.price}" class="input-small" required />
                         <span class="add-on">₽</span>
                     </div>
                     <p class="muted description">Укажите самую низкую стоимость занятия. Если есть бесплатное пробное занятие, укажите 0 ₽. Эта цена будет показана в каталоге по умолчанию.</p>

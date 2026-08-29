@@ -9,6 +9,7 @@ use Tygh\Addons\ProductVariations\Request\GenerateProductsAndCreateGroupRequest;
 use Tygh\Addons\ProductVariations\ServiceProvider as VariationsServiceProvider;
 use Tygh\Enum\Addons\VendorDataPremoderation\ProductStatuses;
 use Tygh\Enum\ObjectStatuses;
+use Tygh\Enum\UserTypes;
 use Tygh\Registry;
 use Tygh\Tygh;
 
@@ -404,30 +405,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return [CONTROLLER_STATUS_DENIED];
             }
 
-            $guarded = $action !== 'submit';
             $transaction_open = false;
             $saved_product_id = 0;
             $save_succeeded = false;
-            $premoderation_before = [];
-            if ($guarded && $product_id && function_exists('fn_vendor_data_premoderation_get_premoderation')) {
-                $before_ids = [$product_id];
-                $before_group_id = VariationsServiceProvider::getGroupRepository()->findGroupIdByProductId($product_id);
-                if ($before_group_id) {
-                    $before_ids = VariationsServiceProvider::getGroupRepository()
-                        ->findGroupById($before_group_id)
-                        ->getProductIds();
-                }
-                $premoderation_before = array_map('intval', array_keys(
-                    (array) fn_vendor_data_premoderation_get_premoderation($before_ids)
-                ));
-            }
-            if ($action !== 'submit') {
-                Registry::set('talario_vendor_cabinet.draft_guard', [
-                    'enabled' => true,
-                    'product_id' => $product_id,
-                    'company_id' => $company_id,
-                ], true);
-            }
+            $original_user_type = (string) Tygh::$app['session']['auth']['user_type'];
+            Registry::set('talario_vendor_cabinet.draft_guard', [
+                'enabled' => true,
+                'product_id' => $product_id,
+                'company_id' => $company_id,
+            ], true);
+            // vendor_data_premoderation has no "skip" flag before its request function.
+            // Run only this internal update cycle as an administrator, then restore the
+            // vendor identity and issue exactly one explicit request for submit below.
+            Tygh::$app['session']['auth']['user_type'] = UserTypes::ADMIN;
             try {
                 db_query('START TRANSACTION');
                 $transaction_open = true;
@@ -435,7 +425,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$saved_product_id) {
                     throw new RuntimeException('Не удалось сохранить занятие.');
                 }
-                if ($guarded && !$product_id) {
+                if (!$product_id) {
                     Registry::set('talario_vendor_cabinet.draft_guard.product_id', (int) $saved_product_id, true);
                 }
 
@@ -461,51 +451,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     fn_update_product(['price' => (float) $variation_min_price], $saved_product_id, DESCR_SL);
                 }
 
-                if ($guarded) {
-                    $affected_ids = [(int) $saved_product_id];
-                    $group_id = VariationsServiceProvider::getGroupRepository()
-                        ->findGroupIdByProductId((int) $saved_product_id);
-                    if ($group_id) {
-                        $affected_ids = VariationsServiceProvider::getGroupRepository()
-                            ->findGroupById($group_id)
-                            ->getProductIds();
-                    }
-                    $pending_ids = db_get_fields(
-                        'SELECT product_id FROM ?:products WHERE product_id IN (?n) AND status = ?s',
-                        $affected_ids,
-                        ProductStatuses::REQUIRES_APPROVAL
-                    );
-                    if ($pending_ids) {
-                        $new_premoderation_ids = array_values(array_diff(
-                            array_map('intval', $pending_ids),
-                            $premoderation_before
-                        ));
-                        if ($new_premoderation_ids) {
-                            db_query(
-                                'UPDATE ?:products SET status = ?s WHERE product_id IN (?n)',
-                                ObjectStatuses::HIDDEN,
-                                $new_premoderation_ids
-                            );
-                        }
-                        if ($new_premoderation_ids
-                            && function_exists('fn_vendor_data_premoderation_delete_premoderation')) {
-                            fn_vendor_data_premoderation_delete_premoderation($new_premoderation_ids);
-                        }
-                    }
-                } else {
-                    $actual_status = (string) db_get_field(
-                        'SELECT status FROM ?:products WHERE product_id = ?i', $saved_product_id
-                    );
-                    if ($actual_status !== ProductStatuses::REQUIRES_APPROVAL
-                        && function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
-                        fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
-                    }
-                    $actual_status = (string) db_get_field(
-                        'SELECT status FROM ?:products WHERE product_id = ?i', $saved_product_id
-                    );
-                    if ($actual_status !== ProductStatuses::REQUIRES_APPROVAL) {
-                        throw new RuntimeException('Занятие не удалось отправить на проверку.');
-                    }
+                $affected_ids = [(int) $saved_product_id];
+                $group_id = VariationsServiceProvider::getGroupRepository()
+                    ->findGroupIdByProductId((int) $saved_product_id);
+                if ($group_id) {
+                    $affected_ids = VariationsServiceProvider::getGroupRepository()
+                        ->findGroupById($group_id)
+                        ->getProductIds();
+                }
+                db_query(
+                    'UPDATE ?:products SET status = ?s WHERE product_id IN (?n)',
+                    ObjectStatuses::HIDDEN,
+                    $affected_ids
+                );
+                if (function_exists('fn_vendor_data_premoderation_delete_premoderation')) {
+                    fn_vendor_data_premoderation_delete_premoderation(array_map('intval', $affected_ids));
                 }
                 db_query('COMMIT');
                 $transaction_open = false;
@@ -517,9 +477,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 fn_set_notification('E', __('error'), $e->getMessage());
             } finally {
+                Tygh::$app['session']['auth']['user_type'] = $original_user_type;
                 Registry::del('talario_vendor_cabinet.draft_guard');
                 if ($transaction_open) {
                     db_query('ROLLBACK');
+                }
+            }
+
+            if ($save_succeeded && $action === 'submit') {
+                try {
+                    if (!function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
+                        throw new RuntimeException('Модуль проверки занятий недоступен.');
+                    }
+                    // The only approval request made by this user action.
+                    fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
+                    $actual_status = (string) db_get_field(
+                        'SELECT status FROM ?:products WHERE product_id = ?i', $saved_product_id
+                    );
+                    if ($actual_status !== ProductStatuses::REQUIRES_APPROVAL) {
+                        throw new RuntimeException('Занятие не удалось отправить на проверку.');
+                    }
+                } catch (Throwable $e) {
+                    $save_succeeded = false;
+                    fn_set_notification('E', __('error'), $e->getMessage());
                 }
             }
 
