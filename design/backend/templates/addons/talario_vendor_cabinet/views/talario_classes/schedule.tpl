@@ -25,19 +25,10 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label">Период:</label>
-            <div class="controls talario-schedule-dates">
-                <label>С <input type="date" name="schedule_data[from_date]" value="{$talario_schedule_data.from_date}" required /></label>
-                <label>По <input type="date" name="schedule_data[to_date]" value="{$talario_schedule_data.to_date}" required /></label>
-                <span class="muted">По умолчанию: с сегодняшнего дня на один год.</span>
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label" for="talario_duration">Продолжительность:</label>
             <div class="controls">
                 <div class="input-append">
-                    <input id="talario_duration" type="number" min="1" max="1440" step="5" class="input-small" name="schedule_data[duration_minutes]" value="{$talario_schedule_data.duration_minutes}" required />
+                    <input id="talario_duration" type="number" min="1" max="1440" step="1" class="input-small" name="schedule_data[duration_minutes]" value="{$talario_schedule_data.duration_minutes}" required />
                     <span class="add-on">минут</span>
                 </div>
             </div>
@@ -52,7 +43,7 @@
                 <tr>
                     <td><strong>{$weekday_name}</strong></td>
                     <td><input type="checkbox" name="schedule_data[days][{$weekday}][enabled]" value="1" {if !empty($day_data.enabled)}checked{/if} /></td>
-                    <td><input type="time" name="schedule_data[days][{$weekday}][start_time]" value="{$day_data.start_time|default:''}" /></td>
+                    <td><input type="time" step="60" name="schedule_data[days][{$weekday}][start_time]" value="{$day_data.start_time|default:''}" /></td>
                     <td><input type="number" min="1" max="10000" class="input-small" name="schedule_data[days][{$weekday}][capacity]" value="{$day_data.capacity|default:''}" placeholder="6" /></td>
                 </tr>
             {/foreach}
