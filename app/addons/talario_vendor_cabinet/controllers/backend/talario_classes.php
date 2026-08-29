@@ -19,6 +19,7 @@ $company_id = (int) fn_get_runtime_company_id();
 if (!$company_id) {
     return [CONTROLLER_STATUS_DENIED];
 }
+fn_talario_vendor_cabinet_ensure_moderation_storage();
 
 $load_owned_product = static function ($product_id) use ($company_id) {
     $product_id = (int) $product_id;
@@ -479,6 +480,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ObjectStatuses::ACTIVE,
                         $saved_product_id
                     );
+                    fn_talario_vendor_cabinet_mark_class_moderation(
+                        (int) $saved_product_id,
+                        $company_id,
+                        (int) $group_id,
+                        array_values(array_diff(array_map('intval', $affected_ids), [(int) $saved_product_id]))
+                    );
                     Tygh::$app['session']['auth']['user_type'] = $original_user_type;
                     Registry::del('talario_vendor_cabinet.draft_guard');
 
@@ -494,6 +501,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         || ($moderation['original_status'] ?? '') !== ObjectStatuses::ACTIVE) {
                         throw new RuntimeException('Занятие не удалось корректно отправить на проверку.');
                     }
+                } else {
+                    fn_talario_vendor_cabinet_clear_class_moderation([(int) $saved_product_id], true);
                 }
                 db_query('COMMIT');
                 $transaction_open = false;

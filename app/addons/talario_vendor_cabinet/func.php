@@ -149,6 +149,49 @@ function fn_talario_vendor_cabinet_get_allowed_categories()
     return $result;
 }
 
+function fn_talario_vendor_cabinet_ensure_moderation_storage()
+{
+    static $ready = false;
+    if ($ready) {
+        return;
+    }
+    db_query(
+        'CREATE TABLE IF NOT EXISTS ?:talario_class_moderation ('
+        . 'product_id int unsigned NOT NULL, company_id int unsigned NOT NULL, group_id int unsigned NOT NULL DEFAULT 0,'
+        . 'variation_ids text NOT NULL, active char(1) NOT NULL DEFAULT \'Y\', updated_at int unsigned NOT NULL DEFAULT 0,'
+        . 'PRIMARY KEY (product_id), KEY active (active)'
+        . ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+    );
+    $ready = true;
+}
+
+function fn_talario_vendor_cabinet_mark_class_moderation($product_id, $company_id, $group_id, array $variation_ids)
+{
+    fn_talario_vendor_cabinet_ensure_moderation_storage();
+    db_replace_into('talario_class_moderation', [
+        'product_id' => (int) $product_id,
+        'company_id' => (int) $company_id,
+        'group_id' => (int) $group_id,
+        'variation_ids' => json_encode(array_values(array_unique(array_map('intval', $variation_ids)))),
+        'active' => 'Y',
+        'updated_at' => TIME,
+    ]);
+}
+
+function fn_talario_vendor_cabinet_clear_class_moderation($product_ids, $delete = false)
+{
+    fn_talario_vendor_cabinet_ensure_moderation_storage();
+    $product_ids = array_values(array_filter(array_map('intval', (array) $product_ids)));
+    if (!$product_ids) {
+        return;
+    }
+    if ($delete) {
+        db_query('DELETE FROM ?:talario_class_moderation WHERE product_id IN (?n)', $product_ids);
+    } else {
+        db_query('UPDATE ?:talario_class_moderation SET active = ?s, updated_at = ?i WHERE product_id IN (?n)', 'N', TIME, $product_ids);
+    }
+}
+
 /**
  * Prevents only the automatic approval request produced while Talario saves a
  * draft. The controller always removes this request-scoped guard in finally.
@@ -197,23 +240,33 @@ function fn_talario_vendor_cabinet_vendor_data_premoderation_approve_products_pr
     if (!$update_product || !$product_ids) {
         return;
     }
-    $allowed_category_ids = array_map(
-        'intval',
-        array_column(fn_talario_vendor_cabinet_get_allowed_categories(), 'category_id')
-    );
-    if (!$allowed_category_ids) {
-        return;
-    }
-    $variation_ids = db_get_fields(
-        'SELECT DISTINCT child.product_id FROM ?:product_variation_group_products parent '
-        . 'INNER JOIN ?:product_variation_group_products child ON child.group_id = parent.group_id '
-        . 'INNER JOIN ?:products_categories pc ON pc.product_id = parent.product_id '
-        . 'WHERE parent.product_id IN (?n) AND child.product_id NOT IN (?n) AND pc.category_id IN (?n)',
+    fn_talario_vendor_cabinet_ensure_moderation_storage();
+    $markers = db_get_hash_array(
+        'SELECT product_id, company_id, group_id, variation_ids FROM ?:talario_class_moderation '
+        . 'WHERE product_id IN (?n) AND active = ?s',
+        'product_id',
         array_map('intval', $product_ids),
-        array_map('intval', $product_ids),
-        $allowed_category_ids
+        'Y'
     );
-    if ($variation_ids) {
+    foreach ($markers as $marker) {
+        $parent_id = (int) $marker['product_id'];
+        $company_id = (int) $marker['company_id'];
+        $group_id = (int) $marker['group_id'];
+        $marked_ids = array_values(array_unique(array_map('intval', (array) json_decode($marker['variation_ids'], true))));
+        $variation_ids = $group_id && $marked_ids ? db_get_fields(
+            'SELECT p.product_id FROM ?:products p INNER JOIN ?:product_variation_group_products gp '
+            . 'ON gp.product_id = p.product_id INNER JOIN ?:product_variation_group_products parent_gp '
+            . 'ON parent_gp.group_id = gp.group_id AND parent_gp.product_id = ?i '
+            . 'INNER JOIN ?:products parent ON parent.product_id = parent_gp.product_id AND parent.company_id = ?i '
+            . 'WHERE gp.group_id = ?i AND p.company_id = ?i '
+            . 'AND p.product_id IN (?n) AND p.product_id <> ?i',
+            $parent_id,
+            $company_id,
+            $group_id,
+            $company_id,
+            $marked_ids,
+            $parent_id
+        ) : [];
         foreach (array_map('intval', $variation_ids) as $variation_id) {
             if (function_exists('fn_vendor_data_premoderation_update_premoderation')) {
                 fn_vendor_data_premoderation_update_premoderation($variation_id, 'A');
@@ -221,6 +274,15 @@ function fn_talario_vendor_cabinet_vendor_data_premoderation_approve_products_pr
             db_query('UPDATE ?:products SET status = ?s WHERE product_id = ?i', 'R', $variation_id);
             $product_ids[] = $variation_id;
         }
-        $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+        fn_talario_vendor_cabinet_clear_class_moderation([$parent_id]);
     }
+    $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+}
+
+function fn_talario_vendor_cabinet_vendor_data_premoderation_disapprove_products_pre(
+    array &$product_ids,
+    $update_product,
+    $reason
+) {
+    fn_talario_vendor_cabinet_clear_class_moderation($product_ids);
 }
