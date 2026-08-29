@@ -467,6 +467,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (function_exists('fn_vendor_data_premoderation_delete_premoderation')) {
                     fn_vendor_data_premoderation_delete_premoderation(array_map('intval', $affected_ids));
                 }
+                if ($action === 'submit') {
+                    if (!function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
+                        throw new RuntimeException('Модуль проверки занятий недоступен.');
+                    }
+                    // The moderation record must restore the parent to Active after
+                    // approval. Variations stay private and are activated by the
+                    // approval hook registered by this add-on.
+                    db_query(
+                        'UPDATE ?:products SET status = ?s WHERE product_id = ?i',
+                        ObjectStatuses::ACTIVE,
+                        $saved_product_id
+                    );
+                    Tygh::$app['session']['auth']['user_type'] = $original_user_type;
+                    Registry::del('talario_vendor_cabinet.draft_guard');
+
+                    // The only approval request made by this user action.
+                    fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
+                    $moderation = db_get_row(
+                        'SELECT p.status, pm.original_status FROM ?:products p '
+                        . 'LEFT JOIN ?:premoderation_products pm ON pm.product_id = p.product_id '
+                        . 'WHERE p.product_id = ?i',
+                        $saved_product_id
+                    );
+                    if (($moderation['status'] ?? '') !== ProductStatuses::REQUIRES_APPROVAL
+                        || ($moderation['original_status'] ?? '') !== ObjectStatuses::ACTIVE) {
+                        throw new RuntimeException('Занятие не удалось корректно отправить на проверку.');
+                    }
+                }
                 db_query('COMMIT');
                 $transaction_open = false;
                 $save_succeeded = true;
@@ -481,25 +509,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Registry::del('talario_vendor_cabinet.draft_guard');
                 if ($transaction_open) {
                     db_query('ROLLBACK');
-                }
-            }
-
-            if ($save_succeeded && $action === 'submit') {
-                try {
-                    if (!function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
-                        throw new RuntimeException('Модуль проверки занятий недоступен.');
-                    }
-                    // The only approval request made by this user action.
-                    fn_vendor_data_premoderation_request_approval_for_products([(int) $saved_product_id], true);
-                    $actual_status = (string) db_get_field(
-                        'SELECT status FROM ?:products WHERE product_id = ?i', $saved_product_id
-                    );
-                    if ($actual_status !== ProductStatuses::REQUIRES_APPROVAL) {
-                        throw new RuntimeException('Занятие не удалось отправить на проверку.');
-                    }
-                } catch (Throwable $e) {
-                    $save_succeeded = false;
-                    fn_set_notification('E', __('error'), $e->getMessage());
                 }
             }
 

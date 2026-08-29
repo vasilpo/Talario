@@ -185,3 +185,42 @@ function fn_talario_vendor_cabinet_vendor_data_premoderation_request_approval_fo
         return !$is_guarded_variation;
     }));
 }
+
+/**
+ * Makes approved class variations available together with their parent. They
+ * remain Hidden throughout moderation, so no child can be opened beforehand.
+ */
+function fn_talario_vendor_cabinet_vendor_data_premoderation_approve_products_pre(
+    array &$product_ids,
+    $update_product
+) {
+    if (!$update_product || !$product_ids) {
+        return;
+    }
+    $allowed_category_ids = array_map(
+        'intval',
+        array_column(fn_talario_vendor_cabinet_get_allowed_categories(), 'category_id')
+    );
+    if (!$allowed_category_ids) {
+        return;
+    }
+    $variation_ids = db_get_fields(
+        'SELECT DISTINCT child.product_id FROM ?:product_variation_group_products parent '
+        . 'INNER JOIN ?:product_variation_group_products child ON child.group_id = parent.group_id '
+        . 'INNER JOIN ?:products_categories pc ON pc.product_id = parent.product_id '
+        . 'WHERE parent.product_id IN (?n) AND child.product_id NOT IN (?n) AND pc.category_id IN (?n)',
+        array_map('intval', $product_ids),
+        array_map('intval', $product_ids),
+        $allowed_category_ids
+    );
+    if ($variation_ids) {
+        foreach (array_map('intval', $variation_ids) as $variation_id) {
+            if (function_exists('fn_vendor_data_premoderation_update_premoderation')) {
+                fn_vendor_data_premoderation_update_premoderation($variation_id, 'A');
+            }
+            db_query('UPDATE ?:products SET status = ?s WHERE product_id = ?i', 'R', $variation_id);
+            $product_ids[] = $variation_id;
+        }
+        $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+    }
+}
