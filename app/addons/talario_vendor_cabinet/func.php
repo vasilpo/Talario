@@ -109,40 +109,32 @@ function fn_talario_vendor_cabinet_update_center($company_id, array $center_data
 
 function fn_talario_vendor_cabinet_get_allowed_categories()
 {
-    $names = [
-        'Спорт',
-        'Единоборства',
-        'Творчество',
-        'Танцы',
-        'Раннее развитие',
-        'Школьные предметы',
-        'Иностранные языки',
-        'Интеллектуальные занятия',
-        'Программирование',
-        'Робототехника',
-        'Детские лагеря',
-        'Летние секции',
-        'Музыка',
-    ];
+    $category_ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        preg_split('/[\s,;]+/', (string) \Tygh\Registry::get('addons.talario_vendor_cabinet.allowed_category_ids'))
+    ))));
+    if (!$category_ids) {
+        return [];
+    }
 
     $rows = db_get_array(
         'SELECT c.category_id, cd.category FROM ?:categories AS c '
         . 'INNER JOIN ?:category_descriptions AS cd ON cd.category_id = c.category_id AND cd.lang_code = ?s '
-        . 'WHERE cd.category IN (?a) AND c.status = ?s AND c.parent_id = 0',
+        . 'WHERE c.category_id IN (?n) AND c.status = ?s',
         DESCR_SL,
-        $names,
+        $category_ids,
         'A'
     );
 
-    $by_name = [];
+    $by_id = [];
     foreach ($rows as $row) {
-        $by_name[(string) $row['category']] = $row;
+        $by_id[(int) $row['category_id']] = $row;
     }
 
     $result = [];
-    foreach ($names as $name) {
-        if (isset($by_name[$name])) {
-            $result[] = $by_name[$name];
+    foreach ($category_ids as $category_id) {
+        if (isset($by_id[$category_id])) {
+            $result[] = $by_id[$category_id];
         }
     }
 
@@ -285,4 +277,21 @@ function fn_talario_vendor_cabinet_vendor_data_premoderation_disapprove_products
     $reason
 ) {
     fn_talario_vendor_cabinet_clear_class_moderation($product_ids);
+}
+
+function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
+{
+    if (!$preview || empty($product_data['product_id'])) {
+        return;
+    }
+    $product_id = (int) $product_data['product_id'];
+    $revision = (array) (\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id] ?? []);
+    if (!$revision || (int) ($auth['company_id'] ?? 0) !== (int) ($product_data['company_id'] ?? 0)) {
+        return;
+    }
+    $product_data['product'] = trim((string) ($revision['product'] ?? $product_data['product']));
+    $product_data['full_description'] = (string) ($revision['full_description'] ?? $product_data['full_description']);
+    $product_data['short_description'] = trim((string) ($revision['catalog_age'] ?? $product_data['short_description']));
+    $product_data['meta_keywords'] = trim((string) ($revision['meta_keywords'] ?? $product_data['meta_keywords']));
+    $product_data['search_words'] = $product_data['meta_keywords'];
 }

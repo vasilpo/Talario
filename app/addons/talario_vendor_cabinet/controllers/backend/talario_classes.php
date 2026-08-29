@@ -29,7 +29,7 @@ $load_owned_product = static function ($product_id) use ($company_id) {
 
     $product = db_get_row(
         'SELECT p.product_id, p.company_id, p.status, pd.product, pd.full_description, pd.short_description, '
-        . 'pd.meta_keywords, pd.address FROM ?:products AS p '
+        . 'pd.meta_keywords, pd.search_words, pd.address FROM ?:products AS p '
         . 'LEFT JOIN ?:product_descriptions AS pd ON pd.product_id = p.product_id AND pd.lang_code = ?s '
         . 'WHERE p.product_id = ?i',
         DESCR_SL,
@@ -227,7 +227,6 @@ $sync_variations = static function (
         if ($result->isFailure()) {
             throw new InvalidArgumentException(implode(' ', $result->getErrors()));
         }
-        (new BookingBridgeService())->detachProduct($delete_id, $company_id);
         fn_delete_product($delete_id);
     }
     if (!$combination_prices) {
@@ -277,7 +276,6 @@ $sync_variations = static function (
     if ($combination_prices) {
         throw new InvalidArgumentException('Не удалось сопоставить созданный вариант с выбранным сочетанием.');
     }
-    (new BookingBridgeService())->syncProductVariants($product_id, $company_id);
 };
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -311,7 +309,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id];
         }
         if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'preview') {
-            fn_set_notification('W', __('warning'), 'Предварительный просмотр показывает текущую опубликованную версию; несохранённые изменения в неё не вошли.');
+            Tygh::$app['session']['talario_preview_revision'][$product_id] = $class_data;
+            fn_set_notification('N', __('notice'), 'Предварительный просмотр не изменяет опубликованную карточку.');
             return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id . '&open_preview=1'];
         }
         $price_raw = str_replace(',', '.', trim((string) ($class_data['price'] ?? '0')));
@@ -384,6 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'full_description' => (string) ($class_data['full_description'] ?? ''),
                 'short_description' => trim((string) ($class_data['catalog_age'] ?? '')),
                 'meta_keywords' => trim((string) ($class_data['meta_keywords'] ?? '')),
+                'search_words' => trim((string) ($class_data['meta_keywords'] ?? '')),
                 'address' => (string) $location['address'],
                 'zero_price_action' => 'P',
                 'removed_image_pair_ids' => $removed_pair_ids,
@@ -528,6 +528,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($saved_product_id && $save_succeeded) {
+                // Ecarter tables may be MyISAM. Update them only after the
+                // transactional product/variation changes have committed.
+                foreach (array_unique(array_map('intval', $delete_variations)) as $deleted_variation_id) {
+                    db_query('DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i', $deleted_variation_id);
+                }
+                (new BookingBridgeService())->syncProductVariants((int) $saved_product_id, $company_id);
                 fn_set_notification(
                     'N',
                     __('notice'),
@@ -602,6 +608,12 @@ if ($mode === 'manage') {
     ], DESCR_SL);
     foreach ($products as &$product) {
         $product['talario_age'] = $product['product_features'][552]['value'] ?? $product['product_features'][552]['variant'] ?? '';
+    }
+    if ($products && function_exists('fn_vendor_data_premoderation_get_premoderation')) {
+        $premoderation = fn_vendor_data_premoderation_get_premoderation(array_map('intval', array_column($products, 'product_id')));
+        foreach ($products as &$product) {
+            $product['premoderation_reason'] = trim((string) ($premoderation[$product['product_id']]['reason'] ?? ''));
+        }
     }
     unset($product);
     Tygh::$app['view']->assign([

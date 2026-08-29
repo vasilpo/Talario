@@ -117,15 +117,6 @@ class BookingBridgeService
         foreach ($product_ids as $product_id) {
             $this->schedule_resources->addProductResource($product_id, $resource_id);
         }
-        foreach ($this->schedule_resources->getProductsForResource($resource_id) as $linked_product_id) {
-            $linked_product_id = (int) (is_array($linked_product_id)
-                ? ($linked_product_id['product_id'] ?? 0)
-                : $linked_product_id);
-            if ($linked_product_id && !in_array($linked_product_id, $product_ids, true)) {
-                $this->schedule_resources->removeProductResource($linked_product_id, $resource_id);
-                db_query('DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i', $linked_product_id);
-            }
-        }
     }
 
     public function getFormData($product_id, $company_id)

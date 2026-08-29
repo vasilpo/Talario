@@ -210,6 +210,84 @@ class ScheduleResourceService
         );
     }
 
+    public function reserveProductSlot($product_id, $date, $start_time, $quantity, $cart_id, $cart_item_id, $user_id = 0)
+    {
+        $quantity = (int) $quantity;
+        if ($quantity <= 0) { throw new InvalidArgumentException('Quantity must be positive'); }
+        $occurrence_id = (int) db_get_field(
+            'SELECT o.occurrence_id FROM ?:talario_resource_occurrences o '
+            . 'INNER JOIN ?:talario_resource_products rp ON rp.resource_id = o.resource_id '
+            . 'WHERE rp.product_id = ?i AND o.starts_at = ?s AND o.status = ?s',
+            $product_id, $date . ' ' . $start_time . ':00', 'A'
+        );
+        if (!$occurrence_id) { throw new InvalidArgumentException('Выбранное время больше недоступно.'); }
+        db_query('START TRANSACTION');
+        try {
+            $capacity = (int) db_get_field(
+                'SELECT capacity FROM ?:talario_resource_occurrences WHERE occurrence_id = ?i FOR UPDATE',
+                $occurrence_id
+            );
+            db_query('UPDATE ?:talario_resource_holds SET status = ?s WHERE status = ?s AND expires_at <= ?i', 'D', 'A', TIME);
+            $reserved = (int) db_get_field(
+                'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_holds '
+                . 'WHERE occurrence_id = ?i AND status = ?s AND expires_at > ?i '
+                . 'AND NOT (cart_id = ?s AND cart_item_id = ?s)',
+                $occurrence_id, 'A', TIME, (string) $cart_id, (string) $cart_item_id
+            );
+            $reserved += (int) db_get_field(
+                'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_bookings WHERE occurrence_id = ?i AND status = ?s',
+                $occurrence_id, 'A'
+            );
+            if ($reserved + $quantity > $capacity) {
+                throw new InvalidArgumentException('На это время не осталось нужного количества мест.');
+            }
+            db_query(
+                'DELETE FROM ?:talario_resource_holds WHERE cart_id = ?s AND cart_item_id = ?s',
+                (string) $cart_id,
+                (string) $cart_item_id
+            );
+            db_query('INSERT INTO ?:talario_resource_holds ?e', [
+                'occurrence_id' => $occurrence_id, 'product_id' => (int) $product_id,
+                'cart_id' => (string) $cart_id, 'cart_item_id' => (string) $cart_item_id,
+                'user_id' => (int) $user_id, 'quantity' => $quantity, 'status' => 'A',
+                'expires_at' => TIME + 15 * 60, 'created_at' => TIME, 'updated_at' => TIME,
+            ]);
+            db_query('COMMIT');
+            return $occurrence_id;
+        } catch (\Throwable $e) {
+            db_query('ROLLBACK');
+            throw $e;
+        }
+    }
+
+    public function convertCartHoldsToBookings($cart_id, $order_id, array $order_items)
+    {
+        db_query('START TRANSACTION');
+        try {
+            foreach ($order_items as $item_id => $item) {
+                $hold = db_get_row(
+                    'SELECT * FROM ?:talario_resource_holds WHERE cart_id = ?s AND product_id = ?i '
+                    . 'AND status = ?s AND expires_at > ?i ORDER BY hold_id DESC LIMIT 1 FOR UPDATE',
+                    (string) $cart_id, (int) $item['product_id'], 'A', TIME
+                );
+                if (!$hold) { continue; }
+                db_replace_into('talario_resource_bookings', [
+                    'occurrence_id' => (int) $hold['occurrence_id'], 'product_id' => (int) $item['product_id'],
+                    'order_id' => (int) $order_id, 'order_item_id' => (int) $item_id,
+                    'quantity' => (int) $hold['quantity'], 'status' => 'A',
+                    'created_at' => TIME, 'updated_at' => TIME,
+                ]);
+                db_query('UPDATE ?:talario_resource_holds SET status = ?s, updated_at = ?i WHERE hold_id = ?i', 'C', TIME, $hold['hold_id']);
+            }
+            db_query('COMMIT');
+        } catch (\Throwable $e) { db_query('ROLLBACK'); throw $e; }
+    }
+
+    public function releaseOrderBookings($order_id)
+    {
+        db_query('UPDATE ?:talario_resource_bookings SET status = ?s, updated_at = ?i WHERE order_id = ?i', 'D', TIME, $order_id);
+    }
+
     private function actingCompanyId($admin_company_id)
     {
         $runtime_company_id = (int) Registry::get('runtime.company_id');
