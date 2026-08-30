@@ -285,13 +285,30 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
         return;
     }
     $product_id = (int) $product_data['product_id'];
-    $revision = (array) (\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id] ?? []);
-    if (!$revision || (int) ($auth['company_id'] ?? 0) !== (int) ($product_data['company_id'] ?? 0)) {
+    $stored_revision = (array) (\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id] ?? []);
+    if (!$stored_revision || (int) ($stored_revision['expires_at'] ?? 0) < TIME
+        || (int) ($auth['company_id'] ?? 0) !== (int) ($product_data['company_id'] ?? 0)) {
+        unset(\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id]);
         return;
     }
+    $revision = (array) ($stored_revision['data'] ?? []);
     $product_data['product'] = trim((string) ($revision['product'] ?? $product_data['product']));
     $product_data['full_description'] = (string) ($revision['full_description'] ?? $product_data['full_description']);
     $product_data['short_description'] = trim((string) ($revision['catalog_age'] ?? $product_data['short_description']));
     $product_data['meta_keywords'] = trim((string) ($revision['meta_keywords'] ?? $product_data['meta_keywords']));
     $product_data['search_words'] = $product_data['meta_keywords'];
+    $variation_prices = array_map('floatval', (array) ($revision['variation_prices'] ?? []));
+    if ($variation_prices) { $product_data['price'] = min($variation_prices); }
+    if (!empty($revision['category_id'])) {
+        $product_data['main_category'] = (int) $revision['category_id'];
+        $product_data['category_ids'] = [(int) $revision['category_id']];
+    }
+    if (!empty($revision['location_id'])) {
+        $address = db_get_field(
+            'SELECT address FROM ?:talario_locations WHERE location_id = ?i AND company_id = ?i',
+            $revision['location_id'],
+            $product_data['company_id']
+        );
+        if ($address !== false) { $product_data['address'] = $address; }
+    }
 }

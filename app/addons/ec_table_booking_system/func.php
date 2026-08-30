@@ -1036,12 +1036,16 @@ function Fn_Ec_Table_Booking_System_Get_Booked_info($product_id = 0, $type = '',
     $limit          = '';
     $booking_data   = array();
     if ($product_id) {
+        $shared_product_ids = [$product_id];
+        if (function_exists('fn_talario_schedule_resources_get_shared_product_ids')) {
+            $shared_product_ids = fn_talario_schedule_resources_get_shared_product_ids($product_id);
+        }
         if (!empty($params['items_per_page'])) {
-            $params['total_items'] = db_get_field("SELECT COUNT(*) FROM ?:ec_table_booking_system_booking_info WHERE product_id = ?i $condition", $product_id);
+            $params['total_items'] = db_get_field("SELECT COUNT(*) FROM ?:ec_table_booking_system_booking_info WHERE product_id IN (?n) $condition", $shared_product_ids);
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
             $params['limit'] = $limit;
         }
-        $booking_data = db_get_array("SELECT * FROM ?:ec_table_booking_system_booking_info WHERE product_id = ?i $condition $limit", $product_id);
+        $booking_data = db_get_array("SELECT * FROM ?:ec_table_booking_system_booking_info WHERE product_id IN (?n) $condition $limit", $shared_product_ids);
     } else {
         if (!empty($params['items_per_page'])) {
             $params['total_items']  = db_get_field("SELECT COUNT(*) FROM ?:ec_table_booking_system_booking_info WHERE 1 $condition");

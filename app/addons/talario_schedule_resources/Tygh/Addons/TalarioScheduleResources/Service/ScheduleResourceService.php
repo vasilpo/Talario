@@ -253,11 +253,26 @@ class ScheduleResourceService
                 'expires_at' => TIME + 15 * 60, 'created_at' => TIME, 'updated_at' => TIME,
             ]);
             db_query('COMMIT');
-            return $occurrence_id;
         } catch (\Throwable $e) {
             db_query('ROLLBACK');
             throw $e;
         }
+        $this->syncEcarterOccurrenceAvailability($occurrence_id);
+        return $occurrence_id;
+    }
+
+    public function productUsesScheduleResource($product_id)
+    {
+        return (bool) db_get_field('SELECT 1 FROM ?:talario_resource_products WHERE product_id = ?i', $product_id);
+    }
+
+    public function releaseCartHold($cart_id, $cart_item_id = null)
+    {
+        $condition = ['cart_id' => (string) $cart_id, 'status' => 'A'];
+        if ($cart_item_id !== null) { $condition['cart_item_id'] = (string) $cart_item_id; }
+        $occurrence_ids = db_get_fields('SELECT DISTINCT occurrence_id FROM ?:talario_resource_holds WHERE ?w', $condition);
+        db_query('UPDATE ?:talario_resource_holds SET status = ?s, updated_at = ?i WHERE ?w', 'D', TIME, $condition);
+        foreach ($occurrence_ids as $occurrence_id) { $this->syncEcarterOccurrenceAvailability((int) $occurrence_id); }
     }
 
     public function convertCartHoldsToBookings($cart_id, $order_id, array $order_items)
@@ -265,12 +280,23 @@ class ScheduleResourceService
         db_query('START TRANSACTION');
         try {
             foreach ($order_items as $item_id => $item) {
+                if (!$this->productUsesScheduleResource((int) $item['product_id'])) { continue; }
+                $booking = (array) ($item['extra']['booking_info'] ?? []);
+                $date_value = $booking['original_booking_date'] ?? $booking['booking_date'] ?? '';
+                $date = is_numeric($date_value) ? date('Y-m-d', (int) $date_value) : date('Y-m-d', strtotime($date_value));
+                $slot = explode(' - ', (string) ($booking['booking_slot'] ?? ''));
+                $expected_occurrence_id = (int) db_get_field(
+                    'SELECT o.occurrence_id FROM ?:talario_resource_occurrences o '
+                    . 'INNER JOIN ?:talario_resource_products rp ON rp.resource_id = o.resource_id '
+                    . 'WHERE rp.product_id = ?i AND o.starts_at = ?s',
+                    $item['product_id'], $date . ' ' . substr($slot[0] ?? '', 0, 5) . ':00'
+                );
                 $hold = db_get_row(
                     'SELECT * FROM ?:talario_resource_holds WHERE cart_id = ?s AND product_id = ?i '
-                    . 'AND status = ?s AND expires_at > ?i ORDER BY hold_id DESC LIMIT 1 FOR UPDATE',
-                    (string) $cart_id, (int) $item['product_id'], 'A', TIME
+                    . 'AND occurrence_id = ?i AND status = ?s AND expires_at > ?i ORDER BY hold_id DESC LIMIT 1 FOR UPDATE',
+                    (string) $cart_id, (int) $item['product_id'], $expected_occurrence_id, 'A', TIME
                 );
-                if (!$hold) { continue; }
+                if (!$hold) { throw new InvalidArgumentException('Резерв места истёк до создания бронирования.'); }
                 db_replace_into('talario_resource_bookings', [
                     'occurrence_id' => (int) $hold['occurrence_id'], 'product_id' => (int) $item['product_id'],
                     'order_id' => (int) $order_id, 'order_item_id' => (int) $item_id,
@@ -281,11 +307,77 @@ class ScheduleResourceService
             }
             db_query('COMMIT');
         } catch (\Throwable $e) { db_query('ROLLBACK'); throw $e; }
+        foreach (array_unique(array_column($order_items, 'product_id')) as $product_id) {
+            $occurrence_ids = db_get_fields(
+                'SELECT DISTINCT occurrence_id FROM ?:talario_resource_bookings WHERE order_id = ?i AND product_id = ?i',
+                $order_id, $product_id
+            );
+            foreach ($occurrence_ids as $occurrence_id) { $this->syncEcarterOccurrenceAvailability((int) $occurrence_id); }
+        }
     }
 
     public function releaseOrderBookings($order_id)
     {
+        $occurrence_ids = db_get_fields('SELECT DISTINCT occurrence_id FROM ?:talario_resource_bookings WHERE order_id = ?i AND status = ?s', $order_id, 'A');
         db_query('UPDATE ?:talario_resource_bookings SET status = ?s, updated_at = ?i WHERE order_id = ?i', 'D', TIME, $order_id);
+        foreach ($occurrence_ids as $occurrence_id) { $this->syncEcarterOccurrenceAvailability((int) $occurrence_id); }
+    }
+
+    public function restoreOrderBookings($order_id)
+    {
+        $items = db_get_array('SELECT * FROM ?:talario_resource_bookings WHERE order_id = ?i AND status <> ?s', $order_id, 'A');
+        db_query('START TRANSACTION');
+        try {
+            foreach ($items as $item) {
+                $capacity = (int) db_get_field(
+                    'SELECT capacity FROM ?:talario_resource_occurrences WHERE occurrence_id = ?i FOR UPDATE',
+                    $item['occurrence_id']
+                );
+                $reserved = (int) db_get_field(
+                    'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_bookings WHERE occurrence_id = ?i AND status = ?s',
+                    $item['occurrence_id'], 'A'
+                );
+                $reserved += (int) db_get_field(
+                    'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_holds WHERE occurrence_id = ?i AND status = ?s AND expires_at > ?i',
+                    $item['occurrence_id'], 'A', TIME
+                );
+                if ($reserved + (int) $item['quantity'] > $capacity) {
+                    throw new InvalidArgumentException('Нельзя восстановить заказ: на занятии больше нет свободных мест.');
+                }
+                db_query('UPDATE ?:talario_resource_bookings SET status = ?s, updated_at = ?i WHERE booking_id = ?i', 'A', TIME, $item['booking_id']);
+            }
+            db_query('COMMIT');
+        } catch (\Throwable $e) { db_query('ROLLBACK'); throw $e; }
+        foreach ($items as $item) { $this->syncEcarterOccurrenceAvailability((int) $item['occurrence_id']); }
+    }
+
+    public function syncEcarterOccurrenceAvailability($occurrence_id)
+    {
+        $occurrence = db_get_row('SELECT * FROM ?:talario_resource_occurrences WHERE occurrence_id = ?i', $occurrence_id);
+        if (!$occurrence) { return; }
+        $holds = (int) db_get_field(
+            'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_holds WHERE occurrence_id = ?i AND status = ?s AND expires_at > ?i',
+            $occurrence_id, 'A', TIME
+        );
+        $bookings = (int) db_get_field(
+            'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_bookings WHERE occurrence_id = ?i AND status = ?s',
+            $occurrence_id, 'A'
+        );
+        $available = max(0, (int) $occurrence['capacity'] - $holds - $bookings);
+        $day = strtolower(date('l', strtotime($occurrence['starts_at'])));
+        $start = substr($occurrence['starts_at'], 11, 5);
+        $end = substr($occurrence['ends_at'], 11, 5);
+        $product_ids = db_get_fields('SELECT product_id FROM ?:talario_resource_products WHERE resource_id = ?i', $occurrence['resource_id']);
+        foreach ($product_ids as $product_id) {
+            $row = db_get_row('SELECT days_data FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
+            $days = $row ? (array) unserialize($row['days_data']) : [];
+            foreach ((array) ($days[$day]['time_by_amount'] ?? []) as $key => $slot) {
+                if (($slot['start_time'] ?? '') === $start && ($slot['end_time'] ?? '') === $end) {
+                    $days[$day]['time_by_amount'][$key]['amount'] = $available;
+                }
+            }
+            if ($row) { db_query('UPDATE ?:ec_table_booking_system SET days_data = ?s WHERE product_id = ?i', serialize($days), $product_id); }
+        }
     }
 
     private function actingCompanyId($admin_company_id)

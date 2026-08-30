@@ -309,7 +309,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id];
         }
         if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'preview') {
-            Tygh::$app['session']['talario_preview_revision'][$product_id] = $class_data;
+            Tygh::$app['session']['talario_preview_revision'][$product_id] = [
+                'expires_at' => TIME + 15 * 60,
+                'data' => $class_data,
+            ];
             fn_set_notification('N', __('notice'), 'Предварительный просмотр не изменяет опубликованную карточку.');
             return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id . '&open_preview=1'];
         }
@@ -629,6 +632,14 @@ if ($mode === 'manage') {
     }
 
     $context = $get_editor_context($product);
+    if (!$context['categories']) {
+        fn_set_notification(
+            'E',
+            __('error'),
+            'В Talario не настроен список разрешённых категорий. Обратитесь к администратору Talario.'
+        );
+        return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.manage'];
+    }
     if (!$product_id && (empty($context['center']['name']) || empty($context['center']['address']) || empty($context['center']['primary_location_id']))) {
         fn_set_notification('W', __('warning'), 'Сначала укажите название и основной адрес центра.');
         return [CONTROLLER_STATUS_REDIRECT, 'talario_locations.manage'];
