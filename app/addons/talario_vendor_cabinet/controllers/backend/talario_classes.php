@@ -64,16 +64,29 @@ $load_owned_product = static function ($product_id) use ($company_id) {
         $product_id,
         $company_id
     );
+    $variation_group_id = (int) VariationsServiceProvider::getGroupRepository()
+        ->findGroupIdByProductId($product_id);
+    $variation_feature_ids = $variation_group_id
+        ? VariationsServiceProvider::getGroupRepository()
+            ->findGroupFeatureCollectionByGroupId($variation_group_id)
+            ->getFeatureIds()
+        : [];
     foreach ($product['variations'] as &$variation) {
+        if (!$variation_feature_ids) {
+            $variation['talario_label'] = '';
+            continue;
+        }
         $variation_values = db_get_array(
             'SELECT fd.description, vd.variant FROM ?:product_features_values AS fv '
             . 'INNER JOIN ?:product_features_descriptions AS fd ON fd.feature_id = fv.feature_id '
             . 'AND fd.lang_code = ?s INNER JOIN ?:product_feature_variant_descriptions AS vd '
             . 'ON vd.variant_id = fv.variant_id AND vd.lang_code = ?s '
-            . 'WHERE fv.product_id = ?i AND fv.variant_id > 0 ORDER BY fv.feature_id',
+            . 'WHERE fv.product_id = ?i AND fv.feature_id IN (?n) '
+            . 'AND fv.variant_id > 0 ORDER BY fv.feature_id',
             DESCR_SL,
             DESCR_SL,
-            (int) $variation['product_id']
+            (int) $variation['product_id'],
+            array_map('intval', $variation_feature_ids)
         );
         $variation['talario_label'] = implode(', ', array_filter(array_map(
             static function (array $value) {
