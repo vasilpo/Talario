@@ -409,10 +409,17 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
     }
 
     $product_request = (array) ($revision_record['product_data'] ?? []);
-    $removed_pair_ids = array_values(array_unique(array_filter(array_map(
+    $requested_removed_pair_ids = array_values(array_unique(array_filter(array_map(
         'intval',
         (array) ($product_request['removed_image_pair_ids'] ?? [])
     ))));
+    $owned_pair_ids = array_map('intval', db_get_fields(
+        'SELECT il.pair_id FROM ?:images_links il '
+        . 'INNER JOIN ?:products p ON p.product_id = il.object_id AND p.company_id = ?i '
+        . 'WHERE il.object_id = ?i AND il.object_type = ?s',
+        (int) $product_data['company_id'], $product_id, 'product'
+    ));
+    $removed_pair_ids = array_values(array_intersect($requested_removed_pair_ids, $owned_pair_ids));
     if (!empty($product_data['main_pair']['pair_id'])
         && in_array((int) $product_data['main_pair']['pair_id'], $removed_pair_ids, true)) {
         $product_data['main_pair'] = [];
@@ -425,12 +432,16 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
     ));
 
     foreach ((array) ($revision_record['image_request'] ?? []) as $request_key => $image_rows) {
-        if (strpos((string) $request_key, 'type_') !== 0 || substr((string) $request_key, -5) !== '_data') {
+        $is_image_data = substr((string) $request_key, -11) === '_image_data';
+        $is_legacy_type_data = strpos((string) $request_key, 'type_') === 0
+            && substr((string) $request_key, -5) === '_data';
+        if (!$is_image_data && !$is_legacy_type_data) {
             continue;
         }
         foreach ((array) $image_rows as $image_row) {
             if (!is_array($image_row) || empty($image_row['pair_id']) || empty($image_row['type'])) { continue; }
             $pair_id = (int) $image_row['pair_id'];
+            if (!in_array($pair_id, $owned_pair_ids, true)) { continue; }
             $pair = null;
             if ((int) ($product_data['main_pair']['pair_id'] ?? 0) === $pair_id) {
                 $pair = $product_data['main_pair'];
@@ -446,6 +457,11 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
             }
             if (!$pair) { continue; }
             $pair['type'] = $image_row['type'] === 'M' ? 'M' : 'A';
+            if (isset($image_row['position'])) { $pair['position'] = (int) $image_row['position']; }
+            if (array_key_exists('detailed_alt', $image_row)) {
+                if (!empty($pair['detailed'])) { $pair['detailed']['alt'] = (string) $image_row['detailed_alt']; }
+                if (!empty($pair['icon'])) { $pair['icon']['alt'] = (string) $image_row['detailed_alt']; }
+            }
             if ($pair['type'] === 'M') {
                 if ($product_data['main_pair']) {
                     $product_data['main_pair']['type'] = 'A';
@@ -458,14 +474,22 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
         }
     }
     $product_data['image_pairs'] = array_values($product_data['image_pairs']);
+    usort($product_data['image_pairs'], static function (array $left, array $right) {
+        return (int) ($left['position'] ?? 0) <=> (int) ($right['position'] ?? 0);
+    });
 
     $preview_pair_id = 1000000000;
     foreach ((array) ($revision_record['image_request'] ?? []) as $request_key => $paths) {
         if (strpos((string) $request_key, 'file_') !== 0 || substr((string) $request_key, -9) !== '_detailed') {
             continue;
         }
-        foreach ((array) $paths as $path) {
+        $image_data_key = substr((string) $request_key, 5, -9) . '_data';
+        $image_data_rows = (array) (($revision_record['image_request'][$image_data_key] ?? []));
+        foreach ((array) $paths as $image_index => $path) {
             if (!is_string($path) || $path === '') { continue; }
+            $image_data = is_array($image_data_rows[$image_index] ?? null)
+                ? $image_data_rows[$image_index]
+                : [];
             $image_url = filter_var($path, FILTER_VALIDATE_URL)
                 ? $path
                 : fn_url('image.custom_image?type=T&image=' . rawurlencode(fn_basename($path)), 'C');
@@ -474,8 +498,10 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
                 'image_id' => 0,
                 'detailed_id' => $preview_pair_id,
                 'icon' => [],
-                'detailed' => ['image_path' => $image_url, 'alt' => ''],
-                'type' => strpos($request_key, 'product_main_image') !== false ? 'M' : 'A',
+                'detailed' => ['image_path' => $image_url, 'alt' => (string) ($image_data['detailed_alt'] ?? '')],
+                'position' => (int) ($image_data['position'] ?? 0),
+                'type' => ($image_data['type'] ?? '') === 'M'
+                    || strpos($request_key, 'product_main_image') !== false ? 'M' : 'A',
             ];
             if ($pair['type'] === 'M') {
                 $product_data['main_pair'] = $pair;
@@ -484,4 +510,7 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
             }
         }
     }
+    usort($product_data['image_pairs'], static function (array $left, array $right) {
+        return (int) ($left['position'] ?? 0) <=> (int) ($right['position'] ?? 0);
+    });
 }

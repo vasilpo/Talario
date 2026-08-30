@@ -311,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'preview') {
             $image_request = [];
             foreach ($_REQUEST as $request_key => $request_value) {
-                if (preg_match('/^(file_|type_).+_(?:detailed|data)$/D', (string) $request_key)) {
+                if (preg_match('/^(?:(?:file_|type_).+_(?:detailed|data)|.+_image_data)$/D', (string) $request_key)) {
                     $image_request[$request_key] = $request_value;
                 }
             }

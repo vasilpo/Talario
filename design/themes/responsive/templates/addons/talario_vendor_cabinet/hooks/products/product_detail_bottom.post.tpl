@@ -10,7 +10,7 @@
             {/foreach}
             {foreach $product.talario_preview_variations as $variation}
                 <li>
-                    {$variation.variant_names|implode:", "}: {include file="common/price.tpl" value=$variation.price}
+                    {", "|implode:$variation.variant_names}: {include file="common/price.tpl" value=$variation.price}
                     — новый вариант
                 </li>
             {/foreach}
