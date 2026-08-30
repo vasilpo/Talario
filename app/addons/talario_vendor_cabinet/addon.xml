@@ -1,11 +1,29 @@
 <?xml version="1.0"?>
 <addon scheme="4.0">
     <id>talario_vendor_cabinet</id>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <priority>11000</priority>
     <dependencies>vendor_data_premoderation,talario_schedule_resources,vendor_communication,ec_table_booking_system</dependencies>
     <status>disabled</status>
     <default_language>ru</default_language>
+    <settings>
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="allowed_category_ids">
+                        <type>input</type>
+                        <default_value>267,433,268,269,270,275,276,277,273,274,352,434,272</default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+    <queries>
+        <item for="install">
+            CREATE TABLE IF NOT EXISTS `?:talario_class_preview_revisions` (`token_hash` char(64) NOT NULL, `product_id` int unsigned NOT NULL, `company_id` int unsigned NOT NULL, `user_id` int unsigned NOT NULL, `revision` mediumtext NOT NULL, `expires_at` int unsigned NOT NULL, `created_at` int unsigned NOT NULL, PRIMARY KEY (`token_hash`), KEY `expires_at` (`expires_at`), KEY `owner_product` (`company_id`,`user_id`,`product_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
+        <item for="uninstall">DROP TABLE IF EXISTS `?:talario_class_preview_revisions`;</item>
+    </queries>
     <compatibility>
         <core_edition>MULTIVENDOR</core_edition>
         <core_version>

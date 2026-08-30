@@ -31,9 +31,10 @@
                     <div class="talario-class-card__meta">
                         <strong>{include file="common/price.tpl" value=$product.price}</strong>
                         <span class="label {if $product.status === "A"}label-success{elseif $product.status === "R"}label-warning{/if}">
-                            {if $product.status === "A"}{__("talario_vendor_cabinet.published")}{elseif $product.status === "R"}{__("talario_vendor_cabinet.pending")}{else}{__("talario_vendor_cabinet.disabled")}{/if}
+                            {if $product.status === "A"}Опубликовано{elseif $product.status === "R"}На проверке{elseif $product.status === "H"}Черновик{elseif $product.status === "D"}Приостановлено{else}На доработке{/if}
                         </span>
                     </div>
+                    {if $product.premoderation_reason}<div class="alert alert-warning">Комментарий Talario: {$product.premoderation_reason}</div>{/if}
                     <div class="talario-class-card__actions">
                         <a class="btn btn-block" href="{"talario_classes.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a>
                         <a class="btn btn-block" href="{"talario_classes.schedule?product_id=`$product.product_id`"|fn_url}">Расписание</a>
