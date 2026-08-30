@@ -309,12 +309,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id];
         }
         if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'preview') {
-            Tygh::$app['session']['talario_preview_revision'][$product_id] = [
-                'expires_at' => TIME + 15 * 60,
-                'data' => $class_data,
-            ];
+            $image_request = [];
+            foreach ($_REQUEST as $request_key => $request_value) {
+                if (preg_match('/^(file_|type_).+_(?:detailed|data)$/D', (string) $request_key)) {
+                    $image_request[$request_key] = $request_value;
+                }
+            }
+            $preview_token = fn_talario_vendor_cabinet_store_preview_revision(
+                $product_id,
+                $company_id,
+                (int) Tygh::$app['session']['auth']['user_id'],
+                [
+                    'class_data' => $class_data,
+                    'product_data' => (array) ($_REQUEST['product_data'] ?? []),
+                    'image_request' => $image_request,
+                ]
+            );
             fn_set_notification('N', __('notice'), 'Предварительный просмотр не изменяет опубликованную карточку.');
-            return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id . '&open_preview=1'];
+            return [
+                CONTROLLER_STATUS_REDIRECT,
+                'talario_classes.update?product_id=' . $product_id . '&open_preview=1&talario_preview_token=' . $preview_token
+            ];
         }
         $price_raw = str_replace(',', '.', trim((string) ($class_data['price'] ?? '0')));
         $price = is_numeric($price_raw) ? (float) $price_raw : -1;
@@ -671,6 +686,9 @@ if ($mode === 'manage') {
         ),
     ]);
     if ($product_id && !empty($_REQUEST['open_preview'])) {
+        $preview_token = isset($_REQUEST['talario_preview_token'])
+            ? (string) $_REQUEST['talario_preview_token']
+            : '';
         $preview_product = fn_get_product_data(
             $product_id,
             Tygh::$app['session']['auth'],
@@ -690,7 +708,9 @@ if ($mode === 'manage') {
             $storefront = empty($storefront) ? $storefront_repository->findDefault() : $storefront;
             $language = Registry::get('settings.Appearance.frontend_default_language');
             Tygh::$app['view']->assign('talario_preview_url', fn_get_preview_url(
-                'products.view?product_id=' . $product_id . '&storefront_id=' . (int) $storefront->storefront_id,
+                'products.view?product_id=' . $product_id
+                    . '&storefront_id=' . (int) $storefront->storefront_id
+                    . ($preview_token !== '' ? '&talario_preview_token=' . rawurlencode($preview_token) : ''),
                 $preview_product,
                 (int) Tygh::$app['session']['auth']['user_id'],
                 $language

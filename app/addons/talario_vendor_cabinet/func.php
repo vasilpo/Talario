@@ -109,12 +109,15 @@ function fn_talario_vendor_cabinet_update_center($company_id, array $center_data
 
 function fn_talario_vendor_cabinet_get_allowed_categories()
 {
+    $default_category_ids = [267, 433, 268, 269, 270, 275, 276, 277, 273, 274, 352, 434, 272];
     $category_ids = array_values(array_unique(array_filter(array_map(
         'intval',
         preg_split('/[\s,;]+/', (string) \Tygh\Registry::get('addons.talario_vendor_cabinet.allowed_category_ids'))
     ))));
     if (!$category_ids) {
-        return [];
+        // development deploys only pull Git; use the same server-side
+        // whitelist when the new setting has not been installed yet.
+        $category_ids = $default_category_ids;
     }
 
     $rows = db_get_array(
@@ -139,6 +142,47 @@ function fn_talario_vendor_cabinet_get_allowed_categories()
     }
 
     return $result;
+}
+
+function fn_talario_vendor_cabinet_ensure_preview_storage()
+{
+    db_query(
+        'CREATE TABLE IF NOT EXISTS ?:talario_class_preview_revisions ('
+        . 'token_hash char(64) NOT NULL, product_id int unsigned NOT NULL, company_id int unsigned NOT NULL, '
+        . 'user_id int unsigned NOT NULL, revision mediumtext NOT NULL, expires_at int unsigned NOT NULL, '
+        . 'created_at int unsigned NOT NULL, PRIMARY KEY (token_hash), KEY expires_at (expires_at), '
+        . 'KEY owner_product (company_id,user_id,product_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    );
+}
+
+function fn_talario_vendor_cabinet_store_preview_revision($product_id, $company_id, $user_id, array $revision)
+{
+    fn_talario_vendor_cabinet_ensure_preview_storage();
+    db_query('DELETE FROM ?:talario_class_preview_revisions WHERE expires_at < ?i', TIME);
+    $token = bin2hex(random_bytes(32));
+    db_query('INSERT INTO ?:talario_class_preview_revisions ?e', [
+        'token_hash' => hash('sha256', $token),
+        'product_id' => (int) $product_id,
+        'company_id' => (int) $company_id,
+        'user_id' => (int) $user_id,
+        'revision' => serialize($revision),
+        'expires_at' => TIME + 15 * 60,
+        'created_at' => TIME,
+    ]);
+    return $token;
+}
+
+function fn_talario_vendor_cabinet_get_preview_revision($token, $product_id, $company_id, $user_id)
+{
+    if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/D', $token)) { return []; }
+    fn_talario_vendor_cabinet_ensure_preview_storage();
+    db_query('DELETE FROM ?:talario_class_preview_revisions WHERE expires_at < ?i', TIME);
+    $row = db_get_row(
+        'SELECT revision FROM ?:talario_class_preview_revisions WHERE token_hash = ?s AND product_id = ?i '
+        . 'AND company_id = ?i AND user_id = ?i AND expires_at >= ?i',
+        hash('sha256', $token), $product_id, $company_id, $user_id, TIME
+    );
+    return $row ? (array) unserialize($row['revision'], ['allowed_classes' => false]) : [];
 }
 
 function fn_talario_vendor_cabinet_ensure_moderation_storage()
@@ -285,32 +329,61 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
         return;
     }
     $product_id = (int) $product_data['product_id'];
-    $stored_revision = (array) (\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id] ?? []);
-    if (!$stored_revision || (int) ($stored_revision['expires_at'] ?? 0) < TIME
-        || (int) ($auth['company_id'] ?? 0) !== (int) ($product_data['company_id'] ?? 0)) {
-        unset(\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id]);
-        return;
-    }
-    $revision = (array) ($stored_revision['data'] ?? []);
+    $revision_record = fn_talario_vendor_cabinet_get_preview_revision(
+        (string) ($_REQUEST['talario_preview_token'] ?? ''),
+        $product_id,
+        (int) ($product_data['company_id'] ?? 0),
+        (int) ($auth['user_id'] ?? 0)
+    );
+    if (!$revision_record) { return; }
+    $revision = (array) ($revision_record['class_data'] ?? []);
     $product_data['product'] = trim((string) ($revision['product'] ?? $product_data['product']));
     $product_data['full_description'] = (string) ($revision['full_description'] ?? $product_data['full_description']);
     $product_data['short_description'] = trim((string) ($revision['catalog_age'] ?? $product_data['short_description']));
     $product_data['meta_keywords'] = trim((string) ($revision['meta_keywords'] ?? $product_data['meta_keywords']));
     $product_data['search_words'] = $product_data['meta_keywords'];
-    $deleted_ids = array_map('intval', array_keys(array_filter((array) ($revision['delete_variations'] ?? []))));
+    $deleted_ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        (array) ($revision['delete_variations'] ?? [])
+    ))));
     $variation_prices = [];
+    $preview_existing_variations = [];
     foreach ((array) ($revision['variation_prices'] ?? []) as $variation_id => $variation_price) {
-        if (!in_array((int) $variation_id, $deleted_ids, true) && is_numeric(str_replace(',', '.', (string) $variation_price))) {
-            $variation_prices[] = (float) str_replace(',', '.', (string) $variation_price);
-        }
+        $variation_id = (int) $variation_id;
+        $normalized_price = str_replace(',', '.', (string) $variation_price);
+        if (!is_numeric($normalized_price)) { continue; }
+        $variation_name = db_get_field(
+            'SELECT pd.product FROM ?:product_descriptions pd '
+            . 'INNER JOIN ?:products child ON child.product_id = pd.product_id AND child.company_id = ?i '
+            . 'INNER JOIN ?:product_variation_group_products child_gp ON child_gp.product_id = child.product_id '
+            . 'INNER JOIN ?:product_variation_group_products parent_gp '
+            . 'ON parent_gp.group_id = child_gp.group_id AND parent_gp.product_id = ?i '
+            . 'WHERE pd.product_id = ?i AND pd.lang_code = ?s',
+            (int) $product_data['company_id'], $product_id, $variation_id, $lang_code
+        );
+        if ($variation_name === false) { continue; }
+        $is_deleted = in_array($variation_id, $deleted_ids, true);
+        if (!$is_deleted) { $variation_prices[] = (float) $normalized_price; }
+        $preview_existing_variations[] = [
+            'product_id' => $variation_id,
+            'product' => (string) $variation_name,
+            'price' => (float) $normalized_price,
+            'deleted' => $is_deleted,
+        ];
     }
     $preview_variations = [];
     foreach ((array) ($revision['new_variations'] ?? []) as $variation) {
         $raw_price = str_replace(',', '.', (string) ($variation['price'] ?? ''));
         if (!is_numeric($raw_price)) { continue; }
         $variation_prices[] = (float) $raw_price;
+        $variant_ids = array_map('intval', (array) ($variation['variants'] ?? []));
         $preview_variations[] = [
-            'variants' => array_map('intval', (array) ($variation['variants'] ?? [])),
+            'variants' => $variant_ids,
+            'variant_names' => $variant_ids ? db_get_fields(
+                'SELECT variant FROM ?:product_feature_variant_descriptions '
+                . 'WHERE variant_id IN (?n) AND lang_code = ?s ORDER BY FIELD(variant_id, ?n)',
+                $variant_ids, $lang_code, $variant_ids
+            ) : [],
             'price' => (float) $raw_price,
         ];
     }
@@ -320,6 +393,7 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
     // Storefront extensions can render these unsaved rows without creating
     // Product Variation records or changing the public product.
     $product_data['talario_preview_variations'] = $preview_variations;
+    $product_data['talario_preview_existing_variations'] = $preview_existing_variations;
     $product_data['talario_preview_deleted_variation_ids'] = $deleted_ids;
     if (!empty($revision['category_id'])) {
         $product_data['main_category'] = (int) $revision['category_id'];
@@ -332,5 +406,82 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
             $product_data['company_id']
         );
         if ($address !== false) { $product_data['address'] = $address; }
+    }
+
+    $product_request = (array) ($revision_record['product_data'] ?? []);
+    $removed_pair_ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        (array) ($product_request['removed_image_pair_ids'] ?? [])
+    ))));
+    if (!empty($product_data['main_pair']['pair_id'])
+        && in_array((int) $product_data['main_pair']['pair_id'], $removed_pair_ids, true)) {
+        $product_data['main_pair'] = [];
+    }
+    $product_data['image_pairs'] = array_values(array_filter(
+        (array) ($product_data['image_pairs'] ?? []),
+        static function (array $pair) use ($removed_pair_ids) {
+            return !in_array((int) ($pair['pair_id'] ?? 0), $removed_pair_ids, true);
+        }
+    ));
+
+    foreach ((array) ($revision_record['image_request'] ?? []) as $request_key => $image_rows) {
+        if (strpos((string) $request_key, 'type_') !== 0 || substr((string) $request_key, -5) !== '_data') {
+            continue;
+        }
+        foreach ((array) $image_rows as $image_row) {
+            if (!is_array($image_row) || empty($image_row['pair_id']) || empty($image_row['type'])) { continue; }
+            $pair_id = (int) $image_row['pair_id'];
+            $pair = null;
+            if ((int) ($product_data['main_pair']['pair_id'] ?? 0) === $pair_id) {
+                $pair = $product_data['main_pair'];
+                $product_data['main_pair'] = [];
+            } else {
+                foreach ($product_data['image_pairs'] as $pair_key => $candidate) {
+                    if ((int) ($candidate['pair_id'] ?? 0) === $pair_id) {
+                        $pair = $candidate;
+                        unset($product_data['image_pairs'][$pair_key]);
+                        break;
+                    }
+                }
+            }
+            if (!$pair) { continue; }
+            $pair['type'] = $image_row['type'] === 'M' ? 'M' : 'A';
+            if ($pair['type'] === 'M') {
+                if ($product_data['main_pair']) {
+                    $product_data['main_pair']['type'] = 'A';
+                    $product_data['image_pairs'][] = $product_data['main_pair'];
+                }
+                $product_data['main_pair'] = $pair;
+            } else {
+                $product_data['image_pairs'][] = $pair;
+            }
+        }
+    }
+    $product_data['image_pairs'] = array_values($product_data['image_pairs']);
+
+    $preview_pair_id = 1000000000;
+    foreach ((array) ($revision_record['image_request'] ?? []) as $request_key => $paths) {
+        if (strpos((string) $request_key, 'file_') !== 0 || substr((string) $request_key, -9) !== '_detailed') {
+            continue;
+        }
+        foreach ((array) $paths as $path) {
+            if (!is_string($path) || $path === '') { continue; }
+            $image_url = filter_var($path, FILTER_VALIDATE_URL)
+                ? $path
+                : fn_url('image.custom_image?type=T&image=' . rawurlencode(fn_basename($path)), 'C');
+            $pair = [
+                'pair_id' => ++$preview_pair_id,
+                'image_id' => 0,
+                'detailed_id' => $preview_pair_id,
+                'icon' => [],
+                'detailed' => ['image_path' => $image_url, 'alt' => ''],
+                'type' => strpos($request_key, 'product_main_image') !== false ? 'M' : 'A',
+            ];
+            if ($pair['type'] === 'M') {
+                $product_data['main_pair'] = $pair;
+            } else {
+                $product_data['image_pairs'][] = $pair;
+            }
+        }
     }
 }
