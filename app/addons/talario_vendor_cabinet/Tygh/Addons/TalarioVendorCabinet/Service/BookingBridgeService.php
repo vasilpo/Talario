@@ -38,11 +38,11 @@ class BookingBridgeService
             throw new InvalidArgumentException('Выберите филиал.');
         }
 
-        $from_date = $this->normalizeDate($data['from_date'] ?? '');
-        $to_date = $this->normalizeDate($data['to_date'] ?? '');
-        if ($to_date < $from_date) {
-            throw new InvalidArgumentException('Дата окончания не может быть раньше даты начала.');
-        }
+        // The validity period is an implementation detail. Partners must not be
+        // able to accidentally create an expired (or excessively long) calendar.
+        $today = new DateTimeImmutable('today');
+        $from_date = $today->format('Y-m-d');
+        $to_date = $today->modify('+1 year')->format('Y-m-d');
 
         $duration = (int) ($data['duration_minutes'] ?? 0);
         if ($duration <= 0 || $duration > 1440) {
@@ -55,10 +55,68 @@ class BookingBridgeService
         }
 
         $resource_id = $this->ensureResource($product_id);
+        $product_ids = $this->getVariationGroupProductIds($product_id, $company_id);
+        $this->syncResourceProducts($resource_id, $product_ids, $company_id);
         $this->syncRules($resource_id, $location_id, $from_date, $to_date, $duration, $days);
-        $this->syncEcarter($product_id, $from_date, $to_date, $duration, $days);
+        $this->schedule_resources->syncOccurrencesFromRules($resource_id, $from_date, $to_date);
+        foreach ($product_ids as $current_product_id) {
+            $this->syncEcarter($current_product_id, $from_date, $to_date, $duration, $days);
+        }
 
         return ['resource_id' => $resource_id, 'product_id' => $product_id, 'days' => $days];
+    }
+
+    public function syncProductVariants($product_id, $company_id)
+    {
+        $resources = $this->schedule_resources->getResourcesForProduct((int) $product_id);
+        if (!$resources) {
+            return;
+        }
+        $resource_id = (int) reset($resources);
+        $product_ids = $this->getVariationGroupProductIds($product_id, $company_id);
+        $this->syncResourceProducts($resource_id, $product_ids, $company_id);
+
+        $ecarter = db_get_row('SELECT * FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
+        if ($ecarter) {
+            foreach ($product_ids as $current_product_id) {
+                $ecarter['product_id'] = (int) $current_product_id;
+                db_query('REPLACE INTO ?:ec_table_booking_system ?e', $ecarter);
+                db_query('UPDATE ?:products SET tracking = ?s, is_edp = ?s WHERE product_id = ?i', 'D', 'Y', $current_product_id);
+            }
+        }
+    }
+
+    public function detachProduct($product_id, $company_id)
+    {
+        $resources = $this->schedule_resources->getResourcesForProduct((int) $product_id);
+        foreach ($resources as $resource_id) {
+            $this->schedule_resources->removeProductResource((int) $product_id, (int) $resource_id);
+        }
+        db_query('DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
+    }
+
+    private function getVariationGroupProductIds($product_id, $company_id)
+    {
+        $group_id = (int) db_get_field(
+            'SELECT group_id FROM ?:product_variation_group_products WHERE product_id = ?i',
+            $product_id
+        );
+        if (!$group_id) {
+            return [(int) $product_id];
+        }
+        return array_map('intval', db_get_fields(
+            'SELECT p.product_id FROM ?:products p INNER JOIN ?:product_variation_group_products gp '
+            . 'ON gp.product_id = p.product_id WHERE gp.group_id = ?i AND p.company_id = ?i',
+            $group_id,
+            $company_id
+        ));
+    }
+
+    private function syncResourceProducts($resource_id, array $product_ids, $company_id)
+    {
+        foreach ($product_ids as $product_id) {
+            $this->schedule_resources->addProductResource($product_id, $resource_id);
+        }
     }
 
     public function getFormData($product_id, $company_id)

@@ -6,6 +6,18 @@
     <dependencies>vendor_data_premoderation,talario_schedule_resources,vendor_communication,ec_table_booking_system</dependencies>
     <status>disabled</status>
     <default_language>ru</default_language>
+    <settings>
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="allowed_category_ids">
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
     <compatibility>
         <core_edition>MULTIVENDOR</core_edition>
         <core_version>

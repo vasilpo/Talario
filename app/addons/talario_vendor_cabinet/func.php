@@ -109,42 +109,206 @@ function fn_talario_vendor_cabinet_update_center($company_id, array $center_data
 
 function fn_talario_vendor_cabinet_get_allowed_categories()
 {
-    $names = [
-        'Спорт',
-        'Единоборства',
-        'Творчество',
-        'Танцы',
-        'Раннее развитие',
-        'Школьные предметы',
-        'Иностранные языки',
-        'Интеллектуальные занятия',
-        'Программирование',
-        'Робототехника',
-        'Детские лагеря',
-        'Летние секции',
-        'Музыка',
-    ];
+    $category_ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        preg_split('/[\s,;]+/', (string) \Tygh\Registry::get('addons.talario_vendor_cabinet.allowed_category_ids'))
+    ))));
+    if (!$category_ids) {
+        return [];
+    }
 
     $rows = db_get_array(
         'SELECT c.category_id, cd.category FROM ?:categories AS c '
         . 'INNER JOIN ?:category_descriptions AS cd ON cd.category_id = c.category_id AND cd.lang_code = ?s '
-        . 'WHERE cd.category IN (?a) AND c.status = ?s',
+        . 'WHERE c.category_id IN (?n) AND c.status = ?s',
         DESCR_SL,
-        $names,
+        $category_ids,
         'A'
     );
 
-    $by_name = [];
+    $by_id = [];
     foreach ($rows as $row) {
-        $by_name[(string) $row['category']] = $row;
+        $by_id[(int) $row['category_id']] = $row;
     }
 
     $result = [];
-    foreach ($names as $name) {
-        if (isset($by_name[$name])) {
-            $result[] = $by_name[$name];
+    foreach ($category_ids as $category_id) {
+        if (isset($by_id[$category_id])) {
+            $result[] = $by_id[$category_id];
         }
     }
 
     return $result;
+}
+
+function fn_talario_vendor_cabinet_ensure_moderation_storage()
+{
+    static $ready = false;
+    if ($ready) {
+        return;
+    }
+    db_query(
+        'CREATE TABLE IF NOT EXISTS ?:talario_class_moderation ('
+        . 'product_id int unsigned NOT NULL, company_id int unsigned NOT NULL, group_id int unsigned NOT NULL DEFAULT 0,'
+        . 'variation_ids text NOT NULL, active char(1) NOT NULL DEFAULT \'Y\', updated_at int unsigned NOT NULL DEFAULT 0,'
+        . 'PRIMARY KEY (product_id), KEY active (active)'
+        . ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+    );
+    $ready = true;
+}
+
+function fn_talario_vendor_cabinet_mark_class_moderation($product_id, $company_id, $group_id, array $variation_ids)
+{
+    fn_talario_vendor_cabinet_ensure_moderation_storage();
+    db_replace_into('talario_class_moderation', [
+        'product_id' => (int) $product_id,
+        'company_id' => (int) $company_id,
+        'group_id' => (int) $group_id,
+        'variation_ids' => json_encode(array_values(array_unique(array_map('intval', $variation_ids)))),
+        'active' => 'Y',
+        'updated_at' => TIME,
+    ]);
+}
+
+function fn_talario_vendor_cabinet_clear_class_moderation($product_ids, $delete = false)
+{
+    fn_talario_vendor_cabinet_ensure_moderation_storage();
+    $product_ids = array_values(array_filter(array_map('intval', (array) $product_ids)));
+    if (!$product_ids) {
+        return;
+    }
+    if ($delete) {
+        db_query('DELETE FROM ?:talario_class_moderation WHERE product_id IN (?n)', $product_ids);
+    } else {
+        db_query('UPDATE ?:talario_class_moderation SET active = ?s, updated_at = ?i WHERE product_id IN (?n)', 'N', TIME, $product_ids);
+    }
+}
+
+/**
+ * Prevents only the automatic approval request produced while Talario saves a
+ * draft. The controller always removes this request-scoped guard in finally.
+ */
+function fn_talario_vendor_cabinet_vendor_data_premoderation_request_approval_for_products_pre(
+    array &$product_ids,
+    $update_product
+) {
+    $guard = \Tygh\Registry::ifGet('talario_vendor_cabinet.draft_guard', []);
+    if (empty($guard['enabled']) || empty($product_ids)) {
+        return;
+    }
+
+    $target_id = (int) ($guard['product_id'] ?? 0);
+    if (!$target_id) {
+        $target_id = (int) reset($product_ids);
+        \Tygh\Registry::set('talario_vendor_cabinet.draft_guard.product_id', $target_id, true);
+    }
+    $company_id = (int) ($guard['company_id'] ?? 0);
+    $product_ids = array_values(array_filter($product_ids, static function ($product_id) use ($target_id, $company_id) {
+        $product_id = (int) $product_id;
+        if ($product_id === $target_id) {
+            return false;
+        }
+        $is_guarded_variation = (bool) db_get_field(
+            'SELECT 1 FROM ?:product_variation_group_products target '
+            . 'INNER JOIN ?:product_variation_group_products child ON child.group_id = target.group_id '
+            . 'INNER JOIN ?:products p ON p.product_id = child.product_id AND p.company_id = ?i '
+            . 'WHERE target.product_id = ?i AND child.product_id = ?i',
+            $company_id,
+            $target_id,
+            $product_id
+        );
+        return !$is_guarded_variation;
+    }));
+}
+
+/**
+ * Makes approved class variations available together with their parent. They
+ * remain Hidden throughout moderation, so no child can be opened beforehand.
+ */
+function fn_talario_vendor_cabinet_vendor_data_premoderation_approve_products_pre(
+    array &$product_ids,
+    $update_product
+) {
+    if (!$update_product || !$product_ids) {
+        return;
+    }
+    fn_talario_vendor_cabinet_ensure_moderation_storage();
+    $markers = db_get_hash_array(
+        'SELECT product_id, company_id, group_id, variation_ids FROM ?:talario_class_moderation '
+        . 'WHERE product_id IN (?n) AND active = ?s',
+        'product_id',
+        array_map('intval', $product_ids),
+        'Y'
+    );
+    foreach ($markers as $marker) {
+        $parent_id = (int) $marker['product_id'];
+        $company_id = (int) $marker['company_id'];
+        $group_id = (int) $marker['group_id'];
+        $marked_ids = array_values(array_unique(array_map('intval', (array) json_decode($marker['variation_ids'], true))));
+        $variation_ids = $group_id && $marked_ids ? db_get_fields(
+            'SELECT p.product_id FROM ?:products p INNER JOIN ?:product_variation_group_products gp '
+            . 'ON gp.product_id = p.product_id INNER JOIN ?:product_variation_group_products parent_gp '
+            . 'ON parent_gp.group_id = gp.group_id AND parent_gp.product_id = ?i '
+            . 'INNER JOIN ?:products parent ON parent.product_id = parent_gp.product_id AND parent.company_id = ?i '
+            . 'WHERE gp.group_id = ?i AND p.company_id = ?i '
+            . 'AND p.product_id IN (?n) AND p.product_id <> ?i',
+            $parent_id,
+            $company_id,
+            $group_id,
+            $company_id,
+            $marked_ids,
+            $parent_id
+        ) : [];
+        foreach (array_map('intval', $variation_ids) as $variation_id) {
+            if (function_exists('fn_vendor_data_premoderation_update_premoderation')) {
+                fn_vendor_data_premoderation_update_premoderation($variation_id, 'A');
+            }
+            db_query('UPDATE ?:products SET status = ?s WHERE product_id = ?i', 'R', $variation_id);
+            $product_ids[] = $variation_id;
+        }
+        fn_talario_vendor_cabinet_clear_class_moderation([$parent_id]);
+    }
+    $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+}
+
+function fn_talario_vendor_cabinet_vendor_data_premoderation_disapprove_products_pre(
+    array &$product_ids,
+    $update_product,
+    $reason
+) {
+    fn_talario_vendor_cabinet_clear_class_moderation($product_ids);
+}
+
+function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, $preview, $lang_code)
+{
+    if (!$preview || empty($product_data['product_id'])) {
+        return;
+    }
+    $product_id = (int) $product_data['product_id'];
+    $stored_revision = (array) (\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id] ?? []);
+    if (!$stored_revision || (int) ($stored_revision['expires_at'] ?? 0) < TIME
+        || (int) ($auth['company_id'] ?? 0) !== (int) ($product_data['company_id'] ?? 0)) {
+        unset(\Tygh\Tygh::$app['session']['talario_preview_revision'][$product_id]);
+        return;
+    }
+    $revision = (array) ($stored_revision['data'] ?? []);
+    $product_data['product'] = trim((string) ($revision['product'] ?? $product_data['product']));
+    $product_data['full_description'] = (string) ($revision['full_description'] ?? $product_data['full_description']);
+    $product_data['short_description'] = trim((string) ($revision['catalog_age'] ?? $product_data['short_description']));
+    $product_data['meta_keywords'] = trim((string) ($revision['meta_keywords'] ?? $product_data['meta_keywords']));
+    $product_data['search_words'] = $product_data['meta_keywords'];
+    $variation_prices = array_map('floatval', (array) ($revision['variation_prices'] ?? []));
+    if ($variation_prices) { $product_data['price'] = min($variation_prices); }
+    if (!empty($revision['category_id'])) {
+        $product_data['main_category'] = (int) $revision['category_id'];
+        $product_data['category_ids'] = [(int) $revision['category_id']];
+    }
+    if (!empty($revision['location_id'])) {
+        $address = db_get_field(
+            'SELECT address FROM ?:talario_locations WHERE location_id = ?i AND company_id = ?i',
+            $revision['location_id'],
+            $product_data['company_id']
+        );
+        if ($address !== false) { $product_data['address'] = $address; }
+    }
 }
