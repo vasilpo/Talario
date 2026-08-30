@@ -11,6 +11,9 @@
 
     <form action="{fn_url('talario_classes.save_schedule')}" method="post" name="talario_schedule_form" class="form-horizontal">
         <input type="hidden" name="product_id" value="{$talario_schedule_product.product_id}" />
+        {if $talario_schedule_parent_product_id}
+            <input type="hidden" name="parent_product_id" value="{$talario_schedule_parent_product_id}" />
+        {/if}
 
         <div class="control-group">
             <label class="control-label" for="talario_location">Филиал:</label>
@@ -51,7 +54,11 @@
         </table>
 
         <div class="buttons-container">
-            <a class="btn" href="{"talario_classes.manage"|fn_url}">Назад</a>
+            {if $talario_schedule_parent_product_id}
+                <a class="btn" href="{"talario_classes.update?product_id=`$talario_schedule_parent_product_id`"|fn_url}">Назад к занятию</a>
+            {else}
+                <a class="btn" href="{"talario_classes.manage"|fn_url}">Назад</a>
+            {/if}
             <button class="btn btn-primary" type="submit" {if !$talario_schedule_locations}disabled{/if}>Сохранить расписание</button>
         </div>
     </form>

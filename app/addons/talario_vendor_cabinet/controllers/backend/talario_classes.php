@@ -64,6 +64,40 @@ $load_owned_product = static function ($product_id) use ($company_id) {
         $product_id,
         $company_id
     );
+    $variation_group_id = (int) VariationsServiceProvider::getGroupRepository()
+        ->findGroupIdByProductId($product_id);
+    $variation_feature_ids = $variation_group_id
+        ? VariationsServiceProvider::getGroupRepository()
+            ->findGroupFeatureCollectionByGroupId($variation_group_id)
+            ->getFeatureIds()
+        : [];
+    foreach ($product['variations'] as &$variation) {
+        if (!$variation_feature_ids) {
+            $variation['talario_label'] = '';
+            continue;
+        }
+        $variation_values = db_get_array(
+            'SELECT fd.description, vd.variant FROM ?:product_features_values AS fv '
+            . 'INNER JOIN ?:product_features_descriptions AS fd ON fd.feature_id = fv.feature_id '
+            . 'AND fd.lang_code = ?s INNER JOIN ?:product_feature_variant_descriptions AS vd '
+            . 'ON vd.variant_id = fv.variant_id AND vd.lang_code = ?s '
+            . 'WHERE fv.product_id = ?i AND fv.feature_id IN (?n) '
+            . 'AND fv.variant_id > 0 ORDER BY fv.feature_id',
+            DESCR_SL,
+            DESCR_SL,
+            (int) $variation['product_id'],
+            array_map('intval', $variation_feature_ids)
+        );
+        $variation['talario_label'] = implode(', ', array_filter(array_map(
+            static function (array $value) {
+                $feature = trim((string) ($value['description'] ?? ''));
+                $variant = trim((string) ($value['variant'] ?? ''));
+                return $feature !== '' && $variant !== '' ? $feature . ': ' . $variant : $variant;
+            },
+            $variation_values
+        )));
+    }
+    unset($variation);
     if (function_exists('fn_vendor_data_premoderation_get_premoderation')) {
         $premoderation = fn_vendor_data_premoderation_get_premoderation([$product_id]);
         $product['talario_revision_comment'] = trim((string) ($premoderation[$product_id]['reason'] ?? ''));
@@ -144,6 +178,26 @@ $get_variation_axes = static function ($category_id, $product_id = 0) {
     return array_values(array_filter($features, static function (array $feature) {
         return !empty($feature['variants']) && in_array($feature['purpose'], FeaturePurposes::getAll(), true);
     }));
+};
+
+$variation_belongs_to_parent = static function ($variation_id, $parent_product_id) use ($company_id) {
+    $variation_id = (int) $variation_id;
+    $parent_product_id = (int) $parent_product_id;
+    if (!$variation_id || !$parent_product_id || $variation_id === $parent_product_id) {
+        return false;
+    }
+    return (bool) db_get_field(
+        'SELECT 1 FROM ?:product_variation_group_products child '
+        . 'INNER JOIN ?:product_variation_group_products parent ON parent.group_id = child.group_id '
+        . 'INNER JOIN ?:products child_product ON child_product.product_id = child.product_id '
+        . 'INNER JOIN ?:products parent_product ON parent_product.product_id = parent.product_id '
+        . 'WHERE child.product_id = ?i AND parent.product_id = ?i '
+        . 'AND child_product.company_id = ?i AND parent_product.company_id = ?i',
+        $variation_id,
+        $parent_product_id,
+        $company_id,
+        $company_id
+    );
 };
 
 $sync_variations = static function (
@@ -577,8 +631,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($mode === 'save_schedule') {
         $product_id = isset($_REQUEST['product_id']) ? (int) $_REQUEST['product_id'] : 0;
+        $parent_product_id = isset($_REQUEST['parent_product_id']) ? (int) $_REQUEST['parent_product_id'] : 0;
         $product = $load_owned_product($product_id);
         if (!$product) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
+        if ($parent_product_id && !$variation_belongs_to_parent($product_id, $parent_product_id)) {
             return [CONTROLLER_STATUS_DENIED];
         }
         $schedule_data = isset($_REQUEST['schedule_data']) && is_array($_REQUEST['schedule_data']) ? $_REQUEST['schedule_data'] : [];
@@ -591,7 +649,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (RuntimeException $e) {
             return [CONTROLLER_STATUS_DENIED];
         }
-        return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.schedule?product_id=' . $product_id];
+        return [
+            CONTROLLER_STATUS_REDIRECT,
+            'talario_classes.schedule?product_id=' . $product_id
+                . ($parent_product_id ? '&parent_product_id=' . $parent_product_id : '')
+        ];
     }
 }
 
@@ -674,12 +736,16 @@ if ($mode === 'manage') {
         ];
     }
 
+    $variation_group_id = $product['product_id']
+        ? (int) VariationsServiceProvider::getGroupRepository()->findGroupIdByProductId((int) $product['product_id'])
+        : 0;
     Tygh::$app['view']->assign([
         'talario_class' => $product,
         'talario_class_locations' => $context['locations'],
         'talario_class_categories' => $context['categories'],
         'talario_class_location_id' => $context['selected_location_id'],
         'talario_class_category_id' => $context['selected_category_id'],
+        'talario_variation_group_id' => $variation_group_id,
         'talario_variation_axes' => $get_variation_axes(
             (int) $context['selected_category_id'],
             (int) $product['product_id']
@@ -719,8 +785,12 @@ if ($mode === 'manage') {
     }
 } elseif ($mode === 'schedule') {
     $product_id = isset($_REQUEST['product_id']) ? (int) $_REQUEST['product_id'] : 0;
+    $parent_product_id = isset($_REQUEST['parent_product_id']) ? (int) $_REQUEST['parent_product_id'] : 0;
     $product = $load_owned_product($product_id);
     if (!$product) {
+        return [CONTROLLER_STATUS_NO_PAGE];
+    }
+    if ($parent_product_id && !$variation_belongs_to_parent($product_id, $parent_product_id)) {
         return [CONTROLLER_STATUS_NO_PAGE];
     }
     try {
@@ -740,6 +810,7 @@ if ($mode === 'manage') {
         }
         Tygh::$app['view']->assign([
             'talario_schedule_product' => $product,
+            'talario_schedule_parent_product_id' => $parent_product_id,
             'talario_schedule_locations' => $locations,
             'talario_schedule_data' => $schedule_data,
             'talario_weekdays' => [
