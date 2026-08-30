@@ -297,8 +297,30 @@ function fn_talario_vendor_cabinet_get_product_data_post(&$product_data, $auth, 
     $product_data['short_description'] = trim((string) ($revision['catalog_age'] ?? $product_data['short_description']));
     $product_data['meta_keywords'] = trim((string) ($revision['meta_keywords'] ?? $product_data['meta_keywords']));
     $product_data['search_words'] = $product_data['meta_keywords'];
-    $variation_prices = array_map('floatval', (array) ($revision['variation_prices'] ?? []));
-    if ($variation_prices) { $product_data['price'] = min($variation_prices); }
+    $deleted_ids = array_map('intval', array_keys(array_filter((array) ($revision['delete_variations'] ?? []))));
+    $variation_prices = [];
+    foreach ((array) ($revision['variation_prices'] ?? []) as $variation_id => $variation_price) {
+        if (!in_array((int) $variation_id, $deleted_ids, true) && is_numeric(str_replace(',', '.', (string) $variation_price))) {
+            $variation_prices[] = (float) str_replace(',', '.', (string) $variation_price);
+        }
+    }
+    $preview_variations = [];
+    foreach ((array) ($revision['new_variations'] ?? []) as $variation) {
+        $raw_price = str_replace(',', '.', (string) ($variation['price'] ?? ''));
+        if (!is_numeric($raw_price)) { continue; }
+        $variation_prices[] = (float) $raw_price;
+        $preview_variations[] = [
+            'variants' => array_map('intval', (array) ($variation['variants'] ?? [])),
+            'price' => (float) $raw_price,
+        ];
+    }
+    $product_data['price'] = $variation_prices
+        ? min($variation_prices)
+        : (float) str_replace(',', '.', (string) ($revision['price'] ?? $product_data['price']));
+    // Storefront extensions can render these unsaved rows without creating
+    // Product Variation records or changing the public product.
+    $product_data['talario_preview_variations'] = $preview_variations;
+    $product_data['talario_preview_deleted_variation_ids'] = $deleted_ids;
     if (!empty($revision['category_id'])) {
         $product_data['main_category'] = (int) $revision['category_id'];
         $product_data['category_ids'] = [(int) $revision['category_id']];

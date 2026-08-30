@@ -281,6 +281,12 @@ class ScheduleResourceService
         try {
             foreach ($order_items as $item_id => $item) {
                 if (!$this->productUsesScheduleResource((int) $item['product_id'])) { continue; }
+                $existing_booking = db_get_field(
+                    'SELECT booking_id FROM ?:talario_resource_bookings WHERE order_id = ?i AND order_item_id = ?i LIMIT 1',
+                    $order_id,
+                    $item_id
+                );
+                if ($existing_booking) { continue; }
                 $booking = (array) ($item['extra']['booking_info'] ?? []);
                 $date_value = $booking['original_booking_date'] ?? $booking['booking_date'] ?? '';
                 $date = is_numeric($date_value) ? date('Y-m-d', (int) $date_value) : date('Y-m-d', strtotime($date_value));
@@ -293,10 +299,16 @@ class ScheduleResourceService
                 );
                 $hold = db_get_row(
                     'SELECT * FROM ?:talario_resource_holds WHERE cart_id = ?s AND product_id = ?i '
-                    . 'AND occurrence_id = ?i AND status = ?s AND expires_at > ?i ORDER BY hold_id DESC LIMIT 1 FOR UPDATE',
-                    (string) $cart_id, (int) $item['product_id'], $expected_occurrence_id, 'A', TIME
+                    . 'AND cart_item_id = ?s AND occurrence_id = ?i AND status = ?s AND expires_at > ?i '
+                    . 'ORDER BY hold_id DESC LIMIT 1 FOR UPDATE',
+                    (string) $cart_id, (int) $item['product_id'], (string) $item_id,
+                    $expected_occurrence_id, 'A', TIME
                 );
                 if (!$hold) { throw new InvalidArgumentException('Резерв места истёк до создания бронирования.'); }
+                $expected_quantity = (int) ($booking['booking_slot_amount'] ?? $item['amount'] ?? 1);
+                if ((int) $hold['quantity'] !== $expected_quantity) {
+                    throw new InvalidArgumentException('Количество мест в резерве не совпадает с заказом.');
+                }
                 db_replace_into('talario_resource_bookings', [
                     'occurrence_id' => (int) $hold['occurrence_id'], 'product_id' => (int) $item['product_id'],
                     'order_id' => (int) $order_id, 'order_item_id' => (int) $item_id,
@@ -353,31 +365,9 @@ class ScheduleResourceService
 
     public function syncEcarterOccurrenceAvailability($occurrence_id)
     {
-        $occurrence = db_get_row('SELECT * FROM ?:talario_resource_occurrences WHERE occurrence_id = ?i', $occurrence_id);
-        if (!$occurrence) { return; }
-        $holds = (int) db_get_field(
-            'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_holds WHERE occurrence_id = ?i AND status = ?s AND expires_at > ?i',
-            $occurrence_id, 'A', TIME
-        );
-        $bookings = (int) db_get_field(
-            'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_bookings WHERE occurrence_id = ?i AND status = ?s',
-            $occurrence_id, 'A'
-        );
-        $available = max(0, (int) $occurrence['capacity'] - $holds - $bookings);
-        $day = strtolower(date('l', strtotime($occurrence['starts_at'])));
-        $start = substr($occurrence['starts_at'], 11, 5);
-        $end = substr($occurrence['ends_at'], 11, 5);
-        $product_ids = db_get_fields('SELECT product_id FROM ?:talario_resource_products WHERE resource_id = ?i', $occurrence['resource_id']);
-        foreach ($product_ids as $product_id) {
-            $row = db_get_row('SELECT days_data FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
-            $days = $row ? (array) unserialize($row['days_data']) : [];
-            foreach ((array) ($days[$day]['time_by_amount'] ?? []) as $key => $slot) {
-                if (($slot['start_time'] ?? '') === $start && ($slot['end_time'] ?? '') === $end) {
-                    $days[$day]['time_by_amount'][$key]['amount'] = $available;
-                }
-            }
-            if ($row) { db_query('UPDATE ?:ec_table_booking_system SET days_data = ?s WHERE product_id = ?i', serialize($days), $product_id); }
-        }
+        // Availability is projected dynamically for the requested date by
+        // fn_talario_schedule_resources_override_single_day_slots(). days_data
+        // deliberately remains the weekly base-capacity template.
     }
 
     private function actingCompanyId($admin_company_id)
