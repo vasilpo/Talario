@@ -54,14 +54,13 @@ class BookingBridgeService
             throw new InvalidArgumentException('Добавьте хотя бы один день и время занятия.');
         }
 
-        $resource_id = $this->ensureResource($product_id);
-        $product_ids = $this->getVariationGroupProductIds($product_id, $company_id);
-        $this->syncResourceProducts($resource_id, $product_ids, $company_id);
+        // A legacy class may still share one resource between all variations.
+        // Editing a concrete variation separates only that product so its
+        // calendar and capacity can differ without changing its siblings.
+        $resource_id = $this->ensureIndependentResource($product_id);
         $this->syncRules($resource_id, $location_id, $from_date, $to_date, $duration, $days);
         $this->schedule_resources->syncOccurrencesFromRules($resource_id, $from_date, $to_date);
-        foreach ($product_ids as $current_product_id) {
-            $this->syncEcarter($current_product_id, $from_date, $to_date, $duration, $days);
-        }
+        $this->syncEcarter($product_id, $from_date, $to_date, $duration, $days);
 
         return ['resource_id' => $resource_id, 'product_id' => $product_id, 'days' => $days];
     }
@@ -74,14 +73,24 @@ class BookingBridgeService
         }
         $resource_id = (int) reset($resources);
         $product_ids = $this->getVariationGroupProductIds($product_id, $company_id);
-        $this->syncResourceProducts($resource_id, $product_ids, $company_id);
 
         $ecarter = db_get_row('SELECT * FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
-        if ($ecarter) {
-            foreach ($product_ids as $current_product_id) {
-                $ecarter['product_id'] = (int) $current_product_id;
-                db_query('REPLACE INTO ?:ec_table_booking_system ?e', $ecarter);
-                db_query('UPDATE ?:products SET tracking = ?s, is_edp = ?s WHERE product_id = ?i', 'D', 'Y', $current_product_id);
+        foreach ($product_ids as $current_product_id) {
+            $current_resources = $this->schedule_resources->getResourcesForProduct($current_product_id);
+            // New variations inherit the class schedule. Variations that were
+            // already configured independently must never be reattached.
+            if (!$current_resources) {
+                $this->schedule_resources->addProductResource($current_product_id, $resource_id);
+                if ($ecarter) {
+                    $ecarter['product_id'] = (int) $current_product_id;
+                    db_query('REPLACE INTO ?:ec_table_booking_system ?e', $ecarter);
+                    db_query(
+                        'UPDATE ?:products SET tracking = ?s, is_edp = ?s WHERE product_id = ?i',
+                        'D',
+                        'Y',
+                        $current_product_id
+                    );
+                }
             }
         }
     }
@@ -110,13 +119,6 @@ class BookingBridgeService
             $group_id,
             $company_id
         ));
-    }
-
-    private function syncResourceProducts($resource_id, array $product_ids, $company_id)
-    {
-        foreach ($product_ids as $product_id) {
-            $this->schedule_resources->addProductResource($product_id, $resource_id);
-        }
     }
 
     public function getFormData($product_id, $company_id)
@@ -162,12 +164,54 @@ class BookingBridgeService
         return $result;
     }
 
-    private function ensureResource($product_id)
+    private function ensureIndependentResource($product_id)
     {
         $resources = $this->schedule_resources->getResourcesForProduct($product_id);
-        if ($resources) {
-            return (int) $resources[0];
+        $independent_resource_id = 0;
+        foreach ($resources as $resource_id) {
+            $resource_products = array_map(
+                'intval',
+                $this->schedule_resources->getProductsForResource((int) $resource_id)
+            );
+            if ($resource_products === [(int) $product_id]) {
+                $independent_resource_id = (int) $resource_id;
+                break;
+            }
         }
+        if ($independent_resource_id) {
+            foreach ($resources as $resource_id) {
+                if ((int) $resource_id !== $independent_resource_id) {
+                    $this->schedule_resources->removeProductResource($product_id, (int) $resource_id);
+                }
+            }
+            return $independent_resource_id;
+        }
+
+        if ($resources) {
+            $has_active_bookings = (bool) db_get_field(
+                'SELECT 1 FROM ?:talario_resource_bookings AS booking '
+                . 'INNER JOIN ?:talario_resource_occurrences AS occurrence '
+                . 'ON occurrence.occurrence_id = booking.occurrence_id '
+                . 'WHERE booking.product_id = ?i AND booking.status = ?s '
+                . 'AND occurrence.starts_at >= ?s LIMIT 1',
+                $product_id,
+                'A',
+                date('Y-m-d H:i:s', TIME)
+            );
+            $has_active_holds = (bool) db_get_field(
+                'SELECT 1 FROM ?:talario_resource_holds WHERE product_id = ?i '
+                . 'AND status = ?s AND expires_at > ?i LIMIT 1',
+                $product_id,
+                'A',
+                TIME
+            );
+            if ($has_active_bookings || $has_active_holds) {
+                throw new InvalidArgumentException(
+                    'У этого варианта уже есть активные записи. Чтобы изменить его расписание отдельно, обратитесь в Talario.'
+                );
+            }
+        }
+
         $product_name = (string) db_get_field(
             'SELECT product FROM ?:product_descriptions WHERE product_id = ?i AND lang_code = ?s',
             $product_id,
@@ -178,6 +222,9 @@ class BookingBridgeService
         }
         $resource_id = (int) $this->schedule_resources->createResource(['name' => $product_name, 'status' => 'A']);
         $this->schedule_resources->addProductResource($product_id, $resource_id);
+        foreach ($resources as $shared_resource_id) {
+            $this->schedule_resources->removeProductResource($product_id, (int) $shared_resource_id);
+        }
         return $resource_id;
     }
 

@@ -26,54 +26,82 @@
                 </div>
             </div>
 
-            {if $talario_class.variations}
-                <div class="control-group">
-                    <label class="control-label">Варианты занятия:</label>
-                    <div class="controls">
-                        <p class="muted description">Особенности вариантов берутся из настроенных для занятия характеристик. Цена «от» будет выбрана автоматически.</p>
-                        <table class="table table-middle">
-                            <thead><tr><th>Вариант</th><th>Цена, ₽</th><th></th></tr></thead>
-                            <tbody>
-                            {foreach $talario_class.variations as $variation}
-                                <tr>
-                                    <td>{$variation.product}</td>
-                                    <td><input type="number" min="0" step="0.01" name="class_data[variation_prices][{$variation.product_id}]" value="{$variation.price}" class="input-small" required /></td>
-                                    <td><label class="checkbox"><input type="checkbox" name="class_data[delete_variations][]" value="{$variation.product_id}" /> Удалить</label></td>
-                                </tr>
-                            {/foreach}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            {/if}
+            <div class="control-group talario-variants">
+                <label class="control-label">Варианты занятия:</label>
+                <div class="controls">
+                    <p class="description">Добавьте варианты, если цена или время занятия зависят от возраста, уровня, предмета или другого параметра.</p>
+                    <p class="muted description">Например: «3–5 лет — 2 000 ₽» и «6–9 лет — 2 000 ₽».</p>
 
-            {if $talario_class.product_id && $talario_variation_axes}
-                <div class="control-group">
-                    <label class="control-label">Добавить варианты:</label>
-                    <div class="controls">
-                        <p class="muted description">Добавьте только те сочетания, которые вы действительно проводите. Новые сочетания не создаются автоматически.</p>
-                        <table class="table table-middle" id="talario_new_variations">
-                            <thead><tr>{foreach $talario_variation_axes as $axis}<th>{$axis.description|default:$axis.internal_name}</th>{/foreach}<th>Цена, ₽</th><th></th></tr></thead>
-                            <tbody></tbody>
-                        </table>
+                    {if $talario_class.variations}
+                        <div class="talario-variation-list">
+                            {foreach $talario_class.variations as $variation}
+                                <div class="talario-variation-card">
+                                    <div class="talario-variation-card__name">
+                                        <span class="muted">Вариант</span>
+                                        <strong>{$variation.talario_label|default:$variation.product}</strong>
+                                    </div>
+                                    <label class="talario-variation-card__price">
+                                        <span>Цена, ₽</span>
+                                        <input type="number" min="0" step="0.01" name="class_data[variation_prices][{$variation.product_id}]" value="{$variation.price}" class="input-small" required />
+                                    </label>
+                                    <a class="btn" href="{"talario_classes.schedule?product_id=`$variation.product_id`&parent_product_id=`$talario_class.product_id`"|fn_url}">Расписание</a>
+                                    <label class="checkbox talario-variation-card__delete">
+                                        <input type="checkbox" name="class_data[delete_variations][]" value="{$variation.product_id}" /> Удалить
+                                    </label>
+                                </div>
+                            {/foreach}
+                        </div>
+                        <p class="muted description">У каждого варианта своя цена и расписание. Цена «от» рассчитывается автоматически.</p>
+                    {/if}
+
+                    {if $talario_class.product_id && $talario_variation_axes}
+                        {if !$talario_variation_group_id}
+                            <div class="talario-variation-axis">
+                                <label for="talario_variation_axis"><strong>Чем отличаются варианты?</strong></label>
+                                <select id="talario_variation_axis" class="input-xlarge">
+                                    <option value="">Выберите один параметр</option>
+                                    {foreach $talario_variation_axes as $axis}
+                                        <option value="{$axis.feature_id}">{$axis.description|default:$axis.internal_name}</option>
+                                    {/foreach}
+                                </select>
+                                <p class="muted description">Выберите то, что родитель будет переключать в карточке занятия.</p>
+                            </div>
+                        {else}
+                            <p class="talario-variation-axis-summary">
+                                <strong>Варианты отличаются по:</strong>
+                                {foreach $talario_variation_axes as $axis}{$axis.description|default:$axis.internal_name}{if !$axis@last}, {/if}{/foreach}
+                            </p>
+                        {/if}
+
+                        <div id="talario_new_variations" class="talario-variation-list"></div>
                         <script type="text/x-talario-template" id="talario_variation_row_template">
-                            <tr>
-                                {foreach $talario_variation_axes as $axis}
-                                    <td><select data-name="class_data[new_variations][__INDEX__][variants][{$axis.feature_id}]" class="input-medium" required>
-                                        <option value="">—</option>
-                                        {foreach $axis.variants as $variant}<option value="{$variant.variant_id}">{$variant.variant}</option>{/foreach}
-                                    </select></td>
-                                {/foreach}
-                                <td><input data-name="class_data[new_variations][__INDEX__][price]" type="number" min="0" step="0.01" class="input-small" required /></td>
-                                <td><button type="button" class="btn cm-talario-remove-variation">Удалить</button></td>
-                            </tr>
+                            <div class="talario-variation-card talario-variation-card--new">
+                                <div class="talario-variation-card__fields">
+                                    {foreach $talario_variation_axes as $axis}
+                                        <label class="talario-variation-field{if !$talario_variation_group_id} hidden{/if}" data-axis-id="{$axis.feature_id}">
+                                            <span>{$axis.description|default:$axis.internal_name}</span>
+                                            <select data-name="class_data[new_variations][__INDEX__][variants][{$axis.feature_id}]" class="input-medium" required{if !$talario_variation_group_id} disabled{/if}>
+                                                <option value="">Выберите</option>
+                                                {foreach $axis.variants as $variant}<option value="{$variant.variant_id}">{$variant.variant}</option>{/foreach}
+                                            </select>
+                                        </label>
+                                    {/foreach}
+                                </div>
+                                <label class="talario-variation-card__price">
+                                    <span>Цена, ₽</span>
+                                    <input data-name="class_data[new_variations][__INDEX__][price]" type="number" min="0" step="0.01" class="input-small" required />
+                                </label>
+                                <button type="button" class="btn cm-talario-remove-variation">Удалить</button>
+                            </div>
                         </script>
-                        <button type="button" class="btn" id="talario_add_variation">Добавить сочетание</button>
-                    </div>
+                        <button type="button" class="btn" id="talario_add_variation"{if !$talario_variation_group_id} disabled{/if}>Добавить вариант</button>
+                    {elseif !$talario_class.product_id}
+                        <p class="muted description">Варианты можно добавить после сохранения черновика.</p>
+                    {else}
+                        <p class="muted description">Для выбранной категории варианты пока не настроены. Обратитесь в Talario.</p>
+                    {/if}
                 </div>
-            {elseif !$talario_class.product_id}
-                <div class="control-group"><div class="controls muted">Сначала сохраните основные данные как черновик — после этого можно будет добавить варианты.</div></div>
-            {/if}
+            </div>
 
             <div class="control-group">
                 <label class="control-label cm-required" for="elm_talario_class_location">Где проходит занятие:</label>
@@ -166,7 +194,7 @@
 
         <div class="buttons-container talario-class-editor__buttons">
             <a class="btn" href="{"talario_classes.manage"|fn_url}">Отменить</a>
-            {if $talario_class.product_id}
+            {if $talario_class.product_id && !$talario_class.variations}
                 <a class="btn" href="{"talario_classes.schedule?product_id=`$talario_class.product_id`"|fn_url}">Расписание</a>
             {/if}
             <button type="submit" name="save_action" value="draft" class="btn">Сохранить черновик</button>
@@ -178,13 +206,25 @@
 <script>
 (function (_, $) {
     var index = 0;
+    var $axis = $('#talario_variation_axis');
+    $axis.on('change', function () {
+        $('#talario_add_variation').prop('disabled', !this.value);
+        $('#talario_new_variations').empty();
+    });
     $('#talario_add_variation').on('click', function () {
         var html = $('#talario_variation_row_template').html().replace(/__INDEX__/g, index++);
         var $row = $(html);
+        if ($axis.length) {
+            var axisId = String($axis.val());
+            $row.find('.talario-variation-field').each(function () {
+                var isSelected = String($(this).attr('data-axis-id')) === axisId;
+                $(this).toggleClass('hidden', !isSelected).find('select').prop('disabled', !isSelected);
+            });
+        }
         $row.find('[data-name]').each(function () { this.name = $(this).data('name'); });
-        $('#talario_new_variations tbody').append($row);
+        $('#talario_new_variations').append($row);
     });
-    $(document).on('click', '.cm-talario-remove-variation', function () { $(this).closest('tr').remove(); });
+    $(document).on('click', '.cm-talario-remove-variation', function () { $(this).closest('.talario-variation-card').remove(); });
     $('#talario_preview_button').on('click', function () {
         var form = this.form;
         if (!form.checkValidity()) {
