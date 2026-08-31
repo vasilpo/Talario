@@ -28,7 +28,7 @@ $load_owned_product = static function ($product_id) use ($company_id) {
     }
 
     $product = db_get_row(
-        'SELECT p.product_id, p.company_id, p.status, pd.product, pd.full_description, pd.short_description, '
+        'SELECT p.product_id, p.company_id, p.status, p.timestamp, pd.product, pd.full_description, pd.short_description, '
         . 'pd.meta_keywords, pd.search_words, pd.address FROM ?:products AS p '
         . 'LEFT JOIN ?:product_descriptions AS pd ON pd.product_id = p.product_id AND pd.lang_code = ?s '
         . 'WHERE p.product_id = ?i',
@@ -349,6 +349,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $location_id = (int) ($class_data['location_id'] ?? 0);
         $category_id = (int) ($class_data['category_id'] ?? 0);
         $action = (string) ($_REQUEST['save_action'] ?? 'draft');
+        $wizard_step = max(1, min(4, (int) ($_REQUEST['wizard_step'] ?? 1)));
+        $wizard_next_step = max(1, min(4, (int) ($_REQUEST['wizard_next_step'] ?? $wizard_step)));
         if (!in_array($action, ['draft', 'preview', 'submit'], true)) {
             return [CONTROLLER_STATUS_DENIED];
         }
@@ -360,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 . 'Чтобы не снять текущую карточку с витрины, изменения не сохранены. '
                 . 'Их можно передать только кнопкой «Отправить на проверку».'
             );
-            return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id];
+            return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . $product_id . '&step=' . $wizard_step];
         }
         if ($existing && $existing['status'] === ObjectStatuses::ACTIVE && $action === 'preview') {
             $image_request = [];
@@ -478,7 +480,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } catch (InvalidArgumentException $e) {
                 fn_set_notification('E', __('error'), $e->getMessage());
                 return [CONTROLLER_STATUS_REDIRECT, $product_id
-                    ? 'talario_classes.update?product_id=' . $product_id
+                    ? 'talario_classes.update?product_id=' . $product_id . '&step=' . $wizard_step
                     : 'talario_classes.add'];
             } catch (RuntimeException $e) {
                 return [CONTROLLER_STATUS_DENIED];
@@ -547,6 +549,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     fn_vendor_data_premoderation_delete_premoderation(array_map('intval', $affected_ids));
                 }
                 if ($action === 'submit') {
+                    // A card must never reach moderation without a bookable slot.
+                    // The parent is only a catalogue shell when variations exist,
+                    // so validate the child groups in that case.
+                    $schedule_product_ids = array_values(array_diff(
+                        array_map('intval', $affected_ids),
+                        [(int) $saved_product_id]
+                    ));
+                    if (!$schedule_product_ids) {
+                        $schedule_product_ids = [(int) $saved_product_id];
+                    }
+                    $schedule_bridge = new BookingBridgeService();
+                    foreach ($schedule_product_ids as $schedule_product_id) {
+                        try {
+                            $schedule_bridge->validateScheduleData(
+                                $company_id,
+                                $schedule_bridge->getFormData($schedule_product_id, $company_id)
+                            );
+                        } catch (InvalidArgumentException $e) {
+                            throw new InvalidArgumentException(
+                                'Заполните расписание для каждой группы перед отправкой на проверку. '
+                                . $e->getMessage()
+                            );
+                        }
+                    }
                     if (!function_exists('fn_vendor_data_premoderation_request_approval_for_products')) {
                         throw new RuntimeException('Модуль проверки занятий недоступен.');
                     }
@@ -619,14 +645,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'talario_classes.update?product_id=' . (int) $saved_product_id . '&open_preview=1'
                     ];
                 }
-                return [CONTROLLER_STATUS_REDIRECT, 'talario_classes.update?product_id=' . (int) $saved_product_id];
+                return [
+                    CONTROLLER_STATUS_REDIRECT,
+                    'talario_classes.update?product_id=' . (int) $saved_product_id . '&step=' . $wizard_next_step
+                ];
             }
         }
 
         $redirect = $product_id
-            ? 'talario_classes.update?product_id=' . $product_id
+            ? 'talario_classes.update?product_id=' . $product_id . '&step=' . $wizard_step
             : 'talario_classes.add';
         return [CONTROLLER_STATUS_REDIRECT, $redirect];
+    }
+
+    if ($mode === 'save_schedules') {
+        $product_id = isset($_REQUEST['product_id']) ? (int) $_REQUEST['product_id'] : 0;
+        $product = $load_owned_product($product_id);
+        if (!$product) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
+        $target_ids = $product['variations']
+            ? array_map('intval', array_column($product['variations'], 'product_id'))
+            : [$product_id];
+        $schedules = isset($_REQUEST['schedules']) && is_array($_REQUEST['schedules'])
+            ? $_REQUEST['schedules']
+            : [];
+        if (array_diff(array_keys($schedules), $target_ids) || array_diff($target_ids, array_map('intval', array_keys($schedules)))) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
+        try {
+            $bridge = new BookingBridgeService();
+            foreach ($target_ids as $target_id) {
+                $bridge->validateProductSchedule($target_id, $company_id, (array) $schedules[$target_id]);
+            }
+            foreach ($target_ids as $target_id) {
+                $bridge->syncProductSchedule($target_id, $company_id, (array) $schedules[$target_id]);
+            }
+            fn_set_notification('N', __('notice'), 'Расписание сохранено. Черновик обновлён.');
+            return [
+                CONTROLLER_STATUS_REDIRECT,
+                'talario_classes.update?product_id=' . $product_id . '&step=4'
+            ];
+        } catch (InvalidArgumentException $e) {
+            fn_set_notification('E', __('error'), $e->getMessage());
+        } catch (RuntimeException $e) {
+            return [CONTROLLER_STATUS_DENIED];
+        }
+        return [
+            CONTROLLER_STATUS_REDIRECT,
+            'talario_classes.update?product_id=' . $product_id . '&step=3'
+        ];
     }
 
     if ($mode === 'save_schedule') {
@@ -736,9 +804,45 @@ if ($mode === 'manage') {
         ];
     }
 
+    $current_step = max(1, min(4, (int) ($_REQUEST['step'] ?? 1)));
+    if (!$product['product_id']) {
+        $current_step = 1;
+    }
     $variation_group_id = $product['product_id']
         ? (int) VariationsServiceProvider::getGroupRepository()->findGroupIdByProductId((int) $product['product_id'])
         : 0;
+    $schedule_groups = [];
+    if ($product['product_id']) {
+        $schedule_products = $product['variations'] ?: [[
+            'product_id' => (int) $product['product_id'],
+            'product' => (string) $product['product'],
+            'talario_label' => 'Основная группа',
+        ]];
+        $bridge = new BookingBridgeService();
+        foreach ($schedule_products as $schedule_product) {
+            $schedule_product_id = (int) $schedule_product['product_id'];
+            try {
+                $schedule_data = $bridge->getFormData($schedule_product_id, $company_id);
+            } catch (RuntimeException $e) {
+                return [CONTROLLER_STATUS_DENIED];
+            }
+            if (empty($schedule_data['location_id'])) {
+                $schedule_data['location_id'] = (int) $context['selected_location_id'];
+            }
+            if (empty($schedule_data['slots'])) {
+                $schedule_data['slots'] = [[
+                    'weekday' => 0,
+                    'start_time' => '',
+                    'capacity' => '',
+                ]];
+            }
+            $schedule_groups[] = [
+                'product_id' => $schedule_product_id,
+                'label' => (string) ($schedule_product['talario_label'] ?: $schedule_product['product']),
+                'data' => $schedule_data,
+            ];
+        }
+    }
     Tygh::$app['view']->assign([
         'talario_class' => $product,
         'talario_class_locations' => $context['locations'],
@@ -746,6 +850,12 @@ if ($mode === 'manage') {
         'talario_class_location_id' => $context['selected_location_id'],
         'talario_class_category_id' => $context['selected_category_id'],
         'talario_variation_group_id' => $variation_group_id,
+        'talario_wizard_step' => $current_step,
+        'talario_schedule_groups' => $schedule_groups,
+        'talario_weekdays' => [
+            1 => 'Понедельник', 2 => 'Вторник', 3 => 'Среда', 4 => 'Четверг',
+            5 => 'Пятница', 6 => 'Суббота', 7 => 'Воскресенье',
+        ],
         'talario_variation_axes' => $get_variation_axes(
             (int) $context['selected_category_id'],
             (int) $product['product_id']
