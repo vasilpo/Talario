@@ -11,6 +11,9 @@
 {literal}<style>
 .talario-photo-upload__frame{max-width:430px}.talario-photo-upload .file-uploader__files-container{width:100%}.talario-photo-upload .file-uploader__pickers{width:100%}.talario-photo-upload .file-uploader__file-square--no-files{box-sizing:border-box;width:100%;height:138px;min-height:138px;border:1px dashed #b8a66c;border-radius:10px;background:#fbf8ee}.talario-photo-upload .file-uploader__pickers-content{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:100%;padding:0 24px}.talario-photo-upload .file-uploader__pickers-content p{display:none}.talario-photo-upload .file-uploader__pickers-buttons{margin:0}.talario-photo-upload .file-uploader__pickers-buttons-select{border-color:#9a7a1d;background:#fffdf8;color:#765d12;font-weight:700}.talario-photo-upload .file-uploader__file{width:132px}.talario-photo-upload .file-uploader__file-square{width:132px;height:132px}.talario-photo-upload .file-uploader__file-description-input{display:none}@media(max-width:600px){.talario-photo-upload__frame{max-width:none}.talario-photo-upload .file-uploader__file-square--no-files{height:118px;min-height:118px}}
 </style>{/literal}
+{literal}<style>
+.talario-photo-upload__compact{display:flex;flex-direction:column;align-items:flex-start;gap:8px;box-sizing:border-box;max-width:430px;padding:20px 22px;border:1px dashed #b8a66c;border-radius:10px;background:#fbf8ee}.talario-photo-upload__compact strong{font-size:16px}.talario-photo-upload__compact>span{color:#817c74;font-size:13px;font-weight:400}.talario-photo-upload__compact .btn{margin:3px 8px 0 0}.talario-photo-upload__compact .btn:first-child{border-color:#9a7a1d;background:#fffdf8;color:#765d12;font-weight:700}.talario-photo-upload__manage{font-weight:400}.talario-photo-upload__native{max-width:430px;margin-top:12px}.talario-photo-upload__native.hidden{display:none}@media(max-width:600px){.talario-photo-upload__compact,.talario-photo-upload__native{max-width:none}.talario-photo-upload__manage{display:block;margin-top:10px!important}}
+</style>{/literal}
 <div class="talario-cabinet talario-class-editor talario-wizard">
     {if $talario_class.talario_revision_comment}
         <div class="alert alert-warning"><strong>Занятие нужно доработать.</strong><br />Комментарий Talario: {$talario_class.talario_revision_comment}</div>
@@ -80,7 +83,7 @@
                         <label class="talario-field"><span>Коротко о занятии</span><textarea name="class_data[catalog_age]" rows="3">{$talario_class.short_description|strip_tags}</textarea><small>Короткая подпись для каталога: польза, формат или кому подходит.</small></label>
                         <label class="talario-field"><span>Описание</span><textarea name="class_data[full_description]" rows="10">{$talario_class.full_description}</textarea><small>Расскажите, чем занимаются дети, как проходит занятие и что важно знать перед записью.</small></label>
                         <label class="talario-field"><span>Ключевые слова для поиска</span><input type="text" name="class_data[meta_keywords]" value="{$talario_class.meta_keywords}" /><small>Например: биология, опыты, микроскоп. На витрине они не показываются.</small></label>
-                        <div class="talario-field talario-photo-upload"><span>Фотографии</span><div class="talario-photo-upload__frame">{include file="common/form_file_uploader.tpl" existing_pairs=(($talario_class.main_pair) ? [$talario_class.main_pair] : []) + $talario_class.image_pairs|default:[] file_name="file" image_pair_types=['N' => 'product_add_additional_image', 'M' => 'product_main_image', 'A' => 'product_additional_image'] image_object_id=$talario_class.product_id allow_update_files=true upload_file_text="Добавить фотографии"}</div><small>Можно добавить позже. Отметьте главное фото — оно будет видно в каталоге.</small></div>
+                        <div class="talario-field talario-photo-upload"><span>Фотографии</span><div class="talario-photo-upload__compact"><strong>Добавьте фотографии занятия</strong><span>Можно сделать это позже.</span><div><button type="button" class="btn btn-large" id="talario_add_photos">+ Добавить фотографии</button><button type="button" class="btn talario-photo-upload__manage" id="talario_manage_photos">Управлять фотографиями</button></div></div><div class="talario-photo-upload__native hidden">{include file="common/form_file_uploader.tpl" existing_pairs=(($talario_class.main_pair) ? [$talario_class.main_pair] : []) + $talario_class.image_pairs|default:[] file_name="file" image_pair_types=['N' => 'product_add_additional_image', 'M' => 'product_main_image', 'A' => 'product_additional_image'] image_object_id=$talario_class.product_id allow_update_files=true upload_file_text="Добавить фотографии"}</div><small>Главное фото будет видно в каталоге.</small></div>
                     </div>
                 </section>
                 <div class="talario-wizard__actions"><a class="btn btn-large" href="{"talario_classes.manage"|fn_url}">Отменить</a><button type="submit" name="save_action" value="draft" class="btn btn-primary btn-large">Сохранить и продолжить →</button></div>
@@ -129,6 +132,14 @@
         $group.find('[data-slot-list]').append(html);
     });
     $(document).on('click', '.cm-talario-remove-slot', function () { var $list = $(this).closest('[data-slot-list]'); if ($list.find('.talario-schedule-slot').length > 1) { $(this).closest('.talario-schedule-slot').remove(); } });
+    $('#talario_add_photos').on('click', function () {
+        var $native = $(this).closest('.talario-photo-upload').find('.talario-photo-upload__native');
+        $native.removeClass('hidden');
+        $native.find('[data-ca-fileupload-picker-local]').first().trigger('click');
+    });
+    $('#talario_manage_photos').on('click', function () {
+        $(this).closest('.talario-photo-upload').find('.talario-photo-upload__native').toggleClass('hidden');
+    });
     {if $talario_preview_url}window.location.replace({$talario_preview_url|json_encode nofilter});{/if}
 }(Tygh, Tygh.$));
 </script>
