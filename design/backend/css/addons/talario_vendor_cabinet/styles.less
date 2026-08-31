@@ -48,5 +48,64 @@
 .talario-variation-axis-summary { margin:18px 0 8px; }
 .talario-help { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border:1px solid #8a98a6; border-radius:50%; color:#667786; font-size:11px; line-height:1; cursor:help; }
 .talario-class-editor__buttons { max-width:980px; }
+.talario-wizard { max-width:1040px; color:#292621; }
+.talario-wizard__hero { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin:0 0 18px; }
+.talario-wizard__hero h2 { margin:4px 0 0; font-size:26px; line-height:1.2; }
+.talario-wizard__eyebrow, .talario-wizard__panel-heading > span { color:#947820; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.talario-wizard__save-state { color:#6d6a64; font-size:13px; white-space:nowrap; }
+.talario-wizard__saved-dot { display:inline-block; width:8px; height:8px; margin:0 7px 1px 0; border-radius:50%; background:#4c995d; }
+.talario-wizard__steps { display:flex; gap:8px; margin:0 0 20px; padding:14px; background:#fff; border:1px solid #e5e0d3; border-radius:12px; box-shadow:0 2px 10px rgba(64,51,23,.04); }
+.talario-wizard__step { display:flex; flex:1 1 0; align-items:center; gap:9px; min-width:0; padding:10px 12px; border-radius:9px; color:#77736d; text-decoration:none; }
+.talario-wizard__step:hover { color:#5d4c15; text-decoration:none; }
+.talario-wizard__step > span { display:flex; flex:0 0 auto; align-items:center; justify-content:center; width:25px; height:25px; border:1px solid #d7d2c7; border-radius:50%; font-size:13px; font-weight:700; }
+.talario-wizard__step strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; }
+.talario-wizard__step.is-active { color:#765d12; background:#f6f0df; }
+.talario-wizard__step.is-active > span { color:#fff; border-color:#9a7a1d; background:#9a7a1d; }
+.talario-wizard__step.is-complete { color:#4d7652; }
+.talario-wizard__step.is-complete > span { color:#fff; border-color:#63936a; background:#63936a; }
+.talario-wizard__panel { padding:30px; background:#fff; border:1px solid #e5e0d3; border-radius:12px; box-shadow:0 2px 10px rgba(64,51,23,.05); }
+.talario-wizard__panel-heading { max-width:720px; margin-bottom:26px; }
+.talario-wizard__panel-heading h2 { margin:7px 0 8px; font-size:28px; line-height:1.2; }
+.talario-wizard__panel-heading p { margin:0; color:#736f68; font-size:15px; line-height:1.5; }
+.talario-wizard__grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px 24px; max-width:900px; }
+.talario-wizard__grid--two { grid-template-columns:minmax(0, 1.5fr) minmax(220px, .7fr); margin-bottom:20px; }
+.talario-field { display:flex; flex-direction:column; gap:7px; min-width:0; margin:0; font-weight:600; }
+.talario-field > span { color:#403c36; font-size:14px; }
+.talario-field input, .talario-field select, .talario-field textarea, .talario-field__readonly { box-sizing:border-box; width:100%; min-height:42px; margin:0; padding:9px 11px; border:1px solid #d8d3c8; border-radius:8px; background:#fffdf8; box-shadow:none; font:inherit; }
+.talario-field textarea { min-height:96px; resize:vertical; line-height:1.45; }
+.talario-field input:focus, .talario-field select:focus, .talario-field textarea:focus { border-color:#a18223; outline:0; box-shadow:0 0 0 3px rgba(161,130,35,.14); }
+.talario-field small { color:#817c74; font-size:12px; font-weight:400; line-height:1.4; }
+.talario-field__readonly { display:flex; align-items:center; color:#514c44; background:#f7f4ec; }
+.talario-wizard .ty-fileuploader { max-width:100%; }
+.talario-wizard__actions { display:flex; justify-content:space-between; gap:12px; margin-top:20px; padding:16px 0 0; border-top:1px solid #e7e1d7; }
+.talario-wizard__actions .btn-primary, .talario-preview-step__card .btn-primary { border-color:#8d6f17; background:#9a7a1d; text-shadow:none; }
+.talario-wizard__actions .btn-primary:hover, .talario-preview-step__card .btn-primary:hover { border-color:#765c10; background:#85680f; }
+.talario-wizard__underhood { margin:18px 0 0; color:#837d73; font-size:12px; }
+.talario-axis-options { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+.talario-axis-options label { display:inline-flex; align-items:center; gap:6px; margin:0; padding:8px 10px; border:1px solid #ded8cc; border-radius:7px; background:#fffdf8; cursor:pointer; }
+.talario-axis-options input { margin:0; }
+.talario-variation-axis { max-width:none; margin:0 0 18px; border:1px solid #e4ded1; background:#fbf8f0; }
+.talario-variation-axis p { margin:6px 0 0; color:#777169; font-size:13px; }
+.talario-variation-axis-summary { margin:0 0 12px; color:#5d574e; }
+.talario-variation-list { max-width:none; }
+.talario-group-card { margin:0 0 14px; padding:20px; border:1px solid #e2dccc; border-radius:10px; background:#fcfbf7; }
+.talario-group-card__heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.talario-group-card__heading > div { display:flex; align-items:center; gap:9px; }
+.talario-group-card__heading h3 { margin:0; font-size:18px; line-height:1.3; }
+.talario-group-card__number { display:flex; align-items:center; justify-content:center; width:25px; height:25px; border-radius:50%; background:#eee4c3; color:#755b12; font-weight:700; }
+.talario-variation-card { align-items:flex-end; background:#fcfbf7; border-color:#e2dccc; }
+.talario-variation-card__fields { flex:1 1 390px; }
+.talario-variation-card__price { flex:0 0 130px; }
+.talario-variation-card__delete { margin:0 0 11px; }
+.talario-base-price { max-width:360px; margin-top:20px; }
+.talario-add-variation { margin-top:3px; }
+.talario-schedule-slots { display:flex; flex-direction:column; gap:10px; }
+.talario-schedule-slot { display:grid; grid-template-columns:minmax(170px, 1.3fr) minmax(130px, .8fr) minmax(100px, .6fr) auto; align-items:end; gap:12px; padding:14px; border:1px solid #e6e0d4; border-radius:8px; background:#fff; }
+.talario-add-slot { margin-top:12px; }
+.talario-preview-step__card { display:grid; grid-template-columns:auto minmax(0, 1fr) auto; align-items:center; gap:16px; padding:24px; border:1px solid #e3dbc8; border-radius:10px; background:#fbf7eb; }
+.talario-preview-step__card h3 { margin:0 0 6px; font-size:20px; }
+.talario-preview-step__card p { margin:0; color:#6f6a60; line-height:1.45; }
+.talario-preview-step__icon { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; background:#dcefdc; color:#478653; font-size:25px; font-weight:700; }
 @media (max-width: 980px) { .talario-stats { grid-template-columns:repeat(2,1fr); } .talario-class-grid { grid-template-columns:repeat(2,1fr); } .talario-partner-identity { max-width:360px; } }
-@media (max-width: 600px) { .talario-dashboard__header { align-items:stretch; flex-direction:column; } .talario-stats, .talario-stats--two, .talario-class-grid { grid-template-columns:1fr; } .talario-partner-identity { display:none; } .talario-notification { flex-direction:column; } .talario-class-editor .control-label { width:auto; float:none; text-align:left; } .talario-class-editor .controls { margin-left:0; } .talario-variation-card { align-items:stretch; flex-direction:column; } .talario-variation-card__name, .talario-variation-card__fields { flex-basis:auto; width:100%; } }
+@media (max-width: 980px) { .talario-wizard__grid { grid-template-columns:1fr; } .talario-wizard__grid--two { grid-template-columns:1fr; } .talario-schedule-slot { grid-template-columns:1fr 1fr; } .talario-schedule-slot .btn { justify-self:start; } .talario-preview-step__card { grid-template-columns:auto minmax(0, 1fr); } .talario-preview-step__card .btn { grid-column:1 / -1; justify-self:start; } }
+@media (max-width: 600px) { .talario-dashboard__header { align-items:stretch; flex-direction:column; } .talario-stats, .talario-stats--two, .talario-class-grid { grid-template-columns:1fr; } .talario-partner-identity { display:none; } .talario-notification { flex-direction:column; } .talario-class-editor .control-label { width:auto; float:none; text-align:left; } .talario-class-editor .controls { margin-left:0; } .talario-variation-card { align-items:stretch; flex-direction:column; } .talario-variation-card__name, .talario-variation-card__fields { flex-basis:auto; width:100%; } .talario-wizard__hero { align-items:flex-start; flex-direction:column; } .talario-wizard__steps { overflow-x:auto; padding:8px; } .talario-wizard__step { flex:0 0 auto; } .talario-wizard__step strong { font-size:12px; } .talario-wizard__panel { padding:20px 16px; } .talario-wizard__panel-heading h2 { font-size:24px; } .talario-wizard__actions { position:sticky; bottom:0; z-index:2; margin:16px -16px 0; padding:12px 16px; background:#fff; } .talario-wizard__actions .btn { min-width:0; } .talario-schedule-slot { grid-template-columns:1fr; } .talario-preview-step__card { grid-template-columns:1fr; } }
