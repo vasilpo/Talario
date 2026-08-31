@@ -1,4 +1,36 @@
 .talario-cabinet { max-width: 1280px; }
+.talario-cabinet { color:#252b33; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; }
+.talario-page-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin:2px 0 22px; }
+.talario-page-heading__eyebrow { display:block; margin-bottom:7px; color:#b58a13; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+.talario-page-heading h1 { margin:0; color:#252b33; font-size:29px; line-height:1.2; }
+.talario-page-heading p { margin:6px 0 0; color:#818896; font-size:14px; }
+.talario-button-primary { border:0; border-radius:8px; background:#f7c62f; color:#3f3210; font-weight:700; text-shadow:none; box-shadow:0 4px 10px rgba(196,150,20,.16); }
+.talario-button-primary:hover, .talario-button-primary:focus { background:#edb91c; color:#3f3210; }
+.talario-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+.talario-metric { display:flex; align-items:center; gap:14px; min-height:72px; padding:15px 17px; border:1px solid #e8ebf1; border-radius:12px; background:#fff; box-shadow:0 3px 12px rgba(36,47,65,.04); color:#252b33; text-decoration:none; }
+.talario-metric:hover { color:#252b33; border-color:#d9dfe8; text-decoration:none; transform:translateY(-1px); }
+.talario-metric i { display:flex; align-items:center; justify-content:center; flex:0 0 42px; width:42px; height:42px; border-radius:50%; font-size:22px; font-style:normal; font-weight:700; }
+.talario-metric span { display:flex; flex-direction:column; min-width:0; }
+.talario-metric strong { font-size:25px; line-height:1; }
+.talario-metric small { margin-top:6px; color:#77808d; font-size:12px; line-height:1.2; }
+.talario-metric--green i { background:#e7f6ec; color:#4caa6a; }.talario-metric--blue i { background:#eaf3ff; color:#5091dd; }.talario-metric--gold i { background:#fff4d9; color:#e0a415; }.talario-metric--violet i { background:#f0ebff; color:#8465dc; }
+.talario-home__grid { display:grid; grid-template-columns:minmax(0,1.52fr) minmax(310px,.82fr); gap:18px; }
+.talario-home__grid--bottom { grid-template-columns:minmax(310px,.84fr) minmax(0,1.5fr); margin-top:18px; }
+.talario-panel { padding:20px; border:1px solid #e8ebf1; border-radius:12px; background:#fff; box-shadow:0 3px 12px rgba(36,47,65,.04); }
+.talario-panel__heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px; }
+.talario-panel__heading h2, .talario-promo-card h2 { margin:0; color:#2a3038; font-size:18px; line-height:1.3; }
+.talario-panel__heading p { margin:4px 0 0; color:#818896; font-size:12px; }
+.talario-panel__heading > a { flex:0 0 auto; color:#5e95d5; font-size:12px; font-weight:600; }
+.talario-checklist { margin:0; padding:0; list-style:none; }
+.talario-checklist li { display:grid; grid-template-columns:36px minmax(0,1fr) auto; align-items:center; gap:11px; padding:13px 0; border-top:1px solid #eff1f4; }
+.talario-checklist li:first-child { border-top:0; }
+.talario-checklist strong { display:block; font-size:13px; line-height:1.3; }.talario-checklist p { margin:3px 0 0; color:#88909b; font-size:12px; line-height:1.35; }
+.talario-checklist .btn { min-width:82px; border-color:#e3e7ed; border-radius:7px; background:#fff; color:#4d5561; font-size:12px; font-weight:600; text-shadow:none; }
+.talario-checklist__icon { display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:9px; font-size:17px; font-weight:700; }.talario-checklist__icon--blue { background:#eaf3ff; color:#5591d8; }.talario-checklist__icon--green { background:#e7f6ec; color:#4eaa6a; }.talario-checklist__icon--gold { background:#fff3d7; color:#e5a614; }
+.talario-promo-card { position:relative; overflow:hidden; padding:25px 27px; border:1px solid #f3e5bc; border-radius:12px; background:linear-gradient(135deg,#fffdf6 0%,#fff6df 100%); box-shadow:0 3px 12px rgba(110,82,15,.04); }
+.talario-promo-card:after { position:absolute; right:-38px; bottom:-55px; width:165px; height:165px; border:18px solid rgba(247,198,47,.18); border-radius:50%; content:""; }.talario-promo-card h2 { max-width:220px; font-size:20px; }.talario-promo-card p { position:relative; z-index:1; max-width:290px; margin:12px 0 20px; color:#766d59; font-size:13px; line-height:1.55; }.talario-promo-card .btn { position:relative; z-index:1; }.talario-promo-card .close { position:absolute; z-index:2; top:10px; right:12px; border:0; background:transparent; color:#9d978b; font-size:20px; }.talario-promo-card__spark { position:absolute; right:34px; top:36px; color:#efbb23; font-size:32px; }
+.talario-finance-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }.talario-finance-summary > * { display:flex; flex-direction:column; min-height:76px; padding:13px; border-radius:9px; background:#f7f9fc; color:#2c333c; text-decoration:none; }.talario-finance-summary a:hover { color:#2c333c; background:#f3f7fc; text-decoration:none; }.talario-finance-summary small { color:#858d99; font-size:11px; line-height:1.3; }.talario-finance-summary strong { margin-top:auto; font-size:17px; line-height:1.2; }
+.talario-table { margin:0; }.talario-table th { color:#88909b; font-size:11px; font-weight:600; }.talario-table td { color:#48515e; font-size:12px; }.talario-table td a { color:#4e88ca; font-weight:600; }.talario-empty { padding:20px 0 4px; color:#565f6c; }.talario-empty p { margin:5px 0 0; color:#89919c; font-size:13px; }
 .talario-dashboard__header { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:24px; }
 .talario-dashboard__partner { font-size:16px; }
 .talario-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:24px; }
