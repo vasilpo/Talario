@@ -13,6 +13,7 @@ $schema['controllers']['talario_classes'] = [
         'save_class' => ['permissions' => 'manage_catalog'],
         'schedule' => ['permissions' => 'manage_catalog'],
         'save_schedule' => ['permissions' => 'manage_catalog'],
+        'save_schedules' => ['permissions' => 'manage_catalog'],
     ],
 ];
 $schema['controllers']['talario_locations'] = [
