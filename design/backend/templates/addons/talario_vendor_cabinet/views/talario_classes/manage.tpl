@@ -34,7 +34,7 @@
                             {if $product.status === "A"}Опубликовано{elseif $product.status === "R"}На проверке{elseif $product.status === "H"}Черновик{elseif $product.status === "D"}Приостановлено{else}На доработке{/if}
                         </span>
                     </div>
-                    {if $product.premoderation_reason}<div class="alert alert-warning">Комментарий Talario: {$product.premoderation_reason}</div>{/if}
+                    {if $product.premoderation_reason}<div class="alert alert-warning">Комментарий Таларио: {$product.premoderation_reason}</div>{/if}
                     <div class="talario-class-card__actions">
                         <a class="btn btn-block" href="{"talario_classes.update?product_id=`$product.product_id`"|fn_url}">{__("edit")}</a>
                         <a class="btn btn-block" href="{"talario_classes.schedule?product_id=`$product.product_id`"|fn_url}">Расписание</a>
