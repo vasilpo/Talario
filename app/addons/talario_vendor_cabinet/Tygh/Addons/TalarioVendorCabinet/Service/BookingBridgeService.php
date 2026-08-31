@@ -25,18 +25,9 @@ class BookingBridgeService
     {
         $product_id = (int) $product_id;
         $company_id = (int) $company_id;
+        $this->validateProductSchedule($product_id, $company_id, $data);
         $product = db_get_row('SELECT product_id, company_id FROM ?:products WHERE product_id = ?i', $product_id);
-        if (!$product) {
-            throw new InvalidArgumentException('Занятие не найдено.');
-        }
-        if ((int) $product['company_id'] !== $company_id) {
-            throw new RuntimeException('Cross-company operation is forbidden');
-        }
-
         $location_id = (int) ($data['location_id'] ?? 0);
-        if (!$location_id || !$this->schedule_resources->locationBelongsToCompany($location_id, $company_id)) {
-            throw new InvalidArgumentException('Выберите филиал.');
-        }
 
         // The validity period is an implementation detail. Partners must not be
         // able to accidentally create an expired (or excessively long) calendar.
@@ -45,24 +36,90 @@ class BookingBridgeService
         $to_date = $today->modify('+1 year')->format('Y-m-d');
 
         $duration = (int) ($data['duration_minutes'] ?? 0);
-        if ($duration <= 0 || $duration > 1440) {
-            throw new InvalidArgumentException('Укажите корректную продолжительность занятия.');
-        }
-
-        $days = $this->normalizeDays($data['days'] ?? [], $duration);
-        if (!$days) {
-            throw new InvalidArgumentException('Добавьте хотя бы один день и время занятия.');
-        }
+        $slots = $this->normalizeSlots($data, $duration);
 
         // A legacy class may still share one resource between all variations.
         // Editing a concrete variation separates only that product so its
         // calendar and capacity can differ without changing its siblings.
         $resource_id = $this->ensureIndependentResource($product_id);
-        $this->syncRules($resource_id, $location_id, $from_date, $to_date, $duration, $days);
+        $this->syncRules($resource_id, $location_id, $from_date, $to_date, $duration, $slots);
         $this->schedule_resources->syncOccurrencesFromRules($resource_id, $from_date, $to_date);
-        $this->syncEcarter($product_id, $from_date, $to_date, $duration, $days);
+        $this->syncEcarter($product_id, $from_date, $to_date, $duration, $slots);
 
-        return ['resource_id' => $resource_id, 'product_id' => $product_id, 'days' => $days];
+        return ['resource_id' => $resource_id, 'product_id' => $product_id, 'slots' => $slots];
+    }
+
+    /**
+     * Validates a wizard schedule before any product schedule is changed.
+     */
+    public function validateScheduleData($company_id, array $data)
+    {
+        $location_id = (int) ($data['location_id'] ?? 0);
+        if (!$location_id || !$this->schedule_resources->locationBelongsToCompany($location_id, (int) $company_id)) {
+            throw new InvalidArgumentException('Выберите филиал.');
+        }
+        $duration = (int) ($data['duration_minutes'] ?? 0);
+        if ($duration <= 0 || $duration > 1440) {
+            throw new InvalidArgumentException('Укажите корректную продолжительность занятия.');
+        }
+        if (!$this->normalizeSlots($data, $duration)) {
+            throw new InvalidArgumentException('Добавьте хотя бы один день и время занятия.');
+        }
+    }
+
+    /**
+     * Checks every condition that can be known before changing a resource.
+     * The wizard calls this for all groups first, avoiding a partly updated
+     * schedule when one of the later groups has active bookings.
+     */
+    public function validateProductSchedule($product_id, $company_id, array $data)
+    {
+        $product_id = (int) $product_id;
+        $company_id = (int) $company_id;
+        $product = db_get_row('SELECT product_id, company_id FROM ?:products WHERE product_id = ?i', $product_id);
+        if (!$product) {
+            throw new InvalidArgumentException('Занятие не найдено.');
+        }
+        if ((int) $product['company_id'] !== $company_id) {
+            throw new RuntimeException('Cross-company operation is forbidden');
+        }
+        $this->validateScheduleData($company_id, $data);
+
+        $resources = $this->schedule_resources->getResourcesForProduct($product_id);
+        foreach ($resources as $resource_id) {
+            $resource_products = array_map(
+                'intval',
+                $this->schedule_resources->getProductsForResource((int) $resource_id)
+            );
+            if ($resource_products === [$product_id]) {
+                return;
+            }
+        }
+        if (!$resources) {
+            return;
+        }
+        $has_active_bookings = (bool) db_get_field(
+            'SELECT 1 FROM ?:talario_resource_bookings AS booking '
+            . 'INNER JOIN ?:talario_resource_occurrences AS occurrence '
+            . 'ON occurrence.occurrence_id = booking.occurrence_id '
+            . 'WHERE booking.product_id = ?i AND booking.status = ?s '
+            . 'AND occurrence.starts_at >= ?s LIMIT 1',
+            $product_id,
+            'A',
+            date('Y-m-d H:i:s', TIME)
+        );
+        $has_active_holds = (bool) db_get_field(
+            'SELECT 1 FROM ?:talario_resource_holds WHERE product_id = ?i '
+            . 'AND status = ?s AND expires_at > ?i LIMIT 1',
+            $product_id,
+            'A',
+            TIME
+        );
+        if ($has_active_bookings || $has_active_holds) {
+            throw new InvalidArgumentException(
+                'У этой группы уже есть активные записи. Чтобы изменить её расписание отдельно, обратитесь в Talario.'
+            );
+        }
     }
 
     public function syncProductVariants($product_id, $company_id)
@@ -137,6 +194,7 @@ class BookingBridgeService
             'duration_minutes' => 45,
             'location_id' => 0,
             'days' => [],
+            'slots' => [],
         ];
 
         $resources = $this->schedule_resources->getResourcesForProduct($product_id);
@@ -154,11 +212,17 @@ class BookingBridgeService
                 $result['from_date'] = (string) $rule['valid_from'];
                 $result['to_date'] = (string) $rule['valid_to'];
                 $result['duration_minutes'] = (int) $rule['duration_minutes'];
-                $result['days'][$weekday] = [
+                $slot = [
+                    'weekday' => $weekday,
                     'enabled' => 1,
                     'start_time' => substr((string) $rule['starts_time'], 0, 5),
                     'capacity' => (int) $rule['capacity'],
                 ];
+                $result['slots'][] = $slot;
+                // Kept for the old standalone schedule form during rollout.
+                if (!isset($result['days'][$weekday])) {
+                    $result['days'][$weekday] = $slot;
+                }
             }
         }
         return $result;
@@ -228,62 +292,68 @@ class BookingBridgeService
         return $resource_id;
     }
 
-    private function syncRules($resource_id, $location_id, $from_date, $to_date, $duration, array $days)
+    private function syncRules($resource_id, $location_id, $from_date, $to_date, $duration, array $slots)
     {
         $existing = $this->schedule_resources->getRules($resource_id);
-        $existing_by_weekday = [];
+        $existing_by_key = [];
         foreach ($existing as $rule) {
-            $weekday = (int) $rule['weekday'];
-            if (!isset($existing_by_weekday[$weekday])) {
-                $existing_by_weekday[$weekday] = $rule;
-            } elseif (($rule['status'] ?? '') === 'A') {
-                $this->schedule_resources->disableRule((int) $rule['rule_id']);
-            }
+            $key = (int) $rule['weekday'] . '|' . substr((string) $rule['starts_time'], 0, 5);
+            $existing_by_key[$key] = $rule;
         }
 
-        foreach ($this->day_names as $weekday => $day_name) {
-            if (!isset($days[$weekday])) {
-                if (isset($existing_by_weekday[$weekday]) && ($existing_by_weekday[$weekday]['status'] ?? '') === 'A') {
-                    $this->schedule_resources->disableRule((int) $existing_by_weekday[$weekday]['rule_id']);
-                }
-                continue;
-            }
+        $wanted = [];
+        foreach ($slots as $slot) {
+            $weekday = (int) $slot['weekday'];
+            $key = $weekday . '|' . $slot['start_time'];
+            $wanted[$key] = true;
             $rule_data = [
                 'resource_id' => $resource_id,
                 'location_id' => $location_id,
                 'weekday' => $weekday,
-                'starts_time' => $days[$weekday]['start_time'] . ':00',
+                'starts_time' => $slot['start_time'] . ':00',
                 'duration_minutes' => $duration,
-                'capacity' => $days[$weekday]['capacity'],
+                'capacity' => $slot['capacity'],
                 'valid_from' => $from_date,
                 'valid_to' => $to_date,
                 'status' => 'A',
             ];
-            if (isset($existing_by_weekday[$weekday])) {
-                unset($rule_data['resource_id'], $rule_data['weekday']);
-                $this->schedule_resources->updateRule((int) $existing_by_weekday[$weekday]['rule_id'], $rule_data);
+            if (isset($existing_by_key[$key])) {
+                unset($rule_data['resource_id']);
+                $this->schedule_resources->updateRule((int) $existing_by_key[$key]['rule_id'], $rule_data);
             } else {
                 $this->schedule_resources->createRule($rule_data);
             }
         }
+        foreach ($existing_by_key as $key => $rule) {
+            if (!isset($wanted[$key]) && ($rule['status'] ?? '') === 'A') {
+                $this->schedule_resources->disableRule((int) $rule['rule_id']);
+            }
+        }
     }
 
-    private function syncEcarter($product_id, $from_date, $to_date, $duration, array $days)
+    private function syncEcarter($product_id, $from_date, $to_date, $duration, array $slots)
     {
         $days_data = [];
+        $slots_by_day = [];
+        foreach ($slots as $slot) {
+            $slots_by_day[(int) $slot['weekday']][] = $slot;
+        }
         foreach ($this->day_names as $weekday => $day_name) {
-            $enabled = isset($days[$weekday]);
-            $start_time = $enabled ? $days[$weekday]['start_time'] : '';
-            $end_time = $enabled ? $days[$weekday]['end_time'] : '';
+            $day_slots = $slots_by_day[$weekday] ?? [];
+            $enabled = (bool) $day_slots;
+            $start_time = $enabled ? $day_slots[0]['start_time'] : '';
+            $end_time = $enabled ? $day_slots[0]['end_time'] : '';
             $days_data[$day_name . '_status'] = $enabled ? 1 : 0;
             $days_data[$day_name . '_timing_start_time'] = $start_time;
             $days_data[$day_name . '_timing_end_time'] = $end_time;
             if ($enabled) {
-                $days_data[$day_name]['time_by_amount'] = [[
-                    'start_time' => $start_time,
-                    'end_time' => $end_time,
-                    'amount' => (int) $days[$weekday]['capacity'],
-                ]];
+                $days_data[$day_name]['time_by_amount'] = array_map(static function (array $slot) {
+                    return [
+                        'start_time' => $slot['start_time'],
+                        'end_time' => $slot['end_time'],
+                        'amount' => (int) $slot['capacity'],
+                    ];
+                }, $day_slots);
             }
         }
 
@@ -333,6 +403,53 @@ class BookingBridgeService
             ];
         }
         return $days;
+    }
+
+    private function normalizeSlots(array $data, $duration)
+    {
+        $raw_slots = isset($data['slots']) && is_array($data['slots']) ? $data['slots'] : [];
+        if (!$raw_slots && !empty($data['days']) && is_array($data['days'])) {
+            foreach ($this->normalizeDays($data['days'], $duration) as $weekday => $day) {
+                $raw_slots[] = $day + ['weekday' => $weekday];
+            }
+        }
+
+        $slots = [];
+        $seen = [];
+        foreach ($raw_slots as $raw) {
+            if (!is_array($raw)) {
+                continue;
+            }
+            $weekday = (int) ($raw['weekday'] ?? 0);
+            if (!isset($this->day_names[$weekday])) {
+                throw new InvalidArgumentException('Выберите день занятия.');
+            }
+            $start_time = $this->normalizeTime($raw['start_time'] ?? '');
+            $capacity = (int) ($raw['capacity'] ?? 0);
+            if ($capacity <= 0) {
+                throw new InvalidArgumentException('Количество мест должно быть больше нуля.');
+            }
+            $start = DateTimeImmutable::createFromFormat('!H:i', $start_time);
+            $end = $start ? $start->modify('+' . (int) $duration . ' minutes') : false;
+            if (!$start || !$end || $end->format('Y-m-d') !== $start->format('Y-m-d')) {
+                throw new InvalidArgumentException('Укажите корректное время занятия.');
+            }
+            $key = $weekday . '|' . $start_time;
+            if (isset($seen[$key])) {
+                throw new InvalidArgumentException('Одинаковые день и время добавлены дважды.');
+            }
+            $seen[$key] = true;
+            $slots[] = [
+                'weekday' => $weekday,
+                'start_time' => $start_time,
+                'end_time' => $end->format('H:i'),
+                'capacity' => $capacity,
+            ];
+        }
+        usort($slots, static function (array $left, array $right) {
+            return [$left['weekday'], $left['start_time']] <=> [$right['weekday'], $right['start_time']];
+        });
+        return $slots;
     }
 
     private function normalizeDate($value)
