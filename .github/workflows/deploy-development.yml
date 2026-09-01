@@ -57,5 +57,9 @@ jobs:
 
             git remote set-url origin https://github.com/vasilpo/Talario.git
             git pull --ff-only origin development
-            # dev_copy: clear generated templates and compiled assets after each deploy.\n            if [ -d var/cache ]; then\n              find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +\n            fi\n            echo "DEPLOY_OK $(git rev-parse --short HEAD)"
+            # dev_copy: clear generated templates and compiled assets after each deploy.
+            if [ -d var/cache ]; then
+              find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            fi
+            echo "DEPLOY_OK $(git rev-parse --short HEAD)"
           EOF
