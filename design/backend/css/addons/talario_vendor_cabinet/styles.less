@@ -156,7 +156,7 @@
 .talario-wizard__actions { margin-top:18px; border-color:#e8ebf1; }.talario-wizard__actions .btn-primary, .talario-preview-step__card .btn-primary { border:0; background:#f7c62f; color:#3f3210; box-shadow:0 4px 10px rgba(196,150,20,.16); }.talario-wizard__actions .btn-primary:hover, .talario-preview-step__card .btn-primary:hover { background:#edb91c; color:#3f3210; }.talario-preview-step__card { border-color:#e4e9f0; background:#fbfcfe; }.talario-preview-step__card p { color:#818896; }
 
 
-/* Единая тёплая оболочка кабинета партнёра: без верхней панели и голубого фона. */
+/* Единая белая оболочка кабинета партнёра. */
 html body.vendor-area {
     background: #ffffff !important;
     color: #292621;
@@ -173,30 +173,33 @@ html body.vendor-area #main_column {
 }
 html body.vendor-area .admin-content-wrap {
     min-height: 100vh;
+    padding-top: 0 !important;
 }
-
-/* Левое меню: светлый кремовый фон и аккуратный жёлтый акцент текущего раздела. */
 html body.vendor-area .cs-main-menu,
 html body.vendor-area .cs-main-menu__header,
 html body.vendor-area .cs-main-menu__outer,
 html body.vendor-area .cs-main-menu__inner,
 html body.vendor-area .cs-main-menu__primary,
 html body.vendor-area .cs-main-menu__secondary,
+html body.vendor-area .cs-main-menu__bottom-toolbar,
 html body.vendor-area .cs-main-menu .main-menu {
-    background: #faf8f3 !important;
+    background: #ffffff !important;
+    background-image: none !important;
 }
 html body.vendor-area .cs-main-menu {
-    border-right: 1px solid #e8e2d8 !important;
+    border-right: 1px solid #ececec !important;
+    box-shadow: none !important;
 }
 html body.vendor-area .cs-main-menu .main-menu-1__link,
 html body.vendor-area .cs-main-menu .main-menu-1__toggle,
 html body.vendor-area .cs-main-menu .main-menu-2__link,
 html body.vendor-area .cs-main-menu .main-menu-3__link {
+    background-color: transparent !important;
     color: #3f403f !important;
 }
 html body.vendor-area .cs-main-menu .main-menu-1__link:hover,
 html body.vendor-area .cs-main-menu .main-menu-1__toggle:hover {
-    background: #f5f1e8 !important;
+    background: #fff8e8 !important;
 }
 html body.vendor-area .cs-main-menu .main-menu-1__link--active,
 html body.vendor-area .cs-main-menu .main-menu-1__toggle--active,
@@ -210,35 +213,4 @@ html body.vendor-area .cs-main-menu .main-menu-1__link--active .cs-icon__svg,
 html body.vendor-area .cs-main-menu .main-menu-1__toggle--active .cs-icon__svg,
 html body.vendor-area .cs-main-menu .main-menu-1__link--active .main-menu-1__icon {
     color: #c28b12 !important;
-}
-
-/* Карточки и формы остаются нейтральными; жёлтый — только для действия и текущего шага. */
-html body.vendor-area .talario-cabinet,
-html body.vendor-area .talario-wizard,
-html body.vendor-area .talario-panel,
-html body.vendor-area .talario-stat,
-html body.vendor-area .talario-todo,
-html body.vendor-area .talario-class-card {
-    color: #292621;
-}
-html body.vendor-area .talario-wizard__eyebrow,
-html body.vendor-area .talario-wizard__panel-heading > span {
-    color: #91721a;
-}
-html body.vendor-area .talario-wizard__step:hover {
-    color: #715711;
-}
-html body.vendor-area .talario-wizard__step.is-active {
-    color: #614a0f;
-    background: #fff4d8;
-}
-html body.vendor-area .talario-wizard__step.is-active > span {
-    border-color: #e5ae18;
-    background: #e5ae18;
-}
-html body.vendor-area .talario-field input:focus,
-html body.vendor-area .talario-field select:focus,
-html body.vendor-area .talario-field textarea:focus {
-    border-color: #dfb442;
-    box-shadow: 0 0 0 3px rgba(229,174,24,.16);
 }
