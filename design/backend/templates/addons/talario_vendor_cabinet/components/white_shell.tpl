@@ -12,6 +12,7 @@
     --cs-menu-sidebar-bg: none;
     --cs-admin-content-wrap-shadow: none;
     --cs-admin-content-wrap-radius: 0px;
+    --cs-form-actions-background: #ffffff;
 }
 
 html,
@@ -80,6 +81,12 @@ html body .cs-main-menu .main-menu-3__link--active {
     background-color: #fff1c9 !important;
     color: #4a3a0f !important;
     box-shadow: inset 3px 0 0 #f3bd25 !important;
+}
+
+/* Пустые состояния также остаются на белом фоне. */
+html body .no-items,
+html body #elm_booking .no-items {
+    background: #ffffff !important;
 }
 
 /* Жёлтый остаётся акцентом действия, а не подложкой страницы. */
