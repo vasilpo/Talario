@@ -132,3 +132,27 @@ html body .cs-main-menu__logo-wrapper .logo-menu__logo-short {
 </style>
 {/literal}
 {/if}
+
+
+{if $runtime.company_id}
+{literal}
+<style>
+/* Логотип имеет белую подложку — вся панель приведена к тому же чистому белому. */
+html body .cs-main-menu,
+html body .cs-main-menu__header,
+html body .cs-main-menu__outer,
+html body .cs-main-menu__inner,
+html body .cs-main-menu__primary,
+html body .cs-main-menu__secondary,
+html body .cs-main-menu .main-menu,
+html body .cs-main-menu__logo-wrapper,
+html body .cs-main-menu__logo-wrapper .logo-menu__btn,
+html body .cs-main-menu__logo-wrapper .logo-menu__btn-inner {
+    background: #ffffff !important;
+}
+html body .cs-main-menu__logo-wrapper img {
+    mix-blend-mode: normal !important;
+}
+</style>
+{/literal}
+{/if}
