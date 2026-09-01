@@ -53,6 +53,7 @@ html body .cs-main-menu .main-menu-1__link:hover {
 }
 </style>{/literal}
 
+{include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
 <div class="talario-cabinet talario-class-editor talario-wizard">
     {if $talario_class.talario_revision_comment}
         <div class="alert alert-warning"><strong>Занятие нужно доработать.</strong><br />Комментарий Talario: {$talario_class.talario_revision_comment}</div>
