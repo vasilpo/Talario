@@ -46,8 +46,16 @@ html body.vendor-area #top_bar_search {
 html body.vendor-area #top_bar_right {
     display: flex !important;
     align-items: center;
-    justify-content: flex-end;
-    margin-left: auto;
+    position: absolute;
+    left: calc(var(--main-menu-width) + 24px);
+    right: 24px;
+    top: 0;
+    bottom: 0;
+    min-width: 0;
+}
+html body.vendor-area .talario-partner-identity {
+    margin-right: auto !important;
+    max-width: calc(100vw - var(--main-menu-width) - 190px);
 }
 html body.vendor-area .talario-partner-identity {
     display: flex !important;
