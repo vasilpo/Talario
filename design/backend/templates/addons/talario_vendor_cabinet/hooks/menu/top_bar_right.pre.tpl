@@ -102,9 +102,5 @@ html body.vendor-area .cs-main-menu .logo-menu__btn,
 html body.vendor-area .cs-main-menu .logo-menu__btn-inner {
     background: #f8f2e8 !important;
 }
-html body.vendor-area .cs-main-menu .logo-menu__logo,
-html body.vendor-area .cs-main-menu .logo-menu__logo-short {
-    mix-blend-mode: multiply;
-}
 </style>
 {/literal}
