@@ -28,6 +28,10 @@
         {$menuSidebarBg = "none" scope=parent}
     {/if}
 
+    {* Talario: единый нейтральный фон всего меню кабинета партнёра. *}
+    {$menuSidebarColor = "#f8f2e8" scope=parent}
+    {$menuSidebarBg = "none" scope=parent}
+
     {if $is_gray_main_color}
         {$isGrayMainColor = $is_gray_main_color|default:false scope=parent}
     {/if}
