@@ -21,6 +21,38 @@
 {literal}<style>
 .talario-wizard__actions{display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:12px!important;margin-top:28px!important;padding:18px 0 0!important}.talario-wizard__actions .btn{flex:0 0 auto!important;min-width:104px!important;margin:0!important}.talario-wizard__actions .btn-primary{min-width:220px!important}.talario-photo-upload__compact{gap:10px!important;padding:18px!important}.talario-photo-upload__compact>div{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important;margin-top:2px!important}.talario-photo-upload__compact .btn{margin:0!important;min-height:36px!important}.talario-photo-upload__compact .btn:first-child{border-color:#d7e2ee!important;background:#fff!important;color:#397abd!important;font-weight:600!important}.talario-photo-upload__compact .talario-photo-upload__manage{border-color:transparent!important;background:transparent!important;color:#6b7280!important;font-size:12px!important}.talario-photo-upload__compact .talario-photo-upload__manage:hover{background:#f5f7fa!important;color:#2d3540!important}@media(max-width:600px){.talario-wizard__actions{justify-content:stretch!important;flex-direction:column-reverse!important}.talario-wizard__actions .btn,.talario-wizard__actions .btn-primary{width:100%!important}.talario-photo-upload__compact>div{align-items:stretch!important;flex-direction:column!important}.talario-photo-upload__compact .btn{width:100%!important}}
 </style>{/literal}
+{literal}<style>
+/* Neutral navigation for the class creation wizard. */
+html body .cs-main-menu,
+html body .cs-main-menu__header,
+html body .cs-main-menu__outer,
+html body .cs-main-menu__inner,
+html body .cs-main-menu__primary,
+html body .cs-main-menu__secondary,
+html body .cs-main-menu .main-menu {
+    background: #ffffff !important;
+}
+html body .cs-main-menu {
+    border-right: 1px solid #e7eaee !important;
+}
+html body .cs-main-menu .main-menu-1__link,
+html body .cs-main-menu .main-menu-2__link,
+html body .cs-main-menu .main-menu-3__link {
+    color: #3e4651 !important;
+}
+html body .cs-main-menu .main-menu-1__link--active,
+html body .cs-main-menu .main-menu-1__toggle--active,
+html body .cs-main-menu .main-menu-2__link--active,
+html body .cs-main-menu .main-menu-3__link--active {
+    background: #f3f4f6 !important;
+    color: #2d3540 !important;
+    box-shadow: none !important;
+}
+html body .cs-main-menu .main-menu-1__link:hover {
+    background: #f8fafc !important;
+}
+</style>{/literal}
+
 <div class="talario-cabinet talario-class-editor talario-wizard">
     {if $talario_class.talario_revision_comment}
         <div class="alert alert-warning"><strong>Занятие нужно доработать.</strong><br />Комментарий Talario: {$talario_class.talario_revision_comment}</div>
