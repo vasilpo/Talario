@@ -1,4 +1,5 @@
 {capture name="mainbox"}
+{include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
 {include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 <form action="{""|fn_url}" method="post" name="talario_location_form" class="form-horizontal form-edit">
     <input type="hidden" name="dispatch" value="talario_locations.update" />
