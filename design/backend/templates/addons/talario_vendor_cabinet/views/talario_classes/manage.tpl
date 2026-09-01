@@ -1,4 +1,5 @@
 {capture name="mainbox"}
+{include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
 {include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 <div class="talario-cabinet">
     <div class="talario-dashboard__header">
