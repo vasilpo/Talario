@@ -91,3 +91,24 @@ html body .cs-main-menu__logo-wrapper img {
 </style>
 {/literal}
 {/if}
+
+
+{if $runtime.company_id}
+{literal}
+<style>
+/* Единый цвет всей левой панели и подложки логотипа. */
+html body .cs-main-menu,
+html body .cs-main-menu__header,
+html body .cs-main-menu__outer,
+html body .cs-main-menu__inner,
+html body .cs-main-menu__primary,
+html body .cs-main-menu__secondary,
+html body .cs-main-menu .main-menu,
+html body .cs-main-menu__logo-wrapper,
+html body .cs-main-menu__logo-wrapper a,
+html body .cs-main-menu__logo-wrapper .logo-container {
+    background: #fffaf0 !important;
+}
+</style>
+{/literal}
+{/if}
