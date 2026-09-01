@@ -1,4 +1,4 @@
-{if $auth.user_type === "UserTypes::VENDOR"|enum}
+{if $runtime.controller === "talario_dashboard" || $runtime.controller === "talario_locations" || $runtime.controller === "talario_classes" || $runtime.controller === "talario_finance" || $runtime.controller === "talario_messages" || $runtime.controller === "talario_notifications" || $runtime.controller === "talario_profile" || $runtime.controller === "talario_documents" || $runtime.controller === "ec_table_booking_system" || $runtime.controller === "vendor_communication"}
 {literal}
 <style>
 /* Единый визуальный слой кабинета партнёра. Не затрагивает администратора. */
