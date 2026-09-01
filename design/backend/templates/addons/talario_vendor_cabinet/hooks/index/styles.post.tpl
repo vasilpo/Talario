@@ -156,3 +156,37 @@ html body .cs-main-menu__logo-wrapper img {
 </style>
 {/literal}
 {/if}
+
+
+{if $runtime.company_id}
+{literal}
+<style>
+/* Единый белый фон кабинета без кремовых и голубых подложек. */
+html,
+html body,
+html body .main-wrap,
+html body .admin-content,
+html body .admin-content-wrap,
+html body .main-content,
+html body .content-wrap,
+html body #main_column,
+html body .mainbox-container,
+html body .mainbox-body,
+html body .ty-mainbox-container,
+html body .talario-cabinet,
+html body .talario-home,
+html body .cs-main-menu,
+html body .cs-main-menu__header,
+html body .cs-main-menu__outer,
+html body .cs-main-menu__inner,
+html body .cs-main-menu__primary,
+html body .cs-main-menu__secondary,
+html body .cs-main-menu .main-menu,
+html body .cs-main-menu__logo-wrapper,
+html body .cs-main-menu__logo-wrapper .logo-menu__btn,
+html body .cs-main-menu__logo-wrapper .logo-menu__btn-inner {
+    background: #ffffff !important;
+}
+</style>
+{/literal}
+{/if}
