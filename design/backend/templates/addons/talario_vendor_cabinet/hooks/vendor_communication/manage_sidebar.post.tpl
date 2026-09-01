@@ -1,3 +1,4 @@
+{include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 {if $runtime.company_id && $communication_type == "vendor_to_admin"}
     <div class="talario-message-help">
         <strong>Связь с Таларио</strong>
