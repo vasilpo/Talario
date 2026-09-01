@@ -76,5 +76,34 @@ html body.vendor-area .talario-partner-identity span {
     color: #77736d !important;
     font-size: 12px !important;
 }
+
+/* Единая поверхность меню: правило находится вне ограничений контроллеров. */
+html body.vendor-area {
+    --cs-menu-sidebar-color: #f8f2e8 !important;
+    --cs-menu-sidebar-bottom-toolbar-color: #f8f2e8 !important;
+}
+html body.vendor-area .cs-main-menu {
+    --cs-menu-sidebar-color: #f8f2e8 !important;
+    --cs-menu-sidebar-bottom-toolbar-color: #f8f2e8 !important;
+    --cs-content-background: #f8f2e8 !important;
+    background-color: #f8f2e8 !important;
+}
+html body.vendor-area .cs-main-menu,
+html body.vendor-area .cs-main-menu__header,
+html body.vendor-area .cs-main-menu__outer,
+html body.vendor-area .cs-main-menu__inner,
+html body.vendor-area .cs-main-menu__primary,
+html body.vendor-area .cs-main-menu__secondary,
+html body.vendor-area .cs-main-menu__bottom-toolbar {
+    background-color: #f8f2e8 !important;
+    background-image: none !important;
+}
+html body.vendor-area .cs-main-menu .logo-menu__btn,
+html body.vendor-area .cs-main-menu .logo-menu__btn-inner {
+    background-color: #f8f2e8 !important;
+}
+html body.vendor-area .cs-main-menu .logo-menu__logo--custom {
+    mix-blend-mode: multiply;
+}
 </style>
 {/literal}
