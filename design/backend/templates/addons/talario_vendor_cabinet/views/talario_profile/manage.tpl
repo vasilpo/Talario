@@ -1,4 +1,5 @@
 {capture name="mainbox"}
+{include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 <div class="talario-cabinet">
     <section class="talario-todo">
         <h2>Данные партнёра</h2>

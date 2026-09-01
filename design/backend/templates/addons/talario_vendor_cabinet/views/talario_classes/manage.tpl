@@ -1,4 +1,5 @@
 {capture name="mainbox"}
+{include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 <div class="talario-cabinet">
     <div class="talario-dashboard__header">
         <nav class="talario-filters" aria-label="{__("talario_vendor_cabinet.filters")}">
