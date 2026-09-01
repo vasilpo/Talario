@@ -17,17 +17,13 @@
 {/if}
 {if $talario_header_company_id}
     {$talario_header_company = $talario_header_company_id|fn_get_company_data}
-    {$talario_header_center_name = $talario_header_company_id|fn_talario_vendor_cabinet_get_center_name}
 {/if}
 <div class="talario-partner-identity">
     <strong>{$talario_header_company.company|default:$talario_header_user.company|default:$user_info.company|default:"Партнёр"}</strong>
-    {if $talario_header_center_name}
-        <span>({$talario_header_center_name})</span>
-    {/if}
 </div>
 {literal}
 <style>
-/* Компактная шапка кабинета: юридическое имя и публичное название центра. */
+/* Компактная шапка кабинета: одно название партнёра. */
 html body.vendor-area #top_bar {
     display: block !important;
     min-height: 56px;
