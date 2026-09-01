@@ -75,3 +75,19 @@ html body .talario-field textarea:focus {
 </style>
 {/literal}
 {/if}
+
+
+{if $runtime.company_id}
+{literal}
+<style>
+html body .cs-main-menu__logo-wrapper,
+html body .cs-main-menu__logo-wrapper a,
+html body .cs-main-menu__logo-wrapper .logo-container {
+    background: #fffaf0 !important;
+}
+html body .cs-main-menu__logo-wrapper img {
+    mix-blend-mode: multiply;
+}
+</style>
+{/literal}
+{/if}
