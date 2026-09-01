@@ -11,7 +11,7 @@
     {$image_short_data_dark = "{$images_dir}/addons/talario_vendor_cabinet/talario_logo_symbol_transparent.svg"}
     {$image_short_attributes_dark = [
         "src" => $image_short_data_dark,
-        "class" => "logo-menu__logo logo-menu__logo-short--menu-type-dropdown"
+        "class" => "logo-menu__logo-short logo-menu__logo-short--menu-type-dropdown"
     ]}
 
     {$image_data_light = "{$images_dir}/addons/talario_vendor_cabinet/talario_logo_transparent.svg"}
@@ -23,7 +23,7 @@
     {$image_short_data_light = "{$images_dir}/addons/talario_vendor_cabinet/talario_logo_symbol_transparent.svg"}
     {$image_short_attributes_light = [
         "src" => $image_short_data_light,
-        "class" => "logo-menu__logo logo-menu__logo-short--menu-type-dropdown"
+        "class" => "logo-menu__logo-short logo-menu__logo-short--menu-type-dropdown"
     ]}
 
     {if $backoffice_color_scheme === "BackofficeColorSchemeVariants::DARK"|enum}
