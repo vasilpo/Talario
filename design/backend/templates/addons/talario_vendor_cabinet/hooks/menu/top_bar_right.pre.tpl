@@ -21,5 +21,56 @@
 {/if}
 <div class="talario-partner-identity">
     <strong>{$talario_header_company.company|default:$talario_header_user.company|default:$user_info.company|default:"Партнёр"}</strong>
-    <span>{$user_info.firstname|default:$talario_header_user.firstname} {$user_info.lastname|default:$talario_header_user.lastname}</span>
+    {if $talario_header_center_name}
+        <span>({$talario_header_center_name})</span>
+    {/if}
 </div>
+{literal}
+<style>
+/* Компактная шапка кабинета: юридическое имя и публичное название центра. */
+html body.vendor-area #top_bar {
+    display: block !important;
+    min-height: 56px;
+    background: #ffffff !important;
+    border-bottom: 1px solid #ececec !important;
+}
+html body.vendor-area #top_bar .top-bar__inner {
+    min-height: 56px;
+    padding: 0 24px;
+    background: #ffffff !important;
+}
+html body.vendor-area #top_bar_left,
+html body.vendor-area #top_bar_search {
+    display: none !important;
+}
+html body.vendor-area #top_bar_right {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+html body.vendor-area .talario-partner-identity {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 6px;
+    min-width: 0 !important;
+    margin: 0 14px 0 0 !important;
+    color: #292621 !important;
+}
+html body.vendor-area .talario-partner-identity strong,
+html body.vendor-area .talario-partner-identity span {
+    max-width: none !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+html body.vendor-area .talario-partner-identity strong {
+    font-size: 13px !important;
+}
+html body.vendor-area .talario-partner-identity span {
+    color: #77736d !important;
+    font-size: 12px !important;
+}
+</style>
+{/literal}
