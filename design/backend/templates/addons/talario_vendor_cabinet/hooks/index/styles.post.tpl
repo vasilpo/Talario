@@ -112,3 +112,23 @@ html body .cs-main-menu__logo-wrapper .logo-container {
 </style>
 {/literal}
 {/if}
+
+
+{if $runtime.company_id}
+{literal}
+<style>
+/* У логотипа и панели один фон, включая внутреннюю обёртку стандартного меню. */
+html body .cs-main-menu__logo-wrapper,
+html body .cs-main-menu__logo-wrapper .logo-menu__btn,
+html body .cs-main-menu__logo-wrapper .logo-menu__btn-inner,
+html body .cs-main-menu__logo-wrapper .logo-menu__logo,
+html body .cs-main-menu__logo-wrapper .logo-menu__logo-short {
+    background-color: #fffaf0 !important;
+}
+html body .cs-main-menu__logo-wrapper .logo-menu__logo,
+html body .cs-main-menu__logo-wrapper .logo-menu__logo-short {
+    mix-blend-mode: multiply !important;
+}
+</style>
+{/literal}
+{/if}
