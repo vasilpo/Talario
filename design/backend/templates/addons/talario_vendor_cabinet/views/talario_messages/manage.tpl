@@ -1,6 +1,5 @@
 {capture name="mainbox"}
 {include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
-{include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 <div class="talario-cabinet">
     <section class="talario-todo talario-message-card">
     <p class="muted">Выберите, кому хотите написать.</p>

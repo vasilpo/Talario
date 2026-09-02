@@ -14,11 +14,14 @@ if (!$company_id) {
 }
 
 if ($mode === 'manage') {
-    $counts = array_fill_keys(['active', 'pending', 'disabled', 'bookings'], 0);
+    $counts = array_fill_keys(['active', 'pending', 'drafts', 'rejected', 'bookings'], 0);
     $status_groups = [
         'active'   => [ObjectStatuses::ACTIVE],
         'pending'  => [ProductStatuses::REQUIRES_APPROVAL],
-        'disabled' => [ObjectStatuses::DISABLED, ObjectStatuses::HIDDEN, ProductStatuses::DISAPPROVED],
+        // В кабинете «Черновики» — это только занятия со статусом H.
+        // Выключенные и отклонённые занятия не должны выдавать себя за черновики.
+        'drafts'   => [ObjectStatuses::HIDDEN],
+        'rejected' => [ProductStatuses::DISAPPROVED],
     ];
 
     foreach ($status_groups as $count_key => $statuses) {
@@ -58,6 +61,28 @@ if ($mode === 'manage') {
         $company_id
     );
 
+    $attention_items = [];
+    if ($counts['drafts'] > 0) {
+        $attention_items[] = [
+            'type'        => 'drafts',
+            'count'       => $counts['drafts'],
+            'title'       => 'Есть черновики занятий',
+            'description' => 'Опубликуйте их, чтобы родители могли записываться.',
+            'url'         => fn_url('talario_classes.manage?talario_status=disabled'),
+            'action'      => 'Открыть черновики',
+        ];
+    }
+    if ($counts['rejected'] > 0) {
+        $attention_items[] = [
+            'type'        => 'rejected',
+            'count'       => $counts['rejected'],
+            'title'       => 'Есть занятия, которые нужно доработать',
+            'description' => 'Откройте их и учтите комментарии Talario.',
+            'url'         => fn_url('talario_classes.manage?talario_status=disabled'),
+            'action'      => 'Открыть занятия',
+        ];
+    }
+
     $company_data = fn_get_company_data($company_id, DESCR_SL, ['skip_cache' => true]);
     $center = fn_talario_vendor_cabinet_get_center($company_id);
     $locations = (new ScheduleResourceService())->getLocations();
@@ -66,6 +91,7 @@ if ($mode === 'manage') {
 
     Tygh::$app['view']->assign([
         'talario_counts'          => $counts,
+        'talario_attention_items' => $attention_items,
         'talario_sales_30_days'   => $sales_30_days,
         'talario_current_balance' => (float) $current_balance,
         'talario_recent_orders'   => $recent_orders,

@@ -1,6 +1,5 @@
 {capture name="mainbox"}
 {include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
-{include file="addons/talario_vendor_cabinet/components/cabinet_style.tpl"}
 <div class="talario-cabinet talario-schedule-editor">
     <p class="muted">Укажите, когда проходит занятие и сколько детей может прийти. После сохранения эти данные автоматически используются календарём на витрине.</p>
 
