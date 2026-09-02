@@ -16,10 +16,13 @@ html body .cs-main-menu__inner,
 html body .cs-main-menu__primary,
 html body .cs-main-menu__secondary,
 html body .cs-main-menu__bottom-toolbar,
-html body .cs-main-menu__logo-wrapper,
-html body #header_navbar {
+html body .cs-main-menu__logo-wrapper {
     background-color: #ffffff !important;
     background-image: none !important;
+}
+html body #header_navbar {
+    background-color: #f8f2e8 !important;
+    border-bottom: 1px solid #eee5d9 !important;
 }
 html body .cs-main-menu {
     border-right: 1px solid #ececec !important;

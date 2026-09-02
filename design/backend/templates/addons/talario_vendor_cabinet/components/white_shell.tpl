@@ -38,6 +38,12 @@ html body #top_bar,
 html body .top-bar {
     display: none !important;
 }
+/* Even without the top bar, CS-Cart keeps a header strip above the workspace. */
+html body #header_navbar {
+    background-color: #f8f2e8 !important;
+    background-image: none !important;
+    border-bottom: 1px solid #eee5d9 !important;
+}
 html body .admin-content-wrap {
     padding-top: 0 !important;
 }
