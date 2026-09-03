@@ -1,13 +1,21 @@
 {if $runtime.company_id}
 {literal}
 <style>
-/* Финальный слой кабинета: единый белый фон поверх всех подключённых стилей. */
+/* Финальный слой кабинета: единая кремовая оболочка поверх системных стилей. */
 html {
-    --cs-content-background: #ffffff;
-    --cs-body-background: #ffffff;
-    --cs-menu-sidebar-color: #ffffff;
+    --cs-content-background: #fffdf9;
+    --cs-body-background: #f8f2e8;
+    --cs-menu-sidebar-color: #f8f2e8;
     --cs-menu-sidebar-bg: none;
     --cs-form-actions-background: #ffffff;
+}
+html body .main-wrap,
+html body .admin-content {
+    background: #f8f2e8 !important;
+}
+html body .admin-content-wrap,
+html body .content-wrap {
+    background: #fffdf9 !important;
 }
 html body .cs-main-menu,
 html body .cs-main-menu__header,
@@ -17,7 +25,7 @@ html body .cs-main-menu__primary,
 html body .cs-main-menu__secondary,
 html body .cs-main-menu__bottom-toolbar,
 html body .cs-main-menu__logo-wrapper {
-    background-color: #ffffff !important;
+    background-color: #f8f2e8 !important;
     background-image: none !important;
 }
 html body #header_navbar {
@@ -25,7 +33,7 @@ html body #header_navbar {
     border-bottom: 1px solid #eee5d9 !important;
 }
 html body .cs-main-menu {
-    border-right: 1px solid #ececec !important;
+    border-right: 1px solid #eee5d9 !important;
     box-shadow: none !important;
 }
 html body .cs-main-menu .main-menu-1__link,

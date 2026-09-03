@@ -1,14 +1,14 @@
 {literal}
 <style>
 /*
- * Единая белая оболочка кабинета партнёра.
+ * Единая кремовая оболочка кабинета партнёра.
  * Подключается последней внутри каждой страницы кабинета и заменяет
  * разношёрстные фоны системными переменными CS-Cart.
  */
 :root {
-    --cs-content-background: #ffffff;
-    --cs-body-background: #ffffff;
-    --cs-menu-sidebar-color: #ffffff;
+    --cs-content-background: #fffdf9;
+    --cs-body-background: #f8f2e8;
+    --cs-menu-sidebar-color: #f8f2e8;
     --cs-menu-sidebar-bg: none;
     --cs-admin-content-wrap-shadow: none;
     --cs-admin-content-wrap-radius: 0px;
@@ -17,8 +17,12 @@
 
 html,
 html body,
+/* Фон внешней области образует шапку справа от меню. */
 html body .main-wrap,
-html body .admin-content,
+html body .admin-content {
+    background: #f8f2e8 !important;
+}
+/* Рабочая область остаётся почти белой и отделяется от шапки. */
 html body .admin-content-wrap,
 html body .admin-content-wrapper-outer,
 html body .admin-content-wrapper,
@@ -30,10 +34,17 @@ html body .mainbox-body,
 html body .ty-mainbox-container,
 html body .talario-cabinet,
 html body .talario-home {
-    background: #ffffff !important;
+    background: #fffdf9 !important;
 }
 
-/* Верхняя панель поиска удалена — рабочая область начинается без пустой плашки. */
+/* Верхняя панель поиска удалена — цвет сохраняем и для её системных обёрток. */
+html body #top_bar,
+html body .top-bar,
+html body .top-bar__inner {
+    background-color: #f8f2e8 !important;
+    background-image: none !important;
+    border-bottom: 1px solid #eee5d9 !important;
+}
 html body #top_bar,
 html body .top-bar {
     display: none !important;
@@ -48,11 +59,11 @@ html body .admin-content-wrap {
     padding-top: 0 !important;
 }
 
-/* Белая боковая панель — один фон для логотипа, навигации и нижней области. */
+/* Боковая панель, логотип и навигация — единый кремовый фон. */
 html body .cs-main-menu {
-    background-color: #ffffff !important;
+    background-color: #f8f2e8 !important;
     background-image: none !important;
-    border-right: 1px solid #ececec !important;
+    border-right: 1px solid #eee5d9 !important;
     box-shadow: none !important;
 }
 html body .cs-main-menu__header,
@@ -66,6 +77,8 @@ html body .cs-main-menu__logo-wrapper .logo-menu__btn,
 html body .cs-main-menu__logo-wrapper .logo-menu__btn-inner {
     background-color: transparent !important;
     background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 /* Ссылки прозрачны: меню больше не выглядит набором белых полос. */
