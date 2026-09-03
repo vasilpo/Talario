@@ -17,6 +17,19 @@ html body .admin-content-wrap,
 html body .content-wrap {
     background: #fffdf9 !important;
 }
+/* Keep the page heading in one place while the vendor scrolls.
+   CS-Cart normally swaps this text into the actions panel on scroll. */
+html body #actions_panel {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+}
+html body #actions_panel [data-ca-mainbox="navActionsTitle"] {
+    visibility: hidden !important;
+}
+html body [data-ca-mainbox="contentHeadingTitle"] {
+    visibility: visible !important;
+}
 html body .cs-main-menu,
 html body .cs-main-menu__header,
 html body .cs-main-menu__outer,
