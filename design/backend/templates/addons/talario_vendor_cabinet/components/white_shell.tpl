@@ -51,6 +51,9 @@ html body #header_navbar {
     border-bottom: 1px solid #eee5d9 !important;
 }
 html body .admin-content-wrap {
+    padding-top: var(--top-bar-height) !important;
+}
+html body .admin-content-wrap.admin-content-wrap--scroll-header {
     padding-top: 0 !important;
 }
 

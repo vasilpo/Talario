@@ -203,10 +203,6 @@ html body.vendor-area {
     background: #fffdf9 !important;
     color: #292621;
 }
-html body.vendor-area .top-bar,
-html body.vendor-area #top_bar {
-    display: none !important;
-}
 html body.vendor-area .main-wrap,
 html body.vendor-area .admin-content,
 html body.vendor-area .admin-content-wrap,
@@ -215,6 +211,9 @@ html body.vendor-area #main_column {
 }
 html body.vendor-area .admin-content-wrap {
     min-height: 100vh;
+    padding-top: var(--top-bar-height) !important;
+}
+html body.vendor-area .admin-content-wrap.admin-content-wrap--scroll-header {
     padding-top: 0 !important;
 }
 html body.vendor-area .cs-main-menu,
