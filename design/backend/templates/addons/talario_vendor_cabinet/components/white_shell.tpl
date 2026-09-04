@@ -132,6 +132,32 @@ html body .top-bar__inner {
     padding-right: 16px !important;
     padding-left: 16px !important;
 }
+/*
+ * Правая колонка может содержать длинное имя центра, уведомления и меню
+ * пользователя. Без min-width: 0 flex-элементы расширяют grid-колонку и
+ * обрезаются окном браузера. Имя должно сжиматься с многоточием, а не
+ * уезжать за правый край.
+ */
+html body .top-bar__right {
+    min-width: 0 !important;
+    gap: 8px !important;
+}
+html body .top-bar__right .talario-partner-identity {
+    display: block !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-align: right !important;
+}
+html body .top-bar__right .talario-partner-identity strong {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
 html body .top-bar__search {
     width: 382px !important;
     justify-self: center !important;
