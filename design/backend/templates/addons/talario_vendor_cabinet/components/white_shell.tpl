@@ -220,7 +220,10 @@ html body .talario-center-page .talario-todo {
 html body .talario-center-page .talario-todo + .talario-todo {
     margin-top: 16px !important;
 }
-html body .talario-section-heading,
+html body .talario-section-heading {
+    display: block !important;
+    margin: 0 0 20px !important;
+}
 html body .talario-center-page .talario-dashboard__header {
     display: flex !important;
     align-items: flex-start !important;
@@ -248,15 +251,14 @@ html body .talario-center-form {
     max-width: 760px !important;
 }
 html body .talario-center-form .control-group {
-    display: grid !important;
-    grid-template-columns: 160px minmax(0, 570px) !important;
-    align-items: start !important;
-    gap: 0 14px !important;
+    display: block !important;
+    clear: both !important;
     margin: 0 0 16px !important;
 }
 html body .talario-center-form .control-label {
-    float: none !important;
-    width: auto !important;
+    display: block !important;
+    float: left !important;
+    width: 160px !important;
     margin: 0 !important;
     padding: 10px 0 0 !important;
     color: #474640 !important;
@@ -266,14 +268,17 @@ html body .talario-center-form .control-label {
     text-align: right !important;
 }
 html body .talario-center-form .controls {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 570px !important;
     min-width: 0 !important;
-    margin-left: 0 !important;
+    margin-left: 174px !important;
 }
 html body .talario-center-form input[type="text"],
 html body .talario-center-form textarea {
     box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: 570px !important;
+    width: 570px !important;
+    max-width: 100% !important;
     min-height: 38px !important;
     margin: 0 !important;
     padding: 8px 11px !important;
@@ -458,11 +463,21 @@ html body .talario-classes-page .talario-class-card__actions .btn {
         width: 100% !important;
     }
     html body .talario-center-form .control-group {
-        grid-template-columns: 1fr !important;
+        display: block !important;
     }
     html body .talario-center-form .control-label {
+        float: none !important;
+        width: auto !important;
         padding-top: 0 !important;
         text-align: left !important;
+    }
+    html body .talario-center-form .controls {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    html body .talario-center-form input[type="text"],
+    html body .talario-center-form textarea {
+        width: 100% !important;
     }
     html body .talario-center-form .buttons-container {
         margin-left: 0 !important;
