@@ -37,7 +37,7 @@ html body .talario-home {
     background: #fffdf9 !important;
 }
 
-/* Верхняя панель поиска удалена — цвет сохраняем и для её системных обёрток. */
+/* Верхняя панель содержит название партнёра и уведомления. */
 html body #top_bar,
 html body .top-bar,
 html body .top-bar__inner {
@@ -45,11 +45,6 @@ html body .top-bar__inner {
     background-image: none !important;
     border-bottom: 1px solid #eee5d9 !important;
 }
-html body #top_bar,
-html body .top-bar {
-    display: none !important;
-}
-/* Even without the top bar, CS-Cart keeps a header strip above the workspace. */
 html body #header_navbar {
     background-color: #f8f2e8 !important;
     background-image: none !important;
