@@ -121,5 +121,88 @@ html body .talario-field textarea:focus {
     border-color: #dfb442 !important;
     box-shadow: 0 0 0 3px rgba(229, 174, 24, .16) !important;
 }
+
+/*
+ * Шапка кабинета: поиск остаётся в геометрическом центре экрана,
+ * независимо от длины названия партнёра справа.
+ */
+html body .top-bar__inner {
+    grid-template-columns: minmax(0, 1fr) 382px minmax(0, 1fr) !important;
+    gap: 0 !important;
+    padding-right: 16px !important;
+    padding-left: 16px !important;
+}
+html body .top-bar__search {
+    width: 382px !important;
+    justify-self: center !important;
+}
+html body .top-bar__search .search {
+    width: 100% !important;
+    margin: 0 !important;
+}
+html body .top-bar__search .search__group {
+    display: flex !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 28px !important;
+    overflow: hidden !important;
+    border: 1px solid #d9e0e8 !important;
+    border-radius: 4px !important;
+    background: #fffdf9 !important;
+}
+html body .top-bar__search input[type="text"].search__input {
+    min-width: 0 !important;
+    height: 26px !important;
+    padding: 4px 8px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #34312c !important;
+    font-size: 12px !important;
+    line-height: 18px !important;
+}
+html body .top-bar__search .search__input::placeholder {
+    color: #8b887f !important;
+}
+html body .top-bar__search .search__button {
+    display: inline-flex !important;
+    flex: 0 0 34px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    min-width: 34px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+html body .top-bar__search .search__button:before {
+    display: block !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+html body .talario-add-class-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    min-height: 38px !important;
+    padding: 9px 14px !important;
+    line-height: 18px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+}
+@media (max-width: 767px) {
+    html body .top-bar__inner {
+        grid-template-columns: minmax(0, 1fr) minmax(180px, 38vw) minmax(0, 1fr) !important;
+    }
+    html body .top-bar__search {
+        width: 100% !important;
+    }
+}
 </style>
 {/literal}

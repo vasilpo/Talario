@@ -8,7 +8,7 @@
             <a class="btn {if $talario_filter === "pending"}btn-primary{/if}" href="{"talario_classes.manage?talario_status=pending"|fn_url}">{__("talario_vendor_cabinet.pending")}</a>
             <a class="btn {if $talario_filter === "disabled"}btn-primary{/if}" href="{"talario_classes.manage?talario_status=disabled"|fn_url}">{__("talario_vendor_cabinet.disabled_classes")}</a>
         </nav>
-        <a class="btn btn-primary btn-large" href="{"talario_classes.add"|fn_url}">+ {__("talario_vendor_cabinet.add_class")}</a>
+        <a class="btn btn-primary btn-large talario-add-class-button" href="{"talario_classes.add"|fn_url}">+ {__("talario_vendor_cabinet.add_class")}</a>
     </div>
     {if $talario_products}
         <div class="talario-class-grid">
