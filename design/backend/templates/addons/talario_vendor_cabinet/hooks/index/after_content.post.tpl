@@ -71,3 +71,14 @@ html body .cs-main-menu .main-menu-3__link--active {
 </style>
 {/literal}
 {/if}
+
+{* The dashboard has its own content controls, so the empty system action bar is not needed. *}
+{if $runtime.company_id && $runtime.controller === "talario_dashboard"}
+{literal}
+<style>
+html body #actions_panel {
+    display: none !important;
+}
+</style>
+{/literal}
+{/if}
