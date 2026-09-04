@@ -1,7 +1,7 @@
 {capture name="mainbox"}
 {include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
-<div class="talario-cabinet">
-    <div class="talario-dashboard__header">
+<div class="talario-cabinet talario-classes-page">
+    <div class="talario-dashboard__header talario-classes-toolbar">
         <nav class="talario-filters" aria-label="{__("talario_vendor_cabinet.filters")}">
             <a class="btn {if $talario_filter === "all"}btn-primary{/if}" href="{"talario_classes.manage"|fn_url}">{__("all")}</a>
             <a class="btn {if $talario_filter === "active"}btn-primary{/if}" href="{"talario_classes.manage?talario_status=active"|fn_url}">{__("talario_vendor_cabinet.published")}</a>

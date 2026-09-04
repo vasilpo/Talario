@@ -1,10 +1,12 @@
 {capture name="mainbox"}
 {include file="addons/talario_vendor_cabinet/components/white_shell.tpl"}
-<div class="talario-cabinet">
-    <section class="talario-todo">
-        <h2>Центр</h2>
-        <p class="muted">Эти данные будут использоваться в занятиях по умолчанию.</p>
-        <form action="{""|fn_url}" method="post" class="form-horizontal form-edit">
+<div class="talario-cabinet talario-center-page">
+    <section class="talario-todo talario-center-panel">
+        <div class="talario-section-heading">
+            <h2>Основная информация</h2>
+            <p class="muted">Заполните данные один раз — они будут подставляться в новые занятия.</p>
+        </div>
+        <form action="{""|fn_url}" method="post" class="form-horizontal form-edit talario-center-form">
             <input type="hidden" name="dispatch" value="talario_locations.update_center" />
 
             <div class="control-group">
@@ -44,7 +46,7 @@
         </form>
     </section>
 
-    <section class="talario-todo">
+    <section class="talario-todo talario-branches-panel">
         <div class="talario-dashboard__header">
             <div>
                 <h2>Филиалы</h2>
