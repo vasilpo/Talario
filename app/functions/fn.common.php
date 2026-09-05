@@ -3765,6 +3765,11 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
     static $indexes, $_admin_index, $vendor_index, $customer_index, $locations, $storefront_locations;
     static $undefined_storefront_id = 0;
 
+    // Some backend redirects can omit a target URL. PHP 8.1+ reports passing
+    // null to strpos()/preg_match() as a deprecation and the dev environment
+    // promotes it to an exception. An empty URL is the native fallback here.
+    $url = (string) $url;
+
     $admin_index_area = null;
     if ($area === SiteArea::ADMIN_PANEL) {
         if (strpos($url, 'admin:') === 0) {
@@ -3996,6 +4001,8 @@ function fn_get_company_id_from_uri($uri)
 {
     $company_id = false;
 
+    $uri = (string) $uri;
+
     if (preg_match("%(\?|&|&amp;)company_id=(\d+)%", $uri, $match)) {
         if (!empty($match[2])) {
             $company_id = $match[2];
@@ -4015,6 +4022,8 @@ function fn_get_company_id_from_uri($uri)
 function fn_get_storefront_id_from_uri($uri)
 {
     $storefront_id = false;
+
+    $uri = (string) $uri;
 
     if (preg_match('%(\?|&|&amp;)storefront_id=(\d+)%', $uri, $match)) {
         if (!empty($match[2])) {
