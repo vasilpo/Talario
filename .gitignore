@@ -87,6 +87,8 @@ Thumbs.db
 *.log
 *.sql
 *.sqlite
+error_log
+error_log.*
 
 # OS generated files #
 ######################
@@ -134,3 +136,4 @@ index_.php
 index1.php
 config.local.php
 mariadb/
+adminer*.php
