@@ -1,0 +1,121 @@
+name: Quality & Safety
+
+on:
+  pull_request:
+    branches:
+      - development
+      - prod
+  push:
+    branches:
+      - development
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-syntax:
+    name: PHP syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: Lint changed PHP files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+
+          mapfile -t files < <(git diff --diff-filter=ACMR --name-only "$BASE" "$HEAD" -- '*.php')
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No changed PHP files."
+            exit 0
+          fi
+
+          printf 'Linting %s changed PHP file(s).\n' "${#files[@]}"
+          for file in "${files[@]}"; do
+            php -l "$file"
+          done
+
+  repository-guard:
+    name: Repository safety guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reject unsafe artifacts and direct core edits
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+
+          mapfile -t files < <(git diff --name-only "$BASE" "$HEAD")
+          printf '%s\n' "${files[@]}"
+
+          failed=0
+          for file in "${files[@]}"; do
+            case "$file" in
+              adminer*.php|*/adminer*.php|error_log|*/error_log|error_log.*|*/error_log.*|.env|*/.env|*.sql|*.sql.gz|*.bak|*.dump)
+                echo "::error file=$file::Unsafe runtime/secret/backup artifact must not be committed."
+                failed=1
+                ;;
+            esac
+
+            case "$file" in
+              app/functions/*|app/Tygh/*|app/schemas/*)
+                echo "::error file=$file::Direct CS-Cart core edit detected. Move the change into a Talario add-on/hook or handle it in a dedicated reviewed exception PR."
+                failed=1
+                ;;
+            esac
+          done
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan PR/push for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
