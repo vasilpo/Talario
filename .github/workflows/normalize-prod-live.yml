@@ -1,0 +1,184 @@
+name: Normalize live prod state
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: normalize-live-prod
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Normalize live Git state
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.actor }}" != "vasilpo" ]; then
+            echo "ERROR: only the repository owner may run live normalization"
+            exit 1
+          fi
+
+          eval "$(ssh-agent -s)" >/dev/null
+          trap 'ssh-agent -k >/dev/null 2>&1 || true' EXIT
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode | ssh-add - >/dev/null
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H "$BEGET_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          ssh -o BatchMode=yes "$BEGET_USER@$BEGET_HOST" \
+            "EXPECTED_SHA='$EXPECTED_SHA' bash -s" <<'EOF'
+            set -euo pipefail
+
+            LIVE_DIR=/home/t/tyman5tb/talario.ru/public_html
+            EXPECTED_CURRENT=e3f5863007d9ccc9e4a35f129673f3bf9fa7fde0
+            cd "$LIVE_DIR"
+
+            if [ "$(git rev-parse --abbrev-ref HEAD)" != "prod" ]; then
+              echo "ERROR: live directory is not on prod branch"
+              exit 1
+            fi
+
+            CURRENT_SHA="$(git rev-parse HEAD)"
+            if [ "$CURRENT_SHA" != "$EXPECTED_CURRENT" ]; then
+              echo "ERROR: live HEAD changed since audit; refusing one-time normalization"
+              exit 1
+            fi
+
+            if [ -n "$(git diff --cached --name-only)" ]; then
+              echo "ERROR: staged changes exist on live"
+              exit 1
+            fi
+
+            allowed_dirty=(
+              "design/themes/abt__unitheme2/styles/data/new.css"
+              "design/themes/responsive/css/addons/hybrid_auth/styles.less"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/block_checkout/product_extra.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/checkout/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/orders/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/lr_search_analytics/overrides/common/search.tpl"
+              "error_log"
+              "local_conf.php1"
+            )
+
+            is_allowed_dirty() {
+              local candidate="$1"
+              local allowed
+              for allowed in "${allowed_dirty[@]}"; do
+                [ "$candidate" = "$allowed" ] && return 0
+              done
+              return 1
+            }
+
+            mapfile -t tracked_dirty < <(git diff --name-only)
+            for file in "${tracked_dirty[@]}"; do
+              if ! is_allowed_dirty "$file"; then
+                echo "ERROR: unexpected tracked live change: $file"
+                exit 1
+              fi
+            done
+
+            unexpected_untracked=0
+            while IFS= read -r file; do
+              case "$file" in
+                devcopy/*) ;;
+                *)
+                  echo "ERROR: unexpected untracked live file: $file"
+                  unexpected_untracked=1
+                  ;;
+              esac
+            done < <(git ls-files --others --exclude-standard)
+            [ "$unexpected_untracked" -eq 0 ] || exit 1
+
+            git fetch --quiet https://github.com/vasilpo/Talario.git prod
+            TARGET_SHA="$(git rev-parse FETCH_HEAD)"
+            if [ "$TARGET_SHA" != "$EXPECTED_SHA" ]; then
+              echo "ERROR: fetched prod SHA does not match workflow SHA"
+              exit 1
+            fi
+
+            if ! git merge-base --is-ancestor "$CURRENT_SHA" "$TARGET_SHA"; then
+              echo "ERROR: audited live HEAD is not an ancestor of target prod"
+              exit 1
+            fi
+
+            functional_files=(
+              "design/themes/abt__unitheme2/styles/data/new.css"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/block_checkout/product_extra.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/checkout/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/orders/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/lr_search_analytics/overrides/common/search.tpl"
+            )
+
+            for file in "${functional_files[@]}"; do
+              if ! git diff --quiet "$TARGET_SHA" -- "$file"; then
+                echo "ERROR: audited live functional override differs from target prod: $file"
+                exit 1
+              fi
+            done
+
+            BASELINE_HTTP="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 https://talario.ru/ || true)"
+            case "$BASELINE_HTTP" in
+              200|301|302) ;;
+              *)
+                echo "ERROR: baseline health check failed with HTTP $BASELINE_HTTP"
+                exit 1
+                ;;
+            esac
+
+            # Move Git metadata to reviewed prod without overwriting the audited live worktree.
+            git reset --mixed "$TARGET_SHA" >/dev/null
+
+            # Bring repository-management files to the reviewed prod version.
+            git restore --source=HEAD -- .gitignore .github
+
+            # Normalize the newline-only hybrid_auth difference.
+            git restore --source=HEAD -- design/themes/responsive/css/addons/hybrid_auth/styles.less
+
+            # Remove runtime/admin artifacts that are no longer tracked by prod.
+            rm -f adminer1.php error_log
+
+            # local_conf.php1 is intentionally left untouched as an ignored legacy server-local copy.
+            git remote set-url origin https://github.com/vasilpo/Talario.git
+
+            if [ -d var/cache ]; then
+              find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            fi
+
+            POST_HTTP="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 https://talario.ru/ || true)"
+            case "$POST_HTTP" in
+              200|301|302) ;;
+              *)
+                echo "ERROR: post-normalization health check failed with HTTP $POST_HTTP"
+                exit 1
+                ;;
+            esac
+
+            if [ "$(git rev-parse HEAD)" != "$TARGET_SHA" ]; then
+              echo "ERROR: live HEAD does not match target prod after normalization"
+              exit 1
+            fi
+
+            remaining_tracked="$(git diff --name-only)"
+            if [ -n "$remaining_tracked" ]; then
+              echo "ERROR: tracked differences remain after normalization"
+              printf '%s\n' "$remaining_tracked"
+              exit 1
+            fi
+
+            echo "NORMALIZE_OK head=$TARGET_SHA http=$POST_HTTP"
+          EOF
