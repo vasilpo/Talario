@@ -133,6 +133,7 @@ dev_copy*
 index_.php
 index1.php
 config.local.php
+local_conf.php*
 mariadb/
 adminer*.php
 error_log
