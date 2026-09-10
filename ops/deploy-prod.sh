@@ -4,6 +4,8 @@ set -euo pipefail
 LIVE_DIR="/home/t/tyman5tb/talario.ru/public_html"
 EXPECTED_BRANCH="prod"
 REMOTE_URL="https://github.com/vasilpo/Talario.git"
+HEALTH_URL="https://talario.ru/"
+HEALTH_MARKER="Talario"
 
 cd "$LIVE_DIR"
 
@@ -17,24 +19,21 @@ case "$mode" in
 esac
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
-[ "$branch" = "$EXPECTED_BRANCH" ] || { echo "ERROR: live branch is $branch, expected $EXPECTED_BRANCH"; exit 1; }
+[ "$branch" = "$EXPECTED_BRANCH" ] || {
+  echo "ERROR: live branch is $branch, expected $EXPECTED_BRANCH"
+  exit 1
+}
 
 if [ -n "$(git diff --cached --name-only)" ]; then
   echo "ERROR: staged changes exist"
   exit 1
 fi
 
-unexpected_tracked=0
-while IFS= read -r file; do
-  case "$file" in
-    design/themes/responsive/css/addons/hybrid_auth/styles.less) ;;
-    *)
-      echo "ERROR: unexpected tracked change: $file"
-      unexpected_tracked=1
-      ;;
-  esac
-done < <(git diff --name-only)
-[ "$unexpected_tracked" -eq 0 ] || exit 1
+if [ -n "$(git diff --name-only)" ]; then
+  echo "ERROR: tracked live changes exist; production must be clean before deployment"
+  git diff --name-status
+  exit 1
+fi
 
 unexpected_untracked=0
 while IFS= read -r file; do
@@ -57,12 +56,30 @@ git merge-base --is-ancestor "$current" "$target" || {
   exit 1
 }
 
-http="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 https://talario.ru/ || true)"
-case "$http" in
-  200|301|302) ;;
-  *) echo "ERROR: baseline HTTP health failed: $http"; exit 1 ;;
-esac
+check_health() {
+  local tmp
+  tmp="$(mktemp)"
+  trap 'rm -f "$tmp"' RETURN
 
+  local http
+  http="$(curl -L -sS -o "$tmp" -w '%{http_code}' --max-time 20 "$HEALTH_URL" || true)"
+  case "$http" in
+    200|301|302) ;;
+    *)
+      echo "ERROR: HTTP health failed: $http"
+      return 1
+      ;;
+  esac
+
+  if ! grep -qi "$HEALTH_MARKER" "$tmp"; then
+    echo "ERROR: application health marker not found"
+    return 1
+  fi
+
+  printf '%s' "$http"
+}
+
+http="$(check_health)"
 echo "PRECHECK_OK current=$current target=$target http=$http"
 
 [ "$mode" = "deploy" ] || exit 0
@@ -78,25 +95,35 @@ chmod 600 "$backup"
 
 git reset --hard "$target"
 
-if [ -d var/cache ]; then
-  find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+if [ -L var/cache ]; then
+  echo "ERROR: var/cache is a symlink; refusing to clear it"
+  git reset --hard "$current"
+  exit 1
 fi
 
-http_after="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 https://talario.ru/ || true)"
-case "$http_after" in
-  200|301|302) ;;
-  *)
-    echo "ERROR: post-deploy HTTP health failed: $http_after"
-    echo "ROLLBACK: resetting to $current"
-    git reset --hard "$current"
-    exit 1
-    ;;
-esac
+if [ -d var/cache ]; then
+  cache_real="$(readlink -f var/cache)"
+  case "$cache_real" in
+    "$LIVE_DIR"/var/cache) ;;
+    *)
+      echo "ERROR: var/cache resolves outside live directory"
+      git reset --hard "$current"
+      exit 1
+      ;;
+  esac
+  find "$cache_real" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+fi
 
-[ "$(git rev-parse HEAD)" = "$target" ] || {
+if ! http_after="$(check_health)"; then
+  echo "ROLLBACK: resetting to $current"
+  git reset --hard "$current"
+  exit 1
+fi
+
+if [ "$(git rev-parse HEAD)" != "$target" ]; then
   echo "ERROR: live HEAD mismatch after deploy"
   git reset --hard "$current"
   exit 1
-}
+fi
 
 echo "DEPLOY_OK head=$target http=$http_after previous=$current"
