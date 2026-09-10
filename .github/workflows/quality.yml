@@ -82,17 +82,20 @@ jobs:
           fi
 
           mapfile -t files < <(git diff --name-only "$BASE" "$HEAD")
+          mapfile -t non_deleted_files < <(git diff --diff-filter=ACMR --name-only "$BASE" "$HEAD")
           printf '%s\n' "${files[@]}"
 
           failed=0
-          for file in "${files[@]}"; do
+          for file in "${non_deleted_files[@]}"; do
             case "$file" in
               adminer*.php|*/adminer*.php|error_log|*/error_log|error_log.*|*/error_log.*|.env|*/.env|*.sql|*.sql.gz|*.bak|*.dump)
                 echo "::error file=$file::Unsafe runtime/secret/backup artifact must not be committed."
                 failed=1
                 ;;
             esac
+          done
 
+          for file in "${files[@]}"; do
             case "$file" in
               app/functions/*|app/Tygh/*|app/schemas/*)
                 echo "::error file=$file::Direct CS-Cart core edit detected. Move the change into a Talario add-on/hook or handle it in a dedicated reviewed exception PR."
