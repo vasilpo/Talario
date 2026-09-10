@@ -41,3 +41,8 @@ box-sizing: border-box !important;
 .ut2-top-my-account span {
     display: none !important;
 }
+
+/* 101927226 */
+.ut2-top-cart-content a > span {
+    display: none !important;
+}
