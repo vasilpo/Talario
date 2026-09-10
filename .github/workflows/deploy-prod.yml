@@ -25,6 +25,15 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Authorize dispatcher
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.actor }}" != "${{ github.repository_owner }}" ]; then
+            echo "ERROR: production deploy may only be dispatched by repository owner"
+            exit 1
+          fi
+
       - name: Configure SSH
         shell: bash
         env:
@@ -68,6 +77,8 @@ jobs:
               exit 1
             fi
 
+            # Temporary migration exceptions based on the audited live diff from 2026-09-10.
+            # Any other tracked or untracked change blocks deployment.
             mapfile -t tracked_dirty < <(git diff --name-only)
             allowed_tracked=(
               "design/themes/abt__unitheme2/styles/data/new.css"
@@ -99,6 +110,7 @@ jobs:
             unexpected_untracked=0
             while IFS= read -r file; do
               case "$file" in
+                # Legacy audited copy. It is intentionally not touched by this deployment.
                 devcopy/*) ;;
                 *)
                   echo "ERROR: unexpected untracked live file: $file"
@@ -157,11 +169,16 @@ jobs:
               exit 1
             fi
 
-            BACKUP_DIR="$HOME/talario-prod-backups/$(date +%Y%m%d-%H%M%S)"
-            mkdir -p "$BACKUP_DIR"
-            git diff --binary > "$BACKUP_DIR/worktree.patch"
-            git status --short > "$BACKUP_DIR/status.txt"
-            printf '%s\n' "$CURRENT_SHA" > "$BACKUP_DIR/previous_head.txt"
+            umask 077
+            BACKUP_DIR="$(mktemp -d "$HOME/.talario-deploy.XXXXXX")"
+            chmod 700 "$BACKUP_DIR"
+            trap 'rm -rf "$BACKUP_DIR"' EXIT
+
+            mkdir -p "$BACKUP_DIR/files"
+            for file in "${functional_files[@]}"; do
+              mkdir -p "$BACKUP_DIR/files/$(dirname "$file")"
+              cp -p "$file" "$BACKUP_DIR/files/$file"
+            done
             if [ -f local_conf.php1 ]; then
               cp -p local_conf.php1 "$BACKUP_DIR/local_conf.php1"
             fi
@@ -169,9 +186,9 @@ jobs:
             rollback() {
               echo "ROLLBACK_START"
               git reset --hard "$CURRENT_SHA"
-              if [ -s "$BACKUP_DIR/worktree.patch" ]; then
-                git apply "$BACKUP_DIR/worktree.patch"
-              fi
+              for file in "${functional_files[@]}"; do
+                cp -p "$BACKUP_DIR/files/$file" "$file"
+              done
               if [ -f "$BACKUP_DIR/local_conf.php1" ]; then
                 cp -p "$BACKUP_DIR/local_conf.php1" local_conf.php1
               fi
@@ -207,5 +224,10 @@ jobs:
               exit 1
             fi
 
-            echo "DEPLOY_OK head=$TARGET_SHA http=$DEPLOY_HTTP backup=$BACKUP_DIR"
+            echo "DEPLOY_OK head=$TARGET_SHA http=$DEPLOY_HTTP"
           EOF
+
+      - name: Remove runner SSH key
+        if: always()
+        shell: bash
+        run: rm -f ~/.ssh/id_ed25519
