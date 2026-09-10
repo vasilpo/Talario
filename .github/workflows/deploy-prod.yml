@@ -1,0 +1,211 @@
+name: Deploy prod to live
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run production preflight or perform guarded deployment"
+        required: true
+        default: preflight
+        type: choice
+        options:
+          - preflight
+          - deploy
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Configure SSH
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          ssh-keyscan -H "$BEGET_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Guarded production preflight/deploy
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          MODE: ${{ inputs.mode }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          ssh -o BatchMode=yes "$BEGET_USER@$BEGET_HOST" \
+            "MODE='$MODE' EXPECTED_SHA='$EXPECTED_SHA' bash -s" <<'EOF'
+            set -euo pipefail
+
+            LIVE_DIR=/home/t/tyman5tb/talario.ru/public_html
+            cd "$LIVE_DIR"
+
+            if [ "$(git rev-parse --abbrev-ref HEAD)" != "prod" ]; then
+              echo "ERROR: live directory is not on prod branch"
+              exit 1
+            fi
+
+            if [ -n "$(git diff --cached --name-only)" ]; then
+              echo "ERROR: staged changes exist on live"
+              git diff --cached --name-status
+              exit 1
+            fi
+
+            mapfile -t tracked_dirty < <(git diff --name-only)
+            allowed_tracked=(
+              "design/themes/abt__unitheme2/styles/data/new.css"
+              "design/themes/responsive/css/addons/hybrid_auth/styles.less"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/block_checkout/product_extra.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/checkout/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/orders/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/lr_search_analytics/overrides/common/search.tpl"
+              "error_log"
+              "local_conf.php1"
+            )
+
+            is_allowed_tracked() {
+              local candidate="$1"
+              local allowed
+              for allowed in "${allowed_tracked[@]}"; do
+                [ "$candidate" = "$allowed" ] && return 0
+              done
+              return 1
+            }
+
+            for file in "${tracked_dirty[@]}"; do
+              if ! is_allowed_tracked "$file"; then
+                echo "ERROR: unexpected tracked live change: $file"
+                exit 1
+              fi
+            done
+
+            unexpected_untracked=0
+            while IFS= read -r file; do
+              case "$file" in
+                devcopy/*) ;;
+                *)
+                  echo "ERROR: unexpected untracked live file: $file"
+                  unexpected_untracked=1
+                  ;;
+              esac
+            done < <(git ls-files --others --exclude-standard)
+            [ "$unexpected_untracked" -eq 0 ] || exit 1
+
+            git fetch --quiet https://github.com/vasilpo/Talario.git prod
+            TARGET_SHA="$(git rev-parse FETCH_HEAD)"
+
+            if [ "$TARGET_SHA" != "$EXPECTED_SHA" ]; then
+              echo "ERROR: fetched prod SHA $TARGET_SHA does not match workflow SHA $EXPECTED_SHA"
+              exit 1
+            fi
+
+            functional_files=(
+              "design/themes/abt__unitheme2/styles/data/new.css"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/block_checkout/product_extra.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/checkout/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/ec_table_booking_system/hooks/orders/product_info.post.tpl"
+              "design/themes/responsive/templates/addons/lr_search_analytics/overrides/common/search.tpl"
+            )
+
+            for file in "${functional_files[@]}"; do
+              if ! git diff --quiet "$TARGET_SHA" -- "$file"; then
+                echo "ERROR: live functional override does not match prod target: $file"
+                exit 1
+              fi
+            done
+
+            CURRENT_SHA="$(git rev-parse HEAD)"
+            if ! git merge-base --is-ancestor "$CURRENT_SHA" "$TARGET_SHA"; then
+              echo "ERROR: current live commit is not an ancestor of prod target"
+              exit 1
+            fi
+
+            BASELINE_HTTP="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 https://talario.ru/ || true)"
+            case "$BASELINE_HTTP" in
+              200|301|302) ;;
+              *)
+                echo "ERROR: live baseline health check failed with HTTP $BASELINE_HTTP"
+                exit 1
+                ;;
+            esac
+
+            echo "PRECHECK_OK current=$CURRENT_SHA target=$TARGET_SHA baseline_http=$BASELINE_HTTP"
+
+            if [ "$MODE" = "preflight" ]; then
+              exit 0
+            fi
+
+            if [ "$MODE" != "deploy" ]; then
+              echo "ERROR: unsupported mode: $MODE"
+              exit 1
+            fi
+
+            BACKUP_DIR="$HOME/talario-prod-backups/$(date +%Y%m%d-%H%M%S)"
+            mkdir -p "$BACKUP_DIR"
+            git diff --binary > "$BACKUP_DIR/worktree.patch"
+            git status --short > "$BACKUP_DIR/status.txt"
+            printf '%s\n' "$CURRENT_SHA" > "$BACKUP_DIR/previous_head.txt"
+            if [ -f local_conf.php1 ]; then
+              cp -p local_conf.php1 "$BACKUP_DIR/local_conf.php1"
+            fi
+
+            rollback() {
+              echo "ROLLBACK_START"
+              git reset --hard "$CURRENT_SHA"
+              if [ -s "$BACKUP_DIR/worktree.patch" ]; then
+                git apply "$BACKUP_DIR/worktree.patch"
+              fi
+              if [ -f "$BACKUP_DIR/local_conf.php1" ]; then
+                cp -p "$BACKUP_DIR/local_conf.php1" local_conf.php1
+              fi
+              if [ -d var/cache ]; then
+                find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+              fi
+              echo "ROLLBACK_DONE head=$(git rev-parse HEAD)"
+            }
+
+            git reset --hard "$TARGET_SHA"
+            if [ -f "$BACKUP_DIR/local_conf.php1" ]; then
+              cp -p "$BACKUP_DIR/local_conf.php1" local_conf.php1
+            fi
+            git remote set-url origin https://github.com/vasilpo/Talario.git
+
+            if [ -d var/cache ]; then
+              find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            fi
+
+            DEPLOY_HTTP="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 https://talario.ru/ || true)"
+            case "$DEPLOY_HTTP" in
+              200|301|302) ;;
+              *)
+                echo "ERROR: post-deploy health check failed with HTTP $DEPLOY_HTTP"
+                rollback
+                exit 1
+                ;;
+            esac
+
+            if [ "$(git rev-parse HEAD)" != "$TARGET_SHA" ]; then
+              echo "ERROR: live HEAD is not target after deployment"
+              rollback
+              exit 1
+            fi
+
+            echo "DEPLOY_OK head=$TARGET_SHA http=$DEPLOY_HTTP backup=$BACKUP_DIR"
+          EOF
