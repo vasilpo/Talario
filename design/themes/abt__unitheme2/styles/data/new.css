@@ -16,3 +16,28 @@
 box-sizing: border-box !important;
   }
 }
+@media (min-width:768px) {
+.sd-company-apply-page-banners .ut2-banner .ut2-a__content {
+  min-height: 350px;
+}
+}
+.litecheckout__submit-btn__order-total {
+  display: none;
+}
+.cat-view-grid .ty-pagination__bottom, .lr-empty-search-page__banner,.ut2-gl__amount:empty {
+  display: none !important;
+}
+.ut2-gl__item .sd-product-info {
+  margin-top: unset !important;
+}
+.product-description:has(.ty-icon-location-arrow) {
+  color: var(--color-font-lighten) !important;
+}
+.product-description {
+  color: black !important;
+  }
+
+/* #101927226 */
+.ut2-top-my-account span {
+    display: none !important;
+}
