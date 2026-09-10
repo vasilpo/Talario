@@ -9,8 +9,17 @@
     {/if}
 
     {if $runtime.company_id}
-        <p>{__("vendor_plans.choose_your_plan")}</p>
-        {include file="addons/vendor_plans/views/vendor_plans/components/plans_selector.tpl" plans=$vendor_plans current_plan_id=$company_data.plan_id name="company_data[plan_id]"}
+        {if $talario_vendor_plan_readonly}
+            <p>{__("vendor_plans.current_plan")}</p>
+            {include file="addons/vendor_plans/views/vendor_plans/components/plans_selector.tpl"
+                plans=[$current_plan]
+                current_plan_id=$company_data.plan_id
+                name="company_data[plan_id]"
+            }
+        {else}
+            <p>{__("vendor_plans.choose_your_plan")}</p>
+            {include file="addons/vendor_plans/views/vendor_plans/components/plans_selector.tpl" plans=$vendor_plans current_plan_id=$company_data.plan_id name="company_data[plan_id]"}
+        {/if}
     {else}
         {$allow_add_plan = fn_check_permissions("vendor_plans", "quick_add", "admin", "POST")}
         {$company_plan_id = $company_data.plan_id|default:$default_vendor_plan.plan_id}
