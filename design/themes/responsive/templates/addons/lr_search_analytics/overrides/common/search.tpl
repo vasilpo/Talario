@@ -1,3 +1,4 @@
+<a href="javascript:void(0);" rel="nofollow" onclick="$(this).parent().next().toggleClass('hidden');$(this).next().toggleClass('view');$(this).toggleClass('hidden');" class="ut2-btn-search"><i class="ut2-icon-search"></i><i class="ut2-icon-baseline-close hidden"></i></a>
 <div class="ty-search-block">
     <form action="{""|fn_url}" name="search_form" method="get">
         <input type="hidden" name="match" value="all" />
