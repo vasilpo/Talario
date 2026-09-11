@@ -12,9 +12,22 @@ function fn_talario_schedule_resources_delete_product_post($product_id, $product
 
 function fn_talario_schedule_resources_get_shared_product_ids($product_id)
 {
-    $resource_id = (int) db_get_field('SELECT resource_id FROM ?:talario_resource_products WHERE product_id = ?i LIMIT 1', $product_id);
-    if (!$resource_id) { return [(int) $product_id]; }
-    return array_map('intval', db_get_fields('SELECT product_id FROM ?:talario_resource_products WHERE resource_id = ?i', $resource_id));
+    $mapping = db_get_row(
+        'SELECT rp.resource_id, p.company_id FROM ?:talario_resource_products rp '
+        . 'INNER JOIN ?:products p ON p.product_id = rp.product_id '
+        . 'INNER JOIN ?:talario_resources r ON r.resource_id = rp.resource_id AND r.company_id = p.company_id '
+        . 'WHERE rp.product_id = ?i LIMIT 1',
+        $product_id
+    );
+    if (!$mapping) { return [(int) $product_id]; }
+
+    return array_map('intval', db_get_fields(
+        'SELECT rp.product_id FROM ?:talario_resource_products rp '
+        . 'INNER JOIN ?:products p ON p.product_id = rp.product_id AND p.company_id = ?i '
+        . 'WHERE rp.resource_id = ?i',
+        (int) $mapping['company_id'],
+        (int) $mapping['resource_id']
+    ));
 }
 
 function fn_talario_schedule_resources_override_single_day_slots(
@@ -23,7 +36,13 @@ function fn_talario_schedule_resources_override_single_day_slots(
     array &$available_slots,
     array &$unavailable_slots
 ) {
-    $resource_id = (int) db_get_field('SELECT resource_id FROM ?:talario_resource_products WHERE product_id = ?i LIMIT 1', $product_id);
+    $resource_id = (int) db_get_field(
+        'SELECT rp.resource_id FROM ?:talario_resource_products rp '
+        . 'INNER JOIN ?:products p ON p.product_id = rp.product_id '
+        . 'INNER JOIN ?:talario_resources r ON r.resource_id = rp.resource_id AND r.company_id = p.company_id '
+        . 'WHERE rp.product_id = ?i LIMIT 1',
+        $product_id
+    );
     if (!$resource_id) { return; }
     $occurrences = db_get_hash_array(
         'SELECT occurrence_id, starts_at, ends_at, capacity FROM ?:talario_resource_occurrences '
