@@ -9,6 +9,19 @@
     <compatibility>
         <core_edition>MULTIVENDOR</core_edition>
     </compatibility>
+    <queries>
+        <item for="install">
+            CREATE TABLE `?:talario_analytics_rate_limits` (
+                `scope_hash` char(64) NOT NULL,
+                `minute_bucket` int unsigned NOT NULL,
+                `request_count` int unsigned NOT NULL DEFAULT 0,
+                `updated_at` int unsigned NOT NULL,
+                PRIMARY KEY (`scope_hash`, `minute_bucket`),
+                KEY `updated_at` (`updated_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
+        <item for="uninstall">DROP TABLE IF EXISTS ?:talario_analytics_rate_limits;</item>
+    </queries>
     <settings layout="separate" edition_type="ROOT">
         <sections>
             <section id="general">
