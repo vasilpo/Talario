@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>talario_analytics</id>
+    <version>1.0.0</version>
+    <name>Talario Analytics API</name>
+    <default_language>ru</default_language>
+    <priority>1000</priority>
+    <status>disabled</status>
+    <compatibility>
+        <core_edition>MULTIVENDOR</core_edition>
+    </compatibility>
+    <settings layout="separate" edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="api_token">
+                        <type>input</type>
+                        <default_value/>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>
