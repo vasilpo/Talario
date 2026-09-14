@@ -1,0 +1,29 @@
+msgid ""
+msgstr "Project-Id-Version: tygh\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+msgctxt "Addons::name::talario_analytics"
+msgid "Talario Analytics API"
+msgstr "Таларио Analytics API"
+
+msgctxt "Addons::description::talario_analytics"
+msgid "Read-only analytics endpoint for Talario Assistant"
+msgstr "Read-only API для сверки заказов Таларио с аналитикой"
+
+msgctxt "SettingsSections::talario_analytics::general"
+msgid "General"
+msgstr "Общее"
+
+msgctxt "SettingsOptions::talario_analytics::api_token"
+msgid "Analytics API token"
+msgstr "Токен Analytics API"
+
+msgctxt "SettingsTooltips::talario_analytics::api_token"
+msgid "Use a random token of at least 32 characters. It is required as a Bearer token for read-only analytics requests."
+msgstr "Используй случайный токен длиной не менее 32 символов. Он передаётся как Bearer-токен для read-only запросов аналитики."
+
+msgctxt "Languages::talario_analytics.token_too_short"
+msgid "Analytics API token must be at least 32 characters long."
+msgstr "Токен Analytics API должен содержать не менее 32 символов."
