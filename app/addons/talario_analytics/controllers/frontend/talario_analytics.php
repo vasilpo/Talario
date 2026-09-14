@@ -25,56 +25,81 @@ function fn_talario_analytics_bearer_token(): string
 }
 
 /**
- * Simple per-IP fixed-window rate limit. Only a SHA-256 hash of the IP is stored.
+ * DB-backed fixed-window throttling:
+ * - max 600 requests/min globally;
+ * - max 60 requests/min per source IP hash.
  *
- * @return int Current request count in the minute bucket.
+ * @return int Current per-IP request count in the minute bucket.
  */
 function fn_talario_analytics_rate_limit(): int
 {
-    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-    $ip_hash = hash('sha256', $ip);
-    $bucket = gmdate('YmdHi');
-    $dir = Registry::get('config.dir.cache_misc') . 'talario_analytics_rate/';
+    $now = time();
+    $bucket = (int) floor($now / 60);
+    $global_hash = str_repeat('0', 64);
 
-    if (!is_dir($dir)) {
-        fn_mkdir($dir);
+    db_query(
+        'INSERT INTO ?:talario_analytics_rate_limits'
+        . ' (scope_hash, minute_bucket, request_count, updated_at)'
+        . ' VALUES (?s, ?i, 1, ?i)'
+        . ' ON DUPLICATE KEY UPDATE request_count = request_count + 1, updated_at = ?i',
+        $global_hash,
+        $bucket,
+        $now,
+        $now
+    );
+
+    $global_count = (int) db_get_field(
+        'SELECT request_count FROM ?:talario_analytics_rate_limits'
+        . ' WHERE scope_hash = ?s AND minute_bucket = ?i',
+        $global_hash,
+        $bucket
+    );
+
+    if ($global_count === 1) {
+        db_query(
+            'DELETE FROM ?:talario_analytics_rate_limits WHERE updated_at < ?i',
+            $now - 7200
+        );
     }
 
-    foreach ((array) glob($dir . '*.cnt') as $old_file) {
-        if (is_file($old_file) && filemtime($old_file) < time() - 7200) {
-            @unlink($old_file);
-        }
-    }
-
-    $file = $dir . $bucket . '_' . $ip_hash . '.cnt';
-    $handle = @fopen($file, 'c+');
-    if (!$handle) {
-        // Fail closed if throttling state cannot be maintained.
-        fn_talario_analytics_json_response(503, ['error' => 'rate_limit_unavailable']);
-    }
-
-    flock($handle, LOCK_EX);
-    rewind($handle);
-    $current = (int) trim((string) stream_get_contents($handle));
-
-    if ($current >= 60) {
-        flock($handle, LOCK_UN);
-        fclose($handle);
+    if ($global_count > 600) {
         fn_log_event('general', 'runtime', [
-            'message' => 'Talario Analytics API rate limit exceeded',
+            'message' => 'Talario Analytics API global rate limit exceeded',
         ]);
         fn_talario_analytics_json_response(429, ['error' => 'rate_limit_exceeded']);
     }
 
-    $current++;
-    ftruncate($handle, 0);
-    rewind($handle);
-    fwrite($handle, (string) $current);
-    fflush($handle);
-    flock($handle, LOCK_UN);
-    fclose($handle);
+    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    $ip_hash = hash('sha256', $ip);
 
-    return $current;
+    db_query(
+        'INSERT INTO ?:talario_analytics_rate_limits'
+        . ' (scope_hash, minute_bucket, request_count, updated_at)'
+        . ' VALUES (?s, ?i, 1, ?i)'
+        . ' ON DUPLICATE KEY UPDATE request_count = request_count + 1, updated_at = ?i',
+        $ip_hash,
+        $bucket,
+        $now,
+        $now
+    );
+
+    $ip_count = (int) db_get_field(
+        'SELECT request_count FROM ?:talario_analytics_rate_limits'
+        . ' WHERE scope_hash = ?s AND minute_bucket = ?i',
+        $ip_hash,
+        $bucket
+    );
+
+    if ($ip_count > 60) {
+        if ($ip_count === 61) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Analytics API per-IP rate limit exceeded',
+            ]);
+        }
+        fn_talario_analytics_json_response(429, ['error' => 'rate_limit_exceeded']);
+    }
+
+    return $ip_count;
 }
 
 function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
@@ -93,8 +118,6 @@ function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
     return $date;
 }
 
-fn_talario_analytics_rate_limit();
-
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
@@ -102,6 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 if ($mode !== 'orders') {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
+
+$rate_count = fn_talario_analytics_rate_limit();
 
 $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
@@ -112,9 +137,11 @@ $provided_token = fn_talario_analytics_bearer_token();
 $provided_hash = 'sha256:' . hash('sha256', $provided_token);
 
 if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_hash)) {
-    fn_log_event('general', 'runtime', [
-        'message' => 'Talario Analytics API unauthorized request',
-    ]);
+    if ($rate_count === 1) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Analytics API unauthorized request',
+        ]);
+    }
     fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
 }
 
@@ -180,15 +207,7 @@ foreach ($rows as $row) {
 }
 
 fn_log_event('general', 'runtime', [
-    'message' => sprintf(
-        'Talario Analytics API success: %s..%s page=%d limit=%d returned=%d total=%d',
-        $date1_raw,
-        $date2_raw,
-        $page,
-        $limit,
-        count($orders),
-        $total
-    ),
+    'message' => 'Talario Analytics API authorized request completed',
 ]);
 
 fn_talario_analytics_json_response(200, [
