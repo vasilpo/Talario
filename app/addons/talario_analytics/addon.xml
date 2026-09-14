@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>talario_analytics</id>
+    <version>1.0.0</version>
+    <name>Talario Analytics API</name>
+    <default_language>ru</default_language>
+    <priority>1000</priority>
+    <status>disabled</status>
+    <compatibility>
+        <core_edition>MULTIVENDOR</core_edition>
+    </compatibility>
+    <queries>
+        <item for="install">
+            CREATE TABLE `?:talario_analytics_rate_limits` (
+                `scope_hash` char(64) NOT NULL,
+                `minute_bucket` int unsigned NOT NULL,
+                `request_count` int unsigned NOT NULL DEFAULT 0,
+                `updated_at` int unsigned NOT NULL,
+                PRIMARY KEY (`scope_hash`, `minute_bucket`),
+                KEY `updated_at` (`updated_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </item>
+        <item for="uninstall">DROP TABLE IF EXISTS ?:talario_analytics_rate_limits;</item>
+    </queries>
+    <settings layout="separate" edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="api_token">
+                        <type>input</type>
+                        <default_value/>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>
