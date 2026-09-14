@@ -16,5 +16,11 @@ function fn_settings_actions_addons_talario_analytics_api_token(&$value)
         return;
     }
 
+    if (strlen($value) < 32) {
+        fn_set_notification('E', __('error'), __('talario_analytics.token_too_short'));
+        $value = '';
+        return;
+    }
+
     $value = 'sha256:' . hash('sha256', $value);
 }
