@@ -80,9 +80,22 @@
             return idMatch[1];
         }
 
+        var hiddenId = numericId($element.closest('form').find('input[name*="[product_id]"]').first().val() || '');
+        if (hiddenId) {
+            return hiddenId;
+        }
+
         var href = String($element.attr('href') || '');
         var hrefMatch = href.match(/[?&]product_id=(\d{1,12})(?:&|$)/);
-        return hrefMatch ? hrefMatch[1] : '';
+        if (hrefMatch) {
+            return hrefMatch[1];
+        }
+
+        try {
+            return numericId(new URLSearchParams(window.location.search || '').get('product_id') || '');
+        } catch (e) {
+            return '';
+        }
     }
 
     function filterIdFromElement(element) {
