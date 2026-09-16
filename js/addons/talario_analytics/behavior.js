@@ -1,3 +1,4 @@
+if (typeof Tygh !== 'undefined' && Tygh.$) {
 (function (_, $) {
     'use strict';
 
@@ -178,4 +179,5 @@
         emit('talario_back');
     });
 
-}((typeof Tygh !== 'undefined') ? Tygh : {}, (typeof Tygh !== 'undefined' && Tygh.$) ? Tygh.$ : function () {}));
+}(Tygh, Tygh.$));
+}
