@@ -5,6 +5,7 @@
     var recent = {};
     var flushTimer = null;
     var scheduleSeen = false;
+    var consentGranted = false;
 
     var allowedEvents = {
         talario_search_submit: true,
@@ -28,6 +29,20 @@
         return /^\d{1,12}$/.test(raw) ? parseInt(raw, 10) : 0;
     }
 
+    function readConsentState() {
+        try {
+            if (typeof window.klaro === 'undefined' || typeof window.klaro.getManager !== 'function') {
+                return false;
+            }
+
+            var manager = window.klaro.getManager();
+
+            return !!(manager && manager.states && manager.states.yandex_metrika === true);
+        } catch (e) {
+            return false;
+        }
+    }
+
     function shouldSend(name) {
         var now = Date.now();
 
@@ -42,7 +57,7 @@
     function sendNow(name) {
         var id = counterId();
 
-        if (!id || typeof window.ym !== 'function') {
+        if (!consentGranted || !id || typeof window.ym !== 'function') {
             return false;
         }
 
@@ -54,9 +69,22 @@
         }
     }
 
+    function clearQueue() {
+        queue = [];
+
+        if (flushTimer) {
+            window.clearInterval(flushTimer);
+            flushTimer = null;
+        }
+    }
+
     function flushQueue() {
         var pending = [];
         var i;
+
+        if (!consentGranted) {
+            return;
+        }
 
         for (i = 0; i < queue.length; i += 1) {
             if (!sendNow(queue[i])) {
@@ -73,7 +101,7 @@
     }
 
     function emit(name) {
-        if (!allowedEvents[name] || !shouldSend(name)) {
+        if (!consentGranted || !allowedEvents[name] || !shouldSend(name)) {
             return;
         }
 
@@ -82,17 +110,22 @@
 
             if (!flushTimer) {
                 flushTimer = window.setInterval(flushQueue, 500);
-                window.setTimeout(function () {
-                    if (flushTimer) {
-                        window.clearInterval(flushTimer);
-                        flushTimer = null;
-                    }
-
-                    queue = [];
-                }, 5000);
+                window.setTimeout(clearQueue, 5000);
             }
         }
     }
+
+    consentGranted = readConsentState();
+
+    $.ceEvent('on', 'ce.gdpr_cookie_on_accept_yandex_metrika', function () {
+        consentGranted = true;
+        flushQueue();
+    });
+
+    $.ceEvent('on', 'ce.gdpr_cookie_on_decline_yandex_metrika', function () {
+        consentGranted = false;
+        clearQueue();
+    });
 
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit');
