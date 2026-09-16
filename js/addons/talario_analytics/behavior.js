@@ -35,6 +35,8 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
             if (typeof window.klaro === 'undefined' || typeof window.klaro.getManager !== 'function') {
                 return !!(
                     _ &&
+                    _.talarioAnalytics &&
+                    _.talarioAnalytics.allowBehaviorWithoutKlaro === true &&
                     _.yandexMetrika &&
                     _.yandexMetrika.provider &&
                     _.yandexMetrika.provider.id === 'default' &&
