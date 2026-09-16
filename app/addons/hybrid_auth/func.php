@@ -684,7 +684,7 @@ function fn_get_hybrid_auth_provider_icon($provider_id, $icon_name = null)
  */
 function fn_hybrid_auth_url_post(&$_url, $area, $url, $protocol, $company_id_in_url, $lang_code, $locations)
 {
-    if ($url === '/auth/twitter') {
+    if ($url === '/auth/twitter' || $url === '/auth/vkontakte') {
         $_url = $locations[$area][$protocol] . $url;
     }
 }
