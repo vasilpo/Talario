@@ -2,11 +2,8 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
 (function (_, $) {
     'use strict';
 
-    var queue = [];
     var recent = {};
-    var flushTimer = null;
     var scheduleSeen = false;
-    var consentGranted = false;
 
     var allowedEvents = {
         talario_search_submit: true,
@@ -30,18 +27,15 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         return /^\d{1,12}$/.test(raw) ? parseInt(raw, 10) : 0;
     }
 
-    function readConsentState() {
-        try {
-            if (typeof window.klaro === 'undefined' || typeof window.klaro.getManager !== 'function') {
-                return false;
-            }
-
-            var manager = window.klaro.getManager();
-
-            return !!(manager && manager.states && manager.states.yandex_metrika === true);
-        } catch (e) {
-            return false;
-        }
+    function nativeMetrikaReady() {
+        return !!(
+            _ &&
+            _.yandexMetrika &&
+            _.yandexMetrika.provider &&
+            _.yandexMetrika.provider.id === 'default' &&
+            counterId() &&
+            typeof window.ym === 'function'
+        );
     }
 
     function shouldSend(name) {
@@ -55,78 +49,19 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         return true;
     }
 
-    function sendNow(name) {
-        var id = counterId();
+    function emit(name) {
+        var id;
 
-        if (!consentGranted || !id || typeof window.ym !== 'function') {
-            return false;
+        if (!allowedEvents[name] || !nativeMetrikaReady() || !shouldSend(name)) {
+            return;
         }
+
+        id = counterId();
 
         try {
             window.ym(id, 'reachGoal', name);
-            return true;
-        } catch (e) {
-            return false;
-        }
+        } catch (e) {}
     }
-
-    function clearQueue() {
-        queue = [];
-
-        if (flushTimer) {
-            window.clearInterval(flushTimer);
-            flushTimer = null;
-        }
-    }
-
-    function flushQueue() {
-        var pending = [];
-        var i;
-
-        if (!consentGranted) {
-            return;
-        }
-
-        for (i = 0; i < queue.length; i += 1) {
-            if (!sendNow(queue[i])) {
-                pending.push(queue[i]);
-            }
-        }
-
-        queue = pending;
-
-        if (!queue.length && flushTimer) {
-            window.clearInterval(flushTimer);
-            flushTimer = null;
-        }
-    }
-
-    function emit(name) {
-        if (!consentGranted || !allowedEvents[name] || !shouldSend(name)) {
-            return;
-        }
-
-        if (!sendNow(name)) {
-            queue.push(name);
-
-            if (!flushTimer) {
-                flushTimer = window.setInterval(flushQueue, 500);
-                window.setTimeout(clearQueue, 5000);
-            }
-        }
-    }
-
-    consentGranted = readConsentState();
-
-    $.ceEvent('on', 'ce.gdpr_cookie_on_accept_yandex_metrika', function () {
-        consentGranted = true;
-        flushQueue();
-    });
-
-    $.ceEvent('on', 'ce.gdpr_cookie_on_decline_yandex_metrika', function () {
-        consentGranted = false;
-        clearQueue();
-    });
 
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit');
@@ -171,7 +106,7 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit(isBooking ? 'talario_booking_cta' : 'talario_add_to_cart');
     });
 
-    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout"]', function () {
+    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout]"]', function () {
         emit('talario_checkout_start');
     });
 
