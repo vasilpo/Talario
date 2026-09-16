@@ -1,7 +1,7 @@
 (function (_, $) {
     'use strict';
 
-    var COUNTER_ID = 105073425;
+    var COUNTER_ID = numericCounterId(_.talario_behavior_counter_id);
     var queue = [];
     var recent = {};
     var flushTimer = null;
@@ -19,6 +19,11 @@
         talario_checkout_start: true,
         talario_back: true
     };
+
+    function numericCounterId(value) {
+        var raw = String(value || '').trim();
+        return /^\d{1,12}$/.test(raw) ? parseInt(raw, 10) : 0;
+    }
 
     function safeToken(value, maxLength) {
         var raw = String(value || '').trim();
@@ -108,17 +113,26 @@
         var params = {
             page_type: currentPageType()
         };
-        var key;
+        var productId;
+        var filterId;
+        var optionId;
 
         extra = extra || {};
-        for (key in extra) {
-            if (!Object.prototype.hasOwnProperty.call(extra, key)) {
-                continue;
-            }
-            if (extra[key] !== '') {
-                params[key] = extra[key];
-            }
+
+        productId = numericId(extra.product_id || '');
+        filterId = numericId(extra.filter_id || '');
+        optionId = numericId(extra.option_id || '');
+
+        if (productId) {
+            params.product_id = productId;
         }
+        if (filterId) {
+            params.filter_id = filterId;
+        }
+        if (optionId) {
+            params.option_id = optionId;
+        }
+
         return params;
     }
 
@@ -145,7 +159,7 @@
     }
 
     function sendNow(item) {
-        if (typeof window.ym !== 'function') {
+        if (!COUNTER_ID || typeof window.ym !== 'function') {
             return false;
         }
 
@@ -211,10 +225,6 @@
             // CustomEvent is optional. Analytics delivery above is authoritative.
         }
     }
-
-    window.TalarioBehavior = {
-        emit: emit
-    };
 
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit');
