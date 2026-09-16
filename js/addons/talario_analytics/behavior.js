@@ -33,7 +33,14 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     function readConsentState() {
         try {
             if (typeof window.klaro === 'undefined' || typeof window.klaro.getManager !== 'function') {
-                return true;
+                return !!(
+                    _ &&
+                    _.yandexMetrika &&
+                    _.yandexMetrika.provider &&
+                    _.yandexMetrika.provider.id === 'default' &&
+                    counterId() &&
+                    typeof window.ym === 'function'
+                );
             }
 
             var manager = window.klaro.getManager();
@@ -102,6 +109,8 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     }
 
     function emit(name) {
+        consentGranted = readConsentState();
+
         if (!consentGranted || !allowedEvents[name] || !shouldSend(name)) {
             return;
         }
