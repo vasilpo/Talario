@@ -33,7 +33,7 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     function readConsentState() {
         try {
             if (typeof window.klaro === 'undefined' || typeof window.klaro.getManager !== 'function') {
-                return false;
+                return true;
             }
 
             var manager = window.klaro.getManager();
@@ -171,7 +171,7 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit(isBooking ? 'talario_booking_cta' : 'talario_add_to_cart');
     });
 
-    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout"]', function () {
+    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout]"]', function () {
         emit('talario_checkout_start');
     });
 
