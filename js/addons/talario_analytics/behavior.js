@@ -4,6 +4,11 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
 
     var recent = {};
     var scheduleSeen = false;
+    var queue = [];
+    var flushTimer = null;
+    var QUEUE_LIMIT = 20;
+    var QUEUE_TTL_MS = 2000;
+    var RETRY_MS = 250;
 
     var allowedEvents = {
         talario_search_submit: true,
@@ -30,7 +35,8 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     // Product decision (2026-09-16): behavior goals are not a separate tracker.
     // They are emitted only through the already-active native rus_yandex_metrika
     // runtime, without new cookies, identifiers, payload parameters, or a new
-    // consent UI. If native Metrika is unavailable, behavior events are dropped.
+    // consent UI. A short-lived in-memory queue may retry delivery only through
+    // that same native runtime; it is never persisted and has no fallback transport.
     function nativeMetrikaReady() {
         return !!(
             _ &&
@@ -53,18 +59,73 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         return true;
     }
 
-    function emit(name) {
+    function sendNow(name) {
         var id;
 
-        if (!allowedEvents[name] || !nativeMetrikaReady() || !shouldSend(name)) {
-            return;
+        if (!nativeMetrikaReady()) {
+            return false;
         }
 
         id = counterId();
 
         try {
             window.ym(id, 'reachGoal', name);
-        } catch (e) {}
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function scheduleFlush() {
+        if (flushTimer || !queue.length) {
+            return;
+        }
+
+        flushTimer = window.setTimeout(flushQueue, RETRY_MS);
+    }
+
+    function flushQueue() {
+        var now = Date.now();
+        var pending = [];
+        var i;
+
+        flushTimer = null;
+
+        for (i = 0; i < queue.length; i++) {
+            if (now - queue[i].queuedAt > QUEUE_TTL_MS) {
+                continue;
+            }
+
+            if (!sendNow(queue[i].name)) {
+                pending.push(queue[i]);
+            }
+        }
+
+        queue = pending.slice(-QUEUE_LIMIT);
+
+        if (queue.length) {
+            scheduleFlush();
+        }
+    }
+
+    function emit(name) {
+        if (!allowedEvents[name] || !shouldSend(name)) {
+            return;
+        }
+
+        if (sendNow(name)) {
+            return;
+        }
+
+        if (queue.length >= QUEUE_LIMIT) {
+            queue.shift();
+        }
+
+        queue.push({
+            name: name,
+            queuedAt: Date.now()
+        });
+        scheduleFlush();
     }
 
     $(document).on('submit', 'form[name="search_form"]', function () {
