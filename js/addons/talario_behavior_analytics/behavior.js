@@ -40,29 +40,17 @@
     }
 
     function currentPageType() {
-        var params;
-        var dispatch = '';
-
-        try {
-            params = new URLSearchParams(window.location.search || '');
-            dispatch = safeToken(params.get('dispatch') || '', 64);
-        } catch (e) {
-            dispatch = '';
-        }
-
-        if (dispatch) {
-            return dispatch;
-        }
-
-        var path = String(window.location.pathname || '/');
-        if (/\/products\//i.test(path) || /product/i.test(document.body.className || '')) {
+        if ($('form[name^="product_form_"] input[name*="[product_id]"]').length) {
             return 'product';
         }
-        if (/checkout/i.test(path)) {
+        if ($('form[name="checkout_form"], .ty-checkout, .litecheckout').length) {
             return 'checkout';
         }
-        if (/search/i.test(path)) {
+        if ($('form[name="search_form"]').length) {
             return 'search';
+        }
+        if ($('.cm-product-filters').length) {
+            return 'catalog';
         }
         return 'other';
     }
@@ -90,17 +78,7 @@
             return hiddenId;
         }
 
-        var href = String($element.attr('href') || '');
-        var hrefMatch = href.match(/[?&]product_id=(\d{1,12})(?:&|$)/);
-        if (hrefMatch) {
-            return hrefMatch[1];
-        }
-
-        try {
-            return numericId(new URLSearchParams(window.location.search || '').get('product_id') || '');
-        } catch (e) {
-            return '';
-        }
+        return '';
     }
 
     function filterIdFromElement(element) {
