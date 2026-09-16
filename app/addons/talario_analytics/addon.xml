@@ -30,6 +30,10 @@
                         <type>input</type>
                         <default_value/>
                     </item>
+                    <item id="allow_behavior_without_klaro">
+                        <type>checkbox</type>
+                        <default_value>N</default_value>
+                    </item>
                 </items>
             </section>
         </sections>
