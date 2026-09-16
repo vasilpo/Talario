@@ -9,4 +9,16 @@
     <compatibility>
         <core_edition>MULTIVENDOR</core_edition>
     </compatibility>
+    <settings layout="separate" edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="counter_id">
+                        <type>input</type>
+                        <default_value/>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
 </addon>
