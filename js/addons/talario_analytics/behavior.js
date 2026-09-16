@@ -178,4 +178,4 @@
         emit('talario_back');
     });
 
-}(Tygh, Tygh.$));
+}((typeof Tygh !== 'undefined') ? Tygh : {}, (typeof Tygh !== 'undefined' && Tygh.$) ? Tygh.$ : function () {}));
