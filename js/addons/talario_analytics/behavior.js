@@ -1,7 +1,6 @@
 (function (_, $) {
     'use strict';
 
-    var COUNTER_ID = numericCounterId(_.talario_behavior_counter_id);
     var queue = [];
     var recent = {};
     var flushTimer = null;
@@ -20,27 +19,35 @@
         talario_back: true
     };
 
-    function numericCounterId(value) {
+    function counterId() {
+        var value = _ && _.yandexMetrika && _.yandexMetrika.settings
+            ? _.yandexMetrika.settings.id
+            : '';
         var raw = String(value || '').trim();
+
         return /^\d{1,12}$/.test(raw) ? parseInt(raw, 10) : 0;
     }
 
     function shouldSend(name) {
         var now = Date.now();
+
         if (recent[name] && now - recent[name] < 600) {
             return false;
         }
+
         recent[name] = now;
         return true;
     }
 
     function sendNow(name) {
-        if (!COUNTER_ID || typeof window.ym !== 'function') {
+        var id = counterId();
+
+        if (!id || typeof window.ym !== 'function') {
             return false;
         }
 
         try {
-            window.ym(COUNTER_ID, 'reachGoal', name);
+            window.ym(id, 'reachGoal', name);
             return true;
         } catch (e) {
             return false;
@@ -72,6 +79,7 @@
 
         if (!sendNow(name)) {
             queue.push(name);
+
             if (!flushTimer) {
                 flushTimer = window.setInterval(flushQueue, 500);
                 window.setTimeout(function () {
@@ -79,6 +87,7 @@
                         window.clearInterval(flushTimer);
                         flushTimer = null;
                     }
+
                     queue = [];
                 }, 5000);
             }
@@ -109,6 +118,7 @@
         if (scheduleSeen) {
             return;
         }
+
         scheduleSeen = true;
         emit('talario_schedule_open');
     });
@@ -117,11 +127,13 @@
         if (!String($(this).val() || '')) {
             return;
         }
+
         emit('talario_slot_select');
     });
 
     $(document).on('click', 'button[name^="dispatch[checkout.add"], input[name^="dispatch[checkout.add"], [id^="button_cart_"]', function () {
         var isBooking = $(this).closest('form').find('[name*="[booking_info]"]').length > 0;
+
         emit(isBooking ? 'talario_booking_cta' : 'talario_add_to_cart');
     });
 
