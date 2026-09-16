@@ -27,6 +27,10 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         return /^\d{1,12}$/.test(raw) ? parseInt(raw, 10) : 0;
     }
 
+    // Product decision (2026-09-16): behavior goals are not a separate tracker.
+    // They are emitted only through the already-active native rus_yandex_metrika
+    // runtime, without new cookies, identifiers, payload parameters, or a new
+    // consent UI. If native Metrika is unavailable, behavior events are dropped.
     function nativeMetrikaReady() {
         return !!(
             _ &&
@@ -106,7 +110,7 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit(isBooking ? 'talario_booking_cta' : 'talario_add_to_cart');
     });
 
-    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout]"]', function () {
+    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout"]', function () {
         emit('talario_checkout_start');
     });
 
