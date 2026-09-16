@@ -18,8 +18,4 @@ $schema['/auth/twitter'] = [
     'dispatch' => 'auth.process'
 ];
 
-$schema['/auth/vkontakte'] = [
-    'dispatch' => 'auth.process'
-];
-
 return $schema;
