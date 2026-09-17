@@ -140,7 +140,9 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit('talario_filter_apply');
     });
 
-    $(document).on('click', '.ty-product-filters__reset-button, .ty-reset-filters', function () {
+    // Keep the previous generic AJAX-link coverage while also handling the
+    // concrete reset controls used by current CS-Cart/UniTheme templates.
+    $(document).on('click', '.cm-product-filters a.cm-ajax, .ty-product-filters__reset-button, .ty-reset-filters', function () {
         emit('talario_filter_apply');
     });
 
