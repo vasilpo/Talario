@@ -35,8 +35,10 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     // Product decision (2026-09-16): behavior goals are not a separate tracker.
     // They are emitted only through the already-active native rus_yandex_metrika
     // runtime, without new cookies, identifiers, payload parameters, or a new
-    // consent UI. A short-lived in-memory queue may retry delivery only through
-    // that same native runtime; it is never persisted and has no fallback transport.
+    // consent UI. Under the documented project policy, absence of a separate
+    // code-level consent gate for these fixed goals is not itself a finding.
+    // A short-lived in-memory queue may retry delivery only through that same
+    // native runtime; it is never persisted and has no fallback transport.
     function nativeMetrikaReady() {
         return !!(
             _ &&
