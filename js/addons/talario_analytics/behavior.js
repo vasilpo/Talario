@@ -134,11 +134,13 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit('talario_search_submit');
     });
 
-    $(document).on('change', '.cm-product-filters input, .cm-product-filters select', function () {
+    // CS-Cart/UniTheme filter controls use these classes directly; there is no
+    // guaranteed .cm-product-filters wrapper around the inputs on PROD.
+    $(document).on('change', '.cm-product-filters-checkbox, .cm-product-filters-select', function () {
         emit('talario_filter_apply');
     });
 
-    $(document).on('click', '.cm-product-filters a.cm-ajax, .ty-product-filters__reset-button', function () {
+    $(document).on('click', '.ty-product-filters__reset-button, .ty-reset-filters', function () {
         emit('talario_filter_apply');
     });
 
