@@ -2,11 +2,13 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
 (function (_, $) {
     'use strict';
 
-    var queue = [];
     var recent = {};
-    var flushTimer = null;
     var scheduleSeen = false;
-    var consentGranted = false;
+    var queue = [];
+    var flushTimer = null;
+    var QUEUE_LIMIT = 20;
+    var QUEUE_TTL_MS = 2000;
+    var RETRY_MS = 250;
 
     var allowedEvents = {
         talario_search_submit: true,
@@ -30,18 +32,22 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         return /^\d{1,12}$/.test(raw) ? parseInt(raw, 10) : 0;
     }
 
-    function readConsentState() {
-        try {
-            if (typeof window.klaro === 'undefined' || typeof window.klaro.getManager !== 'function') {
-                return false;
-            }
-
-            var manager = window.klaro.getManager();
-
-            return !!(manager && manager.states && manager.states.yandex_metrika === true);
-        } catch (e) {
-            return false;
-        }
+    // Product decision (2026-09-16): behavior goals are not a separate tracker.
+    // They are emitted only through the already-active native rus_yandex_metrika
+    // runtime, without new cookies, identifiers, payload parameters, or a new
+    // consent UI. Under the documented project policy, absence of a separate
+    // code-level consent gate for these fixed goals is not itself a finding.
+    // A short-lived in-memory queue may retry delivery only through that same
+    // native runtime; it is never persisted and has no fallback transport.
+    function nativeMetrikaReady() {
+        return !!(
+            _ &&
+            _.yandexMetrika &&
+            _.yandexMetrika.provider &&
+            _.yandexMetrika.provider.id === 'default' &&
+            counterId() &&
+            typeof window.ym === 'function'
+        );
     }
 
     function shouldSend(name) {
@@ -56,11 +62,13 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     }
 
     function sendNow(name) {
-        var id = counterId();
+        var id;
 
-        if (!consentGranted || !id || typeof window.ym !== 'function') {
+        if (!nativeMetrikaReady()) {
             return false;
         }
+
+        id = counterId();
 
         try {
             window.ym(id, 'reachGoal', name);
@@ -70,63 +78,57 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         }
     }
 
-    function clearQueue() {
-        queue = [];
-
-        if (flushTimer) {
-            window.clearInterval(flushTimer);
-            flushTimer = null;
-        }
-    }
-
-    function flushQueue() {
-        var pending = [];
-        var i;
-
-        if (!consentGranted) {
+    function scheduleFlush() {
+        if (flushTimer || !queue.length) {
             return;
         }
 
-        for (i = 0; i < queue.length; i += 1) {
-            if (!sendNow(queue[i])) {
+        flushTimer = window.setTimeout(flushQueue, RETRY_MS);
+    }
+
+    function flushQueue() {
+        var now = Date.now();
+        var pending = [];
+        var i;
+
+        flushTimer = null;
+
+        for (i = 0; i < queue.length; i++) {
+            if (now - queue[i].queuedAt > QUEUE_TTL_MS) {
+                continue;
+            }
+
+            if (!sendNow(queue[i].name)) {
                 pending.push(queue[i]);
             }
         }
 
-        queue = pending;
+        queue = pending.slice(-QUEUE_LIMIT);
 
-        if (!queue.length && flushTimer) {
-            window.clearInterval(flushTimer);
-            flushTimer = null;
+        if (queue.length) {
+            scheduleFlush();
         }
     }
 
     function emit(name) {
-        if (!consentGranted || !allowedEvents[name] || !shouldSend(name)) {
+        if (!allowedEvents[name] || !shouldSend(name)) {
             return;
         }
 
-        if (!sendNow(name)) {
-            queue.push(name);
-
-            if (!flushTimer) {
-                flushTimer = window.setInterval(flushQueue, 500);
-                window.setTimeout(clearQueue, 5000);
-            }
+        if (sendNow(name)) {
+            return;
         }
+
+        if (queue.length >= QUEUE_LIMIT) {
+            queue.shift();
+        }
+
+        queue.push({
+            name: name,
+            queuedAt: Date.now()
+        });
+        scheduleFlush();
     }
-
-    consentGranted = readConsentState();
-
-    $.ceEvent('on', 'ce.gdpr_cookie_on_accept_yandex_metrika', function () {
-        consentGranted = true;
-        flushQueue();
-    });
-
-    $.ceEvent('on', 'ce.gdpr_cookie_on_decline_yandex_metrika', function () {
-        consentGranted = false;
-        clearQueue();
-    });
 
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit');
