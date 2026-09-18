@@ -153,6 +153,80 @@ function fn_talario_schedule_resources_clear_cart($cart, $complete, $clear_all)
     (new \Tygh\Addons\TalarioScheduleResources\Service\ScheduleResourceService())->releaseCartHold(session_id());
 }
 
+
+function fn_talario_schedule_resources_sync_legacy_booking_info($order_id, array $order_info)
+{
+    if (empty($order_info['products'])) {
+        $order_info = (array) fn_get_order_info((int) $order_id);
+    }
+
+    if (empty($order_info['products'])) {
+        return;
+    }
+
+    $status_params = fn_get_status_params((string) ($order_info['status'] ?? ''), STATUSES_ORDER);
+    $legacy_status = (($status_params['inventory'] ?? '') === 'I') ? 'D' : 'A';
+
+    foreach ((array) $order_info['products'] as $order_product) {
+        $booking = (array) ($order_product['extra']['booking_info'] ?? []);
+        if (($booking['booking_type'] ?? '') !== 'T') {
+            continue;
+        }
+
+        $product_id = (int) ($order_product['product_id'] ?? 0);
+        if (!$product_id) {
+            continue;
+        }
+
+        $resource_id = (int) db_get_field(
+            'SELECT resource_id FROM ?:talario_resource_products WHERE product_id = ?i LIMIT 1',
+            $product_id
+        );
+        if (!$resource_id) {
+            continue;
+        }
+
+        $existing_id = (int) db_get_field(
+            'SELECT id FROM ?:ec_table_booking_system_booking_info WHERE order_id = ?i AND product_id = ?i LIMIT 1',
+            (int) $order_id,
+            $product_id
+        );
+        if ($existing_id) {
+            db_query(
+                'UPDATE ?:ec_table_booking_system_booking_info SET status = ?s WHERE id = ?i',
+                $legacy_status,
+                $existing_id
+            );
+            continue;
+        }
+
+        $date_value = $booking['original_booking_date'] ?? $booking['booking_date'] ?? '';
+        $date_timestamp = is_numeric($date_value) ? (int) $date_value : strtotime((string) $date_value);
+        $start_date = $date_timestamp ? date('Y-m-d', $date_timestamp) : '';
+
+        db_query(
+            'INSERT INTO ?:ec_table_booking_system_booking_info ?e',
+            [
+                'order_id' => (int) $order_id,
+                'product_id' => $product_id,
+                'booking_info' => serialize([
+                    'booking_type' => 'T',
+                    'booking_date' => is_scalar($booking['booking_date'] ?? null) ? (string) ($booking['booking_date'] ?? '') : '',
+                    'original_booking_date' => is_scalar($booking['original_booking_date'] ?? null) ? (string) ($booking['original_booking_date'] ?? '') : '',
+                    'booking_slot' => is_scalar($booking['booking_slot'] ?? null) ? (string) ($booking['booking_slot'] ?? '') : '',
+                    'booking_slot_amount' => (int) ($booking['booking_slot_amount'] ?? $order_product['amount'] ?? 1),
+                ]),
+                'start_date' => $start_date,
+                'end_date' => '',
+                'slot' => (string) ($booking['booking_slot'] ?? ''),
+                'quantity' => (int) ($booking['booking_slot_amount'] ?? $order_product['amount'] ?? 1),
+                'status' => $legacy_status,
+                'booking_type' => 'T',
+            ]
+        );
+    }
+}
+
 function fn_talario_schedule_resources_order_placement_routines($order_id, $force_notification, $order_info, $_error, &$redirect_url)
 {
     if ($_error) { return; }
@@ -163,6 +237,7 @@ function fn_talario_schedule_resources_order_placement_routines($order_id, $forc
     $service = new \Tygh\Addons\TalarioScheduleResources\Service\ScheduleResourceService();
     try {
         $service->convertCartHoldsToBookings(session_id(), $order_id, $order_info['products']);
+        fn_talario_schedule_resources_sync_legacy_booking_info((int) $order_id, (array) $order_info);
     } catch (\Throwable $e) {
         $service->releaseCartHold(session_id());
         $inactive_statuses = fn_get_status_by_type_and_param(STATUSES_ORDER, ['inventory' => 'I']);

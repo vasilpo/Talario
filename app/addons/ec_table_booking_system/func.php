@@ -1065,7 +1065,7 @@ function Fn_Ec_Table_Booking_System_Get_Booked_info($product_id = 0, $type = '',
     $all_booking_info = array();
     foreach ($booking_data as $in_dex => $b_data) {
         $booking_info = $b_data;
-        $booking_info['booking_info'] = unserialize($b_data['booking_info']);
+        $booking_info['booking_info'] = unserialize($b_data['booking_info'], ['allowed_classes' => false]);
         if ($booking_info['booking_info']['booking_type'] == $type) {
             $all_booking_info[] = $booking_info;
         } elseif (empty($type)) {
@@ -1165,7 +1165,7 @@ function Fn_Ec_Table_Booking_System_Get_Booked_information($product_id = 0, $typ
     }
     $booking_info = db_get_array('SELECT ' . implode(', ', $fields) . " FROM ?:ec_table_booking_system_booking_info as booking_and_reservation_booking_info $join WHERE 1 $condition $sorting $limit");
     foreach ($booking_info as $in_dex => $b_data) {
-        $booking_info[$in_dex]['booking_info'] = unserialize($b_data['booking_info']);
+        $booking_info[$in_dex]['booking_info'] = unserialize($b_data['booking_info'], ['allowed_classes' => false]);
         // if (empty($b_data['order_id'])){
         //     undet($booking_info[$in_dex]);
         // }
