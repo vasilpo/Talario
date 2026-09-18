@@ -82,7 +82,7 @@
         }
 
         try {
-            window.ym(id, 'reachGoal', eventData.name, compactPayload(eventData.payload));
+            window.ym(id, 'reachGoal', eventData.name);
             return true;
         } catch (e) {
             return false;
@@ -208,11 +208,11 @@
     function detectCompletedBooking() {
         var ctx = analyticsContext();
 
-        if (!ctx.order_id || !ctx.is_booking_order) {
+        if (!ctx.is_completed_order || !ctx.is_booking_order) {
             return;
         }
 
-        if (parseFloat(ctx.order_total || 0) <= 0) {
+        if (ctx.is_free_order) {
             emit('talario_free_booking', {
                 revenue: 0,
                 currency: 'RUB'
