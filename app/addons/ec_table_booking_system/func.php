@@ -1065,7 +1065,7 @@ function Fn_Ec_Table_Booking_System_Get_Booked_info($product_id = 0, $type = '',
     $all_booking_info = array();
     foreach ($booking_data as $in_dex => $b_data) {
         $booking_info = $b_data;
-        $booking_info['booking_info'] = unserialize($b_data['booking_info']);
+        $booking_info['booking_info'] = unserialize($b_data['booking_info'], ['allowed_classes' => false]);
         if ($booking_info['booking_info']['booking_type'] == $type) {
             $all_booking_info[] = $booking_info;
         } elseif (empty($type)) {
