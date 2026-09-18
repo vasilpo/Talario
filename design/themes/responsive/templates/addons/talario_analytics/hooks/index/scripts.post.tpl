@@ -12,10 +12,9 @@ window.talarioAnalyticsContext = {
     mode: {$runtime.mode|default:""|json_encode nofilter},
     product_id: {$product.product_id|default:0|intval},
     company_id: {$product.company_id|default:0|intval},
-    order_id: {$order_info.order_id|default:0|intval},
-    order_total: {$order_info.total|default:0|json_encode nofilter},
-    order_status: {$order_info.status|default:""|json_encode nofilter},
-    is_booking_order: {if $talario_is_booking_order}true{else}false{/if}
+    is_completed_order: {if $order_info.order_id|default:0}true{else}false{/if},
+    is_booking_order: {if $talario_is_booking_order}true{else}false{/if},
+    is_free_order: {if ($order_info.total|default:0) <= 0}true{else}false{/if}
 };
 </script>
 {script src="js/addons/talario_analytics/behavior.js"}
