@@ -209,7 +209,13 @@ function fn_talario_schedule_resources_sync_legacy_booking_info($order_id, array
             [
                 'order_id' => (int) $order_id,
                 'product_id' => $product_id,
-                'booking_info' => serialize($booking),
+                'booking_info' => serialize([
+                    'booking_type' => 'T',
+                    'booking_date' => is_scalar($booking['booking_date'] ?? null) ? (string) ($booking['booking_date'] ?? '') : '',
+                    'original_booking_date' => is_scalar($booking['original_booking_date'] ?? null) ? (string) ($booking['original_booking_date'] ?? '') : '',
+                    'booking_slot' => is_scalar($booking['booking_slot'] ?? null) ? (string) ($booking['booking_slot'] ?? '') : '',
+                    'booking_slot_amount' => (int) ($booking['booking_slot_amount'] ?? $order_product['amount'] ?? 1),
+                ]),
                 'start_date' => $start_date,
                 'end_date' => '',
                 'slot' => (string) ($booking['booking_slot'] ?? ''),
