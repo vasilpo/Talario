@@ -189,20 +189,54 @@ $rows = db_get_array(
     $limit
 );
 
+$order_ids = array_map(static function ($row) {
+    return (int) $row['order_id'];
+}, $rows);
+
+$resource_booking_counts = [];
+$legacy_booking_counts = [];
+
+if ($order_ids) {
+    foreach (db_get_array(
+        'SELECT order_id, COUNT(*) AS booking_count FROM ?:talario_resource_bookings'
+        . ' WHERE order_id IN (?n) GROUP BY order_id',
+        $order_ids
+    ) as $booking_row) {
+        $resource_booking_counts[(int) $booking_row['order_id']] = (int) $booking_row['booking_count'];
+    }
+
+    foreach (db_get_array(
+        'SELECT order_id, COUNT(*) AS booking_count FROM ?:ec_table_booking_system_booking_info'
+        . ' WHERE order_id IN (?n) GROUP BY order_id',
+        $order_ids
+    ) as $booking_row) {
+        $legacy_booking_counts[(int) $booking_row['order_id']] = (int) $booking_row['booking_count'];
+    }
+}
+
 $orders = [];
 foreach ($rows as $row) {
     $total_value = (float) $row['total'];
     $parent_order_id = $row['parent_order_id'] === null ? null : (int) $row['parent_order_id'];
 
+    $order_id = (int) $row['order_id'];
+    $resource_count = (int) ($resource_booking_counts[$order_id] ?? 0);
+    $legacy_count = (int) ($legacy_booking_counts[$order_id] ?? 0);
+    $is_free = $total_value <= 0.0;
+
     $orders[] = [
-        'order_id' => (int) $row['order_id'],
+        'order_id' => $order_id,
         'parent_order_id' => $parent_order_id,
         'is_parent_order' => (string) $row['is_parent_order'] === 'Y',
         'status' => (string) $row['status'],
         'total' => $total_value,
         'timestamp' => (int) $row['timestamp'],
         'company_id' => (int) $row['company_id'],
-        'is_free' => $total_value <= 0.0,
+        'is_free' => $is_free,
+        'expected_metrika_event' => $is_free ? 'talario_free_booking' : 'ecommerce_purchase',
+        'resource_booking_count' => $resource_count,
+        'legacy_booking_count' => $legacy_count,
+        'booking_mismatch' => $resource_count !== $legacy_count,
     ];
 }
 
