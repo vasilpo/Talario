@@ -156,11 +156,15 @@
         return parseInt(ctx.company_id, 10) || 0;
     }
 
+    function pagePath() {
+        return window.location.pathname || '/';
+    }
+
     function pagePayload(extra) {
         var payload = {
             product_id: currentProductId(),
             company_id: currentCompanyId(),
-            url: window.location.href
+            path: pagePath()
         };
         var key;
 
@@ -196,7 +200,7 @@
 
         if (isCheckout && !ctx.order_id) {
             emit('talario_checkout_start', {
-                url: window.location.href
+                path: pagePath()
             });
         }
     }
@@ -210,7 +214,6 @@
 
         if (parseFloat(ctx.order_total || 0) <= 0) {
             emit('talario_free_booking', {
-                order_id: parseInt(ctx.order_id, 10) || 0,
                 revenue: 0,
                 currency: 'RUB'
             });
@@ -219,7 +222,7 @@
 
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit', {
-            url: window.location.href
+            path: pagePath()
         });
     });
 
@@ -287,8 +290,7 @@
                 emit('talario_add_to_cart', {
                     product_id: parseInt(added[i].id, 10) || currentProductId(),
                     quantity: added[i].quantity || 1,
-                    price: added[i].price,
-                    url: window.location.href
+                    path: pagePath()
                 });
             }
         });
@@ -296,7 +298,7 @@
 
     window.addEventListener('popstate', function () {
         emit('talario_back', {
-            url: window.location.href
+            path: pagePath()
         });
     });
 
