@@ -154,6 +154,52 @@ function fn_talario_schedule_resources_clear_cart($cart, $complete, $clear_all)
 }
 
 
+
+function fn_talario_schedule_resources_dispatch_before_display()
+{
+    if (AREA !== 'A'
+        || \Tygh\Registry::get('runtime.controller') !== 'ec_table_booking_system'
+        || \Tygh\Registry::get('runtime.mode') !== 'booked_orders'
+    ) {
+        return;
+    }
+
+    $company_id = (int) \Tygh\Registry::get('runtime.company_id');
+    $condition = '';
+    $args = [];
+
+    if ($company_id) {
+        $condition = ' AND p.company_id = ?i';
+        $args[] = $company_id;
+    }
+
+    $query = 'SELECT DISTINCT rb.order_id'
+        . ' FROM ?:talario_resource_bookings rb'
+        . ' INNER JOIN ?:products p ON p.product_id = rb.product_id'
+        . ' INNER JOIN ?:orders o ON o.order_id = rb.order_id'
+        . ' WHERE rb.order_id > 0'
+        . $condition
+        . ' AND NOT EXISTS ('
+        . 'SELECT 1 FROM ?:ec_table_booking_system_booking_info legacy'
+        . ' WHERE legacy.order_id = rb.order_id AND legacy.product_id = rb.product_id'
+        . ')'
+        . ' ORDER BY rb.order_id ASC'
+        . ' LIMIT 200';
+
+    $order_ids = $args
+        ? db_get_fields($query, ...$args)
+        : db_get_fields($query);
+
+    foreach ($order_ids as $order_id) {
+        $order_info = (array) fn_get_order_info((int) $order_id);
+        if (empty($order_info['products'])) {
+            continue;
+        }
+
+        fn_talario_schedule_resources_sync_legacy_booking_info((int) $order_id, $order_info);
+    }
+}
+
 function fn_talario_schedule_resources_sync_legacy_booking_info($order_id, array $order_info)
 {
     if (empty($order_info['products'])) {
