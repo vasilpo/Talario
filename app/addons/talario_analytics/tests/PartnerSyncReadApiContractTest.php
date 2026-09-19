@@ -40,6 +40,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("p.product_id > ?i", $this->controller);
         self::assertStringContainsString("rp.product_id IN (?n)", $this->controller);
         self::assertStringContainsString("rp_scope.product_id IN (?n)", $this->controller);
+        self::assertStringNotContainsString("l.address AS location_address", $this->controller);
     }
 
     public function testResourceScheduleIsPreferredAndLegacyIsFallback(): void
