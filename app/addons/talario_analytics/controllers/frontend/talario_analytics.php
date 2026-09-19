@@ -478,6 +478,14 @@ function fn_talario_analytics_catalog_response(): void
     if ($schedule_truncated) {
         $schedule = array_slice($schedule, 0, 2000);
     }
+    $next_schedule_marker = null;
+    if ($schedule_truncated && $schedule) {
+        $last_schedule = $schedule[count($schedule) - 1];
+        $next_schedule_marker = [
+            'starts_at' => (string) ($last_schedule['starts_at'] ?? ''),
+            'occurrence_id' => (string) ($last_schedule['occurrence_id'] ?? ''),
+        ];
+    }
 
     fn_log_event('general', 'runtime', [
         'message' => 'Talario Partner Sync catalog request completed',
@@ -505,6 +513,7 @@ function fn_talario_analytics_catalog_response(): void
         'next_product_id' => $products_truncated && $products
             ? (int) array_key_last($products)
             : null,
+        'next_schedule_marker' => $next_schedule_marker,
     ]);
 }
 
