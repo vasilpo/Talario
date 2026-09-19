@@ -63,24 +63,6 @@ function fn_talario_analytics_rate_limit(): int
     }
 
     if ($global_count > 600) {
-        $resource_product_ids = [];
-    foreach ($schedule as $entry) {
-        foreach ($entry['product_ids'] as $product_id) {
-            $resource_product_ids[$product_id] = true;
-        }
-    }
-    $legacy_product_ids = array_values(array_filter(
-        $selected_product_ids,
-        static function ($product_id) use ($resource_product_ids) {
-            return !isset($resource_product_ids[$product_id]);
-        }
-    ));
-    $legacy_schedule = fn_talario_analytics_legacy_schedule($legacy_product_ids, $from, $to);
-    $schedule = array_merge($schedule, $legacy_schedule);
-    usort($schedule, static function (array $left, array $right): int {
-        return strcmp((string) $left['starts_at'], (string) $right['starts_at']);
-    });
-
     fn_log_event('general', 'runtime', [
             'message' => 'Talario Analytics API global rate limit exceeded',
         ]);
@@ -463,6 +445,24 @@ function fn_talario_analytics_catalog_response(): void
             'available' => max(0, (int) $row['capacity'] - $booked - $held),
         ];
     }
+
+    $resource_product_ids = [];
+    foreach ($schedule as $entry) {
+        foreach ($entry['product_ids'] as $product_id) {
+            $resource_product_ids[$product_id] = true;
+        }
+    }
+    $legacy_product_ids = array_values(array_filter(
+        $selected_product_ids,
+        static function ($product_id) use ($resource_product_ids) {
+            return !isset($resource_product_ids[$product_id]);
+        }
+    ));
+    $legacy_schedule = fn_talario_analytics_legacy_schedule($legacy_product_ids, $from, $to);
+    $schedule = array_merge($schedule, $legacy_schedule);
+    usort($schedule, static function (array $left, array $right): int {
+        return strcmp((string) $left['starts_at'], (string) $right['starts_at']);
+    });
 
     fn_log_event('general', 'runtime', [
         'message' => 'Talario Partner Sync catalog request completed',
