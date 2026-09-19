@@ -102,6 +102,70 @@ function fn_talario_analytics_rate_limit(): int
     return $ip_count;
 }
 
+function fn_talario_analytics_authorize_orders(int $rate_count): void
+{
+    $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+    if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
+        fn_talario_analytics_json_response(503, ['error' => 'analytics_api_not_configured']);
+    }
+
+    $provided_token = fn_talario_analytics_bearer_token();
+    $provided_hash = 'sha256:' . hash('sha256', $provided_token);
+
+    if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_hash)) {
+        if ($rate_count === 1) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Analytics API unauthorized request',
+            ]);
+        }
+        fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
+    }
+}
+
+/**
+ * Authorizes the internal Partner Sync service principal.
+ *
+ * This credential is intentionally separate from analytics and customer/vendor
+ * credentials. It has global read scope for partner catalog reconciliation and
+ * is additionally restricted to explicitly configured source IP addresses.
+ */
+function fn_talario_analytics_authorize_partner_sync(int $rate_count): void
+{
+    $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.partner_sync_token'));
+    $allowed_ips_raw = trim((string) Registry::get('addons.talario_analytics.partner_sync_allowed_ips'));
+
+    if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash) || $allowed_ips_raw === '') {
+        fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_not_configured']);
+    }
+
+    $allowed_ips = array_values(array_filter(array_map('trim', preg_split('/[\s,;]+/', $allowed_ips_raw))));
+    $remote_ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+
+    if (
+        !filter_var($remote_ip, FILTER_VALIDATE_IP)
+        || !in_array($remote_ip, $allowed_ips, true)
+    ) {
+        if ($rate_count === 1) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync API rejected source IP',
+            ]);
+        }
+        fn_talario_analytics_json_response(403, ['error' => 'source_not_allowed']);
+    }
+
+    $provided_token = fn_talario_analytics_bearer_token();
+    $provided_hash = 'sha256:' . hash('sha256', $provided_token);
+
+    if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_hash)) {
+        if ($rate_count === 1) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync API unauthorized request',
+            ]);
+        }
+        fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
+    }
+}
+
 function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
 {
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
@@ -204,8 +268,18 @@ function fn_talario_analytics_legacy_schedules(array $product_ids): array
         $product_id = (int) $row['product_id'];
         $days_data = [];
         $serialized = (string) ($row['days_data'] ?? '');
-        if ($serialized !== '') {
-            $decoded = @unserialize($serialized, ['allowed_classes' => false]);
+        if ($serialized !== '' && strlen($serialized) <= 262144) {
+            $decoded = false;
+            set_error_handler(static function ($severity, $message) {
+                throw new UnexpectedValueException('Invalid serialized schedule payload');
+            });
+            try {
+                $decoded = unserialize($serialized, ['allowed_classes' => false]);
+            } catch (Throwable $error) {
+                $decoded = false;
+            } finally {
+                restore_error_handler();
+            }
             if (is_array($decoded)) {
                 $days_data = $decoded;
             }
@@ -420,30 +494,17 @@ if (!in_array($mode, ['orders', 'partner_companies', 'partner_snapshot'], true))
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-$stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
-if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    fn_talario_analytics_json_response(503, ['error' => 'analytics_api_not_configured']);
-}
+if (in_array($mode, ['partner_companies', 'partner_snapshot'], true)) {
+    fn_talario_analytics_authorize_partner_sync($rate_count);
 
-$provided_token = fn_talario_analytics_bearer_token();
-$provided_hash = 'sha256:' . hash('sha256', $provided_token);
-
-if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_hash)) {
-    if ($rate_count === 1) {
-        fn_log_event('general', 'runtime', [
-            'message' => 'Talario Analytics API unauthorized request',
-        ]);
+    if ($mode === 'partner_companies') {
+        fn_talario_analytics_partner_companies();
     }
-    fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
-}
 
-if ($mode === 'partner_companies') {
-    fn_talario_analytics_partner_companies();
-}
-
-if ($mode === 'partner_snapshot') {
     fn_talario_analytics_partner_snapshot();
 }
+
+fn_talario_analytics_authorize_orders($rate_count);
 
 $date1_raw = isset($_REQUEST['date1']) ? (string) $_REQUEST['date1'] : '';
 $date2_raw = isset($_REQUEST['date2']) ? (string) $_REQUEST['date2'] : '';
