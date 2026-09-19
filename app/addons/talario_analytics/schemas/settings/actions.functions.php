@@ -24,3 +24,14 @@ function fn_settings_actions_addons_talario_analytics_api_token(&$value)
 
     $value = 'sha256:' . hash('sha256', $value);
 }
+
+
+/**
+ * Stores only a SHA-256 hash of the dedicated Partner Sync service token.
+ *
+ * @param string $value Setting value.
+ */
+function fn_settings_actions_addons_talario_analytics_partner_sync_token(&$value)
+{
+    fn_settings_actions_addons_talario_analytics_api_token($value);
+}
