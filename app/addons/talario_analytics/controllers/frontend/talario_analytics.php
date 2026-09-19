@@ -118,11 +118,200 @@ function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
     return $date;
 }
 
+
+/**
+ * Returns a bounded, PII-free catalog snapshot for Partner Sync.
+ *
+ * The snapshot deliberately reads products, variations, prices and the
+ * existing Talario schedule-resource tables in one request. It never reads
+ * orders, users or payment data and never writes application data.
+ */
+function fn_talario_analytics_catalog_response(): void
+{
+    $timezone = new DateTimeZone('Europe/Moscow');
+    $from_raw = isset($_GET['from']) ? (string) $_GET['from'] : (new DateTimeImmutable('now', $timezone))->format('Y-m-d');
+    $to_raw = isset($_GET['to']) ? (string) $_GET['to'] : (new DateTimeImmutable($from_raw, $timezone))->modify('+30 days')->format('Y-m-d');
+    $from = fn_talario_analytics_parse_date($from_raw);
+    $to = fn_talario_analytics_parse_date($to_raw);
+
+    if (!$from || !$to || $to < $from) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_date_range']);
+    }
+
+    $days = (int) $from->diff($to)->format('%a') + 1;
+    if ($days > 62) {
+        fn_talario_analytics_json_response(400, ['error' => 'date_range_too_large', 'max_days' => 62]);
+    }
+
+    $lang_code = (string) Registry::get('settings.Appearance.default_language');
+    if ($lang_code === '') {
+        $lang_code = 'ru';
+    }
+
+    $partners = [];
+    foreach (db_get_array(
+        'SELECT company_id, company, status FROM ?:companies WHERE status = ?s ORDER BY company_id ASC',
+        'A'
+    ) as $row) {
+        $partners[] = [
+            'partner_id' => (int) $row['company_id'],
+            'name' => (string) $row['company'],
+            'status' => (string) $row['status'],
+        ];
+    }
+
+    $products = [];
+    foreach (db_get_array(
+        'SELECT p.product_id, p.company_id, p.product_type, p.parent_product_id,'
+        . ' p.price, p.status, p.updated_timestamp, pd.product'
+        . ' FROM ?:products p'
+        . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' WHERE p.status = ?s'
+        . ' ORDER BY p.product_id ASC',
+        $lang_code,
+        'A'
+    ) as $row) {
+        $product_id = (int) $row['product_id'];
+        $products[$product_id] = [
+            'product_id' => $product_id,
+            'partner_id' => (int) $row['company_id'],
+            'name' => (string) $row['product'],
+            'status' => (string) $row['status'],
+            'product_type' => (string) $row['product_type'],
+            'parent_product_id' => (int) $row['parent_product_id'],
+            'price' => (float) $row['price'],
+            'public_url' => (string) fn_url('products.view&product_id=' . $product_id, 'C'),
+            'updated_at' => (int) $row['updated_timestamp'],
+            'variations' => [],
+            'prices' => [],
+            'resource_ids' => [],
+        ];
+    }
+
+    $prices = db_get_array(
+        'SELECT product_id, lower_limit, usergroup_id, price'
+        . ' FROM ?:product_prices WHERE product_id > 0 ORDER BY product_id ASC, lower_limit ASC'
+    );
+    foreach ($prices as $row) {
+        $product_id = (int) $row['product_id'];
+        if (!isset($products[$product_id])) {
+            continue;
+        }
+        $products[$product_id]['prices'][] = [
+            'lower_limit' => (int) $row['lower_limit'],
+            'usergroup_id' => (int) $row['usergroup_id'],
+            'price' => (float) $row['price'],
+        ];
+    }
+
+    $variations = db_get_array(
+        'SELECT vgp.group_id, vgp.product_id, vgp.parent_product_id,'
+        . ' p.price, p.status, pd.product'
+        . ' FROM ?:product_variation_group_products vgp'
+        . ' INNER JOIN ?:products p ON p.product_id = vgp.product_id'
+        . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' WHERE p.status = ?s ORDER BY vgp.group_id ASC, vgp.product_id ASC',
+        $lang_code,
+        'A'
+    );
+    foreach ($variations as $row) {
+        $product_id = (int) $row['product_id'];
+        $variation = [
+            'variation_id' => $product_id,
+            'group_id' => (int) $row['group_id'],
+            'product_id' => $product_id,
+            'parent_product_id' => (int) $row['parent_product_id'],
+            'name' => (string) $row['product'],
+            'price' => (float) $row['price'],
+            'status' => (string) $row['status'],
+        ];
+        if (isset($products[$product_id])) {
+            $products[$product_id]['variations'][] = $variation;
+        }
+    }
+
+    foreach (db_get_array(
+        'SELECT rp.product_id, rp.resource_id'
+        . ' FROM ?:talario_resource_products rp'
+        . ' INNER JOIN ?:talario_resources r ON r.resource_id = rp.resource_id'
+        . ' WHERE r.status = ?s ORDER BY rp.product_id ASC, rp.resource_id ASC',
+        'A'
+    ) as $row) {
+        $product_id = (int) $row['product_id'];
+        if (isset($products[$product_id])) {
+            $products[$product_id]['resource_ids'][] = (int) $row['resource_id'];
+        }
+    }
+
+    $from_sql = $from->format('Y-m-d') . ' 00:00:00';
+    $to_sql = $to->format('Y-m-d') . ' 23:59:59';
+    $schedule = [];
+    foreach (db_get_array(
+        'SELECT o.occurrence_id, o.resource_id, o.location_id, o.starts_at, o.ends_at,'
+        . ' o.capacity, o.status, r.name AS resource_name, l.name AS location_name,'
+        . ' l.address AS location_address'
+        . ' FROM ?:talario_resource_occurrences o'
+        . ' INNER JOIN ?:talario_resources r ON r.resource_id = o.resource_id AND r.status = ?s'
+        . ' INNER JOIN ?:talario_locations l ON l.location_id = o.location_id AND l.status = ?s'
+        . ' WHERE o.status = ?s AND o.starts_at >= ?s AND o.starts_at <= ?s'
+        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC',
+        'A',
+        'A',
+        'A',
+        $from_sql,
+        $to_sql
+    ) as $row) {
+        $occurrence_id = (int) $row['occurrence_id'];
+        $booked = (int) db_get_field(
+            'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_bookings'
+            . ' WHERE occurrence_id = ?i AND status = ?s',
+            $occurrence_id,
+            'A'
+        );
+        $held = (int) db_get_field(
+            'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_holds'
+            . ' WHERE occurrence_id = ?i AND status = ?s AND expires_at > ?i',
+            $occurrence_id,
+            'A',
+            TIME
+        );
+        $product_ids = array_map('intval', db_get_fields(
+            'SELECT product_id FROM ?:talario_resource_products WHERE resource_id = ?i ORDER BY product_id ASC',
+            (int) $row['resource_id']
+        ));
+        $schedule[] = [
+            'occurrence_id' => $occurrence_id,
+            'resource_id' => (int) $row['resource_id'],
+            'resource_name' => (string) $row['resource_name'],
+            'product_ids' => $product_ids,
+            'location_id' => (int) $row['location_id'],
+            'location_name' => (string) $row['location_name'],
+            'location_address' => (string) $row['location_address'],
+            'starts_at' => (string) $row['starts_at'],
+            'ends_at' => (string) $row['ends_at'],
+            'capacity' => (int) $row['capacity'],
+            'booked' => $booked,
+            'held' => $held,
+            'available' => max(0, (int) $row['capacity'] - $booked - $held),
+        ];
+    }
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'partner-sync.catalog.v1',
+        'generated_at' => (new DateTimeImmutable('now', $timezone))->format(DateTimeInterface::ATOM),
+        'timezone' => 'Europe/Moscow',
+        'range' => ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')],
+        'partners' => $partners,
+        'products' => array_values($products),
+        'schedule' => $schedule,
+    ]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if ($mode !== 'orders') {
+if (!in_array($mode, ['orders', 'catalog'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
@@ -143,6 +332,10 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
         ]);
     }
     fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
+}
+
+if ($mode === 'catalog') {
+    fn_talario_analytics_catalog_response();
 }
 
 $date1_raw = isset($_REQUEST['date1']) ? (string) $_REQUEST['date1'] : '';
