@@ -129,8 +129,30 @@ function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
 function fn_talario_analytics_catalog_public_url(int $product_id): string
 {
     $url = (string) fn_url('products.view&product_id=' . $product_id, 'C', 'https');
-    $url = preg_replace('/([?&])sid=[^&]*/i', '$1', $url);
-    return rtrim((string) $url, '?&');
+    $parts = parse_url($url);
+    if (!$parts) {
+        return $url;
+    }
+
+    $query = [];
+    parse_str((string) ($parts['query'] ?? ''), $query);
+    unset($query['sid']);
+    $rebuilt = '';
+    if (!empty($parts['scheme']) && !empty($parts['host'])) {
+        $rebuilt = $parts['scheme'] . '://' . $parts['host'];
+        if (!empty($parts['port'])) {
+            $rebuilt .= ':' . $parts['port'];
+        }
+    }
+    $rebuilt .= (string) ($parts['path'] ?? '');
+    if ($query) {
+        $rebuilt .= '?' . http_build_query($query);
+    }
+    if (!empty($parts['fragment'])) {
+        $rebuilt .= '#' . $parts['fragment'];
+    }
+
+    return $rebuilt;
 }
 
 function fn_talario_analytics_catalog_response(): void
@@ -205,10 +227,12 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
-    $prices = db_get_array(
+    $prices = $products ? db_get_array(
         'SELECT product_id, lower_limit, usergroup_id, price'
-        . ' FROM ?:product_prices WHERE product_id > 0 ORDER BY product_id ASC, lower_limit ASC'
-    );
+        . ' FROM ?:product_prices WHERE product_id IN (?n)'
+        . ' ORDER BY product_id ASC, lower_limit ASC',
+        array_keys($products)
+    ) : [];
     foreach ($prices as $row) {
         $product_id = (int) $row['product_id'];
         if (!isset($products[$product_id])) {
@@ -221,16 +245,18 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
-    $variations = db_get_array(
+    $variations = $products ? db_get_array(
         'SELECT vgp.group_id, vgp.product_id, vgp.parent_product_id,'
         . ' p.price, p.status, pd.product'
         . ' FROM ?:product_variation_group_products vgp'
         . ' INNER JOIN ?:products p ON p.product_id = vgp.product_id'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
-        . ' WHERE p.status = ?s ORDER BY vgp.group_id ASC, vgp.product_id ASC',
+        . ' WHERE p.status = ?s AND vgp.product_id IN (?n)'
+        . ' ORDER BY vgp.group_id ASC, vgp.product_id ASC',
         $lang_code,
-        'A'
-    );
+        'A',
+        array_keys($products)
+    ) : [];
     foreach ($variations as $row) {
         $product_id = (int) $row['product_id'];
         $variation = [
@@ -242,8 +268,10 @@ function fn_talario_analytics_catalog_response(): void
             'price' => (float) $row['price'],
             'status' => (string) $row['status'],
         ];
-        if (isset($products[$product_id])) {
-            $products[$product_id]['variations'][] = $variation;
+        $parent_product_id = (int) $row['parent_product_id'];
+        $catalog_product_id = $parent_product_id > 0 ? $parent_product_id : $product_id;
+        if (isset($products[$catalog_product_id])) {
+            $products[$catalog_product_id]['variations'][] = $variation;
         }
     }
 
@@ -335,7 +363,11 @@ if (!in_array($mode, ['orders', 'catalog'], true)) {
 // Partner Sync catalog is intentionally development-only. The existing
 // orders mode retains its established read-only contract.
 if ($mode === 'catalog'
-    && (!function_exists('fn_is_development') || !fn_is_development())
+    && (
+        !function_exists('fn_is_development')
+        || !fn_is_development()
+        || strpos((string) ($_SERVER['REQUEST_URI'] ?? ''), '/dev_copy/') === false
+    )
 ) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
