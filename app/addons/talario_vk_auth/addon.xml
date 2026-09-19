@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>talario_vk_auth</id>
+    <version>1.0.0</version>
+    <name>Talario VK ID compatibility</name>
+    <description>Isolates Talario VK ID OAuth/PKCE compatibility from CS-Cart hybrid_auth and rus_hybrid_auth vendor code.</description>
+    <priority>9000</priority>
+    <default_language>ru</default_language>
+    <compatibility>
+        <dependencies>hybrid_auth,rus_hybrid_auth</dependencies>
+    </compatibility>
+    <autoload>
+        <psr4 prefix="Tygh\Addons\TalarioVkAuth\">src</psr4>
+    </autoload>
+</addon>
