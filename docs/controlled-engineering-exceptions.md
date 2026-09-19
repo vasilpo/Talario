@@ -111,3 +111,34 @@ Remove the patch when any of the following is true:
 3. a smaller supported hook/extension point becomes available that avoids replacing whole vendor templates.
 
 Removal must be verified on `dev_copy` for product, category, page, search/SEO, and pages with an empty meta description before release to PROD.
+
+
+## VK ID compatibility in `hybrid_auth` / `rus_hybrid_auth`
+
+### Scope
+
+Talario currently retains the existing VK ID OAuth/PKCE compatibility changes inside the installed `hybrid_auth` and `rus_hybrid_auth` add-ons. These changes provide the working `/auth/vkontakte` callback and VK ID adapter behaviour already used by the application.
+
+A separate Talario-owned `talario_vk_auth` add-on was evaluated during A-13 but deliberately abandoned before any PROD release. It was removed from `dev_copy` and is being removed from `development`.
+
+### Current decision
+
+Do not migrate or further refactor the working VK login solely to eliminate these direct vendor edits. The current login works, and the migration cost/risk is disproportionate to the present benefit.
+
+This exception is not permission to add new Talario logic to these vendor add-ons. Any future VK authentication feature or behavioural change must first reassess whether a supported extension point is available.
+
+### Upgrade controls
+
+Before updating CS-Cart, `hybrid_auth`, or `rus_hybrid_auth`:
+
+1. compare the VK-related files with upstream;
+2. confirm the `/auth/vkontakte` route and callback still exist;
+3. confirm VK ID token exchange, PKCE, `device_id`, and profile mapping remain supported;
+4. test VK login end-to-end on `dev_copy`;
+5. only then release through the normal controlled process.
+
+### Removal criteria
+
+Remove this exception only when upstream provides equivalent VK ID behaviour or when a future product/security requirement justifies a reviewed migration to a Talario-owned extension.
+
+PROD must not receive the abandoned `talario_vk_auth` experiment.
