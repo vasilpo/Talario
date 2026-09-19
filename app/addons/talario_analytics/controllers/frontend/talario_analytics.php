@@ -253,6 +253,7 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
 function fn_talario_analytics_catalog_response(): void
 {
     $partner_id = max(0, (int) ($_GET['partner_id'] ?? 0));
+    $after_product_id = max(0, (int) ($_GET['after_product_id'] ?? 0));
     $product_limit = (int) ($_GET['limit'] ?? 250);
     if ($product_limit < 1 || $product_limit > 500) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_limit', 'max_limit' => 500]);
@@ -300,6 +301,10 @@ function fn_talario_analytics_catalog_response(): void
     if ($partner_id > 0) {
         $product_query .= ' AND p.company_id = ?i';
         $product_args[] = $partner_id;
+    }
+    if ($after_product_id > 0) {
+        $product_query .= ' AND p.product_id > ?i';
+        $product_args[] = $after_product_id;
     }
     $product_query .= ' ORDER BY p.product_id ASC LIMIT ?i';
     $product_args[] = $product_limit + 1;
@@ -451,11 +456,6 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
-    $schedule_truncated = count($schedule) > 2000;
-    if ($schedule_truncated) {
-        $schedule = array_slice($schedule, 0, 2000);
-    }
-
     $resource_product_ids = [];
     foreach ($schedule as $entry) {
         foreach ($entry['product_ids'] as $product_id) {
@@ -473,6 +473,11 @@ function fn_talario_analytics_catalog_response(): void
     usort($schedule, static function (array $left, array $right): int {
         return strcmp((string) $left['starts_at'], (string) $right['starts_at']);
     });
+
+    $schedule_truncated = count($schedule) > 2000;
+    if ($schedule_truncated) {
+        $schedule = array_slice($schedule, 0, 2000);
+    }
 
     fn_log_event('general', 'runtime', [
         'message' => 'Talario Partner Sync catalog request completed',
