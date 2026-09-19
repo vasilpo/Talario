@@ -154,6 +154,62 @@ function fn_talario_schedule_resources_clear_cart($cart, $complete, $clear_all)
 }
 
 
+
+function fn_talario_schedule_resources_dispatch_before_display()
+{
+    // Historical backfill is an explicit, development-only operation.
+    // A normal admin page view must remain read-only. The operation requires
+    // an explicit POST flag so it cannot run from a regular GET request.
+    if (!defined('TALARIO_LEGACY_BOOKING_BACKFILL_ENABLED')
+        || !TALARIO_LEGACY_BOOKING_BACKFILL_ENABLED
+        || !function_exists('fn_is_development')
+        || !fn_is_development()
+        || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST'
+        || ($_POST['talario_backfill'] ?? '') !== '1'
+        || !function_exists('fn_csrf_validate_request')
+        || !fn_csrf_validate_request(['server' => $_SERVER, 'request' => $_REQUEST])
+        || AREA !== 'A'
+        || \Tygh\Registry::get('runtime.controller') !== 'ec_table_booking_system'
+        || \Tygh\Registry::get('runtime.mode') !== 'booked_orders'
+    ) {
+        return;
+    }
+
+    $company_id = (int) \Tygh\Registry::get('runtime.company_id');
+    $condition = '';
+    $args = [];
+
+    if ($company_id) {
+        $condition = ' AND p.company_id = ?i';
+        $args[] = $company_id;
+    }
+
+    $query = 'SELECT DISTINCT rb.order_id'
+        . ' FROM ?:talario_resource_bookings rb'
+        . ' INNER JOIN ?:products p ON p.product_id = rb.product_id'
+        . ' WHERE rb.order_id > 0'
+        . $condition
+        . ' AND NOT EXISTS ('
+        . 'SELECT 1 FROM ?:ec_table_booking_system_booking_info legacy'
+        . ' WHERE legacy.order_id = rb.order_id AND legacy.product_id = rb.product_id'
+        . ')'
+        . ' ORDER BY rb.order_id ASC'
+        . ' LIMIT 20';
+
+    $order_ids = $args
+        ? db_get_fields($query, ...$args)
+        : db_get_fields($query);
+
+    foreach ($order_ids as $order_id) {
+        $order_info = (array) fn_get_order_info((int) $order_id);
+        if (empty($order_info['products'])) {
+            continue;
+        }
+
+        fn_talario_schedule_resources_sync_legacy_booking_info((int) $order_id, $order_info);
+    }
+}
+
 function fn_talario_schedule_resources_sync_legacy_booking_info($order_id, array $order_info)
 {
     if (empty($order_info['products'])) {
