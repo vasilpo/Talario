@@ -129,6 +129,65 @@ function fn_talario_analytics_authorize_orders(int $rate_count): void
  * credentials. It has global read scope for partner catalog reconciliation and
  * is additionally restricted to explicitly configured source IP addresses.
  */
+function fn_talario_analytics_ip_matches_rule(string $ip, string $rule): bool
+{
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        return false;
+    }
+
+    $rule = trim($rule);
+    if ($rule === '') {
+        return false;
+    }
+
+    if (strpos($rule, '/') === false) {
+        if (!filter_var($rule, FILTER_VALIDATE_IP)) {
+            return false;
+        }
+        $ip_binary = inet_pton($ip);
+        $rule_binary = inet_pton($rule);
+
+        return $ip_binary !== false
+            && $rule_binary !== false
+            && strlen($ip_binary) === strlen($rule_binary)
+            && hash_equals($rule_binary, $ip_binary);
+    }
+
+    [$network, $prefix_raw] = array_pad(explode('/', $rule, 2), 2, '');
+    if (!filter_var($network, FILTER_VALIDATE_IP) || !ctype_digit($prefix_raw)) {
+        return false;
+    }
+
+    $ip_binary = inet_pton($ip);
+    $network_binary = inet_pton($network);
+    if ($ip_binary === false || $network_binary === false || strlen($ip_binary) !== strlen($network_binary)) {
+        return false;
+    }
+
+    $max_bits = strlen($network_binary) * 8;
+    $prefix = (int) $prefix_raw;
+    if ($prefix < 0 || $prefix > $max_bits) {
+        return false;
+    }
+
+    $full_bytes = intdiv($prefix, 8);
+    $remaining_bits = $prefix % 8;
+
+    if ($full_bytes > 0
+        && !hash_equals(substr($network_binary, 0, $full_bytes), substr($ip_binary, 0, $full_bytes))
+    ) {
+        return false;
+    }
+
+    if ($remaining_bits === 0) {
+        return true;
+    }
+
+    $mask = (0xFF << (8 - $remaining_bits)) & 0xFF;
+
+    return (ord($network_binary[$full_bytes]) & $mask) === (ord($ip_binary[$full_bytes]) & $mask);
+}
+
 function fn_talario_analytics_authorize_partner_sync(int $rate_count): void
 {
     $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.partner_sync_token'));
@@ -138,13 +197,19 @@ function fn_talario_analytics_authorize_partner_sync(int $rate_count): void
         fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_not_configured']);
     }
 
-    $allowed_ips = array_values(array_filter(array_map('trim', preg_split('/[\s,;]+/', $allowed_ips_raw))));
+    $allowed_ip_rules = array_values(array_filter(array_map('trim', preg_split('/[\s,;]+/', $allowed_ips_raw))));
+    // Deliberately use the TCP peer address only. Forwarded headers are not
+    // trusted here because their trust boundary is deployment-specific.
     $remote_ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    $source_allowed = false;
+    foreach ($allowed_ip_rules as $allowed_ip_rule) {
+        if (fn_talario_analytics_ip_matches_rule($remote_ip, $allowed_ip_rule)) {
+            $source_allowed = true;
+            break;
+        }
+    }
 
-    if (
-        !filter_var($remote_ip, FILTER_VALIDATE_IP)
-        || !in_array($remote_ip, $allowed_ips, true)
-    ) {
+    if (!$source_allowed) {
         if ($rate_count === 1) {
             fn_log_event('general', 'runtime', [
                 'message' => 'Talario Partner Sync API rejected source IP',
@@ -280,8 +345,28 @@ function fn_talario_analytics_legacy_schedules(array $product_ids): array
             } finally {
                 restore_error_handler();
             }
-            if (is_array($decoded)) {
-                $days_data = $decoded;
+            if (is_array($decoded) && count($decoded) <= 50) {
+                $valid_structure = true;
+                foreach ($day_map as $known_day_name => $known_weekday) {
+                    $day_payload = $decoded[$known_day_name] ?? null;
+                    if ($day_payload !== null && !is_array($day_payload)) {
+                        $valid_structure = false;
+                        break;
+                    }
+                    if (is_array($day_payload)
+                        && isset($day_payload['time_by_amount'])
+                        && (
+                            !is_array($day_payload['time_by_amount'])
+                            || count($day_payload['time_by_amount']) > 50
+                        )
+                    ) {
+                        $valid_structure = false;
+                        break;
+                    }
+                }
+                if ($valid_structure) {
+                    $days_data = $decoded;
+                }
             }
         }
 
@@ -499,9 +584,11 @@ if (in_array($mode, ['partner_companies', 'partner_snapshot'], true)) {
 
     if ($mode === 'partner_companies') {
         fn_talario_analytics_partner_companies();
+        exit;
     }
 
     fn_talario_analytics_partner_snapshot();
+    exit;
 }
 
 fn_talario_analytics_authorize_orders($rate_count);
