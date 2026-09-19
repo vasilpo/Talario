@@ -374,9 +374,13 @@ if ($mode === 'catalog'
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-$stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+$token_setting = $mode === 'catalog' ? 'partner_sync_token' : 'api_token';
+$stored_token_hash = trim((string) Registry::get('addons.talario_analytics.' . $token_setting));
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    fn_talario_analytics_json_response(503, ['error' => 'analytics_api_not_configured']);
+    fn_talario_analytics_json_response(503, ['error' => $mode === 'catalog'
+        ? 'partner_sync_api_not_configured'
+        : 'analytics_api_not_configured'
+    ]);
 }
 
 $provided_token = fn_talario_analytics_bearer_token();
