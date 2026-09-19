@@ -118,11 +118,303 @@ function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
     return $date;
 }
 
+
+function fn_talario_analytics_feature_values(array $product_ids, string $lang_code): array
+{
+    if (!$product_ids) {
+        return [];
+    }
+
+    $result = [];
+    $rows = db_get_array(
+        'SELECT values_data.product_id, values_data.feature_id,'
+        . ' feature_descriptions.description AS feature_name,'
+        . ' COALESCE(variant_descriptions.variant, NULLIF(values_data.value, \'\'),'
+        . ' NULLIF(CAST(values_data.value_int AS CHAR), \'\')) AS feature_value'
+        . ' FROM ?:product_features_values AS values_data'
+        . ' LEFT JOIN ?:product_features_descriptions AS feature_descriptions'
+        . ' ON feature_descriptions.feature_id = values_data.feature_id'
+        . ' AND feature_descriptions.lang_code = ?s'
+        . ' LEFT JOIN ?:product_feature_variant_descriptions AS variant_descriptions'
+        . ' ON variant_descriptions.variant_id = values_data.variant_id'
+        . ' AND variant_descriptions.lang_code = ?s'
+        . ' WHERE values_data.product_id IN (?n)'
+        . ' AND values_data.lang_code = ?s'
+        . ' ORDER BY values_data.product_id ASC, values_data.feature_id ASC',
+        $lang_code,
+        $lang_code,
+        $product_ids,
+        $lang_code
+    );
+
+    foreach ($rows as $row) {
+        $product_id = (int) $row['product_id'];
+        $result[$product_id][] = [
+            'feature_id' => (int) $row['feature_id'],
+            'name' => (string) ($row['feature_name'] ?? ''),
+            'value' => (string) ($row['feature_value'] ?? ''),
+        ];
+    }
+
+    return $result;
+}
+
+function fn_talario_analytics_legacy_schedules(array $product_ids): array
+{
+    if (!$product_ids) {
+        return [];
+    }
+
+    $rows = db_get_array(
+        'SELECT product_id, booking_type, from_date, to_date, slot_time, days_data,'
+        . ' quantity_selector, minimum_booking_time'
+        . ' FROM ?:ec_table_booking_system'
+        . ' WHERE product_id IN (?n)',
+        $product_ids
+    );
+
+    $price_rows = db_get_array(
+        'SELECT product_id, from_date, to_date, price'
+        . ' FROM ?:ec_table_booking_system_price'
+        . ' WHERE product_id IN (?n)'
+        . ' ORDER BY product_id ASC, from_date ASC, to_date ASC',
+        $product_ids
+    );
+    $price_wise = [];
+    foreach ($price_rows as $price_row) {
+        $price_wise[(int) $price_row['product_id']][] = [
+            'from_date' => (string) $price_row['from_date'],
+            'to_date' => (string) $price_row['to_date'],
+            'price' => (float) $price_row['price'],
+        ];
+    }
+
+    $day_map = [
+        'monday' => 1,
+        'tuesday' => 2,
+        'wednesday' => 3,
+        'thursday' => 4,
+        'friday' => 5,
+        'saturday' => 6,
+        'sunday' => 7,
+    ];
+
+    $result = [];
+    foreach ($rows as $row) {
+        $product_id = (int) $row['product_id'];
+        $days_data = [];
+        $serialized = (string) ($row['days_data'] ?? '');
+        if ($serialized !== '') {
+            $decoded = @unserialize($serialized, ['allowed_classes' => false]);
+            if (is_array($decoded)) {
+                $days_data = $decoded;
+            }
+        }
+
+        $slots = [];
+        foreach ($day_map as $day_name => $weekday) {
+            if (empty($days_data[$day_name . '_status'])) {
+                continue;
+            }
+
+            $time_rows = [];
+            if (!empty($days_data[$day_name]['time_by_amount'])
+                && is_array($days_data[$day_name]['time_by_amount'])
+            ) {
+                $time_rows = $days_data[$day_name]['time_by_amount'];
+            }
+
+            if (!$time_rows) {
+                $start = trim((string) ($days_data[$day_name . '_timing_start_time'] ?? ''));
+                $end = trim((string) ($days_data[$day_name . '_timing_end_time'] ?? ''));
+                if ($start !== '') {
+                    $time_rows[] = [
+                        'start_time' => $start,
+                        'end_time' => $end,
+                        'amount' => null,
+                    ];
+                }
+            }
+
+            foreach ($time_rows as $time_row) {
+                if (!is_array($time_row)) {
+                    continue;
+                }
+                $start = substr(trim((string) ($time_row['start_time'] ?? '')), 0, 5);
+                $end = substr(trim((string) ($time_row['end_time'] ?? '')), 0, 5);
+                if ($start === '') {
+                    continue;
+                }
+                $slots[] = [
+                    'weekday' => $weekday,
+                    'start_time' => $start,
+                    'end_time' => $end,
+                    'capacity' => isset($time_row['amount']) && $time_row['amount'] !== ''
+                        ? (int) $time_row['amount']
+                        : null,
+                ];
+            }
+        }
+
+        usort($slots, static function (array $left, array $right): int {
+            return [$left['weekday'], $left['start_time']] <=> [$right['weekday'], $right['start_time']];
+        });
+
+        $result[$product_id] = [
+            'source' => 'ec_table_booking_system',
+            'booking_type' => (string) ($row['booking_type'] ?? ''),
+            'from_date' => !empty($row['from_date']) ? date('Y-m-d', (int) $row['from_date']) : null,
+            'to_date' => !empty($row['to_date']) ? date('Y-m-d', (int) $row['to_date']) : null,
+            'duration_minutes' => (int) ($row['slot_time'] ?? 0),
+            'quantity_selector' => (string) ($row['quantity_selector'] ?? ''),
+            'minimum_booking_time' => (string) ($row['minimum_booking_time'] ?? ''),
+            'slots' => $slots,
+            'price_wise' => $price_wise[$product_id] ?? [],
+        ];
+    }
+
+    return $result;
+}
+
+function fn_talario_analytics_partner_companies(): void
+{
+    $rows = db_get_array(
+        'SELECT company_id, company, status'
+        . ' FROM ?:companies'
+        . ' ORDER BY company ASC, company_id ASC'
+        . ' LIMIT 500'
+    );
+
+    $companies = array_map(static function (array $row): array {
+        return [
+            'company_id' => (int) $row['company_id'],
+            'company' => (string) $row['company'],
+            'status' => (string) $row['status'],
+        ];
+    }, $rows);
+
+    fn_talario_analytics_json_response(200, [
+        'fetched_at' => time(),
+        'total' => count($companies),
+        'companies' => $companies,
+    ]);
+}
+
+function fn_talario_analytics_partner_snapshot(): void
+{
+    $company_id = isset($_REQUEST['company_id']) ? (int) $_REQUEST['company_id'] : 0;
+    $product_id = isset($_REQUEST['product_id']) ? (int) $_REQUEST['product_id'] : 0;
+
+    if ($company_id <= 0 && $product_id <= 0) {
+        fn_talario_analytics_json_response(400, ['error' => 'company_id_or_product_id_required']);
+    }
+
+    $lang_code = defined('CART_LANGUAGE') ? CART_LANGUAGE : 'ru';
+    $condition = '';
+    $query_args = [$lang_code];
+
+    if ($product_id > 0) {
+        $condition = ' AND p.product_id = ?i';
+        $query_args[] = $product_id;
+    } else {
+        $condition = ' AND p.company_id = ?i';
+        $query_args[] = $company_id;
+    }
+
+    $rows = db_get_array(
+        'SELECT p.product_id, p.company_id, p.product_code, p.status,'
+        . ' descriptions.product, descriptions.short_description, descriptions.full_description,'
+        . ' prices.price'
+        . ' FROM ?:products AS p'
+        . ' INNER JOIN ?:product_descriptions AS descriptions'
+        . ' ON descriptions.product_id = p.product_id AND descriptions.lang_code = ?s'
+        . ' LEFT JOIN ?:product_prices AS prices'
+        . ' ON prices.product_id = p.product_id'
+        . ' AND prices.usergroup_id = 0 AND prices.lower_limit = 1'
+        . ' WHERE 1=1'
+        . $condition
+        . ' ORDER BY p.product_id ASC'
+        . ' LIMIT 500',
+        ...$query_args
+    );
+
+    if (!$rows) {
+        fn_talario_analytics_json_response(404, ['error' => 'products_not_found']);
+    }
+
+    $product_ids = array_values(array_unique(array_map(static function (array $row): int {
+        return (int) $row['product_id'];
+    }, $rows)));
+
+    $feature_values = fn_talario_analytics_feature_values($product_ids, $lang_code);
+    $schedules = fn_talario_analytics_legacy_schedules($product_ids);
+
+    $variation_groups = [];
+    foreach (db_get_array(
+        'SELECT group_id, product_id FROM ?:product_variation_group_products'
+        . ' WHERE product_id IN (?n)',
+        $product_ids
+    ) as $group_row) {
+        $variation_groups[(int) $group_row['product_id']] = (int) $group_row['group_id'];
+    }
+
+    $company_ids = array_values(array_unique(array_map(static function (array $row): int {
+        return (int) $row['company_id'];
+    }, $rows)));
+    $companies = [];
+    if ($company_ids) {
+        foreach (db_get_array(
+            'SELECT company_id, company, status FROM ?:companies WHERE company_id IN (?n)',
+            $company_ids
+        ) as $company_row) {
+            $companies[(int) $company_row['company_id']] = [
+                'company_id' => (int) $company_row['company_id'],
+                'company' => (string) $company_row['company'],
+                'status' => (string) $company_row['status'],
+            ];
+        }
+    }
+
+    $products = [];
+    foreach ($rows as $row) {
+        $current_product_id = (int) $row['product_id'];
+        $current_company_id = (int) $row['company_id'];
+
+        $products[] = [
+            'product_id' => $current_product_id,
+            'company_id' => $current_company_id,
+            'company' => $companies[$current_company_id]['company'] ?? '',
+            'product_code' => (string) ($row['product_code'] ?? ''),
+            'name' => (string) ($row['product'] ?? ''),
+            'status' => (string) ($row['status'] ?? ''),
+            'price' => isset($row['price']) ? (float) $row['price'] : null,
+            'short_description' => (string) ($row['short_description'] ?? ''),
+            'full_description' => (string) ($row['full_description'] ?? ''),
+            'variation_group_id' => $variation_groups[$current_product_id] ?? null,
+            'features' => $feature_values[$current_product_id] ?? [],
+            'schedule' => $schedules[$current_product_id] ?? null,
+            'public_url' => fn_url(
+                'products.view?product_id=' . $current_product_id,
+                'C',
+                'https'
+            ),
+        ];
+    }
+
+    fn_talario_analytics_json_response(200, [
+        'fetched_at' => time(),
+        'company_id' => $company_id ?: null,
+        'product_id' => $product_id ?: null,
+        'total' => count($products),
+        'products' => $products,
+    ]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if ($mode !== 'orders') {
+if (!in_array($mode, ['orders', 'partner_companies', 'partner_snapshot'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
@@ -143,6 +435,14 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
         ]);
     }
     fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
+}
+
+if ($mode === 'partner_companies') {
+    fn_talario_analytics_partner_companies();
+}
+
+if ($mode === 'partner_snapshot') {
+    fn_talario_analytics_partner_snapshot();
 }
 
 $date1_raw = isset($_REQUEST['date1']) ? (string) $_REQUEST['date1'] : '';
