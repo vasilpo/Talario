@@ -302,7 +302,7 @@ function fn_talario_analytics_catalog_response(): void
         $product_args[] = $partner_id;
     }
     $product_query .= ' ORDER BY p.product_id ASC LIMIT ?i';
-    $product_args[] = $product_limit;
+    $product_args[] = $product_limit + 1;
 
     foreach (db_get_array($product_query, ...$product_args) as $row) {
         $product_id = (int) $row['product_id'];
@@ -320,6 +320,11 @@ function fn_talario_analytics_catalog_response(): void
             'prices' => [],
             'resource_ids' => [],
         ];
+    }
+
+    $products_truncated = count($products) > $product_limit;
+    if ($products_truncated) {
+        $products = array_slice($products, 0, $product_limit, true);
     }
 
     $selected_product_ids = array_map('intval', array_keys($products));
@@ -446,6 +451,11 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
+    $schedule_truncated = count($schedule) > 2000;
+    if ($schedule_truncated) {
+        $schedule = array_slice($schedule, 0, 2000);
+    }
+
     $resource_product_ids = [];
     foreach ($schedule as $entry) {
         foreach ($entry['product_ids'] as $product_id) {
@@ -482,6 +492,14 @@ function fn_talario_analytics_catalog_response(): void
         'partners' => $partners,
         'products' => array_values($products),
         'schedule' => $schedule,
+        'truncated' => [
+            'products' => $products_truncated,
+            'schedule' => $schedule_truncated,
+        ],
+        'has_more' => $products_truncated || $schedule_truncated,
+        'next_product_id' => $products_truncated && $products
+            ? (int) array_key_last($products)
+            : null,
     ]);
 }
 
