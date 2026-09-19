@@ -157,7 +157,12 @@ function fn_talario_schedule_resources_clear_cart($cart, $complete, $clear_all)
 
 function fn_talario_schedule_resources_dispatch_before_display()
 {
-    if (AREA !== 'A'
+    // Historical backfill is an explicit, environment-scoped operation.
+    // Keep it disabled unless the operator enables it on a controlled non-PROD
+    // environment; opening the admin list must stay read-only by default.
+    if (!defined('TALARIO_LEGACY_BOOKING_BACKFILL_ENABLED')
+        || !TALARIO_LEGACY_BOOKING_BACKFILL_ENABLED
+        || AREA !== 'A'
         || \Tygh\Registry::get('runtime.controller') !== 'ec_table_booking_system'
         || \Tygh\Registry::get('runtime.mode') !== 'booked_orders'
     ) {
@@ -184,7 +189,7 @@ function fn_talario_schedule_resources_dispatch_before_display()
         . ' WHERE legacy.order_id = rb.order_id AND legacy.product_id = rb.product_id'
         . ')'
         . ' ORDER BY rb.order_id ASC'
-        . ' LIMIT 200';
+        . ' LIMIT 20';
 
     $order_ids = $args
         ? db_get_fields($query, ...$args)
