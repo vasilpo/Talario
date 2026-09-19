@@ -288,6 +288,28 @@ function fn_talario_analytics_feature_values(array $product_ids, string $lang_co
     return $result;
 }
 
+function fn_talario_analytics_serialized_scalar(string $payload, string $key): string
+{
+    if ($payload === '' || strlen($payload) > 262144) {
+        return '';
+    }
+
+    $key_pattern = preg_quote($key, '/');
+    $patterns = [
+        '/s:\\d+:"' . $key_pattern . '";s:\\d+:"([^"]*)";/',
+        '/s:\\d+:"' . $key_pattern . '";i:(-?\\d+);/',
+        '/s:\\d+:"' . $key_pattern . '";b:([01]);/',
+    ];
+
+    foreach ($patterns as $pattern) {
+        if (preg_match($pattern, $payload, $matches)) {
+            return (string) ($matches[1] ?? '');
+        }
+    }
+
+    return '';
+}
+
 function fn_talario_analytics_legacy_schedules(array $product_ids): array
 {
     if (!$product_ids) {
@@ -331,87 +353,71 @@ function fn_talario_analytics_legacy_schedules(array $product_ids): array
     $result = [];
     foreach ($rows as $row) {
         $product_id = (int) $row['product_id'];
-        $days_data = [];
         $serialized = (string) ($row['days_data'] ?? '');
-        if ($serialized !== '' && strlen($serialized) <= 262144) {
-            $decoded = false;
-            set_error_handler(static function ($severity, $message) {
-                throw new UnexpectedValueException('Invalid serialized schedule payload');
-            });
-            try {
-                $decoded = unserialize($serialized, ['allowed_classes' => false]);
-            } catch (Throwable $error) {
-                $decoded = false;
-            } finally {
-                restore_error_handler();
-            }
-            if (is_array($decoded) && count($decoded) <= 50) {
-                $valid_structure = true;
-                foreach ($day_map as $known_day_name => $known_weekday) {
-                    $day_payload = $decoded[$known_day_name] ?? null;
-                    if ($day_payload !== null && !is_array($day_payload)) {
-                        $valid_structure = false;
-                        break;
-                    }
-                    if (is_array($day_payload)
-                        && isset($day_payload['time_by_amount'])
-                        && (
-                            !is_array($day_payload['time_by_amount'])
-                            || count($day_payload['time_by_amount']) > 50
-                        )
-                    ) {
-                        $valid_structure = false;
-                        break;
-                    }
-                }
-                if ($valid_structure) {
-                    $days_data = $decoded;
-                }
-            }
-        }
-
         $slots = [];
-        foreach ($day_map as $day_name => $weekday) {
-            if (empty($days_data[$day_name . '_status'])) {
-                continue;
-            }
 
-            $time_rows = [];
-            if (!empty($days_data[$day_name]['time_by_amount'])
-                && is_array($days_data[$day_name]['time_by_amount'])
-            ) {
-                $time_rows = $days_data[$day_name]['time_by_amount'];
-            }
+        if ($serialized !== '' && strlen($serialized) <= 262144) {
+            foreach ($day_map as $day_name => $weekday) {
+                $enabled = fn_talario_analytics_serialized_scalar(
+                    $serialized,
+                    $day_name . '_status'
+                );
+                if ($enabled !== '1') {
+                    continue;
+                }
 
-            if (!$time_rows) {
-                $start = trim((string) ($days_data[$day_name . '_timing_start_time'] ?? ''));
-                $end = trim((string) ($days_data[$day_name . '_timing_end_time'] ?? ''));
-                if ($start !== '') {
-                    $time_rows[] = [
+                $time_rows = [];
+                if (function_exists('fn_ec_table_booking_system_get_saved_data')) {
+                    $saved_rows = fn_ec_table_booking_system_get_saved_data([
+                        'product_id' => $product_id,
+                        'day' => $day_name,
+                    ]);
+                    if (is_array($saved_rows) && count($saved_rows) <= 50) {
+                        $time_rows = $saved_rows;
+                    }
+                }
+
+                if (!$time_rows) {
+                    $start = fn_talario_analytics_serialized_scalar(
+                        $serialized,
+                        $day_name . '_timing_start_time'
+                    );
+                    $end = fn_talario_analytics_serialized_scalar(
+                        $serialized,
+                        $day_name . '_timing_end_time'
+                    );
+                    if ($start !== '') {
+                        $time_rows[] = [
+                            'start_time' => $start,
+                            'end_time' => $end,
+                            'amount' => null,
+                        ];
+                    }
+                }
+
+                foreach ($time_rows as $time_row) {
+                    if (!is_array($time_row)) {
+                        continue;
+                    }
+                    $start = substr(trim((string) ($time_row['start_time'] ?? '')), 0, 5);
+                    $end = substr(trim((string) ($time_row['end_time'] ?? '')), 0, 5);
+                    if (!preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $start)) {
+                        continue;
+                    }
+                    if ($end !== '' && !preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $end)) {
+                        $end = '';
+                    }
+                    $capacity = null;
+                    if (isset($time_row['amount']) && is_numeric($time_row['amount'])) {
+                        $capacity = max(0, min(10000, (int) $time_row['amount']));
+                    }
+                    $slots[] = [
+                        'weekday' => $weekday,
                         'start_time' => $start,
                         'end_time' => $end,
-                        'amount' => null,
+                        'capacity' => $capacity,
                     ];
                 }
-            }
-
-            foreach ($time_rows as $time_row) {
-                if (!is_array($time_row)) {
-                    continue;
-                }
-                $start = substr(trim((string) ($time_row['start_time'] ?? '')), 0, 5);
-                $end = substr(trim((string) ($time_row['end_time'] ?? '')), 0, 5);
-                if ($start === '') {
-                    continue;
-                }
-                $slots[] = [
-                    'weekday' => $weekday,
-                    'start_time' => $start,
-                    'end_time' => $end,
-                    'capacity' => isset($time_row['amount']) && $time_row['amount'] !== ''
-                        ? (int) $time_row['amount']
-                        : null,
-                ];
             }
         }
 
@@ -493,7 +499,7 @@ function fn_talario_analytics_partner_snapshot(): void
         . ' WHERE 1=1'
         . $condition
         . ' ORDER BY p.product_id ASC'
-        . ' LIMIT 500',
+        . ' LIMIT 100',
         ...$query_args
     );
 
