@@ -24,6 +24,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_TOKEN_HASH', $this->controller);
         self::assertStringContainsString('partner_sync_api_not_configured', $this->controller);
         self::assertStringContainsString('partner_sync_api_misconfigured', $this->controller);
+        self::assertStringContainsString("!preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)", $this->controller);
+        self::assertStringContainsString("$analytics_token_hash = 'sha256:' . hash('sha256', $analytics_token_hash);", $this->controller);
         self::assertStringContainsString('hash_equals($analytics_token_hash, $stored_token_hash)', $this->controller);
         self::assertStringNotContainsString('<item id="partner_sync_token">', $this->addon_xml);
     }
