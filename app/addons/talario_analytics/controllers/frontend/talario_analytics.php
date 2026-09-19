@@ -193,7 +193,7 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
     $schedule = [];
 
     foreach ($rows as $row) {
-        $days_data = @unserialize((string) ($row['days_data'] ?? ''));
+        $days_data = @unserialize((string) ($row['days_data'] ?? ''), ['allowed_classes' => false]);
         if (!is_array($days_data)) {
             continue;
         }
@@ -522,7 +522,8 @@ if ($mode === 'catalog'
     && (
         !function_exists('fn_is_development')
         || !fn_is_development()
-        || strpos((string) ($_SERVER['REQUEST_URI'] ?? ''), '/dev_copy/') === false
+        || !defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        || TALARIO_PARTNER_SYNC_DEV_COPY !== true
     )
 ) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
