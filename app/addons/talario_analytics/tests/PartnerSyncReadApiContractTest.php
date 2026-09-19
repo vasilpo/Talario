@@ -9,29 +9,31 @@ use PHPUnit\Framework\TestCase;
 final class PartnerSyncReadApiContractTest extends TestCase
 {
     private string $controller;
-    private string $settings_actions;
+    private string $addon_xml;
 
     protected function setUp(): void
     {
         $controller_path = dirname(__DIR__) . '/controllers/frontend/talario_analytics.php';
-        $settings_path = dirname(__DIR__) . '/schemas/settings/actions.functions.php';
+        $addon_path = dirname(__DIR__) . '/addon.xml';
         $this->controller = (string) file_get_contents($controller_path);
-        $this->settings_actions = (string) file_get_contents($settings_path);
+        $this->addon_xml = (string) file_get_contents($addon_path);
     }
 
-    public function testPartnerSyncUsesDedicatedTokenAndCannotAuthorizeOrders(): void
+    public function testPartnerSyncUsesDedicatedServerConfigToken(): void
     {
-        self::assertStringContainsString("'partner_sync_token'", $this->controller);
-        self::assertStringContainsString('$token_setting = $mode === \'catalog\' ? \'partner_sync_token\' : \'api_token\';', $this->controller);
-        self::assertStringContainsString('hash_equals($stored_token_hash, $provided_hash)', $this->controller);
-        self::assertStringContainsString('fn_talario_analytics_token_is_distinct', $this->settings_actions);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_TOKEN_HASH', $this->controller);
+        self::assertStringContainsString('partner_sync_api_not_configured', $this->controller);
+        self::assertStringContainsString('partner_sync_api_misconfigured', $this->controller);
+        self::assertStringContainsString("!preg_match('/^sha256:[a-f0-9]{64}$/', \$analytics_token_hash)", $this->controller);
+        self::assertStringContainsString("\$analytics_token_hash = 'sha256:' . hash('sha256', \$analytics_token_hash);", $this->controller);
+        self::assertStringContainsString('hash_equals($analytics_token_hash, $stored_token_hash)', $this->controller);
+        self::assertStringNotContainsString('<item id="partner_sync_token">', $this->addon_xml);
     }
 
-    public function testAnalyticsTokenCannotAuthorizeCatalog(): void
+    public function testOrdersContinueUsingAnalyticsTokenSetting(): void
     {
-        self::assertStringContainsString('if ($mode === \'catalog\')', $this->controller);
-        self::assertStringContainsString("Registry::get('addons.talario_analytics.' . \$token_setting)", $this->controller);
-        self::assertStringContainsString("partner_sync_api_not_configured", $this->controller);
+        self::assertStringContainsString("Registry::get('addons.talario_analytics.api_token')", $this->controller);
+        self::assertStringContainsString('analytics_api_not_configured', $this->controller);
     }
 
     public function testPartnerScopeConstrainsProductsVariationsResourcesAndSchedule(): void
