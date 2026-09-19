@@ -30,7 +30,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testAnalyticsTokenCannotAuthorizeCatalog(): void
     {
         self::assertStringContainsString('if ($mode === \'catalog\')', $this->controller);
-        self::assertStringContainsString("Registry::get('addons.talario_analytics.' . $token_setting)", $this->controller);
+        self::assertStringContainsString("Registry::get('addons.talario_analytics.' . \$token_setting)", $this->controller);
         self::assertStringContainsString("partner_sync_api_not_configured", $this->controller);
     }
 
