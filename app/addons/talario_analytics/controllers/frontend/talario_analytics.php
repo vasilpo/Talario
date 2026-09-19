@@ -568,6 +568,9 @@ if ($mode === 'catalog') {
         && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
         && hash_equals($analytics_token_hash, $stored_token_hash)
     ) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync API misconfigured: credential matches Analytics API credential',
+        ]);
         fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_misconfigured']);
     }
 } else {
