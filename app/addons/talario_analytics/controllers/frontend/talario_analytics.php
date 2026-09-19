@@ -227,6 +227,8 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
+    $selected_product_ids = array_map('intval', array_keys($products));
+
     $prices = $products ? db_get_array(
         'SELECT product_id, lower_limit, usergroup_id, price'
         . ' FROM ?:product_prices WHERE product_id IN (?n)'
@@ -275,13 +277,15 @@ function fn_talario_analytics_catalog_response(): void
         }
     }
 
-    foreach (db_get_array(
+    foreach ($selected_product_ids ? db_get_array(
         'SELECT rp.product_id, rp.resource_id'
         . ' FROM ?:talario_resource_products rp'
         . ' INNER JOIN ?:talario_resources r ON r.resource_id = rp.resource_id'
-        . ' WHERE r.status = ?s ORDER BY rp.product_id ASC, rp.resource_id ASC',
-        'A'
-    ) as $row) {
+        . ' WHERE r.status = ?s AND rp.product_id IN (?n)'
+        . ' ORDER BY rp.product_id ASC, rp.resource_id ASC',
+        'A',
+        $selected_product_ids
+    ) : [] as $row) {
         $product_id = (int) $row['product_id'];
         if (isset($products[$product_id])) {
             $products[$product_id]['resource_ids'][] = (int) $row['resource_id'];
@@ -291,7 +295,7 @@ function fn_talario_analytics_catalog_response(): void
     $from_sql = $from->format('Y-m-d') . ' 00:00:00';
     $to_sql = $to->format('Y-m-d') . ' 23:59:59';
     $schedule = [];
-    foreach (db_get_array(
+    $resource_occurrences = $selected_product_ids ? db_get_array(
         'SELECT o.occurrence_id, o.resource_id, o.location_id, o.starts_at, o.ends_at,'
         . ' o.capacity, o.status, r.name AS resource_name, l.name AS location_name,'
         . ' l.address AS location_address'
@@ -299,13 +303,17 @@ function fn_talario_analytics_catalog_response(): void
         . ' INNER JOIN ?:talario_resources r ON r.resource_id = o.resource_id AND r.status = ?s'
         . ' INNER JOIN ?:talario_locations l ON l.location_id = o.location_id AND l.status = ?s'
         . ' WHERE o.status = ?s AND o.starts_at >= ?s AND o.starts_at <= ?s'
-        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC LIMIT 2000',
+        . ' AND EXISTS (SELECT 1 FROM ?:talario_resource_products rp_scope'
+        . ' WHERE rp_scope.resource_id = o.resource_id AND rp_scope.product_id IN (?n))'
+        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC LIMIT 2001',
         'A',
         'A',
         'A',
         $from_sql,
-        $to_sql
-    ) as $row) {
+        $to_sql,
+        $selected_product_ids
+    ) : [];
+    foreach ($resource_occurrences as $row) {
         $occurrence_id = (int) $row['occurrence_id'];
         $booked = (int) db_get_field(
             'SELECT COALESCE(SUM(quantity), 0) FROM ?:talario_resource_bookings'
@@ -321,8 +329,10 @@ function fn_talario_analytics_catalog_response(): void
             TIME
         );
         $product_ids = array_map('intval', db_get_fields(
-            'SELECT product_id FROM ?:talario_resource_products WHERE resource_id = ?i ORDER BY product_id ASC',
-            (int) $row['resource_id']
+            'SELECT product_id FROM ?:talario_resource_products'
+            . ' WHERE resource_id = ?i AND product_id IN (?n) ORDER BY product_id ASC',
+            (int) $row['resource_id'],
+            $selected_product_ids
         ));
         $schedule[] = [
             'occurrence_id' => $occurrence_id,
