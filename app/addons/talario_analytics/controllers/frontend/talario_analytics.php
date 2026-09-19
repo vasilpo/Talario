@@ -474,8 +474,16 @@ function fn_talario_analytics_partner_snapshot(): void
             'name' => (string) ($row['product'] ?? ''),
             'status' => (string) ($row['status'] ?? ''),
             'price' => isset($row['price']) ? (float) $row['price'] : null,
-            'short_description' => (string) ($row['short_description'] ?? ''),
-            'full_description' => (string) ($row['full_description'] ?? ''),
+            'short_description' => trim(html_entity_decode(
+                strip_tags((string) ($row['short_description'] ?? '')),
+                ENT_QUOTES | ENT_HTML5,
+                'UTF-8'
+            )),
+            'full_description' => trim(html_entity_decode(
+                strip_tags((string) ($row['full_description'] ?? '')),
+                ENT_QUOTES | ENT_HTML5,
+                'UTF-8'
+            )),
             'variation_group_id' => $variation_groups[$current_product_id] ?? null,
             'features' => $feature_values[$current_product_id] ?? [],
             'schedule' => $schedules[$current_product_id] ?? null,
