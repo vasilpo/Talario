@@ -126,8 +126,21 @@ function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
  * existing Talario schedule-resource tables in one request. It never reads
  * orders, users or payment data and never writes application data.
  */
+function fn_talario_analytics_catalog_public_url(int $product_id): string
+{
+    $url = (string) fn_url('products.view&product_id=' . $product_id, 'C', 'https');
+    $url = preg_replace('/([?&])sid=[^&]*/i', '$1', $url);
+    return rtrim((string) $url, '?&');
+}
+
 function fn_talario_analytics_catalog_response(): void
 {
+    $partner_id = max(0, (int) ($_GET['partner_id'] ?? 0));
+    $product_limit = (int) ($_GET['limit'] ?? 250);
+    if ($product_limit < 1 || $product_limit > 500) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_limit', 'max_limit' => 500]);
+    }
+
     $timezone = new DateTimeZone('Europe/Moscow');
     $from_raw = isset($_GET['from']) ? (string) $_GET['from'] : (new DateTimeImmutable('now', $timezone))->format('Y-m-d');
     $to_raw = isset($_GET['to']) ? (string) $_GET['to'] : (new DateTimeImmutable($from_raw, $timezone))->modify('+30 days')->format('Y-m-d');
@@ -161,16 +174,20 @@ function fn_talario_analytics_catalog_response(): void
     }
 
     $products = [];
-    foreach (db_get_array(
-        'SELECT p.product_id, p.company_id, p.product_type, p.parent_product_id,'
+    $product_query = 'SELECT p.product_id, p.company_id, p.product_type, p.parent_product_id,'
         . ' p.price, p.status, p.updated_timestamp, pd.product'
         . ' FROM ?:products p'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
-        . ' WHERE p.status = ?s'
-        . ' ORDER BY p.product_id ASC',
-        $lang_code,
-        'A'
-    ) as $row) {
+        . ' WHERE p.status = ?s';
+    $product_args = [$lang_code, 'A'];
+    if ($partner_id > 0) {
+        $product_query .= ' AND p.company_id = ?i';
+        $product_args[] = $partner_id;
+    }
+    $product_query .= ' ORDER BY p.product_id ASC LIMIT ?i';
+    $product_args[] = $product_limit;
+
+    foreach (db_get_array($product_query, ...$product_args) as $row) {
         $product_id = (int) $row['product_id'];
         $products[$product_id] = [
             'product_id' => $product_id,
@@ -180,7 +197,7 @@ function fn_talario_analytics_catalog_response(): void
             'product_type' => (string) $row['product_type'],
             'parent_product_id' => (int) $row['parent_product_id'],
             'price' => (float) $row['price'],
-            'public_url' => (string) fn_url('products.view&product_id=' . $product_id, 'C'),
+            'public_url' => fn_talario_analytics_catalog_public_url($product_id),
             'updated_at' => (int) $row['updated_timestamp'],
             'variations' => [],
             'prices' => [],
@@ -254,7 +271,7 @@ function fn_talario_analytics_catalog_response(): void
         . ' INNER JOIN ?:talario_resources r ON r.resource_id = o.resource_id AND r.status = ?s'
         . ' INNER JOIN ?:talario_locations l ON l.location_id = o.location_id AND l.status = ?s'
         . ' WHERE o.status = ?s AND o.starts_at >= ?s AND o.starts_at <= ?s'
-        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC',
+        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC LIMIT 2000',
         'A',
         'A',
         'A',
