@@ -166,6 +166,8 @@ function fn_talario_schedule_resources_dispatch_before_display()
         || !fn_is_development()
         || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST'
         || ($_POST['talario_backfill'] ?? '') !== '1'
+        || !function_exists('fn_csrf_validate_request')
+        || !fn_csrf_validate_request(['server' => $_SERVER, 'request' => $_REQUEST])
         || AREA !== 'A'
         || \Tygh\Registry::get('runtime.controller') !== 'ec_table_booking_system'
         || \Tygh\Registry::get('runtime.mode') !== 'booked_orders'
