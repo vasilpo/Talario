@@ -555,8 +555,22 @@ if ($mode === 'catalog'
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-$token_setting = $mode === 'catalog' ? 'partner_sync_token' : 'api_token';
-$stored_token_hash = trim((string) Registry::get('addons.talario_analytics.' . $token_setting));
+if ($mode === 'catalog') {
+    $stored_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
+        ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
+        : '';
+    $analytics_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+
+    if (preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)
+        && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
+        && hash_equals($analytics_token_hash, $stored_token_hash)
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_misconfigured']);
+    }
+} else {
+    $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+}
+
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     fn_talario_analytics_json_response(503, ['error' => $mode === 'catalog'
         ? 'partner_sync_api_not_configured'
