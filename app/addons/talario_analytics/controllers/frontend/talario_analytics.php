@@ -418,8 +418,7 @@ function fn_talario_analytics_catalog_response(): void
     $schedule = [];
     $resource_occurrences = $selected_product_ids ? db_get_array(
         'SELECT o.occurrence_id, o.resource_id, o.location_id, o.starts_at, o.ends_at,'
-        . ' o.capacity, o.status, r.name AS resource_name, l.name AS location_name,'
-        . ' l.address AS location_address'
+        . ' o.capacity, o.status, r.name AS resource_name, l.name AS location_name'
         . ' FROM ?:talario_resource_occurrences o'
         . ' INNER JOIN ?:talario_resources r ON r.resource_id = o.resource_id AND r.status = ?s'
         . ' INNER JOIN ?:talario_locations l ON l.location_id = o.location_id AND l.status = ?s'
@@ -462,7 +461,7 @@ function fn_talario_analytics_catalog_response(): void
             'product_ids' => $product_ids,
             'location_id' => (int) $row['location_id'],
             'location_name' => (string) $row['location_name'],
-            'location_address' => (string) $row['location_address'],
+            'location_address' => null,
             'starts_at' => (string) $row['starts_at'],
             'ends_at' => (string) $row['ends_at'],
             'capacity' => (int) $row['capacity'],
