@@ -63,7 +63,25 @@ function fn_talario_analytics_rate_limit(): int
     }
 
     if ($global_count > 600) {
-        fn_log_event('general', 'runtime', [
+        $resource_product_ids = [];
+    foreach ($schedule as $entry) {
+        foreach ($entry['product_ids'] as $product_id) {
+            $resource_product_ids[$product_id] = true;
+        }
+    }
+    $legacy_product_ids = array_values(array_filter(
+        $selected_product_ids,
+        static function ($product_id) use ($resource_product_ids) {
+            return !isset($resource_product_ids[$product_id]);
+        }
+    ));
+    $legacy_schedule = fn_talario_analytics_legacy_schedule($legacy_product_ids, $from, $to);
+    $schedule = array_merge($schedule, $legacy_schedule);
+    usort($schedule, static function (array $left, array $right): int {
+        return strcmp((string) $left['starts_at'], (string) $right['starts_at']);
+    });
+
+    fn_log_event('general', 'runtime', [
             'message' => 'Talario Analytics API global rate limit exceeded',
         ]);
         fn_talario_analytics_json_response(429, ['error' => 'rate_limit_exceeded']);
@@ -153,6 +171,101 @@ function fn_talario_analytics_catalog_public_url(int $product_id): string
     }
 
     return $rebuilt;
+}
+
+
+function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmutable $from, DateTimeImmutable $to): array
+{
+    if (!$product_ids) {
+        return [];
+    }
+
+    $timezone = $from->getTimezone();
+    $rows = db_get_array(
+        'SELECT e.product_id, e.booking_type, e.from_date, e.to_date, e.days_data,'
+        . ' e.slot_time, e.free_time, pd.product'
+        . ' FROM ?:ec_table_booking_system e'
+        . ' INNER JOIN ?:products p ON p.product_id = e.product_id AND p.status = ?s'
+        . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id'
+        . ' AND pd.lang_code = ?s'
+        . ' WHERE e.product_id IN (?n)'
+        . ' AND e.booking_type IN (?a)'
+        . ' AND NOT EXISTS (SELECT 1 FROM ?:talario_resource_products rp'
+        . ' WHERE rp.product_id = e.product_id)'
+        . ' ORDER BY e.product_id ASC',
+        'A',
+        (string) Registry::get('settings.Appearance.default_language') ?: 'ru',
+        $product_ids,
+        ['T', 'R']
+    );
+
+    $day_names = [
+        1 => 'monday',
+        2 => 'tuesday',
+        3 => 'wednesday',
+        4 => 'thursday',
+        5 => 'friday',
+        6 => 'saturday',
+        7 => 'sunday',
+    ];
+    $schedule = [];
+
+    foreach ($rows as $row) {
+        $days_data = @unserialize((string) ($row['days_data'] ?? ''));
+        if (!is_array($days_data)) {
+            continue;
+        }
+
+        $product_id = (int) $row['product_id'];
+        $range_from = DateTimeImmutable::createFromFormat(
+            '!Y-m-d',
+            substr((string) ($row['from_date'] ?? ''), 0, 10),
+            $timezone
+        ) ?: $from;
+        $range_to = DateTimeImmutable::createFromFormat(
+            '!Y-m-d',
+            substr((string) ($row['to_date'] ?? ''), 0, 10),
+            $timezone
+        ) ?: $to;
+        if ($range_to < $range_from || $range_to < $from || $range_from > $to) {
+            continue;
+        }
+
+        $cursor = $range_from > $from ? $range_from : $from;
+        $end = $range_to < $to ? $range_to : $to;
+        for (; $cursor <= $end; $cursor = $cursor->modify('+1 day')) {
+            $day_name = $day_names[(int) $cursor->format('N')];
+            $status = (string) ($days_data[$day_name . '_status'] ?? '0');
+            if (!in_array($status, ['1', 'Y', 'A'], true)) {
+                continue;
+            }
+
+            $starts = trim((string) ($days_data[$day_name . '_timing_start_time'] ?? ''));
+            $ends = trim((string) ($days_data[$day_name . '_timing_end_time'] ?? ''));
+            if ($starts === '' || $ends === '') {
+                continue;
+            }
+
+            $schedule[] = [
+                'occurrence_id' => 'legacy:' . $product_id . ':' . $cursor->format('Y-m-d') . ':' . $starts,
+                'resource_id' => null,
+                'resource_name' => null,
+                'product_ids' => [$product_id],
+                'location_id' => null,
+                'location_name' => null,
+                'location_address' => null,
+                'starts_at' => $cursor->format('Y-m-d') . ' ' . $starts . ':00',
+                'ends_at' => $cursor->format('Y-m-d') . ' ' . $ends . ':00',
+                'capacity' => null,
+                'booked' => null,
+                'held' => null,
+                'available' => null,
+                'source' => 'legacy_ecarter',
+            ];
+        }
+    }
+
+    return $schedule;
 }
 
 function fn_talario_analytics_catalog_response(): void
