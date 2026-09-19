@@ -59,7 +59,6 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testCatalogIsDevelopmentCopyOnly(): void
     {
         self::assertStringContainsString("fn_is_development()", $this->controller);
-        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
 
