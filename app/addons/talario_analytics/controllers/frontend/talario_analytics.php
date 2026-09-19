@@ -284,6 +284,9 @@ function fn_talario_analytics_catalog_response(): void
         'SELECT company_id, company, status FROM ?:companies WHERE status = ?s ORDER BY company_id ASC',
         'A'
     ) as $row) {
+        if ($partner_id > 0 && (int) $row['company_id'] !== $partner_id) {
+            continue;
+        }
         $partners[] = [
             'partner_id' => (int) $row['company_id'],
             'name' => (string) $row['company'],
