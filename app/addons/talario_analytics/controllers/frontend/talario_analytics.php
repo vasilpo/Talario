@@ -315,6 +315,14 @@ if (!in_array($mode, ['orders', 'catalog'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
+// Partner Sync catalog is intentionally development-only. The existing
+// orders mode retains its established read-only contract.
+if ($mode === 'catalog'
+    && (!function_exists('fn_is_development') || !fn_is_development())
+) {
+    fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+}
+
 $rate_count = fn_talario_analytics_rate_limit();
 
 $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
