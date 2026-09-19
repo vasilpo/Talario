@@ -165,7 +165,7 @@ function fn_talario_schedule_resources_dispatch_before_display()
         || !function_exists('fn_is_development')
         || !fn_is_development()
         || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST'
-        || ($_REQUEST['talario_backfill'] ?? '') !== '1'
+        || ($_POST['talario_backfill'] ?? '') !== '1'
         || AREA !== 'A'
         || \Tygh\Registry::get('runtime.controller') !== 'ec_table_booking_system'
         || \Tygh\Registry::get('runtime.mode') !== 'booked_orders'
@@ -185,7 +185,6 @@ function fn_talario_schedule_resources_dispatch_before_display()
     $query = 'SELECT DISTINCT rb.order_id'
         . ' FROM ?:talario_resource_bookings rb'
         . ' INNER JOIN ?:products p ON p.product_id = rb.product_id'
-        . ' INNER JOIN ?:orders o ON o.order_id = rb.order_id'
         . ' WHERE rb.order_id > 0'
         . $condition
         . ' AND NOT EXISTS ('
