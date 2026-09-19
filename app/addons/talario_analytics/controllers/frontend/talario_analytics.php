@@ -341,6 +341,16 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
+    fn_log_event('general', 'runtime', [
+        'message' => 'Talario Partner Sync catalog request completed',
+        'mode' => 'catalog',
+        'partner_id' => $partner_id,
+        'partner_count' => count($partners),
+        'product_count' => count($products),
+        'schedule_count' => count($schedule),
+        'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
+    ]);
+
     fn_talario_analytics_json_response(200, [
         'schema_version' => 'partner-sync.catalog.v1',
         'generated_at' => (new DateTimeImmutable('now', $timezone))->format(DateTimeInterface::ATOM),
