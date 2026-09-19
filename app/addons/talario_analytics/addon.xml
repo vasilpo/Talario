@@ -30,6 +30,14 @@
                         <type>input</type>
                         <default_value/>
                     </item>
+                    <item id="partner_sync_token">
+                        <type>input</type>
+                        <default_value/>
+                    </item>
+                    <item id="partner_sync_allowed_ips">
+                        <type>input</type>
+                        <default_value/>
+                    </item>
                 </items>
             </section>
         </sections>
