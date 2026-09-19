@@ -35,3 +35,47 @@ function fn_settings_actions_addons_talario_analytics_partner_sync_token(&$value
 {
     fn_settings_actions_addons_talario_analytics_api_token($value);
 }
+
+
+/**
+ * Validates comma/space-separated Partner Sync source IP or CIDR rules.
+ *
+ * @param string $value Setting value.
+ */
+function fn_settings_actions_addons_talario_analytics_partner_sync_allowed_ips(&$value)
+{
+    $value = trim((string) $value);
+    if ($value === '') {
+        return;
+    }
+
+    $rules = array_values(array_filter(array_map('trim', preg_split('/[\s,;]+/', $value))));
+    foreach ($rules as $rule) {
+        if (strpos($rule, '/') === false) {
+            if (!filter_var($rule, FILTER_VALIDATE_IP)) {
+                fn_set_notification('E', __('error'), 'Partner Sync source list contains an invalid IP address.');
+                $value = '';
+                return;
+            }
+            continue;
+        }
+
+        [$network, $prefix_raw] = array_pad(explode('/', $rule, 2), 2, '');
+        if (!filter_var($network, FILTER_VALIDATE_IP) || !ctype_digit($prefix_raw)) {
+            fn_set_notification('E', __('error'), 'Partner Sync source list contains an invalid CIDR rule.');
+            $value = '';
+            return;
+        }
+
+        $binary = inet_pton($network);
+        $prefix = (int) $prefix_raw;
+        $max_bits = $binary === false ? -1 : strlen($binary) * 8;
+        if ($max_bits < 0 || $prefix < 0 || $prefix > $max_bits) {
+            fn_set_notification('E', __('error'), 'Partner Sync source list contains an invalid CIDR prefix.');
+            $value = '';
+            return;
+        }
+    }
+
+    $value = implode(',', $rules);
+}
