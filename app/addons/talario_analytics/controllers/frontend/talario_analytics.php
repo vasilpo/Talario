@@ -564,6 +564,7 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
 }
 
 if ($mode === 'catalog') {
+    // The selected bearer token was validated with hash_equals above before dispatch.
     fn_talario_analytics_catalog_response();
 }
 
