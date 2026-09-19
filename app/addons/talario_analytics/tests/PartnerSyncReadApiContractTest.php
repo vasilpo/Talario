@@ -64,6 +64,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'truncated' =>", $this->controller);
         self::assertStringContainsString("'has_more' =>", $this->controller);
         self::assertStringContainsString("'next_product_id' =>", $this->controller);
+        self::assertStringContainsString("'next_schedule_marker' =>", $this->controller);
     }
 
     public function testAuditLogExcludesTokenAndUsesHashedSourceIp(): void
