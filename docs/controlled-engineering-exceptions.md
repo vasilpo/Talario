@@ -72,3 +72,42 @@ Remove the guards only in a dedicated reviewed exception PR when all of the foll
 5. the PR includes an immediate rollback commit or patch.
 
 Until those criteria are met, this entry is a compatibility boundary, not a completed root-cause fix.
+
+
+## Theme meta templates: PHP 8.1 null compatibility
+
+### Scope
+
+Talario currently carries a narrow compatibility patch in four theme/template files and their matching `var/themes_repository` copies:
+
+- `design/themes/abt__unitheme2/templates/addons/abt__unitheme2/hooks/index/meta.post.tpl`;
+- `design/themes/abt__unitheme2/templates/meta.tpl`;
+- `design/themes/responsive/templates/addons/seo/hooks/index/meta_description.override.tpl`;
+- `design/themes/responsive/templates/meta.tpl`;
+- and the corresponding four files under `var/themes_repository/`.
+
+The patch changes only the evaluation order/defaulting around `html_entity_decode`: a missing meta description is converted to an empty string before decode, preventing PHP 8.1 null deprecation warnings. It does not add Talario product logic, routing, authorization, data access, or storefront behavior.
+
+### Why the exception remains
+
+Moving this safeguard into a Talario add-on would require overriding complete theme meta hooks/templates merely to preserve a one-expression PHP compatibility guard. That would create a larger maintenance surface than the existing patch and increase the chance of drifting from future UniTheme/CS-Cart template updates.
+
+The direct patch therefore remains a controlled compatibility exception until the upstream theme/core templates become null-safe.
+
+### Safety controls
+
+- No Talario business logic may be added to these files.
+- Allowed changes are limited to null/default handling required for PHP compatibility.
+- Every CS-Cart, UniTheme, or SEO add-on upgrade must compare these templates against upstream before deployment.
+- The paired files under `design/themes` and `var/themes_repository` must remain functionally identical for this guard.
+- Any broader metadata/SEO behavior change must be implemented through normal theme hooks/add-ons, not by expanding this exception.
+
+### Removal criteria
+
+Remove the patch when any of the following is true:
+
+1. the upstream CS-Cart/UniTheme/SEO templates default nullable meta values before `html_entity_decode`;
+2. the application stack no longer emits the relevant null-to-string deprecation under the supported PHP version;
+3. a smaller supported hook/extension point becomes available that avoids replacing whole vendor templates.
+
+Removal must be verified on `dev_copy` for product, category, page, search/SEO, and pages with an empty meta description before release to PROD.
