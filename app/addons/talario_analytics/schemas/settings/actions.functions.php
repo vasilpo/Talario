@@ -7,7 +7,10 @@ use Tygh\Registry;
 function fn_talario_analytics_token_is_distinct(string $hash, string $other_setting): bool
 {
     $other_hash = trim((string) Registry::get('addons.talario_analytics.' . $other_setting));
-    return $other_hash === '' || !hash_equals($other_hash, $hash);
+    if ($other_hash !== '' && !preg_match('/^sha256:[a-f0-9]{64}$/', $other_hash)) {
+        $other_hash = 'sha256:' . hash('sha256', $other_hash);
+    }
+    return $other_hash === '' || hash_equals($other_hash, $hash);
 }
 
 /**
