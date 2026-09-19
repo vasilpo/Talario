@@ -20,22 +20,27 @@ function fn_settings_actions_addons_talario_analytics_api_token(&$value)
 {
     $value = trim((string) $value);
 
-    if ($value === '' || preg_match('/^sha256:[a-f0-9]{64}$/', $value)) {
+    if ($value === '') {
         return;
     }
 
-    if (strlen($value) < 32) {
-        fn_set_notification('E', __('error'), __('talario_analytics.token_too_short'));
-        $value = '';
-        return;
+    if (preg_match('/^sha256:[a-f0-9]{64}$/', $value)) {
+        $hash = $value;
+    } else {
+        if (strlen($value) < 32) {
+            fn_set_notification('E', __('error'), __('talario_analytics.token_too_short'));
+            $value = '';
+            return;
+        }
+        $hash = 'sha256:' . hash('sha256', $value);
     }
 
-    $hash = 'sha256:' . hash('sha256', $value);
     if (!fn_talario_analytics_token_is_distinct($hash, 'partner_sync_token')) {
         fn_set_notification('E', __('error'), __('talario_analytics.tokens_must_differ'));
         $value = '';
         return;
     }
+
     $value = $hash;
 }
 
@@ -44,21 +49,26 @@ function fn_settings_actions_addons_talario_analytics_partner_sync_token(&$value
 {
     $value = trim((string) $value);
 
-    if ($value === '' || preg_match('/^sha256:[a-f0-9]{64}$/', $value)) {
+    if ($value === '') {
         return;
     }
 
-    if (strlen($value) < 32) {
-        fn_set_notification('E', __('error'), __('talario_analytics.token_too_short'));
-        $value = '';
-        return;
+    if (preg_match('/^sha256:[a-f0-9]{64}$/', $value)) {
+        $hash = $value;
+    } else {
+        if (strlen($value) < 32) {
+            fn_set_notification('E', __('error'), __('talario_analytics.token_too_short'));
+            $value = '';
+            return;
+        }
+        $hash = 'sha256:' . hash('sha256', $value);
     }
 
-    $hash = 'sha256:' . hash('sha256', $value);
     if (!fn_talario_analytics_token_is_distinct($hash, 'api_token')) {
         fn_set_notification('E', __('error'), __('talario_analytics.tokens_must_differ'));
         $value = '';
         return;
     }
+
     $value = $hash;
 }
