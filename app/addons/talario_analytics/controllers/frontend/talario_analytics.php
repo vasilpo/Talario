@@ -560,6 +560,9 @@ if ($mode === 'catalog') {
         ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
         : '';
     $analytics_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+    if ($analytics_token_hash !== '' && !preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)) {
+        $analytics_token_hash = 'sha256:' . hash('sha256', $analytics_token_hash);
+    }
 
     if (preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)
         && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
