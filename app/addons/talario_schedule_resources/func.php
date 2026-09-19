@@ -157,11 +157,15 @@ function fn_talario_schedule_resources_clear_cart($cart, $complete, $clear_all)
 
 function fn_talario_schedule_resources_dispatch_before_display()
 {
-    // Historical backfill is an explicit, environment-scoped operation.
-    // Keep it disabled unless the operator enables it on a controlled non-PROD
-    // environment; opening the admin list must stay read-only by default.
+    // Historical backfill is an explicit, development-only operation.
+    // A normal admin page view must remain read-only. The operation requires
+    // an explicit POST flag so it cannot run from a regular GET request.
     if (!defined('TALARIO_LEGACY_BOOKING_BACKFILL_ENABLED')
         || !TALARIO_LEGACY_BOOKING_BACKFILL_ENABLED
+        || !function_exists('fn_is_development')
+        || !fn_is_development()
+        || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST'
+        || ($_REQUEST['talario_backfill'] ?? '') !== '1'
         || AREA !== 'A'
         || \Tygh\Registry::get('runtime.controller') !== 'ec_table_booking_system'
         || \Tygh\Registry::get('runtime.mode') !== 'booked_orders'
