@@ -134,9 +134,8 @@ function fn_talario_analytics_catalog_public_url(int $product_id): string
         return $url;
     }
 
+    // Public catalog URLs intentionally carry no request query parameters.
     $query = [];
-    parse_str((string) ($parts['query'] ?? ''), $query);
-    unset($query['sid']);
     $rebuilt = '';
     if (!empty($parts['scheme']) && !empty($parts['host'])) {
         $rebuilt = $parts['scheme'] . '://' . $parts['host'];
@@ -198,7 +197,17 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
             continue;
         }
         $days_data = unserialize($serialized_days_data, ['allowed_classes' => false]);
-        if (!is_array($days_data)) {
+        if (!is_array($days_data) || count($days_data) > 128) {
+            continue;
+        }
+        $valid_days_data = true;
+        foreach ($days_data as $key => $value) {
+            if (!is_string($key) || is_array($value) || is_object($value) || is_resource($value)) {
+                $valid_days_data = false;
+                break;
+            }
+        }
+        if (!$valid_days_data) {
             continue;
         }
 
@@ -535,7 +544,12 @@ if (!in_array($mode, ['orders', 'catalog'], true)) {
 // Partner Sync catalog is intentionally development-only. The existing
 // orders mode retains its established read-only contract.
 if ($mode === 'catalog'
-    && (!function_exists('fn_is_development') || !fn_is_development())
+    && (
+        !function_exists('fn_is_development')
+        || !fn_is_development()
+        || !defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        || TALARIO_PARTNER_SYNC_DEV_COPY !== true
+    )
 ) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
