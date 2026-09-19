@@ -2,7 +2,7 @@
 
 defined('BOOTSTRAP') or die('Access denied');
 
-use Tygh\\Registry;
+use Tygh\Registry;
 
 function fn_talario_analytics_token_is_distinct(string $hash, string $other_setting): bool
 {
