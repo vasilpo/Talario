@@ -17,13 +17,17 @@ This directory defines the request surface for allowlisted operational checks ag
 - `git-status`: read-only Git status and HEAD.
 - `clear-cache`: clears generated `var/cache` content in dev_copy.
 - `php-lint`: PHP syntax check for the `talario_analytics` add-on.
-- `partner-sync-probe`: unauthenticated reachability probe for the dev-only Partner Sync endpoint. It reports only HTTP status and a sanitized API error/schema marker; it does not print access keys or bearer tokens.
 
 ## Security boundaries
 
 - No arbitrary commands.
+- No HTTP probes that place storefront access keys in URLs or logs.
 - No sudo.
 - No production directory.
 - No raw secrets in request files or logs.
 - `config.local.php` remains non-versioned.
 - Production changes still require a separate explicit decision.
+
+## Required repository controls
+
+Before creating or using the `ops/dev-copy` trigger branch, protect it so direct pushes are restricted to trusted maintainers and workflow changes remain review-gated. Keep the Beget SSH secrets scoped to this repository and rotate them if write access or repository ownership changes.
