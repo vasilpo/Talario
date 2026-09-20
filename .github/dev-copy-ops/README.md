@@ -8,7 +8,7 @@ This directory defines the request surface for allowlisted operational checks ag
 - It runs only when `.github/dev-copy-ops/request.json` changes on `development`.
 - Operational requests must therefore go through the normal PR/review path before merge.
 - The request selects one exact allowlisted operation.
-- The workflow connects with the existing Beget development SSH secrets.
+- The workflow connects with the existing Beget development SSH secrets, but the corresponding public key on Beget must be server-side restricted with a forced-command dispatcher.
 - Every remote command starts in `/home/t/tyman5tb/talario.ru/public_html/dev_copy` and refuses to run unless the checkout is on the `development` branch.
 - There is no arbitrary shell input and no production path.
 
@@ -20,7 +20,7 @@ This directory defines the request surface for allowlisted operational checks ag
 
 ## Security boundaries
 
-- No arbitrary commands.
+- No arbitrary commands: the Beget key is bound in `authorized_keys` to `ops/beget/talario-dev-github-dispatcher.sh`, which accepts only exact named operations.
 - No sudo.
 - No production directory.
 - No cache deletion or other destructive filesystem operation.
@@ -35,3 +35,9 @@ This directory defines the request surface for allowlisted operational checks ag
 - `development` must remain protected and review-gated.
 - Do not allow direct pushes that bypass the normal PR checks.
 - Keep the Beget SSH secrets scoped to this repository and rotate them if write access or repository ownership changes.
+
+## Beget forced-command requirement
+
+Before merging this workflow, install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout (for example under `~/.local/bin`) and bind the existing GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and not be writable through the restricted SSH key.
+
+The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, and `talario-dev-ops php-lint`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
