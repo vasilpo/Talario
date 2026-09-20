@@ -1,0 +1,174 @@
+name: Dev Copy Ops
+
+on:
+  push:
+    branches:
+      - ops/dev-copy
+    paths:
+      - .github/dev-copy-ops/request.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dev-copy-ops
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout request
+        uses: actions/checkout@v4
+
+      - name: Validate request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          OP="$(jq -er '.operation' .github/dev-copy-ops/request.json)"
+          case "$OP" in
+            status|git-status|clear-cache|php-lint|partner-sync-probe)
+              ;;
+            *)
+              echo "ERROR: operation is not allowlisted: $OP"
+              exit 64
+              ;;
+          esac
+          echo "operation=$OP" >> "$GITHUB_OUTPUT"
+
+      - name: Configure SSH
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          ssh-keyscan -H "$BEGET_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Run allowlisted dev_copy operation
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          OPERATION: ${{ steps.request.outputs.operation }}
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes "$BEGET_USER@$BEGET_HOST" bash -s -- "$OPERATION" <<'EOF'
+            set -euo pipefail
+
+            OPERATION="$1"
+            DEV_COPY="/home/t/tyman5tb/talario.ru/public_html/dev_copy"
+
+            cd "$DEV_COPY"
+
+            if [ "$(git rev-parse --abbrev-ref HEAD)" != "development" ]; then
+              echo "ERROR: dev_copy is not on development branch"
+              exit 65
+            fi
+
+            case "$OPERATION" in
+              status)
+                echo "OPERATION=status"
+                echo "BRANCH=$(git rev-parse --abbrev-ref HEAD)"
+                echo "HEAD=$(git rev-parse HEAD)"
+                if [ -n "$(git status --porcelain)" ]; then
+                  echo "WORKTREE=DIRTY"
+                else
+                  echo "WORKTREE=CLEAN"
+                fi
+                echo "PHP=$(php8.2 -r 'echo PHP_VERSION;')"
+                php8.2 -r '
+                  $path = "config.local.php";
+                  $content = is_file($path) ? (string) file_get_contents($path) : "";
+                  echo "DEV_COPY_FLAG=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_COPY") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+                  echo "PARTNER_SYNC_HASH=" . (preg_match("/TALARIO_PARTNER_SYNC_TOKEN_HASH.*sha256:[a-f0-9]{64}/", $content) ? "PRESENT" : "MISSING") . PHP_EOL;
+                '
+                ;;
+
+              git-status)
+                echo "OPERATION=git-status"
+                git status --short
+                echo "HEAD=$(git rev-parse HEAD)"
+                ;;
+
+              clear-cache)
+                echo "OPERATION=clear-cache"
+                if [ -d var/cache ]; then
+                  find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+                fi
+                echo "CACHE_CLEAR_OK"
+                ;;
+
+              php-lint)
+                echo "OPERATION=php-lint"
+                find app/addons/talario_analytics -type f -name '*.php' -print0                   | sort -z                   | xargs -0 -n1 php8.2 -l
+                echo "PHP_LINT_OK"
+                ;;
+
+              partner-sync-probe)
+                echo "OPERATION=partner-sync-probe"
+                php8.2 -r '
+                  define("AREA", "C");
+                  define("ACCOUNT_TYPE", "customer");
+                  require "init.php";
+
+                  $key = (string) db_get_field(
+                      "SELECT access_key FROM ?:storefronts WHERE storefront_id = ?i",
+                      1
+                  );
+
+                  if ($key === "") {
+                      fwrite(STDERR, "STOREFRONT_ACCESS_KEY_EMPTY\n");
+                      exit(4);
+                  }
+
+                  $url = "https://talario.ru/dev_copy/index.php?"
+                      . http_build_query([
+                          "store_access_key" => $key,
+                          "dispatch" => "talario_analytics.catalog",
+                          "from" => date("Y-m-d"),
+                          "to" => date("Y-m-d", strtotime("+7 days")),
+                          "limit" => 1,
+                      ]);
+
+                  $ch = curl_init($url);
+                  curl_setopt_array($ch, [
+                      CURLOPT_RETURNTRANSFER => true,
+                      CURLOPT_TIMEOUT => 30,
+                  ]);
+                  $response = (string) curl_exec($ch);
+                  $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                  $error = (string) curl_error($ch);
+                  curl_close($ch);
+
+                  echo "HTTP_STATUS=" . $code . PHP_EOL;
+                  if ($error !== "") {
+                      echo "CURL_ERROR=" . $error . PHP_EOL;
+                  }
+
+                  $decoded = json_decode($response, true);
+                  if (is_array($decoded) && isset($decoded["error"])) {
+                      echo "API_ERROR=" . preg_replace("/[^a-z0-9_\-]/i", "", (string) $decoded["error"]) . PHP_EOL;
+                  } elseif (is_array($decoded) && isset($decoded["schema_version"])) {
+                      echo "SCHEMA_VERSION=" . preg_replace("/[^a-z0-9_.\-]/i", "", (string) $decoded["schema_version"]) . PHP_EOL;
+                  } else {
+                      echo "RESPONSE=NON_JSON_OR_UNEXPECTED" . PHP_EOL;
+                  }
+                '
+                ;;
+
+              *)
+                echo "ERROR: operation is not allowlisted"
+                exit 64
+                ;;
+            esac
+          EOF
