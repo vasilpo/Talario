@@ -30,7 +30,7 @@ jobs:
           set -euo pipefail
           OP="$(jq -er '.operation' .github/dev-copy-ops/request.json)"
           case "$OP" in
-            status|git-status|clear-cache|php-lint|partner-sync-probe)
+            status|git-status|clear-cache|php-lint)
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
@@ -112,58 +112,6 @@ jobs:
                 echo "OPERATION=php-lint"
                 find app/addons/talario_analytics -type f -name '*.php' -print0                   | sort -z                   | xargs -0 -n1 php8.2 -l
                 echo "PHP_LINT_OK"
-                ;;
-
-              partner-sync-probe)
-                echo "OPERATION=partner-sync-probe"
-                php8.2 -r '
-                  define("AREA", "C");
-                  define("ACCOUNT_TYPE", "customer");
-                  require "init.php";
-
-                  $key = (string) db_get_field(
-                      "SELECT access_key FROM ?:storefronts WHERE storefront_id = ?i",
-                      1
-                  );
-
-                  if ($key === "") {
-                      fwrite(STDERR, "STOREFRONT_ACCESS_KEY_EMPTY\n");
-                      exit(4);
-                  }
-
-                  $url = "https://talario.ru/dev_copy/index.php?"
-                      . http_build_query([
-                          "store_access_key" => $key,
-                          "dispatch" => "talario_analytics.catalog",
-                          "from" => date("Y-m-d"),
-                          "to" => date("Y-m-d", strtotime("+7 days")),
-                          "limit" => 1,
-                      ]);
-
-                  $ch = curl_init($url);
-                  curl_setopt_array($ch, [
-                      CURLOPT_RETURNTRANSFER => true,
-                      CURLOPT_TIMEOUT => 30,
-                  ]);
-                  $response = (string) curl_exec($ch);
-                  $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                  $error = (string) curl_error($ch);
-                  curl_close($ch);
-
-                  echo "HTTP_STATUS=" . $code . PHP_EOL;
-                  if ($error !== "") {
-                      echo "CURL_ERROR=" . $error . PHP_EOL;
-                  }
-
-                  $decoded = json_decode($response, true);
-                  if (is_array($decoded) && isset($decoded["error"])) {
-                      echo "API_ERROR=" . preg_replace("/[^a-z0-9_\-]/i", "", (string) $decoded["error"]) . PHP_EOL;
-                  } elseif (is_array($decoded) && isset($decoded["schema_version"])) {
-                      echo "SCHEMA_VERSION=" . preg_replace("/[^a-z0-9_.\-]/i", "", (string) $decoded["schema_version"]) . PHP_EOL;
-                  } else {
-                      echo "RESPONSE=NON_JSON_OR_UNEXPECTED" . PHP_EOL;
-                  }
-                '
                 ;;
 
               *)
