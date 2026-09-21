@@ -67,6 +67,35 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-prod-partner-sync-bootstrap")
+    mark_dispatcher
+    echo "OPERATION=prod-partner-sync-bootstrap"
+
+    PROD_ROOT="/home/t/tyman5tb/talario.ru/public_html"
+    BOOTSTRAP_REL="ops/beget/bootstrap-partner-sync-prod-read.sh"
+    BOOTSTRAP_PATH="$PROD_ROOT/$BOOTSTRAP_REL"
+
+    [ -d "$PROD_ROOT" ] || fail "PROD root missing" 71
+    [ "$(git -C "$PROD_ROOT" rev-parse --abbrev-ref HEAD)" = "prod" ] || fail "PROD is not on prod branch" 72
+    [ -z "$(git -C "$PROD_ROOT" status --porcelain)" ] || fail "PROD worktree must be clean" 73
+
+    git -C "$PROD_ROOT" fetch --quiet origin prod
+    [ "$(git -C "$PROD_ROOT" rev-parse HEAD)" = "$(git -C "$PROD_ROOT" rev-parse origin/prod)" ] \
+      || fail "PROD worktree is not at current origin/prod" 74
+
+    [ -f "$BOOTSTRAP_PATH" ] && [ ! -L "$BOOTSTRAP_PATH" ] || fail "bootstrap script unavailable" 75
+
+    EXPECTED_HASH="$(git -C "$PROD_ROOT" show "HEAD:$BOOTSTRAP_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
+    ACTUAL_HASH="$(/usr/bin/sha256sum "$BOOTSTRAP_PATH" | /usr/bin/awk '{print $1}')"
+    [ -n "$EXPECTED_HASH" ] && [ "$EXPECTED_HASH" = "$ACTUAL_HASH" ] \
+      || fail "bootstrap script integrity check failed" 76
+
+    /usr/bin/env -i \
+      HOME="$HOME" \
+      PATH="/usr/local/bin:/usr/bin:/bin" \
+      /usr/bin/bash "$BOOTSTRAP_PATH"
+    ;;
+
   "talario-dev-ops worktree-repair")
     mark_dispatcher
     echo "OPERATION=worktree-repair"
