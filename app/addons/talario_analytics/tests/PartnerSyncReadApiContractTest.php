@@ -62,6 +62,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("l.address AS location_address", $this->controller);
     }
 
+    public function testMissingResourceTablesFallBackToLegacySchedule(): void
+    {
+        self::assertStringContainsString("function fn_talario_analytics_resource_tables_available", $this->controller);
+        self::assertStringContainsString("SHOW TABLES LIKE '?:?p'", $this->controller);
+        self::assertStringContainsString("if ($resource_tables_available)", $this->controller);
+        self::assertStringContainsString("if (fn_talario_analytics_resource_tables_available())", $this->controller);
+    }
+
     public function testResourceScheduleIsPreferredAndLegacyIsFallback(): void
     {
         self::assertStringContainsString("talario_resource_occurrences", $this->controller);
