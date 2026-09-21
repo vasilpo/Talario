@@ -109,17 +109,26 @@ case "$REQUEST" in
     [ -x /usr/local/bin/php8.2 ] || fail "required PHP binary unavailable" 77
     [ -x /usr/bin/git ] || fail "required git binary unavailable" 81
 
+    PHP_REAL="$(/usr/bin/realpath /usr/local/bin/php8.2)"
+    [ -n "$PHP_REAL" ] && [ -f "$PHP_REAL" ] && [ -x "$PHP_REAL" ] || fail "trusted PHP binary resolution failed" 82
+    PHP_MODE="$(/usr/bin/stat -c '%a' "$PHP_REAL")"
+    case "$PHP_MODE" in
+      *[2367]|*[2367][0-9]) fail "trusted PHP binary is group/world writable" 82 ;;
+    esac
+
     RUNNER_REL="ops/partner-sync-apply.php"
-    RUNNER_PATH="$DEV_COPY/$RUNNER_REL"
-    [ -f "$RUNNER_PATH" ] && [ ! -L "$RUNNER_PATH" ] || fail "partner sync CLI runner unavailable" 78
     [ -z "$(/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
+    RUNNER_COMMIT="$(/usr/bin/git -C "$DEV_COPY" rev-parse HEAD)"
+    [ -n "$RUNNER_COMMIT" ] || fail "partner sync runner commit resolution failed" 80
 
-    EXPECTED_RUNNER_HASH="$(/usr/bin/git -C "$DEV_COPY" show "HEAD:$RUNNER_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
-    ACTUAL_RUNNER_HASH="$(/usr/bin/sha256sum "$RUNNER_PATH" | /usr/bin/awk '{print $1}')"
-    [ -n "$EXPECTED_RUNNER_HASH" ] && [ "$EXPECTED_RUNNER_HASH" = "$ACTUAL_RUNNER_HASH" ] \
+    RUNNER_TMP="$(/usr/bin/mktemp "$DEV_COPY/ops/.partner-sync-runner.XXXXXX.php")"
+    chmod 600 "$RUNNER_TMP"
+    trap 'rm -f -- "$PAYLOAD_FILE" "$RUNNER_TMP"' EXIT HUP INT TERM
+    /usr/bin/git -C "$DEV_COPY" show "$RUNNER_COMMIT:$RUNNER_REL" > "$RUNNER_TMP" \
       || fail "partner sync CLI runner integrity check failed" 80
+    [ -s "$RUNNER_TMP" ] || fail "partner sync CLI runner integrity check failed" 80
 
-    /usr/bin/env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 "$RUNNER_PATH" < "$PAYLOAD_FILE"
+    /usr/bin/env -u PHPRC -u PHP_INI_SCAN_DIR "$PHP_REAL" "$RUNNER_TMP" < "$PAYLOAD_FILE"
     ;;
 
   "talario-dev-ops worktree-repair")
