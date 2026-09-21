@@ -27,6 +27,8 @@ final class CrmReadApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_CRM_PROD_READ', $this->controller);
         self::assertStringContainsString('crm_api_not_configured', $this->controller);
         self::assertStringContainsString('crm_api_misconfigured', $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_canonical_token_hash', $this->controller);
+        self::assertStringContainsString('$provided_credential_hash', $this->controller);
         self::assertStringContainsString("'crm' => true", $this->trusted_controllers);
     }
 
