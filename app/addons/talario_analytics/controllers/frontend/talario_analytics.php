@@ -140,6 +140,29 @@ function fn_talario_analytics_catalog_rate_limit(string $provided_hash): void
     }
 }
 
+function fn_talario_analytics_table_exists(string $table): bool
+{
+    return (bool) db_get_row("SHOW TABLES LIKE '?:?p'", $table);
+}
+
+function fn_talario_analytics_resource_tables_available(): bool
+{
+    foreach ([
+        'talario_resource_products',
+        'talario_resources',
+        'talario_resource_occurrences',
+        'talario_locations',
+        'talario_resource_bookings',
+        'talario_resource_holds',
+    ] as $table) {
+        if (!fn_talario_analytics_table_exists($table)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
 {
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
@@ -200,18 +223,22 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
     }
 
     $timezone = $from->getTimezone();
-    $rows = db_get_array(
-        'SELECT e.product_id, e.booking_type, e.from_date, e.to_date, e.days_data,'
+    $legacy_query = 'SELECT e.product_id, e.booking_type, e.from_date, e.to_date, e.days_data,'
         . ' e.slot_time, e.free_time, pd.product'
         . ' FROM ?:ec_table_booking_system e'
         . ' INNER JOIN ?:products p ON p.product_id = e.product_id AND p.status = ?s'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id'
         . ' AND pd.lang_code = ?s'
         . ' WHERE e.product_id IN (?n)'
-        . ' AND e.booking_type IN (?a)'
-        . ' AND NOT EXISTS (SELECT 1 FROM ?:talario_resource_products rp'
-        . ' WHERE rp.product_id = e.product_id)'
-        . ' ORDER BY e.product_id ASC',
+        . ' AND e.booking_type IN (?a)';
+    if (fn_talario_analytics_resource_tables_available()) {
+        $legacy_query .= ' AND NOT EXISTS (SELECT 1 FROM ?:talario_resource_products rp'
+            . ' WHERE rp.product_id = e.product_id)';
+    }
+    $legacy_query .= ' ORDER BY e.product_id ASC';
+
+    $rows = db_get_array(
+        $legacy_query,
         'A',
         (string) Registry::get('settings.Appearance.default_language') ?: 'ru',
         $product_ids,
@@ -449,25 +476,31 @@ function fn_talario_analytics_catalog_response(): void
         }
     }
 
-    foreach ($selected_product_ids ? db_get_array(
-        'SELECT rp.product_id, rp.resource_id'
-        . ' FROM ?:talario_resource_products rp'
-        . ' INNER JOIN ?:talario_resources r ON r.resource_id = rp.resource_id'
-        . ' WHERE r.status = ?s AND rp.product_id IN (?n)'
-        . ' ORDER BY rp.product_id ASC, rp.resource_id ASC',
-        'A',
-        $selected_product_ids
-    ) : [] as $row) {
-        $product_id = (int) $row['product_id'];
-        if (isset($products[$product_id])) {
-            $products[$product_id]['resource_ids'][] = (int) $row['resource_id'];
+    $resource_tables_available = fn_talario_analytics_resource_tables_available();
+
+    if ($resource_tables_available) {
+        foreach ($selected_product_ids ? db_get_array(
+            'SELECT rp.product_id, rp.resource_id'
+            . ' FROM ?:talario_resource_products rp'
+            . ' INNER JOIN ?:talario_resources r ON r.resource_id = rp.resource_id'
+            . ' WHERE r.status = ?s AND rp.product_id IN (?n)'
+            . ' ORDER BY rp.product_id ASC, rp.resource_id ASC',
+            'A',
+            $selected_product_ids
+        ) : [] as $row) {
+            $product_id = (int) $row['product_id'];
+            if (isset($products[$product_id])) {
+                $products[$product_id]['resource_ids'][] = (int) $row['resource_id'];
+            }
         }
     }
 
     $from_sql = $from->format('Y-m-d') . ' 00:00:00';
     $to_sql = $to->format('Y-m-d') . ' 23:59:59';
     $schedule = [];
-    $resource_occurrences = $selected_product_ids ? db_get_array(
+    $resource_occurrences = [];
+    if ($resource_tables_available && $selected_product_ids) {
+        $resource_occurrences = db_get_array(
         'SELECT o.occurrence_id, o.resource_id, o.location_id, o.starts_at, o.ends_at,'
         . ' o.capacity, o.status, r.name AS resource_name, l.name AS location_name'
         . ' FROM ?:talario_resource_occurrences o'
@@ -483,7 +516,7 @@ function fn_talario_analytics_catalog_response(): void
         $from_sql,
         $to_sql,
         $selected_product_ids
-    ) : [];
+        );
     foreach ($resource_occurrences as $row) {
         $occurrence_id = (int) $row['occurrence_id'];
         $booked = (int) db_get_field(
@@ -520,6 +553,8 @@ function fn_talario_analytics_catalog_response(): void
             'held' => $held,
             'available' => max(0, (int) $row['capacity'] - $booked - $held),
         ];
+    }
+
     }
 
     $resource_product_ids = [];
