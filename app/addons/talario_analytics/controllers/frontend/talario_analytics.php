@@ -212,16 +212,14 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
         }
 
         $product_id = (int) $row['product_id'];
-        $range_from = DateTimeImmutable::createFromFormat(
-            '!Y-m-d',
-            substr((string) ($row['from_date'] ?? ''), 0, 10),
-            $timezone
-        ) ?: $from;
-        $range_to = DateTimeImmutable::createFromFormat(
-            '!Y-m-d',
-            substr((string) ($row['to_date'] ?? ''), 0, 10),
-            $timezone
-        ) ?: $to;
+        $raw_from = $row['from_date'] ?? '';
+        $raw_to = $row['to_date'] ?? '';
+        $range_from = is_numeric($raw_from)
+            ? (new DateTimeImmutable())->setTimestamp((int) $raw_from)->setTimezone($timezone)->setTime(0, 0, 0)
+            : (DateTimeImmutable::createFromFormat('!Y-m-d', substr((string) $raw_from, 0, 10), $timezone) ?: $from);
+        $range_to = is_numeric($raw_to)
+            ? (new DateTimeImmutable())->setTimestamp((int) $raw_to)->setTimezone($timezone)->setTime(0, 0, 0)
+            : (DateTimeImmutable::createFromFormat('!Y-m-d', substr((string) $raw_to, 0, 10), $timezone) ?: $to);
         if ($range_to < $range_from || $range_to < $from || $range_from > $to) {
             continue;
         }
