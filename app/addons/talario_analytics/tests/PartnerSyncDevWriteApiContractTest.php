@@ -21,8 +21,9 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
         self::assertStringContainsString('fn_is_development()', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString("'/dev_copy/'", $this->controller);
-        self::assertStringContainsString('$physical_controller_path', $this->controller);
-        self::assertStringContainsString('$is_dev_copy_code', $this->controller);
+        self::assertStringContainsString("Registry::get('config.dir.root')", $this->controller);
+        self::assertStringContainsString('$is_dev_copy_root', $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_WRITE_ENABLED', $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
@@ -32,6 +33,7 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH', $this->controller);
         self::assertStringContainsString('partner_sync_write_credential_reused', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_TOKEN_HASH', $this->controller);
+        self::assertStringContainsString('apache_request_headers', $this->controller);
     }
 
     public function testOnlyPostIsAccepted(): void
@@ -49,6 +51,7 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
 
     public function testWriteAuthIsRateLimitedAndAudited(): void
     {
+        self::assertStringContainsString('write_rate_limit_unavailable', $this->controller);
         self::assertStringContainsString('partner_sync_write:global', $this->controller);
         self::assertStringContainsString('partner_sync_write:ip:', $this->controller);
         self::assertStringContainsString('dev write unauthorized', $this->controller);
