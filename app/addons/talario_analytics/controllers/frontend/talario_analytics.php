@@ -25,6 +25,24 @@ function fn_talario_analytics_bearer_token(): string
     return trim($matches[1]);
 }
 
+function fn_talario_analytics_canonical_token_hash(string $value, bool $hash_raw_secret = false): string
+{
+    $value = trim($value);
+    if ($value === '') {
+        return '';
+    }
+
+    if (preg_match('/^sha256:([a-f0-9]{64})$/i', $value, $matches)) {
+        return 'sha256:' . strtolower($matches[1]);
+    }
+
+    if (preg_match('/^[a-f0-9]{64}$/i', $value)) {
+        return 'sha256:' . strtolower($value);
+    }
+
+    return $hash_raw_secret ? 'sha256:' . hash('sha256', $value) : '';
+}
+
 /**
  * DB-backed fixed-window throttling:
  * - max 600 requests/min globally;
@@ -577,13 +595,13 @@ if ($mode === 'crm') {
 $rate_count = fn_talario_analytics_rate_limit();
 
 if ($mode === 'catalog') {
-    $stored_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
-        ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
-        : '';
-    $analytics_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
-    if ($analytics_token_hash !== '' && !preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)) {
-        $analytics_token_hash = 'sha256:' . hash('sha256', $analytics_token_hash);
-    }
+    $stored_token_hash = fn_talario_analytics_canonical_token_hash(
+        defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
+    );
+    $analytics_token_hash = fn_talario_analytics_canonical_token_hash(
+        (string) Registry::get('addons.talario_analytics.api_token'),
+        true
+    );
 
     if (preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)
         && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
@@ -595,16 +613,16 @@ if ($mode === 'catalog') {
         fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_misconfigured']);
     }
 } elseif ($mode === 'crm') {
-    $stored_token_hash = defined('TALARIO_CRM_TOKEN_HASH')
-        ? trim((string) TALARIO_CRM_TOKEN_HASH)
-        : '';
-    $analytics_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
-    if ($analytics_token_hash !== '' && !preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)) {
-        $analytics_token_hash = 'sha256:' . hash('sha256', $analytics_token_hash);
-    }
-    $partner_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
-        ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
-        : '';
+    $stored_token_hash = fn_talario_analytics_canonical_token_hash(
+        defined('TALARIO_CRM_TOKEN_HASH') ? (string) TALARIO_CRM_TOKEN_HASH : ''
+    );
+    $analytics_token_hash = fn_talario_analytics_canonical_token_hash(
+        (string) Registry::get('addons.talario_analytics.api_token'),
+        true
+    );
+    $partner_token_hash = fn_talario_analytics_canonical_token_hash(
+        defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
+    );
 
     foreach ([$analytics_token_hash, $partner_token_hash] as $other_token_hash) {
         if (preg_match('/^sha256:[a-f0-9]{64}$/', $other_token_hash)
@@ -632,9 +650,9 @@ if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
 }
 
 $provided_token = fn_talario_analytics_bearer_token();
-$provided_hash = 'sha256:' . hash('sha256', $provided_token);
+$provided_credential_hash = 'sha256:' . hash('sha256', $provided_token);
 
-if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_hash)) {
+if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_credential_hash)) {
     if ($rate_count === 1) {
         fn_log_event('general', 'runtime', [
             'message' => 'Talario Analytics API unauthorized request',
@@ -649,7 +667,7 @@ if ($mode === 'catalog') {
 }
 
 if ($mode === 'crm') {
-    fn_talario_analytics_crm_rate_limit($provided_hash);
+    fn_talario_analytics_crm_rate_limit($provided_credential_hash);
     fn_talario_analytics_crm_response();
 }
 
