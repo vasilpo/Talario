@@ -57,8 +57,9 @@ case "$REQUEST" in
   "talario-dev-ops git-status")
     mark_dispatcher
     echo "OPERATION=git-status"
-    git status --short
     echo "HEAD=$(git rev-parse HEAD)"
+    DIRTY_COUNT="$(git status --porcelain | wc -l | tr -d ' ')"
+    echo "DIRTY_COUNT=$DIRTY_COUNT"
     ;;
 
   "talario-dev-ops php-lint")
