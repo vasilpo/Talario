@@ -43,7 +43,21 @@ jobs:
           set -euo pipefail
           test "$BEGET_HOST" = "salvage.beget.com"
 
+          set +e
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
+          SSH_RC=$?
+          set -e
+
+          if [ "$SSH_RC" -ne 0 ]; then
+            echo "REMOTE_DEPLOY_FAILED rc=$SSH_RC"
+            ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops status" 2>/dev/null \
+              | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=status|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9.]+|DEV_COPY_FLAG=(PRESENT|MISSING)|PARTNER_SYNC_HASH=(PRESENT|MISSING))$' \
+              || true
+            ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops git-status" 2>/dev/null \
+              | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=git-status|HEAD=[0-9a-f]{40}|DIRTY_COUNT=[0-9]+)$' \
+              || true
+            exit "$SSH_RC"
+          fi
 
           DISPATCHER_LINE="$(printf '%s\n' "$OUTPUT" | grep -F -x 'DISPATCHER=talario-dev-github-v1')"
           DEPLOY_LINE="$(printf '%s\n' "$OUTPUT" | grep -E '^DEPLOY_OK [[:xdigit:]]+$')"
