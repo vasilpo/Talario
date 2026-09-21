@@ -28,6 +28,14 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
+            if (context.actor !== context.repo.owner || pr.user.login !== context.repo.owner) {
+              core.setFailed('only the repository owner may open control PRs');
+              return;
+            }
+            if (!pr.head.ref.startsWith('ops/')) {
+              core.setFailed('control PR branch must use ops/ prefix');
+              return;
+            }
             if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
               core.setFailed('cross-repository control PRs are forbidden');
               return;
@@ -92,9 +100,16 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@salvage.beget.com" "talario-dev-ops $OPERATION" 2>&1)"
+          RAW_OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@salvage.beget.com" "talario-dev-ops $OPERATION" 2>&1)"
           RC=$?
           set -e
+
+          if [ "$RC" -eq 0 ]; then
+            OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT)=' | head -20)"
+          else
+            OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
+          fi
+
           {
             echo "rc=$RC"
             echo 'output<<EOF'
