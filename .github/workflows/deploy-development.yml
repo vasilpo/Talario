@@ -37,11 +37,10 @@ jobs:
         shell: bash
         env:
           # Explicitly step-scoped; must match the pinned known_hosts entry below.
-          BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_USER: ${{ secrets.BEGET_USER }}
         run: |
           set -euo pipefail
-          test "$BEGET_HOST" = "salvage.beget.com"
+          BEGET_HOST="salvage.beget.com"
 
           set +e
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
