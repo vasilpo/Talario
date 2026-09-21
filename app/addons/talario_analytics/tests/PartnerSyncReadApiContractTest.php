@@ -138,6 +138,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("if (\$mode === 'catalog_meta' && !\$dev_copy_enabled)", $this->controller);
         self::assertStringContainsString("in_array(\$mode, ['catalog', 'catalog_meta'], true)", $this->controller);
         self::assertStringContainsString("'partner_id_required'", $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->controller);
+        self::assertStringContainsString("'partner_not_metadata_allowed'", $this->controller);
         self::assertStringContainsString("'catalog_meta' => true", $this->trusted_controllers);
     }
 
