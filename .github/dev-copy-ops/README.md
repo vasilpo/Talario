@@ -14,9 +14,13 @@ This directory defines the request surface for allowlisted operational checks ag
 
 ## Allowlisted operations
 
+The complete Dev Copy Ops request allowlist is exactly:
+
 - `status`: branch, HEAD, worktree state, PHP version, and presence-only Partner Sync local config checks.
 - `git-status`: read-only Git status and HEAD.
 - `php-lint`: PHP syntax check for the `talario_analytics` add-on.
+
+`clear-cache` and `partner-sync-probe` are intentionally not Dev Copy Ops operations. Cache cleanup exists only inside the separate standard deploy command `talario-dev-deploy`.
 
 ## Security boundaries
 
