@@ -131,14 +131,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testDevDispatcherHasFixedPartnerSyncCommands(): void
     {
         self::assertStringContainsString(
-            '"talario-partner-sync-dry-run"|"talario-partner-sync-apply")',
+            '"talario-partner-sync-dry-run")',
             $this->dev_dispatcher
         );
         self::assertStringContainsString('/usr/local/bin/php8.2 "$DEV_COPY/ops/partner-sync-apply.php"', $this->dev_dispatcher);
         self::assertStringContainsString('20971520', $this->dev_dispatcher);
         self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
-        self::assertStringContainsString('APPLY_DRY_RUN_FALSE_REQUIRED', $this->dev_dispatcher);
-        self::assertStringContainsString('APPROVAL_ID_REQUIRED', $this->dev_dispatcher);
+        self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
+        self::assertStringContainsString('timeout 30s head -c 20971521', $this->dev_dispatcher);
     }
 
     public function testDevDispatcherDoesNotExposeGenericShellForPartnerSync(): void
