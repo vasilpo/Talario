@@ -34,7 +34,7 @@ jobs:
           jq -e 'keys | sort == ["operation","request_id"]' "$REQUEST" >/dev/null
           [[ "$REQUEST_ID" =~ ^[A-Za-z0-9._:-]{1,80}$ ]]
           case "$OP" in
-            status|git-status|php-lint)
+            status|git-status|php-lint|worktree-repair)
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
@@ -69,4 +69,4 @@ jobs:
           test "$BEGET_HOST" = "salvage.beget.com"
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
           printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
-          printf '%s\n' "$OUTPUT"             | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT)='
+          printf '%s\n' "$OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT|REPAIR|REPAIRED_COUNT)='

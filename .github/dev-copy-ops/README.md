@@ -14,20 +14,21 @@ This directory defines the request surface for allowlisted operational checks ag
 
 ## Allowlisted operations
 
-The Dev Copy Ops request allowlist is exactly three read/check operations:
+The Dev Copy Ops request allowlist is:
 
 - `status`
 - `git-status`
 - `php-lint`
+- `worktree-repair`: moves only untracked `config.local.php.bak-partner-sync-*` files out of the checkout into a private Beget state directory. It refuses to run if any other worktree change exists.
 
-No other Dev Copy Ops operation is supported. `clear-cache` and `partner-sync-probe` are not part of this interface. The separate standard deploy command `talario-dev-deploy` may clear generated cache after a successful fast-forward deploy.
+No arbitrary file paths, shell fragments, HTTP probes, or generic cleanup operations are accepted. `clear-cache` and `partner-sync-probe` remain outside this interface. The separate standard deploy command `talario-dev-deploy` may clear generated cache after a successful fast-forward deploy.
 
 ## Security boundaries
 
 - No arbitrary commands: the Beget key is bound in `authorized_keys` to `ops/beget/talario-dev-github-dispatcher.sh`, which accepts only exact named operations.
 - No sudo.
 - No production directory.
-- Dev Copy Ops operations are read-only. The separate standard `talario-dev-deploy` command may clear generated `var/cache` content after a successful fast-forward deploy, with symlink protection.
+- Mutating Dev Copy Ops operations are narrowly scoped: `worktree-repair` can only relocate the known Partner Sync backup artifact pattern,. The separate standard `talario-dev-deploy` command may clear generated `var/cache` content after a successful fast-forward deploy, with symlink protection.
 - No HTTP probes that place storefront access keys in URLs or logs.
 - No raw secrets in request files or logs.
 - `config.local.php` remains non-versioned.
@@ -75,3 +76,10 @@ This exact binding was installed and verified during bootstrap on 2026-09-21. Th
 ## Beget host-key rotation
 
 If Beget rotates the SSH host key, do not fall back to runtime `ssh-keyscan`. Verify the replacement ED25519 fingerprint out-of-band from Beget, update the pinned `salvage.beget.com` entry in both workflows through a reviewed PR, then run Quality & Safety and the Talario Review Agent before merge.
+
+
+## Self-maintenance bootstrap
+
+The live dispatcher remains an out-of-repository security boundary and is not self-updatable through GitHub Actions. This PR adds only the narrowly scoped `worktree-repair` operation. After its one-time installation on Beget, the current known dirty state can be repaired remotely without exposing arbitrary shell access.
+
+The current known dirty dev_copy state is caused by the untracked file `config.local.php.bak-partner-sync-20260920-015402`. The approved `worktree-repair` operation preserves it by moving it to `~/.local/state/talario/dev-copy-backups/`; it does not delete or print the file contents.
