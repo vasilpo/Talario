@@ -555,7 +555,10 @@ if (!in_array($mode, ['orders', 'catalog', 'catalog_apply'], true)) {
 // production-only constant and a separately approved rollout.
 if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
+    $script_name = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+    $dev_copy_path = strpos($script_name, '/dev_copy/') !== false;
     $dev_copy_enabled = $is_development
+        && $dev_copy_path
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
         && TALARIO_PARTNER_SYNC_DEV_COPY === true;
     $prod_read_enabled = !$is_development
@@ -574,7 +577,7 @@ if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
+if ($mode === 'catalog') {
     $stored_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
         ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
         : '';
@@ -592,15 +595,31 @@ if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
         ]);
         fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_misconfigured']);
     }
+} elseif ($mode === 'catalog_apply') {
+    $stored_token_hash = defined('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH')
+        ? trim((string) TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH)
+        : '';
+    $read_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
+        ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
+        : '';
+    if (preg_match('/^sha256:[a-f0-9]{64}$/', $read_token_hash)
+        && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
+        && hash_equals($read_token_hash, $stored_token_hash)
+    ) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync write API misconfigured: write credential matches read credential',
+        ]);
+        fn_talario_analytics_json_response(503, ['error' => 'partner_sync_write_api_misconfigured']);
+    }
 } else {
     $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
 }
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    fn_talario_analytics_json_response(503, ['error' => in_array($mode, ['catalog', 'catalog_apply'], true)
-        ? 'partner_sync_api_not_configured'
-        : 'analytics_api_not_configured'
-    ]);
+    $configuration_error = $mode === 'catalog_apply'
+        ? 'partner_sync_write_api_not_configured'
+        : ($mode === 'catalog' ? 'partner_sync_api_not_configured' : 'analytics_api_not_configured');
+    fn_talario_analytics_json_response(503, ['error' => $configuration_error]);
 }
 
 $provided_token = fn_talario_analytics_bearer_token();
