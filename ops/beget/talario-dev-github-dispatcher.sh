@@ -70,8 +70,17 @@ case "$REQUEST" in
   "talario-dev-ops partner-sync-apply")
     mark_dispatcher
     echo "OPERATION=partner-sync-apply"
-    [ -f ops/partner-sync-apply.php ] && [ ! -L ops/partner-sync-apply.php ]       || fail "partner sync CLI runner is unavailable" 71
-    exec php8.2 ops/partner-sync-apply.php
+    RUNNER="$DEV_COPY/ops/partner-sync-apply.php"
+    REAL_RUNNER="$(realpath -- "$RUNNER" 2>/dev/null || true)"
+    [ "$REAL_RUNNER" = "$RUNNER" ] && [ -f "$REAL_RUNNER" ] && [ ! -L "$REAL_RUNNER" ] \
+      || fail "partner sync CLI runner is unavailable" 71
+    EXPECTED_BLOB="$(git rev-parse 'HEAD:ops/partner-sync-apply.php' 2>/dev/null || true)"
+    ACTUAL_BLOB="$(git hash-object -- "$REAL_RUNNER" 2>/dev/null || true)"
+    [ -n "$EXPECTED_BLOB" ] && [ "$ACTUAL_BLOB" = "$EXPECTED_BLOB" ] \
+      || fail "partner sync CLI runner differs from current Git HEAD" 72
+    [ "$(stat -c '%u' -- "$REAL_RUNNER")" = "$(id -u)" ] \
+      || fail "partner sync CLI runner has unexpected owner" 73
+    exec /usr/local/bin/php8.2 "$REAL_RUNNER"
     ;;
 
   "talario-dev-ops worktree-repair")
