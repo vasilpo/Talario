@@ -5,6 +5,8 @@ on:
     branches:
       - development
       - prod
+    paths-ignore:
+      - '.github/dev-copy-ops/request.json'
   push:
     branches:
       - development
