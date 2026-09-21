@@ -64,7 +64,17 @@ case "$REQUEST" in
     while IFS= read -r -d '' file; do
       php8.2 -l -- "$file" >/dev/null
     done < <(find app/addons/talario_analytics -type f -name '*.php' -print0 | sort -z)
+    php8.2 -l -- ops/partner-sync-apply.php >/dev/null
     echo "PHP_LINT=OK"
+    ;;
+
+  "talario-dev-ops partner-sync-dry-run")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-dry-run"
+    PAYLOAD="$(cat)"
+    [ -n "$PAYLOAD" ] || fail "missing Partner Sync payload" 71
+    [ "${#PAYLOAD}" -le 1048576 ] || fail "Partner Sync payload too large" 71
+    printf '%s' "$PAYLOAD" | php8.2 ops/partner-sync-apply.php
     ;;
 
   "talario-dev-ops worktree-repair")
