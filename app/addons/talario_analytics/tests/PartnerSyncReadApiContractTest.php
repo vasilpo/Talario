@@ -134,16 +134,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
             '"talario-partner-sync-dry-run")',
             $this->dev_dispatcher
         );
-        self::assertStringContainsString('/usr/local/bin/php8.2 "$RUNNER_PATH"', $this->dev_dispatcher);
+        self::assertStringContainsString('"$PHP_REAL" "$RUNNER_TMP"', $this->dev_dispatcher);
         self::assertStringContainsString('20971520', $this->dev_dispatcher);
         self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
         self::assertStringContainsString('PAYLOAD_READ_FAILED', $this->dev_dispatcher);
         self::assertStringNotContainsString('PATH="/usr/local/bin:/usr/bin:/bin"', $this->dev_dispatcher);
         self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all', $this->dev_dispatcher);
-        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" show "HEAD:$RUNNER_REL"', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" rev-parse HEAD', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" show "$RUNNER_COMMIT:$RUNNER_REL" > "$RUNNER_TMP"', $this->dev_dispatcher);
         self::assertStringContainsString('[ -x /usr/bin/git ] || fail "required git binary unavailable" 81', $this->dev_dispatcher);
         self::assertStringContainsString('dev_copy worktree must be clean for partner sync', $this->dev_dispatcher);
         self::assertStringContainsString('partner sync CLI runner integrity check failed', $this->dev_dispatcher);
+        self::assertStringContainsString('trusted PHP binary is group/world writable', $this->dev_dispatcher);
+        self::assertStringContainsString('mktemp "$DEV_COPY/ops/.partner-sync-runner.XXXXXX.php"', $this->dev_dispatcher);
         self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
         self::assertStringContainsString('/usr/bin/timeout 30s /usr/bin/head -c 20971521', $this->dev_dispatcher);
     }
