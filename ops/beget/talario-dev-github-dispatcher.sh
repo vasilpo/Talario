@@ -85,7 +85,14 @@ case "$REQUEST" in
     [ "$PAYLOAD_SIZE" -gt 0 ] || fail "partner sync payload is empty" 71
     [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "partner sync payload exceeds 20 MiB" 72
 
-    VALIDATION="$(/usr/bin/env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 -n -r '
+    PHP_REAL="$(/usr/bin/realpath /usr/local/bin/php8.2)"
+    [ -n "$PHP_REAL" ] && [ -f "$PHP_REAL" ] && [ -x "$PHP_REAL" ] || fail "trusted PHP binary resolution failed" 82
+    PHP_UID="$(/usr/bin/stat -c '%u' "$PHP_REAL")"
+    [ "$PHP_UID" = "0" ] || fail "trusted PHP binary owner mismatch" 82
+    PHP_MODE="$(/usr/bin/stat -c '%a' "$PHP_REAL")"
+    (( (8#$PHP_MODE & 0022) == 0 )) || fail "trusted PHP binary is group/world writable" 82
+
+    VALIDATION="$(/usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin" "$PHP_REAL" -n -r '
       $path = $argv[1];
       $raw = file_get_contents($path);
       if ($raw === false) {
@@ -109,20 +116,13 @@ case "$REQUEST" in
     [ -x /usr/local/bin/php8.2 ] || fail "required PHP binary unavailable" 77
     [ -x /usr/bin/git ] || fail "required git binary unavailable" 81
 
-    PHP_REAL="$(/usr/bin/realpath /usr/local/bin/php8.2)"
-    [ -n "$PHP_REAL" ] && [ -f "$PHP_REAL" ] && [ -x "$PHP_REAL" ] || fail "trusted PHP binary resolution failed" 82
-    PHP_UID="$(/usr/bin/stat -c '%u' "$PHP_REAL")"
-    [ "$PHP_UID" = "0" ] || fail "trusted PHP binary owner mismatch" 82
-    PHP_MODE="$(/usr/bin/stat -c '%a' "$PHP_REAL")"
-    (( (8#$PHP_MODE & 0022) == 0 )) || fail "trusted PHP binary is group/world writable" 82
-
     RUNNER_REL="ops/partner-sync-apply.php"
     EXPECTED_RUNNER_SHA256="dd94ab1a5f5c9774511408cdf8d54a406643848b351d2666d8f8092ff23f584d"
     [ -z "$(/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
     RUNNER_COMMIT="$(/usr/bin/git -C "$DEV_COPY" rev-parse HEAD)"
     [ -n "$RUNNER_COMMIT" ] || fail "partner sync runner commit resolution failed" 80
 
-    RUNNER_TMP="$(/usr/bin/mktemp "$DEV_COPY/ops/.partner-sync-runner.XXXXXX.php")"
+    RUNNER_TMP="$(/usr/bin/mktemp "$STATE_DIR/runner.XXXXXX.php")"
     chmod 600 "$RUNNER_TMP"
     trap 'rm -f -- "$PAYLOAD_FILE" "$RUNNER_TMP"' EXIT HUP INT TERM
     /usr/bin/git -C "$DEV_COPY" show "$RUNNER_COMMIT:$RUNNER_REL" > "$RUNNER_TMP" \
