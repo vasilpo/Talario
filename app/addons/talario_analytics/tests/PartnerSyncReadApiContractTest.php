@@ -23,7 +23,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->addon_xml = (string) file_get_contents($addon_path);
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
-        $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 3) . '/ops/partner-sync-apply.php');
+        $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
