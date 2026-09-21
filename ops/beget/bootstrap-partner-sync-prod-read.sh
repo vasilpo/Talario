@@ -31,13 +31,15 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="$STATE_DIR/config.local.php.$STAMP.bak"
 TMP="$STATE_DIR/config.local.php.$STAMP.tmp"
 RESPONSE="$STATE_DIR/smoke.$STAMP.json"
-HEADER="$STATE_DIR/header.$STAMP.conf"
 
 cp -p "$CONFIG" "$BACKUP"
 chmod 600 "$BACKUP"
 
-TOKEN="$("$PHP" -r 'echo bin2hex(random_bytes(32));')"
-HASH="$("$PHP" -r 'echo hash("sha256", $argv[1]);' "$TOKEN")"
+read -r TOKEN HASH < <("$PHP" -r '
+$token = bin2hex(random_bytes(32));
+echo $token, " ", hash("sha256", $token), PHP_EOL;
+')
+[ "${#TOKEN}" -eq 64 ] || fail "token generation failed" 70
 [ "${#HASH}" -eq 64 ] || fail "token hash generation failed" 70
 
 export TALARIO_CONFIG="$CONFIG"
@@ -79,7 +81,7 @@ cleanup() {
   if [ "$SUCCESS" -ne 1 ] && [ "$CONFIG_REPLACED" -eq 1 ]; then
     cp -p "$BACKUP" "$CONFIG" || true
   fi
-  rm -f "$TMP" "$RESPONSE" "$HEADER"
+  rm -f "$TMP" "$RESPONSE"
   exit "$rc"
 }
 trap cleanup EXIT
@@ -89,13 +91,14 @@ trap 'exit 143' TERM
 mv "$TMP" "$CONFIG"
 CONFIG_REPLACED=1
 
-printf 'header = "Authorization: Bearer %s"\n' "$TOKEN" > "$HEADER"
-chmod 600 "$HEADER"
-
-HTTP="$("$CURL" -sS -o "$RESPONSE" -w '%{http_code}' --max-time 30 \
-  --resolve talario.ru:443:127.0.0.1 \
-  --config "$HEADER" \
-  "https://talario.ru/index.php?dispatch=talario_analytics.catalog&limit=1")"
+HTTP="$(
+  {
+    printf 'header = "Authorization: Bearer %s"\n' "$TOKEN"
+  } | "$CURL" -sS -o "$RESPONSE" -w '%{http_code}' --max-time 30 \
+      --resolve talario.ru:443:127.0.0.1 \
+      --config - \
+      "https://talario.ru/index.php?dispatch=talario_analytics.catalog&limit=1"
+)"
 [ "$HTTP" = "200" ] || fail "catalog smoke returned HTTP $HTTP" 73
 
 "$PHP" -r '
@@ -108,9 +111,17 @@ if (!is_array($d) || ($d["schema_version"] ?? "") !== "partner-sync.catalog.v1")
 
 SUCCESS=1
 
-rm -f "$RESPONSE" "$HEADER"
+rm -f "$RESPONSE"
 rm -f "$BACKUP"
 
 echo "BOOTSTRAP_OK"
-echo "RAW_TOKEN_FOLLOWS_ONCE"
-printf '%s\n' "$TOKEN"
+if [ -e /dev/tty ] && [ -w /dev/tty ]; then
+  {
+    echo
+    echo "PARTNER_SYNC_PROD_TOKEN (copy once to GitHub Actions secret):"
+    printf '%s\n' "$TOKEN"
+    echo
+  } > /dev/tty
+else
+  fail "interactive terminal required to reveal token safely" 75
+fi
