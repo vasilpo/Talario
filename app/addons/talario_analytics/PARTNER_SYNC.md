@@ -11,6 +11,7 @@ define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
 define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
 // Optional and dev_copy-only. Enables approved POST apply after dry-run.
 define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
+define('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH', 'sha256:<different 64 hex characters>');
 ```
 
 ## Production read-only mode
@@ -47,10 +48,11 @@ The write route is intentionally available only in development/dev_copy:
 
 Safety properties:
 
-- the route is not available outside `fn_is_development()` + `TALARIO_PARTNER_SYNC_DEV_COPY=true`;
+- the route is not available outside `fn_is_development()` + an actual `/dev_copy/` script path + `TALARIO_PARTNER_SYNC_DEV_COPY=true`;
 - there is no `TALARIO_PARTNER_SYNC_PROD_WRITE` constant or production write branch;
 - dry-run is the default and requires no write gate;
 - an actual apply additionally requires `TALARIO_PARTNER_SYNC_DEV_WRITE=true`;
+- apply uses a separate `TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH`; it must not equal the read-token hash;
 - an actual apply requires a non-empty `approval_id`;
 - new products default to status `H` (hidden) unless the caller explicitly supplies `A`;
 - partner reassignment on update is rejected;
