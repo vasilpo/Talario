@@ -67,6 +67,13 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-dev-ops partner-sync-apply")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-apply"
+    [ -f ops/partner-sync-apply.php ] && [ ! -L ops/partner-sync-apply.php ]       || fail "partner sync CLI runner is unavailable" 71
+    exec php8.2 ops/partner-sync-apply.php
+    ;;
+
   "talario-dev-ops worktree-repair")
     mark_dispatcher
     echo "OPERATION=worktree-repair"
