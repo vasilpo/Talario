@@ -23,6 +23,43 @@ function fn_talario_partner_sync_write_bearer(): string
     return trim((string) $matches[1]);
 }
 
+function fn_talario_partner_sync_write_rate_limit(): void
+{
+    $now = time();
+    $bucket = (int) floor($now / 60);
+    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    $ip_hash = hash('sha256', $ip);
+
+    foreach ([
+        [hash('sha256', 'partner_sync_write:global'), 30],
+        [hash('sha256', 'partner_sync_write:ip:' . $ip_hash), 10],
+    ] as [$scope_hash, $limit]) {
+        db_query(
+            'INSERT INTO ?:talario_analytics_rate_limits'
+            . ' (scope_hash, minute_bucket, request_count, updated_at)'
+            . ' VALUES (?s, ?i, 1, ?i)'
+            . ' ON DUPLICATE KEY UPDATE request_count = request_count + 1, updated_at = ?i',
+            $scope_hash,
+            $bucket,
+            $now,
+            $now
+        );
+        $count = (int) db_get_field(
+            'SELECT request_count FROM ?:talario_analytics_rate_limits'
+            . ' WHERE scope_hash = ?s AND minute_bucket = ?i',
+            $scope_hash,
+            $bucket
+        );
+        if ($count > $limit) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync dev write rate limit exceeded',
+                'source_ip_hash' => $ip_hash,
+            ]);
+            fn_talario_partner_sync_write_json(429, ['error' => 'rate_limit_exceeded']);
+        }
+    }
+}
+
 function fn_talario_partner_sync_write_authenticate(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
@@ -41,6 +78,8 @@ function fn_talario_partner_sync_write_authenticate(): void
         fn_talario_partner_sync_write_json(404, ['error' => 'not_found']);
     }
 
+    fn_talario_partner_sync_write_rate_limit();
+
     $stored_hash = defined('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH')
         ? trim((string) TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH)
         : '';
@@ -58,20 +97,40 @@ function fn_talario_partner_sync_write_authenticate(): void
     $token = fn_talario_partner_sync_write_bearer();
     $provided_hash = 'sha256:' . hash('sha256', $token);
     if (strlen($token) < 32 || !hash_equals($stored_hash, $provided_hash)) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync dev write unauthorized',
+            'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
+        ]);
         fn_talario_partner_sync_write_json(401, ['error' => 'unauthorized']);
     }
+
+    fn_log_event('general', 'runtime', [
+        'message' => 'Talario Partner Sync dev write authenticated',
+        'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
+    ]);
 }
 
 function fn_talario_partner_sync_write_input(): array
 {
+    $max_bytes = 33554432;
     $length = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
-    if ($length > 33554432) {
+    if ($length > $max_bytes) {
         fn_talario_partner_sync_write_json(413, ['error' => 'payload_too_large']);
     }
 
-    $raw = (string) file_get_contents('php://input');
-    if ($raw === '' || strlen($raw) > 33554432) {
+    $handle = fopen('php://input', 'rb');
+    if ($handle === false) {
         fn_talario_partner_sync_write_json(400, ['error' => 'invalid_json']);
+    }
+
+    $raw = stream_get_contents($handle, $max_bytes + 1);
+    fclose($handle);
+
+    if ($raw === false || $raw === '') {
+        fn_talario_partner_sync_write_json(400, ['error' => 'invalid_json']);
+    }
+    if (strlen($raw) > $max_bytes) {
+        fn_talario_partner_sync_write_json(413, ['error' => 'payload_too_large']);
     }
 
     $payload = json_decode($raw, true);
