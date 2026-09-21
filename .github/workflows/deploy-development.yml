@@ -44,11 +44,13 @@ jobs:
           test "$BEGET_HOST" = "salvage.beget.com"
 
           set +e
-          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy 2>&1)"
+          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
           SSH_RC=$?
           set -e
-          printf '%s\n' "$OUTPUT"
           if [ "$SSH_RC" -ne 0 ]; then
+            echo "REMOTE_DEPLOY_FAILED rc=$SSH_RC"
+            ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops status" || true
+            ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops git-status" || true
             exit "$SSH_RC"
           fi
 
