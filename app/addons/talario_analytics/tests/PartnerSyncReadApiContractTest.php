@@ -106,6 +106,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('New Partner Sync cards are hidden by default', $this->write_capability);
     }
 
+    public function testPartnerSyncWriteSupportsBoundedPrivateImageImport(): void
+    {
+        self::assertStringContainsString('content_base64', $this->write_capability);
+        self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
+        self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
+        self::assertStringContainsString('fn_create_temp_file()', $this->write_capability);
+        self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(dirname(dirname(dirname(__DIR__)))) . '/functions/fn.products.php'));
+        self::assertStringContainsString("'images' => [", $this->write_capability);
+    }
+
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
