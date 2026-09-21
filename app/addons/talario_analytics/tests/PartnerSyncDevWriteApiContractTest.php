@@ -40,6 +40,21 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
         self::assertStringContainsString("['error' => 'method_not_allowed']", $this->controller);
     }
 
+    public function testInputReadIsBoundedWithoutContentLength(): void
+    {
+        self::assertStringContainsString("stream_get_contents(\$handle, \$max_bytes + 1)", $this->controller);
+        self::assertStringNotContainsString("file_get_contents('php://input')", $this->controller);
+        self::assertStringContainsString("'payload_too_large'", $this->controller);
+    }
+
+    public function testWriteAuthIsRateLimitedAndAudited(): void
+    {
+        self::assertStringContainsString('partner_sync_write:global', $this->controller);
+        self::assertStringContainsString('partner_sync_write:ip:', $this->controller);
+        self::assertStringContainsString('dev write unauthorized', $this->controller);
+        self::assertStringContainsString('source_ip_hash', $this->controller);
+    }
+
     public function testProductWritesAreWhitelistedAndOwnershipChecked(): void
     {
         self::assertStringContainsString('array_intersect_key($fields, array_flip($allowed))', $this->controller);
