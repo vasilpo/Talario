@@ -10,13 +10,18 @@ fail() {
   exit "${2:-64}"
 }
 
-[ "$(realpath "$DEV_COPY")" = "$EXPECTED_PATH" ] || fail "unexpected dev_copy path" 65
 cd "$DEV_COPY"
+[ "$(realpath .)" = "$EXPECTED_PATH" ] || fail "unexpected active directory" 65
 
 [ "$(git rev-parse --abbrev-ref HEAD)" = "development" ] || fail "dev_copy is not on development branch" 66
 
+mark_dispatcher() {
+  echo "DISPATCHER=talario-dev-github-v1"
+}
+
 case "$REQUEST" in
   talario-dev-deploy)
+    mark_dispatcher
     [ -z "$(git status --porcelain)" ] || {
       echo "ERROR: dev_copy has local changes; refusing to deploy"
       git status --short
@@ -31,6 +36,7 @@ case "$REQUEST" in
     ;;
 
   "talario-dev-ops status")
+    mark_dispatcher
     echo "OPERATION=status"
     echo "BRANCH=$(git rev-parse --abbrev-ref HEAD)"
     echo "HEAD=$(git rev-parse HEAD)"
@@ -49,12 +55,14 @@ case "$REQUEST" in
     ;;
 
   "talario-dev-ops git-status")
+    mark_dispatcher
     echo "OPERATION=git-status"
     git status --short
     echo "HEAD=$(git rev-parse HEAD)"
     ;;
 
   "talario-dev-ops php-lint")
+    mark_dispatcher
     echo "OPERATION=php-lint"
     find app/addons/talario_analytics -type f -name '*.php' -print0       | sort -z       | xargs -0 -n1 php8.2 -l
     echo "PHP_LINT_OK"
