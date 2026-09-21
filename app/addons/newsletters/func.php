@@ -569,7 +569,11 @@ function fn_render_newsletter($body, $subscriber)
         $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
-    $values['%FIRSTNAME'] = trim((string) ($subscriber['firstname'] ?? ''));
+    $firstname = trim((string) ($subscriber['firstname'] ?? ''));
+    $values['%FIRSTNAME'] = $firstname;
+    $values['%FIRSTNAME_GREETING%'] = $firstname !== ''
+        ? $firstname . ', здравствуйте!'
+        : 'Здравствуйте!';
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
     $values['%COMPANY_PHONE'] = Registry::get('settings.Company.company_phone');
