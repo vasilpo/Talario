@@ -18,7 +18,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  scope:
+    name: Detect control request
+    runs-on: ubuntu-latest
+    outputs:
+      control_only: ${{ steps.detect.outputs.control_only }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect request-only change
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+          mapfile -t files < <(git diff --name-only "$BASE" "$HEAD")
+          if [ "${#files[@]}" -eq 1 ] && [ "${files[0]}" = ".github/dev-copy-ops/request.json" ]; then
+            echo "control_only=true" >> "$GITHUB_OUTPUT"
+            echo "CONTROL_REQUEST_ONLY=YES"
+          else
+            echo "control_only=false" >> "$GITHUB_OUTPUT"
+            echo "CONTROL_REQUEST_ONLY=NO"
+          fi
+
   php-syntax:
+    needs: scope
     name: PHP syntax
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -28,13 +61,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Control request fast-path
+        if: needs.scope.outputs.control_only == 'true'
+        run: echo "Request-only control change; PHP setup/lint skipped."
+
       - name: Set up PHP
+        if: needs.scope.outputs.control_only != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           coverage: none
 
       - name: Lint changed PHP files
+        if: needs.scope.outputs.control_only != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -59,6 +98,7 @@ jobs:
           done
 
   repository-guard:
+    needs: scope
     name: Repository safety guard
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -106,6 +146,7 @@ jobs:
           fi
 
   secret-scan:
+    needs: scope
     name: Secret scan
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -115,12 +156,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Control request fast-path
+        if: needs.scope.outputs.control_only == 'true'
+        run: echo "Request-only control change; secret scan skipped."
+
       - name: Scan PR/push for secrets
+        if: needs.scope.outputs.control_only != 'true'
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   partner-sync-tests:
+    needs: scope
     name: Partner Sync targeted tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -128,7 +175,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Control request fast-path
+        if: needs.scope.outputs.control_only == 'true'
+        run: echo "Request-only control change; Partner Sync tests skipped."
+
       - name: Set up PHP and PHPUnit
+        if: needs.scope.outputs.control_only != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
@@ -136,9 +188,11 @@ jobs:
           tools: phpunit
 
       - name: Run Partner Sync contract tests
+        if: needs.scope.outputs.control_only != 'true'
         run: phpunit --no-coverage app/addons/talario_analytics/tests/PartnerSyncReadApiContractTest.php
 
   talario-schedule-resources:
+    needs: scope
     name: Talario schedule resource tests
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -146,11 +200,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Control request fast-path
+        if: needs.scope.outputs.control_only == 'true'
+        run: echo "Request-only control change; schedule resource tests skipped."
+
       - name: Set up PHP
+        if: needs.scope.outputs.control_only != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           coverage: none
 
       - name: Test company boundaries and shared capacity
+        if: needs.scope.outputs.control_only != 'true'
         run: bash tests/talario_schedule_resources/run.sh
