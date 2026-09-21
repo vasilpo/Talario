@@ -112,7 +112,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
         self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
         self::assertStringContainsString('fn_create_temp_file()', $this->write_capability);
-        self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(dirname(dirname(dirname(__DIR__)))) . '/functions/fn.products.php'));
+        self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
         self::assertStringContainsString("'images' => [", $this->write_capability);
     }
 
