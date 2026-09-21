@@ -9,6 +9,8 @@ Define the following constants in the non-versioned local CS-Cart configuration 
 ```php
 define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
 define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
+// Optional and dev_copy-only. Enables approved POST apply after dry-run.
+define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
 ```
 
 ## Production read-only mode
@@ -35,3 +37,54 @@ Requirements:
 - write operations remain out of scope and require a separate approval-gated implementation and production decision.
 
 The raw token belongs in the authorized caller's secret store/runtime environment, not in Git or CS-Cart settings.
+
+
+## Development write capability
+
+The write route is intentionally available only in development/dev_copy:
+
+`POST /dev_copy/index.php?dispatch=talario_analytics.catalog_apply`
+
+Safety properties:
+
+- the route is not available outside `fn_is_development()` + `TALARIO_PARTNER_SYNC_DEV_COPY=true`;
+- there is no `TALARIO_PARTNER_SYNC_PROD_WRITE` constant or production write branch;
+- dry-run is the default and requires no write gate;
+- an actual apply additionally requires `TALARIO_PARTNER_SYNC_DEV_WRITE=true`;
+- an actual apply requires a non-empty `approval_id`;
+- new products default to status `H` (hidden) unless the caller explicitly supplies `A`;
+- partner reassignment on update is rejected;
+- product writes use `fn_update_product()`;
+- recurring schedule writes are passed through the existing Ecarter `booking_data` hook;
+- images are accepted only as bounded JPEG/PNG/WebP binary payloads, validated server-side and attached through the standard CS-Cart product image flow;
+- the response includes readback of the saved product, price, image counts and booking data.
+
+Example dry-run payload:
+
+```json
+{
+  "operation": "create",
+  "dry_run": true,
+  "product": {
+    "company_id": 43,
+    "name": "Тестовое занятие",
+    "price": 750,
+    "category_ids": [1],
+    "status": "H",
+    "full_description": "Описание"
+  },
+  "booking": {
+    "from": "2026-09-21",
+    "to": "2027-09-21",
+    "slot_time": 90,
+    "free_time": 0,
+    "days": {
+      "monday": {"enabled": true, "start": "17:30", "end": "19:30"},
+      "wednesday": {"enabled": true, "start": "17:30", "end": "19:30"},
+      "friday": {"enabled": true, "start": "17:30", "end": "19:30"}
+    }
+  }
+}
+```
+
+For an actual dev_copy apply, send the same normalized payload with `"dry_run": false` and an `approval_id`. Production write remains out of scope and requires a separate explicit product/security decision.
