@@ -56,7 +56,7 @@ function fn_talario_analytics_crm_response(): void
         }
     }
 
-    $user_query = 'SELECT u.user_id, u.email, u.firstname, u.lastname, u.status, u.timestamp,'
+    $user_query = 'SELECT u.user_id, u.email, u.phone, u.firstname, u.lastname, u.status, u.timestamp,'
         . ' COALESCE(ud.data, 0) AS reward_points'
         . ' FROM ?:users u'
         . " LEFT JOIN ?:user_data ud ON ud.user_id = u.user_id AND ud.type = 'W'"
@@ -89,6 +89,7 @@ function fn_talario_analytics_crm_response(): void
         $customers[$user_id] = [
             'user_id' => $user_id,
             'email' => (string) $row['email'],
+            'phone' => (string) $row['phone'],
             'firstname' => (string) $row['firstname'],
             'lastname' => (string) $row['lastname'],
             'status' => (string) $row['status'],
