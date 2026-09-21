@@ -309,9 +309,11 @@ function fn_talario_analytics_catalog_response(): void
 
     $products = [];
     $product_query = 'SELECT p.product_id, p.company_id, p.product_type, p.parent_product_id,'
-        . ' p.price, p.status, p.updated_timestamp, pd.product'
+        . ' COALESCE(pp.price, 0) AS price, p.status, p.updated_timestamp, pd.product'
         . ' FROM ?:products p'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id'
+        . ' AND pp.lower_limit = 1 AND pp.usergroup_id = 0'
         . ' WHERE p.status = ?s';
     $product_args = [$lang_code, 'A'];
     if ($partner_id > 0) {
@@ -370,10 +372,12 @@ function fn_talario_analytics_catalog_response(): void
 
     $variations = $products ? db_get_array(
         'SELECT vgp.group_id, vgp.product_id, vgp.parent_product_id,'
-        . ' p.price, p.status, pd.product'
+        . ' COALESCE(vpp.price, 0) AS price, p.status, pd.product'
         . ' FROM ?:product_variation_group_products vgp'
         . ' INNER JOIN ?:products p ON p.product_id = vgp.product_id'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' LEFT JOIN ?:product_prices vpp ON vpp.product_id = p.product_id'
+        . ' AND vpp.lower_limit = 1 AND vpp.usergroup_id = 0'
         . ' WHERE p.status = ?s AND vgp.product_id IN (?n)'
         . ' ORDER BY vgp.group_id ASC, vgp.product_id ASC',
         $lang_code,
