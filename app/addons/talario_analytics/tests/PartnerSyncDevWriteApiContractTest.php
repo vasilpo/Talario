@@ -42,7 +42,7 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
         self::assertStringContainsString('array_intersect_key($fields, array_flip($allowed))', $this->controller);
         self::assertStringContainsString('product_company_mismatch', $this->controller);
         self::assertStringContainsString('fn_update_product($product_data', $this->controller);
-        self::assertStringContainsString("$product_data['status'] = $product_data['status'] ?? 'H'", $this->controller);
+        self::assertStringContainsString("\$product_data['status'] = \$product_data['status'] ?? 'H'", $this->controller);
     }
 
     public function testScheduleWritesUseLegacyEcarterApi(): void
