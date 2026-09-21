@@ -30,17 +30,11 @@ concurrency:
 
 jobs:
   run:
+    if: github.event_name != 'workflow_dispatch' || github.actor == 'vasilpo'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Restrict manual dispatch actor
-        if: github.event_name == 'workflow_dispatch'
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "${{ github.actor }}" = "vasilpo"
-
       - name: Checkout request
         uses: actions/checkout@v4
 
@@ -101,7 +95,7 @@ jobs:
           set -e
 
           if [ "$RC" -eq 0 ]; then
-            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT)=' | head -20)"
+            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|DIRTY_COUNT|PHP_LINT)=' | head -20)"
             printf '%s\n' "$CLEAN_OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
           else
             CLEAN_OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
