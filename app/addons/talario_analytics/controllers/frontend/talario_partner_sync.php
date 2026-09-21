@@ -300,36 +300,103 @@ function fn_talario_partner_sync_write_schedule(array $payload): void
         fn_talario_partner_sync_write_json(400, ['error' => 'schedule_dates_must_be_dd_mm_yyyy']);
     }
 
-    $booking_data = [
-        'booking_type' => 'T',
-        'from_date' => $from_date,
-        'to_date' => $to_date,
-        'slot_time' => (string) max(0, (int) ($schedule['slot_time'] ?? 0)),
-        'free_time' => (string) max(0, (int) ($schedule['free_time'] ?? 0)),
-    ];
-
     $weekdays = [
         'monday', 'tuesday', 'wednesday', 'thursday',
         'friday', 'saturday', 'sunday',
     ];
     $days = isset($schedule['days']) && is_array($schedule['days']) ? $schedule['days'] : [];
+    $normalized_slots = [];
+    $minimum_slot_minutes = null;
 
     foreach ($weekdays as $day) {
         $item = isset($days[$day]) && is_array($days[$day]) ? $days[$day] : [];
-        $enabled = !empty($item['enabled']);
-        $start = trim((string) ($item['start'] ?? ''));
-        $end = trim((string) ($item['end'] ?? ''));
+        $slots = isset($item['slots']) && is_array($item['slots']) ? $item['slots'] : [];
 
-        if ($enabled && (!preg_match('/^\d{2}:\d{2}$/', $start) || !preg_match('/^\d{2}:\d{2}$/', $end))) {
-            fn_talario_partner_sync_write_json(400, ['error' => 'invalid_schedule_time', 'day' => $day]);
+        if (!$slots && !empty($item['enabled'])) {
+            $slots[] = [
+                'start' => (string) ($item['start'] ?? ''),
+                'end' => (string) ($item['end'] ?? ''),
+                'amount' => (int) ($item['amount'] ?? 1),
+            ];
         }
 
-        $booking_data[$day . '_status'] = $enabled ? '1' : '0';
-        $booking_data[$day . '_timing_start_time'] = $enabled ? $start : '';
-        $booking_data[$day . '_timing_end_time'] = $enabled ? $end : '';
+        if (count($slots) > 12) {
+            fn_talario_partner_sync_write_json(400, ['error' => 'too_many_daily_slots', 'day' => $day]);
+        }
+
+        foreach ($slots as $index => $slot) {
+            if (!is_array($slot)) {
+                fn_talario_partner_sync_write_json(400, ['error' => 'invalid_schedule_slot', 'day' => $day]);
+            }
+            $slot_start = trim((string) ($slot['start'] ?? ''));
+            $slot_end = trim((string) ($slot['end'] ?? ''));
+            $amount = (int) ($slot['amount'] ?? 1);
+
+            if (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $slot_start)
+                || !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $slot_end)
+                || strcmp($slot_start, $slot_end) >= 0
+                || $amount < 1
+                || $amount > 100
+            ) {
+                fn_talario_partner_sync_write_json(400, [
+                    'error' => 'invalid_schedule_slot',
+                    'day' => $day,
+                    'index' => $index,
+                ]);
+            }
+
+            $start_dt = DateTimeImmutable::createFromFormat('!H:i', $slot_start);
+            $end_dt = DateTimeImmutable::createFromFormat('!H:i', $slot_end);
+            if (!$start_dt || !$end_dt) {
+                fn_talario_partner_sync_write_json(400, ['error' => 'invalid_schedule_slot', 'day' => $day]);
+            }
+            $minutes = (int) (($end_dt->getTimestamp() - $start_dt->getTimestamp()) / 60);
+            if ($minutes <= 0) {
+                fn_talario_partner_sync_write_json(400, ['error' => 'invalid_schedule_slot', 'day' => $day]);
+            }
+            $minimum_slot_minutes = $minimum_slot_minutes === null
+                ? $minutes
+                : min($minimum_slot_minutes, $minutes);
+
+            $normalized_slots[$day][] = [
+                'start_time' => $slot_start,
+                'end_time' => $slot_end,
+                'amount' => $amount,
+            ];
+        }
     }
 
-    if (!function_exists('Fn_Ec_Table_Booking_System_Update_Booking_data')) {
+    $slot_time = max(1, (int) ($schedule['slot_time'] ?? $minimum_slot_minutes ?? 60));
+    $booking_data = [
+        'booking_type' => 'T',
+        'from_date' => $from_date,
+        'to_date' => $to_date,
+        'slot_time' => (string) $slot_time,
+        'free_time' => (string) max(0, (int) ($schedule['free_time'] ?? 0)),
+    ];
+
+    foreach ($weekdays as $day) {
+        $slots = $normalized_slots[$day] ?? [];
+        if (!$slots) {
+            $booking_data[$day . '_status'] = '0';
+            $booking_data[$day . '_timing_start_time'] = '';
+            $booking_data[$day . '_timing_end_time'] = '';
+            continue;
+        }
+
+        $starts = array_column($slots, 'start_time');
+        $ends = array_column($slots, 'end_time');
+        sort($starts);
+        sort($ends);
+
+        $booking_data[$day . '_status'] = '1';
+        $booking_data[$day . '_timing_start_time'] = $starts[0];
+        $booking_data[$day . '_timing_end_time'] = $ends[count($ends) - 1];
+    }
+
+    if (!function_exists('Fn_Ec_Table_Booking_System_Update_Booking_data')
+        || !function_exists('fn_ec_save_booking_data_by_amount')
+    ) {
         fn_talario_partner_sync_write_json(503, ['error' => 'ecarter_booking_not_available']);
     }
 
@@ -337,25 +404,49 @@ function fn_talario_partner_sync_write_schedule(array $payload): void
         fn_talario_partner_sync_write_json(500, ['error' => 'schedule_write_failed']);
     }
 
+    foreach ($weekdays as $day) {
+        fn_ec_save_booking_data_by_amount([
+            'product_id' => $product_id,
+            'day' => $day,
+            'booking_data' => $normalized_slots[$day] ?? [],
+        ]);
+    }
+
     $row = db_get_row(
         'SELECT product_id, booking_type, from_date, to_date, slot_time, free_time, days_data'
         . ' FROM ?:ec_table_booking_system WHERE product_id = ?i',
         $product_id
     );
-    if ($row) {
-        unset($row['days_data']);
+
+    $saved_days = [];
+    if (!empty($row['days_data'])) {
+        $saved_days = @unserialize((string) $row['days_data'], ['allowed_classes' => false]);
+        if (!is_array($saved_days)) {
+            $saved_days = [];
+        }
+    }
+    unset($row['days_data']);
+
+    $readback = [];
+    foreach ($weekdays as $day) {
+        $readback[$day] = isset($saved_days[$day]['time_by_amount'])
+            && is_array($saved_days[$day]['time_by_amount'])
+            ? $saved_days[$day]['time_by_amount']
+            : [];
     }
 
     fn_log_event('general', 'runtime', [
         'message' => 'Talario Partner Sync dev schedule write completed',
         'product_id' => $product_id,
         'company_id' => $company_id,
+        'slot_count' => array_sum(array_map('count', $normalized_slots)),
     ]);
 
     fn_talario_partner_sync_write_json(200, [
         'ok' => true,
         'operation' => 'schedule',
         'schedule' => $row,
+        'slots' => $readback,
     ]);
 }
 
