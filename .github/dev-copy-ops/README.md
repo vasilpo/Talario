@@ -31,8 +31,8 @@ The complete Dev Copy Ops request allowlist is exactly:
 - No HTTP probes that place storefront access keys in URLs or logs.
 - No raw secrets in request files or logs.
 - `config.local.php` remains non-versioned.
-- SSH host verification must use the pinned `BEGET_KNOWN_HOSTS` repository secret; runtime `ssh-keyscan` is not used.
-- Both ops and deploy workflows require the dispatcher marker `DISPATCHER=talario-dev-github-v1`; an unrestricted SSH shell will not satisfy the workflow contract.
+- SSH host verification uses the pinned public Beget ED25519 host key committed in the workflow; runtime `ssh-keyscan` and an extra repository secret are not used.
+- The Beget GitHub Actions key has been verified out-of-band as forced-command bound; both ops and deploy workflows require the dispatcher marker `DISPATCHER=talario-dev-github-v1`; an unrestricted SSH shell will not satisfy the workflow contract.
 - Production changes still require a separate explicit decision.
 
 ## Required repository controls
