@@ -239,6 +239,7 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
     foreach ($decoded_images as $index => $image) {
         $tmp = fn_create_temp_file();
         fn_put_contents($tmp, $image['binary']);
+        @chmod($tmp, 0600);
         $temp_files[] = $tmp;
 
         if ($index === 0) {
