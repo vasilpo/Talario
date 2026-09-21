@@ -102,6 +102,42 @@ function fn_talario_analytics_rate_limit(): int
     return $ip_count;
 }
 
+function fn_talario_analytics_catalog_rate_limit(): void
+{
+    $now = time();
+    $bucket = (int) floor($now / 60);
+    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    $scopes = [
+        [hash('sha256', 'partner_sync_catalog:global'), 60],
+        [hash('sha256', 'partner_sync_catalog:' . $ip), 10],
+    ];
+
+    foreach ($scopes as [$scope_hash, $limit]) {
+        db_query(
+            'INSERT INTO ?:talario_analytics_rate_limits'
+            . ' (scope_hash, minute_bucket, request_count, updated_at)'
+            . ' VALUES (?s, ?i, 1, ?i)'
+            . ' ON DUPLICATE KEY UPDATE request_count = request_count + 1, updated_at = ?i',
+            $scope_hash,
+            $bucket,
+            $now,
+            $now
+        );
+        $count = (int) db_get_field(
+            'SELECT request_count FROM ?:talario_analytics_rate_limits'
+            . ' WHERE scope_hash = ?s AND minute_bucket = ?i',
+            $scope_hash,
+            $bucket
+        );
+        if ($count > $limit) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync catalog rate limit exceeded',
+            ]);
+            fn_talario_analytics_json_response(429, ['error' => 'rate_limit_exceeded']);
+        }
+    }
+}
+
 function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
 {
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
@@ -193,16 +229,27 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
 
     foreach ($rows as $row) {
         $serialized_days_data = (string) ($row['days_data'] ?? '');
-        if ($serialized_days_data === '' || strlen($serialized_days_data) > 65536) {
+        if (
+            $serialized_days_data === ''
+            || strlen($serialized_days_data) > 8192
+            || !preg_match('/^a:\\d+:\\{/', $serialized_days_data)
+        ) {
             continue;
         }
-        $days_data = unserialize($serialized_days_data, ['allowed_classes' => false]);
-        if (!is_array($days_data) || count($days_data) > 128) {
+        $days_data = @unserialize($serialized_days_data, [
+            'allowed_classes' => false,
+            'max_depth' => 2,
+        ]);
+        if (!is_array($days_data) || count($days_data) > 32) {
             continue;
         }
         $valid_days_data = true;
         foreach ($days_data as $key => $value) {
-            if (!is_string($key) || is_array($value) || is_object($value) || is_resource($value)) {
+            if (
+                !is_string($key)
+                || !preg_match('/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)_(status|timing_start_time|timing_end_time)$/', $key)
+                || !is_scalar($value)
+            ) {
                 $valid_days_data = false;
                 break;
             }
@@ -265,9 +312,9 @@ function fn_talario_analytics_catalog_response(): void
 {
     $partner_id = max(0, (int) ($_GET['partner_id'] ?? 0));
     $after_product_id = max(0, (int) ($_GET['after_product_id'] ?? 0));
-    $product_limit = (int) ($_GET['limit'] ?? 250);
-    if ($product_limit < 1 || $product_limit > 500) {
-        fn_talario_analytics_json_response(400, ['error' => 'invalid_limit', 'max_limit' => 500]);
+    $product_limit = (int) ($_GET['limit'] ?? 100);
+    if ($product_limit < 1 || $product_limit > 100) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_limit', 'max_limit' => 100]);
     }
 
     $timezone = new DateTimeZone('Europe/Moscow');
@@ -281,8 +328,8 @@ function fn_talario_analytics_catalog_response(): void
     }
 
     $days = (int) $from->diff($to)->format('%a') + 1;
-    if ($days > 62) {
-        fn_talario_analytics_json_response(400, ['error' => 'date_range_too_large', 'max_days' => 62]);
+    if ($days > 31) {
+        fn_talario_analytics_json_response(400, ['error' => 'date_range_too_large', 'max_days' => 31]);
     }
 
     $lang_code = (string) Registry::get('settings.Appearance.default_language');
@@ -427,7 +474,7 @@ function fn_talario_analytics_catalog_response(): void
         . ' WHERE o.status = ?s AND o.starts_at >= ?s AND o.starts_at <= ?s'
         . ' AND EXISTS (SELECT 1 FROM ?:talario_resource_products rp_scope'
         . ' WHERE rp_scope.resource_id = o.resource_id AND rp_scope.product_id IN (?n))'
-        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC LIMIT 2001',
+        . ' ORDER BY o.starts_at ASC, o.occurrence_id ASC LIMIT 501',
         'A',
         'A',
         'A',
@@ -491,9 +538,9 @@ function fn_talario_analytics_catalog_response(): void
         return strcmp((string) $left['starts_at'], (string) $right['starts_at']);
     });
 
-    $schedule_truncated = count($schedule) > 2000;
+    $schedule_truncated = count($schedule) > 500;
     if ($schedule_truncated) {
-        $schedule = array_slice($schedule, 0, 2000);
+        $schedule = array_slice($schedule, 0, 500);
     }
     $next_schedule_marker = null;
     if ($schedule_truncated && $schedule) {
@@ -604,6 +651,7 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
 
 if ($mode === 'catalog') {
     // The selected bearer token was validated with hash_equals above before dispatch.
+    fn_talario_analytics_catalog_rate_limit();
     fn_talario_analytics_catalog_response();
 }
 
