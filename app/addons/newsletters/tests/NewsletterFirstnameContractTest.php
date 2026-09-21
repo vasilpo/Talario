@@ -24,7 +24,7 @@ final class NewsletterFirstnameContractTest extends TestCase
 
     public function testRendererSupportsFirstnameAndSafeGreeting(): void
     {
-        self::assertStringContainsString("['%FIRSTNAME']", $this->func);
+        self::assertStringContainsString("['%FIRSTNAME%']", $this->func);
         self::assertStringContainsString("['%FIRSTNAME_GREETING%']", $this->func);
         self::assertStringContainsString("'Здравствуйте!'", $this->func);
     }
