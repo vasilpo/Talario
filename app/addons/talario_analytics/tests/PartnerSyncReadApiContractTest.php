@@ -80,6 +80,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("\$partner_sync_write_mode = \$mode === 'catalog_apply'", $this->controller);
         self::assertStringContainsString("REQUEST_METHOD'] !== 'POST'", $this->controller);
         self::assertStringContainsString("if (\$mode === 'catalog_apply' && !\$dev_copy_enabled)", $this->controller);
+        self::assertStringContainsString("strpos(\$script_name, '/dev_copy/') !== false", $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_WRITE', $this->controller);
         self::assertStringContainsString("'catalog_apply' => true", $this->trusted_controllers);
     }
@@ -87,6 +88,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncWriteRequiresSeparateDevWriteGateAndApproval(): void
     {
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH', $this->controller);
+        self::assertStringContainsString('partner_sync_write_api_not_configured', $this->controller);
+        self::assertStringContainsString('partner_sync_write_api_misconfigured', $this->controller);
+        self::assertStringContainsString('hash_equals($read_token_hash, $stored_token_hash)', $this->controller);
         self::assertStringContainsString("['error' => 'partner_sync_write_disabled']", $this->write_capability);
         self::assertStringContainsString("['error' => 'approval_id_required']", $this->write_capability);
         self::assertStringContainsString("'dry_run' => true", $this->write_capability);
@@ -112,6 +117,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
         self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
         self::assertStringContainsString('fn_create_temp_file()', $this->write_capability);
+        self::assertStringContainsString('@chmod($tmp, 0600);', $this->write_capability);
         self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
         self::assertStringContainsString("'images' => [", $this->write_capability);
     }
