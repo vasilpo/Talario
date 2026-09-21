@@ -1,4 +1,4 @@
 {
-  "operation": "status",
-  "request_id": "template"
+  "operation": "worktree-repair",
+  "request_id": "partner-sync-worktree-repair-20260921"
 }
