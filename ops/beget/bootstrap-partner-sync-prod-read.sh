@@ -10,7 +10,6 @@ CONFIG="$ROOT/config.local.php"
 PHP="/usr/local/bin/php8.2"
 CURL="/usr/bin/curl"
 STATE_DIR="$HOME/.local/state/talario/partner-sync-prod"
-TOKEN_FILE="$STATE_DIR/token"
 EXPECTED_BRANCH="prod"
 
 fail() {
@@ -32,12 +31,13 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="$STATE_DIR/config.local.php.$STAMP.bak"
 TMP="$STATE_DIR/config.local.php.$STAMP.tmp"
 RESPONSE="$STATE_DIR/smoke.$STAMP.json"
+HEADER="$STATE_DIR/header.$STAMP.conf"
 
 cp -p "$CONFIG" "$BACKUP"
 chmod 600 "$BACKUP"
 
 TOKEN="$("$PHP" -r 'echo bin2hex(random_bytes(32));')"
-HASH="$(printf '%s' "$TOKEN" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
+HASH="$("$PHP" -r 'echo hash("sha256", $argv[1]);' "$TOKEN")"
 [ "${#HASH}" -eq 64 ] || fail "token hash generation failed" 70
 
 export TALARIO_CONFIG="$CONFIG"
@@ -71,15 +71,30 @@ if (file_put_contents($tmp, $raw, LOCK_EX) === false) {
 chmod --reference="$CONFIG" "$TMP"
 "$PHP" -l "$TMP" >/dev/null || fail "generated config failed PHP lint" 72
 
-mv "$TMP" "$CONFIG"
+SUCCESS=0
+CONFIG_REPLACED=0
 
-rollback() {
-  cp -p "$BACKUP" "$CONFIG"
+cleanup() {
+  rc=$?
+  if [ "$SUCCESS" -ne 1 ] && [ "$CONFIG_REPLACED" -eq 1 ]; then
+    cp -p "$BACKUP" "$CONFIG" || true
+  fi
+  rm -f "$TMP" "$RESPONSE" "$HEADER"
+  exit "$rc"
 }
-trap rollback ERR
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+mv "$TMP" "$CONFIG"
+CONFIG_REPLACED=1
+
+printf 'header = "Authorization: Bearer %s"\n' "$TOKEN" > "$HEADER"
+chmod 600 "$HEADER"
 
 HTTP="$("$CURL" -sS -o "$RESPONSE" -w '%{http_code}' --max-time 30 \
-  -H "Authorization: Bearer $TOKEN" \
+  --resolve talario.ru:443:127.0.0.1 \
+  --config "$HEADER" \
   "https://talario.ru/index.php?dispatch=talario_analytics.catalog&limit=1")"
 [ "$HTTP" = "200" ] || fail "catalog smoke returned HTTP $HTTP" 73
 
@@ -91,13 +106,11 @@ if (!is_array($d) || ($d["schema_version"] ?? "") !== "partner-sync.catalog.v1")
 }
 ' "$RESPONSE" || fail "catalog schema smoke failed" 74
 
-rm -f "$RESPONSE"
-printf '%s' "$TOKEN" > "$TOKEN_FILE"
-chmod 600 "$TOKEN_FILE"
+SUCCESS=1
 
-trap - ERR
+rm -f "$RESPONSE" "$HEADER"
+rm -f "$BACKUP"
 
 echo "BOOTSTRAP_OK"
-echo "TOKEN_FILE=$TOKEN_FILE"
-echo "BACKUP=$BACKUP"
-echo "RAW_TOKEN_NOT_PRINTED=YES"
+echo "RAW_TOKEN_FOLLOWS_ONCE"
+printf '%s\n' "$TOKEN"
