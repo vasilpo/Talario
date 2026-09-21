@@ -32,8 +32,9 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="$STATE_DIR/config.local.php.$STAMP.bak"
 TMP="$STATE_DIR/config.local.php.$STAMP.tmp"
 RESPONSE="$STATE_DIR/smoke.$STAMP.json"
-TOKEN_FILE="$RUNTIME_DIR/talario-partner-sync-prod-token.$"
-HEADER_FILE="$RUNTIME_DIR/talario-partner-sync-prod-header.$"
+TOKEN_FILE="$(/usr/bin/mktemp "$RUNTIME_DIR/talario-partner-sync-prod-token.XXXXXX")"
+HEADER_FILE="$(/usr/bin/mktemp "$RUNTIME_DIR/talario-partner-sync-prod-header.XXXXXX")"
+chmod 600 "$TOKEN_FILE" "$HEADER_FILE"
 
 cp -p "$CONFIG" "$BACKUP"
 chmod 600 "$BACKUP"
@@ -85,6 +86,10 @@ cleanup() {
     cp -p "$BACKUP" "$CONFIG" || true
   fi
   rm -f "$TMP" "$RESPONSE" "$HEADER_FILE"
+  if [ "$SUCCESS" -ne 1 ] && [ -f "$TOKEN_FILE" ]; then
+    : > "$TOKEN_FILE"
+    rm -f "$TOKEN_FILE"
+  fi
   exit "$rc"
 }
 trap cleanup EXIT
@@ -95,9 +100,7 @@ CONFIG_REPLACED=1
 mv "$TMP" "$CONFIG"
 
 printf '%s' "$TOKEN" > "$TOKEN_FILE"
-chmod 600 "$TOKEN_FILE"
 printf 'Authorization: Bearer %s\n' "$TOKEN" > "$HEADER_FILE"
-chmod 600 "$HEADER_FILE"
 unset TOKEN
 
 HTTP="$("$CURL" -sS -o "$RESPONSE" -w '%{http_code}' --max-time 30 \
