@@ -145,8 +145,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('[ -x /usr/bin/git ] || fail "required git binary unavailable" 81', $this->dev_dispatcher);
         self::assertStringContainsString('dev_copy worktree must be clean for partner sync', $this->dev_dispatcher);
         self::assertStringContainsString('partner sync CLI runner integrity check failed', $this->dev_dispatcher);
+        self::assertStringContainsString('trusted PHP binary owner mismatch', $this->dev_dispatcher);
         self::assertStringContainsString('trusted PHP binary is group/world writable', $this->dev_dispatcher);
         self::assertStringContainsString('mktemp "$DEV_COPY/ops/.partner-sync-runner.XXXXXX.php"', $this->dev_dispatcher);
+        self::assertStringContainsString('EXPECTED_RUNNER_SHA256="dd94ab1a5f5c9774511408cdf8d54a406643848b351d2666d8f8092ff23f584d"', $this->dev_dispatcher);
+        self::assertStringContainsString('partner sync CLI runner is not allowlisted', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/timeout --signal=TERM --kill-after=5s 60s', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin"', $this->dev_dispatcher);
+        self::assertStringContainsString('partner sync dry-run execution timeout', $this->dev_dispatcher);
         self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
         self::assertStringContainsString('/usr/bin/timeout 30s /usr/bin/head -c 20971521', $this->dev_dispatcher);
     }
