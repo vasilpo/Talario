@@ -12,7 +12,7 @@ defined('BOOTSTRAP') or die('Access denied');
 function fn_talario_analytics_partner_sync_write_payload(): array
 {
     $raw = (string) file_get_contents('php://input');
-    if ($raw === '' || strlen($raw) > 65536) {
+    if ($raw === '' || strlen($raw) > 20971520) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
     }
 
@@ -165,6 +165,118 @@ function fn_talario_analytics_partner_sync_write_normalize_booking(array $bookin
     return $data;
 }
 
+function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
+{
+    if (count($images) > 12) {
+        fn_talario_analytics_json_response(400, ['error' => 'too_many_images', 'max_images' => 12]);
+    }
+
+    $temp_files = [];
+    $decoded_images = [];
+    $total_bytes = 0;
+    $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
+
+    foreach ($images as $index => $image) {
+        if (!is_array($image)) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_image', 'index' => $index]);
+        }
+
+        $encoded = (string) ($image['content_base64'] ?? '');
+        if ($encoded === '' || strlen($encoded) > 7340032) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_image_payload', 'index' => $index]);
+        }
+
+        $binary = base64_decode($encoded, true);
+        if ($binary === false || strlen($binary) === 0 || strlen($binary) > 5242880) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_image_payload', 'index' => $index]);
+        }
+
+        $info = @getimagesizefromstring($binary);
+        $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
+        if (!in_array($mime, $allowed_mimes, true)) {
+            fn_talario_analytics_json_response(400, ['error' => 'unsupported_image_type', 'index' => $index]);
+        }
+
+        $total_bytes += strlen($binary);
+        if ($total_bytes > 16777216) {
+            fn_talario_analytics_json_response(400, ['error' => 'images_too_large', 'max_bytes' => 16777216]);
+        }
+
+        $decoded_images[] = [
+            'binary' => $binary,
+            'alt' => mb_substr(trim((string) ($image['alt'] ?? '')), 0, 255, 'UTF-8'),
+        ];
+    }
+
+    if (!$decoded_images) {
+        return [];
+    }
+
+    if ($product_id > 0) {
+        $main = fn_get_image_pairs($product_id, 'product', 'M', true, true, DEFAULT_LANGUAGE);
+        if (!empty($main['pair_id'])) {
+            fn_delete_image_pair((int) $main['pair_id']);
+        }
+        foreach ((array) fn_get_image_pairs($product_id, 'product', 'A', true, true, DEFAULT_LANGUAGE) as $pair) {
+            if (!empty($pair['pair_id'])) {
+                fn_delete_image_pair((int) $pair['pair_id']);
+            }
+        }
+    }
+
+    $_REQUEST['file_product_main_image_icon'] = [];
+    $_REQUEST['type_product_main_image_icon'] = [];
+    $_REQUEST['file_product_main_image_detailed'] = [];
+    $_REQUEST['type_product_main_image_detailed'] = [];
+    $_REQUEST['product_main_image_data'] = [];
+
+    $_REQUEST['file_product_add_additional_image_icon'] = [];
+    $_REQUEST['type_product_add_additional_image_icon'] = [];
+    $_REQUEST['file_product_add_additional_image_detailed'] = [];
+    $_REQUEST['type_product_add_additional_image_detailed'] = [];
+    $_REQUEST['product_add_additional_image_data'] = [];
+
+    foreach ($decoded_images as $index => $image) {
+        $tmp = fn_create_temp_file();
+        fn_put_contents($tmp, $image['binary']);
+        $temp_files[] = $tmp;
+
+        if ($index === 0) {
+            $_REQUEST['file_product_main_image_detailed'][] = $tmp;
+            $_REQUEST['type_product_main_image_detailed'][] = 'server';
+            $_REQUEST['product_main_image_data'][] = [
+                'pair_id' => 0,
+                'type' => 'M',
+                'object_id' => 0,
+                'image_alt' => '',
+                'detailed_alt' => $image['alt'],
+            ];
+        } else {
+            $_REQUEST['file_product_add_additional_image_detailed'][] = $tmp;
+            $_REQUEST['type_product_add_additional_image_detailed'][] = 'server';
+            $_REQUEST['product_add_additional_image_data'][] = [
+                'position' => $index,
+                'pair_id' => 0,
+                'type' => 'A',
+                'object_id' => 0,
+                'image_alt' => '',
+                'detailed_alt' => $image['alt'],
+            ];
+        }
+    }
+
+    return $temp_files;
+}
+
+function fn_talario_analytics_partner_sync_write_cleanup_images(array $temp_files): void
+{
+    foreach ($temp_files as $file) {
+        if (is_string($file) && $file !== '' && file_exists($file)) {
+            fn_rm($file);
+        }
+    }
+}
+
 function fn_talario_analytics_partner_sync_write_readback(int $product_id): array
 {
     $row = db_get_row(
@@ -201,6 +313,9 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         }
     }
 
+    $main_image = fn_get_image_pairs($product_id, 'product', 'M', true, true, DEFAULT_LANGUAGE);
+    $additional_images = (array) fn_get_image_pairs($product_id, 'product', 'A', true, true, DEFAULT_LANGUAGE);
+
     return [
         'product_id' => (int) $row['product_id'],
         'company_id' => (int) $row['company_id'],
@@ -209,6 +324,10 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         'price' => (float) $row['price'],
         'short_description' => (string) $row['short_description'],
         'full_description' => (string) $row['full_description'],
+        'images' => [
+            'main' => !empty($main_image['pair_id']) ? 1 : 0,
+            'additional' => count($additional_images),
+        ],
         'booking' => $booking ? [
             'booking_type' => (string) $booking['booking_type'],
             'from_date' => (string) $booking['from_date'],
@@ -267,6 +386,14 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
     }
 
+    $images = null;
+    if (isset($payload['images'])) {
+        if (!is_array($payload['images'])) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_images']);
+        }
+        $images = $payload['images'];
+    }
+
     $booking_data = null;
     if (isset($payload['booking'])) {
         if (!is_array($payload['booking'])) {
@@ -281,6 +408,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'product_id' => $operation === 'update' ? $product_id : null,
         'product' => array_diff_key($product_data, ['booking_data' => true]),
         'booking' => $booking_data,
+        'images' => $images === null ? null : ['count' => count($images), 'replace' => true],
     ];
 
     if ($dry_run) {
@@ -300,8 +428,16 @@ function fn_talario_analytics_partner_sync_write_response(): void
         fn_talario_analytics_json_response(403, ['error' => 'partner_sync_write_disabled']);
     }
 
+    $temp_files = [];
     db_query('START TRANSACTION');
     try {
+        if ($images !== null) {
+            $temp_files = fn_talario_analytics_partner_sync_write_prepare_images(
+                $images,
+                $operation === 'update' ? $product_id : 0
+            );
+        }
+
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
         $result_id = fn_update_product(
             $product_data,
@@ -313,8 +449,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
         $product_id = (int) $result_id;
         db_query('COMMIT');
+        fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
     } catch (Throwable $exception) {
         db_query('ROLLBACK');
+        fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
         fn_log_event('general', 'runtime', [
             'message' => 'Talario Partner Sync dev write failed',
             'operation' => $operation,
