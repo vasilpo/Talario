@@ -13,6 +13,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $trusted_controllers;
     private string $write_capability;
     private string $cli_runner;
+    private string $dispatcher;
 
     protected function setUp(): void
     {
@@ -24,6 +25,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
         $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
+        $this->dispatcher = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/beget/talario-dev-github-dispatcher.sh');
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -128,6 +130,57 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
+    }
+
+    public function testPartnerSyncDispatcherAllowsOnlyFixedCliApplyCommand(): void
+    {
+        self::assertStringContainsString('"talario-dev-partner-sync-apply")', $this->dispatcher);
+        self::assertStringContainsString('"talario-dev-ops partner-sync-status")', $this->dispatcher);
+        self::assertStringContainsString('/usr/local/bin/php8.2 ops/partner-sync-apply.php', $this->dispatcher);
+        self::assertStringContainsString('head -c 20971521', $this->dispatcher);
+        self::assertStringContainsString('dev_copy has local changes; refusing Partner Sync apply', $this->dispatcher);
+        self::assertStringNotContainsString('eval ', $this->dispatcher);
+        self::assertStringNotContainsString('bash -c "
+    public function testCatalogRequiresExplicitEnvironmentGate(): void
+    {
+        self::assertStringContainsString("fn_is_development()", $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
+        self::assertStringContainsString('$prod_read_enabled = !$is_development', $this->controller);
+        self::assertStringContainsString('if (!$dev_copy_enabled && !$prod_read_enabled)', $this->controller);
+        self::assertStringContainsString("['error' => 'not_found']", $this->controller);
+    }
+
+    public function testOnlyCatalogModeBypassesClosedStorefrontGate(): void
+    {
+        self::assertStringContainsString("\$schema['talario_analytics']", $this->trusted_controllers);
+        self::assertStringContainsString("'catalog' => true", $this->trusted_controllers);
+        self::assertStringContainsString("'default_allow' => false", $this->trusted_controllers);
+        self::assertStringContainsString("'areas' => ['C']", $this->trusted_controllers);
+        self::assertStringNotContainsString("'allow' => true", $this->trusted_controllers);
+    }
+
+    public function testSnapshotDeclaresTruncationAndCursor(): void
+    {
+        self::assertStringContainsString("'truncated' =>", $this->controller);
+        self::assertStringContainsString("'has_more' =>", $this->controller);
+        self::assertStringContainsString("'next_product_id' =>", $this->controller);
+        self::assertStringContainsString("'next_schedule_marker' =>", $this->controller);
+    }
+
+    public function testAuditLogExcludesTokenAndUsesHashedSourceIp(): void
+    {
+        $audit_offset = strpos($this->controller, 'Talario Partner Sync catalog request completed');
+        self::assertNotFalse($audit_offset);
+        $audit = substr($this->controller, $audit_offset);
+        $response_offset = strpos($audit, 'fn_talario_analytics_json_response(200');
+        self::assertNotFalse($response_offset);
+        $audit = substr($audit, 0, $response_offset);
+        self::assertStringContainsString("source_ip_hash' => hash('sha256'", $audit);
+        self::assertStringNotContainsString('$provided_token', $audit);
+    }
+}
+, $this->dispatcher);
     }
 
     public function testCatalogRequiresExplicitEnvironmentGate(): void
