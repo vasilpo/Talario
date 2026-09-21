@@ -59,6 +59,9 @@ final class CrmReadApiContractTest extends TestCase
         self::assertStringContainsString('?:user_session_products', $this->crm_read);
         self::assertStringContainsString('?:subscribers', $this->crm_read);
         self::assertStringContainsString('?:user_mailing_lists', $this->crm_read);
+        self::assertStringContainsString('?:mailing_lists', $this->crm_read);
+        self::assertStringContainsString("'register_autoresponder' =>", $this->crm_read);
+        self::assertStringContainsString("'list_status' =>", $this->crm_read);
     }
 
     public function testNewsletterConsentIsRawConfirmedStateNotEligibilityGuess(): void
