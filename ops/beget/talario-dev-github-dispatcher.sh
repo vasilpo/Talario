@@ -67,6 +67,56 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-partner-sync-dry-run"|"talario-partner-sync-apply")
+    mark_dispatcher
+    MODE="${REQUEST#talario-partner-sync-}"
+    echo "OPERATION=partner-sync-$MODE"
+
+    STATE_DIR="/home/t/tyman5tb/.local/state/talario/partner-sync"
+    mkdir -p "$STATE_DIR"
+    chmod 700 "$STATE_DIR"
+    PAYLOAD_FILE="$(mktemp "$STATE_DIR/request.XXXXXX.json")"
+    chmod 600 "$PAYLOAD_FILE"
+    trap 'rm -f -- "$PAYLOAD_FILE"' EXIT HUP INT TERM
+
+    # Bound stdin before PHP touches application code.
+    dd bs=1048576 count=21 of="$PAYLOAD_FILE" status=none
+    PAYLOAD_SIZE="$(wc -c < "$PAYLOAD_FILE" | tr -d ' ')"
+    [ "$PAYLOAD_SIZE" -gt 0 ] || fail "partner sync payload is empty" 71
+    [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "partner sync payload exceeds 20 MiB" 72
+
+    VALIDATION="$(/usr/local/bin/php8.2 -r '
+      $path = $argv[1];
+      $mode = $argv[2];
+      $raw = (string) file_get_contents($path);
+      $payload = json_decode($raw, true);
+      if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
+          fwrite(STDERR, "INVALID_JSON\n");
+          exit(10);
+      }
+      if ($mode === "dry-run") {
+          if (!array_key_exists("dry_run", $payload) || $payload["dry_run"] !== true) {
+              fwrite(STDERR, "DRY_RUN_REQUIRED\n");
+              exit(11);
+          }
+      } else {
+          if (!array_key_exists("dry_run", $payload) || $payload["dry_run"] !== false) {
+              fwrite(STDERR, "APPLY_DRY_RUN_FALSE_REQUIRED\n");
+              exit(12);
+          }
+          $approval = trim((string) ($payload["approval_id"] ?? ""));
+          if (!preg_match("/^[A-Za-z0-9._:-]{6,128}$/", $approval)) {
+              fwrite(STDERR, "APPROVAL_ID_REQUIRED\n");
+              exit(13);
+          }
+      }
+      echo "OK";
+    ' "$PAYLOAD_FILE" "$MODE" 2>&1)" || fail "partner sync payload validation failed" 73
+    [ "$VALIDATION" = "OK" ] || fail "partner sync payload validation failed" 73
+
+    /usr/local/bin/php8.2 ops/partner-sync-apply.php < "$PAYLOAD_FILE"
+    ;;
+
   "talario-dev-ops worktree-repair")
     mark_dispatcher
     echo "OPERATION=worktree-repair"
