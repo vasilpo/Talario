@@ -61,12 +61,11 @@ jobs:
       - name: Run allowlisted dev_copy operation
         shell: bash
         env:
-          BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_USER: ${{ secrets.BEGET_USER }}
           OPERATION: ${{ steps.request.outputs.operation }}
         run: |
           set -euo pipefail
-          test "$BEGET_HOST" = "salvage.beget.com"
+          BEGET_HOST="salvage.beget.com"
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
           printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
           printf '%s\n' "$OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT|REPAIR|REPAIRED_COUNT)='
