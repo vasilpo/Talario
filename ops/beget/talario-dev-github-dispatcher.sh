@@ -107,13 +107,14 @@ case "$REQUEST" in
 
     [ "$DEV_COPY" = "/home/t/tyman5tb/talario.ru/public_html/dev_copy" ] || fail "unexpected dev_copy root" 76
     [ -x /usr/local/bin/php8.2 ] || fail "required PHP binary unavailable" 77
+    [ -x /usr/bin/git ] || fail "required git binary unavailable" 81
 
     RUNNER_REL="ops/partner-sync-apply.php"
     RUNNER_PATH="$DEV_COPY/$RUNNER_REL"
     [ -f "$RUNNER_PATH" ] && [ ! -L "$RUNNER_PATH" ] || fail "partner sync CLI runner unavailable" 78
-    [ -z "$(git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
+    [ -z "$(/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
 
-    EXPECTED_RUNNER_HASH="$(git -C "$DEV_COPY" show "HEAD:$RUNNER_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
+    EXPECTED_RUNNER_HASH="$(/usr/bin/git -C "$DEV_COPY" show "HEAD:$RUNNER_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
     ACTUAL_RUNNER_HASH="$(/usr/bin/sha256sum "$RUNNER_PATH" | /usr/bin/awk '{print $1}')"
     [ -n "$EXPECTED_RUNNER_HASH" ] && [ "$EXPECTED_RUNNER_HASH" = "$ACTUAL_RUNNER_HASH" ] \
       || fail "partner sync CLI runner integrity check failed" 80
