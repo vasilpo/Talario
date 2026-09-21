@@ -63,3 +63,15 @@ Out-of-band Beget verification completed before merge:
 - non-allowlisted `uname -a` returned `ERROR: SSH command is not allowlisted`
 
 This verifies the replacement key is the only GitHub Actions key retained for this channel and is bound to the forced-command dispatcher.
+
+## Verified server binding
+
+The active `authorized_keys` entry on Beget points to the out-of-repository dispatcher path:
+
+`/home/t/tyman5tb/.local/bin/talario-dev-github-dispatcher`
+
+This exact binding was installed and verified during bootstrap on 2026-09-21. The repository copy under `ops/beget/` is only the reviewed source used to prepare updates; it is not the path referenced by `authorized_keys`.
+
+## Beget host-key rotation
+
+If Beget rotates the SSH host key, do not fall back to runtime `ssh-keyscan`. Verify the replacement ED25519 fingerprint out-of-band from Beget, update the pinned `salvage.beget.com` entry in both workflows through a reviewed PR, then run Quality & Safety and the Talario Review Agent before merge.
