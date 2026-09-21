@@ -555,10 +555,10 @@ if (!in_array($mode, ['orders', 'catalog', 'catalog_apply'], true)) {
 // production-only constant and a separately approved rollout.
 if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
-    $script_name = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
-    $dev_copy_path = strpos($script_name, '/dev_copy/') !== false;
+    $runtime_root = str_replace('\\', '/', (string) (realpath(DIR_ROOT) ?: DIR_ROOT));
+    $dev_copy_root = substr($runtime_root, -strlen('/talario.ru/dev_copy')) === '/talario.ru/dev_copy';
     $dev_copy_enabled = $is_development
-        && $dev_copy_path
+        && $dev_copy_root
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
         && TALARIO_PARTNER_SYNC_DEV_COPY === true;
     $prod_read_enabled = !$is_development
