@@ -79,8 +79,8 @@ case "$REQUEST" in
     chmod 600 "$PAYLOAD_FILE"
     trap 'rm -f -- "$PAYLOAD_FILE"' EXIT HUP INT TERM
 
-    # Bound stdin before PHP touches application code.
-    dd bs=1048576 count=21 of="$PAYLOAD_FILE" status=none
+    # Read at most 20 MiB + 1 byte before PHP touches application code.
+    head -c 20971521 > "$PAYLOAD_FILE"
     PAYLOAD_SIZE="$(wc -c < "$PAYLOAD_FILE" | tr -d ' ')"
     [ "$PAYLOAD_SIZE" -gt 0 ] || fail "partner sync payload is empty" 71
     [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "partner sync payload exceeds 20 MiB" 72
@@ -114,7 +114,7 @@ case "$REQUEST" in
     ' "$PAYLOAD_FILE" "$MODE" 2>&1)" || fail "partner sync payload validation failed" 73
     [ "$VALIDATION" = "OK" ] || fail "partner sync payload validation failed" 73
 
-    /usr/local/bin/php8.2 ops/partner-sync-apply.php < "$PAYLOAD_FILE"
+    /usr/local/bin/php8.2 "$DEV_COPY/ops/partner-sync-apply.php" < "$PAYLOAD_FILE"
     ;;
 
   "talario-dev-ops worktree-repair")
