@@ -4,6 +4,8 @@ defined('BOOTSTRAP') or die('Access denied');
 
 use Tygh\Registry;
 
+require_once dirname(__DIR__, 2) . '/partner_sync_write.php';
+
 function fn_talario_analytics_json_response(int $status, array $payload): void
 {
     http_response_code($status);
@@ -534,18 +536,24 @@ function fn_talario_analytics_catalog_response(): void
     ]);
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+$partner_sync_write_mode = $mode === 'catalog_apply';
+
+if ($partner_sync_write_mode) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_apply'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -554,14 +562,19 @@ if ($mode === 'catalog') {
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (!$dev_copy_enabled && !$prod_read_enabled) {
+    if ($mode === 'catalog' && !$dev_copy_enabled && !$prod_read_enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+
+    // Write mode is deliberately dev_copy-only. There is no production write gate.
+    if ($mode === 'catalog_apply' && !$dev_copy_enabled) {
         fn_talario_analytics_json_response(404, ['error' => 'not_found']);
     }
 }
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
     $stored_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
         ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
         : '';
@@ -584,7 +597,7 @@ if ($mode === 'catalog') {
 }
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    fn_talario_analytics_json_response(503, ['error' => $mode === 'catalog'
+    fn_talario_analytics_json_response(503, ['error' => in_array($mode, ['catalog', 'catalog_apply'], true)
         ? 'partner_sync_api_not_configured'
         : 'analytics_api_not_configured'
     ]);
@@ -605,6 +618,11 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
 if ($mode === 'catalog') {
     // The selected bearer token was validated with hash_equals above before dispatch.
     fn_talario_analytics_catalog_response();
+}
+
+if ($mode === 'catalog_apply') {
+    // Dedicated Partner Sync credential + dev_copy gate were validated above.
+    fn_talario_analytics_partner_sync_write_response();
 }
 
 $date1_raw = isset($_REQUEST['date1']) ? (string) $_REQUEST['date1'] : '';
