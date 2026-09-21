@@ -64,7 +64,43 @@ case "$REQUEST" in
     while IFS= read -r -d '' file; do
       php8.2 -l -- "$file" >/dev/null
     done < <(find app/addons/talario_analytics -type f -name '*.php' -print0 | sort -z)
+    php8.2 -l ops/partner-sync-apply.php >/dev/null
     echo "PHP_LINT=OK"
+    ;;
+
+  "talario-dev-ops partner-sync-status")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-status"
+    echo "HEAD=$(git rev-parse HEAD)"
+    if [ -f ops/partner-sync-apply.php ] && [ ! -L ops/partner-sync-apply.php ]; then
+      echo "PARTNER_SYNC_CLI=PRESENT"
+    else
+      echo "PARTNER_SYNC_CLI=MISSING"
+    fi
+    php8.2 -r '
+      $path = "config.local.php";
+      $content = is_file($path) ? (string) file_get_contents($path) : "";
+      echo "DEV_COPY_FLAG=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_COPY") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+      echo "DEV_WRITE_FLAG=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_WRITE") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+      echo "WRITE_COMPANY_ALLOWLIST=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+    '
+    ;;
+
+  "talario-dev-partner-sync-apply")
+    mark_dispatcher
+    [ -z "$(git status --porcelain)" ] || fail "dev_copy has local changes; refusing Partner Sync apply" 71
+    [ -f ops/partner-sync-apply.php ] && [ ! -L ops/partner-sync-apply.php ] || fail "Partner Sync CLI runner missing" 72
+
+    TMP_PAYLOAD="$(mktemp)"
+    chmod 600 "$TMP_PAYLOAD"
+    trap 'rm -f "$TMP_PAYLOAD"' EXIT
+
+    head -c 20971521 > "$TMP_PAYLOAD"
+    PAYLOAD_SIZE="$(wc -c < "$TMP_PAYLOAD" | tr -d ' ')"
+    [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "Partner Sync payload exceeds 20 MiB" 73
+    [ "$PAYLOAD_SIZE" -gt 0 ] || fail "Partner Sync payload is empty" 74
+
+    /usr/local/bin/php8.2 ops/partner-sync-apply.php < "$TMP_PAYLOAD"
     ;;
 
   "talario-dev-ops worktree-repair")
