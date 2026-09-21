@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-PATH="/usr/local/bin:/usr/bin:/bin"
-export PATH
-
 DEV_COPY="/home/t/tyman5tb/talario.ru/public_html/dev_copy"
 EXPECTED_PATH="$DEV_COPY"
 BACKUP_DIR="/home/t/tyman5tb/.local/state/talario/dev-copy-backups"
@@ -90,7 +87,11 @@ case "$REQUEST" in
 
     VALIDATION="$(/usr/bin/env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 -n -r '
       $path = $argv[1];
-      $raw = (string) file_get_contents($path);
+      $raw = file_get_contents($path);
+      if ($raw === false) {
+          fwrite(STDERR, "PAYLOAD_READ_FAILED\n");
+          exit(9);
+      }
       $payload = json_decode($raw, true);
       if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
           fwrite(STDERR, "INVALID_JSON\n");
@@ -110,9 +111,9 @@ case "$REQUEST" in
     RUNNER_REL="ops/partner-sync-apply.php"
     RUNNER_PATH="$DEV_COPY/$RUNNER_REL"
     [ -f "$RUNNER_PATH" ] && [ ! -L "$RUNNER_PATH" ] || fail "partner sync CLI runner unavailable" 78
-    [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
+    [ -z "$(git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
 
-    EXPECTED_RUNNER_HASH="$(git show "HEAD:$RUNNER_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
+    EXPECTED_RUNNER_HASH="$(git -C "$DEV_COPY" show "HEAD:$RUNNER_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
     ACTUAL_RUNNER_HASH="$(/usr/bin/sha256sum "$RUNNER_PATH" | /usr/bin/awk '{print $1}')"
     [ -n "$EXPECTED_RUNNER_HASH" ] && [ "$EXPECTED_RUNNER_HASH" = "$ACTUAL_RUNNER_HASH" ] \
       || fail "partner sync CLI runner integrity check failed" 80
