@@ -50,3 +50,16 @@ The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-o
 ## Verified bootstrap state
 
 The GitHub Actions SSH key was rotated during bootstrap. The replacement key was bound to the forced-command dispatcher and verified out-of-band: `talario-dev-ops status` returned `DISPATCHER=talario-dev-github-v1`, while a non-allowlisted `uname -a` command was rejected. The previous GitHub Actions key was then removed from `authorized_keys` and deleted from the Beget account.
+
+### Bootstrap verification evidence — 2026-09-21
+
+Out-of-band Beget verification completed before merge:
+
+- `OLD_KEY_LINES=0`
+- `NEW_KEY_LINES=1`
+- `OLD_KEY_REMOVED=YES`
+- `NEW_KEY_ACTIVE=YES`
+- allowlisted `talario-dev-ops status` returned `DISPATCHER=talario-dev-github-v1`
+- non-allowlisted `uname -a` returned `ERROR: SSH command is not allowlisted`
+
+This verifies the replacement key is the only GitHub Actions key retained for this channel and is bound to the forced-command dispatcher.
