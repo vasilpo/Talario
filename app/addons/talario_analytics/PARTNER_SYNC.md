@@ -35,3 +35,11 @@ Requirements:
 - write operations remain out of scope and require a separate approval-gated implementation and production decision.
 
 The raw token belongs in the authorized caller's secret store/runtime environment, not in Git or CS-Cart settings.
+
+Production hardening:
+
+- catalog requests are separately limited to 10 requests/minute per source IP and 60/minute globally;
+- production catalog pages are capped at 100 products per request;
+- returned schedule entries are capped at 500 per response;
+- legacy Ecarter serialized schedule data is bounded to 8 KiB, scalar weekday fields only, no classes, and max depth 2;
+- production does not install a closed-storefront bypass schema; the normal storefront gate remains in force.
