@@ -301,11 +301,13 @@ function fn_newsletters_get_recipients(array $params)
 
     if (!empty($params['mailing_lists'])) {
         $list_recipients = db_get_array(
-            'SELECT 0 as user_id, subscribers.email, subscribers.lang_code, mailing_lists.list_id , subscribers.subscriber_id FROM ?:subscribers AS subscribers'
+            'SELECT COALESCE(users.user_id, 0) as user_id, subscribers.email, subscribers.lang_code, mailing_lists.list_id, subscribers.subscriber_id, COALESCE(users.firstname, \'\') as firstname FROM ?:subscribers AS subscribers'
             . ' LEFT JOIN ?:user_mailing_lists AS user_mailing_lists'
                 . ' ON subscribers.subscriber_id = user_mailing_lists.subscriber_id'
             . ' LEFT JOIN ?:mailing_lists AS mailing_lists'
                 . ' ON user_mailing_lists.list_id = mailing_lists.list_id'
+            . ' LEFT JOIN ?:users AS users'
+                . ' ON LOWER(TRIM(users.email)) = LOWER(TRIM(subscribers.email)) AND users.user_type = \'C\''
             . ' WHERE user_mailing_lists.list_id IN (?n)'
                 . ' AND (user_mailing_lists.confirmed = ?i OR mailing_lists.register_autoresponder = ?i)'
                 . ' AND mailing_lists.status IN (?a)'
@@ -318,7 +320,7 @@ function fn_newsletters_get_recipients(array $params)
 
     if (!empty($params['users'])) {
         $users = fn_explode(',', $params['users']);
-        $user_recipients = db_get_array('SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id FROM ?:users AS users WHERE users.user_id IN (?n)', $users);
+        $user_recipients = db_get_array('SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname FROM ?:users AS users WHERE users.user_id IN (?n)', $users);
     }
 
     if (!empty($params['abandoned_days'])) {
@@ -567,6 +569,7 @@ function fn_render_newsletter($body, $subscriber)
         $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
+    $values['%FIRSTNAME'] = trim((string) ($subscriber['firstname'] ?? ''));
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
     $values['%COMPANY_PHONE'] = Registry::get('settings.Company.company_phone');
