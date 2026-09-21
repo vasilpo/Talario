@@ -89,7 +89,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testProductionCatalogHasTightResourceLimits(): void
     {
         self::assertStringContainsString("partner_sync_catalog:global", $this->controller);
-        self::assertStringContainsString("partner_sync_catalog:", $this->controller);
+        self::assertStringContainsString("partner_sync_catalog:credential:", $this->controller);
+        self::assertStringContainsString("fn_talario_analytics_catalog_rate_limit($provided_hash)", $this->controller);
         self::assertStringContainsString("max_limit' => 100", $this->controller);
         self::assertStringContainsString("LIMIT 501", $this->controller);
         self::assertStringContainsString("array_slice($schedule, 0, 500)", $this->controller);
@@ -105,7 +106,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'next_schedule_marker' =>", $this->controller);
     }
 
-    public function testAuditLogExcludesTokenAndUsesHashedSourceIp(): void
+    public function testRateLimitStorageIsDeclaredByAddonInstallSchema(): void
+    {
+        self::assertStringContainsString('CREATE TABLE `?:talario_analytics_rate_limits`', $this->addon_xml);
+        self::assertStringContainsString('PRIMARY KEY (`scope_hash`, `minute_bucket`)', $this->addon_xml);
+    }
+
+    public function testAuditLogExcludesCredentialsAndSourceIp(): void
     {
         $audit_offset = strpos($this->controller, 'Talario Partner Sync catalog request completed');
         self::assertNotFalse($audit_offset);
@@ -113,7 +120,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $response_offset = strpos($audit, 'fn_talario_analytics_json_response(200');
         self::assertNotFalse($response_offset);
         $audit = substr($audit, 0, $response_offset);
-        self::assertStringContainsString("source_ip_hash' => hash('sha256'", $audit);
+        self::assertStringNotContainsString('source_ip_hash', $audit);
         self::assertStringNotContainsString('$provided_token', $audit);
+        self::assertStringNotContainsString('$provided_hash', $audit);
     }
 }
