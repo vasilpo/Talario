@@ -570,7 +570,7 @@ function fn_render_newsletter($body, $subscriber)
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
     $firstname = trim((string) ($subscriber['firstname'] ?? ''));
-    $values['%FIRSTNAME'] = $firstname;
+    $values['%FIRSTNAME%'] = $firstname;
     $values['%FIRSTNAME_GREETING%'] = $firstname !== ''
         ? $firstname . ', здравствуйте!'
         : 'Здравствуйте!';
