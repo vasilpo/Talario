@@ -70,7 +70,10 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
     {
         self::assertStringContainsString('Fn_Ec_Table_Booking_System_Update_Booking_data', $this->controller);
         self::assertStringContainsString("'booking_type' => 'T'", $this->controller);
-        self::assertStringContainsString('invalid_schedule_time', $this->controller);
+        self::assertStringContainsString('fn_ec_save_booking_data_by_amount', $this->controller);
+        self::assertStringContainsString('time_by_amount', $this->controller);
+        self::assertStringContainsString('too_many_daily_slots', $this->controller);
+        self::assertStringContainsString('invalid_schedule_slot', $this->controller);
     }
 
     public function testMediaWritesAreBoundedAndRasterOnly(): void
