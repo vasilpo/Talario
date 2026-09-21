@@ -14,13 +14,13 @@ This directory defines the request surface for allowlisted operational checks ag
 
 ## Allowlisted operations
 
-The complete Dev Copy Ops request allowlist is exactly:
+The Dev Copy Ops request allowlist is exactly three read/check operations:
 
-- `status`: branch, HEAD, worktree state, PHP version, and presence-only Partner Sync local config checks.
-- `git-status`: read-only Git status and HEAD.
-- `php-lint`: PHP syntax check for the `talario_analytics` add-on.
+- `status`
+- `git-status`
+- `php-lint`
 
-`clear-cache` and `partner-sync-probe` are intentionally not Dev Copy Ops operations. Cache cleanup exists only inside the separate standard deploy command `talario-dev-deploy`.
+No other Dev Copy Ops operation is supported. `clear-cache` and `partner-sync-probe` are not part of this interface. The separate standard deploy command `talario-dev-deploy` may clear generated cache after a successful fast-forward deploy.
 
 ## Security boundaries
 
@@ -46,3 +46,7 @@ The complete Dev Copy Ops request allowlist is exactly:
 Before merging this workflow, install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout (for example under `~/.local/bin`) and bind the existing GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and writable only by that account. Verify the binding out-of-band before merge. If the GitHub Actions key was previously usable for unrestricted shell access, rotate it after the forced-command migration.
 
 The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, and `talario-dev-ops php-lint`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
+
+## Verified bootstrap state
+
+The existing GitHub Actions public key was verified out-of-band on Beget with the forced-command dispatcher: an allowlisted `talario-dev-ops status` call returned `DISPATCHER=talario-dev-github-v1`, while a non-allowlisted `uname -a` command was rejected. Because the key previously existed before this forced-command migration, rotate the GitHub Actions SSH key once during bootstrap and bind the replacement key to the same forced command before merging this PR.
