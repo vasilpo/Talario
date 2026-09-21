@@ -36,6 +36,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('analytics_api_not_configured', $this->controller);
     }
 
+    public function testCatalogReadsBasePricesFromProductPricesTable(): void
+    {
+        self::assertStringContainsString('LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id', $this->controller);
+        self::assertStringContainsString('pp.lower_limit = 1 AND pp.usergroup_id = 0', $this->controller);
+        self::assertStringContainsString('LEFT JOIN ?:product_prices vpp ON vpp.product_id = p.product_id', $this->controller);
+        self::assertStringContainsString('vpp.lower_limit = 1 AND vpp.usergroup_id = 0', $this->controller);
+        self::assertStringNotContainsString(' p.price, p.status', $this->controller);
+    }
+
     public function testPartnerScopeConstrainsProductsVariationsResourcesAndSchedule(): void
     {
         self::assertStringContainsString("p.company_id = ?i", $this->controller);
