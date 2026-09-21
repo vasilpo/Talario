@@ -102,14 +102,16 @@ function fn_talario_analytics_rate_limit(): int
     return $ip_count;
 }
 
-function fn_talario_analytics_catalog_rate_limit(): void
+function fn_talario_analytics_catalog_rate_limit(string $provided_hash): void
 {
     $now = time();
     $bucket = (int) floor($now / 60);
-    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    // Reuse the rate-limit table created by talario_analytics/addon.xml.
+    // Scope the stricter catalog quota to the authenticated credential, not client IP,
+    // so reverse proxies cannot weaken or distort the limiter.
     $scopes = [
         [hash('sha256', 'partner_sync_catalog:global'), 60],
-        [hash('sha256', 'partner_sync_catalog:' . $ip), 10],
+        [hash('sha256', 'partner_sync_catalog:credential:' . $provided_hash), 10],
     ];
 
     foreach ($scopes as [$scope_hash, $limit]) {
@@ -558,7 +560,6 @@ function fn_talario_analytics_catalog_response(): void
         'partner_count' => count($partners),
         'product_count' => count($products),
         'schedule_count' => count($schedule),
-        'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
     ]);
 
     fn_talario_analytics_json_response(200, [
@@ -651,7 +652,7 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
 
 if ($mode === 'catalog') {
     // The selected bearer token was validated with hash_equals above before dispatch.
-    fn_talario_analytics_catalog_rate_limit();
+    fn_talario_analytics_catalog_rate_limit($provided_hash);
     fn_talario_analytics_catalog_response();
 }
 
