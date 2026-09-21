@@ -34,7 +34,7 @@ jobs:
           jq -e 'keys | sort == ["operation","request_id"]' "$REQUEST" >/dev/null
           [[ "$REQUEST_ID" =~ ^[A-Za-z0-9._:-]{1,80}$ ]]
           case "$OP" in
-            status|git-status|php-lint|worktree-repair)
+            status|git-status|php-lint|worktree-repair|partner-sync-smoke)
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
@@ -68,4 +68,4 @@ jobs:
           BEGET_HOST="salvage.beget.com"
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
           printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
-          printf '%s\n' "$OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT|REPAIR|REPAIRED_COUNT)='
+          printf '%s\n' "$OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT|REPAIR|REPAIRED_COUNT|RUNTIME_AUTH|RUNTIME_METHOD_GUARD|SCHEMA_VERSION|PARTNERS|PRODUCTS|PRODUCTS_WITH_PRICE|PRICE_ROWS|VARIATIONS|VARIATIONS_WITH_PRICE|SCHEDULE|PRODUCTS_TRUNCATED|SCHEDULE_TRUNCATED|HAS_MORE|NEXT_PRODUCT_ID|NEXT_SCHEDULE_MARKER|PUBLIC_URLS|PARTNER_SCOPE)='
