@@ -197,9 +197,11 @@ function fn_talario_analytics_crm_response(): void
         if ($emails) {
             $subscriptions_by_email = [];
             foreach (db_get_array(
-                'SELECT s.email, uml.list_id, uml.confirmed, uml.timestamp'
+                'SELECT s.email, uml.list_id, uml.confirmed, uml.timestamp,'
+                . ' ml.status AS list_status, ml.register_autoresponder'
                 . ' FROM ?:subscribers s'
                 . ' INNER JOIN ?:user_mailing_lists uml ON uml.subscriber_id = s.subscriber_id'
+                . ' INNER JOIN ?:mailing_lists ml ON ml.list_id = uml.list_id'
                 . ' WHERE s.email IN (?a)'
                 . ' ORDER BY s.email ASC, uml.list_id ASC',
                 $emails
@@ -208,6 +210,8 @@ function fn_talario_analytics_crm_response(): void
                 $subscriptions_by_email[$email_key][] = [
                     'list_id' => (int) $subscription['list_id'],
                     'confirmed' => (int) $subscription['confirmed'] === 1,
+                    'list_status' => (string) $subscription['list_status'],
+                    'register_autoresponder' => (string) $subscription['register_autoresponder'],
                     'timestamp' => (int) $subscription['timestamp'],
                 ];
             }
