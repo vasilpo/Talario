@@ -4,7 +4,6 @@ defined('BOOTSTRAP') or die('Access denied');
 
 use Tygh\Registry;
 
-require_once dirname(__DIR__, 2) . '/partner_sync_write.php';
 
 function fn_talario_analytics_json_response(int $status, array $payload): void
 {
@@ -536,41 +535,27 @@ function fn_talario_analytics_catalog_response(): void
     ]);
 }
 
-$partner_sync_write_mode = $mode === 'catalog_apply';
-
-if ($partner_sync_write_mode) {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
-    }
-} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_apply'], true)) {
+if (!in_array($mode, ['orders', 'catalog'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_apply'], true)) {
+if ($mode === 'catalog') {
     $is_development = function_exists('fn_is_development') && fn_is_development();
-    $runtime_root = str_replace('\\', '/', (string) (realpath(DIR_ROOT) ?: DIR_ROOT));
-    $dev_copy_root = substr($runtime_root, -strlen('/talario.ru/dev_copy')) === '/talario.ru/dev_copy';
     $dev_copy_enabled = $is_development
-        && $dev_copy_root
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
         && TALARIO_PARTNER_SYNC_DEV_COPY === true;
     $prod_read_enabled = !$is_development
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if ($mode === 'catalog' && !$dev_copy_enabled && !$prod_read_enabled) {
-        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
-    }
-
-    // Write mode is deliberately dev_copy-only. There is no production write gate.
-    if ($mode === 'catalog_apply' && !$dev_copy_enabled) {
+    if (!$dev_copy_enabled && !$prod_read_enabled) {
         fn_talario_analytics_json_response(404, ['error' => 'not_found']);
     }
 }
@@ -595,31 +580,15 @@ if ($mode === 'catalog') {
         ]);
         fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_misconfigured']);
     }
-} elseif ($mode === 'catalog_apply') {
-    $stored_token_hash = defined('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH')
-        ? trim((string) TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH)
-        : '';
-    $read_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
-        ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
-        : '';
-    if (preg_match('/^sha256:[a-f0-9]{64}$/', $read_token_hash)
-        && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
-        && hash_equals($read_token_hash, $stored_token_hash)
-    ) {
-        fn_log_event('general', 'runtime', [
-            'message' => 'Talario Partner Sync write API misconfigured: write credential matches read credential',
-        ]);
-        fn_talario_analytics_json_response(503, ['error' => 'partner_sync_write_api_misconfigured']);
-    }
 } else {
     $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
 }
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    $configuration_error = $mode === 'catalog_apply'
-        ? 'partner_sync_write_api_not_configured'
-        : ($mode === 'catalog' ? 'partner_sync_api_not_configured' : 'analytics_api_not_configured');
-    fn_talario_analytics_json_response(503, ['error' => $configuration_error]);
+    fn_talario_analytics_json_response(503, ['error' => $mode === 'catalog'
+        ? 'partner_sync_api_not_configured'
+        : 'analytics_api_not_configured'
+    ]);
 }
 
 $provided_token = fn_talario_analytics_bearer_token();
@@ -639,10 +608,6 @@ if ($mode === 'catalog') {
     fn_talario_analytics_catalog_response();
 }
 
-if ($mode === 'catalog_apply') {
-    // Dedicated Partner Sync credential + dev_copy gate were validated above.
-    fn_talario_analytics_partner_sync_write_response();
-}
 
 $date1_raw = isset($_REQUEST['date1']) ? (string) $_REQUEST['date1'] : '';
 $date2_raw = isset($_REQUEST['date2']) ? (string) $_REQUEST['date2'] : '';
