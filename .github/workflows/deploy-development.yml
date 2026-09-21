@@ -41,7 +41,14 @@ jobs:
         run: |
           set -euo pipefail
           test "$BEGET_HOST" = "salvage.beget.com"
+
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
-          printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
-          printf '%s\n' "$OUTPUT" | grep -Eq '^DEPLOY_OK [0-9a-f]+
-          printf '%s\n' "$OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|DEPLOY_OK [0-9a-f]+)
+
+          DISPATCHER_LINE="$(printf '%s\n' "$OUTPUT" | grep -F -x 'DISPATCHER=talario-dev-github-v1')"
+          DEPLOY_LINE="$(printf '%s\n' "$OUTPUT" | grep -E '^DEPLOY_OK [[:xdigit:]]+$')"
+
+          test "$DISPATCHER_LINE" = "DISPATCHER=talario-dev-github-v1"
+          test -n "$DEPLOY_LINE"
+
+          printf '%s\n' "$DISPATCHER_LINE"
+          printf '%s\n' "$DEPLOY_LINE"
