@@ -136,11 +136,26 @@ final class PartnerSyncReadApiContractTest extends TestCase
     {
         self::assertStringContainsString('"talario-dev-partner-sync-apply")', $this->dispatcher);
         self::assertStringContainsString('"talario-dev-ops partner-sync-status")', $this->dispatcher);
-        self::assertStringContainsString('/usr/local/bin/php8.2 ops/partner-sync-apply.php', $this->dispatcher);
+        self::assertStringContainsString('exec 8< "$RUNNER"', $this->dispatcher);
+        self::assertStringContainsString('/usr/local/bin/php8.2 /proc/self/fd/8', $this->dispatcher);
+        self::assertStringContainsString('readlink -f "/proc/$/fd/8"', $this->dispatcher);
         self::assertStringContainsString('head -c 20971521', $this->dispatcher);
         self::assertStringContainsString('dev_copy has local changes; refusing Partner Sync apply', $this->dispatcher);
         self::assertStringNotContainsString('eval ', $this->dispatcher);
         self::assertStringNotContainsString('bash -c "', $this->dispatcher);
+    }
+
+    public function testPartnerSyncCliRunnerOwnsPayloadValidationAndEnvironmentGates(): void
+    {
+        self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
+        self::assertStringContainsString("'/talario.ru/dev_copy'", $this->cli_runner);
+        self::assertStringContainsString('fn_is_development()', $this->cli_runner);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->cli_runner);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_write_response();', $this->cli_runner);
+        self::assertStringContainsString('strlen($raw) > 20971520', $this->write_capability);
+        self::assertStringContainsString("['error' => 'invalid_json']", $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->write_capability);
+        self::assertStringContainsString("['error' => 'company_not_write_allowed']", $this->write_capability);
     }
 
     public function testCatalogRequiresExplicitEnvironmentGate(): void
