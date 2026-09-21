@@ -46,7 +46,7 @@ No arbitrary file paths, shell fragments, HTTP probes, or generic cleanup operat
 
 Install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout and bind the GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and writable only by that account. Verify the binding out-of-band before merge.
 
-The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, and `talario-dev-ops php-lint`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
+The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, `talario-dev-ops php-lint`, `talario-dev-ops partner-sync-status`, `talario-dev-partner-sync-apply`, and the existing narrowly-scoped `talario-dev-ops worktree-repair`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
 
 ## Verified bootstrap state
 
@@ -83,3 +83,17 @@ If Beget rotates the SSH host key, do not fall back to runtime `ssh-keyscan`. Ve
 The live dispatcher remains an out-of-repository security boundary and is not self-updatable through GitHub Actions. This PR adds only the narrowly scoped `worktree-repair` operation. After its one-time installation on Beget, the current known dirty state can be repaired remotely without exposing arbitrary shell access.
 
 The current known dirty dev_copy state is caused by the untracked file `config.local.php.bak-partner-sync-20260920-015402`. The approved `worktree-repair` operation preserves it by moving it to `~/.local/state/talario/dev-copy-backups/`; it does not delete or print the file contents.
+
+
+### Partner Sync CLI apply boundary
+
+Partner Sync writes stay off the public storefront/API surface.
+
+The forced-command dispatcher exposes exactly two Partner Sync-specific commands:
+
+- `talario-dev-ops partner-sync-status` — reports only whether the CLI runner and required dev-write gates are present; it never prints secret values or allow-list contents.
+- `talario-dev-partner-sync-apply` — accepts a JSON payload only on stdin, caps input at 20 MiB, refuses a dirty dev_copy worktree, and invokes exactly `/usr/local/bin/php8.2 ops/partner-sync-apply.php`.
+
+The command string is fixed. Arbitrary shell fragments, file paths, URLs and product IDs are not accepted in `SSH_ORIGINAL_COMMAND`; all business input is parsed and validated by the reviewed PHP CLI runner.
+
+The active Beget dispatcher lives outside Git and therefore requires a one-time bootstrap update after this reviewed source change. That bootstrap must copy the reviewed dispatcher to `/home/t/tyman5tb/.local/bin/talario-dev-github-dispatcher` without changing the authorized_keys forced-command binding.

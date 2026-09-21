@@ -64,7 +64,50 @@ case "$REQUEST" in
     while IFS= read -r -d '' file; do
       php8.2 -l -- "$file" >/dev/null
     done < <(find app/addons/talario_analytics -type f -name '*.php' -print0 | sort -z)
+    php8.2 -l ops/partner-sync-apply.php >/dev/null
     echo "PHP_LINT=OK"
+    ;;
+
+  "talario-dev-ops partner-sync-status")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-status"
+    echo "HEAD=$(git rev-parse HEAD)"
+    if [ -f ops/partner-sync-apply.php ] && [ ! -L ops/partner-sync-apply.php ]; then
+      echo "PARTNER_SYNC_CLI=PRESENT"
+    else
+      echo "PARTNER_SYNC_CLI=MISSING"
+    fi
+    php8.2 -r '
+      $path = "config.local.php";
+      $content = is_file($path) ? (string) file_get_contents($path) : "";
+      echo "DEV_COPY_FLAG=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_COPY") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+      echo "DEV_WRITE_FLAG=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_WRITE") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+      echo "WRITE_COMPANY_ALLOWLIST=" . (strpos($content, "TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS") !== false ? "PRESENT" : "MISSING") . PHP_EOL;
+    '
+    ;;
+
+  "talario-dev-partner-sync-apply")
+    mark_dispatcher
+    [ -z "$(git status --porcelain)" ] || fail "dev_copy has local changes; refusing Partner Sync apply" 71
+    RUNNER="$DEV_COPY/ops/partner-sync-apply.php"
+    [ -f "$RUNNER" ] && [ ! -L "$RUNNER" ] || fail "Partner Sync CLI runner missing" 72
+
+    # Open the reviewed runner once and execute that exact inode through the inherited fd.
+    # A concurrent path replacement after this point cannot change what PHP executes.
+    exec 8< "$RUNNER"
+    [ "$(readlink -f "/proc/$/fd/8")" = "$RUNNER" ] || fail "Partner Sync CLI runner path mismatch" 72
+    [ "$(stat -Lc '%F' "/proc/$/fd/8")" = "regular file" ] || fail "Partner Sync CLI runner is not regular" 72
+
+    TMP_PAYLOAD="$(mktemp)"
+    chmod 600 "$TMP_PAYLOAD"
+    trap 'rm -f "$TMP_PAYLOAD"' EXIT
+
+    head -c 20971521 > "$TMP_PAYLOAD"
+    PAYLOAD_SIZE="$(wc -c < "$TMP_PAYLOAD" | tr -d ' ')"
+    [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "Partner Sync payload exceeds 20 MiB" 73
+    [ "$PAYLOAD_SIZE" -gt 0 ] || fail "Partner Sync payload is empty" 74
+
+    /usr/local/bin/php8.2 /proc/self/fd/8 < "$TMP_PAYLOAD"
     ;;
 
   "talario-dev-ops worktree-repair")

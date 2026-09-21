@@ -13,6 +13,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $trusted_controllers;
     private string $write_capability;
     private string $cli_runner;
+    private string $dispatcher;
 
     protected function setUp(): void
     {
@@ -24,6 +25,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
         $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
+        $this->dispatcher = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/beget/talario-dev-github-dispatcher.sh');
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -128,6 +130,32 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
+    }
+
+    public function testPartnerSyncDispatcherAllowsOnlyFixedCliApplyCommand(): void
+    {
+        self::assertStringContainsString('"talario-dev-partner-sync-apply")', $this->dispatcher);
+        self::assertStringContainsString('"talario-dev-ops partner-sync-status")', $this->dispatcher);
+        self::assertStringContainsString('exec 8< "$RUNNER"', $this->dispatcher);
+        self::assertStringContainsString('/usr/local/bin/php8.2 /proc/self/fd/8', $this->dispatcher);
+        self::assertStringContainsString('readlink -f "/proc/$/fd/8"', $this->dispatcher);
+        self::assertStringContainsString('head -c 20971521', $this->dispatcher);
+        self::assertStringContainsString('dev_copy has local changes; refusing Partner Sync apply', $this->dispatcher);
+        self::assertStringNotContainsString('eval ', $this->dispatcher);
+        self::assertStringNotContainsString('bash -c "', $this->dispatcher);
+    }
+
+    public function testPartnerSyncCliRunnerOwnsPayloadValidationAndEnvironmentGates(): void
+    {
+        self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
+        self::assertStringContainsString("'/talario.ru/dev_copy'", $this->cli_runner);
+        self::assertStringContainsString('fn_is_development()', $this->cli_runner);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->cli_runner);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_write_response();', $this->cli_runner);
+        self::assertStringContainsString('strlen($raw) > 20971520', $this->write_capability);
+        self::assertStringContainsString("['error' => 'invalid_json']", $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->write_capability);
+        self::assertStringContainsString("['error' => 'company_not_write_allowed']", $this->write_capability);
     }
 
     public function testCatalogRequiresExplicitEnvironmentGate(): void
