@@ -77,9 +77,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
 
     public function testPartnerSyncWriteIsPostOnlyAndDevCopyOnly(): void
     {
-        self::assertStringContainsString("$partner_sync_write_mode = $mode === 'catalog_apply'", $this->controller);
+        self::assertStringContainsString("\$partner_sync_write_mode = \$mode === 'catalog_apply'", $this->controller);
         self::assertStringContainsString("REQUEST_METHOD'] !== 'POST'", $this->controller);
-        self::assertStringContainsString("if ($mode === 'catalog_apply' && !$dev_copy_enabled)", $this->controller);
+        self::assertStringContainsString("if (\$mode === 'catalog_apply' && !\$dev_copy_enabled)", $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_WRITE', $this->controller);
         self::assertStringContainsString("'catalog_apply' => true", $this->trusted_controllers);
     }
@@ -127,7 +127,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
         self::assertStringContainsString('$prod_read_enabled = !$is_development', $this->controller);
-        self::assertStringContainsString('if (!$dev_copy_enabled && !$prod_read_enabled)', $this->controller);
+        self::assertStringContainsString("if (\$mode === 'catalog' && !\$dev_copy_enabled && !\$prod_read_enabled)", $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
 
