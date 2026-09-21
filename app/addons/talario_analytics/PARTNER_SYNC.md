@@ -45,3 +45,30 @@ Production hardening:
 - production does not install a closed-storefront bypass schema; the normal storefront gate remains in force.
 
 The stricter catalog limiter reuses `?:talario_analytics_rate_limits`, which is already created by the add-on install DDL in `addon.xml` and is also used by the existing production Analytics API limiter.
+
+
+## Development write mode — dev_copy only
+
+Partner Sync write operations are a separate dev-only capability. They require all of the following simultaneously:
+
+```php
+define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
+define('TALARIO_PARTNER_SYNC_WRITE_ENABLED', true);
+define('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH', 'sha256:<64 hex characters>');
+```
+
+Runtime also requires:
+
+- `fn_is_development() === true`;
+- the HTTP request path contains `/dev_copy/`;
+- the actual CS-Cart `config.dir.root` resolves under `/dev_copy/`;
+- the write credential differs from the read credential;
+- the shared `talario_analytics_rate_limits` table exists; otherwise writes fail closed with HTTP 503.
+
+Supported write modes are intentionally separate:
+
+- `POST talario_partner_sync.product` — create/update whitelisted product fields;
+- `POST talario_partner_sync.schedule` — legacy Ecarter schedule write;
+- `POST talario_partner_sync.media` — bounded JPEG/PNG/WebP media replacement.
+
+The write endpoint must never be enabled on the production CS-Cart root. Production write remains out of scope until a separate explicit rollout decision.
