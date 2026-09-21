@@ -36,6 +36,7 @@ jobs:
       - name: Deploy development
         shell: bash
         env:
+          # Explicitly step-scoped; must match the pinned known_hosts entry below.
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_USER: ${{ secrets.BEGET_USER }}
         run: |
