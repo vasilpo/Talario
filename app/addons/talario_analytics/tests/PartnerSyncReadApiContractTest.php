@@ -137,8 +137,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('/usr/local/bin/php8.2 "$DEV_COPY/ops/partner-sync-apply.php"', $this->dev_dispatcher);
         self::assertStringContainsString('20971520', $this->dev_dispatcher);
         self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
+        self::assertStringContainsString('PATH="/usr/local/bin:/usr/bin:/bin"', $this->dev_dispatcher);
+        self::assertStringContainsString('dev_copy worktree must be clean for partner sync', $this->dev_dispatcher);
+        self::assertStringContainsString('partner sync CLI runner integrity check failed', $this->dev_dispatcher);
         self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
-        self::assertStringContainsString('timeout 30s head -c 20971521', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/timeout 30s /usr/bin/head -c 20971521', $this->dev_dispatcher);
     }
 
     public function testDevDispatcherDoesNotExposeGenericShellForPartnerSync(): void
