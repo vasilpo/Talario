@@ -83,3 +83,7 @@ If Beget rotates the SSH host key, do not fall back to runtime `ssh-keyscan`. Ve
 The live dispatcher remains an out-of-repository security boundary and is not self-updatable through GitHub Actions. This PR adds only the narrowly scoped `worktree-repair` operation. After its one-time installation on Beget, the current known dirty state can be repaired remotely without exposing arbitrary shell access.
 
 The current known dirty dev_copy state is caused by the untracked file `config.local.php.bak-partner-sync-20260920-015402`. The approved `worktree-repair` operation preserves it by moving it to `~/.local/state/talario/dev-copy-backups/`; it does not delete or print the file contents.
+
+### partner-sync-smoke
+
+Runs a development-only, read-only Partner Sync runtime smoke test on Beget using the locally stored bearer token. The operation never prints the raw token or storefront access key. It checks missing/wrong auth rejection, POST rejection, authorized catalog schema, price/variation counters, schedule truncation, public URL safety, and partner scoping. This operation does not write Talario application data and is not available for PROD.
