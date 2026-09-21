@@ -38,8 +38,10 @@ The raw token belongs in the authorized caller's secret store/runtime environmen
 
 Production hardening:
 
-- catalog requests are separately limited to 10 requests/minute per source IP and 60/minute globally;
+- catalog requests are separately limited to 10 requests/minute per authenticated Partner Sync credential and 60/minute globally;
 - production catalog pages are capped at 100 products per request;
 - returned schedule entries are capped at 500 per response;
 - legacy Ecarter serialized schedule data is bounded to 8 KiB, scalar weekday fields only, no classes, and max depth 2;
 - production does not install a closed-storefront bypass schema; the normal storefront gate remains in force.
+
+The stricter catalog limiter reuses `?:talario_analytics_rate_limits`, which is already created by the add-on install DDL in `addon.xml` and is also used by the existing production Analytics API limiter.
