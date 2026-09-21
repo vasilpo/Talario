@@ -1,0 +1,137 @@
+name: Dev Copy Ops PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - development
+    paths:
+      - '.github/dev-copy-ops/request.json'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: dev-copy-ops-pr
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Validate control PR and request
+        id: request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
+              core.setFailed('cross-repository control PRs are forbidden');
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            if (files.length !== 1 || files[0].filename !== '.github/dev-copy-ops/request.json') {
+              core.setFailed('control PR must change exactly request.json');
+              return;
+            }
+
+            const { data } = await github.rest.repos.getContent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: '.github/dev-copy-ops/request.json',
+              ref: pr.head.sha,
+            });
+            const raw = Buffer.from(data.content, 'base64').toString('utf8');
+            const request = JSON.parse(raw);
+            const keys = Object.keys(request).sort();
+            if (JSON.stringify(keys) !== JSON.stringify(['operation','request_id'])) {
+              core.setFailed('request must contain exactly operation and request_id');
+              return;
+            }
+            if (!['status','git-status','php-lint'].includes(request.operation)) {
+              core.setFailed('operation is not allowlisted');
+              return;
+            }
+            if (!/^[A-Za-z0-9._:-]{1,80}$/.test(request.request_id)) {
+              core.setFailed('invalid request_id');
+              return;
+            }
+            core.setOutput('operation', request.operation);
+            core.setOutput('request_id', request.request_id);
+
+      - name: Configure pinned Beget SSH
+        shell: bash
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$BEGET_SSH_KEY"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Run allowlisted dev_copy operation
+        id: remote
+        shell: bash
+        env:
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          OPERATION: ${{ steps.request.outputs.operation }}
+        run: |
+          set -euo pipefail
+          set +e
+          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@salvage.beget.com" "talario-dev-ops $OPERATION" 2>&1)"
+          RC=$?
+          set -e
+          {
+            echo "rc=$RC"
+            echo 'output<<EOF'
+            printf '%s\n' "$OUTPUT"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Comment result and close control PR
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          REQUEST_ID: ${{ steps.request.outputs.request_id }}
+          OPERATION: ${{ steps.request.outputs.operation }}
+          RC: ${{ steps.remote.outputs.rc }}
+          RESULT: ${{ steps.remote.outputs.output }}
+        with:
+          script: |
+            const body = [
+              '## Dev Copy Ops',
+              '',
+              'request: `' + (process.env.REQUEST_ID || 'unknown') + '`',
+              'operation: `' + (process.env.OPERATION || 'unknown') + '`',
+              'remote_rc: `' + (process.env.RC || 'unknown') + '`',
+              '',
+              '```text',
+              process.env.RESULT || 'workflow failed before remote output',
+              '```'
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body,
+            });
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              state: 'closed',
+            });
