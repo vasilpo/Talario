@@ -47,9 +47,14 @@ final class CrmReadApiContractTest extends TestCase
         self::assertStringContainsString("'lastname' =>", $this->crm_read);
         self::assertStringContainsString("'phone' =>", $this->crm_read);
         self::assertStringContainsString('TALARIO_CRM_PHONE_READ', $this->crm_read);
+        self::assertStringContainsString('TALARIO_CRM_PHONE_TOKEN_HASH', $this->crm_read);
+        self::assertStringContainsString('HTTP_X_TALARIO_CRM_PHONE_TOKEN', $this->crm_read);
         self::assertStringContainsString("'crm_phone_read_disabled'", $this->crm_read);
+        self::assertStringContainsString("'crm_phone_api_not_configured'", $this->crm_read);
+        self::assertStringContainsString("'crm_phone_unauthorized'", $this->crm_read);
         self::assertStringContainsString("(\$include_phone ? ' u.phone,' : '')", $this->crm_read);
         self::assertStringContainsString("'phone_included' => \$include_phone", $this->crm_read);
+        self::assertStringNotContainsString('include_phone', (string) parse_url('https://example.test/?registered_from=2026-02-01', PHP_URL_QUERY));
         self::assertStringNotContainsString("'address' =>", $this->crm_read);
         self::assertStringNotContainsString('payment', strtolower($this->crm_read));
     }
