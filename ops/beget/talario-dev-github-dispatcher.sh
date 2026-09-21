@@ -3,7 +3,6 @@ set -euo pipefail
 
 DEV_COPY="/home/t/tyman5tb/talario.ru/public_html/dev_copy"
 EXPECTED_PATH="$DEV_COPY"
-LIVE_DISPATCHER="/home/t/tyman5tb/.local/bin/talario-dev-github-dispatcher"
 BACKUP_DIR="/home/t/tyman5tb/.local/state/talario/dev-copy-backups"
 REQUEST="${SSH_ORIGINAL_COMMAND:-}"
 
@@ -72,18 +71,20 @@ case "$REQUEST" in
     mark_dispatcher
     echo "OPERATION=worktree-repair"
 
-    mapfile -t STATUS_LINES < <(git status --porcelain=v1 --untracked-files=all)
-    if [ "${#STATUS_LINES[@]}" -eq 0 ]; then
+    mapfile -d '' -t STATUS_ITEMS < <(git status --porcelain=v1 -z --untracked-files=all)
+    if [ "${#STATUS_ITEMS[@]}" -eq 0 ]; then
       echo "REPAIR=NOOP"
       echo "WORKTREE=CLEAN"
       exit 0
     fi
 
-    for line in "${STATUS_LINES[@]}"; do
-      [[ "$line" == "?? config.local.php.bak-partner-sync-"* ]] || fail "worktree contains changes outside the approved Partner Sync backup pattern" 69
-      path="${line:3}"
+    APPROVED_PATHS=()
+    for item in "${STATUS_ITEMS[@]}"; do
+      [[ "$item" == "?? config.local.php.bak-partner-sync-"* ]] || fail "worktree contains changes outside the approved Partner Sync backup pattern" 69
+      path="${item:3}"
       [[ "$path" == config.local.php.bak-partner-sync-* ]] || fail "unexpected repair path" 69
       [ -f "$path" ] && [ ! -L "$path" ] || fail "approved backup candidate is not a regular file" 69
+      APPROVED_PATHS+=("$path")
     done
 
     mkdir -p "$BACKUP_DIR"
@@ -91,8 +92,7 @@ case "$REQUEST" in
 
     repaired=0
     stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-    for line in "${STATUS_LINES[@]}"; do
-      path="${line:3}"
+    for path in "${APPROVED_PATHS[@]}"; do
       dest="$BACKUP_DIR/${path}.${stamp}.${repaired}"
       mv -- "$path" "$dest"
       chmod 600 "$dest"
@@ -102,24 +102,6 @@ case "$REQUEST" in
     [ -z "$(git status --porcelain)" ] || fail "worktree still dirty after approved repair" 70
     echo "REPAIRED_COUNT=$repaired"
     echo "WORKTREE=CLEAN"
-    ;;
-
-  "talario-dev-ops dispatcher-sync")
-    mark_dispatcher
-    echo "OPERATION=dispatcher-sync"
-
-    git remote set-url origin https://github.com/vasilpo/Talario.git
-    git fetch --quiet origin development
-
-    tmp="$(mktemp)"
-    trap 'rm -f "$tmp"' EXIT
-    git show origin/development:ops/beget/talario-dev-github-dispatcher.sh > "$tmp"
-    bash -n "$tmp"
-    grep -Fq 'DEV_COPY="/home/t/tyman5tb/talario.ru/public_html/dev_copy"' "$tmp" || fail "reviewed dispatcher has unexpected dev_copy boundary" 71
-
-    mkdir -p "$(dirname "$LIVE_DISPATCHER")"
-    install -m 700 "$tmp" "$LIVE_DISPATCHER"
-    echo "DISPATCHER_SYNC=OK"
     ;;
 
   *)
