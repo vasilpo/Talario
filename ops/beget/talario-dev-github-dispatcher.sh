@@ -67,6 +67,42 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-prod-partner-sync-bootstrap")
+    mark_dispatcher
+    echo "OPERATION=prod-partner-sync-bootstrap"
+
+    PROD_ROOT="/home/t/tyman5tb/talario.ru/public_html"
+    SAFE_HOME="/home/t/tyman5tb"
+    BOOTSTRAP_REL="ops/beget/bootstrap-partner-sync-prod-read.sh"
+    EXPECTED_PROD_COMMIT="c27310ec82c38fcf574ca0c56f0c39ece3f5c66d"
+
+    [ -d "$PROD_ROOT" ] || fail "PROD root missing" 71
+    [ "$(git -C "$PROD_ROOT" rev-parse --abbrev-ref HEAD)" = "prod" ] || fail "PROD is not on prod branch" 72
+    [ -z "$(git -C "$PROD_ROOT" status --porcelain)" ] || fail "PROD worktree must be clean" 73
+
+    git -C "$PROD_ROOT" fetch --quiet origin prod \
+      || fail "failed to fetch origin/prod" 74
+
+    CURRENT_HEAD="$(git -C "$PROD_ROOT" rev-parse HEAD 2>/dev/null)" \
+      || fail "failed to read PROD HEAD" 75
+    REMOTE_HEAD="$(git -C "$PROD_ROOT" rev-parse origin/prod 2>/dev/null)" \
+      || fail "failed to read origin/prod" 76
+
+    [ "$CURRENT_HEAD" = "$EXPECTED_PROD_COMMIT" ] \
+      || fail "PROD HEAD is not the reviewed bootstrap commit" 77
+    [ "$REMOTE_HEAD" = "$EXPECTED_PROD_COMMIT" ] \
+      || fail "origin/prod moved beyond the reviewed bootstrap commit" 78
+
+    git -C "$PROD_ROOT" cat-file -e "$EXPECTED_PROD_COMMIT:$BOOTSTRAP_REL" \
+      || fail "reviewed bootstrap blob unavailable" 79
+
+    git -C "$PROD_ROOT" show "$EXPECTED_PROD_COMMIT:$BOOTSTRAP_REL" \
+      | /usr/bin/env -i \
+          HOME="$SAFE_HOME" \
+          PATH="/usr/local/bin:/usr/bin:/bin" \
+          /usr/bin/bash -s
+    ;;
+
   "talario-dev-ops worktree-repair")
     mark_dispatcher
     echo "OPERATION=worktree-repair"
