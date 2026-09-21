@@ -54,7 +54,7 @@ final class CrmReadApiContractTest extends TestCase
         self::assertStringContainsString("'crm_phone_unauthorized'", $this->crm_read);
         self::assertStringContainsString("(\$include_phone ? ' u.phone,' : '')", $this->crm_read);
         self::assertStringContainsString("'phone_included' => \$include_phone", $this->crm_read);
-        self::assertStringNotContainsString('include_phone', (string) parse_url('https://example.test/?registered_from=2026-02-01', PHP_URL_QUERY));
+        self::assertStringNotContainsString("\$_GET['include_phone']", $this->crm_read);
         self::assertStringNotContainsString("'address' =>", $this->crm_read);
         self::assertStringNotContainsString('payment', strtolower($this->crm_read));
     }
