@@ -9,9 +9,8 @@ Define the following constants in the non-versioned local CS-Cart configuration 
 ```php
 define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
 define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
-// Optional and dev_copy-only. Enables approved POST apply after dry-run.
+// Optional and dev_copy-only. Enables approved internal CLI apply after dry-run.
 define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
-define('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH', 'sha256:<different 64 hex characters>');
 define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '43');
 ```
 
@@ -36,33 +35,39 @@ Requirements:
 - production read access requires a separate explicit rollout decision before the constant is defined or code is deployed to PROD;
 - a missing or malformed hash returns `partner_sync_api_not_configured`;
 - a Partner Sync hash matching the Analytics API credential returns `partner_sync_api_misconfigured` and is logged without either credential;
-- write operations remain out of scope and require a separate approval-gated implementation and production decision.
+- production write operations remain out of scope and require a separate approval-gated production decision.
 
 The raw token belongs in the authorized caller's secret store/runtime environment, not in Git or CS-Cart settings.
 
 
 ## Development write capability
 
-The write route is intentionally available only in development/dev_copy:
+Write is not exposed through the storefront/controller API.
 
-`POST /dev_copy/index.php?dispatch=talario_analytics.catalog_apply`
+The only supported apply entrypoint is the internal CLI runner:
+
+`php ops/partner-sync-apply.php < payload.json`
+
+It is intended to be invoked only through the existing authenticated dev_copy forced-command/maintenance channel.
 
 Safety properties:
 
-- the route is not available outside `fn_is_development()` + the actual `DIR_ROOT` ending in `/talario.ru/dev_copy` + `TALARIO_PARTNER_SYNC_DEV_COPY=true`;
-- there is no `TALARIO_PARTNER_SYNC_PROD_WRITE` constant or production write branch;
-- dry-run is the default and requires no write gate;
+- no public `catalog_apply` HTTP route exists;
+- the runner exits unless `PHP_SAPI === 'cli'`;
+- the runner resolves the actual repository root and exits unless it ends in `/talario.ru/dev_copy`;
+- the runtime must report `fn_is_development() === true`;
+- `TALARIO_PARTNER_SYNC_DEV_COPY=true` must be present;
+- dry-run is the default;
 - an actual apply additionally requires `TALARIO_PARTNER_SYNC_DEV_WRITE=true`;
-- apply uses a separate `TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH`; it must not equal the read-token hash;
-- writes are additionally restricted to server-side allow-listed partner IDs from `TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS`;
-- `approval_id` is an audit label, and only its SHA-256 hash is logged/returned;
-- an actual apply requires a non-empty `approval_id`;
-- new products default to status `H` (hidden) unless the caller explicitly supplies `A`;
+- writes are restricted to server-side allow-listed partner IDs from `TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS`;
+- an actual apply requires a non-empty `approval_id`; only its SHA-256 hash is logged/returned;
+- new products default to status `H` unless the caller explicitly supplies `A`;
 - partner reassignment on update is rejected;
 - product writes use `fn_update_product()`;
-- recurring schedule writes are passed through the existing Ecarter `booking_data` hook;
+- recurring schedule writes use the existing Ecarter `booking_data` hook;
 - images are accepted only as bounded JPEG/PNG/WebP binary payloads, validated server-side and attached through the standard CS-Cart product image flow;
-- the response includes readback of the saved product, price, image counts and booking data.
+- existing images are removed only after the new product/images have been saved successfully;
+- the result includes readback of the saved product, price, image counts and booking data.
 
 Example dry-run payload:
 
@@ -92,4 +97,4 @@ Example dry-run payload:
 }
 ```
 
-For an actual dev_copy apply, send the same normalized payload with `"dry_run": false` and an `approval_id`. Production write remains out of scope and requires a separate explicit product/security decision.
+For an actual dev_copy apply, send the same normalized payload with `"dry_run": false` and an `approval_id`. Production write remains disabled and requires a separate explicit decision.
