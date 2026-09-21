@@ -542,17 +542,21 @@ if (!in_array($mode, ['orders', 'catalog'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
-// Partner Sync catalog is intentionally development-only. The existing
-// orders mode retains its established read-only contract.
-if ($mode === 'catalog'
-    && (
-        !function_exists('fn_is_development')
-        || !fn_is_development()
-        || !defined('TALARIO_PARTNER_SYNC_DEV_COPY')
-        || TALARIO_PARTNER_SYNC_DEV_COPY !== true
-    )
-) {
-    fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+// Partner Sync catalog is enabled only when an explicit local runtime gate is present.
+// Development uses the dev_copy gate. Production read access requires a separate
+// production-only constant and a separately approved rollout.
+if ($mode === 'catalog') {
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $dev_copy_enabled = $is_development
+        && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+    $prod_read_enabled = !$is_development
+        && defined('TALARIO_PARTNER_SYNC_PROD_READ')
+        && TALARIO_PARTNER_SYNC_PROD_READ === true;
+
+    if (!$dev_copy_enabled && !$prod_read_enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
 }
 
 $rate_count = fn_talario_analytics_rate_limit();
