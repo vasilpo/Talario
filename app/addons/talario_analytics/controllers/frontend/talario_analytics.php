@@ -4,6 +4,7 @@ defined('BOOTSTRAP') or die('Access denied');
 
 use Tygh\Registry;
 
+
 function fn_talario_analytics_json_response(int $status, array $payload): void
 {
     http_response_code($status);
@@ -606,6 +607,7 @@ if ($mode === 'catalog') {
     // The selected bearer token was validated with hash_equals above before dispatch.
     fn_talario_analytics_catalog_response();
 }
+
 
 $date1_raw = isset($_REQUEST['date1']) ? (string) $_REQUEST['date1'] : '';
 $date2_raw = isset($_REQUEST['date2']) ? (string) $_REQUEST['date2'] : '';

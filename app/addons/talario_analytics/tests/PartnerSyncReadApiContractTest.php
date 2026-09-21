@@ -11,6 +11,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $controller;
     private string $addon_xml;
     private string $trusted_controllers;
+    private string $write_capability;
+    private string $cli_runner;
 
     protected function setUp(): void
     {
@@ -20,6 +22,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->controller = (string) file_get_contents($controller_path);
         $this->addon_xml = (string) file_get_contents($addon_path);
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
+        $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
+        $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -73,10 +77,57 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('array_merge($schedule, $legacy_schedule)', $this->controller);
     }
 
-    public function testWriteMethodsAreRejected(): void
+    public function testPartnerSyncWriteIsInternalCliOnly(): void
     {
-        self::assertStringContainsString("REQUEST_METHOD'] !== 'GET'", $this->controller);
-        self::assertStringContainsString("['error' => 'method_not_allowed']", $this->controller);
+        self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
+        self::assertStringContainsString("'/talario.ru/dev_copy'", $this->cli_runner);
+        self::assertStringContainsString('fn_is_development()', $this->cli_runner);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->cli_runner);
+        self::assertStringNotContainsString("'catalog_apply' => true", $this->trusted_controllers);
+        self::assertStringNotContainsString("catalog_apply", $this->controller);
+    }
+
+    public function testPartnerSyncWriteRequiresSeparateDevWriteGateAndApproval(): void
+    {
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->write_capability);
+        self::assertStringContainsString("['error' => 'company_not_write_allowed']", $this->write_capability);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_write_response();', $this->cli_runner);
+        self::assertStringContainsString("['error' => 'partner_sync_write_disabled']", $this->write_capability);
+        self::assertStringContainsString("['error' => 'approval_id_required']", $this->write_capability);
+        self::assertStringContainsString("'approval_id_hash' => \$approval_id_hash", $this->write_capability);
+        self::assertStringNotContainsString("'approval_id' => \$approval_id", $this->write_capability);
+        self::assertStringContainsString("'dry_run' => true", $this->write_capability);
+    }
+
+    public function testPartnerSyncWriteUsesCoreProductAndEcarterHooks(): void
+    {
+        self::assertStringContainsString('fn_update_product(', $this->write_capability);
+        self::assertStringContainsString("\$product_data['booking_data'] = \$booking_data", $this->write_capability);
+        self::assertStringContainsString('?:ec_table_booking_system', $this->write_capability);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.write-result.v1'", $this->write_capability);
+    }
+
+    public function testPartnerSyncCreateDefaultsToHidden(): void
+    {
+        self::assertStringContainsString("\$data['status'] = 'H';", $this->write_capability);
+        self::assertStringContainsString('New Partner Sync cards are hidden by default', $this->write_capability);
+    }
+
+    public function testPartnerSyncWriteSupportsBoundedPrivateImageImport(): void
+    {
+        self::assertStringContainsString('content_base64', $this->write_capability);
+        self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
+        self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
+        self::assertStringContainsString('fn_create_temp_file()', $this->write_capability);
+        self::assertStringContainsString('@chmod($tmp, 0600);', $this->write_capability);
+        self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
+        self::assertStringContainsString("'images' => [", $this->write_capability);
+    }
+
+    public function testPartnerSyncWriteRejectsPartnerReassignment(): void
+    {
+        self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
     }
 
     public function testCatalogRequiresExplicitEnvironmentGate(): void
