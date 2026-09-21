@@ -40,6 +40,7 @@ jobs:
           BEGET_USER: ${{ secrets.BEGET_USER }}
         run: |
           set -euo pipefail
+          test "$BEGET_HOST" = "salvage.beget.com"
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
           printf '%s\n' "$OUTPUT"
           printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
