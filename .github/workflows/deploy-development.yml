@@ -46,4 +46,5 @@ jobs:
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
           printf '%s\n' "$OUTPUT"
           grep -qx 'DISPATCHER=talario-dev-github-v1' <<<"$OUTPUT"
-          grep -Eq '^DEPLOY_OK [0-9a-f]+ <<<"$OUTPUT"
+          grep -Eq '^DEPLOY_OK [0-9a-f]+
+ <<<"$OUTPUT"
