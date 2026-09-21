@@ -21,6 +21,8 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
         self::assertStringContainsString('fn_is_development()', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString("'/dev_copy/'", $this->controller);
+        self::assertStringContainsString('$physical_controller_path', $this->controller);
+        self::assertStringContainsString('$is_dev_copy_code', $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
