@@ -23,7 +23,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: dev-copy-ops
@@ -35,6 +34,13 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Restrict manual dispatch actor
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.actor }}" = "vasilpo"
+
       - name: Checkout request
         uses: actions/checkout@v4
 
@@ -107,31 +113,3 @@ jobs:
             printf '%s\n' "$CLEAN_OUTPUT"
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
-
-      - name: Record sanitized result
-        if: always()
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ steps.request.outputs.request_id }}
-          OPERATION: ${{ steps.request.outputs.operation }}
-          RC: ${{ steps.remote.outputs.rc }}
-          RESULT: ${{ steps.remote.outputs.output }}
-        with:
-          script: |
-            const body = [
-              '## Dev Copy Ops result',
-              '',
-              'request: `' + (process.env.REQUEST_ID || 'unknown') + '`',
-              'operation: `' + (process.env.OPERATION || 'unknown') + '`',
-              'remote_rc: `' + (process.env.RC || 'unknown') + '`',
-              '',
-              '```text',
-              process.env.RESULT || 'workflow failed before sanitized output',
-              '```'
-            ].join('\n');
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: 204,
-              body,
-            });
