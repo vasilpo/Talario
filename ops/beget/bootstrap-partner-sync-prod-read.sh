@@ -123,6 +123,15 @@ SUCCESS=1
 rm -f "$RESPONSE"
 rm -f "$BACKUP"
 
+/usr/bin/nohup /bin/sh -c '
+  sleep 600
+  if [ -f "$1" ]; then
+    : > "$1"
+    rm -f "$1"
+  fi
+' sh "$TOKEN_FILE" >/dev/null 2>&1 &
+
 echo "BOOTSTRAP_OK"
 echo "TOKEN_FILE=$TOKEN_FILE"
-echo "Copy that token into GitHub Actions secret PARTNER_SYNC_PROD_TOKEN, then delete the file."
+echo "TOKEN_TTL_SECONDS=600"
+echo "Copy that token into GitHub Actions secret PARTNER_SYNC_PROD_TOKEN. The tmpfs file self-destructs in 10 minutes."
