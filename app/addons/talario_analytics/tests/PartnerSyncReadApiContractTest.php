@@ -11,6 +11,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $controller;
     private string $addon_xml;
     private string $trusted_controllers;
+    private string $write_capability;
 
     protected function setUp(): void
     {
@@ -20,6 +21,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->controller = (string) file_get_contents($controller_path);
         $this->addon_xml = (string) file_get_contents($addon_path);
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
+        $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -73,10 +75,40 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('array_merge($schedule, $legacy_schedule)', $this->controller);
     }
 
-    public function testWriteMethodsAreRejected(): void
+    public function testPartnerSyncWriteIsPostOnlyAndDevCopyOnly(): void
     {
-        self::assertStringContainsString("REQUEST_METHOD'] !== 'GET'", $this->controller);
-        self::assertStringContainsString("['error' => 'method_not_allowed']", $this->controller);
+        self::assertStringContainsString("$partner_sync_write_mode = $mode === 'catalog_apply'", $this->controller);
+        self::assertStringContainsString("REQUEST_METHOD'] !== 'POST'", $this->controller);
+        self::assertStringContainsString("if ($mode === 'catalog_apply' && !$dev_copy_enabled)", $this->controller);
+        self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_WRITE', $this->controller);
+        self::assertStringContainsString("'catalog_apply' => true", $this->trusted_controllers);
+    }
+
+    public function testPartnerSyncWriteRequiresSeparateDevWriteGateAndApproval(): void
+    {
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->write_capability);
+        self::assertStringContainsString("['error' => 'partner_sync_write_disabled']", $this->write_capability);
+        self::assertStringContainsString("['error' => 'approval_id_required']", $this->write_capability);
+        self::assertStringContainsString("'dry_run' => true", $this->write_capability);
+    }
+
+    public function testPartnerSyncWriteUsesCoreProductAndEcarterHooks(): void
+    {
+        self::assertStringContainsString('fn_update_product(', $this->write_capability);
+        self::assertStringContainsString("$product_data['booking_data'] = $booking_data", $this->write_capability);
+        self::assertStringContainsString('?:ec_table_booking_system', $this->write_capability);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.write-result.v1'", $this->write_capability);
+    }
+
+    public function testPartnerSyncCreateDefaultsToHidden(): void
+    {
+        self::assertStringContainsString("$data['status'] = 'H';", $this->write_capability);
+        self::assertStringContainsString('New Partner Sync cards are hidden by default', $this->write_capability);
+    }
+
+    public function testPartnerSyncWriteRejectsPartnerReassignment(): void
+    {
+        self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
     }
 
     public function testCatalogRequiresExplicitEnvironmentGate(): void
