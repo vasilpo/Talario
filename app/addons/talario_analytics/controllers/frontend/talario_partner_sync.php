@@ -310,6 +310,8 @@ function fn_talario_partner_sync_write_media(array $payload): void
     $prepared = [];
     $temporary_files = [];
 
+    $media_error = null;
+
     try {
         foreach ($validated as $image) {
             $path = fn_create_temp_file() . '.' . $image['extension'];
@@ -339,13 +341,17 @@ function fn_talario_partner_sync_write_media(array $payload): void
             throw new RuntimeException('media_write_failed');
         }
     } catch (RuntimeException $exception) {
-        fn_talario_partner_sync_write_json(500, ['error' => $exception->getMessage()]);
+        $media_error = $exception->getMessage();
     } finally {
         foreach ($temporary_files as $path) {
             if (is_file($path)) {
                 fn_rm($path);
             }
         }
+    }
+
+    if ($media_error !== null) {
+        fn_talario_partner_sync_write_json(500, ['error' => $media_error]);
     }
 
     $main = fn_get_image_pairs($product_id, 'product', 'M', true, true, CART_LANGUAGE);
