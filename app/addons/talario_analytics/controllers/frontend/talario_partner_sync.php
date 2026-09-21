@@ -27,10 +27,13 @@ function fn_talario_partner_sync_write_authenticate(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $request_path = (string) ($_SERVER['SCRIPT_NAME'] ?? $_SERVER['REQUEST_URI'] ?? '');
-    $is_dev_copy_path = strpos($request_path, '/dev_copy/') !== false;
+    $is_dev_copy_request = strpos($request_path, '/dev_copy/') !== false;
+    $physical_controller_path = str_replace('\\', '/', __FILE__);
+    $is_dev_copy_code = strpos($physical_controller_path, '/dev_copy/') !== false;
 
     $dev_copy_enabled = $is_development
-        && $is_dev_copy_path
+        && $is_dev_copy_request
+        && $is_dev_copy_code
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
         && TALARIO_PARTNER_SYNC_DEV_COPY === true;
 
