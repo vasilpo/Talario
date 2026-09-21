@@ -84,13 +84,27 @@ jobs:
         shell: bash
         env:
           BEGET_USER: ${{ secrets.BEGET_USER }}
-          OPERATION: ${{ steps.request.outputs.operation }}
         run: |
           set -euo pipefail
           BEGET_HOST="salvage.beget.com"
+          case "${{ steps.request.outputs.operation }}" in
+            status)
+              REMOTE_COMMAND='talario-dev-ops status'
+              ;;
+            git-status)
+              REMOTE_COMMAND='talario-dev-ops git-status'
+              ;;
+            php-lint)
+              REMOTE_COMMAND='talario-dev-ops php-lint'
+              ;;
+            *)
+              echo "ERROR: operation is not allowlisted"
+              exit 64
+              ;;
+          esac
 
           set +e
-          RAW_OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION" 2>&1)"
+          RAW_OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "$REMOTE_COMMAND" 2>&1)"
           RC=$?
           set -e
 
