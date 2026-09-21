@@ -12,6 +12,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $addon_xml;
     private string $trusted_controllers;
     private string $write_capability;
+    private string $dev_dispatcher;
     private string $cli_runner;
 
     protected function setUp(): void
@@ -23,6 +24,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->addon_xml = (string) file_get_contents($addon_path);
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
+        $this->dev_dispatcher = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/beget/talario-dev-github-dispatcher.sh');
         $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
     }
 
@@ -124,6 +126,44 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
         self::assertStringContainsString("'images' => [", $this->write_capability);
     }
+
+
+    public function testDevDispatcherHasFixedPartnerSyncCommands(): void
+    {
+        self::assertStringContainsString(
+            '"talario-partner-sync-dry-run")',
+            $this->dev_dispatcher
+        );
+        self::assertStringContainsString('"$PHP_REAL" "$RUNNER_TMP"', $this->dev_dispatcher);
+        self::assertStringContainsString('20971520', $this->dev_dispatcher);
+        self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
+        self::assertStringContainsString('PAYLOAD_READ_FAILED', $this->dev_dispatcher);
+        self::assertStringNotContainsString('PATH="/usr/local/bin:/usr/bin:/bin"', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" rev-parse HEAD', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" show "$RUNNER_COMMIT:$RUNNER_REL" > "$RUNNER_TMP"', $this->dev_dispatcher);
+        self::assertStringContainsString('[ -x /usr/bin/git ] || fail "required git binary unavailable" 81', $this->dev_dispatcher);
+        self::assertStringContainsString('dev_copy worktree must be clean for partner sync', $this->dev_dispatcher);
+        self::assertStringContainsString('partner sync CLI runner integrity check failed', $this->dev_dispatcher);
+        self::assertStringContainsString('trusted PHP binary owner mismatch', $this->dev_dispatcher);
+        self::assertStringContainsString('trusted PHP binary is group/world writable', $this->dev_dispatcher);
+        self::assertStringContainsString('mktemp "$STATE_DIR/runner.XXXXXX.php"', $this->dev_dispatcher);
+        self::assertStringContainsString('EXPECTED_RUNNER_SHA256="dd94ab1a5f5c9774511408cdf8d54a406643848b351d2666d8f8092ff23f584d"', $this->dev_dispatcher);
+        self::assertStringContainsString('partner sync CLI runner is not allowlisted', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/timeout --signal=TERM --kill-after=5s 60s', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin"', $this->dev_dispatcher);
+        self::assertStringContainsString('partner sync dry-run execution timeout', $this->dev_dispatcher);
+        self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/timeout 30s /usr/bin/head -c 20971521', $this->dev_dispatcher);
+    }
+
+    public function testDevDispatcherDoesNotExposeGenericShellForPartnerSync(): void
+    {
+        self::assertStringNotContainsString('eval ', $this->dev_dispatcher);
+        self::assertStringNotContainsString('bash -c "$REQUEST"', $this->dev_dispatcher);
+        self::assertStringContainsString('fail "SSH command is not allowlisted"', $this->dev_dispatcher);
+    }
+
 
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {

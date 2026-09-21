@@ -46,7 +46,7 @@ No arbitrary file paths, shell fragments, HTTP probes, or generic cleanup operat
 
 Install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout and bind the GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and writable only by that account. Verify the binding out-of-band before merge.
 
-The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, and `talario-dev-ops php-lint`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
+The forced command permits the reviewed dev_copy operations `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, `talario-dev-ops php-lint`, plus the Partner Sync fixed command `talario-partner-sync-dry-run`. Partner Sync payloads are accepted only through stdin, bounded to 20 MiB, limited by a 30-second receive timeout, and validated before the CLI runner starts. The command requires explicit `dry_run=true`. Remote apply is intentionally not exposed at this stage. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
 
 ## Verified bootstrap state
 
@@ -83,3 +83,14 @@ If Beget rotates the SSH host key, do not fall back to runtime `ssh-keyscan`. Ve
 The live dispatcher remains an out-of-repository security boundary and is not self-updatable through GitHub Actions. This PR adds only the narrowly scoped `worktree-repair` operation. After its one-time installation on Beget, the current known dirty state can be repaired remotely without exposing arbitrary shell access.
 
 The current known dirty dev_copy state is caused by the untracked file `config.local.php.bak-partner-sync-20260920-015402`. The approved `worktree-repair` operation preserves it by moving it to `~/.local/state/talario/dev-copy-backups/`; it does not delete or print the file contents.
+
+
+## Partner Sync write bootstrap
+
+The repository dispatcher source now supports one fixed dev_copy-only Partner Sync operation:
+
+- `talario-partner-sync-dry-run` — validates a bounded JSON payload from stdin, requires explicit `dry_run=true`, and has a hard 30-second receive timeout.
+
+The command executes only the absolute dev_copy runner `/home/t/tyman5tb/talario.ru/public_html/dev_copy/ops/partner-sync-apply.php` through `/usr/local/bin/php8.2`. The runner itself refuses to run outside the real `/talario.ru/dev_copy` root and checks the development/dev-copy gates. Remote apply is intentionally deferred until a real-source dry-run passes and a separate reviewed authorization design is approved.
+
+The live dispatcher under `/home/t/tyman5tb/.local/bin/talario-dev-github-dispatcher` remains an out-of-repository security boundary and does not self-update. After this source change is reviewed and merged, the live copy must be updated once out-of-band before the new commands can be used. Do not weaken that boundary by adding generic shell execution.
