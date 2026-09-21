@@ -89,7 +89,14 @@ case "$REQUEST" in
   "talario-dev-partner-sync-apply")
     mark_dispatcher
     [ -z "$(git status --porcelain)" ] || fail "dev_copy has local changes; refusing Partner Sync apply" 71
-    [ -f ops/partner-sync-apply.php ] && [ ! -L ops/partner-sync-apply.php ] || fail "Partner Sync CLI runner missing" 72
+    RUNNER="$DEV_COPY/ops/partner-sync-apply.php"
+    [ -f "$RUNNER" ] && [ ! -L "$RUNNER" ] || fail "Partner Sync CLI runner missing" 72
+
+    # Open the reviewed runner once and execute that exact inode through the inherited fd.
+    # A concurrent path replacement after this point cannot change what PHP executes.
+    exec 8< "$RUNNER"
+    [ "$(readlink -f "/proc/$/fd/8")" = "$RUNNER" ] || fail "Partner Sync CLI runner path mismatch" 72
+    [ "$(stat -Lc '%F' "/proc/$/fd/8")" = "regular file" ] || fail "Partner Sync CLI runner is not regular" 72
 
     TMP_PAYLOAD="$(mktemp)"
     chmod 600 "$TMP_PAYLOAD"
@@ -100,7 +107,7 @@ case "$REQUEST" in
     [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "Partner Sync payload exceeds 20 MiB" 73
     [ "$PAYLOAD_SIZE" -gt 0 ] || fail "Partner Sync payload is empty" 74
 
-    /usr/local/bin/php8.2 ops/partner-sync-apply.php < "$TMP_PAYLOAD"
+    /usr/local/bin/php8.2 /proc/self/fd/8 < "$TMP_PAYLOAD"
     ;;
 
   "talario-dev-ops worktree-repair")
