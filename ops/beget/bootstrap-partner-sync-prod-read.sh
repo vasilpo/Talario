@@ -10,6 +10,7 @@ CONFIG="$ROOT/config.local.php"
 PHP="/usr/local/bin/php8.2"
 CURL="/usr/bin/curl"
 STATE_DIR="$HOME/.local/state/talario/partner-sync-prod"
+RUNTIME_DIR="/dev/shm"
 EXPECTED_BRANCH="prod"
 
 fail() {
@@ -31,6 +32,8 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="$STATE_DIR/config.local.php.$STAMP.bak"
 TMP="$STATE_DIR/config.local.php.$STAMP.tmp"
 RESPONSE="$STATE_DIR/smoke.$STAMP.json"
+TOKEN_FILE="$RUNTIME_DIR/talario-partner-sync-prod-token.$"
+HEADER_FILE="$RUNTIME_DIR/talario-partner-sync-prod-header.$"
 
 cp -p "$CONFIG" "$BACKUP"
 chmod 600 "$BACKUP"
@@ -55,8 +58,8 @@ if ($raw === false) {
     fwrite(STDERR, "config read failed\n");
     exit(2);
 }
-$raw = preg_replace("/^\\s*define\\(\\x27TALARIO_PARTNER_SYNC_PROD_READ\\x27\\s*,.*?\\);\\s*$/m", "", $raw);
-$raw = preg_replace("/^\\s*define\\(\\x27TALARIO_PARTNER_SYNC_TOKEN_HASH\\x27\\s*,.*?\\);\\s*$/m", "", $raw);
+$raw = preg_replace("/^\\s*define\\(\\s*[\\x27\x22]TALARIO_PARTNER_SYNC_PROD_READ[\\x27\x22]\\s*,.*?\\);\\s*$/m", "", $raw);
+$raw = preg_replace("/^\\s*define\\(\\s*[\\x27\x22]TALARIO_PARTNER_SYNC_TOKEN_HASH[\\x27\x22]\\s*,.*?\\);\\s*$/m", "", $raw);
 $block = "\ndefine(\x27TALARIO_PARTNER_SYNC_PROD_READ\x27, true);\n"
        . "define(\x27TALARIO_PARTNER_SYNC_TOKEN_HASH\x27, \x27sha256:" . $hash . "\x27);\n";
 if (preg_match("/\\?>\\s*$/", $raw)) {
@@ -81,24 +84,27 @@ cleanup() {
   if [ "$SUCCESS" -ne 1 ] && [ "$CONFIG_REPLACED" -eq 1 ]; then
     cp -p "$BACKUP" "$CONFIG" || true
   fi
-  rm -f "$TMP" "$RESPONSE"
+  rm -f "$TMP" "$RESPONSE" "$HEADER_FILE"
   exit "$rc"
 }
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-mv "$TMP" "$CONFIG"
 CONFIG_REPLACED=1
+mv "$TMP" "$CONFIG"
 
-HTTP="$(
-  {
-    printf 'header = "Authorization: Bearer %s"\n' "$TOKEN"
-  } | "$CURL" -sS -o "$RESPONSE" -w '%{http_code}' --max-time 30 \
-      --resolve talario.ru:443:127.0.0.1 \
-      --config - \
-      "https://talario.ru/index.php?dispatch=talario_analytics.catalog&limit=1"
-)"
+printf '%s' "$TOKEN" > "$TOKEN_FILE"
+chmod 600 "$TOKEN_FILE"
+printf 'Authorization: Bearer %s\n' "$TOKEN" > "$HEADER_FILE"
+chmod 600 "$HEADER_FILE"
+unset TOKEN
+
+HTTP="$("$CURL" -sS -o "$RESPONSE" -w '%{http_code}' --max-time 30 \
+  --resolve talario.ru:443:127.0.0.1 \
+  --header "@$HEADER_FILE" \
+  "https://talario.ru/index.php?dispatch=talario_analytics.catalog&limit=1")"
+rm -f "$HEADER_FILE"
 [ "$HTTP" = "200" ] || fail "catalog smoke returned HTTP $HTTP" 73
 
 "$PHP" -r '
@@ -115,13 +121,5 @@ rm -f "$RESPONSE"
 rm -f "$BACKUP"
 
 echo "BOOTSTRAP_OK"
-if [ -e /dev/tty ] && [ -w /dev/tty ]; then
-  {
-    echo
-    echo "PARTNER_SYNC_PROD_TOKEN (copy once to GitHub Actions secret):"
-    printf '%s\n' "$TOKEN"
-    echo
-  } > /dev/tty
-else
-  fail "interactive terminal required to reveal token safely" 75
-fi
+echo "TOKEN_FILE=$TOKEN_FILE"
+echo "Copy that token into GitHub Actions secret PARTNER_SYNC_PROD_TOKEN, then delete the file."
