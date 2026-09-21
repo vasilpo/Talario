@@ -42,10 +42,27 @@ function fn_talario_analytics_crm_rate_limit(string $provided_hash): void
 function fn_talario_analytics_crm_response(): void
 {
     $after_user_id = max(0, (int) ($_GET['after_user_id'] ?? 0));
-    $include_phone = isset($_GET['include_phone']) && (string) $_GET['include_phone'] === '1';
+
+    $phone_token = trim((string) ($_SERVER['HTTP_X_TALARIO_CRM_PHONE_TOKEN'] ?? ''));
+    $phone_token_hash = fn_talario_analytics_canonical_token_hash(
+        defined('TALARIO_CRM_PHONE_TOKEN_HASH') ? (string) TALARIO_CRM_PHONE_TOKEN_HASH : ''
+    );
     $phone_read_enabled = defined('TALARIO_CRM_PHONE_READ') && TALARIO_CRM_PHONE_READ === true;
-    if ($include_phone && !$phone_read_enabled) {
-        fn_talario_analytics_json_response(403, ['error' => 'crm_phone_read_disabled']);
+    $include_phone = false;
+
+    if ($phone_token !== '') {
+        if (!$phone_read_enabled) {
+            fn_talario_analytics_json_response(403, ['error' => 'crm_phone_read_disabled']);
+        }
+        if (!preg_match('/^sha256:[a-f0-9]{64}$/', $phone_token_hash)) {
+            fn_talario_analytics_json_response(503, ['error' => 'crm_phone_api_not_configured']);
+        }
+
+        $provided_phone_hash = 'sha256:' . hash('sha256', $phone_token);
+        if (strlen($phone_token) < 32 || !hash_equals($phone_token_hash, $provided_phone_hash)) {
+            fn_talario_analytics_json_response(401, ['error' => 'crm_phone_unauthorized']);
+        }
+        $include_phone = true;
     }
 
     $limit = (int) ($_GET['limit'] ?? 100);
