@@ -535,17 +535,348 @@ function fn_talario_analytics_catalog_response(): void
     ]);
 }
 
+
+function fn_talario_analytics_crm_table_exists(string $table): bool
+{
+    return (bool) db_get_row("SHOW TABLES LIKE '?:?p'", $table);
+}
+
+function fn_talario_analytics_crm_rate_limit(string $provided_hash): void
+{
+    $now = time();
+    $bucket = (int) floor($now / 60);
+    $scopes = [
+        [hash('sha256', 'crm_customer360:global'), 30],
+        [hash('sha256', 'crm_customer360:credential:' . $provided_hash), 10],
+    ];
+
+    foreach ($scopes as [$scope_hash, $limit]) {
+        db_query(
+            'INSERT INTO ?:talario_analytics_rate_limits'
+            . ' (scope_hash, minute_bucket, request_count, updated_at)'
+            . ' VALUES (?s, ?i, 1, ?i)'
+            . ' ON DUPLICATE KEY UPDATE request_count = request_count + 1, updated_at = ?i',
+            $scope_hash,
+            $bucket,
+            $now,
+            $now
+        );
+        $count = (int) db_get_field(
+            'SELECT request_count FROM ?:talario_analytics_rate_limits'
+            . ' WHERE scope_hash = ?s AND minute_bucket = ?i',
+            $scope_hash,
+            $bucket
+        );
+        if ($count > $limit) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario CRM customer360 rate limit exceeded',
+            ]);
+            fn_talario_analytics_json_response(429, ['error' => 'rate_limit_exceeded']);
+        }
+    }
+}
+
+/**
+ * Fresh registered-customer snapshot for CRM-01.
+ *
+ * Deliberately excludes phone, address, profile fields, payment details,
+ * free-form search terms and any raw analytics identifiers.
+ */
+function fn_talario_analytics_customer360_response(): void
+{
+    $after_user_id = max(0, (int) ($_GET['after_user_id'] ?? 0));
+    $limit = (int) ($_GET['limit'] ?? 50);
+    if ($limit < 1 || $limit > 100) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_limit', 'max_limit' => 100]);
+    }
+
+    $registered_from_raw = trim((string) ($_GET['registered_from'] ?? ''));
+    $registered_from = null;
+    if ($registered_from_raw !== '') {
+        $registered_from = fn_talario_analytics_parse_date($registered_from_raw);
+        if (!$registered_from) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_registered_from']);
+        }
+    }
+
+    $query = 'SELECT user_id, email, firstname, lastname, status, timestamp, last_login'
+        . ' FROM ?:users'
+        . ' WHERE user_type = ?s AND user_id > ?i';
+    $args = ['C', $after_user_id];
+
+    if ($registered_from) {
+        $query .= ' AND timestamp >= ?i';
+        $args[] = $registered_from->setTime(0, 0, 0)->getTimestamp();
+    }
+
+    $query .= ' ORDER BY user_id ASC LIMIT ?i';
+    $args[] = $limit + 1;
+
+    $rows = db_get_array($query, ...$args);
+    $truncated = count($rows) > $limit;
+    if ($truncated) {
+        $rows = array_slice($rows, 0, $limit);
+    }
+
+    $user_ids = array_map(static function (array $row): int {
+        return (int) $row['user_id'];
+    }, $rows);
+
+    $points_by_user = [];
+    if ($user_ids) {
+        foreach (db_get_array(
+            'SELECT user_id, data FROM ?:user_data WHERE user_id IN (?n) AND type = ?s',
+            $user_ids,
+            'W'
+        ) as $row) {
+            $points_by_user[(int) $row['user_id']] = (float) $row['data'];
+        }
+    }
+
+    $orders_by_user = [];
+    $order_ids = [];
+    if ($user_ids) {
+        foreach (db_get_array(
+            'SELECT order_id, user_id, status, total, timestamp, company_id'
+            . ' FROM ?:orders'
+            . ' WHERE user_id IN (?n) AND is_parent_order != ?s'
+            . ' ORDER BY timestamp ASC, order_id ASC',
+            $user_ids,
+            'Y'
+        ) as $row) {
+            $user_id = (int) $row['user_id'];
+            $order_id = (int) $row['order_id'];
+            $order_ids[] = $order_id;
+            if (!isset($orders_by_user[$user_id])) {
+                $orders_by_user[$user_id] = [];
+            }
+            $orders_by_user[$user_id][] = [
+                'order_id' => $order_id,
+                'status' => (string) $row['status'],
+                'total' => (float) $row['total'],
+                'timestamp' => (int) $row['timestamp'],
+                'company_id' => (int) $row['company_id'],
+                'products' => [],
+            ];
+        }
+    }
+
+    $products_by_order = [];
+    if ($order_ids) {
+        foreach (db_get_array(
+            'SELECT order_id, product_id, product, amount, price'
+            . ' FROM ?:order_details'
+            . ' WHERE order_id IN (?n)'
+            . ' ORDER BY order_id ASC, item_id ASC',
+            array_values(array_unique($order_ids))
+        ) as $row) {
+            $order_id = (int) $row['order_id'];
+            $products_by_order[$order_id][] = [
+                'product_id' => (int) $row['product_id'],
+                'name' => (string) $row['product'],
+                'amount' => (int) $row['amount'],
+                'price' => (float) $row['price'],
+            ];
+        }
+    }
+
+    foreach ($orders_by_user as &$user_orders) {
+        foreach ($user_orders as &$order) {
+            $order['products'] = $products_by_order[(int) $order['order_id']] ?? [];
+        }
+        unset($order);
+    }
+    unset($user_orders);
+
+    $saved_by_user = [];
+    if ($user_ids) {
+        $lang_code = (string) Registry::get('settings.Appearance.default_language');
+        if ($lang_code === '') {
+            $lang_code = 'ru';
+        }
+        foreach (db_get_array(
+            'SELECT usp.user_id, usp.type, usp.product_id, usp.amount, usp.price, usp.timestamp, pd.product'
+            . ' FROM ?:user_session_products usp'
+            . ' LEFT JOIN ?:product_descriptions pd'
+            . ' ON pd.product_id = usp.product_id AND pd.lang_code = ?s'
+            . ' WHERE usp.user_id IN (?n) AND usp.type IN (?a) AND usp.item_type = ?s'
+            . ' ORDER BY usp.user_id ASC, usp.timestamp DESC',
+            $lang_code,
+            $user_ids,
+            ['C', 'W'],
+            'P'
+        ) as $row) {
+            $user_id = (int) $row['user_id'];
+            $kind = (string) $row['type'] === 'W' ? 'wishlist' : 'cart';
+            if (!isset($saved_by_user[$user_id])) {
+                $saved_by_user[$user_id] = ['cart' => [], 'wishlist' => []];
+            }
+            $saved_by_user[$user_id][$kind][] = [
+                'product_id' => (int) $row['product_id'],
+                'name' => (string) ($row['product'] ?? ''),
+                'amount' => (int) $row['amount'],
+                'price' => (float) $row['price'],
+                'timestamp' => (int) $row['timestamp'],
+            ];
+        }
+    }
+
+    $subscriptions_by_email = [];
+    $emails = array_values(array_filter(array_map(static function (array $row): string {
+        return trim((string) $row['email']);
+    }, $rows)));
+    if ($emails) {
+        foreach (db_get_array(
+            'SELECT s.email, s.subscriber_id, uml.list_id, uml.confirmed, ml.status'
+            . ' FROM ?:subscribers s'
+            . ' INNER JOIN ?:user_mailing_lists uml ON uml.subscriber_id = s.subscriber_id'
+            . ' INNER JOIN ?:mailing_lists ml ON ml.list_id = uml.list_id'
+            . ' WHERE s.email IN (?a)'
+            . ' ORDER BY s.email ASC, uml.list_id ASC',
+            $emails
+        ) as $row) {
+            $email_key = strtolower(trim((string) $row['email']));
+            if (!isset($subscriptions_by_email[$email_key])) {
+                $subscriptions_by_email[$email_key] = [
+                    'subscriber_id' => (int) $row['subscriber_id'],
+                    'lists' => [],
+                    'confirmed' => false,
+                ];
+            }
+            $is_confirmed = (int) $row['confirmed'] === 1
+                && in_array((string) $row['status'], ['A', 'H'], true);
+            $subscriptions_by_email[$email_key]['lists'][] = [
+                'list_id' => (int) $row['list_id'],
+                'confirmed' => (int) $row['confirmed'] === 1,
+                'list_status' => (string) $row['status'],
+            ];
+            if ($is_confirmed) {
+                $subscriptions_by_email[$email_key]['confirmed'] = true;
+            }
+        }
+    }
+
+    $resource_booking_counts = [];
+    $legacy_booking_counts = [];
+    if ($order_ids && fn_talario_analytics_crm_table_exists('talario_resource_bookings')) {
+        foreach (db_get_array(
+            'SELECT order_id, COUNT(*) AS booking_count'
+            . ' FROM ?:talario_resource_bookings'
+            . ' WHERE order_id IN (?n) GROUP BY order_id',
+            array_values(array_unique($order_ids))
+        ) as $row) {
+            $resource_booking_counts[(int) $row['order_id']] = (int) $row['booking_count'];
+        }
+    }
+    if ($order_ids && fn_talario_analytics_crm_table_exists('ec_table_booking_system_booking_info')) {
+        foreach (db_get_array(
+            'SELECT order_id, COUNT(*) AS booking_count'
+            . ' FROM ?:ec_table_booking_system_booking_info'
+            . ' WHERE order_id IN (?n) GROUP BY order_id',
+            array_values(array_unique($order_ids))
+        ) as $row) {
+            $legacy_booking_counts[(int) $row['order_id']] = (int) $row['booking_count'];
+        }
+    }
+
+    $customers = [];
+    foreach ($rows as $row) {
+        $user_id = (int) $row['user_id'];
+        $orders = $orders_by_user[$user_id] ?? [];
+        $last_order = $orders ? $orders[count($orders) - 1] : null;
+        $resource_booking_count = 0;
+        $legacy_booking_count = 0;
+        foreach ($orders as $order) {
+            $order_id = (int) $order['order_id'];
+            $resource_booking_count += (int) ($resource_booking_counts[$order_id] ?? 0);
+            $legacy_booking_count += (int) ($legacy_booking_counts[$order_id] ?? 0);
+        }
+
+        $email_key = strtolower(trim((string) $row['email']));
+        $newsletter = $subscriptions_by_email[$email_key] ?? [
+            'subscriber_id' => null,
+            'lists' => [],
+            'confirmed' => false,
+        ];
+        $saved = $saved_by_user[$user_id] ?? ['cart' => [], 'wishlist' => []];
+
+        $customers[] = [
+            'user_id' => $user_id,
+            'email' => (string) $row['email'],
+            'firstname' => (string) $row['firstname'],
+            'lastname' => (string) $row['lastname'],
+            'status' => (string) $row['status'],
+            'registered_at' => (int) $row['timestamp'],
+            'last_login_at' => (int) $row['last_login'],
+            'reward_points' => (float) ($points_by_user[$user_id] ?? 0),
+            'newsletter' => $newsletter,
+            'orders_count' => count($orders),
+            'last_order' => $last_order,
+            'orders' => $orders,
+            'resource_booking_count' => $resource_booking_count,
+            'legacy_booking_count' => $legacy_booking_count,
+            'cart' => $saved['cart'],
+            'wishlist' => $saved['wishlist'],
+        ];
+    }
+
+    $timezone = new DateTimeZone('Europe/Moscow');
+    fn_log_event('general', 'runtime', [
+        'message' => 'Talario CRM customer360 request completed',
+        'mode' => 'customer360',
+        'customer_count' => count($customers),
+        'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
+    ]);
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'crm.customer360.v1',
+        'generated_at' => (new DateTimeImmutable('now', $timezone))->format(DateTimeInterface::ATOM),
+        'timezone' => 'Europe/Moscow',
+        'registered_from' => $registered_from_raw !== '' ? $registered_from_raw : null,
+        'capabilities' => [
+            'profiles' => true,
+            'orders' => true,
+            'bookings' => true,
+            'cart' => true,
+            'wishlist' => true,
+            'reward_points' => true,
+            'newsletter_consent' => true,
+            'product_views' => false,
+        ],
+        'customers' => $customers,
+        'has_more' => $truncated,
+        'next_user_id' => $truncated && $customers
+            ? (int) $customers[count($customers) - 1]['user_id']
+            : null,
+    ]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'customer360'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
+
+if ($mode === 'customer360') {
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $dev_copy_enabled = $is_development
+        && defined('TALARIO_CRM_DEV_COPY')
+        && TALARIO_CRM_DEV_COPY === true;
+    $prod_read_enabled = !$is_development
+        && defined('TALARIO_CRM_PROD_READ')
+        && TALARIO_CRM_PROD_READ === true;
+
+    if (!$dev_copy_enabled && !$prod_read_enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+}
+
 if ($mode === 'catalog') {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
@@ -562,7 +893,31 @@ if ($mode === 'catalog') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if ($mode === 'catalog') {
+
+if ($mode === 'customer360') {
+    $stored_token_hash = defined('TALARIO_CRM_TOKEN_HASH')
+        ? trim((string) TALARIO_CRM_TOKEN_HASH)
+        : '';
+    $analytics_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+    if ($analytics_token_hash !== '' && !preg_match('/^sha256:[a-f0-9]{64}$/', $analytics_token_hash)) {
+        $analytics_token_hash = 'sha256:' . hash('sha256', $analytics_token_hash);
+    }
+    $partner_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
+        ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
+        : '';
+
+    foreach ([$analytics_token_hash, $partner_token_hash] as $other_token_hash) {
+        if (preg_match('/^sha256:[a-f0-9]{64}$/', $other_token_hash)
+            && preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)
+            && hash_equals($other_token_hash, $stored_token_hash)
+        ) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario CRM API misconfigured: credential is not isolated',
+            ]);
+            fn_talario_analytics_json_response(503, ['error' => 'crm_api_misconfigured']);
+        }
+    }
+} elseif ($mode === 'catalog') {
     $stored_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
         ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
         : '';
@@ -585,10 +940,13 @@ if ($mode === 'catalog') {
 }
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    fn_talario_analytics_json_response(503, ['error' => $mode === 'catalog'
-        ? 'partner_sync_api_not_configured'
-        : 'analytics_api_not_configured'
-    ]);
+    $error = 'analytics_api_not_configured';
+    if ($mode === 'catalog') {
+        $error = 'partner_sync_api_not_configured';
+    } elseif ($mode === 'customer360') {
+        $error = 'crm_api_not_configured';
+    }
+    fn_talario_analytics_json_response(503, ['error' => $error]);
 }
 
 $provided_token = fn_talario_analytics_bearer_token();
@@ -606,6 +964,11 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
 if ($mode === 'catalog') {
     // The selected bearer token was validated with hash_equals above before dispatch.
     fn_talario_analytics_catalog_response();
+}
+
+if ($mode === 'customer360') {
+    fn_talario_analytics_crm_rate_limit($provided_hash);
+    fn_talario_analytics_customer360_response();
 }
 
 
