@@ -72,12 +72,20 @@ case "$REQUEST" in
     MODE="${REQUEST#talario-partner-sync-}"
     echo "OPERATION=partner-sync-$MODE"
 
-    STATE_DIR="/home/t/tyman5tb/.local/state/talario/partner-sync"
+    STATE_DIR="$HOME/.local/state/talario/partner-sync"
     mkdir -p "$STATE_DIR"
     chmod 700 "$STATE_DIR"
+
+    LOCK_DIR="$STATE_DIR/run.lock"
+    mkdir "$LOCK_DIR" 2>/dev/null || fail "partner sync operation already running" 74
+
     PAYLOAD_FILE="$(mktemp "$STATE_DIR/request.XXXXXX.json")"
     chmod 600 "$PAYLOAD_FILE"
-    trap 'rm -f -- "$PAYLOAD_FILE"' EXIT HUP INT TERM
+    cleanup_partner_sync() {
+      rm -f -- "$PAYLOAD_FILE"
+      rmdir -- "$LOCK_DIR" 2>/dev/null || true
+    }
+    trap cleanup_partner_sync EXIT HUP INT TERM
 
     # Read at most 20 MiB + 1 byte before PHP touches application code.
     head -c 20971521 > "$PAYLOAD_FILE"
@@ -85,7 +93,7 @@ case "$REQUEST" in
     [ "$PAYLOAD_SIZE" -gt 0 ] || fail "partner sync payload is empty" 71
     [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "partner sync payload exceeds 20 MiB" 72
 
-    VALIDATION="$(/usr/local/bin/php8.2 -r '
+    VALIDATION="$(env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 -n -r '
       $path = $argv[1];
       $mode = $argv[2];
       $raw = (string) file_get_contents($path);
@@ -114,7 +122,7 @@ case "$REQUEST" in
     ' "$PAYLOAD_FILE" "$MODE" 2>&1)" || fail "partner sync payload validation failed" 73
     [ "$VALIDATION" = "OK" ] || fail "partner sync payload validation failed" 73
 
-    /usr/local/bin/php8.2 "$DEV_COPY/ops/partner-sync-apply.php" < "$PAYLOAD_FILE"
+    env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 "$DEV_COPY/ops/partner-sync-apply.php" < "$PAYLOAD_FILE"
     ;;
 
   "talario-dev-ops worktree-repair")
