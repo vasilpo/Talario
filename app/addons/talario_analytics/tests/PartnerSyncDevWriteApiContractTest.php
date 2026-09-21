@@ -20,6 +20,7 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
     {
         self::assertStringContainsString('fn_is_development()', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
+        self::assertStringContainsString("'/dev_copy/'", $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
@@ -61,5 +62,6 @@ final class PartnerSyncDevWriteApiContractTest extends TestCase
         self::assertStringContainsString("'image/webp' => 'webp'", $this->controller);
         self::assertStringContainsString('new Products([], \'A\')', $this->controller);
         self::assertStringContainsString('fn_rm($path)', $this->controller);
+        self::assertStringContainsString('$media_error = null', $this->controller);
     }
 }
