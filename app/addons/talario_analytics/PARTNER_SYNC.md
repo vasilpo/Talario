@@ -1,15 +1,26 @@
 # Partner Sync runtime configuration
 
-Partner Sync catalog access is development-copy only.
+Partner Sync catalog access is disabled by default in every environment.
 
-## Required local configuration
+## Development / dev_copy
 
-Define the following constants in the non-versioned local CS-Cart configuration for dev_copy only:
+Define the following constants in the non-versioned local CS-Cart configuration for dev_copy:
 
 ```php
 define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
 define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
 ```
+
+## Production read-only mode
+
+Production catalog reads are permitted only after a separate production rollout decision. The code path remains disabled unless production local configuration explicitly contains:
+
+```php
+define('TALARIO_PARTNER_SYNC_PROD_READ', true);
+define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
+```
+
+This production gate enables only the existing GET-only, PII-free catalog snapshot. It does not add create/update/delete operations.
 
 Generate a dedicated Partner Sync bearer token outside the repository and store only its SHA-256 hash in `TALARIO_PARTNER_SYNC_TOKEN_HASH`.
 
@@ -18,8 +29,9 @@ Requirements:
 - do not commit the raw token or its local configuration file;
 - restrict filesystem permissions on the local configuration;
 - do not reuse the Analytics API credential;
-- do not define these constants in production unless a separate production decision and rollout are approved;
+- production read access requires a separate explicit rollout decision before the constant is defined or code is deployed to PROD;
 - a missing or malformed hash returns `partner_sync_api_not_configured`;
-- a Partner Sync hash matching the Analytics API credential returns `partner_sync_api_misconfigured` and is logged without either credential.
+- a Partner Sync hash matching the Analytics API credential returns `partner_sync_api_misconfigured` and is logged without either credential;
+- write operations remain out of scope and require a separate approval-gated implementation and production decision.
 
 The raw token belongs in the authorized caller's secret store/runtime environment, not in Git or CS-Cart settings.

@@ -79,10 +79,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("['error' => 'method_not_allowed']", $this->controller);
     }
 
-    public function testCatalogIsDevelopmentCopyOnly(): void
+    public function testCatalogRequiresExplicitEnvironmentGate(): void
     {
         self::assertStringContainsString("fn_is_development()", $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
+        self::assertStringContainsString('$prod_read_enabled = !$is_development', $this->controller);
+        self::assertStringContainsString('if (!$dev_copy_enabled && !$prod_read_enabled)', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
 
