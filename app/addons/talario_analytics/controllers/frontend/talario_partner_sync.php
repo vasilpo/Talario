@@ -16,6 +16,12 @@ function fn_talario_partner_sync_write_json(int $status, array $payload): void
 function fn_talario_partner_sync_write_bearer(): string
 {
     $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+    if ($header === '' && function_exists('apache_request_headers')) {
+        $headers = apache_request_headers();
+        $header = is_array($headers)
+            ? (string) ($headers['Authorization'] ?? $headers['authorization'] ?? '')
+            : '';
+    }
     if (!preg_match('/^Bearer\s+(.+)$/i', trim((string) $header), $matches)) {
         return '';
     }
@@ -23,8 +29,17 @@ function fn_talario_partner_sync_write_bearer(): string
     return trim((string) $matches[1]);
 }
 
+function fn_talario_partner_sync_write_table_exists(string $table): bool
+{
+    return (bool) db_get_row("SHOW TABLES LIKE '?:?p'", $table);
+}
+
 function fn_talario_partner_sync_write_rate_limit(): void
 {
+    if (!fn_talario_partner_sync_write_table_exists('talario_analytics_rate_limits')) {
+        fn_talario_partner_sync_write_json(503, ['error' => 'write_rate_limit_unavailable']);
+    }
+
     $now = time();
     $bucket = (int) floor($now / 60);
     $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
@@ -65,14 +80,16 @@ function fn_talario_partner_sync_write_authenticate(): void
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $request_path = (string) ($_SERVER['SCRIPT_NAME'] ?? $_SERVER['REQUEST_URI'] ?? '');
     $is_dev_copy_request = strpos($request_path, '/dev_copy/') !== false;
-    $physical_controller_path = str_replace('\\', '/', __FILE__);
-    $is_dev_copy_code = strpos($physical_controller_path, '/dev_copy/') !== false;
+    $root_path = str_replace('\\', '/', (string) \Tygh\Registry::get('config.dir.root'));
+    $is_dev_copy_root = strpos(rtrim($root_path, '/') . '/', '/dev_copy/') !== false;
 
     $dev_copy_enabled = $is_development
         && $is_dev_copy_request
-        && $is_dev_copy_code
+        && $is_dev_copy_root
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
-        && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true
+        && defined('TALARIO_PARTNER_SYNC_WRITE_ENABLED')
+        && TALARIO_PARTNER_SYNC_WRITE_ENABLED === true;
 
     if (!$dev_copy_enabled) {
         fn_talario_partner_sync_write_json(404, ['error' => 'not_found']);
@@ -196,6 +213,26 @@ function fn_talario_partner_sync_write_product(array $payload): void
 
     if (isset($product_data['price']) && (!is_numeric($product_data['price']) || (float) $product_data['price'] < 0)) {
         fn_talario_partner_sync_write_json(400, ['error' => 'invalid_price']);
+    }
+
+    if (isset($product_data['category_ids'])) {
+        if (!is_array($product_data['category_ids']) || !$product_data['category_ids']) {
+            fn_talario_partner_sync_write_json(400, ['error' => 'invalid_category_ids']);
+        }
+        $category_ids = array_values(array_unique(array_map('intval', $product_data['category_ids'])));
+        if (in_array(0, $category_ids, true)) {
+            fn_talario_partner_sync_write_json(400, ['error' => 'invalid_category_ids']);
+        }
+        $existing_category_ids = array_map(
+            'intval',
+            db_get_fields('SELECT category_id FROM ?:categories WHERE category_id IN (?n)', $category_ids)
+        );
+        sort($category_ids);
+        sort($existing_category_ids);
+        if ($category_ids !== $existing_category_ids) {
+            fn_talario_partner_sync_write_json(400, ['error' => 'category_not_found']);
+        }
+        $product_data['category_ids'] = $category_ids;
     }
 
     if ($product_id === 0) {
