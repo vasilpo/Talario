@@ -71,7 +71,7 @@ case "$REQUEST" in
     mark_dispatcher
     echo "OPERATION=partner-sync-smoke"
 
-    TOKEN_FILE="/home/t/tyman5tb/.local/state/talario/partner-sync.token"
+    TOKEN_FILE="$HOME/.local/state/talario/partner-sync.token"
     [ -f "$TOKEN_FILE" ] && [ ! -L "$TOKEN_FILE" ] || fail "Partner Sync token file is unavailable" 71
     [ "$(stat -c '%a' "$TOKEN_FILE")" = "600" ] || fail "Partner Sync token file permissions are not 600" 71
 
@@ -88,7 +88,11 @@ case "$REQUEST" in
               exit(2);
           }
       }
-      $host = $config["db_host"];
+      if (!preg_match("/^[A-Za-z0-9_]+$/", (string) $config["table_prefix"])) {
+          fwrite(STDERR, "TABLE_PREFIX_INVALID\n");
+          exit(3);
+      }
+      $host = (string) $config["db_host"];
       $port = null;
       if (substr_count($host, ":") === 1) {
           [$host, $port] = explode(":", $host, 2);
@@ -98,51 +102,77 @@ case "$REQUEST" in
           : new mysqli($host, $config["db_user"], $config["db_password"], $config["db_name"]);
       if ($mysqli->connect_errno) {
           fwrite(STDERR, "DB_CONNECT_FAILED\n");
-          exit(3);
+          exit(4);
       }
       $table = $config["table_prefix"] . "storefronts";
-      $result = $mysqli->query("SELECT access_key FROM `" . $mysqli->real_escape_string($table) . "` WHERE access_key <> \"\" ORDER BY storefront_id ASC LIMIT 1");
+      $result = $mysqli->query("SELECT access_key FROM `" . $table . "` WHERE access_key <> \"\" ORDER BY storefront_id ASC LIMIT 1");
       if (!$result) {
           fwrite(STDERR, "STOREFRONT_QUERY_FAILED\n");
-          exit(4);
+          exit(5);
       }
       $row = $result->fetch_assoc();
       $key = isset($row["access_key"]) ? trim((string) $row["access_key"]) : "";
       if ($key === "") {
           fwrite(STDERR, "STOREFRONT_KEY_MISSING\n");
-          exit(5);
+          exit(6);
       }
       echo rawurlencode($key);
     ')"
     [ -n "$store_access_key" ] || fail "storefront access key is unavailable" 72
 
-    base_url="https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.catalog&store_access_key=$store_access_key&limit=500"
-    tmpdir="$(mktemp -d "/home/t/tyman5tb/.local/state/talario/partner-sync-smoke.XXXXXX")"
+    tmpdir="$(mktemp -d "$HOME/.local/state/talario/partner-sync-smoke.XXXXXX")"
     chmod 700 "$tmpdir"
     trap 'rm -rf -- "$tmpdir"' EXIT
 
     request() {
       local method="$1"
-      local auth="$2"
+      local auth_mode="$2"
       local suffix="$3"
       local outfile="$4"
-      local args=(--silent --show-error --connect-timeout 15 --max-time 60 --request "$method" --output "$outfile" --write-out '%{http_code}')
-      if [ -n "$auth" ]; then
-        args+=(--header "Authorization: Bearer $auth")
-      fi
-      curl "${args[@]}" "${base_url}${suffix}"
+      local cfg="$tmpdir/curl.$RANDOM.cfg"
+      local url="https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.catalog&store_access_key=$store_access_key&limit=500$suffix"
+
+      {
+        printf 'silent\n'
+        printf 'show-error\n'
+        printf 'connect-timeout = 15\n'
+        printf 'max-time = 60\n'
+        printf 'request = "%s"\n' "$method"
+        printf 'url = "%s"\n' "$url"
+        case "$auth_mode" in
+          valid)
+            printf 'header = "Authorization: Bearer %s"\n' "$token"
+            ;;
+          wrong)
+            printf 'header = "Authorization: Bearer 0000000000000000000000000000000000000000"\n'
+            ;;
+          none)
+            ;;
+          *)
+            fail "invalid runtime smoke auth mode" 76
+            ;;
+        esac
+      } > "$cfg"
+      chmod 600 "$cfg"
+
+      curl --config "$cfg" --output "$outfile" --write-out '%{http_code}'
+      rm -f -- "$cfg"
     }
 
-    missing_auth_status="$(request GET "" "&from=$(date +%F)&to=$(date -d '+30 days' +%F)" "$tmpdir/missing.json")"
+    from_date="$(date +%F)"
+    to_date="$(date -d '+30 days' +%F)"
+    common_suffix="&from=$from_date&to=$to_date"
+
+    missing_auth_status="$(request GET none "$common_suffix" "$tmpdir/missing.json")"
     [ "$missing_auth_status" = "401" ] || fail "missing-auth check failed" 73
 
-    wrong_auth_status="$(request GET "0000000000000000000000000000000000000000" "&from=$(date +%F)&to=$(date -d '+30 days' +%F)" "$tmpdir/wrong.json")"
+    wrong_auth_status="$(request GET wrong "$common_suffix" "$tmpdir/wrong.json")"
     [ "$wrong_auth_status" = "401" ] || fail "wrong-auth check failed" 73
 
-    post_status="$(request POST "$token" "&from=$(date +%F)&to=$(date -d '+30 days' +%F)" "$tmpdir/post.json")"
+    post_status="$(request POST valid "$common_suffix" "$tmpdir/post.json")"
     [ "$post_status" = "405" ] || fail "write-method rejection check failed" 73
 
-    valid_status="$(request GET "$token" "&from=$(date +%F)&to=$(date -d '+30 days' +%F)" "$tmpdir/catalog.json")"
+    valid_status="$(request GET valid "$common_suffix" "$tmpdir/catalog.json")"
     [ "$valid_status" = "200" ] || fail "authorized catalog request failed" 74
 
     php8.2 -r '
@@ -208,7 +238,7 @@ case "$REQUEST" in
     ' "$tmpdir/catalog.json")"
 
     if [ "$first_partner_id" -gt 0 ]; then
-      scoped_status="$(request GET "$token" "&partner_id=$first_partner_id&from=$(date +%F)&to=$(date -d '+30 days' +%F)" "$tmpdir/scoped.json")"
+      scoped_status="$(request GET valid "&partner_id=$first_partner_id$common_suffix" "$tmpdir/scoped.json")"
       [ "$scoped_status" = "200" ] || fail "partner-scoped catalog request failed" 75
       php8.2 -r '
         $expected = (int) $argv[2];
