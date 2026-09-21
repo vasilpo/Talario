@@ -48,6 +48,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString(' p.price, p.status', $this->controller);
     }
 
+    public function testLegacyScheduleSupportsEcarterTimestampDates(): void
+    {
+        self::assertStringContainsString("is_numeric(\$raw_from)", $this->controller);
+        self::assertStringContainsString("setTimestamp((int) \$raw_from)", $this->controller);
+        self::assertStringContainsString("is_numeric(\$raw_to)", $this->controller);
+        self::assertStringContainsString("setTimestamp((int) \$raw_to)", $this->controller);
+    }
+
     public function testPartnerScopeConstrainsProductsVariationsResourcesAndSchedule(): void
     {
         self::assertStringContainsString("p.company_id = ?i", $this->controller);
