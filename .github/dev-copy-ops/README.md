@@ -20,6 +20,7 @@ The Dev Copy Ops request allowlist is:
 - `git-status`
 - `php-lint`
 - `worktree-repair`: moves only untracked `config.local.php.bak-partner-sync-*` files out of the checkout into a private Beget state directory. It refuses to run if any other worktree change exists.
+- `partner-sync-dry-run`: accepts at most 1 MiB of JSON over stdin and invokes only `php8.2 ops/partner-sync-apply.php`; the workflow smoke payload is forced to `dry_run=true` and therefore cannot write product data.
 
 No arbitrary file paths, shell fragments, HTTP probes, or generic cleanup operations are accepted. `clear-cache` and `partner-sync-probe` remain outside this interface. The separate standard deploy command `talario-dev-deploy` may clear generated cache after a successful fast-forward deploy.
 
@@ -46,7 +47,7 @@ No arbitrary file paths, shell fragments, HTTP probes, or generic cleanup operat
 
 Install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout and bind the GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and writable only by that account. Verify the binding out-of-band before merge.
 
-The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, and `talario-dev-ops php-lint`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
+The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, `talario-dev-ops php-lint`, `talario-dev-ops worktree-repair`, and `talario-dev-ops partner-sync-dry-run`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
 
 ## Verified bootstrap state
 
