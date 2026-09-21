@@ -337,7 +337,7 @@ function fn_newsletters_get_recipients(array $params)
         }
 
         $abandoned_recipients = db_get_array(
-            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id FROM ?:users AS users'
+            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname FROM ?:users AS users'
             . ' LEFT JOIN ?:user_session_products AS user_session_products'
                 . ' ON (users.user_id = user_session_products.user_id)'
             . ' WHERE 1=1 ?p'
