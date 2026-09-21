@@ -26,7 +26,11 @@ function fn_talario_partner_sync_write_bearer(): string
 function fn_talario_partner_sync_write_authenticate(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
+    $request_path = (string) ($_SERVER['SCRIPT_NAME'] ?? $_SERVER['REQUEST_URI'] ?? '');
+    $is_dev_copy_path = strpos($request_path, '/dev_copy/') !== false;
+
     $dev_copy_enabled = $is_development
+        && $is_dev_copy_path
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
         && TALARIO_PARTNER_SYNC_DEV_COPY === true;
 
@@ -271,8 +275,13 @@ function fn_talario_partner_sync_write_media(array $payload): void
         fn_talario_partner_sync_write_json(400, ['error' => 'images_count_invalid', 'max' => 8]);
     }
 
-    $prepared = [];
-    $temporary_files = [];
+    $validated = [];
+    $extensions = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
+
     foreach ($images as $index => $image) {
         if (!is_array($image)) {
             fn_talario_partner_sync_write_json(400, ['error' => 'invalid_image', 'index' => $index]);
@@ -286,30 +295,38 @@ function fn_talario_partner_sync_write_media(array $payload): void
 
         $info = @getimagesizefromstring($binary);
         $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
-        $extensions = [
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-        ];
         if (!isset($extensions[$mime])) {
             fn_talario_partner_sync_write_json(400, ['error' => 'unsupported_image_type', 'index' => $index]);
         }
 
-        $path = fn_create_temp_file() . '.' . $extensions[$mime];
-        if (fn_put_contents($path, $binary) === false) {
-            fn_talario_partner_sync_write_json(500, ['error' => 'image_temp_write_failed']);
-        }
-        $temporary_files[] = $path;
-        $prepared[] = [
-            'detailed' => [
-                'image_path' => $path,
-                'alt' => trim((string) ($image['alt'] ?? '')),
-            ],
+        $validated[] = [
+            'binary' => $binary,
+            'extension' => $extensions[$mime],
+            'alt' => trim((string) ($image['alt'] ?? '')),
             'position' => $index,
         ];
     }
 
+    $prepared = [];
+    $temporary_files = [];
+
     try {
+        foreach ($validated as $image) {
+            $path = fn_create_temp_file() . '.' . $image['extension'];
+            if (fn_put_contents($path, $image['binary']) === false) {
+                throw new RuntimeException('image_temp_write_failed');
+            }
+
+            $temporary_files[] = $path;
+            $prepared[] = [
+                'detailed' => [
+                    'image_path' => $path,
+                    'alt' => $image['alt'],
+                ],
+                'position' => $image['position'],
+            ];
+        }
+
         $entity = new Products([], 'A');
         $image_params = [
             'main_pair' => $prepared[0],
@@ -319,8 +336,10 @@ function fn_talario_partner_sync_write_media(array $payload): void
 
         $result_id = (int) fn_update_product(['updated_timestamp' => TIME], $product_id, CART_LANGUAGE);
         if ($result_id !== $product_id) {
-            fn_talario_partner_sync_write_json(500, ['error' => 'media_write_failed']);
+            throw new RuntimeException('media_write_failed');
         }
+    } catch (RuntimeException $exception) {
+        fn_talario_partner_sync_write_json(500, ['error' => $exception->getMessage()]);
     } finally {
         foreach ($temporary_files as $path) {
             if (is_file($path)) {
