@@ -24,6 +24,34 @@ function fn_talario_analytics_partner_sync_write_payload(): array
     return $payload;
 }
 
+function fn_talario_analytics_partner_sync_write_allowed_company_ids(): array
+{
+    if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
+        return [];
+    }
+
+    $raw = trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS);
+    if ($raw === '') {
+        return [];
+    }
+
+    $ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        preg_split('/\s*,\s*/', $raw) ?: []
+    ))));
+    sort($ids);
+
+    return $ids;
+}
+
+function fn_talario_analytics_partner_sync_write_require_company_allowed(int $company_id): void
+{
+    $allowed = fn_talario_analytics_partner_sync_write_allowed_company_ids();
+    if (!$allowed || !in_array($company_id, $allowed, true)) {
+        fn_talario_analytics_json_response(403, ['error' => 'company_not_write_allowed']);
+    }
+}
+
 function fn_talario_analytics_partner_sync_write_normalize_product(array $payload): array
 {
     $operation = (string) ($payload['operation'] ?? '');
@@ -303,9 +331,13 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
     );
 
     $days_data = [];
-    if (!empty($booking['days_data'])) {
-        $decoded = @unserialize((string) $booking['days_data'], ['allowed_classes' => false, 'max_depth' => 8]);
-        if (is_array($decoded)) {
+    $serialized_days_data = (string) ($booking['days_data'] ?? '');
+    if ($serialized_days_data !== ''
+        && strlen($serialized_days_data) <= 8192
+        && preg_match('/^a:\\d+:\\{/', $serialized_days_data)
+    ) {
+        $decoded = @unserialize($serialized_days_data, ['allowed_classes' => false, 'max_depth' => 8]);
+        if (is_array($decoded) && count($decoded) <= 32) {
             foreach ($decoded as $key => $value) {
                 if (is_string($key) && is_scalar($value)) {
                     $days_data[$key] = $value;
@@ -362,6 +394,11 @@ function fn_talario_analytics_partner_sync_write_response(): void
         if (isset($product_data['company_id']) && (int) $existing['company_id'] !== (int) $product_data['company_id']) {
             fn_talario_analytics_json_response(409, ['error' => 'company_change_forbidden']);
         }
+        fn_talario_analytics_partner_sync_write_require_company_allowed((int) $existing['company_id']);
+    }
+
+    if ($operation === 'create') {
+        fn_talario_analytics_partner_sync_write_require_company_allowed((int) $product_data['company_id']);
     }
 
     if (isset($product_data['company_id'])) {
@@ -429,6 +466,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         fn_talario_analytics_json_response(403, ['error' => 'partner_sync_write_disabled']);
     }
 
+    $approval_id_hash = hash('sha256', $approval_id);
     $temp_files = [];
     db_query('START TRANSACTION');
     try {
@@ -457,7 +495,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         fn_log_event('general', 'runtime', [
             'message' => 'Talario Partner Sync dev write failed',
             'operation' => $operation,
-            'approval_id' => $approval_id,
+            'approval_id_hash' => $approval_id_hash,
             'error_class' => get_class($exception),
         ]);
         fn_talario_analytics_json_response(500, ['error' => 'partner_sync_write_failed']);
@@ -469,7 +507,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'message' => 'Talario Partner Sync dev write completed',
         'operation' => $operation,
         'product_id' => $product_id,
-        'approval_id' => $approval_id,
+        'approval_id_hash' => $approval_id_hash,
         'payload_sha256' => hash('sha256', json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
     ]);
 
@@ -477,7 +515,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'schema_version' => 'partner-sync.write-result.v1',
         'dry_run' => false,
         'operation' => $operation,
-        'approval_id' => $approval_id,
+        'approval_id_hash' => $approval_id_hash,
         'product_id' => $product_id,
         'readback' => $readback,
     ]);
