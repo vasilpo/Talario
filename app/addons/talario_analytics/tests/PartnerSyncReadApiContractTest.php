@@ -12,6 +12,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $addon_xml;
     private string $trusted_controllers;
     private string $write_capability;
+    private string $cli_runner;
 
     protected function setUp(): void
     {
@@ -22,6 +23,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->addon_xml = (string) file_get_contents($addon_path);
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
+        $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 3) . '/ops/partner-sync-apply.php');
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -75,14 +77,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('array_merge($schedule, $legacy_schedule)', $this->controller);
     }
 
-    public function testPartnerSyncWriteIsPostOnlyAndDevCopyOnly(): void
+    public function testPartnerSyncWriteIsInternalCliOnly(): void
     {
-        self::assertStringContainsString("\$partner_sync_write_mode = \$mode === 'catalog_apply'", $this->controller);
-        self::assertStringContainsString("REQUEST_METHOD'] !== 'POST'", $this->controller);
-        self::assertStringContainsString("if (\$mode === 'catalog_apply' && !\$dev_copy_enabled)", $this->controller);
-        self::assertStringContainsString("substr(\$runtime_root, -strlen('/talario.ru/dev_copy')) === '/talario.ru/dev_copy'", $this->controller);
-        self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PROD_WRITE', $this->controller);
-        self::assertStringContainsString("'catalog_apply' => true", $this->trusted_controllers);
+        self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
+        self::assertStringContainsString("'/talario.ru/dev_copy'", $this->cli_runner);
+        self::assertStringContainsString('fn_is_development()', $this->cli_runner);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->cli_runner);
+        self::assertStringNotContainsString("'catalog_apply' => true", $this->trusted_controllers);
+        self::assertStringNotContainsString("catalog_apply", $this->controller);
     }
 
     public function testPartnerSyncWriteRequiresSeparateDevWriteGateAndApproval(): void
@@ -90,10 +92,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->write_capability);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->write_capability);
         self::assertStringContainsString("['error' => 'company_not_write_allowed']", $this->write_capability);
-        self::assertStringContainsString('TALARIO_PARTNER_SYNC_WRITE_TOKEN_HASH', $this->controller);
-        self::assertStringContainsString('partner_sync_write_api_not_configured', $this->controller);
-        self::assertStringContainsString('partner_sync_write_api_misconfigured', $this->controller);
-        self::assertStringContainsString('hash_equals($read_token_hash, $stored_token_hash)', $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_write_response();', $this->cli_runner);
         self::assertStringContainsString("['error' => 'partner_sync_write_disabled']", $this->write_capability);
         self::assertStringContainsString("['error' => 'approval_id_required']", $this->write_capability);
         self::assertStringContainsString("'approval_id_hash' => \$approval_id_hash", $this->write_capability);
@@ -137,7 +136,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
         self::assertStringContainsString('$prod_read_enabled = !$is_development', $this->controller);
-        self::assertStringContainsString("if (\$mode === 'catalog' && !\$dev_copy_enabled && !\$prod_read_enabled)", $this->controller);
+        self::assertStringContainsString('if (!$dev_copy_enabled && !$prod_read_enabled)', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
 
