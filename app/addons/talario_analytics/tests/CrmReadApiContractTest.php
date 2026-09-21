@@ -48,8 +48,8 @@ final class CrmReadApiContractTest extends TestCase
         self::assertStringContainsString("'phone' =>", $this->crm_read);
         self::assertStringContainsString('TALARIO_CRM_PHONE_READ', $this->crm_read);
         self::assertStringContainsString("'crm_phone_read_disabled'", $this->crm_read);
-        self::assertStringContainsString("($include_phone ? ' u.phone,' : '')", $this->crm_read);
-        self::assertStringContainsString("'phone_included' => $include_phone", $this->crm_read);
+        self::assertStringContainsString("(\$include_phone ? ' u.phone,' : '')", $this->crm_read);
+        self::assertStringContainsString("'phone_included' => \$include_phone", $this->crm_read);
         self::assertStringNotContainsString("'address' =>", $this->crm_read);
         self::assertStringNotContainsString('payment', strtolower($this->crm_read));
     }
