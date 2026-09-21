@@ -95,14 +95,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncWriteUsesCoreProductAndEcarterHooks(): void
     {
         self::assertStringContainsString('fn_update_product(', $this->write_capability);
-        self::assertStringContainsString("$product_data['booking_data'] = $booking_data", $this->write_capability);
+        self::assertStringContainsString("\$product_data['booking_data'] = \$booking_data", $this->write_capability);
         self::assertStringContainsString('?:ec_table_booking_system', $this->write_capability);
         self::assertStringContainsString("'schema_version' => 'partner-sync.write-result.v1'", $this->write_capability);
     }
 
     public function testPartnerSyncCreateDefaultsToHidden(): void
     {
-        self::assertStringContainsString("$data['status'] = 'H';", $this->write_capability);
+        self::assertStringContainsString("\$data['status'] = 'H';", $this->write_capability);
         self::assertStringContainsString('New Partner Sync cards are hidden by default', $this->write_capability);
     }
 
