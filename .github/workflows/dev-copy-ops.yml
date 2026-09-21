@@ -1,0 +1,72 @@
+name: Dev Copy Ops
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - .github/dev-copy-ops/request.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dev-copy-ops
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout request
+        uses: actions/checkout@v4
+
+      - name: Validate request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST=".github/dev-copy-ops/request.json"
+          OP="$(jq -er '.operation' "$REQUEST")"
+          REQUEST_ID="$(jq -er '.request_id' "$REQUEST")"
+          jq -e 'keys | sort == ["operation","request_id"]' "$REQUEST" >/dev/null
+          [[ "$REQUEST_ID" =~ ^[A-Za-z0-9._:-]{1,80}$ ]]
+          case "$OP" in
+            status|git-status|php-lint)
+              ;;
+            *)
+              echo "ERROR: operation is not allowlisted: $OP"
+              exit 64
+              ;;
+          esac
+          echo "operation=$OP" >> "$GITHUB_OUTPUT"
+
+      - name: Configure pinned SSH host key
+        shell: bash
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$BEGET_SSH_KEY"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Run allowlisted dev_copy operation
+        shell: bash
+        env:
+          BEGET_HOST: ${{ secrets.BEGET_HOST }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          OPERATION: ${{ steps.request.outputs.operation }}
+        run: |
+          set -euo pipefail
+          test "$BEGET_HOST" = "salvage.beget.com"
+          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
+          printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
+          printf '%s\n' "$OUTPUT"             | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT)='

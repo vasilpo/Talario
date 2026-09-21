@@ -18,48 +18,38 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Configure SSH
+      - name: Configure pinned SSH host key
         shell: bash
         env:
-          BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
         run: |
           set -euo pipefail
+          test -n "$BEGET_SSH_KEY"
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
-          ssh-keyscan -H "$BEGET_HOST" >> ~/.ssh/known_hosts
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy development
         shell: bash
         env:
+          # Explicitly step-scoped; must match the pinned known_hosts entry below.
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_USER: ${{ secrets.BEGET_USER }}
         run: |
           set -euo pipefail
-          ssh -o BatchMode=yes "$BEGET_USER@$BEGET_HOST" <<'EOF'
-            set -e
-            cd /home/t/tyman5tb/talario.ru/public_html/dev_copy
+          test "$BEGET_HOST" = "salvage.beget.com"
 
-            if [ "$(git rev-parse --abbrev-ref HEAD)" != "development" ]; then
-              echo "ERROR: dev_copy is not on development branch"
-              exit 1
-            fi
+          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-dev-deploy)"
 
-            if [ -n "$(git status --porcelain)" ]; then
-              echo "ERROR: dev_copy has local changes; refusing to overwrite them"
-              git status --short
-              exit 1
-            fi
+          DISPATCHER_LINE="$(printf '%s\n' "$OUTPUT" | grep -F -x 'DISPATCHER=talario-dev-github-v1')"
+          DEPLOY_LINE="$(printf '%s\n' "$OUTPUT" | grep -E '^DEPLOY_OK [[:xdigit:]]+$')"
 
-            git remote set-url origin https://github.com/vasilpo/Talario.git
-            git pull --ff-only origin development
-            # dev_copy: clear generated templates and compiled assets after each deploy.
-            if [ -d var/cache ]; then
-              find var/cache -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-            fi
-            echo "DEPLOY_OK $(git rev-parse --short HEAD)"
-          EOF
+          test "$DISPATCHER_LINE" = "DISPATCHER=talario-dev-github-v1"
+          test -n "$DEPLOY_LINE"
+
+          printf '%s\n' "$DISPATCHER_LINE"
+          printf '%s\n' "$DEPLOY_LINE"

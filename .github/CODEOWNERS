@@ -1,0 +1,4 @@
+# Sensitive automation and Beget execution boundary
+.github/workflows/ @vasilpo
+.github/dev-copy-ops/ @vasilpo
+ops/beget/ @vasilpo
