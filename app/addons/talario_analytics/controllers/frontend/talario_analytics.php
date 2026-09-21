@@ -262,6 +262,193 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
     return $schedule;
 }
 
+function fn_talario_analytics_catalog_meta_response(): void
+{
+    $partner_id = max(0, (int) ($_GET['partner_id'] ?? 0));
+    if ($partner_id <= 0) {
+        fn_talario_analytics_json_response(400, ['error' => 'partner_id_required']);
+    }
+
+    $allowed_raw = defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')
+        ? trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS)
+        : '';
+    $allowed_company_ids = $allowed_raw === ''
+        ? []
+        : array_values(array_unique(array_filter(array_map(
+            'intval',
+            preg_split('/\\s*,\\s*/', $allowed_raw) ?: []
+        ))));
+    if (!in_array($partner_id, $allowed_company_ids, true)) {
+        fn_talario_analytics_json_response(403, ['error' => 'partner_not_metadata_allowed']);
+    }
+
+    $company_exists = (int) db_get_field(
+        'SELECT COUNT(*) FROM ?:companies WHERE company_id = ?i AND status = ?s',
+        $partner_id,
+        'A'
+    );
+    if ($company_exists !== 1) {
+        fn_talario_analytics_json_response(404, ['error' => 'partner_not_found']);
+    }
+
+    $lang_code = (string) Registry::get('settings.Appearance.default_language');
+    if ($lang_code === '') {
+        $lang_code = 'ru';
+    }
+
+    $categories = [];
+    foreach (db_get_array(
+        'SELECT c.category_id, c.parent_id, c.status, cd.category'
+        . ' FROM ?:categories c'
+        . ' INNER JOIN ?:category_descriptions cd'
+        . ' ON cd.category_id = c.category_id AND cd.lang_code = ?s'
+        . ' WHERE c.status IN (?a)'
+        . ' ORDER BY c.parent_id ASC, c.position ASC, c.category_id ASC',
+        $lang_code,
+        ['A', 'H']
+    ) as $row) {
+        $categories[] = [
+            'category_id' => (int) $row['category_id'],
+            'parent_id' => (int) $row['parent_id'],
+            'name' => (string) $row['category'],
+            'status' => (string) $row['status'],
+        ];
+    }
+
+    $features = [];
+    foreach (db_get_array(
+        'SELECT f.feature_id, f.parent_id, f.feature_type, f.purpose, f.status,'
+        . ' fd.description, fd.internal_name'
+        . ' FROM ?:product_features f'
+        . ' INNER JOIN ?:product_features_descriptions fd'
+        . ' ON fd.feature_id = f.feature_id AND fd.lang_code = ?s'
+        . ' WHERE f.status IN (?a)'
+        . ' ORDER BY f.parent_id ASC, f.position ASC, f.feature_id ASC',
+        $lang_code,
+        ['A', 'H']
+    ) as $row) {
+        $feature_id = (int) $row['feature_id'];
+        $features[$feature_id] = [
+            'feature_id' => $feature_id,
+            'parent_id' => (int) $row['parent_id'],
+            'description' => (string) $row['description'],
+            'internal_name' => (string) $row['internal_name'],
+            'feature_type' => (string) $row['feature_type'],
+            'purpose' => (string) $row['purpose'],
+            'status' => (string) $row['status'],
+            'variants' => [],
+        ];
+    }
+
+    if ($features) {
+        foreach (db_get_array(
+            'SELECT fv.variant_id, fv.feature_id, fvd.variant'
+            . ' FROM ?:product_feature_variants fv'
+            . ' INNER JOIN ?:product_feature_variant_descriptions fvd'
+            . ' ON fvd.variant_id = fv.variant_id AND fvd.lang_code = ?s'
+            . ' WHERE fv.feature_id IN (?n)'
+            . ' ORDER BY fv.feature_id ASC, fv.position ASC, fv.variant_id ASC',
+            $lang_code,
+            array_keys($features)
+        ) as $row) {
+            $feature_id = (int) $row['feature_id'];
+            if (!isset($features[$feature_id])) {
+                continue;
+            }
+            $features[$feature_id]['variants'][] = [
+                'variant_id' => (int) $row['variant_id'],
+                'name' => (string) $row['variant'],
+            ];
+        }
+    }
+
+    $product_rows = db_get_array(
+        'SELECT p.product_id, pd.product'
+        . ' FROM ?:products p'
+        . ' INNER JOIN ?:product_descriptions pd'
+        . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' WHERE p.company_id = ?i AND p.status IN (?a)'
+        . ' ORDER BY p.product_id ASC LIMIT 1001',
+        $lang_code,
+        $partner_id,
+        ['A', 'H']
+    );
+    if (count($product_rows) > 1000) {
+        fn_talario_analytics_json_response(409, ['error' => 'partner_product_limit_exceeded']);
+    }
+
+    $product_ids = array_map(
+        static fn(array $row): int => (int) $row['product_id'],
+        $product_rows
+    );
+    $products = [];
+    foreach ($product_rows as $row) {
+        $product_id = (int) $row['product_id'];
+        $products[$product_id] = [
+            'product_id' => $product_id,
+            'name' => (string) $row['product'],
+            'category_ids' => [],
+            'feature_values' => [],
+        ];
+    }
+
+    if ($product_ids) {
+        foreach (db_get_array(
+            'SELECT product_id, category_id FROM ?:products_categories'
+            . ' WHERE product_id IN (?n)'
+            . ' ORDER BY product_id ASC, link_type DESC, position ASC, category_id ASC',
+            $product_ids
+        ) as $row) {
+            $product_id = (int) $row['product_id'];
+            if (isset($products[$product_id])) {
+                $products[$product_id]['category_ids'][] = (int) $row['category_id'];
+            }
+        }
+
+        $feature_value_rows = db_get_array(
+            'SELECT product_id, feature_id, variant_id, value, value_int'
+            . ' FROM ?:product_features_values'
+            . ' WHERE product_id IN (?n)'
+            . ' ORDER BY product_id ASC, feature_id ASC, variant_id ASC LIMIT 5001',
+            $product_ids
+        );
+        if (count($feature_value_rows) > 5000) {
+            fn_talario_analytics_json_response(409, ['error' => 'partner_feature_value_limit_exceeded']);
+        }
+
+        foreach ($feature_value_rows as $row) {
+            $product_id = (int) $row['product_id'];
+            if (!isset($products[$product_id])) {
+                continue;
+            }
+            $products[$product_id]['feature_values'][] = [
+                'feature_id' => (int) $row['feature_id'],
+                'variant_id' => (int) $row['variant_id'],
+                'value' => (string) $row['value'],
+                'value_int' => (string) $row['value_int'],
+            ];
+        }
+    }
+
+    fn_log_event('general', 'runtime', [
+        'message' => 'Talario Partner Sync catalog metadata request completed',
+        'mode' => 'catalog_meta',
+        'partner_id' => $partner_id,
+        'category_count' => count($categories),
+        'feature_count' => count($features),
+        'product_count' => count($products),
+        'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
+    ]);
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'partner-sync.catalog-meta.v1',
+        'partner_id' => $partner_id,
+        'categories' => $categories,
+        'features' => array_values($features),
+        'products' => array_values($products),
+    ]);
+}
+
 function fn_talario_analytics_catalog_response(): void
 {
     $partner_id = max(0, (int) ($_GET['partner_id'] ?? 0));
@@ -539,14 +726,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_meta'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'catalog_meta'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -555,14 +742,19 @@ if ($mode === 'catalog') {
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (!$dev_copy_enabled && !$prod_read_enabled) {
+    if ($mode === 'catalog' && !$dev_copy_enabled && !$prod_read_enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+
+    // Metadata is intentionally dev_copy-only until the write model is validated end to end.
+    if ($mode === 'catalog_meta' && !$dev_copy_enabled) {
         fn_talario_analytics_json_response(404, ['error' => 'not_found']);
     }
 }
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'catalog_meta'], true)) {
     $stored_token_hash = defined('TALARIO_PARTNER_SYNC_TOKEN_HASH')
         ? trim((string) TALARIO_PARTNER_SYNC_TOKEN_HASH)
         : '';
@@ -585,7 +777,7 @@ if ($mode === 'catalog') {
 }
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
-    fn_talario_analytics_json_response(503, ['error' => $mode === 'catalog'
+    fn_talario_analytics_json_response(503, ['error' => in_array($mode, ['catalog', 'catalog_meta'], true)
         ? 'partner_sync_api_not_configured'
         : 'analytics_api_not_configured'
     ]);
@@ -606,6 +798,11 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_h
 if ($mode === 'catalog') {
     // The selected bearer token was validated with hash_equals above before dispatch.
     fn_talario_analytics_catalog_response();
+}
+
+if ($mode === 'catalog_meta') {
+    // Same dedicated Partner Sync credential; metadata remains dev_copy-only.
+    fn_talario_analytics_catalog_meta_response();
 }
 
 

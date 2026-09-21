@@ -130,13 +130,37 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
     }
 
+
+    public function testCatalogMetadataIsDevCopyOnlyAndUsesPartnerCredential(): void
+    {
+        self::assertStringContainsString("'catalog_meta'", $this->controller);
+        self::assertStringContainsString("'partner-sync.catalog-meta.v1'", $this->controller);
+        self::assertStringContainsString("if (\$mode === 'catalog_meta' && !\$dev_copy_enabled)", $this->controller);
+        self::assertStringContainsString("in_array(\$mode, ['catalog', 'catalog_meta'], true)", $this->controller);
+        self::assertStringContainsString("'partner_id_required'", $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->controller);
+        self::assertStringContainsString("'partner_not_metadata_allowed'", $this->controller);
+        self::assertStringContainsString("'catalog_meta' => true", $this->trusted_controllers);
+    }
+
+    public function testCatalogMetadataExposesCategoriesFeaturesAndExistingValues(): void
+    {
+        self::assertStringContainsString('?:category_descriptions', $this->controller);
+        self::assertStringContainsString('?:product_features_descriptions', $this->controller);
+        self::assertStringContainsString('?:product_feature_variants', $this->controller);
+        self::assertStringContainsString('?:product_feature_variant_descriptions', $this->controller);
+        self::assertStringContainsString('?:products_categories', $this->controller);
+        self::assertStringContainsString('?:product_features_values', $this->controller);
+        self::assertStringContainsString("'feature_values' => []", $this->controller);
+    }
+
     public function testCatalogRequiresExplicitEnvironmentGate(): void
     {
         self::assertStringContainsString("fn_is_development()", $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_PROD_READ', $this->controller);
         self::assertStringContainsString('$prod_read_enabled = !$is_development', $this->controller);
-        self::assertStringContainsString('if (!$dev_copy_enabled && !$prod_read_enabled)', $this->controller);
+        self::assertStringContainsString("if (\$mode === 'catalog' && !\$dev_copy_enabled && !\$prod_read_enabled)", $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
 
