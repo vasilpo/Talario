@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+PATH="/usr/local/bin:/usr/bin:/bin"
+export PATH
 
 DEV_COPY="/home/t/tyman5tb/talario.ru/public_html/dev_copy"
 EXPECTED_PATH="$DEV_COPY"
@@ -76,17 +78,17 @@ case "$REQUEST" in
     chmod 700 "$STATE_DIR"
     [ -d "$STATE_DIR" ] && [ ! -L "$STATE_DIR" ] || fail "invalid partner sync state directory" 74
 
-    PAYLOAD_FILE="$(mktemp "$STATE_DIR/request.XXXXXX.json")"
+    PAYLOAD_FILE="$(/usr/bin/mktemp "$STATE_DIR/request.XXXXXX.json")"
     chmod 600 "$PAYLOAD_FILE"
     trap 'rm -f -- "$PAYLOAD_FILE"' EXIT HUP INT TERM
 
     # Read at most 20 MiB + 1 byte, with a hard receive timeout.
-    timeout 30s head -c 20971521 > "$PAYLOAD_FILE" || fail "partner sync payload receive timeout" 75
-    PAYLOAD_SIZE="$(wc -c < "$PAYLOAD_FILE" | tr -d ' ')"
+    /usr/bin/timeout 30s /usr/bin/head -c 20971521 > "$PAYLOAD_FILE" || fail "partner sync payload receive timeout" 75
+    PAYLOAD_SIZE="$(/usr/bin/wc -c < "$PAYLOAD_FILE" | /usr/bin/tr -d ' ')"
     [ "$PAYLOAD_SIZE" -gt 0 ] || fail "partner sync payload is empty" 71
     [ "$PAYLOAD_SIZE" -le 20971520 ] || fail "partner sync payload exceeds 20 MiB" 72
 
-    VALIDATION="$(env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 -n -r '
+    VALIDATION="$(/usr/bin/env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 -n -r '
       $path = $argv[1];
       $raw = (string) file_get_contents($path);
       $payload = json_decode($raw, true);
@@ -104,10 +106,18 @@ case "$REQUEST" in
 
     [ "$DEV_COPY" = "/home/t/tyman5tb/talario.ru/public_html/dev_copy" ] || fail "unexpected dev_copy root" 76
     [ -x /usr/local/bin/php8.2 ] || fail "required PHP binary unavailable" 77
-    [ -f "$DEV_COPY/ops/partner-sync-apply.php" ] && [ ! -L "$DEV_COPY/ops/partner-sync-apply.php" ] \
-      || fail "partner sync CLI runner unavailable" 78
 
-    env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 "$DEV_COPY/ops/partner-sync-apply.php" < "$PAYLOAD_FILE"
+    RUNNER_REL="ops/partner-sync-apply.php"
+    RUNNER_PATH="$DEV_COPY/$RUNNER_REL"
+    [ -f "$RUNNER_PATH" ] && [ ! -L "$RUNNER_PATH" ] || fail "partner sync CLI runner unavailable" 78
+    [ -z "$(git status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
+
+    EXPECTED_RUNNER_HASH="$(git show "HEAD:$RUNNER_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
+    ACTUAL_RUNNER_HASH="$(/usr/bin/sha256sum "$RUNNER_PATH" | /usr/bin/awk '{print $1}')"
+    [ -n "$EXPECTED_RUNNER_HASH" ] && [ "$EXPECTED_RUNNER_HASH" = "$ACTUAL_RUNNER_HASH" ] \
+      || fail "partner sync CLI runner integrity check failed" 80
+
+    /usr/bin/env -u PHPRC -u PHP_INI_SCAN_DIR /usr/local/bin/php8.2 "$RUNNER_PATH" < "$PAYLOAD_FILE"
     ;;
 
   "talario-dev-ops worktree-repair")
