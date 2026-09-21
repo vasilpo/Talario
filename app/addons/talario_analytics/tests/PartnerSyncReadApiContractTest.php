@@ -139,8 +139,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
         self::assertStringContainsString('PAYLOAD_READ_FAILED', $this->dev_dispatcher);
         self::assertStringNotContainsString('PATH="/usr/local/bin:/usr/bin:/bin"', $this->dev_dispatcher);
-        self::assertStringContainsString('git -C "$DEV_COPY" status --porcelain --untracked-files=all', $this->dev_dispatcher);
-        self::assertStringContainsString('git -C "$DEV_COPY" show "HEAD:$RUNNER_REL"', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/git -C "$DEV_COPY" show "HEAD:$RUNNER_REL"', $this->dev_dispatcher);
+        self::assertStringContainsString('[ -x /usr/bin/git ] || fail "required git binary unavailable" 81', $this->dev_dispatcher);
         self::assertStringContainsString('dev_copy worktree must be clean for partner sync', $this->dev_dispatcher);
         self::assertStringContainsString('partner sync CLI runner integrity check failed', $this->dev_dispatcher);
         self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
