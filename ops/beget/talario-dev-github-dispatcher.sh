@@ -67,6 +67,50 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-dev-ops partner-sync-apply")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-apply"
+
+    LOCAL_HEAD="$(git rev-parse HEAD 2>/dev/null || true)"
+    REMOTE_HEAD="$(git rev-parse refs/remotes/origin/development 2>/dev/null || true)"
+    [ -n "$LOCAL_HEAD" ] && [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ] \
+      || fail "partner sync apply requires deployed protected development HEAD" 71
+    [ -z "$(git status --porcelain=v1 --untracked-files=all)" ] \
+      || fail "partner sync apply requires a clean worktree" 72
+    echo "APPLY_HEAD=$LOCAL_HEAD"
+
+    EXPECTED_BLOB="$(git rev-parse 'HEAD:ops/partner-sync-apply.php' 2>/dev/null || true)"
+    [ -n "$EXPECTED_BLOB" ] || fail "partner sync CLI blob is unavailable" 73
+
+    [ "$DEV_COPY" = "/home/t/tyman5tb/talario.ru/public_html/dev_copy" ] \
+      && [ -d "$DEV_COPY/ops" ] && [ -w "$DEV_COPY/ops" ] \
+      || fail "partner sync CLI temp directory is unavailable" 74
+
+    TMP_RUNNER="$(mktemp "$DEV_COPY/ops/.partner-sync-apply.XXXXXX.php")" \
+      || fail "partner sync CLI temp runner could not be created" 75
+    [ -n "$TMP_RUNNER" ] && [ -f "$TMP_RUNNER" ] \
+      || fail "partner sync CLI temp runner is unavailable" 75
+
+    cleanup_partner_sync_runner() {
+      rm -f -- "$TMP_RUNNER"
+    }
+    trap cleanup_partner_sync_runner EXIT HUP INT TERM
+
+    git cat-file blob "$EXPECTED_BLOB" > "$TMP_RUNNER"
+    chmod 600 "$TMP_RUNNER"
+    [ "$(git hash-object -- "$TMP_RUNNER")" = "$EXPECTED_BLOB" ] \
+      || fail "partner sync CLI temp runner failed integrity check" 76
+
+    set +e
+    /usr/local/bin/php8.2 "$TMP_RUNNER"
+    RC=$?
+    set -e
+    cleanup_partner_sync_runner
+    trap - EXIT HUP INT TERM
+    echo "APPLY_RC=$RC"
+    exit "$RC"
+    ;;
+
   "talario-dev-ops worktree-repair")
     mark_dispatcher
     echo "OPERATION=worktree-repair"
