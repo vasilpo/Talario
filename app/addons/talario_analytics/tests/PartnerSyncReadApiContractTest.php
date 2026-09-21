@@ -140,7 +140,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('head -c 20971521', $this->dispatcher);
         self::assertStringContainsString('dev_copy has local changes; refusing Partner Sync apply', $this->dispatcher);
         self::assertStringNotContainsString('eval ', $this->dispatcher);
-        self::assertStringNotContainsString('bash -c "
+        self::assertStringNotContainsString('bash -c "', $this->dispatcher);
+    }
+
     public function testCatalogRequiresExplicitEnvironmentGate(): void
     {
         self::assertStringContainsString("fn_is_development()", $this->controller);
