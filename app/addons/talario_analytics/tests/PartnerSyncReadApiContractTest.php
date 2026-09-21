@@ -10,13 +10,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
 {
     private string $controller;
     private string $addon_xml;
+    private string $trusted_controllers;
 
     protected function setUp(): void
     {
         $controller_path = dirname(__DIR__) . '/controllers/frontend/talario_analytics.php';
         $addon_path = dirname(__DIR__) . '/addon.xml';
+        $trusted_controllers_path = dirname(__DIR__) . '/schemas/permissions/trusted_controllers.post.php';
         $this->controller = (string) file_get_contents($controller_path);
         $this->addon_xml = (string) file_get_contents($addon_path);
+        $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -73,6 +76,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("fn_is_development()", $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
+    }
+
+    public function testOnlyCatalogModeBypassesClosedStorefrontGate(): void
+    {
+        self::assertStringContainsString("\$schema['talario_analytics']", $this->trusted_controllers);
+        self::assertStringContainsString("'catalog' => true", $this->trusted_controllers);
+        self::assertStringContainsString("'default_allow' => false", $this->trusted_controllers);
+        self::assertStringContainsString("'areas' => ['C']", $this->trusted_controllers);
+        self::assertStringNotContainsString("'allow' => true", $this->trusted_controllers);
     }
 
     public function testSnapshotDeclaresTruncationAndCursor(): void
