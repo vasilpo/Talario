@@ -53,6 +53,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("setTimestamp((int) \$raw_to)", $this->controller);
     }
 
+    public function testLegacyScheduleIgnoresEcarterPerWeekdaySlotMetadata(): void
+    {
+        self::assertStringContainsString("days_data[weekday]['time_by_amount']", $this->controller);
+        self::assertStringContainsString(
+            "preg_match('/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/', \$key)",
+            $this->controller
+        );
+        self::assertStringContainsString('&& is_array($value)', $this->controller);
+    }
+
     public function testPartnerScopeConstrainsProductsVariationsResourcesAndSchedule(): void
     {
         self::assertStringContainsString("p.company_id = ?i", $this->controller);
@@ -103,7 +113,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("LIMIT 501", $this->controller);
         self::assertStringContainsString("array_slice($schedule, 0, 500)", $this->controller);
         self::assertStringContainsString("strlen($serialized_days_data) > 8192", $this->controller);
-        self::assertStringContainsString("'max_depth' => 2", $this->controller);
+        self::assertStringContainsString("'max_depth' => 8", $this->controller);
     }
 
     public function testSnapshotDeclaresTruncationAndCursor(): void
