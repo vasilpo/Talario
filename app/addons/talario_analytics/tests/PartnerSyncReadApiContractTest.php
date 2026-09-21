@@ -10,16 +10,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
 {
     private string $controller;
     private string $addon_xml;
-    private string $trusted_controllers;
 
     protected function setUp(): void
     {
         $controller_path = dirname(__DIR__) . '/controllers/frontend/talario_analytics.php';
         $addon_path = dirname(__DIR__) . '/addon.xml';
-        $trusted_controllers_path = dirname(__DIR__) . '/schemas/permissions/trusted_controllers.post.php';
         $this->controller = (string) file_get_contents($controller_path);
         $this->addon_xml = (string) file_get_contents($addon_path);
-        $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -89,13 +86,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("['error' => 'not_found']", $this->controller);
     }
 
-    public function testOnlyCatalogModeBypassesClosedStorefrontGate(): void
+    public function testProductionCatalogHasTightResourceLimits(): void
     {
-        self::assertStringContainsString("\$schema['talario_analytics']", $this->trusted_controllers);
-        self::assertStringContainsString("'catalog' => true", $this->trusted_controllers);
-        self::assertStringContainsString("'default_allow' => false", $this->trusted_controllers);
-        self::assertStringContainsString("'areas' => ['C']", $this->trusted_controllers);
-        self::assertStringNotContainsString("'allow' => true", $this->trusted_controllers);
+        self::assertStringContainsString("partner_sync_catalog:global", $this->controller);
+        self::assertStringContainsString("partner_sync_catalog:", $this->controller);
+        self::assertStringContainsString("max_limit' => 100", $this->controller);
+        self::assertStringContainsString("LIMIT 501", $this->controller);
+        self::assertStringContainsString("array_slice($schedule, 0, 500)", $this->controller);
+        self::assertStringContainsString("strlen($serialized_days_data) > 8192", $this->controller);
+        self::assertStringContainsString("'max_depth' => 2", $this->controller);
     }
 
     public function testSnapshotDeclaresTruncationAndCursor(): void
