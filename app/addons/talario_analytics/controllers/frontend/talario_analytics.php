@@ -267,21 +267,41 @@ function fn_talario_analytics_legacy_schedule(array $product_ids, DateTimeImmuta
         }
         $days_data = @unserialize($serialized_days_data, [
             'allowed_classes' => false,
-            'max_depth' => 2,
+            // Ecarter may keep per-weekday slot-capacity metadata under
+            // days_data[weekday]['time_by_amount']; the schedule reader only
+            // consumes the flat weekday status/start/end fields below.
+            'max_depth' => 8,
         ]);
         if (!is_array($days_data) || count($days_data) > 32) {
             continue;
         }
         $valid_days_data = true;
         foreach ($days_data as $key => $value) {
-            if (
-                !is_string($key)
-                || !preg_match('/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)_(status|timing_start_time|timing_end_time)$/', $key)
-                || !is_scalar($value)
-            ) {
+            if (!is_string($key)) {
                 $valid_days_data = false;
                 break;
             }
+
+            if (
+                preg_match('/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)_(status|timing_start_time|timing_end_time)$/', $key)
+                && is_scalar($value)
+            ) {
+                continue;
+            }
+
+            // Ecarter's slot editor persists extra per-weekday arrays such as
+            // sunday => ['time_by_amount' => ...]. They are unrelated to the
+            // recurring schedule window, so ignore them rather than rejecting
+            // the entire legacy row. Unknown top-level keys still fail closed.
+            if (
+                preg_match('/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/', $key)
+                && is_array($value)
+            ) {
+                continue;
+            }
+
+            $valid_days_data = false;
+            break;
         }
         if (!$valid_days_data) {
             continue;
