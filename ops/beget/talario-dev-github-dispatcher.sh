@@ -65,7 +65,9 @@ case "$REQUEST" in
   "talario-dev-ops php-lint")
     mark_dispatcher
     echo "OPERATION=php-lint"
-    find app/addons/talario_analytics -type f -name '*.php' -print0       | sort -z       | xargs -0 -n1 php8.2 -l
+    while IFS= read -r -d '' file; do
+      php8.2 -l -- "$file"
+    done < <(find app/addons/talario_analytics -type f -name '*.php' -print0 | sort -z)
     echo "PHP_LINT_OK"
     ;;
 
