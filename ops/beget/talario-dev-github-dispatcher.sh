@@ -70,17 +70,24 @@ case "$REQUEST" in
   "talario-dev-ops partner-sync-apply")
     mark_dispatcher
     echo "OPERATION=partner-sync-apply"
-    RUNNER="$DEV_COPY/ops/partner-sync-apply.php"
-    REAL_RUNNER="$(realpath -- "$RUNNER" 2>/dev/null || true)"
-    [ "$REAL_RUNNER" = "$RUNNER" ] && [ -f "$REAL_RUNNER" ] && [ ! -L "$REAL_RUNNER" ] \
-      || fail "partner sync CLI runner is unavailable" 71
     EXPECTED_BLOB="$(git rev-parse 'HEAD:ops/partner-sync-apply.php' 2>/dev/null || true)"
-    ACTUAL_BLOB="$(git hash-object -- "$REAL_RUNNER" 2>/dev/null || true)"
-    [ -n "$EXPECTED_BLOB" ] && [ "$ACTUAL_BLOB" = "$EXPECTED_BLOB" ] \
-      || fail "partner sync CLI runner differs from current Git HEAD" 72
-    [ "$(stat -c '%u' -- "$REAL_RUNNER")" = "$(id -u)" ] \
-      || fail "partner sync CLI runner has unexpected owner" 73
-    exec /usr/local/bin/php8.2 "$REAL_RUNNER"
+    [ -n "$EXPECTED_BLOB" ] || fail "partner sync CLI blob is unavailable" 71
+    TMP_RUNNER="$(mktemp "$DEV_COPY/ops/.partner-sync-apply.XXXXXX.php")"
+    cleanup_partner_sync_runner() {
+      rm -f -- "$TMP_RUNNER"
+    }
+    trap cleanup_partner_sync_runner EXIT HUP INT TERM
+    git cat-file blob "$EXPECTED_BLOB" > "$TMP_RUNNER"
+    chmod 600 "$TMP_RUNNER"
+    [ "$(git hash-object -- "$TMP_RUNNER")" = "$EXPECTED_BLOB" ] \
+      || fail "partner sync CLI temp runner failed integrity check" 72
+    set +e
+    /usr/local/bin/php8.2 "$TMP_RUNNER"
+    RC=$?
+    set -e
+    cleanup_partner_sync_runner
+    trap - EXIT HUP INT TERM
+    exit "$RC"
     ;;
 
   "talario-dev-ops worktree-repair")
