@@ -72,28 +72,35 @@ case "$REQUEST" in
     echo "OPERATION=prod-partner-sync-bootstrap"
 
     PROD_ROOT="/home/t/tyman5tb/talario.ru/public_html"
+    SAFE_HOME="/home/t/tyman5tb"
     BOOTSTRAP_REL="ops/beget/bootstrap-partner-sync-prod-read.sh"
-    BOOTSTRAP_PATH="$PROD_ROOT/$BOOTSTRAP_REL"
+    EXPECTED_PROD_COMMIT="c27310ec82c38fcf574ca0c56f0c39ece3f5c66d"
 
     [ -d "$PROD_ROOT" ] || fail "PROD root missing" 71
     [ "$(git -C "$PROD_ROOT" rev-parse --abbrev-ref HEAD)" = "prod" ] || fail "PROD is not on prod branch" 72
     [ -z "$(git -C "$PROD_ROOT" status --porcelain)" ] || fail "PROD worktree must be clean" 73
 
-    git -C "$PROD_ROOT" fetch --quiet origin prod
-    [ "$(git -C "$PROD_ROOT" rev-parse HEAD)" = "$(git -C "$PROD_ROOT" rev-parse origin/prod)" ] \
-      || fail "PROD worktree is not at current origin/prod" 74
+    git -C "$PROD_ROOT" fetch --quiet origin prod \
+      || fail "failed to fetch origin/prod" 74
 
-    [ -f "$BOOTSTRAP_PATH" ] && [ ! -L "$BOOTSTRAP_PATH" ] || fail "bootstrap script unavailable" 75
+    CURRENT_HEAD="$(git -C "$PROD_ROOT" rev-parse HEAD 2>/dev/null)" \
+      || fail "failed to read PROD HEAD" 75
+    REMOTE_HEAD="$(git -C "$PROD_ROOT" rev-parse origin/prod 2>/dev/null)" \
+      || fail "failed to read origin/prod" 76
 
-    EXPECTED_HASH="$(git -C "$PROD_ROOT" show "HEAD:$BOOTSTRAP_REL" | /usr/bin/sha256sum | /usr/bin/awk '{print $1}')"
-    ACTUAL_HASH="$(/usr/bin/sha256sum "$BOOTSTRAP_PATH" | /usr/bin/awk '{print $1}')"
-    [ -n "$EXPECTED_HASH" ] && [ "$EXPECTED_HASH" = "$ACTUAL_HASH" ] \
-      || fail "bootstrap script integrity check failed" 76
+    [ "$CURRENT_HEAD" = "$EXPECTED_PROD_COMMIT" ] \
+      || fail "PROD HEAD is not the reviewed bootstrap commit" 77
+    [ "$REMOTE_HEAD" = "$EXPECTED_PROD_COMMIT" ] \
+      || fail "origin/prod moved beyond the reviewed bootstrap commit" 78
 
-    /usr/bin/env -i \
-      HOME="$HOME" \
-      PATH="/usr/local/bin:/usr/bin:/bin" \
-      /usr/bin/bash "$BOOTSTRAP_PATH"
+    git -C "$PROD_ROOT" cat-file -e "$EXPECTED_PROD_COMMIT:$BOOTSTRAP_REL" \
+      || fail "reviewed bootstrap blob unavailable" 79
+
+    git -C "$PROD_ROOT" show "$EXPECTED_PROD_COMMIT:$BOOTSTRAP_REL" \
+      | /usr/bin/env -i \
+          HOME="$SAFE_HOME" \
+          PATH="/usr/local/bin:/usr/bin:/bin" \
+          /usr/bin/bash -s
     ;;
 
   "talario-dev-ops worktree-repair")
