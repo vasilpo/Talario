@@ -42,7 +42,6 @@ jobs:
               ;;
           esac
           echo "operation=$OP" >> "$GITHUB_OUTPUT"
-          echo "request_id=$REQUEST_ID" >> "$GITHUB_OUTPUT"
 
       - name: Configure pinned SSH host key
         shell: bash
@@ -65,11 +64,9 @@ jobs:
           BEGET_HOST: ${{ secrets.BEGET_HOST }}
           BEGET_USER: ${{ secrets.BEGET_USER }}
           OPERATION: ${{ steps.request.outputs.operation }}
-          REQUEST_ID: ${{ steps.request.outputs.request_id }}
         run: |
           set -euo pipefail
           test "$BEGET_HOST" = "salvage.beget.com"
-          printf 'REQUEST_ID=%s\n' "$REQUEST_ID"
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
           printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
           printf '%s\n' "$OUTPUT"             | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT)='
