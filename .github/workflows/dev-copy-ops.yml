@@ -71,5 +71,5 @@ jobs:
           test "$BEGET_HOST" = "salvage.beget.com"
           printf 'REQUEST_ID=%s\n' "$REQUEST_ID"
           OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
-          printf '%s\n' "$OUTPUT"
           printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
+          printf '%s\n' "$OUTPUT"             | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT)='
