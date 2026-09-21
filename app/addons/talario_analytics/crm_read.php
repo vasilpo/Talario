@@ -42,6 +42,12 @@ function fn_talario_analytics_crm_rate_limit(string $provided_hash): void
 function fn_talario_analytics_crm_response(): void
 {
     $after_user_id = max(0, (int) ($_GET['after_user_id'] ?? 0));
+    $include_phone = isset($_GET['include_phone']) && (string) $_GET['include_phone'] === '1';
+    $phone_read_enabled = defined('TALARIO_CRM_PHONE_READ') && TALARIO_CRM_PHONE_READ === true;
+    if ($include_phone && !$phone_read_enabled) {
+        fn_talario_analytics_json_response(403, ['error' => 'crm_phone_read_disabled']);
+    }
+
     $limit = (int) ($_GET['limit'] ?? 100);
     if ($limit < 1 || $limit > 100) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_limit', 'max_limit' => 100]);
@@ -56,7 +62,8 @@ function fn_talario_analytics_crm_response(): void
         }
     }
 
-    $user_query = 'SELECT u.user_id, u.email, u.phone, u.firstname, u.lastname, u.status, u.timestamp,'
+    $user_query = 'SELECT u.user_id, u.email, u.firstname, u.lastname, u.status, u.timestamp,'
+        . ($include_phone ? ' u.phone,' : '')
         . ' COALESCE(ud.data, 0) AS reward_points'
         . ' FROM ?:users u'
         . " LEFT JOIN ?:user_data ud ON ud.user_id = u.user_id AND ud.type = 'W'"
@@ -89,7 +96,7 @@ function fn_talario_analytics_crm_response(): void
         $customers[$user_id] = [
             'user_id' => $user_id,
             'email' => (string) $row['email'],
-            'phone' => (string) $row['phone'],
+            'phone' => $include_phone ? (string) ($row['phone'] ?? '') : null,
             'firstname' => (string) $row['firstname'],
             'lastname' => (string) $row['lastname'],
             'status' => (string) $row['status'],
@@ -229,6 +236,7 @@ function fn_talario_analytics_crm_response(): void
         'message' => 'Talario CRM customer-360 authorized request completed',
         'mode' => 'crm',
         'customer_count' => count($customers),
+        'phone_included' => $include_phone,
         'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
     ]);
 
