@@ -6,9 +6,24 @@ on:
       - development
     paths:
       - .github/dev-copy-ops/request.json
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Allowlisted read-only dev_copy operation
+        required: true
+        type: choice
+        options:
+          - status
+          - git-status
+          - php-lint
+      request_id:
+        description: Auditable request identifier
+        required: true
+        type: string
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: dev-copy-ops
@@ -28,13 +43,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          REQUEST=".github/dev-copy-ops/request.json"
-          OP="$(jq -er '.operation' "$REQUEST")"
-          REQUEST_ID="$(jq -er '.request_id' "$REQUEST")"
-          jq -e 'keys | sort == ["operation","request_id"]' "$REQUEST" >/dev/null
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            OP="${{ inputs.operation }}"
+            REQUEST_ID="${{ inputs.request_id }}"
+          else
+            REQUEST=".github/dev-copy-ops/request.json"
+            OP="$(jq -er '.operation' "$REQUEST")"
+            REQUEST_ID="$(jq -er '.request_id' "$REQUEST")"
+            jq -e 'keys | sort == ["operation","request_id"]' "$REQUEST" >/dev/null
+          fi
           [[ "$REQUEST_ID" =~ ^[A-Za-z0-9._:-]{1,80}$ ]]
           case "$OP" in
-            status|git-status|php-lint|worktree-repair)
+            status|git-status|php-lint)
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
@@ -42,6 +62,7 @@ jobs:
               ;;
           esac
           echo "operation=$OP" >> "$GITHUB_OUTPUT"
+          echo "request_id=$REQUEST_ID" >> "$GITHUB_OUTPUT"
 
       - name: Configure pinned SSH host key
         shell: bash
@@ -59,6 +80,7 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       - name: Run allowlisted dev_copy operation
+        id: remote
         shell: bash
         env:
           BEGET_USER: ${{ secrets.BEGET_USER }}
@@ -66,6 +88,50 @@ jobs:
         run: |
           set -euo pipefail
           BEGET_HOST="salvage.beget.com"
-          OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION")"
-          printf '%s\n' "$OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
-          printf '%s\n' "$OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT|REPAIR|REPAIRED_COUNT)='
+
+          set +e
+          RAW_OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" "talario-dev-ops $OPERATION" 2>&1)"
+          RC=$?
+          set -e
+
+          if [ "$RC" -eq 0 ]; then
+            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|PARTNER_SYNC_HASH|DIRTY_COUNT|PHP_LINT)=' | head -20)"
+            printf '%s\n' "$CLEAN_OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
+          else
+            CLEAN_OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
+          fi
+
+          {
+            echo "rc=$RC"
+            echo 'output<<EOF'
+            printf '%s\n' "$CLEAN_OUTPUT"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Record sanitized result
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          REQUEST_ID: ${{ steps.request.outputs.request_id }}
+          OPERATION: ${{ steps.request.outputs.operation }}
+          RC: ${{ steps.remote.outputs.rc }}
+          RESULT: ${{ steps.remote.outputs.output }}
+        with:
+          script: |
+            const body = [
+              '## Dev Copy Ops result',
+              '',
+              'request: `' + (process.env.REQUEST_ID || 'unknown') + '`',
+              'operation: `' + (process.env.OPERATION || 'unknown') + '`',
+              'remote_rc: `' + (process.env.RC || 'unknown') + '`',
+              '',
+              '```text',
+              process.env.RESULT || 'workflow failed before sanitized output',
+              '```'
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 204,
+              body,
+            });
