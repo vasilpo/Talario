@@ -269,6 +269,19 @@ function fn_talario_analytics_catalog_meta_response(): void
         fn_talario_analytics_json_response(400, ['error' => 'partner_id_required']);
     }
 
+    $allowed_raw = defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')
+        ? trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS)
+        : '';
+    $allowed_company_ids = $allowed_raw === ''
+        ? []
+        : array_values(array_unique(array_filter(array_map(
+            'intval',
+            preg_split('/\\s*,\\s*/', $allowed_raw) ?: []
+        ))));
+    if (!in_array($partner_id, $allowed_company_ids, true)) {
+        fn_talario_analytics_json_response(403, ['error' => 'partner_not_metadata_allowed']);
+    }
+
     $company_exists = (int) db_get_field(
         'SELECT COUNT(*) FROM ?:companies WHERE company_id = ?i AND status = ?s',
         $partner_id,
