@@ -12,6 +12,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $addon_xml;
     private string $trusted_controllers;
     private string $write_capability;
+    private string $dev_dispatcher;
     private string $cli_runner;
 
     protected function setUp(): void
@@ -23,6 +24,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->addon_xml = (string) file_get_contents($addon_path);
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
+        $this->dev_dispatcher = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/beget/talario-dev-github-dispatcher.sh');
         $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
     }
 
@@ -124,6 +126,28 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
         self::assertStringContainsString("'images' => [", $this->write_capability);
     }
+
+
+    public function testDevDispatcherHasFixedPartnerSyncCommands(): void
+    {
+        self::assertStringContainsString(
+            '"talario-partner-sync-dry-run"|"talario-partner-sync-apply")',
+            $this->dev_dispatcher
+        );
+        self::assertStringContainsString('/usr/local/bin/php8.2 ops/partner-sync-apply.php', $this->dev_dispatcher);
+        self::assertStringContainsString('20971520', $this->dev_dispatcher);
+        self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
+        self::assertStringContainsString('APPLY_DRY_RUN_FALSE_REQUIRED', $this->dev_dispatcher);
+        self::assertStringContainsString('APPROVAL_ID_REQUIRED', $this->dev_dispatcher);
+    }
+
+    public function testDevDispatcherDoesNotExposeGenericShellForPartnerSync(): void
+    {
+        self::assertStringNotContainsString('eval ', $this->dev_dispatcher);
+        self::assertStringNotContainsString('bash -c "$REQUEST"', $this->dev_dispatcher);
+        self::assertStringContainsString('fail "SSH command is not allowlisted"', $this->dev_dispatcher);
+    }
+
 
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
