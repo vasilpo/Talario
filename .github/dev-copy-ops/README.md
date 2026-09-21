@@ -43,10 +43,10 @@ No other Dev Copy Ops operation is supported. `clear-cache` and `partner-sync-pr
 
 ## Beget forced-command requirement
 
-Before merging this workflow, install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout (for example under `~/.local/bin`) and bind the existing GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and writable only by that account. Verify the binding out-of-band before merge. If the GitHub Actions key was previously usable for unrestricted shell access, rotate it after the forced-command migration.
+Install a copy of `ops/beget/talario-dev-github-dispatcher.sh` outside the Git checkout and bind the GitHub Actions public key in `~/.ssh/authorized_keys` with `command="...dispatcher...",no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty`. The dispatcher must be owned by the Beget account and writable only by that account. Verify the binding out-of-band before merge.
 
 The same forced command must permit exactly `talario-dev-deploy`, `talario-dev-ops status`, `talario-dev-ops git-status`, and `talario-dev-ops php-lint`. Any other `SSH_ORIGINAL_COMMAND` must fail closed.
 
 ## Verified bootstrap state
 
-The existing GitHub Actions public key was verified out-of-band on Beget with the forced-command dispatcher: an allowlisted `talario-dev-ops status` call returned `DISPATCHER=talario-dev-github-v1`, while a non-allowlisted `uname -a` command was rejected. Because the key previously existed before this forced-command migration, rotate the GitHub Actions SSH key once during bootstrap and bind the replacement key to the same forced command before merging this PR.
+The GitHub Actions SSH key was rotated during bootstrap. The replacement key was bound to the forced-command dispatcher and verified out-of-band: `talario-dev-ops status` returned `DISPATCHER=talario-dev-github-v1`, while a non-allowlisted `uname -a` command was rejected. The previous GitHub Actions key was then removed from `authorized_keys` and deleted from the Beget account.
