@@ -600,11 +600,43 @@ function fn_talario_analytics_partner_sync_validate_resolved_variants(array $res
 }
 
 
+function fn_talario_analytics_partner_sync_cleanup_ecarter_product(int $product_id): void
+{
+    if ($product_id <= 0) {
+        return;
+    }
+
+    // Ecarter tables are MyISAM in the installed addon, so the surrounding
+    // transaction cannot roll these writes back. Compensating cleanup must be
+    // explicit before a generated variation product is deleted.
+    db_query('DELETE FROM ?:ec_table_booking_system_price WHERE product_id = ?i', $product_id);
+    db_query('DELETE FROM ?:ec_table_booking_system_booking_info WHERE product_id = ?i', $product_id);
+    db_query('DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
+}
+
 function fn_talario_analytics_partner_sync_cleanup_created_variations(
     int $group_id,
     int $base_product_id,
     array $product_ids
 ): void {
+    $cleanup_ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        $product_ids
+    ), static fn(int $product_id): bool => $product_id > 0 && $product_id !== $base_product_id)));
+
+    // Remove Ecarter state first. Product deletion hooks in the installed
+    // Ecarter version do not clean these product-keyed tables.
+    foreach ($cleanup_ids as $cleanup_product_id) {
+        try {
+            fn_talario_analytics_partner_sync_cleanup_ecarter_product($cleanup_product_id);
+        } catch (Throwable $cleanup_exception) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync Ecarter cleanup failed',
+                'error_class' => get_class($cleanup_exception),
+            ]);
+        }
+    }
+
     try {
         if ($group_id > 0) {
             $service = \Tygh\Addons\ProductVariations\ServiceProvider::getService();
@@ -617,10 +649,7 @@ function fn_talario_analytics_partner_sync_cleanup_created_variations(
         ]);
     }
 
-    foreach (array_unique(array_map('intval', $product_ids)) as $cleanup_product_id) {
-        if ($cleanup_product_id <= 0 || $cleanup_product_id === $base_product_id) {
-            continue;
-        }
+    foreach ($cleanup_ids as $cleanup_product_id) {
         try {
             fn_delete_product($cleanup_product_id);
         } catch (Throwable $cleanup_exception) {
