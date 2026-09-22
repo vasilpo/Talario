@@ -125,6 +125,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('PARTNER_SYNC_ROOT_OWNER_MISMATCH', $this->cli_runner);
         self::assertStringContainsString('PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE', $this->cli_runner);
         self::assertStringContainsString('PARTNER_SYNC_RUNNER_TRUST_FAILED', $this->cli_runner);
+        self::assertStringContainsString("@fopen(__FILE__, 'rb')", $this->cli_runner);
+        self::assertStringContainsString('@fstat($runner_handle)', $this->cli_runner);
+        self::assertStringNotContainsString('@lstat(__FILE__)', $this->cli_runner);
+        self::assertStringNotContainsString('is_link(__FILE__)', $this->cli_runner);
         self::assertStringContainsString('$trusted_root_uids = [0, (int) $script_stat[\'uid\']];', $this->cli_runner);
         self::assertStringNotContainsString('/home/t/tyman5tb/', $this->cli_runner);
         self::assertStringContainsString('fn_is_development()', $this->cli_runner);
@@ -192,7 +196,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('trusted PHP binary owner mismatch', $this->dev_dispatcher);
         self::assertStringContainsString('trusted PHP binary is group/world writable', $this->dev_dispatcher);
         self::assertStringContainsString('mktemp "$STATE_DIR/runner.XXXXXX.php"', $this->dev_dispatcher);
-        self::assertStringContainsString('EXPECTED_RUNNER_SHA256="c8ff7bfe0b2282a6afdbde1b2ea36e736692a56970b0d8ef764e0611470ac26c"', $this->dev_dispatcher);
+        self::assertStringContainsString('EXPECTED_RUNNER_SHA256="d9c5b8e4803cc5cb3057954f9e3aeefacb3e13e89e0679253581a511e042007f"', $this->dev_dispatcher);
         self::assertStringContainsString('partner sync CLI runner is not allowlisted', $this->dev_dispatcher);
         $runner_hash = hash('sha256', $this->cli_runner);
         self::assertStringContainsString('EXPECTED_RUNNER_SHA256="' . $runner_hash . '"', $this->dev_dispatcher);
