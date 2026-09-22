@@ -593,7 +593,7 @@ function fn_render_newsletter($body, $subscriber)
     $firstname = (string) preg_replace('/[\\x00-\\x1F\\x7F]+/u', ' ', $firstname);
     $firstname = htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $values['%FIRSTNAME%'] = $firstname;
-    $values['%FIRSTNAME_GREETING%'] = $firstname . ', здравствуйте!';
+    $values['%FIRSTNAME_GREETING%'] = $firstname !== '' ? $firstname . ', здравствуйте!' : 'Здравствуйте!';
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
     $values['%COMPANY_PHONE'] = Registry::get('settings.Company.company_phone');
