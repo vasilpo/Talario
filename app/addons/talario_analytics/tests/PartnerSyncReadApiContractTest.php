@@ -224,6 +224,28 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'error' => 'variation_update_not_implemented'", $this->write_capability);
     }
 
+    public function testPartnerSyncVariationDependenciesDoNotOwnTransactions(): void
+    {
+        $variation_service = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/product_variations/src/Service.php'
+        );
+        $ecarter = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/ec_table_booking_system/func.php'
+        );
+        foreach (['START TRANSACTION', 'COMMIT', 'ROLLBACK'] as $transaction_control) {
+            self::assertStringNotContainsString($transaction_control, $variation_service);
+            self::assertStringNotContainsString($transaction_control, $ecarter);
+        }
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_validate_resolved_variants',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "throw new RuntimeException('variation_variant_membership_invalid')",
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncVariationApplyDoesNotDirectlyMutateVariationMetadataTables(): void
     {
         self::assertStringNotContainsString('INSERT INTO ?:product_variation', $this->write_capability);
