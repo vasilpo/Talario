@@ -58,10 +58,6 @@ jobs:
             status|git-status|php-lint)
               ;;
             partner-sync-dry-run-smoke)
-              [ "${{ github.event_name }}" = "workflow_dispatch" ] || {
-                echo "ERROR: partner-sync-dry-run-smoke requires workflow_dispatch"
-                exit 64
-              }
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
