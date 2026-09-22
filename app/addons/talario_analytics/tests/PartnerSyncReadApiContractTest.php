@@ -244,4 +244,57 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("source_ip_hash' => hash('sha256'", $audit);
         self::assertStringNotContainsString('$provided_token', $audit);
     }
+
+    public function testPartnerSyncVariationApplyUsesCsCartServiceAndFailsClosed(): void
+    {
+        self::assertStringContainsString(
+            'generateProductsAndCreateGroup($request)',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_update_product_features_value($base_product_id',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'error' => 'variation_plan_not_rectangular'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'error' => 'schedule_not_representable'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'reason' => 'multiple_sessions_same_day'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'error' => 'booking_required_for_variations'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'variation_structure_change_not_supported'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_ec_save_booking_data_by_amount',
+            $this->write_capability
+        );
+    }
+
+    public function testPartnerSyncVariationApplyDoesNotCreateFeatureVariants(): void
+    {
+        self::assertStringNotContainsString(
+            'fn_update_product_feature_variant',
+            $this->write_capability
+        );
+        self::assertStringNotContainsString(
+            "'add_new_variant' =>",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_resolve_variation_axis',
+            $this->write_capability
+        );
+    }
+
 }
