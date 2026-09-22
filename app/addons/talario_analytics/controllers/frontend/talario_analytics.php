@@ -309,6 +309,24 @@ function fn_talario_analytics_catalog_response(): void
         $lang_code = 'ru';
     }
 
+    $categories = [];
+    foreach (db_get_array(
+        'SELECT c.category_id, c.parent_id, cd.category'
+        . ' FROM ?:categories c'
+        . ' INNER JOIN ?:category_descriptions cd ON cd.category_id = c.category_id'
+        . ' AND cd.lang_code = ?s'
+        . ' WHERE c.status = ?s'
+        . ' ORDER BY c.parent_id ASC, c.position ASC, c.category_id ASC',
+        $lang_code,
+        'A'
+    ) as $row) {
+        $categories[] = [
+            'category_id' => (int) $row['category_id'],
+            'parent_id' => (int) $row['parent_id'],
+            'name' => (string) $row['category'],
+        ];
+    }
+
     $partners = [];
     foreach (db_get_array(
         'SELECT company_id, company, status FROM ?:companies WHERE status = ?s ORDER BY company_id ASC',
@@ -358,6 +376,7 @@ function fn_talario_analytics_catalog_response(): void
             'updated_at' => (int) $row['updated_timestamp'],
             'variations' => [],
             'prices' => [],
+            'category_ids' => [],
             'resource_ids' => [],
         ];
     }
@@ -368,6 +387,21 @@ function fn_talario_analytics_catalog_response(): void
     }
 
     $selected_product_ids = array_map('intval', array_keys($products));
+
+    $product_categories = $products ? db_get_array(
+        'SELECT product_id, category_id'
+        . ' FROM ?:products_categories'
+        . ' WHERE product_id IN (?n)'
+        . ' ORDER BY product_id ASC, position ASC, category_id ASC',
+        array_keys($products)
+    ) : [];
+    foreach ($product_categories as $row) {
+        $product_id = (int) $row['product_id'];
+        if (!isset($products[$product_id])) {
+            continue;
+        }
+        $products[$product_id]['category_ids'][] = (int) $row['category_id'];
+    }
 
     $prices = $products ? db_get_array(
         'SELECT product_id, lower_limit, usergroup_id, price'
@@ -538,6 +572,7 @@ function fn_talario_analytics_catalog_response(): void
         'generated_at' => (new DateTimeImmutable('now', $timezone))->format(DateTimeInterface::ATOM),
         'timezone' => 'Europe/Moscow',
         'range' => ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')],
+        'categories' => $categories,
         'partners' => $partners,
         'products' => array_values($products),
         'schedule' => $schedule,
