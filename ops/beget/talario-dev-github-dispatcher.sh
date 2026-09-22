@@ -66,6 +66,48 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-dev-ops runtime-errors")
+    mark_dispatcher
+    echo "OPERATION=runtime-errors"
+
+    LOG_FILES=()
+    if [ -f "$DEV_COPY/error_log" ] && [ ! -L "$DEV_COPY/error_log" ]; then
+      LOG_FILES+=("$DEV_COPY/error_log")
+    fi
+    if [ -d "$DEV_COPY/var/log" ] && [ ! -L "$DEV_COPY/var/log" ]; then
+      while IFS= read -r file; do
+        [ -f "$file" ] && [ ! -L "$file" ] || continue
+        LOG_FILES+=("$file")
+      done < <(find "$DEV_COPY/var/log" -maxdepth 1 -type f \( -name '*.log' -o -name 'error_log*' \) -print 2>/dev/null | sort | head -5)
+    fi
+
+    count=0
+    for file in "${LOG_FILES[@]}"; do
+      [ "$count" -lt 25 ] || break
+      while IFS= read -r line; do
+        [ "$count" -lt 25 ] || break
+        sanitized="$(printf '%s' "$line" \
+          | sed -E \
+              -e "s#${DEV_COPY}#DEV_COPY#g" \
+              -e 's/(Bearer[[:space:]]+)[^[:space:]]+/\1[REDACTED]/Ig' \
+              -e 's/((token|password|passwd|secret|api[_-]?key)["'"'=:[:space:]]+)[^[:space:],;&]+/\1[REDACTED]/Ig' \
+              -e 's/[A-Fa-f0-9]{40,}/[REDACTED_HEX]/g' \
+              -e 's/[A-Za-z0-9_\/+.-]{64,}/[REDACTED_LONG]/g' \
+          | cut -c1-900)"
+        [ -n "$sanitized" ] || continue
+        encoded="$(printf '%s' "$sanitized" | base64 -w0)"
+        printf 'RUNTIME_ERROR_B64=%s\n' "$encoded"
+        count=$((count + 1))
+      done < <(
+        tail -n 160 -- "$file" 2>/dev/null \
+          | grep -Ei 'fatal|uncaught|exception|error|warning|typeerror|argumentcounterror|stack trace' \
+          | tail -n 25 \
+          || true
+      )
+    done
+    echo "RUNTIME_ERROR_COUNT=$count"
+    ;;
+
   "talario-partner-sync-dry-run")
     mark_dispatcher
     echo "OPERATION=partner-sync-dry-run"
