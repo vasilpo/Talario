@@ -1,4 +1,4 @@
 {
-  "operation": "status",
-  "request_id": "incident-20260922-1a"
+  "operation": "partner-sync-dry-run-smoke",
+  "request_id": "part-sync-push-smoke-20260922"
 }
