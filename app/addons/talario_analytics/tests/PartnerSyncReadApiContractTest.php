@@ -194,9 +194,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
 
     public function testPartnerSyncVariationPlanIsBoundedAndValidated(): void
     {
-        self::assertStringContainsString("count(\$payload['variation_plan']) > 100", $this->write_capability);
+        self::assertStringContainsString("count(\$payload['variation_plan']) > 64", $this->write_capability);
         self::assertStringContainsString("'error' => 'duplicate_variation_item'", $this->write_capability);
         self::assertStringContainsString("'error' => 'invalid_variation_schedule_item'", $this->write_capability);
+        self::assertStringContainsString("'error' => 'variation_schedule_total_limit'", $this->write_capability);
         self::assertStringContainsString("'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'", $this->write_capability);
         self::assertStringContainsString("\$duration > 1440", $this->write_capability);
     }
@@ -224,18 +225,28 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'error' => 'variation_update_not_implemented'", $this->write_capability);
     }
 
-    public function testPartnerSyncVariationDependenciesDoNotOwnTransactions(): void
+    public function testPartnerSyncCrossAddonVariationPhaseRunsAfterBaseCommit(): void
     {
-        $variation_service = (string) file_get_contents(
-            dirname(__DIR__, 2) . '/product_variations/src/Service.php'
+        $response_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_response'
         );
-        $ecarter = (string) file_get_contents(
-            dirname(__DIR__, 2) . '/ec_table_booking_system/func.php'
+        self::assertNotFalse($response_offset);
+        $response = substr($this->write_capability, $response_offset);
+
+        $commit_offset = strpos($response, "db_query('COMMIT')");
+        $variation_offset = strpos(
+            $response,
+            'fn_talario_analytics_partner_sync_apply_create_variations('
         );
-        foreach (['START TRANSACTION', 'COMMIT', 'ROLLBACK'] as $transaction_control) {
-            self::assertStringNotContainsString($transaction_control, $variation_service);
-            self::assertStringNotContainsString($transaction_control, $ecarter);
-        }
+        self::assertNotFalse($commit_offset);
+        self::assertNotFalse($variation_offset);
+        self::assertLessThan($variation_offset, $commit_offset);
+
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_cleanup_created_variations',
+            $this->write_capability
+        );
         self::assertStringContainsString(
             'fn_talario_analytics_partner_sync_validate_resolved_variants',
             $this->write_capability
@@ -257,7 +268,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncVariationMatrixAndResultCountAreBounded(): void
     {
         self::assertStringContainsString("'error' => 'variation_plan_must_be_full_matrix'", $this->write_capability);
-        self::assertStringContainsString('$expected_combinations > 100', $this->write_capability);
+        self::assertStringContainsString('$expected_combinations > 64', $this->write_capability);
         self::assertStringContainsString("throw new RuntimeException('variation_product_limit_exceeded')", $this->write_capability);
         self::assertStringContainsString("throw new RuntimeException('invalid_variation_schedule_day')", $this->write_capability);
     }
@@ -267,6 +278,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'error' => 'invalid_variation_capacity'", $this->write_capability);
         self::assertStringContainsString("throw new RuntimeException('variation_capacity_required')", $this->write_capability);
         self::assertStringContainsString("'capacities_complete' =>", $this->write_capability);
+        self::assertStringContainsString('(int) $capacity > 500', $this->write_capability);
         self::assertStringContainsString("'prices_complete' =>", $this->write_capability);
     }
 
