@@ -25,13 +25,41 @@ if (!str_ends_with($normalized_root, '/talario.ru/public_html/dev_copy')) {
 
 $root_stat = @stat($root);
 $script_stat = @stat(__FILE__);
-if (!is_array($root_stat) || !is_array($script_stat) || $root_stat['uid'] !== $script_stat['uid']) {
+if (!is_array($root_stat) || !is_array($script_stat)) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_STAT_FAILED\n");
+    exit(4);
+}
+
+$trusted_root_uids = [0, (int) $script_stat['uid']];
+if (!in_array((int) $root_stat['uid'], $trusted_root_uids, true)) {
     fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
     exit(4);
 }
 if (($root_stat['mode'] & 0022) !== 0) {
     fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
     exit(4);
+}
+
+$critical_files = [
+    $root . '/init.php',
+    $root . '/config.local.php',
+    $root . '/app/addons/talario_analytics/partner_sync_write.php',
+];
+
+foreach ($critical_files as $critical_file) {
+    $critical_lstat = @lstat($critical_file);
+    $critical_stat = @stat($critical_file);
+    if (
+        !is_array($critical_lstat)
+        || !is_array($critical_stat)
+        || is_link($critical_file)
+        || !is_file($critical_file)
+        || (int) $critical_stat['uid'] !== (int) $script_stat['uid']
+        || ($critical_stat['mode'] & 0022) !== 0
+    ) {
+        fwrite(STDERR, "PARTNER_SYNC_CRITICAL_FILE_TRUST_FAILED\n");
+        exit(4);
+    }
 }
 
 define('AREA', 'A');
