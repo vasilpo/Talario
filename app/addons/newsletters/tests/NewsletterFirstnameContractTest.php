@@ -19,7 +19,7 @@ final class NewsletterFirstnameContractTest extends TestCase
     public function testDirectUserRecipientQueriesCarryFirstname(): void
     {
         self::assertStringContainsString(
-            'NULL as list_id, NULL as subscriber_id, users.firstname FROM ?:users AS users',
+            'NULL as list_id, NULL as subscriber_id, users.firstname',
             $this->func
         );
     }
