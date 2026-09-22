@@ -295,6 +295,34 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertLessThan($delete_offset, $ecarter_offset);
     }
 
+    public function testPartnerSyncRollbackDeletesOnlyCurrentCreateOwnedVariations(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_existing_variation_product_ids',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'SELECT DISTINCT product_id FROM ?:product_features_values',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            '$created_product_ids = array_values(array_diff(',
+            $this->write_capability
+        );
+
+        $apply_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_apply_create_variations'
+        );
+        self::assertNotFalse($apply_offset);
+        $apply = substr($this->write_capability, $apply_offset, 12000);
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_cleanup_created_variations(',
+            $apply
+        );
+        self::assertStringContainsString('$created_product_ids', $apply);
+    }
+
     public function testPartnerSyncAuditLogDoesNotPersistVariationIds(): void
     {
         $log_offset = strrpos($this->write_capability, "fn_log_event('general', 'runtime'");
