@@ -313,6 +313,19 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
     return $normalized;
 }
 
+function fn_talario_analytics_partner_sync_variation_label_key(string $label, bool $purchase_axis = false): string
+{
+    $key = mb_strtolower(trim($label), 'UTF-8');
+    $key = str_replace(['–', '—'], '-', $key);
+    $key = preg_replace('/(?<=\\d)\\s*лет/u', ' лет', $key) ?? $key;
+    $key = preg_replace('/\\s+/u', ' ', $key) ?? $key;
+    if ($purchase_axis) {
+        $key = preg_replace('/^абонемент\\s+на\\s+(\\d+)\\s+занят(?:ие|ия|ий)$/u', 'абонемент $1 занятий', $key) ?? $key;
+        $key = preg_replace('/^абонемент\\s+(\\d+)\\s+занят(?:ие|ия|ий)$/u', 'абонемент $1 занятий', $key) ?? $key;
+    }
+    return trim($key);
+}
+
 function fn_talario_analytics_partner_sync_resolve_variation_axis(
     array $candidate_names,
     array $variant_labels,
@@ -345,6 +358,8 @@ function fn_talario_analytics_partner_sync_resolve_variation_axis(
         return $left_pos <=> $right_pos;
     });
 
+    $purchase_axis = count(array_intersect($candidate_names, ['Занятия', 'Занятие'])) > 0;
+
     foreach ($features as $feature) {
         $rows = db_get_array(
             'SELECT pfv.variant_id, pfvd.variant'
@@ -360,14 +375,14 @@ function fn_talario_analytics_partner_sync_resolve_variation_axis(
         foreach ($rows as $row) {
             $label = trim((string) $row['variant']);
             if ($label !== '') {
-                $by_label[mb_strtolower($label, 'UTF-8')] = (int) $row['variant_id'];
+                $by_label[fn_talario_analytics_partner_sync_variation_label_key($label, $purchase_axis)] = (int) $row['variant_id'];
             }
         }
 
         $resolved_variants = [];
         $missing = [];
         foreach ($variant_labels as $label) {
-            $key = mb_strtolower($label, 'UTF-8');
+            $key = fn_talario_analytics_partner_sync_variation_label_key($label, $purchase_axis);
             if (!isset($by_label[$key])) {
                 $missing[] = $label;
             } else {
