@@ -147,6 +147,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("/home/t/tyman5tb/.local/bin", $this->controller);
         self::assertStringContainsString("/ops/beget/talario-dev-github-dispatcher.sh", $this->controller);
         self::assertStringContainsString("4f2b998b71a8ad9913c1e64c5c3df69274748fd2", $this->controller);
+        self::assertStringContainsString("fc2b088cd2403b890cb539aa9e8ccee16778997d", $this->controller);
+        self::assertStringContainsString("dispatcher_current_not_expected", $this->controller);
         self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_COPY", $this->controller);
         self::assertStringContainsString("\$_SERVER['REQUEST_METHOD'] !== 'POST'", $this->controller);
         self::assertStringContainsString("rename(\$tmp, \$target_path)", $this->controller);
