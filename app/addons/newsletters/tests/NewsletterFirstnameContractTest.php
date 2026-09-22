@@ -16,16 +16,35 @@ final class NewsletterFirstnameContractTest extends TestCase
         $this->func = (string) file_get_contents($base . '/func.php');
     }
 
-    public function testRecipientQueriesCarryFirstname(): void
+    public function testDirectUserRecipientQueriesCarryFirstname(): void
     {
-        self::assertStringContainsString("COALESCE(users.firstname, '') as firstname", $this->func);
-        self::assertStringContainsString("users.firstname FROM ?:users AS users", $this->func);
+        self::assertStringContainsString(
+            'NULL as list_id, NULL as subscriber_id, users.firstname FROM ?:users AS users',
+            $this->func
+        );
     }
 
-    public function testRendererSupportsFirstnameAndGreeting(): void
+    public function testMailingListPayloadDoesNotJoinCustomerProfile(): void
+    {
+        self::assertStringContainsString(
+            'SELECT 0 as user_id, subscribers.email, subscribers.lang_code, mailing_lists.list_id',
+            $this->func
+        );
+        self::assertStringNotContainsString(
+            'COALESCE(users.firstname',
+            $this->func
+        );
+    }
+
+    public function testRendererEscapesFirstnameAndGatesListLookupOnConfirmation(): void
     {
         self::assertStringContainsString("['%FIRSTNAME%']", $this->func);
         self::assertStringContainsString("['%FIRSTNAME_GREETING%']", $this->func);
+        self::assertStringContainsString('htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE', $this->func);
+        self::assertStringContainsString(
+            'SELECT confirmed FROM ?:user_mailing_lists WHERE list_id = ?i AND subscriber_id = ?i',
+            $this->func
+        );
     }
 
     public function testMailingListConsentFilterRemainsIntact(): void
