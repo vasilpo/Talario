@@ -301,13 +301,11 @@ function fn_newsletters_get_recipients(array $params)
 
     if (!empty($params['mailing_lists'])) {
         $list_recipients = db_get_array(
-            'SELECT COALESCE(users.user_id, 0) as user_id, subscribers.email, subscribers.lang_code, mailing_lists.list_id, subscribers.subscriber_id, COALESCE(users.firstname, \'\') as firstname FROM ?:subscribers AS subscribers'
+            'SELECT 0 as user_id, subscribers.email, subscribers.lang_code, mailing_lists.list_id , subscribers.subscriber_id FROM ?:subscribers AS subscribers'
             . ' LEFT JOIN ?:user_mailing_lists AS user_mailing_lists'
                 . ' ON subscribers.subscriber_id = user_mailing_lists.subscriber_id'
             . ' LEFT JOIN ?:mailing_lists AS mailing_lists'
                 . ' ON user_mailing_lists.list_id = mailing_lists.list_id'
-            . ' LEFT JOIN ?:users AS users'
-                . ' ON LOWER(TRIM(users.email)) = LOWER(TRIM(subscribers.email)) AND users.user_type = \'C\''
             . ' WHERE user_mailing_lists.list_id IN (?n)'
                 . ' AND (user_mailing_lists.confirmed = ?i OR mailing_lists.register_autoresponder = ?i)'
                 . ' AND mailing_lists.status IN (?a)'
@@ -570,6 +568,29 @@ function fn_render_newsletter($body, $subscriber)
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
     $firstname = trim((string) ($subscriber['firstname'] ?? ''));
+
+    if (
+        $firstname === ''
+        && !empty($subscriber['list_id'])
+        && !empty($subscriber['subscriber_id'])
+        && !empty($subscriber['email'])
+    ) {
+        $confirmed = (bool) db_get_field(
+            'SELECT confirmed FROM ?:user_mailing_lists WHERE list_id = ?i AND subscriber_id = ?i',
+            $subscriber['list_id'],
+            $subscriber['subscriber_id']
+        );
+
+        if ($confirmed) {
+            $firstname = trim((string) db_get_field(
+                'SELECT firstname FROM ?:users WHERE LOWER(TRIM(email)) = LOWER(TRIM(?s)) AND user_type = ?s LIMIT 1',
+                $subscriber['email'],
+                'C'
+            ));
+        }
+    }
+
+    $firstname = htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $values['%FIRSTNAME%'] = $firstname;
     $values['%FIRSTNAME_GREETING%'] = $firstname . ', здравствуйте!';
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
