@@ -533,6 +533,8 @@ function fn_talario_analytics_partner_sync_find_variation_products(
     array $product_ids,
     array $resolution
 ): array {
+    fn_talario_analytics_partner_sync_validate_resolved_variants($resolution);
+
     $group_feature_id = (int) $resolution['group_axis']['feature_id'];
     $purchase_feature_id = (int) $resolution['purchase_axis']['feature_id'];
     $rows = db_get_array(
@@ -560,6 +562,35 @@ function fn_talario_analytics_partner_sync_find_variation_products(
         $map[$key] = (int) $product_id;
     }
     return $map;
+}
+
+
+function fn_talario_analytics_partner_sync_validate_resolved_variants(array $resolution): void
+{
+    $axes = ['group_axis', 'purchase_axis'];
+    foreach ($axes as $axis_name) {
+        $axis = (array) ($resolution[$axis_name] ?? []);
+        $feature_id = (int) ($axis['feature_id'] ?? 0);
+        $variant_ids = array_values(array_unique(array_map(
+            'intval',
+            array_values((array) ($axis['variants'] ?? []))
+        )));
+        if ($feature_id <= 0 || !$variant_ids) {
+            throw new RuntimeException('variation_axis_invalid');
+        }
+
+        $found = array_map('intval', db_get_fields(
+            'SELECT variant_id FROM ?:product_feature_variants'
+            . ' WHERE feature_id = ?i AND variant_id IN (?n)',
+            $feature_id,
+            $variant_ids
+        ));
+        sort($found);
+        sort($variant_ids);
+        if ($found !== $variant_ids) {
+            throw new RuntimeException('variation_variant_membership_invalid');
+        }
+    }
 }
 
 function fn_talario_analytics_partner_sync_apply_create_variations(
@@ -1009,9 +1040,11 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
         $variation_apply = null;
         if ($variation_resolution !== null) {
-            // Product Variations Service and the Ecarter helpers used here do not
-            // open/commit transactions themselves in the pinned CS-Cart codebase.
-            // Keep them inside our single transaction so a failed CREATE rolls back atomically.
+            // Transaction ownership is intentionally here, not in the called helpers.
+            // In the pinned CS-Cart tree, ProductVariations Service and
+            // fn_ec_save_booking_data_by_amount contain no START/COMMIT/ROLLBACK.
+            // Contract tests enforce that assumption. Keep the whole CREATE under
+            // this one transaction so any exception reaches our single ROLLBACK.
 
             if (!isset($payload['booking']) || !is_array($payload['booking'])) {
                 throw new RuntimeException('variation_booking_range_required');
