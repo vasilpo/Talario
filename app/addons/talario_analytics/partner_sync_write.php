@@ -202,7 +202,7 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
         return null;
     }
 
-    if (!is_array($payload['variation_plan']) || !$payload['variation_plan'] || count($payload['variation_plan']) > 100) {
+    if (!is_array($payload['variation_plan']) || !$payload['variation_plan'] || count($payload['variation_plan']) > 64) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_plan']);
     }
 
@@ -230,7 +230,7 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
         }
 
         $capacity = $item['capacity'] ?? null;
-        if ($capacity !== null && (!is_numeric($capacity) || (int) $capacity < 1 || (int) $capacity > 100000)) {
+        if ($capacity !== null && (!is_numeric($capacity) || (int) $capacity < 1 || (int) $capacity > 500)) {
             fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_capacity', 'index' => $index]);
         }
 
@@ -286,6 +286,14 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
             'capacity' => $capacity === null ? null : (int) $capacity,
             'schedule' => $normalized_schedule,
         ];
+    }
+
+    $total_sessions = array_sum(array_map(
+        static fn(array $item): int => count($item['schedule']),
+        $normalized
+    ));
+    if ($total_sessions > 256) {
+        fn_talario_analytics_json_response(400, ['error' => 'variation_schedule_total_limit']);
     }
 
     return $normalized;
@@ -387,7 +395,7 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
     $groups = array_values(array_unique($groups));
     $options = array_values(array_unique($options));
     $expected_combinations = count($groups) * count($options);
-    if ($expected_combinations < 1 || $expected_combinations > 100 || $expected_combinations !== count($variation_plan)) {
+    if ($expected_combinations < 1 || $expected_combinations > 64 || $expected_combinations !== count($variation_plan)) {
         fn_talario_analytics_json_response(400, ['error' => 'variation_plan_must_be_full_matrix']);
     }
 
@@ -593,6 +601,39 @@ function fn_talario_analytics_partner_sync_validate_resolved_variants(array $res
     }
 }
 
+
+function fn_talario_analytics_partner_sync_cleanup_created_variations(
+    int $group_id,
+    int $base_product_id,
+    array $product_ids
+): void {
+    try {
+        if ($group_id > 0) {
+            $service = \Tygh\Addons\ProductVariations\ServiceProvider::getService();
+            $service->removeGroup($group_id);
+        }
+    } catch (Throwable $cleanup_exception) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync variation group cleanup failed',
+            'error_class' => get_class($cleanup_exception),
+        ]);
+    }
+
+    foreach (array_unique(array_map('intval', $product_ids)) as $cleanup_product_id) {
+        if ($cleanup_product_id <= 0 || $cleanup_product_id === $base_product_id) {
+            continue;
+        }
+        try {
+            fn_delete_product($cleanup_product_id);
+        } catch (Throwable $cleanup_exception) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync variation product cleanup failed',
+                'error_class' => get_class($cleanup_exception),
+            ]);
+        }
+    }
+}
+
 function fn_talario_analytics_partner_sync_apply_create_variations(
     int $base_product_id,
     array $resolution,
@@ -656,7 +697,7 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
         throw new RuntimeException('variation_group_readback_failed');
     }
     $product_ids = array_map('intval', $group->getProductIds());
-    if (count($product_ids) > 100) {
+    if (count($product_ids) > 64) {
         throw new RuntimeException('variation_product_limit_exceeded');
     }
     if (count($product_ids) !== count($resolution['items'])) {
@@ -666,6 +707,7 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
     $product_map = fn_talario_analytics_partner_sync_find_variation_products($product_ids, $resolution);
     $applied = [];
 
+    try {
     foreach ((array) $resolution['items'] as $item) {
         $key = (int) $item['group_variant_id'] . ':' . (int) $item['purchase_variant_id'];
         if (!isset($product_map[$key])) {
@@ -705,6 +747,14 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
             'price' => (float) $item['price'],
             'slot_count' => count((array) $item['schedule']),
         ];
+    }
+    } catch (Throwable $exception) {
+        fn_talario_analytics_partner_sync_cleanup_created_variations(
+            (int) $group->getId(),
+            $base_product_id,
+            $product_ids
+        );
+        throw $exception;
     }
 
     return [
@@ -1037,26 +1087,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
             throw new RuntimeException('product_update_failed');
         }
         $product_id = (int) $result_id;
-
-        $variation_apply = null;
-        if ($variation_resolution !== null) {
-            // Transaction ownership is intentionally here, not in the called helpers.
-            // In the pinned CS-Cart tree, ProductVariations Service and
-            // fn_ec_save_booking_data_by_amount contain no START/COMMIT/ROLLBACK.
-            // Contract tests enforce that assumption. Keep the whole CREATE under
-            // this one transaction so any exception reaches our single ROLLBACK.
-
-            if (!isset($payload['booking']) || !is_array($payload['booking'])) {
-                throw new RuntimeException('variation_booking_range_required');
-            }
-            $variation_apply = fn_talario_analytics_partner_sync_apply_create_variations(
-                $product_id,
-                $variation_resolution,
-                $payload['booking'],
-                $lang_code
-            );
-        }
-
         db_query('COMMIT');
 
         // Only after the new product/images are safely saved do we remove the prior image pairs.
@@ -1075,6 +1105,36 @@ function fn_talario_analytics_partner_sync_write_response(): void
             'error_class' => get_class($exception),
         ]);
         fn_talario_analytics_json_response(500, ['error' => 'partner_sync_write_failed']);
+    }
+
+    // Phase 2: cross-addon Product Variations/Ecarter writes intentionally run
+    // outside our base-product transaction. On post-group failure the helper
+    // compensates by removing the group and generated child products. The base
+    // card remains hidden until the complete write/readback succeeds.
+    if ($variation_resolution !== null) {
+        try {
+            if (!isset($payload['booking']) || !is_array($payload['booking'])) {
+                throw new RuntimeException('variation_booking_range_required');
+            }
+            $variation_apply = fn_talario_analytics_partner_sync_apply_create_variations(
+                $product_id,
+                $variation_resolution,
+                $payload['booking'],
+                $lang_code
+            );
+        } catch (Throwable $exception) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync variation write failed',
+                'operation' => $operation,
+                'product_id' => $product_id,
+                'approval_id_hash' => $approval_id_hash,
+                'error_class' => get_class($exception),
+            ]);
+            fn_talario_analytics_json_response(500, [
+                'error' => 'partner_sync_variation_write_failed',
+                'product_id' => $product_id,
+            ]);
+        }
     }
 
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
