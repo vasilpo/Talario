@@ -908,6 +908,9 @@ function fn_talario_analytics_partner_sync_write_response(): void
     }
 
     $booking_data = null;
+    if ($variation_resolution !== null && !isset($payload['booking'])) {
+        fn_talario_analytics_json_response(400, ['error' => 'booking_required_for_variations']);
+    }
     if (isset($payload['booking'])) {
         if (!is_array($payload['booking'])) {
             fn_talario_analytics_json_response(400, ['error' => 'invalid_booking']);
@@ -956,6 +959,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
     $approval_id_hash = hash('sha256', $approval_id);
     $temp_files = [];
     $old_pair_ids = [];
+    $variation_write_result = null;
     db_query('START TRANSACTION');
     try {
         if ($images !== null) {
@@ -977,6 +981,17 @@ function fn_talario_analytics_partner_sync_write_response(): void
             throw new RuntimeException('product_update_failed');
         }
         $product_id = (int) $result_id;
+
+        if ($variation_resolution !== null) {
+            $variation_write_result = fn_talario_analytics_partner_sync_apply_variation_plan(
+                $operation,
+                $product_id,
+                $variation_resolution,
+                (array) $payload['booking'],
+                $lang_code
+            );
+        }
+
         db_query('COMMIT');
 
         // Only after the new product/images are safely saved do we remove the prior image pairs.
@@ -1014,5 +1029,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'approval_id_hash' => $approval_id_hash,
         'product_id' => $product_id,
         'readback' => $readback,
+        'variations' => $variation_write_result,
     ]);
 }
