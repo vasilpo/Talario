@@ -175,16 +175,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('?:product_feature_variant_descriptions', $this->write_capability);
         self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
         self::assertStringContainsString("'error' => 'variation_resolution_required'", $this->write_capability);
-        self::assertStringContainsString("'variations' => $variation_resolution === null ? null", $this->write_capability);
+        self::assertStringContainsString("'variations' => \$variation_resolution === null ? null", $this->write_capability);
     }
 
     public function testPartnerSyncVariationPlanIsBoundedAndValidated(): void
     {
-        self::assertStringContainsString("count($payload['variation_plan']) > 100", $this->write_capability);
+        self::assertStringContainsString("count(\$payload['variation_plan']) > 100", $this->write_capability);
         self::assertStringContainsString("'error' => 'duplicate_variation_item'", $this->write_capability);
         self::assertStringContainsString("'error' => 'invalid_variation_schedule_item'", $this->write_capability);
         self::assertStringContainsString("'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'", $this->write_capability);
-        self::assertStringContainsString("$duration > 1440", $this->write_capability);
+        self::assertStringContainsString("\$duration > 1440", $this->write_capability);
     }
 
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
