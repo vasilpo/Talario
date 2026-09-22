@@ -165,6 +165,42 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+    public function testPartnerSyncVariationPlanUsesExistingFeatureVariantsOnly(): void
+    {
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_normalize_variation_plan', $this->write_capability);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_resolve_variation_axis', $this->write_capability);
+        self::assertStringContainsString("['Возраст', 'Возрастная группа', 'Класс']", $this->write_capability);
+        self::assertStringContainsString("['Занятия', 'Занятие']", $this->write_capability);
+        self::assertStringContainsString('?:product_feature_variants', $this->write_capability);
+        self::assertStringContainsString('?:product_feature_variant_descriptions', $this->write_capability);
+        self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
+        self::assertStringContainsString("'error' => 'variation_resolution_required'", $this->write_capability);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_public_variation_resolution', $this->write_capability);
+        self::assertStringContainsString("'missing_variants' => array_values", $this->write_capability);
+    }
+
+    public function testPartnerSyncVariationResponseDoesNotExposeInternalIds(): void
+    {
+        $public_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_public_variation_axis'
+        );
+        self::assertNotFalse($public_offset);
+        $public_section = substr($this->write_capability, $public_offset, 1800);
+        self::assertStringNotContainsString("'feature_id'", $public_section);
+        self::assertStringNotContainsString("'variant_id'", $public_section);
+        self::assertStringNotContainsString("'variants'", $public_section);
+    }
+
+    public function testPartnerSyncVariationPlanIsBoundedAndValidated(): void
+    {
+        self::assertStringContainsString("count(\$payload['variation_plan']) > 100", $this->write_capability);
+        self::assertStringContainsString("'error' => 'duplicate_variation_item'", $this->write_capability);
+        self::assertStringContainsString("'error' => 'invalid_variation_schedule_item'", $this->write_capability);
+        self::assertStringContainsString("'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'", $this->write_capability);
+        self::assertStringContainsString("\$duration > 1440", $this->write_capability);
+    }
+
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
