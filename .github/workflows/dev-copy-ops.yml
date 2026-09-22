@@ -109,7 +109,24 @@ jobs:
           set -e
 
           if [ "$RC" -eq 0 ]; then
-            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER|OPERATION|BRANCH|HEAD|WORKTREE|PHP|DEV_COPY_FLAG|DIRTY_COUNT|PHP_LINT)=' | head -20)"
+            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=(status|git-status|php-lint)|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9]+\.[0-9]+\.[0-9]+|DEV_COPY_FLAG=(PRESENT|MISSING)|DIRTY_COUNT=[0-9]+|PHP_LINT=OK)
+          else
+            CLEAN_OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
+          fi
+
+          printf '%s\n' "$CLEAN_OUTPUT"
+
+          {
+            echo "rc=$RC"
+            echo 'output<<EOF'
+            printf '%s\n' "$CLEAN_OUTPUT"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+          if [ "$RC" -ne 0 ]; then
+            exit "$RC"
+          fi
+ | head -20)"
             printf '%s\n' "$CLEAN_OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
           else
             CLEAN_OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
