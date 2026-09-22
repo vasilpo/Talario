@@ -229,6 +229,11 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
             fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_price', 'index' => $index]);
         }
 
+        $capacity = $item['capacity'] ?? null;
+        if ($capacity !== null && (!is_numeric($capacity) || (int) $capacity < 1 || (int) $capacity > 100000)) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_capacity', 'index' => $index]);
+        }
+
         $schedule = isset($item['schedule']) && is_array($item['schedule']) ? $item['schedule'] : [];
         if (count($schedule) > 32) {
             fn_talario_analytics_json_response(400, ['error' => 'variation_schedule_too_large', 'index' => $index]);
@@ -278,6 +283,7 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
             'age_group' => $group,
             'purchase_option' => $option,
             'price' => $price === null ? null : (float) $price,
+            'capacity' => $capacity === null ? null : (int) $capacity,
             'schedule' => $normalized_schedule,
         ];
     }
@@ -398,6 +404,7 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
             'age_group' => $item['age_group'],
             'purchase_option' => $item['purchase_option'],
             'price' => $item['price'],
+            'capacity' => $item['capacity'],
             'schedule' => $item['schedule'],
             'group_variant_id' => $group_axis['resolved']
                 ? $group_axis['variants'][$item['age_group']]
@@ -433,6 +440,235 @@ function fn_talario_analytics_partner_sync_public_variation_resolution(array $re
         'group_axis' => fn_talario_analytics_partner_sync_public_variation_axis((array) $resolution['group_axis']),
         'purchase_axis' => fn_talario_analytics_partner_sync_public_variation_axis((array) $resolution['purchase_axis']),
         'count' => count((array) ($resolution['items'] ?? [])),
+        'prices_complete' => !array_filter(
+            (array) ($resolution['items'] ?? []),
+            static fn(array $item): bool => $item['price'] === null
+        ),
+        'capacities_complete' => !array_filter(
+            (array) ($resolution['items'] ?? []),
+            static fn(array $item): bool => $item['capacity'] === null
+        ),
+    ];
+}
+
+
+function fn_talario_analytics_partner_sync_variation_booking(
+    array $item,
+    string $from,
+    string $to
+): array {
+    $schedule = (array) ($item['schedule'] ?? []);
+    if (!$schedule) {
+        throw new RuntimeException('variation_schedule_required');
+    }
+
+    $durations = [];
+    $by_day = [];
+    foreach ($schedule as $session) {
+        $duration = (int) ($session['duration'] ?? 0);
+        $durations[$duration] = true;
+        $day = (string) ($session['day'] ?? '');
+        $by_day[$day][] = $session;
+    }
+    if (count($durations) !== 1) {
+        throw new RuntimeException('variation_duration_must_be_uniform');
+    }
+    $slot_time = (int) array_key_first($durations);
+
+    $days = [];
+    foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
+        $sessions = $by_day[$day] ?? [];
+        if (!$sessions) {
+            $days[$day] = ['enabled' => false, 'start' => '', 'end' => ''];
+            continue;
+        }
+        $starts = array_column($sessions, 'start');
+        $ends = array_column($sessions, 'end');
+        sort($starts);
+        sort($ends);
+        $days[$day] = [
+            'enabled' => true,
+            'start' => reset($starts),
+            'end' => end($ends),
+        ];
+    }
+
+    return fn_talario_analytics_partner_sync_write_normalize_booking([
+        'from' => $from,
+        'to' => $to,
+        'slot_time' => $slot_time,
+        'free_time' => 0,
+        'days' => $days,
+    ]);
+}
+
+function fn_talario_analytics_partner_sync_exact_slots_by_day(array $item): array
+{
+    $capacity = $item['capacity'] ?? null;
+    if ($capacity === null) {
+        throw new RuntimeException('variation_capacity_required');
+    }
+
+    $result = [];
+    foreach ((array) ($item['schedule'] ?? []) as $session) {
+        $day = (string) $session['day'];
+        $result[$day][] = [
+            'start_time' => (string) $session['start'],
+            'end_time' => (string) $session['end'],
+            'amount' => (int) $capacity,
+        ];
+    }
+    return $result;
+}
+
+function fn_talario_analytics_partner_sync_find_variation_products(
+    array $product_ids,
+    array $resolution
+): array {
+    $group_feature_id = (int) $resolution['group_axis']['feature_id'];
+    $purchase_feature_id = (int) $resolution['purchase_axis']['feature_id'];
+    $rows = db_get_array(
+        'SELECT product_id, feature_id, variant_id'
+        . ' FROM ?:product_features_values'
+        . ' WHERE product_id IN (?n) AND feature_id IN (?n)',
+        $product_ids,
+        [$group_feature_id, $purchase_feature_id]
+    );
+
+    $features = [];
+    foreach ($rows as $row) {
+        $features[(int) $row['product_id']][(int) $row['feature_id']] = (int) $row['variant_id'];
+    }
+
+    $map = [];
+    foreach ($features as $product_id => $values) {
+        if (!isset($values[$group_feature_id], $values[$purchase_feature_id])) {
+            continue;
+        }
+        $key = $values[$group_feature_id] . ':' . $values[$purchase_feature_id];
+        if (isset($map[$key])) {
+            throw new RuntimeException('duplicate_variation_combination');
+        }
+        $map[$key] = (int) $product_id;
+    }
+    return $map;
+}
+
+function fn_talario_analytics_partner_sync_apply_create_variations(
+    int $base_product_id,
+    array $resolution,
+    array $booking_payload,
+    string $lang_code
+): array {
+    if (empty($resolution['resolved'])) {
+        throw new RuntimeException('variation_resolution_required');
+    }
+    if (!function_exists('fn_ec_save_booking_data_by_amount')) {
+        throw new RuntimeException('ecarter_slot_writer_unavailable');
+    }
+
+    $group_feature_id = (int) $resolution['group_axis']['feature_id'];
+    $purchase_feature_id = (int) $resolution['purchase_axis']['feature_id'];
+    $feature_ids = [$group_feature_id, $purchase_feature_id];
+
+    $repository = \Tygh\Addons\ProductVariations\ServiceProvider::getProductRepository();
+    $features = $repository->findFeatures($feature_ids);
+    if (count($features) !== 2) {
+        throw new RuntimeException('variation_features_unavailable');
+    }
+
+    $group_features = \Tygh\Addons\ProductVariations\Product\Group\GroupFeatureCollection::createFromFeatureList(
+        $features
+    );
+    if ($group_features->count() !== 2) {
+        throw new RuntimeException('variation_group_features_invalid');
+    }
+
+    $feature_variants = [
+        $group_feature_id => [],
+        $purchase_feature_id => [],
+    ];
+    foreach ((array) $resolution['items'] as $item) {
+        if ($item['price'] === null) {
+            throw new RuntimeException('variation_price_required');
+        }
+        if ($item['capacity'] === null) {
+            throw new RuntimeException('variation_capacity_required');
+        }
+        $feature_variants[$group_feature_id][(int) $item['group_variant_id']] = (int) $item['group_variant_id'];
+        $feature_variants[$purchase_feature_id][(int) $item['purchase_variant_id']] = (int) $item['purchase_variant_id'];
+    }
+
+    $request = new \Tygh\Addons\ProductVariations\Request\GenerateProductsAndCreateGroupRequest(
+        $base_product_id,
+        [],
+        $group_features
+    );
+    $request->setFeaturesVariantsMap($feature_variants);
+
+    $service = \Tygh\Addons\ProductVariations\ServiceProvider::getService();
+    $result = $service->generateProductsAndCreateGroup($request);
+    if (!$result->isSuccess()) {
+        throw new RuntimeException('variation_group_create_failed');
+    }
+
+    $group = $result->getData('group');
+    if (!$group instanceof \Tygh\Addons\ProductVariations\Product\Group\Group) {
+        throw new RuntimeException('variation_group_readback_failed');
+    }
+    $product_ids = array_map('intval', $group->getProductIds());
+    if (count($product_ids) !== count($resolution['items'])) {
+        throw new RuntimeException('variation_count_mismatch');
+    }
+
+    $product_map = fn_talario_analytics_partner_sync_find_variation_products($product_ids, $resolution);
+    $applied = [];
+
+    foreach ((array) $resolution['items'] as $item) {
+        $key = (int) $item['group_variant_id'] . ':' . (int) $item['purchase_variant_id'];
+        if (!isset($product_map[$key])) {
+            throw new RuntimeException('variation_product_mapping_failed');
+        }
+        $variation_product_id = (int) $product_map[$key];
+
+        $variation_booking = fn_talario_analytics_partner_sync_variation_booking(
+            $item,
+            (string) ($booking_payload['from'] ?? ''),
+            (string) ($booking_payload['to'] ?? '')
+        );
+        $updated_id = fn_update_product(
+            [
+                'price' => (float) $item['price'],
+                'booking_data' => $variation_booking,
+            ],
+            $variation_product_id,
+            $lang_code
+        );
+        if (!$updated_id) {
+            throw new RuntimeException('variation_product_update_failed');
+        }
+
+        foreach (fn_talario_analytics_partner_sync_exact_slots_by_day($item) as $day => $slots) {
+            fn_ec_save_booking_data_by_amount([
+                'product_id' => $variation_product_id,
+                'day' => $day,
+                'booking_data' => $slots,
+            ]);
+        }
+
+        $applied[] = [
+            'product_id' => $variation_product_id,
+            'age_group' => (string) $item['age_group'],
+            'purchase_option' => (string) $item['purchase_option'],
+            'price' => (float) $item['price'],
+            'slot_count' => count((array) $item['schedule']),
+        ];
+    }
+
+    return [
+        'group_id' => (int) $group->getId(),
+        'count' => count($applied),
+        'items' => $applied,
     ];
 }
 
@@ -721,6 +957,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
         ]);
     }
 
+    if ($variation_resolution !== null && $operation === 'update') {
+        fn_talario_analytics_json_response(409, ['error' => 'variation_update_not_implemented']);
+    }
+
     $approval_id = trim((string) ($payload['approval_id'] ?? ''));
     if (!preg_match('/^[A-Za-z0-9._:-]{6,128}$/', $approval_id)) {
         fn_talario_analytics_json_response(400, ['error' => 'approval_id_required']);
@@ -733,6 +973,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
     $approval_id_hash = hash('sha256', $approval_id);
     $temp_files = [];
     $old_pair_ids = [];
+    $variation_apply = null;
     db_query('START TRANSACTION');
     try {
         if ($images !== null) {
@@ -754,6 +995,20 @@ function fn_talario_analytics_partner_sync_write_response(): void
             throw new RuntimeException('product_update_failed');
         }
         $product_id = (int) $result_id;
+
+        $variation_apply = null;
+        if ($variation_resolution !== null) {
+            if (!isset($payload['booking']) || !is_array($payload['booking'])) {
+                throw new RuntimeException('variation_booking_range_required');
+            }
+            $variation_apply = fn_talario_analytics_partner_sync_apply_create_variations(
+                $product_id,
+                $variation_resolution,
+                $payload['booking'],
+                $lang_code
+            );
+        }
+
         db_query('COMMIT');
 
         // Only after the new product/images are safely saved do we remove the prior image pairs.
@@ -790,6 +1045,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'operation' => $operation,
         'approval_id_hash' => $approval_id_hash,
         'product_id' => $product_id,
+        'variations' => $variation_apply,
         'readback' => $readback,
     ]);
 }
