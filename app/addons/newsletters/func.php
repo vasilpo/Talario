@@ -318,7 +318,15 @@ function fn_newsletters_get_recipients(array $params)
 
     if (!empty($params['users'])) {
         $users = fn_explode(',', $params['users']);
-        $user_recipients = db_get_array('SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname FROM ?:users AS users WHERE users.user_id IN (?n)', $users);
+        $user_recipients = db_get_array(
+            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname, user_points.data AS points_data'
+            . ' FROM ?:users AS users'
+            . ' LEFT JOIN ?:user_data AS user_points'
+                . ' ON users.user_id = user_points.user_id AND user_points.type = ?s'
+            . ' WHERE users.user_id IN (?n)',
+            POINTS,
+            $users
+        );
     }
 
     if (!empty($params['abandoned_days'])) {
@@ -335,11 +343,14 @@ function fn_newsletters_get_recipients(array $params)
         }
 
         $abandoned_recipients = db_get_array(
-            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname FROM ?:users AS users'
+            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname, user_points.data AS points_data FROM ?:users AS users'
             . ' LEFT JOIN ?:user_session_products AS user_session_products'
                 . ' ON (users.user_id = user_session_products.user_id)'
+            . ' LEFT JOIN ?:user_data AS user_points'
+                . ' ON users.user_id = user_points.user_id AND user_points.type = ?s'
             . ' WHERE 1=1 ?p'
             . ' GROUP BY users.user_id',
+            POINTS,
             $condition
         );
     }
@@ -360,6 +371,7 @@ function fn_newsletters_get_recipients(array $params)
                 || ($field === 'user_id' && !empty($value))
                 || ($field === 'list_id' && !empty($value))
                 || ($field === 'subscriber_id' && !empty($value))
+                || ($field === 'points_data' && $value !== null && $value !== '')
             ) {
                 $recipients[$email_key][$field] = $value;
             }
@@ -594,6 +606,14 @@ function fn_render_newsletter($body, $subscriber)
     $firstname = htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $values['%FIRSTNAME%'] = $firstname;
     $values['%FIRSTNAME_GREETING%'] = $firstname !== '' ? $firstname . ', здравствуйте!' : 'Здравствуйте!';
+
+    $points_balance = 0;
+    $points_data = (string) ($subscriber['points_data'] ?? '');
+    if (preg_match('/^i:(-?\\d+);$/D', $points_data, $matches)) {
+        $points_balance = max(0, (int) $matches[1]);
+    }
+    $values['%POINTS_BALANCE%'] = (string) $points_balance;
+
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
     $values['%COMPANY_PHONE'] = Registry::get('settings.Company.company_phone');
