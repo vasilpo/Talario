@@ -670,7 +670,7 @@ function fn_talario_analytics_partner_sync_write_resolve_variation_plan(?array $
 
 function fn_talario_analytics_partner_sync_write_booking_from_variation(
     array $item,
-    array $base_booking
+    array $base_booking_input
 ): array {
     $days = [];
     foreach (['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] as $day) {
@@ -684,8 +684,8 @@ function fn_talario_analytics_partner_sync_write_booking_from_variation(
         ];
     }
     return fn_talario_analytics_partner_sync_write_normalize_booking([
-        'from' => date('Y-m-d', (int) ($base_booking['from_date'] ?? TIME)),
-        'to' => date('Y-m-d', (int) ($base_booking['to_date'] ?? (TIME + 31536000))),
+        'from' => (string) ($base_booking_input['from'] ?? ''),
+        'to' => (string) ($base_booking_input['to'] ?? ''),
         'slot_time' => $item['duration'],
         'free_time' => 0,
         'days' => $days,
@@ -713,7 +713,7 @@ function fn_talario_analytics_partner_sync_write_apply_slot_capacities(int $prod
 function fn_talario_analytics_partner_sync_write_apply_variations(
     int $base_product_id,
     array $resolved_plan,
-    array $base_booking,
+    array $base_booking_input,
     string $lang_code
 ): array {
     $age_feature = $resolved_plan['age_feature'];
@@ -783,7 +783,7 @@ function fn_talario_analytics_partner_sync_write_apply_variations(
             throw new RuntimeException('variation_product_mapping_failed');
         }
         $product_id = $combination_map[$key];
-        $booking_data = fn_talario_analytics_partner_sync_write_booking_from_variation($item, $base_booking);
+        $booking_data = fn_talario_analytics_partner_sync_write_booking_from_variation($item, $base_booking_input);
         $result_id = fn_update_product([
             'price' => $item['price'],
             'booking_data' => $booking_data,
