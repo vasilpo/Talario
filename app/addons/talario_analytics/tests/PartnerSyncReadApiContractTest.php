@@ -273,7 +273,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            'cleanup_status' => 'ecarter_not_clean',
+            "'cleanup_status' => 'ecarter_not_clean'",
             $this->write_capability
         );
         self::assertStringContainsString('for ($attempt = 1; $attempt <= 3; $attempt++)', $this->write_capability);
