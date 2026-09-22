@@ -567,30 +567,11 @@ function fn_render_newsletter($body, $subscriber)
         $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
-    $firstname = trim((string) ($subscriber['firstname'] ?? ''));
-
-    if (
-        $firstname === ''
-        && !empty($subscriber['list_id'])
-        && !empty($subscriber['subscriber_id'])
-        && !empty($subscriber['email'])
-    ) {
-        $confirmed = (bool) db_get_field(
-            'SELECT confirmed FROM ?:user_mailing_lists WHERE list_id = ?i AND subscriber_id = ?i',
-            $subscriber['list_id'],
-            $subscriber['subscriber_id']
-        );
-
-        if ($confirmed) {
-            $firstname = trim((string) db_get_field(
-                'SELECT firstname FROM ?:users WHERE LOWER(TRIM(email)) = LOWER(TRIM(?s)) AND user_type = ?s LIMIT 1',
-                $subscriber['email'],
-                'C'
-            ));
-        }
-    }
-
-    $firstname = htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    $firstname = htmlspecialchars(
+        trim((string) ($subscriber['firstname'] ?? '')),
+        ENT_QUOTES | ENT_SUBSTITUTE,
+        'UTF-8'
+    );
     $values['%FIRSTNAME%'] = $firstname;
     $values['%FIRSTNAME_GREETING%'] = $firstname . ', здравствуйте!';
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
