@@ -54,6 +54,17 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString(' p.price, p.status', $this->controller);
     }
 
+    public function testCatalogExposesActiveCategoryTaxonomyAndProductAssignments(): void
+    {
+        self::assertStringContainsString('?:category_descriptions', $this->controller);
+        self::assertStringContainsString("'category_id' => (int) \$row['category_id']", $this->controller);
+        self::assertStringContainsString("'parent_id' => (int) \$row['parent_id']", $this->controller);
+        self::assertStringContainsString('?:products_categories', $this->controller);
+        self::assertStringContainsString("'category_ids' => []", $this->controller);
+        self::assertStringContainsString("\$products[\$product_id]['category_ids'][] = (int) \$row['category_id'];", $this->controller);
+        self::assertStringContainsString("'categories' => \$categories", $this->controller);
+    }
+
     public function testLegacyScheduleSupportsEcarterTimestampDates(): void
     {
         self::assertStringContainsString("is_numeric(\$raw_from)", $this->controller);
