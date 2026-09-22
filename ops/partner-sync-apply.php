@@ -29,8 +29,13 @@ if (!is_array($root_stat) || !is_array($script_stat) || $root_stat['uid'] !== $s
     fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
     exit(4);
 }
-if (($root_stat['mode'] & 0022) !== 0) {
+$script_gid = $script_stat['gid'];
+if (($root_stat['mode'] & 0002) !== 0) {
     fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+    exit(4);
+}
+if (($root_stat['mode'] & 0020) !== 0 && $root_stat['gid'] !== $script_gid) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_GROUP_MISMATCH\n");
     exit(4);
 }
 
