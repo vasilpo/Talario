@@ -623,18 +623,94 @@ function fn_talario_analytics_catalog_response(): void
     ]);
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
+{
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $enabled = $is_development
+        && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true
+        && defined('TALARIO_PARTNER_SYNC_DEV_WRITE')
+        && TALARIO_PARTNER_SYNC_DEV_WRITE === true;
+    if (!$enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+
+    $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+    $features = db_get_array(
+        'SELECT pf.feature_id, pf.feature_type, pfd.description'
+        . ' FROM ?:product_features pf'
+        . ' INNER JOIN ?:product_features_descriptions pfd'
+        . ' ON pfd.feature_id = pf.feature_id AND pfd.lang_code = ?s'
+        . ' WHERE pfd.description = ?s'
+        . ' AND pf.purpose = ?s',
+        $lang_code,
+        'Возраст',
+        'group_variation_catalog_item'
+    );
+    if (count($features) !== 1) {
+        fn_talario_analytics_json_response(409, ['error' => 'age_feature_ambiguous']);
+    }
+
+    $feature_id = (int) $features[0]['feature_id'];
+    $feature_type = (string) $features[0]['feature_type'];
+    $variant = '2-8 лет';
+    $existing = (int) db_get_field(
+        'SELECT pfv.variant_id'
+        . ' FROM ?:product_feature_variants pfv'
+        . ' INNER JOIN ?:product_feature_variant_descriptions pfvd'
+        . ' ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s'
+        . ' WHERE pfv.feature_id = ?i AND pfvd.variant = ?s',
+        $lang_code,
+        $feature_id,
+        $variant
+    );
+    if ($existing > 0) {
+        fn_talario_analytics_json_response(200, [
+            'status' => 'already_present',
+            'feature' => 'Возраст',
+            'variant' => $variant,
+        ]);
+    }
+
+    $variant_id = fn_update_product_feature_variant(
+        $feature_id,
+        $feature_type,
+        ['variant' => $variant],
+        $lang_code
+    );
+    if (!$variant_id) {
+        fn_talario_analytics_json_response(500, ['error' => 'age_variant_create_failed']);
+    }
+
+    fn_log_event('general', 'runtime', [
+        'message' => 'Talario Partner Sync dev taxonomy bootstrap completed',
+        'feature' => 'Возраст',
+        'variant' => $variant,
+    ]);
+
+    fn_talario_analytics_json_response(201, [
+        'status' => 'created',
+        'feature' => 'Возраст',
+        'variant' => $variant,
+    ]);
+}
+
+if ($mode === 'catalog_variant_bootstrap') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -643,7 +719,11 @@ if ($mode === 'catalog') {
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (!$dev_copy_enabled && !$prod_read_enabled) {
+    if ($mode === 'catalog_variant_bootstrap') {
+        if (!$dev_copy_enabled) {
+            fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+        }
+    } elseif (!$dev_copy_enabled && !$prod_read_enabled) {
         fn_talario_analytics_json_response(404, ['error' => 'not_found']);
     }
 }
@@ -664,7 +744,7 @@ if ($mode === 'crm') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -711,7 +791,7 @@ if ($mode === 'catalog') {
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if ($mode === 'catalog') {
+    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
@@ -729,6 +809,10 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_c
         ]);
     }
     fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
+}
+
+if ($mode === 'catalog_variant_bootstrap') {
+    fn_talario_analytics_partner_sync_dev_age_variant_bootstrap();
 }
 
 if ($mode === 'catalog') {
