@@ -344,7 +344,29 @@ function fn_newsletters_get_recipients(array $params)
         );
     }
 
-    return array_merge($list_recipients, $user_recipients, $abandoned_recipients);
+    $recipients = [];
+
+    foreach (array_merge($list_recipients, $user_recipients, $abandoned_recipients) as $recipient) {
+        $email_key = strtolower(trim((string) $recipient['email']));
+
+        if (!isset($recipients[$email_key])) {
+            $recipients[$email_key] = $recipient;
+            continue;
+        }
+
+        foreach ($recipient as $field => $value) {
+            if (
+                ($field === 'firstname' && $value !== '')
+                || ($field === 'user_id' && !empty($value))
+                || ($field === 'list_id' && !empty($value))
+                || ($field === 'subscriber_id' && !empty($value))
+            ) {
+                $recipients[$email_key][$field] = $value;
+            }
+        }
+    }
+
+    return array_values($recipients);
 }
 
 /**
@@ -567,11 +589,9 @@ function fn_render_newsletter($body, $subscriber)
         $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
-    $firstname = htmlspecialchars(
-        trim((string) ($subscriber['firstname'] ?? '')),
-        ENT_QUOTES | ENT_SUBSTITUTE,
-        'UTF-8'
-    );
+    $firstname = trim((string) ($subscriber['firstname'] ?? ''));
+    $firstname = (string) preg_replace('/[\\x00-\\x1F\\x7F]+/u', ' ', $firstname);
+    $firstname = htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $values['%FIRSTNAME%'] = $firstname;
     $values['%FIRSTNAME_GREETING%'] = $firstname . ', здравствуйте!';
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
