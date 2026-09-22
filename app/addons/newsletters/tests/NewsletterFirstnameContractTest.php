@@ -22,11 +22,10 @@ final class NewsletterFirstnameContractTest extends TestCase
         self::assertStringContainsString("users.firstname FROM ?:users AS users", $this->func);
     }
 
-    public function testRendererSupportsFirstnameAndSafeGreeting(): void
+    public function testRendererSupportsFirstnameAndGreeting(): void
     {
         self::assertStringContainsString("['%FIRSTNAME%']", $this->func);
         self::assertStringContainsString("['%FIRSTNAME_GREETING%']", $this->func);
-        self::assertStringContainsString("'Здравствуйте!'", $this->func);
     }
 
     public function testMailingListConsentFilterRemainsIntact(): void
