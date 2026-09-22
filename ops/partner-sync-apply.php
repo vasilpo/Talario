@@ -5,17 +5,33 @@ if (PHP_SAPI !== 'cli') {
     exit(2);
 }
 
-$expected_root = '/home/t/tyman5tb/talario.ru/public_html/dev_copy';
 $requested_root = getenv('TALARIO_PARTNER_SYNC_ROOT');
-if (!is_string($requested_root) || $requested_root !== $expected_root) {
+if (!is_string($requested_root) || $requested_root === '' || $requested_root[0] !== '/') {
     fwrite(STDERR, "PARTNER_SYNC_DEV_COPY_ONLY\n");
     exit(3);
 }
 
 $root = realpath($requested_root);
-if ($root === false || str_replace('\\', '/', $root) !== $expected_root) {
+if ($root === false) {
     fwrite(STDERR, "PARTNER_SYNC_ROOT_NOT_FOUND\n");
     exit(2);
+}
+
+$normalized_root = str_replace('\\', '/', $root);
+if (!str_ends_with($normalized_root, '/talario.ru/public_html/dev_copy')) {
+    fwrite(STDERR, "PARTNER_SYNC_DEV_COPY_ONLY\n");
+    exit(3);
+}
+
+$root_stat = @stat($root);
+$script_stat = @stat(__FILE__);
+if (!is_array($root_stat) || !is_array($script_stat) || $root_stat['uid'] !== $script_stat['uid']) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
+    exit(4);
+}
+if (($root_stat['mode'] & 0022) !== 0) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+    exit(4);
 }
 
 define('AREA', 'A');
