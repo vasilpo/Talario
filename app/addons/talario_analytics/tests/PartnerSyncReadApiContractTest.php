@@ -297,4 +297,65 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+    public function testPartnerSyncVariationApplyHasExplicitDevOnlyGate(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_assert_variation_write_gate',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "variation_write_development_runtime_required",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "variation_write_dev_copy_gate_required",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "variation_write_gate_required",
+            $this->write_capability
+        );
+    }
+
+    public function testPartnerSyncVariationResultRedactsInternalVariationIds(): void
+    {
+        $apply_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_apply_variation_plan'
+        );
+        self::assertNotFalse($apply_offset);
+        $prepare_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_prepare_images',
+            $apply_offset
+        );
+        self::assertNotFalse($prepare_offset);
+        $apply_section = substr($this->write_capability, $apply_offset, $prepare_offset - $apply_offset);
+
+        self::assertStringNotContainsString("'product_id' => \$variation_product_id", $apply_section);
+        self::assertStringNotContainsString("'group_id' =>", $apply_section);
+        self::assertStringContainsString("'count' => count(\$updated)", $apply_section);
+        self::assertStringContainsString("'items' => \$updated", $apply_section);
+    }
+
+    public function testPartnerSyncVariationGenerationIsNotWrappedInLongOuterTransaction(): void
+    {
+        $response_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_response'
+        );
+        self::assertNotFalse($response_offset);
+        $response_section = substr($this->write_capability, $response_offset);
+
+        self::assertStringNotContainsString("db_query('START TRANSACTION')", $response_section);
+        self::assertStringNotContainsString("db_query('COMMIT')", $response_section);
+        self::assertStringNotContainsString("db_query('ROLLBACK')", $response_section);
+        self::assertStringContainsString(
+            'Do not wrap CS-Cart variation generation in one long outer transaction',
+            $response_section
+        );
+    }
+
 }
+
+
