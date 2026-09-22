@@ -408,6 +408,9 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
     }
     $groups = array_values(array_unique($groups));
     $options = array_values(array_unique($options));
+    if (count($variation_plan) !== count($groups) * count($options)) {
+        fn_talario_analytics_json_response(409, ['error' => 'variation_plan_not_rectangular']);
+    }
 
     $group_axis = fn_talario_analytics_partner_sync_resolve_variation_axis(
         ['Возраст', 'Возрастная группа', 'Класс'],
@@ -419,6 +422,11 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
         $options,
         $lang_code
     );
+    if ($group_axis['resolved'] && $purchase_axis['resolved']
+        && (int) $group_axis['feature_id'] === (int) $purchase_axis['feature_id']
+    ) {
+        fn_talario_analytics_json_response(409, ['error' => 'variation_axes_must_differ']);
+    }
 
     $resolved_items = [];
     foreach ($variation_plan as $item) {
