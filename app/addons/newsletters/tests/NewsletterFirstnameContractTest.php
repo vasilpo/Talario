@@ -63,6 +63,17 @@ final class NewsletterFirstnameContractTest extends TestCase
         );
     }
 
+    public function testDirectUserRecipientCarriesRewardPointsWithoutRendererLookup(): void
+    {
+        self::assertStringContainsString('user_points.data AS points_data', $this->func);
+        self::assertStringContainsString('LEFT JOIN ?:user_data AS user_points', $this->func);
+        self::assertStringContainsString('user_points.type = ?s', $this->func);
+        self::assertStringContainsString("($field === 'points_data' && $value !== null && $value !== '')", $this->func);
+        self::assertStringContainsString("['%POINTS_BALANCE%']", $this->func);
+        self::assertStringContainsString("preg_match('/^i:(-?\\\\d+);$/D'", $this->func);
+        self::assertStringNotContainsString('fn_get_user_additional_data(POINTS', $this->func);
+    }
+
     public function testMailingListConsentFilterRemainsIntact(): void
     {
         self::assertStringContainsString(
