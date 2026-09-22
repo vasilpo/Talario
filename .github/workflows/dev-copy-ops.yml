@@ -144,12 +144,9 @@ jobs:
           if [ "${{ steps.request.outputs.operation }}" = "partner-sync-dry-run-smoke" ]; then
             MARKERS="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=partner-sync-dry-run)$' | head -4 || true)"
             PLAN="$(printf '%s\n' "$RAW_OUTPUT" | jq -Rrc 'fromjson? | select(.schema_version == "partner-sync.write-plan.v1" and .dry_run == true) | {schema_version, dry_run, operation: .plan.operation, category_count: (.plan.product.category_ids | length), image_count: (if .plan.images == null then 0 else .plan.images.count end), variations_resolved: (if .plan.variations == null then null else .plan.variations.resolved end)}' | tail -1)"
-            ERROR_CODE="$(printf '%s\n' "$RAW_OUTPUT" | jq -Rrc 'fromjson? | .error? // empty' | tail -1)"
             CLEAN_OUTPUT="$(printf '%s\n' "$MARKERS")"
             if [ -n "$PLAN" ]; then
               CLEAN_OUTPUT="$(printf '%s\nPLAN=%s' "$CLEAN_OUTPUT" "$PLAN")"
-            elif [ -n "$ERROR_CODE" ]; then
-              CLEAN_OUTPUT="$(printf '%s\nERROR=%s' "$CLEAN_OUTPUT" "$ERROR_CODE")"
             else
               CLEAN_OUTPUT="$(printf '%s\nREMOTE_OPERATION_FAILED rc=%s' "$CLEAN_OUTPUT" "$RC")"
             fi
