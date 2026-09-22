@@ -105,6 +105,18 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('array_merge($schedule, $legacy_schedule)', $this->controller);
     }
 
+    public function testDevAgeVariantBootstrapIsExactAndDevOnly(): void
+    {
+        self::assertStringContainsString("'catalog_variant_bootstrap'", $this->controller);
+        self::assertStringContainsString("\$_SERVER['REQUEST_METHOD'] !== 'POST'", $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->controller);
+        self::assertStringContainsString("'Возраст'", $this->controller);
+        self::assertStringContainsString("'2-8 лет'", $this->controller);
+        self::assertStringContainsString('fn_update_product_feature_variant(', $this->controller);
+        self::assertStringContainsString("'catalog_variant_bootstrap' => true", $this->trusted_controllers);
+    }
+
     public function testPartnerSyncWriteIsInternalCliOnly(): void
     {
         self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
