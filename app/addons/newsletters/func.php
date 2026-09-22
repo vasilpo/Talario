@@ -571,9 +571,7 @@ function fn_render_newsletter($body, $subscriber)
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
     $firstname = trim((string) ($subscriber['firstname'] ?? ''));
     $values['%FIRSTNAME%'] = $firstname;
-    $values['%FIRSTNAME_GREETING%'] = $firstname !== ''
-        ? $firstname . ', здравствуйте!'
-        : 'Здравствуйте!';
+    $values['%FIRSTNAME_GREETING%'] = $firstname . ', здравствуйте!';
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
     $values['%COMPANY_PHONE'] = Registry::get('settings.Company.company_phone');
