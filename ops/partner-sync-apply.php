@@ -5,16 +5,17 @@ if (PHP_SAPI !== 'cli') {
     exit(2);
 }
 
-$root = realpath(dirname(__DIR__));
-if (!$root) {
-    fwrite(STDERR, "PARTNER_SYNC_ROOT_NOT_FOUND\n");
-    exit(2);
-}
-
-$normalized_root = str_replace('\\', '/', $root);
-if (substr($normalized_root, -strlen('/talario.ru/public_html/dev_copy')) !== '/talario.ru/public_html/dev_copy') {
+$expected_root = '/home/t/tyman5tb/talario.ru/public_html/dev_copy';
+$requested_root = getenv('TALARIO_PARTNER_SYNC_ROOT');
+if (!is_string($requested_root) || $requested_root !== $expected_root) {
     fwrite(STDERR, "PARTNER_SYNC_DEV_COPY_ONLY\n");
     exit(3);
+}
+
+$root = realpath($requested_root);
+if ($root === false || str_replace('\\', '/', $root) !== $expected_root) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_NOT_FOUND\n");
+    exit(2);
 }
 
 define('AREA', 'A');
