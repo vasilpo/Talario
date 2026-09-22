@@ -1,4 +1,4 @@
 {
-  "operation": "php-lint",
-  "request_id": "incident-20260922-1235-php-lint"
+  "operation": "status",
+  "request_id": "incident-20260922-1a"
 }
