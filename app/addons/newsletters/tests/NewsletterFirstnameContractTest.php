@@ -36,10 +36,18 @@ final class NewsletterFirstnameContractTest extends TestCase
         );
     }
 
+    public function testRecipientMergeCombinesSelectedUserAndMailingListMetadataByEmail(): void
+    {
+        self::assertStringContainsString('$email_key = strtolower(trim((string) $recipient[\'email\']))', $this->func);
+        self::assertStringContainsString("($field === 'firstname' && $value !== '')", $this->func);
+        self::assertStringContainsString("($field === 'subscriber_id' && !empty($value))", $this->func);
+    }
+
     public function testRendererEscapesFirstnameWithoutDatabaseLookup(): void
     {
         self::assertStringContainsString("['%FIRSTNAME%']", $this->func);
         self::assertStringContainsString("['%FIRSTNAME_GREETING%']", $this->func);
+        self::assertStringContainsString("preg_replace('/[\\\\x00-\\\\x1F\\\\x7F]+/u'", $this->func);
         self::assertStringContainsString('htmlspecialchars(', $this->func);
         self::assertStringNotContainsString(
             'SELECT confirmed FROM ?:user_mailing_lists WHERE list_id = ?i AND subscriber_id = ?i',
