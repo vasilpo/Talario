@@ -67,6 +67,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'categories' => \$categories", $this->controller);
     }
 
+    public function testCatalogExposesVariationFeatureTaxonomyWithoutInternalIds(): void
+    {
+        self::assertStringContainsString('?:product_features_descriptions', $this->controller);
+        self::assertStringContainsString('?:product_feature_variants', $this->controller);
+        self::assertStringContainsString('?:product_feature_variant_descriptions', $this->controller);
+        self::assertStringContainsString("['group_catalog_item', 'group_variation_catalog_item']", $this->controller);
+        self::assertStringContainsString("'variation_features' => \$variation_features", $this->controller);
+        self::assertStringContainsString("'name' => (string) \$feature['description']", $this->controller);
+        self::assertStringContainsString("'variants' => array_values(array_unique(\$variants))", $this->controller);
+        self::assertStringNotContainsString("'feature_id' => (int) \$feature['feature_id']", $this->controller);
+        self::assertStringNotContainsString("'variant_id' =>", $this->controller);
+    }
+
     public function testLegacyScheduleSupportsEcarterTimestampDates(): void
     {
         self::assertStringContainsString("is_numeric(\$raw_from)", $this->controller);
