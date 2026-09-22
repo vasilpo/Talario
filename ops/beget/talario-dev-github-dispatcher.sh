@@ -126,10 +126,10 @@ case "$REQUEST" in
       if (preg_match("/Call to undefined function\\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\\(\\)/i", $line, $m)) {
           $pattern_name = "CALL_TO_UNDEFINED_FUNCTION";
           $symbol = $m[1];
-      } elseif (preg_match("/Class [\"'"']?([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)[\"'"']? not found/i", $line, $m)) {
+      } elseif (preg_match("/Class [\"\\x27]?([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)[\"\\x27]? not found/i", $line, $m)) {
           $pattern_name = "CLASS_NOT_FOUND";
           $symbol = $m[1];
-      } elseif (preg_match("/Undefined constant [\"'"']?([A-Za-z_][A-Za-z0-9_]*)/i", $line, $m)) {
+      } elseif (preg_match("/Undefined constant [\"\\x27]?([A-Za-z_][A-Za-z0-9_]*)/i", $line, $m)) {
           $pattern_name = "UNDEFINED_CONSTANT";
           $symbol = $m[1];
       } elseif (preg_match("/Cannot redeclare\\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)/i", $line, $m)) {
@@ -138,7 +138,7 @@ case "$REQUEST" in
       } elseif (preg_match("/Call to a member function\\s+([A-Za-z_][A-Za-z0-9_]*)\\(\\) on null/i", $line, $m)) {
           $pattern_name = "CALL_TO_MEMBER_ON_NULL";
           $symbol = $m[1];
-      } elseif (preg_match("/Unknown column [\"'"']([A-Za-z0-9_]+)[\"'"']/i", $line, $m)) {
+      } elseif (preg_match("/Unknown column [\"\\x27]([A-Za-z0-9_]+)[\"\\x27]/i", $line, $m)) {
           $pattern_name = "UNKNOWN_COLUMN";
           $symbol = $m[1];
       }
