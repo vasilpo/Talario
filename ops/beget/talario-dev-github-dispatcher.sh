@@ -66,6 +66,114 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-dev-ops runtime-errors")
+    mark_dispatcher
+    echo "OPERATION=runtime-errors"
+
+    LOG_FILES=()
+    while IFS=$'\t' read -r _mtime file; do
+      [ -n "$file" ] || continue
+      LOG_FILES+=("$file")
+    done < <(
+      {
+        if [ -f "$DEV_COPY/error_log" ] && [ ! -L "$DEV_COPY/error_log" ]; then
+          printf '%s\t%s\n' "$(stat -c '%Y' "$DEV_COPY/error_log")" "$DEV_COPY/error_log"
+        fi
+        if [ -d "$DEV_COPY/var/log" ] && [ ! -L "$DEV_COPY/var/log" ]; then
+          while IFS= read -r file; do
+            [ -f "$file" ] && [ ! -L "$file" ] || continue
+            printf '%s\t%s\n' "$(stat -c '%Y' "$file")" "$file"
+          done < <(find "$DEV_COPY/var/log" -maxdepth 1 -type f \( -name '*.log' -o -name 'error_log*' \) -print 2>/dev/null)
+        fi
+      } | sort -rn | head -5
+    )
+
+    latest_line=""
+    for file in "${LOG_FILES[@]}"; do
+      latest_line="$(tail -n 200 -- "$file" 2>/dev/null \
+        | grep -Ei 'fatal|uncaught|exception|error|warning|typeerror|argumentcounterror' \
+        | tail -n 1 \
+        || true)"
+      [ -z "$latest_line" ] || break
+    done
+
+    if [ -z "$latest_line" ]; then
+      echo "RUNTIME_ERROR_FOUND=NO"
+      exit 0
+    fi
+
+    /usr/local/bin/php8.2 -r '
+      $line = (string) $argv[1];
+      $root = rtrim((string) $argv[2], "/");
+
+      $kind = "OTHER";
+      foreach ([
+          "FATAL" => "/fatal/i",
+          "TYPEERROR" => "/typeerror/i",
+          "UNCAUGHT" => "/uncaught/i",
+          "EXCEPTION" => "/exception/i",
+          "WARNING" => "/warning/i",
+          "ERROR" => "/error/i",
+      ] as $candidate => $pattern) {
+          if (preg_match($pattern, $line)) {
+              $kind = $candidate;
+              break;
+          }
+      }
+
+      $pattern_name = "GENERIC";
+      $symbol = "";
+      if (preg_match("/Call to undefined function\\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\\(\\)/i", $line, $m)) {
+          $pattern_name = "CALL_TO_UNDEFINED_FUNCTION";
+          $symbol = $m[1];
+      } elseif (preg_match("/Class [\"\\x27]?([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)[\"\\x27]? not found/i", $line, $m)) {
+          $pattern_name = "CLASS_NOT_FOUND";
+          $symbol = $m[1];
+      } elseif (preg_match("/Undefined constant [\"\\x27]?([A-Za-z_][A-Za-z0-9_]*)/i", $line, $m)) {
+          $pattern_name = "UNDEFINED_CONSTANT";
+          $symbol = $m[1];
+      } elseif (preg_match("/Cannot redeclare\\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)/i", $line, $m)) {
+          $pattern_name = "CANNOT_REDECLARE";
+          $symbol = $m[1];
+      } elseif (preg_match("/Call to a member function\\s+([A-Za-z_][A-Za-z0-9_]*)\\(\\) on null/i", $line, $m)) {
+          $pattern_name = "CALL_TO_MEMBER_ON_NULL";
+          $symbol = $m[1];
+      } elseif (preg_match("/Unknown column [\"\\x27]([A-Za-z0-9_]+)[\"\\x27]/i", $line, $m)) {
+          $pattern_name = "UNKNOWN_COLUMN";
+          $symbol = $m[1];
+      }
+
+      $class = "";
+      if (preg_match("/Uncaught\\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)/", $line, $m)) {
+          $class = $m[1];
+      }
+
+      $source = "";
+      $quoted_root = preg_quote($root, "~");
+      if (preg_match("~" . $quoted_root . "/([A-Za-z0-9_./-]+\\.php)(?::| on line )(\\d+)~", $line, $m)) {
+          $source = $m[1] . ":" . $m[2];
+      }
+
+      $safe = static function (string $value): string {
+          return str_replace("\\\\", ".", $value);
+      };
+
+      echo "RUNTIME_ERROR_FOUND=YES\n";
+      echo "RUNTIME_ERROR_KIND=" . $kind . "\n";
+      echo "RUNTIME_ERROR_PATTERN=" . $pattern_name . "\n";
+      if ($class !== "") {
+          echo "RUNTIME_ERROR_CLASS=" . $safe($class) . "\n";
+      }
+      if ($symbol !== "") {
+          echo "RUNTIME_ERROR_SYMBOL=" . $safe($symbol) . "\n";
+      }
+      if ($source !== "") {
+          echo "RUNTIME_ERROR_SOURCE=" . $source . "\n";
+      }
+      echo "RUNTIME_ERROR_FINGERPRINT=" . hash("sha256", $line) . "\n";
+    ' "$latest_line" "$DEV_COPY"
+    ;;
+
   "talario-partner-sync-dry-run")
     mark_dispatcher
     echo "OPERATION=partner-sync-dry-run"

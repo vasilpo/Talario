@@ -16,6 +16,7 @@ on:
           - status
           - git-status
           - php-lint
+          - runtime-errors
       request_id:
         description: Auditable request identifier
         required: true
@@ -54,7 +55,7 @@ jobs:
           fi
           [[ "$REQUEST_ID" =~ ^[A-Za-z0-9._:-]{1,80}$ ]]
           case "$OP" in
-            status|git-status|php-lint)
+            status|git-status|php-lint|runtime-errors)
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
@@ -97,6 +98,9 @@ jobs:
             php-lint)
               REMOTE_COMMAND='talario-dev-ops php-lint'
               ;;
+            runtime-errors)
+              REMOTE_COMMAND='talario-dev-ops runtime-errors'
+              ;;
             *)
               echo "ERROR: operation is not allowlisted"
               exit 64
@@ -109,7 +113,7 @@ jobs:
           set -e
 
           if [ "$RC" -eq 0 ]; then
-            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=(status|git-status|php-lint)|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9]+\.[0-9]+\.[0-9]+|DEV_COPY_FLAG=(PRESENT|MISSING)|DIRTY_COUNT=[0-9]+|PHP_LINT=OK)$' | head -20)"
+            CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=(status|git-status|php-lint|runtime-errors)|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9]+\.[0-9]+\.[0-9]+|DEV_COPY_FLAG=(PRESENT|MISSING)|DIRTY_COUNT=[0-9]+|PHP_LINT=OK|RUNTIME_ERROR_FOUND=(YES|NO)|RUNTIME_ERROR_KIND=(FATAL|TYPEERROR|UNCAUGHT|EXCEPTION|WARNING|ERROR|OTHER)|RUNTIME_ERROR_PATTERN=(GENERIC|CALL_TO_UNDEFINED_FUNCTION|CLASS_NOT_FOUND|UNDEFINED_CONSTANT|CANNOT_REDECLARE|CALL_TO_MEMBER_ON_NULL|UNKNOWN_COLUMN)|RUNTIME_ERROR_CLASS=[A-Za-z0-9_.]+|RUNTIME_ERROR_SYMBOL=[A-Za-z0-9_.]+|RUNTIME_ERROR_SOURCE=[A-Za-z0-9_./-]+\.php:[0-9]+|RUNTIME_ERROR_FINGERPRINT=[0-9a-f]{64})$' | head -20)"
             printf '%s\n' "$CLEAN_OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
           else
             CLEAN_OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
