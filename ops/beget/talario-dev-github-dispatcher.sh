@@ -117,7 +117,7 @@ case "$REQUEST" in
     [ -x /usr/bin/git ] || fail "required git binary unavailable" 81
 
     RUNNER_REL="ops/partner-sync-apply.php"
-    EXPECTED_RUNNER_SHA256="9c24e246ab4526bd483b924556793ceb0ff45f270619df16c58e8cf375b2c3f9"
+    EXPECTED_RUNNER_SHA256="74b287a6940df16ed3681ef1a41560b3a44a63df168cd5817971be60b778637f"
     [ -z "$(/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
     RUNNER_COMMIT="$(/usr/bin/git -C "$DEV_COPY" rev-parse HEAD)"
     [ -n "$RUNNER_COMMIT" ] || fail "partner sync runner commit resolution failed" 80
@@ -134,7 +134,7 @@ case "$REQUEST" in
 
     set +e
     /usr/bin/timeout --signal=TERM --kill-after=5s 60s \
-      /usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin" \
+      /usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin" TALARIO_PARTNER_SYNC_ROOT="$DEV_COPY" \
       "$PHP_REAL" "$RUNNER_TMP" < "$PAYLOAD_FILE"
     RUN_RC=$?
     set -e

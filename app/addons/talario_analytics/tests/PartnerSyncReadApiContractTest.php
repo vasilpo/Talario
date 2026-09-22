@@ -120,7 +120,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncWriteIsInternalCliOnly(): void
     {
         self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_ROOT'", $this->cli_runner);
         self::assertStringContainsString("'/talario.ru/public_html/dev_copy'", $this->cli_runner);
+        self::assertStringContainsString('PARTNER_SYNC_ROOT_OWNER_MISMATCH', $this->cli_runner);
+        self::assertStringContainsString('PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE', $this->cli_runner);
+        self::assertStringNotContainsString('/home/t/tyman5tb/', $this->cli_runner);
         self::assertStringContainsString('fn_is_development()', $this->cli_runner);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->cli_runner);
         self::assertStringNotContainsString("'catalog_apply' => true", $this->trusted_controllers);
@@ -186,10 +190,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('trusted PHP binary owner mismatch', $this->dev_dispatcher);
         self::assertStringContainsString('trusted PHP binary is group/world writable', $this->dev_dispatcher);
         self::assertStringContainsString('mktemp "$STATE_DIR/runner.XXXXXX.php"', $this->dev_dispatcher);
-        self::assertStringContainsString('EXPECTED_RUNNER_SHA256="9c24e246ab4526bd483b924556793ceb0ff45f270619df16c58e8cf375b2c3f9"', $this->dev_dispatcher);
+        self::assertStringContainsString('EXPECTED_RUNNER_SHA256="74b287a6940df16ed3681ef1a41560b3a44a63df168cd5817971be60b778637f"', $this->dev_dispatcher);
         self::assertStringContainsString('partner sync CLI runner is not allowlisted', $this->dev_dispatcher);
         self::assertStringContainsString('/usr/bin/timeout --signal=TERM --kill-after=5s 60s', $this->dev_dispatcher);
-        self::assertStringContainsString('/usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin"', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin" TALARIO_PARTNER_SYNC_ROOT="$DEV_COPY"', $this->dev_dispatcher);
         self::assertStringContainsString('partner sync dry-run execution timeout', $this->dev_dispatcher);
         self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
         self::assertStringContainsString('/usr/bin/timeout 30s /usr/bin/head -c 20971521', $this->dev_dispatcher);
