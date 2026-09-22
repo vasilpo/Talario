@@ -272,6 +272,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
             'DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i',
             $this->write_capability
         );
+        self::assertStringContainsString(
+            'cleanup_status' => 'ecarter_not_clean',
+            $this->write_capability
+        );
+        self::assertStringContainsString('for ($attempt = 1; $attempt <= 3; $attempt++)', $this->write_capability);
+        self::assertStringContainsString(
+            'SELECT product_id FROM ?:products WHERE product_id = ?i',
+            $this->write_capability
+        );
 
         $cleanup_offset = strpos(
             $this->write_capability,
@@ -284,6 +293,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertNotFalse($ecarter_offset);
         self::assertNotFalse($delete_offset);
         self::assertLessThan($delete_offset, $ecarter_offset);
+    }
+
+    public function testPartnerSyncAuditLogDoesNotPersistVariationIds(): void
+    {
+        $log_offset = strrpos($this->write_capability, "fn_log_event('general', 'runtime'");
+        self::assertNotFalse($log_offset);
+        $log_section = substr($this->write_capability, $log_offset, 1400);
+        self::assertStringContainsString("'variation_count' =>", $log_section);
+        self::assertStringNotContainsString("'variations' => $variation_apply", $log_section);
     }
 
     public function testPartnerSyncVariationApplyDoesNotDirectlyMutateVariationMetadataTables(): void
