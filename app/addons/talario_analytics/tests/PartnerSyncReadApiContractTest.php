@@ -297,4 +297,104 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+    public function testPartnerSyncVariationApplyHasExplicitDevOnlyGate(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_assert_variation_write_gate',
+            $this->write_capability
+        );
+        self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->write_capability);
+        self::assertStringContainsString(
+            "['error' => 'variation_write_not_available']",
+            $this->write_capability
+        );
+    }
+
+    public function testPartnerSyncVariationResultRedactsInternalVariationIds(): void
+    {
+        $apply_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_apply_variation_plan'
+        );
+        self::assertNotFalse($apply_offset);
+        $prepare_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_prepare_images',
+            $apply_offset
+        );
+        self::assertNotFalse($prepare_offset);
+        $apply_section = substr($this->write_capability, $apply_offset, $prepare_offset - $apply_offset);
+
+        self::assertStringNotContainsString("'product_id' => \$variation_product_id", $apply_section);
+        self::assertStringNotContainsString("'group_id' =>", $apply_section);
+        self::assertStringContainsString("'count' => count(\$updated)", $apply_section);
+        self::assertStringContainsString("'items' => \$updated", $apply_section);
+    }
+
+    public function testPartnerSyncVariationGenerationIsNotWrappedInLongOuterTransaction(): void
+    {
+        $response_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_response'
+        );
+        self::assertNotFalse($response_offset);
+        $response_section = substr($this->write_capability, $response_offset);
+
+        self::assertStringNotContainsString("db_query('START TRANSACTION')", $response_section);
+        self::assertStringNotContainsString("db_query('COMMIT')", $response_section);
+        self::assertStringNotContainsString("db_query('ROLLBACK')", $response_section);
+        self::assertStringContainsString(
+            'Never keep an incomplete new card',
+            $response_section
+        );
+    }
+
+    public function testPartnerSyncVariationFailureHasCompensatingCreateCleanup(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_cleanup_failed_create',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            '$service->removeGroup($group->getId())',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_delete_product($product_id)',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'recovery' => \$operation === 'create' ? 'compensating_cleanup' : 'rerun_same_update'",
+            $this->write_capability
+        );
+    }
+
+    public function testPartnerSyncVariationUsesScopedPerVariationTransactions(): void
+    {
+        $apply_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_apply_variation_plan'
+        );
+        self::assertNotFalse($apply_offset);
+        $prepare_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_prepare_images',
+            $apply_offset
+        );
+        self::assertNotFalse($prepare_offset);
+        $apply_section = substr($this->write_capability, $apply_offset, $prepare_offset - $apply_offset);
+
+        self::assertStringContainsString("db_query('START TRANSACTION')", $apply_section);
+        self::assertStringContainsString("db_query('COMMIT')", $apply_section);
+        self::assertStringContainsString("db_query('ROLLBACK')", $apply_section);
+        self::assertStringContainsString(
+            'Keep the atomic scope narrow: one variation price + booking + capacity.',
+            $apply_section
+        );
+    }
+
 }
+
+

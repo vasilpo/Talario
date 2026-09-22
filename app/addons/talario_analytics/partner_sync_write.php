@@ -562,6 +562,54 @@ function fn_talario_analytics_partner_sync_map_group_products(
     ];
 }
 
+function fn_talario_analytics_partner_sync_assert_variation_write_gate(): void
+{
+    if (PHP_SAPI !== 'cli'
+        || !function_exists('fn_is_development')
+        || !fn_is_development()
+        || !defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        || TALARIO_PARTNER_SYNC_DEV_COPY !== true
+        || !defined('TALARIO_PARTNER_SYNC_DEV_WRITE')
+        || TALARIO_PARTNER_SYNC_DEV_WRITE !== true
+    ) {
+        fn_talario_analytics_json_response(403, ['error' => 'variation_write_not_available']);
+    }
+}
+
+function fn_talario_analytics_partner_sync_cleanup_failed_create(int $base_product_id): void
+{
+    if ($base_product_id <= 0) {
+        return;
+    }
+
+    try {
+        $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+        $service = \Tygh\Addons\ProductVariations\ServiceProvider::getService();
+        $group = $group_repository->findGroupByProductId($base_product_id);
+        $product_ids = [$base_product_id];
+
+        if ($group) {
+            $product_ids = array_values(array_unique(array_map('intval', $group->getProductIds())));
+            $result = $service->removeGroup($group->getId());
+            if (!$result->isSuccess()) {
+                throw new RuntimeException('failed_create_group_cleanup_failed');
+            }
+        }
+
+        foreach ($product_ids as $product_id) {
+            if ($product_id > 0) {
+                fn_delete_product($product_id);
+            }
+        }
+    } catch (Throwable $cleanup_exception) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync failed CREATE cleanup failed',
+            'product_id' => $base_product_id,
+            'error_class' => get_class($cleanup_exception),
+        ]);
+    }
+}
+
 function fn_talario_analytics_partner_sync_apply_variation_plan(
     string $operation,
     int $base_product_id,
@@ -636,17 +684,25 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
 
         $variation_product_id = (int) $mapped['map'][$key];
         $booking_data = fn_talario_analytics_partner_sync_build_variation_booking($item, $base_booking_input);
-        $result_id = fn_update_product([
-            'price' => (float) $item['price'],
-            'booking_data' => $booking_data,
-        ], $variation_product_id, $lang_code);
-        if (!$result_id) {
-            throw new RuntimeException('variation_product_update_failed');
+
+        // Keep the atomic scope narrow: one variation price + booking + capacity.
+        db_query('START TRANSACTION');
+        try {
+            $result_id = fn_update_product([
+                'price' => (float) $item['price'],
+                'booking_data' => $booking_data,
+            ], $variation_product_id, $lang_code);
+            if (!$result_id) {
+                throw new RuntimeException('variation_product_update_failed');
+            }
+            fn_talario_analytics_partner_sync_apply_variation_capacity($variation_product_id, $item);
+            db_query('COMMIT');
+        } catch (Throwable $variation_exception) {
+            db_query('ROLLBACK');
+            throw $variation_exception;
         }
 
-        fn_talario_analytics_partner_sync_apply_variation_capacity($variation_product_id, $item);
         $updated[] = [
-            'product_id' => $variation_product_id,
             'age_group' => $item['age_group'],
             'purchase_option' => $item['purchase_option'],
             'price' => (float) $item['price'],
@@ -654,8 +710,8 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
     }
 
     return [
-        'group_id' => (int) $mapped['group']->getId(),
-        'products' => $updated,
+        'count' => count($updated),
+        'items' => $updated,
     ];
 }
 
@@ -947,6 +1003,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
         ]);
     }
 
+    if ($variation_resolution !== null) {
+        fn_talario_analytics_partner_sync_assert_variation_write_gate();
+    }
+
     $approval_id = trim((string) ($payload['approval_id'] ?? ''));
     if (!preg_match('/^[A-Za-z0-9._:-]{6,128}$/', $approval_id)) {
         fn_talario_analytics_json_response(400, ['error' => 'approval_id_required']);
@@ -960,7 +1020,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
     $temp_files = [];
     $old_pair_ids = [];
     $variation_write_result = null;
-    db_query('START TRANSACTION');
     try {
         if ($images !== null) {
             $prepared_images = fn_talario_analytics_partner_sync_write_prepare_images(
@@ -992,7 +1051,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
             );
         }
 
-        db_query('COMMIT');
 
         // Only after the new product/images are safely saved do we remove the prior image pairs.
         foreach ($old_pair_ids as $old_pair_id) {
@@ -1001,12 +1059,17 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
     } catch (Throwable $exception) {
-        db_query('ROLLBACK');
+        // Never keep an incomplete new card: CREATE is compensating-cleaned.
+        // UPDATE is idempotent by contract; rerunning the same approved payload is the repair path.
+        if ($operation === 'create' && $product_id > 0) {
+            fn_talario_analytics_partner_sync_cleanup_failed_create($product_id);
+        }
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
         fn_log_event('general', 'runtime', [
             'message' => 'Talario Partner Sync dev write failed',
             'operation' => $operation,
             'approval_id_hash' => $approval_id_hash,
+            'recovery' => $operation === 'create' ? 'compensating_cleanup' : 'rerun_same_update',
             'error_class' => get_class($exception),
         ]);
         fn_talario_analytics_json_response(500, ['error' => 'partner_sync_write_failed']);
