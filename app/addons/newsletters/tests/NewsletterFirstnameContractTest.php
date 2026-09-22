@@ -55,6 +55,14 @@ final class NewsletterFirstnameContractTest extends TestCase
         );
     }
 
+    public function testEmptyFirstnameGreetingFallsBackCleanly(): void
+    {
+        self::assertStringContainsString(
+            "$firstname !== '' ? $firstname . ', здравствуйте!' : 'Здравствуйте!'",
+            $this->func
+        );
+    }
+
     public function testMailingListConsentFilterRemainsIntact(): void
     {
         self::assertStringContainsString(
