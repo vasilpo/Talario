@@ -24,19 +24,21 @@ if (!str_ends_with($normalized_root, '/talario.ru/public_html/dev_copy')) {
 }
 
 $root_stat = @stat($root);
-$script_lstat = @lstat(__FILE__);
-$script_stat = @stat(__FILE__);
+$runner_handle = @fopen(__FILE__, 'rb');
+$script_stat = is_resource($runner_handle) ? @fstat($runner_handle) : false;
 if (
     !is_array($root_stat)
-    || !is_array($script_lstat)
     || !is_array($script_stat)
-    || is_link(__FILE__)
-    || !is_file(__FILE__)
-    || ($script_stat['mode'] & 0022) !== 0
+    || (($script_stat['mode'] & 0170000) !== 0100000)
+    || (($script_stat['mode'] & 0022) !== 0)
 ) {
+    if (is_resource($runner_handle)) {
+        fclose($runner_handle);
+    }
     fwrite(STDERR, "PARTNER_SYNC_RUNNER_TRUST_FAILED\n");
     exit(4);
 }
+fclose($runner_handle);
 
 $trusted_root_uids = [0, (int) $script_stat['uid']];
 if (!in_array((int) $root_stat['uid'], $trusted_root_uids, true)) {
