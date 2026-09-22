@@ -541,8 +541,6 @@ function fn_talario_analytics_partner_sync_find_variation_products(
     array $product_ids,
     array $resolution
 ): array {
-    fn_talario_analytics_partner_sync_validate_resolved_variants($resolution);
-
     $group_feature_id = (int) $resolution['group_axis']['feature_id'];
     $purchase_feature_id = (int) $resolution['purchase_axis']['feature_id'];
     $rows = db_get_array(
@@ -646,6 +644,8 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
     if (!function_exists('fn_ec_save_booking_data_by_amount')) {
         throw new RuntimeException('ecarter_slot_writer_unavailable');
     }
+
+    fn_talario_analytics_partner_sync_validate_resolved_variants($resolution);
 
     $group_feature_id = (int) $resolution['group_axis']['feature_id'];
     $purchase_feature_id = (int) $resolution['purchase_axis']['feature_id'];
@@ -1132,7 +1132,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
             ]);
             fn_talario_analytics_json_response(500, [
                 'error' => 'partner_sync_variation_write_failed',
-                'product_id' => $product_id,
             ]);
         }
     }
