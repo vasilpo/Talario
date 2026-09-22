@@ -12,7 +12,7 @@ if (!$root) {
 }
 
 $normalized_root = str_replace('\\', '/', $root);
-if (substr($normalized_root, -strlen('/talario.ru/dev_copy')) !== '/talario.ru/dev_copy') {
+if (substr($normalized_root, -strlen('/talario.ru/public_html/dev_copy')) !== '/talario.ru/public_html/dev_copy') {
     fwrite(STDERR, "PARTNER_SYNC_DEV_COPY_ONLY\n");
     exit(3);
 }
