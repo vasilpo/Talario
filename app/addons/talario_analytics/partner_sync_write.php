@@ -711,6 +711,31 @@ function fn_talario_analytics_partner_sync_cleanup_created_variations(
     return $products_clean;
 }
 
+function fn_talario_analytics_partner_sync_existing_variation_product_ids(array $resolution): array
+{
+    $group_feature_id = (int) ($resolution['group_axis']['feature_id'] ?? 0);
+    $purchase_feature_id = (int) ($resolution['purchase_axis']['feature_id'] ?? 0);
+    $variant_ids = [];
+    foreach ((array) ($resolution['items'] ?? []) as $item) {
+        $variant_ids[] = (int) ($item['group_variant_id'] ?? 0);
+        $variant_ids[] = (int) ($item['purchase_variant_id'] ?? 0);
+    }
+    $variant_ids = array_values(array_unique(array_filter($variant_ids)));
+    if ($group_feature_id <= 0 || $purchase_feature_id <= 0 || !$variant_ids) {
+        return [];
+    }
+
+    // Snapshot only products that already participate in one of the requested
+    // feature/variant values. Any such product is pre-existing ownership and
+    // must never be deleted by compensating cleanup.
+    return array_values(array_unique(array_map('intval', db_get_fields(
+        'SELECT DISTINCT product_id FROM ?:product_features_values'
+        . ' WHERE feature_id IN (?n) AND variant_id IN (?n)',
+        [$group_feature_id, $purchase_feature_id],
+        $variant_ids
+    ))));
+}
+
 function fn_talario_analytics_partner_sync_apply_create_variations(
     int $base_product_id,
     array $resolution,
@@ -765,6 +790,8 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
     );
     $request->setFeaturesVariantsMap($feature_variants);
 
+    $preexisting_product_ids = fn_talario_analytics_partner_sync_existing_variation_product_ids($resolution);
+
     $service = \Tygh\Addons\ProductVariations\ServiceProvider::getService();
     $result = $service->generateProductsAndCreateGroup($request);
     if (!$result->isSuccess()) {
@@ -776,6 +803,11 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
         throw new RuntimeException('variation_group_readback_failed');
     }
     $product_ids = array_map('intval', $group->getProductIds());
+    $created_product_ids = array_values(array_diff(
+        $product_ids,
+        $preexisting_product_ids,
+        [$base_product_id]
+    ));
     if (count($product_ids) > 64) {
         throw new RuntimeException('variation_product_limit_exceeded');
     }
@@ -831,7 +863,7 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
         fn_talario_analytics_partner_sync_cleanup_created_variations(
             (int) $group->getId(),
             $base_product_id,
-            $product_ids
+            $created_product_ids
         );
         throw $exception;
     }
