@@ -54,6 +54,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString(' p.price, p.status', $this->controller);
     }
 
+    public function testCatalogExposesVariationFeatureTaxonomyReadOnly(): void
+    {
+        self::assertStringContainsString('?:product_features_descriptions', $this->controller);
+        self::assertStringContainsString("['group_catalog_item', 'group_variation_catalog_item']", $this->controller);
+        self::assertStringContainsString('?:product_feature_variants', $this->controller);
+        self::assertStringContainsString('?:product_feature_variant_descriptions', $this->controller);
+        self::assertStringContainsString("'variation_features' => \$variation_features", $this->controller);
+        self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->controller);
+    }
+
     public function testCatalogExposesActiveCategoryTaxonomyAndProductAssignments(): void
     {
         self::assertStringContainsString('?:category_descriptions', $this->controller);

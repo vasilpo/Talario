@@ -327,6 +327,42 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
+    $variation_features = [];
+    foreach (db_get_array(
+        'SELECT pf.feature_id, pf.purpose, pfd.description'
+        . ' FROM ?:product_features pf'
+        . ' INNER JOIN ?:product_features_descriptions pfd'
+        . ' ON pfd.feature_id = pf.feature_id AND pfd.lang_code = ?s'
+        . ' WHERE pf.purpose IN (?a)'
+        . ' ORDER BY pf.feature_id ASC',
+        $lang_code,
+        ['group_catalog_item', 'group_variation_catalog_item']
+    ) as $feature_row) {
+        $feature_id = (int) $feature_row['feature_id'];
+        $variants = [];
+        foreach (db_get_array(
+            'SELECT pfvd.variant'
+            . ' FROM ?:product_feature_variants pfv'
+            . ' INNER JOIN ?:product_feature_variant_descriptions pfvd'
+            . ' ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s'
+            . ' WHERE pfv.feature_id = ?i'
+            . ' ORDER BY pfv.position ASC, pfv.variant_id ASC',
+            $lang_code,
+            $feature_id
+        ) as $variant_row) {
+            $label = trim((string) $variant_row['variant']);
+            if ($label !== '') {
+                $variants[] = $label;
+            }
+        }
+        $variation_features[] = [
+            'feature_id' => $feature_id,
+            'name' => (string) $feature_row['description'],
+            'purpose' => (string) $feature_row['purpose'],
+            'variants' => array_values(array_unique($variants)),
+        ];
+    }
+
     $partners = [];
     foreach (db_get_array(
         'SELECT company_id, company, status FROM ?:companies WHERE status = ?s ORDER BY company_id ASC',
@@ -573,6 +609,7 @@ function fn_talario_analytics_catalog_response(): void
         'timezone' => 'Europe/Moscow',
         'range' => ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')],
         'categories' => $categories,
+        'variation_features' => $variation_features,
         'partners' => $partners,
         'products' => array_values($products),
         'schedule' => $schedule,
