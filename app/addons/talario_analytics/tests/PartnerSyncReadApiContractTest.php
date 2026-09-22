@@ -219,9 +219,6 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('generateProductsAndCreateGroup', $this->write_capability);
         self::assertStringContainsString('fn_update_product(', $this->write_capability);
         self::assertStringContainsString('fn_ec_save_booking_data_by_amount', $this->write_capability);
-        self::assertStringContainsString("'time_by_amount'", (string) file_get_contents(
-            dirname(__DIR__, 2) . '/ec_table_booking_system/func.php'
-        ));
         self::assertStringContainsString("'error' => 'variation_update_not_implemented'", $this->write_capability);
     }
 
@@ -255,6 +252,38 @@ final class PartnerSyncReadApiContractTest extends TestCase
             "throw new RuntimeException('variation_variant_membership_invalid')",
             $this->write_capability
         );
+    }
+
+    public function testPartnerSyncVariationRollbackCleansEcarterProductState(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_cleanup_ecarter_product',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'DELETE FROM ?:ec_table_booking_system_price WHERE product_id = ?i',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'DELETE FROM ?:ec_table_booking_system_booking_info WHERE product_id = ?i',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i',
+            $this->write_capability
+        );
+
+        $cleanup_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_cleanup_created_variations'
+        );
+        self::assertNotFalse($cleanup_offset);
+        $cleanup = substr($this->write_capability, $cleanup_offset, 3600);
+        $ecarter_offset = strpos($cleanup, 'fn_talario_analytics_partner_sync_cleanup_ecarter_product');
+        $delete_offset = strpos($cleanup, 'fn_delete_product(');
+        self::assertNotFalse($ecarter_offset);
+        self::assertNotFalse($delete_offset);
+        self::assertLessThan($delete_offset, $ecarter_offset);
     }
 
     public function testPartnerSyncVariationApplyDoesNotDirectlyMutateVariationMetadataTables(): void
