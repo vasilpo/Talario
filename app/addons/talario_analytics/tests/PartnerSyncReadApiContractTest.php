@@ -131,7 +131,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('PARTNER_SYNC_RUNNER_OWNER_MISMATCH', $this->cli_runner);
         self::assertStringNotContainsString('@lstat(__FILE__)', $this->cli_runner);
         self::assertStringNotContainsString('is_link(__FILE__)', $this->cli_runner);
-        self::assertStringContainsString('$trusted_root_uids = [0, (int) $script_stat[\'uid\']];', $this->cli_runner);
+        self::assertStringContainsString('$trusted_root_uids = [0, $runner_euid];', $this->cli_runner);
         self::assertStringNotContainsString('/home/t/tyman5tb/', $this->cli_runner);
         self::assertStringContainsString('fn_is_development()', $this->cli_runner);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->cli_runner);
