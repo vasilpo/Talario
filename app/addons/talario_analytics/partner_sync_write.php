@@ -416,6 +416,26 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
     ];
 }
 
+
+function fn_talario_analytics_partner_sync_public_variation_axis(array $axis): array
+{
+    return [
+        'resolved' => !empty($axis['resolved']),
+        'feature_name' => $axis['feature_name'] ?? null,
+        'missing_variants' => array_values((array) ($axis['missing_variants'] ?? [])),
+    ];
+}
+
+function fn_talario_analytics_partner_sync_public_variation_resolution(array $resolution): array
+{
+    return [
+        'resolved' => !empty($resolution['resolved']),
+        'group_axis' => fn_talario_analytics_partner_sync_public_variation_axis((array) $resolution['group_axis']),
+        'purchase_axis' => fn_talario_analytics_partner_sync_public_variation_axis((array) $resolution['purchase_axis']),
+        'count' => count((array) ($resolution['items'] ?? [])),
+    ];
+}
+
 function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
 {
     if (count($images) > 12) {
@@ -679,12 +699,9 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'product' => array_diff_key($product_data, ['booking_data' => true]),
         'booking' => $booking_data,
         'images' => $images === null ? null : ['count' => count($images), 'replace' => true],
-        'variations' => $variation_resolution === null ? null : [
-            'count' => count($variation_plan),
-            'resolved' => (bool) $variation_resolution['resolved'],
-            'group_axis' => $variation_resolution['group_axis'],
-            'purchase_axis' => $variation_resolution['purchase_axis'],
-        ],
+        'variations' => $variation_resolution === null
+            ? null
+            : fn_talario_analytics_partner_sync_public_variation_resolution($variation_resolution),
     ];
 
     if ($dry_run) {
@@ -698,7 +715,9 @@ function fn_talario_analytics_partner_sync_write_response(): void
     if ($variation_resolution !== null && !$variation_resolution['resolved']) {
         fn_talario_analytics_json_response(409, [
             'error' => 'variation_resolution_required',
-            'variation_resolution' => $variation_resolution,
+            'variation_resolution' => fn_talario_analytics_partner_sync_public_variation_resolution(
+                $variation_resolution
+            ),
         ]);
     }
 
