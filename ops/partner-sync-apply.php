@@ -40,7 +40,13 @@ if (
 }
 fclose($runner_handle);
 
-$trusted_root_uids = [0, (int) $script_stat['uid']];
+$runner_euid = function_exists('posix_geteuid') ? posix_geteuid() : null;
+if (!is_int($runner_euid) || (int) $script_stat['uid'] !== $runner_euid) {
+    fwrite(STDERR, "PARTNER_SYNC_RUNNER_OWNER_MISMATCH\n");
+    exit(4);
+}
+
+$trusted_root_uids = [0, $runner_euid];
 if (!in_array((int) $root_stat['uid'], $trusted_root_uids, true)) {
     fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
     exit(4);
