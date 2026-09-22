@@ -13,6 +13,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $trusted_controllers;
     private string $write_capability;
     private string $dev_dispatcher;
+    private string $dev_ops_workflow;
     private string $cli_runner;
 
     protected function setUp(): void
@@ -25,6 +26,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->trusted_controllers = (string) file_get_contents($trusted_controllers_path);
         $this->write_capability = (string) file_get_contents(dirname(__DIR__) . '/partner_sync_write.php');
         $this->dev_dispatcher = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/beget/talario-dev-github-dispatcher.sh');
+        $this->dev_ops_workflow = (string) file_get_contents(dirname(__DIR__, 4) . '/.github/workflows/dev-copy-ops.yml');
         $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
     }
 
@@ -166,6 +168,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('partner sync dry-run execution timeout', $this->dev_dispatcher);
         self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
         self::assertStringContainsString('/usr/bin/timeout 30s /usr/bin/head -c 20971521', $this->dev_dispatcher);
+    }
+
+    public function testDevDryRunSmokeIsFixedAndServerEnforced(): void
+    {
+        self::assertStringContainsString('partner-sync-dry-run-smoke', $this->dev_ops_workflow);
+        self::assertStringContainsString("REMOTE_COMMAND='talario-partner-sync-dry-run'", $this->dev_ops_workflow);
+        self::assertStringNotContainsString('payload_b64', $this->dev_ops_workflow);
+        self::assertStringContainsString('company_id: 34', $this->dev_ops_workflow);
+        self::assertStringContainsString('category_ids: [274]', $this->dev_ops_workflow);
+
+        self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
+        self::assertStringContainsString('EXPECTED_RUNNER_SHA256=', $this->dev_dispatcher);
+        self::assertStringNotContainsString('talario-partner-sync-apply', $this->dev_dispatcher);
     }
 
     public function testDevDispatcherDoesNotExposeGenericShellForPartnerSync(): void
