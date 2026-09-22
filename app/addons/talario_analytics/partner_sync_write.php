@@ -711,29 +711,18 @@ function fn_talario_analytics_partner_sync_cleanup_created_variations(
     return $products_clean;
 }
 
-function fn_talario_analytics_partner_sync_existing_variation_product_ids(array $resolution): array
+function fn_talario_analytics_partner_sync_snapshot_existing_product_ids(): array
 {
-    $group_feature_id = (int) ($resolution['group_axis']['feature_id'] ?? 0);
-    $purchase_feature_id = (int) ($resolution['purchase_axis']['feature_id'] ?? 0);
-    $variant_ids = [];
-    foreach ((array) ($resolution['items'] ?? []) as $item) {
-        $variant_ids[] = (int) ($item['group_variant_id'] ?? 0);
-        $variant_ids[] = (int) ($item['purchase_variant_id'] ?? 0);
+    // CREATE is dev-only, but ownership must remain explicit even if the
+    // upstream Product Variations service changes reuse/linking behaviour.
+    // Bound the snapshot so an unexpectedly huge catalog fails closed.
+    $ids = array_map('intval', db_get_fields(
+        'SELECT product_id FROM ?:products ORDER BY product_id LIMIT 10001'
+    ));
+    if (count($ids) > 10000) {
+        throw new RuntimeException('variation_ownership_snapshot_too_large');
     }
-    $variant_ids = array_values(array_unique(array_filter($variant_ids)));
-    if ($group_feature_id <= 0 || $purchase_feature_id <= 0 || !$variant_ids) {
-        return [];
-    }
-
-    // Snapshot only products that already participate in one of the requested
-    // feature/variant values. Any such product is pre-existing ownership and
-    // must never be deleted by compensating cleanup.
-    return array_values(array_unique(array_map('intval', db_get_fields(
-        'SELECT DISTINCT product_id FROM ?:product_features_values'
-        . ' WHERE feature_id IN (?n) AND variant_id IN (?n)',
-        [$group_feature_id, $purchase_feature_id],
-        $variant_ids
-    ))));
+    return array_values(array_unique($ids));
 }
 
 function fn_talario_analytics_partner_sync_apply_create_variations(
@@ -790,7 +779,7 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
     );
     $request->setFeaturesVariantsMap($feature_variants);
 
-    $preexisting_product_ids = fn_talario_analytics_partner_sync_existing_variation_product_ids($resolution);
+    $preexisting_product_ids = fn_talario_analytics_partner_sync_snapshot_existing_product_ids();
 
     $service = \Tygh\Addons\ProductVariations\ServiceProvider::getService();
     $result = $service->generateProductsAndCreateGroup($request);
@@ -803,11 +792,24 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
         throw new RuntimeException('variation_group_readback_failed');
     }
     $product_ids = array_map('intval', $group->getProductIds());
-    $created_product_ids = array_values(array_diff(
-        $product_ids,
-        $preexisting_product_ids,
+    $created_product_ids = array_values(array_diff($product_ids, $preexisting_product_ids));
+    $unexpected_preexisting_ids = array_values(array_diff(
+        array_intersect($product_ids, $preexisting_product_ids),
         [$base_product_id]
     ));
+
+    // The only pre-existing product this CREATE operation may touch is its own
+    // freshly-created base card. If upstream variation generation ever links
+    // another pre-existing product, stop before price/booking/slot mutation.
+    if ($unexpected_preexisting_ids) {
+        fn_talario_analytics_partner_sync_cleanup_created_variations(
+            (int) $group->getId(),
+            $base_product_id,
+            $created_product_ids
+        );
+        throw new RuntimeException('variation_preexisting_product_conflict');
+    }
+
     if (count($product_ids) > 64) {
         throw new RuntimeException('variation_product_limit_exceeded');
     }
@@ -825,6 +827,11 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
             throw new RuntimeException('variation_product_mapping_failed');
         }
         $variation_product_id = (int) $product_map[$key];
+        if ($variation_product_id !== $base_product_id
+            && !in_array($variation_product_id, $created_product_ids, true)
+        ) {
+            throw new RuntimeException('variation_product_not_owned_by_create');
+        }
 
         $variation_booking = fn_talario_analytics_partner_sync_variation_booking(
             $item,
