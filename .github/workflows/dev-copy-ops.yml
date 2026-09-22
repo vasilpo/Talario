@@ -58,6 +58,20 @@ jobs:
             status|git-status|php-lint)
               ;;
             partner-sync-dry-run-smoke)
+              if [ "${{ github.event_name }}" = "push" ]; then
+                [ "${{ github.actor }}" = "vasilpo" ] || {
+                  echo "ERROR: push smoke requires repository owner"
+                  exit 64
+                }
+                [ "${{ github.ref }}" = "refs/heads/development" ] || {
+                  echo "ERROR: push smoke requires development branch"
+                  exit 64
+                }
+                [ "$REQUEST_ID" = "part-sync-push-smoke-20260922" ] || {
+                  echo "ERROR: push smoke request id is not allowlisted"
+                  exit 64
+                }
+              fi
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
