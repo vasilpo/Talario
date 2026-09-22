@@ -201,6 +201,45 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("\$duration > 1440", $this->write_capability);
     }
 
+    public function testPartnerSyncCreateUsesProductVariationsServiceAndExactEcarterSlots(): void
+    {
+        self::assertStringContainsString(
+            '\\Tygh\\Addons\\ProductVariations\\ServiceProvider::getService()',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'GenerateProductsAndCreateGroupRequest',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'GroupFeatureCollection::createFromFeatureList',
+            $this->write_capability
+        );
+        self::assertStringContainsString('generateProductsAndCreateGroup', $this->write_capability);
+        self::assertStringContainsString('fn_update_product(', $this->write_capability);
+        self::assertStringContainsString('fn_ec_save_booking_data_by_amount', $this->write_capability);
+        self::assertStringContainsString("'time_by_amount'", (string) file_get_contents(
+            dirname(__DIR__, 2) . '/ec_table_booking_system/func.php'
+        ));
+        self::assertStringContainsString("'error' => 'variation_update_not_implemented'", $this->write_capability);
+    }
+
+    public function testPartnerSyncVariationApplyDoesNotDirectlyMutateVariationMetadataTables(): void
+    {
+        self::assertStringNotContainsString('INSERT INTO ?:product_variation', $this->write_capability);
+        self::assertStringNotContainsString('UPDATE ?:product_variation', $this->write_capability);
+        self::assertStringNotContainsString('INSERT INTO ?:product_feature_variants', $this->write_capability);
+        self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
+    }
+
+    public function testPartnerSyncVariationCapacityIsRequiredForApply(): void
+    {
+        self::assertStringContainsString("'error' => 'invalid_variation_capacity'", $this->write_capability);
+        self::assertStringContainsString("throw new RuntimeException('variation_capacity_required')", $this->write_capability);
+        self::assertStringContainsString("'capacities_complete' =>", $this->write_capability);
+        self::assertStringContainsString("'prices_complete' =>", $this->write_capability);
+    }
+
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
