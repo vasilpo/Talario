@@ -141,6 +141,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+    public function testDevDispatcherBootstrapIsNarrowPinnedAndDevOnly(): void
+    {
+        self::assertStringContainsString("'dispatcher_bootstrap'", $this->controller);
+        self::assertStringContainsString("/home/t/tyman5tb/.local/bin", $this->controller);
+        self::assertStringContainsString("/ops/beget/talario-dev-github-dispatcher.sh", $this->controller);
+        self::assertStringContainsString("4f2b998b71a8ad9913c1e64c5c3df69274748fd2", $this->controller);
+        self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_COPY", $this->controller);
+        self::assertStringContainsString("\$_SERVER['REQUEST_METHOD'] !== 'POST'", $this->controller);
+        self::assertStringContainsString("rename(\$tmp, \$target_path)", $this->controller);
+        self::assertStringNotContainsString("authorized_keys", $this->controller);
+        self::assertStringContainsString("'dispatcher_bootstrap' => true", $this->trusted_controllers);
+    }
+
     public function testDevDispatcherHasFixedPartnerSyncCommands(): void
     {
         self::assertStringContainsString(
