@@ -602,6 +602,7 @@ function fn_talario_analytics_partner_sync_dispatcher_bootstrap_response(): void
     $target_dir = '/home/t/tyman5tb/.local/bin';
     $target_path = $target_dir . '/talario-dev-github-dispatcher';
     $expected_git_blob = '4f2b998b71a8ad9913c1e64c5c3df69274748fd2';
+    $expected_previous_git_blob = 'fc2b088cd2403b890cb539aa9e8ccee16778997d';
 
     $source = is_file($source_path) && !is_link($source_path)
         ? file_get_contents($source_path)
@@ -617,6 +618,25 @@ function fn_talario_analytics_partner_sync_dispatcher_bootstrap_response(): void
 
     if (!is_dir($target_dir) || is_link($target_dir) || realpath($target_dir) !== $target_dir) {
         fn_talario_analytics_json_response(503, ['error' => 'dispatcher_target_invalid']);
+    }
+
+    $current = is_file($target_path) && !is_link($target_path)
+        ? file_get_contents($target_path)
+        : false;
+    if (!is_string($current) || $current === '') {
+        fn_talario_analytics_json_response(503, ['error' => 'dispatcher_current_unavailable']);
+    }
+    $current_git_blob = sha1('blob ' . strlen($current) . "\0" . $current);
+    if (hash_equals($expected_git_blob, $current_git_blob)) {
+        fn_talario_analytics_json_response(200, [
+            'status' => 'already_current',
+            'operation' => 'dispatcher_bootstrap',
+            'dispatcher_git_blob' => $expected_git_blob,
+            'sha256' => hash('sha256', $current),
+        ]);
+    }
+    if (!hash_equals($expected_previous_git_blob, $current_git_blob)) {
+        fn_talario_analytics_json_response(409, ['error' => 'dispatcher_current_not_expected']);
     }
 
     $tmp = tempnam($target_dir, '.talario-dispatcher.');
