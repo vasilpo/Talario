@@ -115,9 +115,15 @@ jobs:
             CLEAN_OUTPUT="REMOTE_OPERATION_FAILED rc=$RC"
           fi
 
+          printf '%s\n' "$CLEAN_OUTPUT"
+
           {
             echo "rc=$RC"
             echo 'output<<EOF'
             printf '%s\n' "$CLEAN_OUTPUT"
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
+
+          if [ "$RC" -ne 0 ]; then
+            exit "$RC"
+          fi
