@@ -218,6 +218,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'missing_variants' => array_values", $this->write_capability);
     }
 
+    public function testPartnerSyncVariationLabelMatchingNormalizesEquivalentCommercialLabels(): void
+    {
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_variation_label_key', $this->write_capability);
+        self::assertStringContainsString("['Занятия', 'Занятие']", $this->write_capability);
+        self::assertStringContainsString("'^абонемент\\\\s+на\\\\s+(\\\\d+)\\\\s+занят", $this->write_capability);
+        self::assertStringContainsString("preg_replace('/(?<=\\\\d)\\\\s*лет/u'", $this->write_capability);
+        self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
+    }
+
     public function testPartnerSyncVariationResponseDoesNotExposeInternalIds(): void
     {
         $public_offset = strpos(
