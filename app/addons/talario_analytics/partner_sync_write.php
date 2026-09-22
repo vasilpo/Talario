@@ -386,6 +386,10 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
     }
     $groups = array_values(array_unique($groups));
     $options = array_values(array_unique($options));
+    $expected_combinations = count($groups) * count($options);
+    if ($expected_combinations < 1 || $expected_combinations > 100 || $expected_combinations !== count($variation_plan)) {
+        fn_talario_analytics_json_response(400, ['error' => 'variation_plan_must_be_full_matrix']);
+    }
 
     $group_axis = fn_talario_analytics_partner_sync_resolve_variation_axis(
         ['Возраст', 'Возрастная группа', 'Класс'],
@@ -510,8 +514,12 @@ function fn_talario_analytics_partner_sync_exact_slots_by_day(array $item): arra
     }
 
     $result = [];
+    $allowed_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     foreach ((array) ($item['schedule'] ?? []) as $session) {
         $day = (string) $session['day'];
+        if (!in_array($day, $allowed_days, true)) {
+            throw new RuntimeException('invalid_variation_schedule_day');
+        }
         $result[$day][] = [
             'start_time' => (string) $session['start'],
             'end_time' => (string) $session['end'],
@@ -617,6 +625,9 @@ function fn_talario_analytics_partner_sync_apply_create_variations(
         throw new RuntimeException('variation_group_readback_failed');
     }
     $product_ids = array_map('intval', $group->getProductIds());
+    if (count($product_ids) > 100) {
+        throw new RuntimeException('variation_product_limit_exceeded');
+    }
     if (count($product_ids) !== count($resolution['items'])) {
         throw new RuntimeException('variation_count_mismatch');
     }
@@ -998,6 +1009,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
         $variation_apply = null;
         if ($variation_resolution !== null) {
+            // Product Variations Service and the Ecarter helpers used here do not
+            // open/commit transactions themselves in the pinned CS-Cart codebase.
+            // Keep them inside our single transaction so a failed CREATE rolls back atomically.
+
             if (!isset($payload['booking']) || !is_array($payload['booking'])) {
                 throw new RuntimeException('variation_booking_range_required');
             }
