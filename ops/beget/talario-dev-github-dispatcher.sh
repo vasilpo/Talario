@@ -117,7 +117,7 @@ case "$REQUEST" in
     [ -x /usr/bin/git ] || fail "required git binary unavailable" 81
 
     RUNNER_REL="ops/partner-sync-apply.php"
-    EXPECTED_RUNNER_SHA256="8028529471a42c40a917d2ba57d6bcdef26373a49138052f49e4e96e6cfe80e8"
+    EXPECTED_RUNNER_SHA256="74b287a6940df16ed3681ef1a41560b3a44a63df168cd5817971be60b778637f"
     [ -z "$(/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ] || fail "dev_copy worktree must be clean for partner sync" 79
     RUNNER_COMMIT="$(/usr/bin/git -C "$DEV_COPY" rev-parse HEAD)"
     [ -n "$RUNNER_COMMIT" ] || fail "partner sync runner commit resolution failed" 80
