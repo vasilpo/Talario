@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: Allowlisted read-only dev_copy operation
+        description: Allowlisted dev_copy operation
         required: true
         type: choice
         options:
@@ -57,6 +57,7 @@ jobs:
             OP="$(jq -er '.operation' "$REQUEST")"
             REQUEST_ID="$(jq -er '.request_id' "$REQUEST")"
             jq -e 'keys | sort == ["operation","request_id"]' "$REQUEST" >/dev/null
+            PAYLOAD_B64=
           fi
           [[ "$REQUEST_ID" =~ ^[A-Za-z0-9._:-]{1,80}$ ]]
           case "$OP" in
@@ -141,47 +142,11 @@ jobs:
 
           if [ "$RC" -eq 0 ]; then
             if [ "${{ steps.request.outputs.operation }}" = "partner-sync-dry-run" ]; then
-              MARKERS="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=partner-sync-dry-run)
-          printf '%s\n' "$CLEAN_OUTPUT"
-
-          DELIM="TALARIO_DEV_OPS_OUTPUT"
-          {
-            echo "rc=$RC"
-            echo "output<<$DELIM"
-            printf '%s\n' "$CLEAN_OUTPUT"
-            echo "$DELIM"
-          } >> "$GITHUB_OUTPUT"
-
-          if [ "$RC" -ne 0 ]; then
-            exit "$RC"
-          fi
- | head -4)"
-              PLAN="$(printf '%s\n' "$RAW_OUTPUT" | tail -1 | jq -cer '{
-                schema_version,
-                dry_run,
-                operation: .plan.operation,
-                company_id: .plan.product.company_id,
-                category_count: (.plan.product.category_ids | length),
-                image_count: (if .plan.images == null then 0 else .plan.images.count end),
-                variations_resolved: (if .plan.variations == null then null else .plan.variations.resolved end)
-              }')"
+              MARKERS="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=partner-sync-dry-run)$' | head -4)"
+              PLAN="$(printf '%s\n' "$RAW_OUTPUT" | tail -1 | jq -cer '{schema_version, dry_run, operation: .plan.operation, company_id: .plan.product.company_id, category_count: (.plan.product.category_ids | length), image_count: (if .plan.images == null then 0 else .plan.images.count end), variations_resolved: (if .plan.variations == null then null else .plan.variations.resolved end)}')"
               CLEAN_OUTPUT="$(printf '%s\n%s\n' "$MARKERS" "$PLAN")"
             else
-              CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=(status|git-status|php-lint)|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9]+\.[0-9]+\.[0-9]+|DEV_COPY_FLAG=(PRESENT|MISSING)|DIRTY_COUNT=[0-9]+|PHP_LINT=OK)
-          printf '%s\n' "$CLEAN_OUTPUT"
-
-          DELIM="TALARIO_DEV_OPS_OUTPUT"
-          {
-            echo "rc=$RC"
-            echo "output<<$DELIM"
-            printf '%s\n' "$CLEAN_OUTPUT"
-            echo "$DELIM"
-          } >> "$GITHUB_OUTPUT"
-
-          if [ "$RC" -ne 0 ]; then
-            exit "$RC"
-          fi
- | head -20)"
+              CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=(status|git-status|php-lint)|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9]+\.[0-9]+\.[0-9]+|DEV_COPY_FLAG=(PRESENT|MISSING)|DIRTY_COUNT=[0-9]+|PHP_LINT=OK)$' | head -20)"
             fi
             printf '%s\n' "$CLEAN_OUTPUT" | grep -qx 'DISPATCHER=talario-dev-github-v1'
           else
