@@ -229,12 +229,19 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
             fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_price', 'index' => $index]);
         }
 
+        $capacity = isset($item['capacity']) ? (int) $item['capacity'] : (int) ($payload['capacity'] ?? 0);
+        if ($capacity < 0 || $capacity > 100000) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_capacity', 'index' => $index]);
+        }
+
         $schedule = isset($item['schedule']) && is_array($item['schedule']) ? $item['schedule'] : [];
-        if (count($schedule) > 32) {
-            fn_talario_analytics_json_response(400, ['error' => 'variation_schedule_too_large', 'index' => $index]);
+        if (!$schedule || count($schedule) > 32) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_variation_schedule', 'index' => $index]);
         }
 
         $normalized_schedule = [];
+        $seen_days = [];
+        $variation_duration = null;
         foreach ($schedule as $session_index => $session) {
             if (!is_array($session)) {
                 fn_talario_analytics_json_response(400, [
@@ -260,11 +267,31 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
                     'session_index' => $session_index,
                 ]);
             }
+            if ($variation_duration === null) {
+                $variation_duration = $duration;
+            } elseif ($variation_duration !== $duration) {
+                fn_talario_analytics_json_response(409, [
+                    'error' => 'schedule_not_representable',
+                    'reason' => 'mixed_duration_within_variation',
+                    'index' => $index,
+                ]);
+            }
+            if (isset($seen_days[$day])) {
+                fn_talario_analytics_json_response(409, [
+                    'error' => 'schedule_not_representable',
+                    'reason' => 'multiple_sessions_same_day',
+                    'index' => $index,
+                    'day' => $day,
+                ]);
+            }
+            $seen_days[$day] = true;
+
             $normalized_schedule[] = [
                 'day' => $day,
                 'start' => $start,
                 'end' => $end,
                 'duration' => $duration,
+                'capacity' => $capacity,
             ];
         }
 
@@ -278,6 +305,7 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
             'age_group' => $group,
             'purchase_option' => $option,
             'price' => $price === null ? null : (float) $price,
+            'duration' => (int) $variation_duration,
             'schedule' => $normalized_schedule,
         ];
     }
