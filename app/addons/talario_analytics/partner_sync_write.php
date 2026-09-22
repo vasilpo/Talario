@@ -562,6 +562,19 @@ function fn_talario_analytics_partner_sync_map_group_products(
     ];
 }
 
+function fn_talario_analytics_partner_sync_assert_variation_write_gate(): void
+{
+    if (!function_exists('fn_is_development') || !fn_is_development()) {
+        throw new RuntimeException('variation_write_development_runtime_required');
+    }
+    if (!defined('TALARIO_PARTNER_SYNC_DEV_COPY') || TALARIO_PARTNER_SYNC_DEV_COPY !== true) {
+        throw new RuntimeException('variation_write_dev_copy_gate_required');
+    }
+    if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE') || TALARIO_PARTNER_SYNC_DEV_WRITE !== true) {
+        throw new RuntimeException('variation_write_gate_required');
+    }
+}
+
 function fn_talario_analytics_partner_sync_apply_variation_plan(
     string $operation,
     int $base_product_id,
@@ -569,6 +582,8 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
     array $base_booking_input,
     string $lang_code
 ): array {
+    fn_talario_analytics_partner_sync_assert_variation_write_gate();
+
     if (empty($resolution['resolved'])) {
         throw new RuntimeException('variation_resolution_required');
     }
@@ -646,7 +661,6 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
 
         fn_talario_analytics_partner_sync_apply_variation_capacity($variation_product_id, $item);
         $updated[] = [
-            'product_id' => $variation_product_id,
             'age_group' => $item['age_group'],
             'purchase_option' => $item['purchase_option'],
             'price' => (float) $item['price'],
@@ -654,8 +668,8 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
     }
 
     return [
-        'group_id' => (int) $mapped['group']->getId(),
-        'products' => $updated,
+        'count' => count($updated),
+        'items' => $updated,
     ];
 }
 
@@ -960,7 +974,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
     $temp_files = [];
     $old_pair_ids = [];
     $variation_write_result = null;
-    db_query('START TRANSACTION');
     try {
         if ($images !== null) {
             $prepared_images = fn_talario_analytics_partner_sync_write_prepare_images(
@@ -992,7 +1005,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
             );
         }
 
-        db_query('COMMIT');
 
         // Only after the new product/images are safely saved do we remove the prior image pairs.
         foreach ($old_pair_ids as $old_pair_id) {
@@ -1001,7 +1013,8 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
     } catch (Throwable $exception) {
-        db_query('ROLLBACK');
+        // Do not wrap CS-Cart variation generation in one long outer transaction.
+        // The base product remains hidden on CREATE and every write path is dev_copy-only.
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
         fn_log_event('general', 'runtime', [
             'message' => 'Talario Partner Sync dev write failed',
