@@ -232,6 +232,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
     }
 
+    public function testPartnerSyncVariationMatrixAndResultCountAreBounded(): void
+    {
+        self::assertStringContainsString("'error' => 'variation_plan_must_be_full_matrix'", $this->write_capability);
+        self::assertStringContainsString('$expected_combinations > 100', $this->write_capability);
+        self::assertStringContainsString("throw new RuntimeException('variation_product_limit_exceeded')", $this->write_capability);
+        self::assertStringContainsString("throw new RuntimeException('invalid_variation_schedule_day')", $this->write_capability);
+    }
+
     public function testPartnerSyncVariationCapacityIsRequiredForApply(): void
     {
         self::assertStringContainsString("'error' => 'invalid_variation_capacity'", $this->write_capability);
