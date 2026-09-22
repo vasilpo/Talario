@@ -36,12 +36,12 @@ final class NewsletterFirstnameContractTest extends TestCase
         );
     }
 
-    public function testRendererEscapesFirstnameAndGatesListLookupOnConfirmation(): void
+    public function testRendererEscapesFirstnameWithoutDatabaseLookup(): void
     {
         self::assertStringContainsString("['%FIRSTNAME%']", $this->func);
         self::assertStringContainsString("['%FIRSTNAME_GREETING%']", $this->func);
-        self::assertStringContainsString('htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE', $this->func);
-        self::assertStringContainsString(
+        self::assertStringContainsString('htmlspecialchars(', $this->func);
+        self::assertStringNotContainsString(
             'SELECT confirmed FROM ?:user_mailing_lists WHERE list_id = ?i AND subscriber_id = ?i',
             $this->func
         );
