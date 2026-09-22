@@ -175,7 +175,21 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('?:product_feature_variant_descriptions', $this->write_capability);
         self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
         self::assertStringContainsString("'error' => 'variation_resolution_required'", $this->write_capability);
-        self::assertStringContainsString("'variations' => \$variation_resolution === null ? null", $this->write_capability);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_public_variation_resolution', $this->write_capability);
+        self::assertStringContainsString("'missing_variants' => array_values", $this->write_capability);
+    }
+
+    public function testPartnerSyncVariationResponseDoesNotExposeInternalIds(): void
+    {
+        $public_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_public_variation_axis'
+        );
+        self::assertNotFalse($public_offset);
+        $public_section = substr($this->write_capability, $public_offset, 1800);
+        self::assertStringNotContainsString("'feature_id'", $public_section);
+        self::assertStringNotContainsString("'variant_id'", $public_section);
+        self::assertStringNotContainsString("'variants'", $public_section);
     }
 
     public function testPartnerSyncVariationPlanIsBoundedAndValidated(): void
