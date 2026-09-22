@@ -600,41 +600,75 @@ function fn_talario_analytics_partner_sync_validate_resolved_variants(array $res
 }
 
 
-function fn_talario_analytics_partner_sync_cleanup_ecarter_product(int $product_id): void
+function fn_talario_analytics_partner_sync_cleanup_ecarter_product(int $product_id): bool
 {
     if ($product_id <= 0) {
-        return;
+        return true;
     }
 
-    // Ecarter tables are MyISAM in the installed addon, so the surrounding
-    // transaction cannot roll these writes back. Compensating cleanup must be
-    // explicit before a generated variation product is deleted.
+    // Ecarter tables are MyISAM in the installed addon, so rollback is
+    // compensating rather than transactional. Delete and verify explicitly.
     db_query('DELETE FROM ?:ec_table_booking_system_price WHERE product_id = ?i', $product_id);
     db_query('DELETE FROM ?:ec_table_booking_system_booking_info WHERE product_id = ?i', $product_id);
     db_query('DELETE FROM ?:ec_table_booking_system WHERE product_id = ?i', $product_id);
+
+    $remaining = (int) db_get_field(
+        'SELECT ('
+        . ' (SELECT COUNT(*) FROM ?:ec_table_booking_system_price WHERE product_id = ?i)'
+        . ' + (SELECT COUNT(*) FROM ?:ec_table_booking_system_booking_info WHERE product_id = ?i)'
+        . ' + (SELECT COUNT(*) FROM ?:ec_table_booking_system WHERE product_id = ?i)'
+        . ')',
+        $product_id,
+        $product_id,
+        $product_id
+    );
+
+    return $remaining === 0;
 }
 
 function fn_talario_analytics_partner_sync_cleanup_created_variations(
     int $group_id,
     int $base_product_id,
     array $product_ids
-): void {
+): bool {
     $cleanup_ids = array_values(array_unique(array_filter(array_map(
         'intval',
         $product_ids
     ), static fn(int $product_id): bool => $product_id > 0 && $product_id !== $base_product_id)));
 
-    // Remove Ecarter state first. Product deletion hooks in the installed
-    // Ecarter version do not clean these product-keyed tables.
+    $ecarter_clean = true;
     foreach ($cleanup_ids as $cleanup_product_id) {
-        try {
-            fn_talario_analytics_partner_sync_cleanup_ecarter_product($cleanup_product_id);
-        } catch (Throwable $cleanup_exception) {
-            fn_log_event('general', 'runtime', [
-                'message' => 'Talario Partner Sync Ecarter cleanup failed',
-                'error_class' => get_class($cleanup_exception),
-            ]);
+        $cleaned = false;
+        for ($attempt = 1; $attempt <= 3; $attempt++) {
+            try {
+                if (fn_talario_analytics_partner_sync_cleanup_ecarter_product($cleanup_product_id)) {
+                    $cleaned = true;
+                    break;
+                }
+            } catch (Throwable $cleanup_exception) {
+                fn_log_event('general', 'runtime', [
+                    'message' => 'Talario Partner Sync Ecarter cleanup attempt failed',
+                    'attempt' => $attempt,
+                    'error_class' => get_class($cleanup_exception),
+                ]);
+            }
         }
+        if (!$cleaned) {
+            $ecarter_clean = false;
+        }
+    }
+
+    if (!$ecarter_clean) {
+        // Fail safe: keep the hidden generated products/group when Ecarter
+        // state cannot be proven clean. Deleting the products here would turn
+        // product-keyed booking rows into true orphans. A later reconciliation
+        // can safely retry the same bounded cleanup.
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync variation cleanup incomplete',
+            'cleanup_status' => 'ecarter_not_clean',
+            'generated_count' => count($cleanup_ids),
+        ]);
+        return false;
     }
 
     try {
@@ -647,18 +681,34 @@ function fn_talario_analytics_partner_sync_cleanup_created_variations(
             'message' => 'Talario Partner Sync variation group cleanup failed',
             'error_class' => get_class($cleanup_exception),
         ]);
+        return false;
     }
 
+    $products_clean = true;
     foreach ($cleanup_ids as $cleanup_product_id) {
         try {
             fn_delete_product($cleanup_product_id);
+            if (db_get_field('SELECT product_id FROM ?:products WHERE product_id = ?i', $cleanup_product_id)) {
+                $products_clean = false;
+            }
         } catch (Throwable $cleanup_exception) {
+            $products_clean = false;
             fn_log_event('general', 'runtime', [
                 'message' => 'Talario Partner Sync variation product cleanup failed',
                 'error_class' => get_class($cleanup_exception),
             ]);
         }
     }
+
+    if (!$products_clean) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync variation cleanup incomplete',
+            'cleanup_status' => 'generated_products_remain',
+            'generated_count' => count($cleanup_ids),
+        ]);
+    }
+
+    return $products_clean;
 }
 
 function fn_talario_analytics_partner_sync_apply_create_variations(
@@ -1181,7 +1231,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'operation' => $operation,
         'approval_id_hash' => $approval_id_hash,
         'product_id' => $product_id,
-        'variations' => $variation_apply,
+        'variation_count' => is_array($variation_apply) ? (int) ($variation_apply['count'] ?? 0) : 0,
         'readback' => $readback,
     ]);
 }
