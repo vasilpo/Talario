@@ -298,15 +298,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncRollbackDeletesOnlyCurrentCreateOwnedVariations(): void
     {
         self::assertStringContainsString(
-            'fn_talario_analytics_partner_sync_existing_variation_product_ids',
+            'fn_talario_analytics_partner_sync_snapshot_existing_product_ids',
             $this->write_capability
         );
         self::assertStringContainsString(
-            'SELECT DISTINCT product_id FROM ?:product_features_values',
+            'SELECT product_id FROM ?:products ORDER BY product_id LIMIT 10001',
             $this->write_capability
         );
         self::assertStringContainsString(
-            '$created_product_ids = array_values(array_diff(',
+            "throw new RuntimeException('variation_preexisting_product_conflict')",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "throw new RuntimeException('variation_product_not_owned_by_create')",
             $this->write_capability
         );
 
