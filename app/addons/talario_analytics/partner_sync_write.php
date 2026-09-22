@@ -472,6 +472,193 @@ function fn_talario_analytics_partner_sync_public_variation_resolution(array $re
     ];
 }
 
+
+function fn_talario_analytics_partner_sync_build_variation_booking(array $item, array $base_booking_input): array
+{
+    $days = [];
+    foreach (['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] as $day) {
+        $days[$day] = ['enabled' => false, 'start' => '', 'end' => ''];
+    }
+    foreach ($item['schedule'] as $session) {
+        $days[$session['day']] = [
+            'enabled' => true,
+            'start' => $session['start'],
+            'end' => $session['end'],
+        ];
+    }
+
+    return fn_talario_analytics_partner_sync_write_normalize_booking([
+        'from' => (string) ($base_booking_input['from'] ?? ''),
+        'to' => (string) ($base_booking_input['to'] ?? ''),
+        'slot_time' => (int) $item['duration'],
+        'free_time' => 0,
+        'days' => $days,
+    ]);
+}
+
+function fn_talario_analytics_partner_sync_apply_variation_capacity(int $product_id, array $item): void
+{
+    foreach ($item['schedule'] as $session) {
+        $capacity = (int) ($session['capacity'] ?? 0);
+        if ($capacity <= 0) {
+            continue;
+        }
+        fn_ec_save_booking_data_by_amount([
+            'product_id' => $product_id,
+            'day' => $session['day'],
+            'booking_data' => [[
+                'start_time' => $session['start'],
+                'end_time' => $session['end'],
+                'amount' => $capacity,
+            ]],
+        ]);
+    }
+}
+
+function fn_talario_analytics_partner_sync_map_group_products(
+    int $base_product_id,
+    array $resolution
+): array {
+    $group = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository()
+        ->findGroupByProductId($base_product_id);
+    if (!$group) {
+        throw new RuntimeException('variation_group_readback_failed');
+    }
+
+    $group_axis = $resolution['group_axis'];
+    $purchase_axis = $resolution['purchase_axis'];
+    $features = new \Tygh\Addons\ProductVariations\Product\Group\GroupFeatureCollection([
+        new \Tygh\Addons\ProductVariations\Product\Group\GroupFeature(
+            (int) $group_axis['feature_id'],
+            (string) $group_axis['purpose']
+        ),
+        new \Tygh\Addons\ProductVariations\Product\Group\GroupFeature(
+            (int) $purchase_axis['feature_id'],
+            (string) $purchase_axis['purpose']
+        ),
+    ]);
+
+    $repository = \Tygh\Addons\ProductVariations\ServiceProvider::getProductRepository();
+    $products = $repository->findProducts($group->getProductIds());
+    $products = $repository->loadProductsFeatures($products, $features);
+
+    $map = [];
+    foreach ($products as $product) {
+        $variants = [];
+        foreach ((array) ($product['variation_features'] ?? []) as $feature_id => $feature) {
+            $variants[(int) $feature_id] = (int) ($feature['variant_id'] ?? 0);
+        }
+        $key = ($variants[(int) $group_axis['feature_id']] ?? 0)
+            . ':' . ($variants[(int) $purchase_axis['feature_id']] ?? 0);
+        if ($key !== '0:0') {
+            $map[$key] = (int) $product['product_id'];
+        }
+    }
+
+    return [
+        'group' => $group,
+        'features' => $features,
+        'map' => $map,
+    ];
+}
+
+function fn_talario_analytics_partner_sync_apply_variation_plan(
+    string $operation,
+    int $base_product_id,
+    array $resolution,
+    array $base_booking_input,
+    string $lang_code
+): array {
+    if (empty($resolution['resolved'])) {
+        throw new RuntimeException('variation_resolution_required');
+    }
+
+    $group_axis = $resolution['group_axis'];
+    $purchase_axis = $resolution['purchase_axis'];
+    $items = $resolution['items'];
+
+    if ($operation === 'create') {
+        $first = reset($items);
+        $base_values = [
+            (int) $group_axis['feature_id'] => (int) $first['group_variant_id'],
+            (int) $purchase_axis['feature_id'] => (int) $first['purchase_variant_id'],
+        ];
+        if (!fn_update_product_features_value($base_product_id, $base_values, [], $lang_code)) {
+            throw new RuntimeException('base_variation_features_update_failed');
+        }
+
+        $features = new \Tygh\Addons\ProductVariations\Product\Group\GroupFeatureCollection([
+            new \Tygh\Addons\ProductVariations\Product\Group\GroupFeature(
+                (int) $group_axis['feature_id'],
+                (string) $group_axis['purpose']
+            ),
+            new \Tygh\Addons\ProductVariations\Product\Group\GroupFeature(
+                (int) $purchase_axis['feature_id'],
+                (string) $purchase_axis['purpose']
+            ),
+        ]);
+        $request = new \Tygh\Addons\ProductVariations\Request\GenerateProductsAndCreateGroupRequest(
+            $base_product_id,
+            [],
+            $features
+        );
+        $request->setFeaturesVariantsMap([
+            (int) $group_axis['feature_id'] => array_values(array_unique(array_column($items, 'group_variant_id'))),
+            (int) $purchase_axis['feature_id'] => array_values(array_unique(array_column($items, 'purchase_variant_id'))),
+        ]);
+        $result = \Tygh\Addons\ProductVariations\ServiceProvider::getService()
+            ->generateProductsAndCreateGroup($request);
+        if (!$result->isSuccess()) {
+            throw new RuntimeException('variation_group_create_failed');
+        }
+    }
+
+    $mapped = fn_talario_analytics_partner_sync_map_group_products($base_product_id, $resolution);
+    $expected_count = count($items);
+    if (count($mapped['map']) !== $expected_count) {
+        throw new RuntimeException(
+            $operation === 'update'
+                ? 'variation_structure_change_not_supported'
+                : 'variation_product_mapping_failed'
+        );
+    }
+
+    $updated = [];
+    foreach ($items as $item) {
+        $key = (int) $item['group_variant_id'] . ':' . (int) $item['purchase_variant_id'];
+        if (empty($mapped['map'][$key])) {
+            throw new RuntimeException(
+                $operation === 'update'
+                    ? 'variation_structure_change_not_supported'
+                    : 'variation_product_mapping_failed'
+            );
+        }
+
+        $variation_product_id = (int) $mapped['map'][$key];
+        $booking_data = fn_talario_analytics_partner_sync_build_variation_booking($item, $base_booking_input);
+        $result_id = fn_update_product([
+            'price' => (float) $item['price'],
+            'booking_data' => $booking_data,
+        ], $variation_product_id, $lang_code);
+        if (!$result_id) {
+            throw new RuntimeException('variation_product_update_failed');
+        }
+
+        fn_talario_analytics_partner_sync_apply_variation_capacity($variation_product_id, $item);
+        $updated[] = [
+            'product_id' => $variation_product_id,
+            'age_group' => $item['age_group'],
+            'purchase_option' => $item['purchase_option'],
+            'price' => (float) $item['price'],
+        ];
+    }
+
+    return [
+        'group_id' => (int) $mapped['group']->getId(),
+        'products' => $updated,
+    ];
+}
+
 function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
 {
     if (count($images) > 12) {
