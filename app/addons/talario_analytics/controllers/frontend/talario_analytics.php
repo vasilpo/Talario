@@ -588,18 +588,101 @@ function fn_talario_analytics_catalog_response(): void
     ]);
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+function fn_talario_analytics_partner_sync_dispatcher_bootstrap_response(): void
+{
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $dev_copy_enabled = $is_development
+        && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+    if (!$dev_copy_enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+
+    $source_path = DIR_ROOT . '/ops/beget/talario-dev-github-dispatcher.sh';
+    $target_dir = '/home/t/tyman5tb/.local/bin';
+    $target_path = $target_dir . '/talario-dev-github-dispatcher';
+    $expected_git_blob = '4f2b998b71a8ad9913c1e64c5c3df69274748fd2';
+
+    $source = is_file($source_path) && !is_link($source_path)
+        ? file_get_contents($source_path)
+        : false;
+    if (!is_string($source) || $source === '') {
+        fn_talario_analytics_json_response(503, ['error' => 'dispatcher_source_unavailable']);
+    }
+
+    $actual_git_blob = sha1('blob ' . strlen($source) . "\0" . $source);
+    if (!hash_equals($expected_git_blob, $actual_git_blob)) {
+        fn_talario_analytics_json_response(409, ['error' => 'dispatcher_source_not_reviewed']);
+    }
+
+    if (!is_dir($target_dir) || is_link($target_dir) || realpath($target_dir) !== $target_dir) {
+        fn_talario_analytics_json_response(503, ['error' => 'dispatcher_target_invalid']);
+    }
+
+    $tmp = tempnam($target_dir, '.talario-dispatcher.');
+    if (!is_string($tmp) || $tmp === '') {
+        fn_talario_analytics_json_response(503, ['error' => 'dispatcher_temp_failed']);
+    }
+
+    $ok = false;
+    try {
+        if (file_put_contents($tmp, $source, LOCK_EX) !== strlen($source)) {
+            fn_talario_analytics_json_response(503, ['error' => 'dispatcher_write_failed']);
+        }
+        if (!chmod($tmp, 0755)) {
+            fn_talario_analytics_json_response(503, ['error' => 'dispatcher_chmod_failed']);
+        }
+        $installed_blob = sha1('blob ' . filesize($tmp) . "\0" . file_get_contents($tmp));
+        if (!hash_equals($expected_git_blob, $installed_blob)) {
+            fn_talario_analytics_json_response(503, ['error' => 'dispatcher_temp_integrity_failed']);
+        }
+        if (!rename($tmp, $target_path)) {
+            fn_talario_analytics_json_response(503, ['error' => 'dispatcher_install_failed']);
+        }
+        $ok = true;
+    } finally {
+        if (!$ok && is_file($tmp)) {
+            @unlink($tmp);
+        }
+    }
+
+    clearstatcache(true, $target_path);
+    $installed = is_file($target_path) && !is_link($target_path)
+        ? file_get_contents($target_path)
+        : false;
+    if (!is_string($installed) || sha1('blob ' . strlen($installed) . "\0" . $installed) !== $expected_git_blob) {
+        fn_talario_analytics_json_response(503, ['error' => 'dispatcher_post_install_verify_failed']);
+    }
+
+    fn_log_event('general', 'runtime', [
+        'message' => 'Talario Partner Sync dev dispatcher bootstrap completed',
+        'dispatcher_git_blob' => $expected_git_blob,
+    ]);
+
+    fn_talario_analytics_json_response(200, [
+        'status' => 'ok',
+        'operation' => 'dispatcher_bootstrap',
+        'dispatcher_git_blob' => $expected_git_blob,
+        'sha256' => hash('sha256', $installed),
+    ]);
+}
+
+if ($mode === 'dispatcher_bootstrap') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'dispatcher_bootstrap', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'dispatcher_bootstrap'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -608,7 +691,11 @@ if ($mode === 'catalog') {
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (!$dev_copy_enabled && !$prod_read_enabled) {
+    if ($mode === 'dispatcher_bootstrap') {
+        if (!$dev_copy_enabled) {
+            fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+        }
+    } elseif (!$dev_copy_enabled && !$prod_read_enabled) {
         fn_talario_analytics_json_response(404, ['error' => 'not_found']);
     }
 }
@@ -629,7 +716,7 @@ if ($mode === 'crm') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if ($mode === 'catalog') {
+if (in_array($mode, ['catalog', 'dispatcher_bootstrap'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -676,7 +763,7 @@ if ($mode === 'catalog') {
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if ($mode === 'catalog') {
+    if (in_array($mode, ['catalog', 'dispatcher_bootstrap'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
@@ -694,6 +781,10 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_c
         ]);
     }
     fn_talario_analytics_json_response(401, ['error' => 'unauthorized']);
+}
+
+if ($mode === 'dispatcher_bootstrap') {
+    fn_talario_analytics_partner_sync_dispatcher_bootstrap_response();
 }
 
 if ($mode === 'catalog') {
