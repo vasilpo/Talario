@@ -160,7 +160,7 @@ function fn_register_link($url, $newsletter_id, $campaign_id)
     }
 }
 
-function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '')
+function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '', $is_test = false, $newsletter_id = 0)
 {
     $reply_to = !empty($reply_to) ? $reply_to : 'default_company_newsletter_email';
     $_from = array(
@@ -171,18 +171,29 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
     /** @var \Tygh\Mailer\Mailer $mailer */
     $mailer = Tygh::$app['mailer'];
 
-    return $mailer->send(array(
+    $message = array(
         'to' => $to,
         'from' => $_from,
         'reply_to' => $reply_to,
-        'data' => array(
+        'attachments' => $attachments,
+    );
+
+    if ((int) $newsletter_id === 5) {
+        // CRM-01 owns its complete HTML shell. Bypass the global newsletter
+        // header/footer so this one campaign can control logo proportions,
+        // spacing and footer without affecting any other email.
+        $message['body'] = $body;
+        $message['subject'] = $subj;
+    } else {
+        $message['data'] = array(
             'body' => $body,
             'subject' => $subj
-        ),
-        'attachments' => $attachments,
-        'template_code' => 'newsletters_newsletter',
-        'tpl' => 'addons/newsletters/newsletter.tpl', // this parameter is obsolete and is used for back compatibility
-    ), 'C', $lang_code, fn_get_newsletters_mailer_settings());
+        );
+        $message['template_code'] = 'newsletters_newsletter';
+        $message['tpl'] = 'addons/newsletters/newsletter.tpl'; // this parameter is obsolete and is used for back compatibility
+    }
+
+    return $mailer->send($message, 'C', $lang_code, fn_get_newsletters_mailer_settings());
 }
 
 /**
