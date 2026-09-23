@@ -24,13 +24,51 @@ if (!str_ends_with($normalized_root, '/talario.ru/public_html/dev_copy')) {
 }
 
 $root_stat = @stat($root);
-$script_stat = @stat(__FILE__);
-if (!is_array($root_stat) || !is_array($script_stat) || $root_stat['uid'] !== $script_stat['uid']) {
-    fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
+$runner_handle = @fopen(__FILE__, 'rb');
+$script_stat = is_resource($runner_handle) ? @fstat($runner_handle) : false;
+if (
+    !is_array($root_stat)
+    || !is_array($script_stat)
+    || (($script_stat['mode'] & 0170000) !== 0100000)
+    || (($script_stat['mode'] & 0022) !== 0)
+) {
+    if (is_resource($runner_handle)) {
+        fclose($runner_handle);
+    }
+    fwrite(STDERR, "PARTNER_SYNC_RUNNER_TRUST_FAILED\n");
     exit(4);
 }
-if (($root_stat['mode'] & 0022) !== 0) {
-    fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+fclose($runner_handle);
+
+$runner_uid_raw = getenv('TALARIO_PARTNER_SYNC_RUNNER_UID');
+if (!is_string($runner_uid_raw) || !ctype_digit($runner_uid_raw)) {
+    fwrite(STDERR, "PARTNER_SYNC_RUNNER_UID_REQUIRED\n");
+    exit(4);
+}
+$runner_uid = (int) $runner_uid_raw;
+if ((int) $script_stat['uid'] !== $runner_uid) {
+    fwrite(STDERR, "PARTNER_SYNC_RUNNER_OWNER_MISMATCH\n");
+    exit(4);
+}
+
+$root_uid = (int) $root_stat['uid'];
+$root_mode = $root_stat['mode'] & 0777;
+if (($root_stat['mode'] & 0170000) !== 0040000) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_NOT_DIRECTORY\n");
+    exit(4);
+}
+if ($root_uid === 0) {
+    if ($root_mode !== 0700) {
+        fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+        exit(4);
+    }
+} elseif ($root_uid === $runner_uid) {
+    if (($root_mode & 0022) !== 0) {
+        fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+        exit(4);
+    }
+} else {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
     exit(4);
 }
 
