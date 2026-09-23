@@ -10,6 +10,57 @@ fail() {
   exit "${2:-64}"
 }
 
+if [ "$REQUEST" = "talario-analytics-prod-sync" ]; then
+  echo "DISPATCHER=talario-dev-github-v1"
+  echo "OPERATION=analytics-prod-sync"
+
+  PROD="/home/t/tyman5tb/talario.ru/public_html"
+  EXPECTED_PROD_SHA="2dea53c94eecc33d84980bab1b808a35258e03f7"
+  STATE_DIR="$HOME/.local/state/talario/analytics-prod"
+  mkdir -p "$STATE_DIR"
+  chmod 700 "$STATE_DIR"
+  [ -d "$STATE_DIR" ] && [ ! -L "$STATE_DIR" ] || fail "invalid analytics state directory" 86
+
+  HASH_FILE="$(/usr/bin/mktemp "$STATE_DIR/hash.XXXXXX")"
+  DEPLOY_RUNNER="$(/usr/bin/mktemp "$STATE_DIR/deploy.XXXXXX.sh")"
+  HASH_RUNNER="$(/usr/bin/mktemp "$STATE_DIR/hash-sync.XXXXXX.sh")"
+  chmod 600 "$HASH_FILE" "$DEPLOY_RUNNER" "$HASH_RUNNER"
+  trap 'rm -f -- "$HASH_FILE" "$DEPLOY_RUNNER" "$HASH_RUNNER"' EXIT HUP INT TERM
+
+  /usr/bin/timeout 10s /usr/bin/head -c 66 > "$HASH_FILE" || fail "analytics hash receive timeout" 86
+  HASH_SIZE="$(/usr/bin/wc -c < "$HASH_FILE" | /usr/bin/tr -d ' ')"
+  [ "$HASH_SIZE" -ge 64 ] && [ "$HASH_SIZE" -le 65 ] || fail "invalid analytics hash size" 86
+  HASH="$(/usr/bin/tr -d '\r\n' < "$HASH_FILE")"
+  [[ "$HASH" =~ ^[a-f0-9]{64}$ ]] || fail "invalid analytics sha256" 86
+
+  [ -d "$PROD/.git" ] || fail "PROD git root missing" 87
+  [ "$(/usr/bin/realpath "$PROD")" = "$PROD" ] || fail "unexpected PROD root" 87
+  [ "$(/usr/bin/git -C "$PROD" rev-parse --abbrev-ref HEAD)" = "prod" ] || fail "PROD branch mismatch" 87
+  [ -z "$(/usr/bin/git -C "$PROD" status --porcelain --untracked-files=no)" ] || fail "PROD tracked worktree dirty" 87
+
+  /usr/bin/git -C "$PROD" fetch --quiet https://github.com/vasilpo/Talario.git prod
+  TARGET="$(/usr/bin/git -C "$PROD" rev-parse FETCH_HEAD)"
+  [ "$TARGET" = "$EXPECTED_PROD_SHA" ] || fail "unexpected PROD target" 88
+
+  /usr/bin/git -C "$PROD" show "$TARGET:ops/deploy-prod.sh" > "$DEPLOY_RUNNER" || fail "deploy runner extraction failed" 88
+  /usr/bin/git -C "$PROD" show "$TARGET:ops/beget/sync-analytics-prod-hash.sh" > "$HASH_RUNNER" || fail "hash runner extraction failed" 88
+  [ -s "$DEPLOY_RUNNER" ] && [ -s "$HASH_RUNNER" ] || fail "reviewed runner missing" 88
+  chmod 700 "$DEPLOY_RUNNER" "$HASH_RUNNER"
+
+  TALARIO_CONFIRM_PROD_DEPLOY="$TARGET" /usr/bin/bash "$DEPLOY_RUNNER" deploy
+  [ "$(/usr/bin/git -C "$PROD" rev-parse HEAD)" = "$EXPECTED_PROD_SHA" ] || fail "exact PROD deploy verification failed" 89
+
+  /usr/bin/bash "$HASH_RUNNER" "$HASH"
+  /usr/bin/curl -fsS --max-time 20 https://talario.ru/ > "$STATE_DIR/storefront-health.tmp" || fail "storefront health request failed" 90
+  /usr/bin/grep -qi 'Talario' "$STATE_DIR/storefront-health.tmp" || fail "storefront health marker missing" 90
+  rm -f "$STATE_DIR/storefront-health.tmp"
+
+  echo "PROD_EXACT_SHA=$EXPECTED_PROD_SHA"
+  echo "ANALYTICS_PROD_SYNC=PASS"
+  echo "STOREFRONT_HEALTH=PASS"
+  exit 0
+fi
+
 cd "$DEV_COPY"
 [ "$(realpath .)" = "$EXPECTED_PATH" ] || fail "unexpected active directory" 65
 [ "$(git rev-parse --abbrev-ref HEAD)" = "development" ] || fail "dev_copy is not on development branch" 66
