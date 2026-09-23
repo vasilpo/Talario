@@ -32,7 +32,7 @@ final class NewsletterCrm01HeaderContractTest extends TestCase
 
     public function testBatchAndTestSendPassNewsletterId(): void
     {
-        self::assertStringContainsString("$recipient['reply_to'], false, (int) $send_id", $this->controller);
-        self::assertStringContainsString("true, (int) $_REQUEST['newsletter_id']", $this->controller);
+        self::assertStringContainsString('$recipient[\'reply_to\'], false, (int) $send_id', $this->controller);
+        self::assertStringContainsString('true, (int) $_REQUEST[\'newsletter_id\']', $this->controller);
     }
 }
