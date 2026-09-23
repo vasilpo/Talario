@@ -17,6 +17,7 @@
         talario_add_to_cart: true,
         talario_checkout_start: true,
         talario_free_booking: true,
+        talario_article_marketplace_click: true,
         talario_back: true
     };
 
@@ -160,6 +161,30 @@
         return window.location.pathname || '/';
     }
 
+    function safeLinkPath(href) {
+        var link;
+
+        try {
+            link = document.createElement('a');
+            link.href = String(href || '');
+            return link.pathname || '/';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function articlePlacement(value) {
+        var allowed = {
+            inline: true,
+            footer: true,
+            cards: true,
+            article: true
+        };
+        var normalized = String(value || 'article').toLowerCase();
+
+        return allowed[normalized] ? normalized : 'article';
+    }
+
     function pagePayload(extra) {
         var payload = {
             product_id: currentProductId(),
@@ -223,6 +248,16 @@
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit', {
             path: pagePath()
+        });
+    });
+
+    $(document).on('click', '[data-talario-article-marketplace]', function () {
+        var $link = $(this);
+
+        emit('talario_article_marketplace_click', {
+            path: pagePath(),
+            target: safeLinkPath($link.attr('href')),
+            placement: articlePlacement($link.attr('data-talario-article-marketplace'))
         });
     });
 
