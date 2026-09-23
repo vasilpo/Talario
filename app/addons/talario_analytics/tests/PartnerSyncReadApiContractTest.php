@@ -216,8 +216,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('partner-sync-dry-run-smoke', $this->dev_ops_workflow);
         self::assertStringContainsString("REMOTE_COMMAND='talario-partner-sync-dry-run'", $this->dev_ops_workflow);
         self::assertStringNotContainsString('payload_b64', $this->dev_ops_workflow);
-        self::assertStringContainsString('company_id: 34', $this->dev_ops_workflow);
-        self::assertStringContainsString('category_ids: [274]', $this->dev_ops_workflow);
+        self::assertStringContainsString('company_id: 39', $this->dev_ops_workflow);
+        self::assertStringContainsString('category_ids: [270]', $this->dev_ops_workflow);
 
         self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
         self::assertStringContainsString('EXPECTED_RUNNER_SHA256=', $this->dev_dispatcher);
