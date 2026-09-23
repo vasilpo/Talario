@@ -29,9 +29,9 @@ final class NewsletterCrm01HeaderContractTest extends TestCase
         self::assertStringContainsString('{{ body }}', $this->func);
         self::assertStringContainsString('{{ snippet("footer") }}', $this->func);
         self::assertStringContainsString("['%POINTS_WORD%']", $this->func);
-        self::assertStringContainsString("$points_word = 'балл'", $this->func);
-        self::assertStringContainsString("$points_word = 'балла'", $this->func);
-        self::assertStringContainsString("$points_word = 'баллов'", $this->func);
+        self::assertStringContainsString('$points_word = \'балл\'', $this->func);
+        self::assertStringContainsString('$points_word = \'балла\'', $this->func);
+        self::assertStringContainsString('$points_word = \'баллов\'', $this->func);
         self::assertStringNotContainsString('{{ snippet("header") }}', $this->func);
     }
 
