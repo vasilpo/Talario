@@ -319,12 +319,21 @@ function fn_newsletters_get_recipients(array $params)
     if (!empty($params['users'])) {
         $users = fn_explode(',', $params['users']);
         $user_recipients = db_get_array(
-            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname, user_points.data AS points_data'
+            'SELECT users.user_id, users.email, users.lang_code, MIN(mailing_lists.list_id) as list_id, subscribers.subscriber_id, users.firstname, user_points.data AS points_data'
             . ' FROM ?:users AS users'
             . ' LEFT JOIN ?:user_data AS user_points'
                 . ' ON users.user_id = user_points.user_id AND user_points.type = ?s'
-            . ' WHERE users.user_id IN (?n)',
+            . ' LEFT JOIN ?:subscribers AS subscribers'
+                . ' ON LOWER(TRIM(subscribers.email)) = LOWER(TRIM(users.email))'
+            . ' LEFT JOIN ?:user_mailing_lists AS user_mailing_lists'
+                . ' ON subscribers.subscriber_id = user_mailing_lists.subscriber_id AND user_mailing_lists.confirmed = ?i'
+            . ' LEFT JOIN ?:mailing_lists AS mailing_lists'
+                . ' ON user_mailing_lists.list_id = mailing_lists.list_id AND mailing_lists.status IN (?a)'
+            . ' WHERE users.user_id IN (?n)'
+            . ' GROUP BY users.user_id, subscribers.subscriber_id',
             POINTS,
+            1,
+            [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN],
             $users
         );
     }
