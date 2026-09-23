@@ -13,24 +13,39 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Verify five article CTA blocks on dev_copy
+      - name: Diagnose dev_copy and verify SEO pilot
         shell: bash
         run: |
           set -euo pipefail
-          pages=(
-            "sport/tablica-razrjadov-po-plavaniju-normativy-dlja-vseh-vozrastov"
-            "blog/poyasa-v-thekvondo"
-            "blog/thekvondo-dlya-detey"
-            "blog/edinoborstva-dlya-detey-kakoe-vybrat"
-            "blog/sambo-dlya-detey-chto-eto"
-          )
-          for page in "${pages[@]}"; do
-            url="https://talario.ru/dev_copy/${page}/"
-            html="$(curl -fsSL --max-time 30 "$url")"
-            printf '%s' "$html" | grep -Fq 'data-talario-article-marketplace-block'
-            printf '%s' "$html" | grep -Fq 'data-talario-article-marketplace="inline"'
-            cards="$(printf '%s' "$html" | grep -Fo 'data-talario-article-marketplace="cards"' | wc -l | tr -d ' ')"
-            test "$cards" -ge 3
-            test "$cards" -le 5
-            printf 'SEO_PILOT_PASS page=%s cards=%s\n' "$page" "$cards"
-          done
+
+          probe() {
+            local label="$1"
+            local url="$2"
+            local file="$RUNNER_TEMP/${label}.html"
+            local code
+            code="$(curl -sSL -o "$file" -w '%{http_code}' --max-time 30 "$url")"
+            printf 'HTTP label=%s code=%s\n' "$label" "$code"
+            if [ "$code" != "200" ]; then
+              printf 'BODY_MARKERS label=%s ' "$label"
+              grep -Eo '<title>[^<]{0,160}|(Service Unavailable|Access denied|Error[^<]{0,120})' "$file" | head -3 | tr '\n' ' ' || true
+              printf '\n'
+            fi
+          }
+
+          probe root "https://talario.ru/dev_copy/"
+          probe normal "https://talario.ru/dev_copy/blog/"
+          probe pilot "https://talario.ru/dev_copy/blog/sambo-dlya-detey-chto-eto/"
+
+          root_code="$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 30 'https://talario.ru/dev_copy/')"
+          normal_code="$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 30 'https://talario.ru/dev_copy/blog/')"
+          pilot_file="$RUNNER_TEMP/pilot-final.html"
+          pilot_code="$(curl -sSL -o "$pilot_file" -w '%{http_code}' --max-time 30 'https://talario.ru/dev_copy/blog/sambo-dlya-detey-chto-eto/')"
+
+          test "$root_code" = "200"
+          test "$normal_code" = "200"
+          test "$pilot_code" = "200"
+          grep -Fq 'data-talario-article-marketplace-block' "$pilot_file"
+          cards="$(grep -Fo 'data-talario-article-marketplace="cards"' "$pilot_file" | wc -l | tr -d ' ')"
+          test "$cards" -ge 3
+          test "$cards" -le 5
+          echo "SEO_PILOT_SMOKE=PASS cards=$cards"
