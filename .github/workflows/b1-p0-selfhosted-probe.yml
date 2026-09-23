@@ -3,7 +3,7 @@ name: B1 P0 Self-hosted Probe
 on:
   push:
     branches:
-      - development
+      - b1/p0-selfhosted-probe
 
 permissions:
   contents: read
