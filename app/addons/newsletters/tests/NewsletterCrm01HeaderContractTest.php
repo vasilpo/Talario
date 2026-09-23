@@ -24,9 +24,14 @@ final class NewsletterCrm01HeaderContractTest extends TestCase
         self::assertStringContainsString('Talario_Logo_WL.png', $this->func);
         self::assertStringContainsString('width="196"', $this->func);
         self::assertStringContainsString('height:auto', $this->func);
-        self::assertStringContainsString('padding:18px 16px 8px', $this->func);
+        self::assertStringContainsString('align="left"', $this->func);
+        self::assertStringContainsString('padding:18px 40px 8px', $this->func);
         self::assertStringContainsString('{{ body }}', $this->func);
         self::assertStringContainsString('{{ snippet("footer") }}', $this->func);
+        self::assertStringContainsString("['%POINTS_WORD%']", $this->func);
+        self::assertStringContainsString("$points_word = 'балл'", $this->func);
+        self::assertStringContainsString("$points_word = 'балла'", $this->func);
+        self::assertStringContainsString("$points_word = 'баллов'", $this->func);
         self::assertStringNotContainsString('{{ snippet("header") }}', $this->func);
     }
 
