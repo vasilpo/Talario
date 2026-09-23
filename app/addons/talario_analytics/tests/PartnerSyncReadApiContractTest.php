@@ -243,6 +243,20 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+    public function testAnalyticsProdHashSyncIsFixedAndDoesNotExposeGenericShell(): void
+    {
+        self::assertStringContainsString('talario-analytics-prod-sync', $this->dev_dispatcher);
+        self::assertStringContainsString('EXPECTED_PROD_SHA="2dea53c94eecc33d84980bab1b808a35258e03f7"', $this->dev_dispatcher);
+        self::assertStringContainsString('/usr/bin/timeout 10s /usr/bin/head -c 66', $this->dev_dispatcher);
+        self::assertStringContainsString('[[ "$HASH" =~ ^[a-f0-9]{64}$ ]]', $this->dev_dispatcher);
+        self::assertStringContainsString('TALARIO_CONFIRM_PROD_DEPLOY="$TARGET"', $this->dev_dispatcher);
+        self::assertStringContainsString('sync-analytics-prod-hash.sh', $this->dev_dispatcher);
+        self::assertStringContainsString('ANALYTICS_PROD_SYNC=PASS', $this->dev_dispatcher);
+        self::assertStringContainsString('STOREFRONT_HEALTH=PASS', $this->dev_dispatcher);
+        self::assertStringNotContainsString('eval ', $this->dev_dispatcher);
+        self::assertStringNotContainsString('bash -c "$REQUEST"', $this->dev_dispatcher);
+    }
+
     public function testPartnerSyncVariationPlanUsesExistingFeatureVariantsOnly(): void
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_normalize_variation_plan', $this->write_capability);
