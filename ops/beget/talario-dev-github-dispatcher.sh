@@ -70,32 +70,75 @@ case "$REQUEST" in
     mark_dispatcher
     echo "OPERATION=partner-sync-enable-penaty-pilot"
 
+    [ "$DEV_COPY" = "$EXPECTED_PATH" ] || fail "unexpected dev_copy root" 85
+    [ "$(/usr/bin/realpath "$DEV_COPY")" = "$EXPECTED_PATH" ] || fail "unexpected dev_copy realpath" 85
+
     CONFIG="$DEV_COPY/config.local.php"
+    EXPECTED_CONFIG="$EXPECTED_PATH/config.local.php"
+    [ "$CONFIG" = "$EXPECTED_CONFIG" ] || fail "unexpected dev_copy config path" 85
+    [ "$(/usr/bin/realpath "$CONFIG")" = "$EXPECTED_CONFIG" ] || fail "unexpected dev_copy config realpath" 85
+
     STATE_DIR="$HOME/.local/state/talario/partner-sync"
     mkdir -p "$STATE_DIR"
     chmod 700 "$STATE_DIR"
-    [ -f "$CONFIG" ] && [ ! -L "$CONFIG" ] || fail "invalid dev_copy local config" 85
+    [ -d "$STATE_DIR" ] && [ ! -L "$STATE_DIR" ] || fail "invalid partner sync state directory" 85
 
-    CONFIG_UID="$(/usr/bin/stat -c '%u' "$CONFIG")"
     CURRENT_UID="$(/usr/bin/id -u)"
-    [ "$CONFIG_UID" = "$CURRENT_UID" ] || fail "dev_copy local config owner mismatch" 85
-
+    [[ "$CURRENT_UID" =~ ^[0-9]+$ ]] || fail "current uid resolution failed" 85
     BACKUP="$STATE_DIR/config.local.php.before-penaty.$(/usr/bin/date -u +%Y%m%dT%H%M%SZ)"
-    /bin/cat "$CONFIG" > "$BACKUP"
-    chmod 600 "$BACKUP"
-
-    CONFIG_TMP="$(/usr/bin/mktemp "$STATE_DIR/config.XXXXXX.php")"
-    chmod 600 "$CONFIG_TMP"
-    trap 'rm -f -- "$CONFIG_TMP"' EXIT HUP INT TERM
 
     /usr/local/bin/php8.2 -r '
-      $src = $argv[1];
-      $dst = $argv[2];
-      $content = file_get_contents($src);
-      if (!is_string($content) || strpos($content, "<?php") === false) {
-          fwrite(STDERR, "CONFIG_READ_FAILED\n");
+      $path = $argv[1];
+      $expected = $argv[2];
+      $expected_uid = (int) $argv[3];
+      $backup = $argv[4];
+
+      $real = realpath($path);
+      if ($real === false || $real !== $expected) {
+          fwrite(STDERR, "CONFIG_PATH_MISMATCH\n");
           exit(10);
       }
+
+      $fh = @fopen($path, "r+b");
+      if (!is_resource($fh) || !flock($fh, LOCK_EX)) {
+          fwrite(STDERR, "CONFIG_OPEN_FAILED\n");
+          exit(11);
+      }
+
+      $st = fstat($fh);
+      $lst = @lstat($path);
+      if (
+          !is_array($st)
+          || !is_array($lst)
+          || (($st["mode"] & 0170000) !== 0100000)
+          || (int) $st["uid"] !== $expected_uid
+          || (($st["mode"] & 0022) !== 0)
+          || (int) $st["dev"] !== (int) $lst["dev"]
+          || (int) $st["ino"] !== (int) $lst["ino"]
+      ) {
+          flock($fh, LOCK_UN);
+          fclose($fh);
+          fwrite(STDERR, "CONFIG_TRUST_FAILED\n");
+          exit(12);
+      }
+
+      rewind($fh);
+      $content = stream_get_contents($fh);
+      if (!is_string($content) || strpos($content, "<?php") === false) {
+          flock($fh, LOCK_UN);
+          fclose($fh);
+          fwrite(STDERR, "CONFIG_READ_FAILED\n");
+          exit(13);
+      }
+
+      if (file_put_contents($backup, $content, LOCK_EX) === false) {
+          flock($fh, LOCK_UN);
+          fclose($fh);
+          fwrite(STDERR, "CONFIG_BACKUP_FAILED\n");
+          exit(14);
+      }
+      @chmod($backup, 0600);
+
       $updates = [
           "TALARIO_PARTNER_SYNC_DEV_WRITE" => "true",
           "TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS" => "\x2739\x27",
@@ -104,42 +147,52 @@ case "$REQUEST" in
           $pattern = "/define\\s*\\(\\s*[\x27\x22]" . preg_quote($name, "/") . "[\x27\x22]\\s*,\\s*[^;]+\\);/";
           $count = preg_match_all($pattern, $content);
           if ($count > 1) {
+              flock($fh, LOCK_UN);
+              fclose($fh);
               fwrite(STDERR, "DUPLICATE_CONFIG_DEFINE\n");
-              exit(11);
+              exit(15);
           }
           $line = "define(\x27" . $name . "\x27, " . $value . ");";
           if ($count === 1) {
               $content = preg_replace($pattern, $line, $content, 1);
           } else {
               $pos = strrpos($content, "?>");
-              if ($pos === false) {
-                  $content = rtrim($content) . PHP_EOL . $line . PHP_EOL;
-              } else {
-                  $content = substr($content, 0, $pos) . $line . PHP_EOL . substr($content, $pos);
-              }
+              $content = $pos === false
+                  ? rtrim($content) . PHP_EOL . $line . PHP_EOL
+                  : substr($content, 0, $pos) . $line . PHP_EOL . substr($content, $pos);
           }
       }
-      if (file_put_contents($dst, $content) === false) {
+
+      rewind($fh);
+      if (!ftruncate($fh, 0) || fwrite($fh, $content) !== strlen($content) || !fflush($fh)) {
+          flock($fh, LOCK_UN);
+          fclose($fh);
           fwrite(STDERR, "CONFIG_WRITE_FAILED\n");
-          exit(12);
+          exit(16);
       }
-    ' "$CONFIG" "$CONFIG_TMP" || fail "failed to prepare Penaty pilot config" 85
+      if (function_exists("fsync")) {
+          @fsync($fh);
+      }
 
-    /usr/local/bin/php8.2 -l "$CONFIG_TMP" >/dev/null || fail "Penaty pilot config syntax invalid" 85
-    /bin/cat "$CONFIG_TMP" > "$CONFIG"
-    chmod 600 "$CONFIG"
+      rewind($fh);
+      $written = stream_get_contents($fh);
+      $ok_write = preg_match("/define\\s*\\(\\s*[\x27\x22]TALARIO_PARTNER_SYNC_DEV_WRITE[\x27\x22]\\s*,\\s*true\\s*\\);/", $written);
+      $ok_company = preg_match("/define\\s*\\(\\s*[\x27\x22]TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS[\x27\x22]\\s*,\\s*[\x27\x22]39[\x27\x22]\\s*\\);/", $written);
 
-    /usr/local/bin/php8.2 -r '
-      $content = file_get_contents($argv[1]);
-      $ok_write = preg_match("/define\\s*\\(\\s*[\x27\x22]TALARIO_PARTNER_SYNC_DEV_WRITE[\x27\x22]\\s*,\\s*true\\s*\\);/", $content);
-      $ok_company = preg_match("/define\\s*\\(\\s*[\x27\x22]TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS[\x27\x22]\\s*,\\s*[\x27\x22]39[\x27\x22]\\s*\\);/", $content);
-      exit(($ok_write && $ok_company) ? 0 : 13);
-    ' "$CONFIG" || fail "Penaty pilot config verification failed" 85
+      flock($fh, LOCK_UN);
+      fclose($fh);
+
+      if (!$ok_write || !$ok_company) {
+          fwrite(STDERR, "CONFIG_VERIFY_FAILED\n");
+          exit(17);
+      }
+    ' "$CONFIG" "$EXPECTED_CONFIG" "$CURRENT_UID" "$BACKUP" || fail "Penaty pilot config update failed" 85
 
     echo "PILOT_CONFIG=OK"
     echo "PILOT_COMPANY_ID=39"
     echo "DEV_WRITE=ENABLED"
     ;;
+
 
   "talario-partner-sync-dry-run")
     mark_dispatcher
