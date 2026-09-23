@@ -1,0 +1,45 @@
+name: B1 Direct Beget Probe
+
+on:
+  push:
+    branches:
+      - ops/b1-direct-beget-probe-20260923
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.actor == github.repository_owner
+    runs-on: [self-hosted, talario-assistant-vps]
+    timeout-minutes: 10
+    steps:
+      - name: Configure Beget key
+        shell: bash
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        run: |
+          set -euo pipefail
+          test -n "$BEGET_SSH_KEY"
+          test -n "$BEGET_USER"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/b1_beget_key
+          chmod 600 ~/.ssh/b1_beget_key
+          ssh-keygen -y -f ~/.ssh/b1_beget_key >/dev/null
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/b1_beget_known_hosts
+          chmod 600 ~/.ssh/b1_beget_known_hosts
+
+      - name: Probe protected Beget channel
+        shell: bash
+        env:
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes -o PasswordAuthentication=no             -o StrictHostKeyChecking=yes             -o UserKnownHostsFile="$HOME/.ssh/b1_beget_known_hosts"             -i "$HOME/.ssh/b1_beget_key"             "$BEGET_USER@salvage.beget.com" 'printf "B1_BEGET_CHANNEL=PASS\n"'
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: rm -f ~/.ssh/b1_beget_key ~/.ssh/b1_beget_known_hosts
