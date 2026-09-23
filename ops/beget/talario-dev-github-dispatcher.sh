@@ -66,6 +66,81 @@ case "$REQUEST" in
     echo "PHP_LINT=OK"
     ;;
 
+  "talario-partner-sync-enable-penaty-pilot")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-enable-penaty-pilot"
+
+    CONFIG="$DEV_COPY/config.local.php"
+    STATE_DIR="$HOME/.local/state/talario/partner-sync"
+    mkdir -p "$STATE_DIR"
+    chmod 700 "$STATE_DIR"
+    [ -f "$CONFIG" ] && [ ! -L "$CONFIG" ] || fail "invalid dev_copy local config" 85
+
+    CONFIG_UID="$(/usr/bin/stat -c '%u' "$CONFIG")"
+    CURRENT_UID="$(/usr/bin/id -u)"
+    [ "$CONFIG_UID" = "$CURRENT_UID" ] || fail "dev_copy local config owner mismatch" 85
+
+    BACKUP="$STATE_DIR/config.local.php.before-penaty.$(/usr/bin/date -u +%Y%m%dT%H%M%SZ)"
+    /bin/cat "$CONFIG" > "$BACKUP"
+    chmod 600 "$BACKUP"
+
+    CONFIG_TMP="$(/usr/bin/mktemp "$STATE_DIR/config.XXXXXX.php")"
+    chmod 600 "$CONFIG_TMP"
+    trap 'rm -f -- "$CONFIG_TMP"' EXIT HUP INT TERM
+
+    /usr/local/bin/php8.2 -r '
+      $src = $argv[1];
+      $dst = $argv[2];
+      $content = file_get_contents($src);
+      if (!is_string($content) || strpos($content, "<?php") === false) {
+          fwrite(STDERR, "CONFIG_READ_FAILED\n");
+          exit(10);
+      }
+      $updates = [
+          "TALARIO_PARTNER_SYNC_DEV_WRITE" => "true",
+          "TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS" => "\x2739\x27",
+      ];
+      foreach ($updates as $name => $value) {
+          $pattern = "/define\\s*\\(\\s*[\x27\x22]" . preg_quote($name, "/") . "[\x27\x22]\\s*,\\s*[^;]+\\);/";
+          $count = preg_match_all($pattern, $content);
+          if ($count > 1) {
+              fwrite(STDERR, "DUPLICATE_CONFIG_DEFINE\n");
+              exit(11);
+          }
+          $line = "define(\x27" . $name . "\x27, " . $value . ");";
+          if ($count === 1) {
+              $content = preg_replace($pattern, $line, $content, 1);
+          } else {
+              $pos = strrpos($content, "?>");
+              if ($pos === false) {
+                  $content = rtrim($content) . PHP_EOL . $line . PHP_EOL;
+              } else {
+                  $content = substr($content, 0, $pos) . $line . PHP_EOL . substr($content, $pos);
+              }
+          }
+      }
+      if (file_put_contents($dst, $content) === false) {
+          fwrite(STDERR, "CONFIG_WRITE_FAILED\n");
+          exit(12);
+      }
+    ' "$CONFIG" "$CONFIG_TMP" || fail "failed to prepare Penaty pilot config" 85
+
+    /usr/local/bin/php8.2 -l "$CONFIG_TMP" >/dev/null || fail "Penaty pilot config syntax invalid" 85
+    /bin/cat "$CONFIG_TMP" > "$CONFIG"
+    chmod 600 "$CONFIG"
+
+    /usr/local/bin/php8.2 -r '
+      $content = file_get_contents($argv[1]);
+      $ok_write = preg_match("/define\\s*\\(\\s*[\x27\x22]TALARIO_PARTNER_SYNC_DEV_WRITE[\x27\x22]\\s*,\\s*true\\s*\\);/", $content);
+      $ok_company = preg_match("/define\\s*\\(\\s*[\x27\x22]TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS[\x27\x22]\\s*,\\s*[\x27\x22]39[\x27\x22]\\s*\\);/", $content);
+      exit(($ok_write && $ok_company) ? 0 : 13);
+    ' "$CONFIG" || fail "Penaty pilot config verification failed" 85
+
+    echo "PILOT_CONFIG=OK"
+    echo "PILOT_COMPANY_ID=39"
+    echo "DEV_WRITE=ENABLED"
+    ;;
+
   "talario-partner-sync-dry-run")
     mark_dispatcher
     echo "OPERATION=partner-sync-dry-run"
