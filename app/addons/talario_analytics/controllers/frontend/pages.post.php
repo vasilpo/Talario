@@ -6,8 +6,20 @@ if (AREA !== 'C' || $mode !== 'view') {
     return;
 }
 
+$is_development = function_exists('fn_is_development') && fn_is_development();
+$dev_copy_enabled = $is_development
+    && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+    && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+
+if (!$dev_copy_enabled) {
+    return;
+}
+
 $path = (string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
 $path = '/' . ltrim(rtrim(rawurldecode($path), '/'), '/');
+if (strpos($path, '/dev_copy/') === 0) {
+    $path = substr($path, strlen('/dev_copy'));
+}
 
 $pilots = [
     '/sport/tablica-razrjadov-po-plavaniju-normativy-dlja-vseh-vozrastov' => [
