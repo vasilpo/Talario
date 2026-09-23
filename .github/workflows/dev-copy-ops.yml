@@ -158,7 +158,12 @@ jobs:
             if [ -n "$PLAN" ]; then
               CLEAN_OUTPUT="$(printf '%s\nPLAN=%s' "$CLEAN_OUTPUT" "$PLAN")"
             else
-              CLEAN_OUTPUT="$(printf '%s\nREMOTE_OPERATION_FAILED rc=%s' "$CLEAN_OUTPUT" "$RC")"
+              SAFE_ERROR="$(printf '%s\n' "$RAW_OUTPUT" | jq -Rrc 'fromjson? | select(type == "object" and (.error? | type == "string")) | {error, http_status: (.http_status // null)}' | tail -1)"
+              if [ -n "$SAFE_ERROR" ]; then
+                CLEAN_OUTPUT="$(printf '%s\nERROR=%s\nREMOTE_OPERATION_FAILED rc=%s' "$CLEAN_OUTPUT" "$SAFE_ERROR" "$RC")"
+              else
+                CLEAN_OUTPUT="$(printf '%s\nREMOTE_OPERATION_FAILED rc=%s' "$CLEAN_OUTPUT" "$RC")"
+              fi
             fi
           elif [ "$RC" -eq 0 ]; then
             CLEAN_OUTPUT="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=(status|git-status|php-lint)|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9]+\.[0-9]+\.[0-9]+|DEV_COPY_FLAG=(PRESENT|MISSING)|DIRTY_COUNT=[0-9]+|PHP_LINT=OK)$' | head -20)"
