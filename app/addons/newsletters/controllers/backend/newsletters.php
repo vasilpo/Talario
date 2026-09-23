@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
             $first_newsletter = fn_render_newsletter($newsletter['body_html'], $user);
 
             if (!empty($first_newsletter)) {
-                $result = fn_send_newsletter($test_email, array(), $newsletter['newsletter'], $first_newsletter, array(), DESCR_SL, '', true);
+                $result = fn_send_newsletter($test_email, array(), $newsletter['newsletter'], $first_newsletter, array(), DESCR_SL, '', true, (int) $_REQUEST['newsletter_id']);
             }
 
             if ((!empty($first_newsletter) && $result)) {
@@ -329,7 +329,7 @@ if ($mode == 'batch_send' && !empty($_REQUEST['key'])) {
 
             fn_echo(__('sending_email_to', ['[email]' => $recipient['email']]) . '<br />');
 
-            fn_send_newsletter($recipient['email'], $recipient, $newsletter[$recipient['lang_code']]['newsletter'], $body, [], $recipient['lang_code'], $recipient['reply_to']);
+            fn_send_newsletter($recipient['email'], $recipient, $newsletter[$recipient['lang_code']]['newsletter'], $body, [], $recipient['lang_code'], $recipient['reply_to'], false, (int) $send_id);
             $offset++;
         }
     }
