@@ -1,1 +1,4 @@
-{"operation":"partner-sync-dry-run-smoke","request_id":"part-sync-push-smoke-20260922"}
+{
+  "operation": "partner-sync-dry-run-smoke",
+  "request_id": "part-sync-push-smoke-20260922"
+}
