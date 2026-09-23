@@ -160,7 +160,7 @@ function fn_register_link($url, $newsletter_id, $campaign_id)
     }
 }
 
-function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '')
+function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '', $is_test = false, $newsletter_id = 0)
 {
     $reply_to = !empty($reply_to) ? $reply_to : 'default_company_newsletter_email';
     $_from = array(
@@ -171,7 +171,7 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
     /** @var \Tygh\Mailer\Mailer $mailer */
     $mailer = Tygh::$app['mailer'];
 
-    return $mailer->send(array(
+    $message = array(
         'to' => $to,
         'from' => $_from,
         'reply_to' => $reply_to,
@@ -182,7 +182,28 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         'attachments' => $attachments,
         'template_code' => 'newsletters_newsletter',
         'tpl' => 'addons/newsletters/newsletter.tpl', // this parameter is obsolete and is used for back compatibility
-    ), 'C', $lang_code, fn_get_newsletters_mailer_settings());
+    );
+
+    if ((int) $newsletter_id === 5 && Registry::get('settings.Appearance.email_templates') === 'new') {
+        $template = Tygh::$app['template.mail.repository']->findActiveByCodeAndArea('newsletters_newsletter', 'C');
+
+        if ($template) {
+            $template = clone $template;
+            $template->setTemplate(
+                '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;">'
+                . '<tr><td align="center" style="padding:18px 16px 8px;">'
+                . '<a href="https://talario.ru/" style="text-decoration:none;">'
+                . '<img src="https://talario.ru/images/talario/Talario_Logo_WL.png" alt="Таларио" width="196" '
+                . 'style="display:block;width:196px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;">'
+                . '</a></td></tr></table>'
+                . '{{ body }}'
+                . '{{ snippet("footer") }}'
+            );
+            $message['template'] = $template;
+        }
+    }
+
+    return $mailer->send($message, 'C', $lang_code, fn_get_newsletters_mailer_settings());
 }
 
 /**
