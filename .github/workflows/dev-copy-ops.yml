@@ -17,6 +17,7 @@ on:
           - git-status
           - php-lint
           - partner-sync-dry-run-smoke
+          - partner-sync-enable-penaty-pilot
       request_id:
         description: Auditable request identifier
         required: true
@@ -71,6 +72,13 @@ jobs:
                   echo "ERROR: push smoke request id is not allowlisted"
                   exit 64
                 }
+              fi
+              ;;
+            partner-sync-enable-penaty-pilot)
+              if [ "${{ github.event_name }}" = "push" ]; then
+                [ "${{ github.actor }}" = "vasilpo" ] || exit 64
+                [ "${{ github.ref }}" = "refs/heads/development" ] || exit 64
+                [ "$REQUEST_ID" = "part-sync-penaty-config-20260923" ] || exit 64
               fi
               ;;
             *)
@@ -132,6 +140,9 @@ jobs:
               ;;
             php-lint)
               REMOTE_COMMAND='talario-dev-ops php-lint'
+              ;;
+            partner-sync-enable-penaty-pilot)
+              REMOTE_COMMAND='talario-partner-sync-enable-penaty-pilot'
               ;;
             partner-sync-dry-run-smoke)
               REMOTE_COMMAND='talario-partner-sync-dry-run'
