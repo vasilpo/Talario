@@ -86,17 +86,17 @@ jobs:
               operation: "create",
               dry_run: true,
               product: {
-                company_id: 34,
-                name: "PART-SYNC dry-run smoke",
+                company_id: 39,
+                name: "PART-SYNC Пенаты dry-run smoke",
                 price: 1,
-                category_ids: [274],
+                category_ids: [270],
                 status: "H",
                 short_description: "",
                 full_description: "",
                 meta_keywords: ""
               }
             }' > "$PAYLOAD_FILE"
-            jq -e '.dry_run == true and .operation == "create" and .product.company_id == 34 and .product.category_ids == [274] and (has("approval_id") | not) and (has("images") | not)' "$PAYLOAD_FILE" >/dev/null
+            jq -e '.dry_run == true and .operation == "create" and .product.company_id == 39 and .product.category_ids == [270] and (has("approval_id") | not) and (has("images") | not)' "$PAYLOAD_FILE" >/dev/null
             echo "payload_file=$PAYLOAD_FILE" >> "$GITHUB_OUTPUT"
           fi
 
