@@ -36,6 +36,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('analytics_api_not_configured', $this->controller);
     }
 
+
+    public function testOrdersExposeOnlyAggregateLegacyBookingCounts(): void
+    {
+        self::assertStringContainsString(
+            'SELECT order_id, COUNT(*) AS booking_count FROM ?:ec_table_booking_system_booking_info',
+            $this->controller
+        );
+        self::assertStringContainsString("'legacy_booking_count' =>", $this->controller);
+        self::assertStringNotContainsString("'booking_info' =>", $this->controller);
+        self::assertStringNotContainsString("'start_date' =>", $this->controller);
+        self::assertStringNotContainsString("'slot' =>", $this->controller);
+    }
+
     public function testCatalogReadsBasePricesFromProductPricesTable(): void
     {
         self::assertStringContainsString('LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id', $this->controller);
