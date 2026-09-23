@@ -75,11 +75,9 @@ jobs:
               fi
               ;;
             partner-sync-enable-penaty-pilot)
-              if [ "${{ github.event_name }}" = "push" ]; then
-                [ "${{ github.actor }}" = "vasilpo" ] || exit 64
-                [ "${{ github.ref }}" = "refs/heads/development" ] || exit 64
-                [ "$REQUEST_ID" = "part-sync-penaty-config-20260923" ] || exit 64
-              fi
+              [ "${{ github.actor }}" = "vasilpo" ] || exit 64
+              [ "${{ github.ref }}" = "refs/heads/development" ] || exit 64
+              [ "$REQUEST_ID" = "part-sync-penaty-config-20260923" ] || exit 64
               ;;
             *)
               echo "ERROR: operation is not allowlisted: $OP"
