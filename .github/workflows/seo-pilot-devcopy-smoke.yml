@@ -1,0 +1,36 @@
+name: SEO pilot dev_copy smoke
+
+on:
+  push:
+    branches:
+      - ops/seo-pilot-devcopy-smoke
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify five article CTA blocks on dev_copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          pages=(
+            "sport/tablica-razrjadov-po-plavaniju-normativy-dlja-vseh-vozrastov"
+            "blog/poyasa-v-thekvondo"
+            "blog/thekvondo-dlya-detey"
+            "blog/edinoborstva-dlya-detey-kakoe-vybrat"
+            "blog/sambo-dlya-detey-chto-eto"
+          )
+          for page in "${pages[@]}"; do
+            url="https://talario.ru/dev_copy/${page}/"
+            html="$(curl -fsSL --max-time 30 "$url")"
+            printf '%s' "$html" | grep -Fq 'data-talario-article-marketplace-block'
+            printf '%s' "$html" | grep -Fq 'data-talario-article-marketplace="inline"'
+            cards="$(printf '%s' "$html" | grep -Fo 'data-talario-article-marketplace="cards"' | wc -l | tr -d ' ')"
+            test "$cards" -ge 3
+            test "$cards" -le 5
+            printf 'SEO_PILOT_PASS page=%s cards=%s\n' "$page" "$cards"
+          done
