@@ -30,6 +30,13 @@ final class SeoMarketplacePilotContractTest extends TestCase
         }
     }
 
+    public function testPilotIsHardGatedToDevCopy(): void
+    {
+        self::assertStringContainsString("fn_is_development", $this->controller);
+        self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_COPY", $this->controller);
+        self::assertStringContainsString("if (!\$dev_copy_enabled)", $this->controller);
+    }
+
     public function testPilotReadsProductsAndDoesNotWriteBusinessData(): void
     {
         self::assertStringContainsString('fn_get_products', $this->controller);
@@ -43,5 +50,12 @@ final class SeoMarketplacePilotContractTest extends TestCase
     {
         self::assertStringContainsString('data-talario-article-marketplace="inline"', $this->template);
         self::assertStringContainsString('data-talario-article-marketplace="cards"', $this->template);
+    }
+
+    public function testProductNamesAreEscapedAndPriceUsesFrameworkHelper(): void
+    {
+        self::assertStringContainsString('{$product.product|escape:"html"}', $this->template);
+        self::assertStringContainsString('{include file="common/price.tpl" value=$product.price}', $this->template);
+        self::assertStringNotContainsString('$product.price|format_price', $this->template);
     }
 }
