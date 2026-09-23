@@ -683,7 +683,9 @@ if ($mode === 'catalog') {
         fn_talario_analytics_json_response(503, ['error' => 'partner_sync_api_misconfigured']);
     }
 } else {
-    $stored_token_hash = trim((string) Registry::get('addons.talario_analytics.api_token'));
+    $stored_token_hash = defined('TALARIO_ANALYTICS_TOKEN_HASH')
+        ? trim((string) TALARIO_ANALYTICS_TOKEN_HASH)
+        : trim((string) Registry::get('addons.talario_analytics.api_token'));
 }
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {

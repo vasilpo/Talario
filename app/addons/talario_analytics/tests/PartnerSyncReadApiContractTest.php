@@ -30,8 +30,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('<item id="partner_sync_token">', $this->addon_xml);
     }
 
-    public function testOrdersContinueUsingAnalyticsTokenSetting(): void
+    public function testOrdersUseProductionHashOverrideWithSettingFallback(): void
     {
+        self::assertStringContainsString("defined('TALARIO_ANALYTICS_TOKEN_HASH')", $this->controller);
+        self::assertStringContainsString('trim((string) TALARIO_ANALYTICS_TOKEN_HASH)', $this->controller);
         self::assertStringContainsString("Registry::get('addons.talario_analytics.api_token')", $this->controller);
         self::assertStringContainsString('analytics_api_not_configured', $this->controller);
     }
