@@ -318,7 +318,24 @@ function fn_newsletters_get_recipients(array $params)
 
     if (!empty($params['users'])) {
         $users = fn_explode(',', $params['users']);
-        $user_recipients = db_get_array('SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id FROM ?:users AS users WHERE users.user_id IN (?n)', $users);
+        $user_recipients = db_get_array(
+            'SELECT users.user_id, users.email, users.lang_code, MIN(mailing_lists.list_id) as list_id, subscribers.subscriber_id, users.firstname, user_points.data AS points_data'
+            . ' FROM ?:users AS users'
+            . ' LEFT JOIN ?:user_data AS user_points'
+                . ' ON users.user_id = user_points.user_id AND user_points.type = ?s'
+            . ' LEFT JOIN ?:subscribers AS subscribers'
+                . ' ON LOWER(TRIM(subscribers.email)) = LOWER(TRIM(users.email))'
+            . ' LEFT JOIN ?:user_mailing_lists AS user_mailing_lists'
+                . ' ON subscribers.subscriber_id = user_mailing_lists.subscriber_id AND user_mailing_lists.confirmed = ?i'
+            . ' LEFT JOIN ?:mailing_lists AS mailing_lists'
+                . ' ON user_mailing_lists.list_id = mailing_lists.list_id AND mailing_lists.status IN (?a)'
+            . ' WHERE users.user_id IN (?n)'
+            . ' GROUP BY users.user_id, subscribers.subscriber_id',
+            POINTS,
+            1,
+            [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN],
+            $users
+        );
     }
 
     if (!empty($params['abandoned_days'])) {
@@ -335,16 +352,42 @@ function fn_newsletters_get_recipients(array $params)
         }
 
         $abandoned_recipients = db_get_array(
-            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id FROM ?:users AS users'
+            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname, user_points.data AS points_data FROM ?:users AS users'
             . ' LEFT JOIN ?:user_session_products AS user_session_products'
                 . ' ON (users.user_id = user_session_products.user_id)'
+            . ' LEFT JOIN ?:user_data AS user_points'
+                . ' ON users.user_id = user_points.user_id AND user_points.type = ?s'
             . ' WHERE 1=1 ?p'
             . ' GROUP BY users.user_id',
+            POINTS,
             $condition
         );
     }
 
-    return array_merge($list_recipients, $user_recipients, $abandoned_recipients);
+    $recipients = [];
+
+    foreach (array_merge($list_recipients, $user_recipients, $abandoned_recipients) as $recipient) {
+        $email_key = strtolower(trim((string) $recipient['email']));
+
+        if (!isset($recipients[$email_key])) {
+            $recipients[$email_key] = $recipient;
+            continue;
+        }
+
+        foreach ($recipient as $field => $value) {
+            if (
+                ($field === 'firstname' && $value !== '')
+                || ($field === 'user_id' && !empty($value))
+                || ($field === 'list_id' && !empty($value))
+                || ($field === 'subscriber_id' && !empty($value))
+                || ($field === 'points_data' && $value !== null && $value !== '')
+            ) {
+                $recipients[$email_key][$field] = $value;
+            }
+        }
+    }
+
+    return array_values($recipients);
 }
 
 /**
@@ -567,6 +610,19 @@ function fn_render_newsletter($body, $subscriber)
         $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
+    $firstname = trim((string) ($subscriber['firstname'] ?? ''));
+    $firstname = (string) preg_replace('/[\\x00-\\x1F\\x7F]+/u', ' ', $firstname);
+    $firstname = htmlspecialchars($firstname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    $values['%FIRSTNAME%'] = $firstname;
+    $values['%FIRSTNAME_GREETING%'] = $firstname !== '' ? $firstname . ', здравствуйте!' : 'Здравствуйте!';
+
+    $points_balance = 0;
+    $points_data = (string) ($subscriber['points_data'] ?? '');
+    if (preg_match('/^i:(-?\\d+);$/D', $points_data, $matches)) {
+        $points_balance = max(0, (int) $matches[1]);
+    }
+    $values['%POINTS_BALANCE%'] = (string) $points_balance;
+
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
     $values['%COMPANY_PHONE'] = Registry::get('settings.Company.company_phone');
