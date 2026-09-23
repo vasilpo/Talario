@@ -161,6 +161,30 @@
         return window.location.pathname || '/';
     }
 
+    function safeLinkPath(href) {
+        var link;
+
+        try {
+            link = document.createElement('a');
+            link.href = String(href || '');
+            return link.pathname || '/';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function articlePlacement(value) {
+        var allowed = {
+            inline: true,
+            footer: true,
+            cards: true,
+            article: true
+        };
+        var normalized = String(value || 'article').toLowerCase();
+
+        return allowed[normalized] ? normalized : 'article';
+    }
+
     function pagePayload(extra) {
         var payload = {
             product_id: currentProductId(),
@@ -232,8 +256,8 @@
 
         emit('talario_article_marketplace_click', {
             path: pagePath(),
-            target: $link.attr('href') || '',
-            placement: $link.attr('data-talario-article-marketplace') || 'article'
+            target: safeLinkPath($link.attr('href')),
+            placement: articlePlacement($link.attr('data-talario-article-marketplace'))
         });
     });
 
