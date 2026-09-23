@@ -190,14 +190,17 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         if ($template) {
             $template = clone $template;
             $template->setTemplate(
-                '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;">'
-                . '<tr><td align="left" style="padding:18px 40px 8px;">'
+                '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;background:#ffffff;">'
+                . '<tr><td align="center" style="padding:0;">'
+                . '<table role="presentation" width="640" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:640px;border-collapse:collapse;margin:0 auto;">'
+                . '<tr><td align="left" style="padding:18px 20px 12px;">'
                 . '<a href="https://talario.ru/" style="text-decoration:none;">'
                 . '<img src="https://talario.ru/images/talario/Talario_Logo_WL.png" alt="Таларио" width="196" '
                 . 'style="display:block;width:196px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;">'
-                . '</a></td></tr></table>'
-                . '{{ body }}'
-                . '{{ snippet("footer") }}'
+                . '</a></td></tr>'
+                . '<tr><td style="padding:0;">{{ body }}</td></tr>'
+                . '<tr><td style="padding:0 20px 18px;">{{ snippet("footer") }}</td></tr>'
+                . '</table></td></tr></table>'
             );
             $message['template'] = $template;
         }
