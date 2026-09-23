@@ -39,11 +39,11 @@ final class NewsletterCrm01UnsubscribeContractTest extends TestCase
     public function testUnsubscribeRenderingStillRequiresListAndSubscriber(): void
     {
         self::assertStringContainsString(
-            "if (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id']))",
+            'if (!empty($subscriber[\'list_id\']) && !empty($subscriber[\'subscriber_id\']))',
             $this->func
         );
         self::assertStringContainsString(
-            "fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id'])",
+            'fn_generate_unsubscribe_link($subscriber[\'list_id\'], $subscriber[\'subscriber_id\'])',
             $this->func
         );
     }
