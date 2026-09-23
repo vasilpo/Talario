@@ -27,7 +27,10 @@ final class NewsletterCrm01HeaderContractTest extends TestCase
         self::assertStringContainsString('align="left"', $this->func);
         self::assertStringContainsString('width="640"', $this->func);
         self::assertStringContainsString('max-width:640px', $this->func);
-        self::assertStringContainsString('padding:18px 20px 12px', $this->func);
+        self::assertStringContainsString('padding:16px 20px 10px', $this->func);
+        self::assertStringContainsString('border-radius:12px', $this->func);
+        self::assertStringContainsString('background:#ffffff', $this->func);
+        self::assertStringContainsString('padding:8px 10px', $this->func);
         self::assertStringContainsString('padding:0 20px 18px', $this->func);
         self::assertStringContainsString('{{ body }}', $this->func);
         self::assertStringContainsString('{{ snippet("footer") }}', $this->func);
