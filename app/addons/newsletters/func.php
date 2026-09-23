@@ -191,7 +191,7 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
             $template = clone $template;
             $template->setTemplate(
                 '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;">'
-                . '<tr><td align="center" style="padding:18px 16px 8px;">'
+                . '<tr><td align="left" style="padding:18px 40px 8px;">'
                 . '<a href="https://talario.ru/" style="text-decoration:none;">'
                 . '<img src="https://talario.ru/images/talario/Talario_Logo_WL.png" alt="Таларио" width="196" '
                 . 'style="display:block;width:196px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;">'
@@ -634,6 +634,19 @@ function fn_render_newsletter($body, $subscriber)
         $points_balance = max(0, (int) $matches[1]);
     }
     $values['%POINTS_BALANCE%'] = (string) $points_balance;
+
+    $points_mod_100 = $points_balance % 100;
+    $points_mod_10 = $points_balance % 10;
+    if ($points_mod_100 >= 11 && $points_mod_100 <= 14) {
+        $points_word = 'баллов';
+    } elseif ($points_mod_10 === 1) {
+        $points_word = 'балл';
+    } elseif ($points_mod_10 >= 2 && $points_mod_10 <= 4) {
+        $points_word = 'балла';
+    } else {
+        $points_word = 'баллов';
+    }
+    $values['%POINTS_WORD%'] = $points_word;
 
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');
