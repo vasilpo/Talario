@@ -135,8 +135,10 @@ jobs:
           coverage: none
           tools: phpunit
 
-      - name: Run Partner Sync contract tests
-        run: phpunit --no-coverage app/addons/talario_analytics/tests/PartnerSyncReadApiContractTest.php
+      - name: Run Talario Analytics contract tests
+        run: |
+          phpunit --no-coverage app/addons/talario_analytics/tests/PartnerSyncReadApiContractTest.php
+          phpunit --no-coverage app/addons/talario_analytics/tests/BehaviorAnalyticsContractTest.php
 
   talario-schedule-resources:
     name: Talario schedule resource tests
