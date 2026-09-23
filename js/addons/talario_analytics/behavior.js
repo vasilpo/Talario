@@ -17,6 +17,7 @@
         talario_add_to_cart: true,
         talario_checkout_start: true,
         talario_free_booking: true,
+        talario_article_marketplace_click: true,
         talario_back: true
     };
 
@@ -219,6 +220,12 @@
             });
         }
     }
+
+    $(document).on('click', '[data-talario-article-marketplace]', function () {
+        emit('talario_article_marketplace_click', {
+            path: pagePath()
+        });
+    });
 
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit', {
