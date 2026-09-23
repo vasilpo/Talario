@@ -233,7 +233,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('"talario-partner-sync-enable-penaty-pilot")', $this->dev_dispatcher);
         self::assertStringContainsString('PILOT_COMPANY_ID=39', $this->dev_dispatcher);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->dev_dispatcher);
-        self::assertStringContainsString('partner-sync-penaty-config-20260923', $this->dev_ops_workflow);
+        self::assertStringContainsString('partner-sync-enable-penaty-pilot', $this->dev_ops_workflow);
         self::assertStringContainsString('fail "SSH command is not allowlisted"', $this->dev_dispatcher);
     }
 
