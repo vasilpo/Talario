@@ -40,19 +40,35 @@ if (
 }
 fclose($runner_handle);
 
-$runner_euid = function_exists('posix_geteuid') ? posix_geteuid() : null;
-if (!is_int($runner_euid) || (int) $script_stat['uid'] !== $runner_euid) {
+$runner_uid_raw = getenv('TALARIO_PARTNER_SYNC_RUNNER_UID');
+if (!is_string($runner_uid_raw) || !ctype_digit($runner_uid_raw)) {
+    fwrite(STDERR, "PARTNER_SYNC_RUNNER_UID_REQUIRED\n");
+    exit(4);
+}
+$runner_uid = (int) $runner_uid_raw;
+if ((int) $script_stat['uid'] !== $runner_uid) {
     fwrite(STDERR, "PARTNER_SYNC_RUNNER_OWNER_MISMATCH\n");
     exit(4);
 }
 
-$trusted_root_uids = [0, $runner_euid];
-if (!in_array((int) $root_stat['uid'], $trusted_root_uids, true)) {
-    fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
+$root_uid = (int) $root_stat['uid'];
+$root_mode = $root_stat['mode'] & 0777;
+if (($root_stat['mode'] & 0170000) !== 0040000) {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_NOT_DIRECTORY\n");
     exit(4);
 }
-if (($root_stat['mode'] & 0022) !== 0) {
-    fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+if ($root_uid === 0) {
+    if ($root_mode !== 0700) {
+        fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+        exit(4);
+    }
+} elseif ($root_uid === $runner_uid) {
+    if (($root_mode & 0022) !== 0) {
+        fwrite(STDERR, "PARTNER_SYNC_ROOT_PERMISSIONS_UNSAFE\n");
+        exit(4);
+    }
+} else {
+    fwrite(STDERR, "PARTNER_SYNC_ROOT_OWNER_MISMATCH\n");
     exit(4);
 }
 
