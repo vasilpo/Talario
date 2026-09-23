@@ -5,6 +5,8 @@
     var recent = {};
     var flushTimer = null;
     var scheduleSeen = false;
+    var bookingPendingKey = 'talario_booking_pending_at';
+    var bookingPendingTtlMs = 30 * 60 * 1000;
 
     var allowedEvents = {
         talario_search_submit: true,
@@ -16,6 +18,9 @@
         talario_booking_cta: true,
         talario_add_to_cart: true,
         talario_checkout_start: true,
+        talario_booking_complete: true,
+        talario_free_booking_complete: true,
+        talario_booking_error: true,
         talario_free_booking: true,
         talario_article_marketplace_click: true,
         talario_back: true
@@ -141,6 +146,41 @@
         return window.talarioAnalyticsContext || {};
     }
 
+    function markBookingPending() {
+        try {
+            window.sessionStorage.setItem(bookingPendingKey, String(Date.now()));
+        } catch (e) {
+            // Session storage may be unavailable in privacy-restricted browsers.
+        }
+    }
+
+    function clearBookingPending() {
+        try {
+            window.sessionStorage.removeItem(bookingPendingKey);
+        } catch (e) {
+            // No-op: analytics must never block the booking flow.
+        }
+    }
+
+    function hasRecentBookingPending() {
+        var value;
+        var timestamp;
+
+        try {
+            value = window.sessionStorage.getItem(bookingPendingKey);
+        } catch (e) {
+            return false;
+        }
+
+        timestamp = parseInt(value, 10) || 0;
+        if (!timestamp || Date.now() - timestamp > bookingPendingTtlMs) {
+            clearBookingPending();
+            return false;
+        }
+
+        return true;
+    }
+
     function currentProductId(scope) {
         var ctx = analyticsContext();
         var $scope = scope ? $(scope) : $(document);
@@ -223,7 +263,7 @@
         var isCheckout = (ctx.controller === 'checkout' && ctx.mode === 'checkout')
             || $('form[name="checkout_form"], .ty-checkout-complete').length > 0;
 
-        if (isCheckout && !ctx.order_id) {
+        if (isCheckout && !ctx.is_completed_order) {
             emit('talario_checkout_start', {
                 path: pagePath()
             });
@@ -237,10 +277,35 @@
             return;
         }
 
+        clearBookingPending();
+
         if (ctx.is_free_order) {
-            emit('talario_free_booking', {
-                revenue: 0,
-                currency: 'RUB'
+            emit('talario_free_booking_complete', {
+                path: pagePath()
+            });
+            return;
+        }
+
+        emit('talario_booking_complete', {
+            path: pagePath()
+        });
+    }
+
+    function detectBookingError(context) {
+        var $context;
+
+        if (!hasRecentBookingPending()) {
+            return;
+        }
+
+        $context = $(context || document);
+        if (
+            $context.is('.alert-error')
+            || $context.find('.alert-error').length > 0
+            || $('.cm-notification-content.alert-error:visible').length > 0
+        ) {
+            emit('talario_booking_error', {
+                path: pagePath()
             });
         }
     }
@@ -311,11 +376,16 @@
         var isBooking = $form.find('[name*="[booking_info]"], [name*="[booking_slot]"]').length > 0;
 
         if (isBooking) {
+            markBookingPending();
             emit('talario_booking_cta', pagePayload());
         }
     });
 
     if ($.ceEvent) {
+        $.ceEvent('on', 'ce.notificationshow', function (context) {
+            detectBookingError(context);
+        });
+
         $.ceEvent('on', 'ce.ajaxdone', function (elms, inlineScripts, params, data) {
             var metrika = data && data.yandex_metrika ? data.yandex_metrika : {};
             var added = metrika.added || [];
@@ -341,6 +411,7 @@
         detectProductView();
         detectCheckoutPage();
         detectCompletedBooking();
+        detectBookingError(document);
     });
 
 }(Tygh, Tygh.$));
