@@ -218,6 +218,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('payload_b64', $this->dev_ops_workflow);
         self::assertStringContainsString('company_id: 39', $this->dev_ops_workflow);
         self::assertStringContainsString('category_ids: [270]', $this->dev_ops_workflow);
+        self::assertStringContainsString('SAFE_ERROR=', $this->dev_ops_workflow);
+        self::assertStringContainsString('{error, http_status: (.http_status // null)}', $this->dev_ops_workflow);
 
         self::assertStringContainsString('DRY_RUN_REQUIRED', $this->dev_dispatcher);
         self::assertStringContainsString('EXPECTED_RUNNER_SHA256=', $this->dev_dispatcher);
