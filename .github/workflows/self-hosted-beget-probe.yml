@@ -1,0 +1,53 @@
+name: Self-hosted Beget channel probe
+
+on:
+  push:
+    branches:
+      - ops/self-hosted-beget-probe-20260923
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.actor == github.repository_owner
+    runs-on: [self-hosted, talario-assistant-vps]
+    timeout-minutes: 10
+    steps:
+      - name: Configure temporary Beget key
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$BEGET_SSH_KEY"
+          mkdir -p "$RUNNER_TEMP/b1-ssh"
+          chmod 700 "$RUNNER_TEMP/b1-ssh"
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > "$RUNNER_TEMP/b1-ssh/id_ed25519"
+          chmod 600 "$RUNNER_TEMP/b1-ssh/id_ed25519"
+          ssh-keygen -y -f "$RUNNER_TEMP/b1-ssh/id_ed25519" >/dev/null
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > "$RUNNER_TEMP/b1-ssh/known_hosts"
+
+      - name: Probe protected Beget channel
+        env:
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SSH=(ssh -o BatchMode=yes -o PasswordAuthentication=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/b1-ssh/known_hosts" -i "$RUNNER_TEMP/b1-ssh/id_ed25519")
+          STATUS="$("${SSH[@]}" "$BEGET_USER@salvage.beget.com" "talario-dev-ops status")"
+          printf '%s\n' "$STATUS" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=status|BRANCH=development|HEAD=[0-9a-f]{40}|WORKTREE=(CLEAN|DIRTY)|PHP=[0-9.]+|DEV_COPY_FLAG=(PRESENT|MISSING))$'
+          set +e
+          GENERIC="$("${SSH[@]}" "$BEGET_USER@salvage.beget.com" "printf GENERIC_OK" 2>&1)"
+          RC=$?
+          set -e
+          if [ "$RC" -eq 0 ] && [ "$GENERIC" = "GENERIC_OK" ]; then
+            echo "GENERIC_COMMAND=ALLOWED"
+          else
+            echo "GENERIC_COMMAND=BLOCKED"
+          fi
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/b1-ssh"
