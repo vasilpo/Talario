@@ -2,11 +2,11 @@
     <section class="talario-article-marketplace" data-talario-article-marketplace-block>
         <div class="talario-article-marketplace__intro">
             <div>
-                <h2 class="talario-article-marketplace__title">{$talario_article_marketplace_pilot.title}</h2>
-                <p class="talario-article-marketplace__text">{$talario_article_marketplace_pilot.text}</p>
+                <h2 class="talario-article-marketplace__title">{$talario_article_marketplace_pilot.title|escape:"html"}</h2>
+                <p class="talario-article-marketplace__text">{$talario_article_marketplace_pilot.text|escape:"html"}</p>
             </div>
             <a class="ty-btn ty-btn__primary"
-               href="{$talario_article_marketplace_pilot.target}"
+               href="{$talario_article_marketplace_pilot.target|escape:"html"}"
                data-talario-article-marketplace="inline">Посмотреть занятия</a>
         </div>
 
@@ -16,10 +16,10 @@
                     <a class="talario-article-marketplace__card"
                        href="{"products.view?product_id="|cat:$product.product_id|fn_url}"
                        data-talario-article-marketplace="cards">
-                        <div class="talario-article-marketplace__card-title">{$product.product}</div>
+                        <div class="talario-article-marketplace__card-title">{$product.product|escape:"html"}</div>
                         {if $product.price !== null}
                             <div class="talario-article-marketplace__price">
-                                {$product.price|format_price:$currencies.$secondary_currency nofilter}
+                                {include file="common/price.tpl" value=$product.price}
                             </div>
                         {/if}
                         <span class="talario-article-marketplace__more">Подробнее →</span>
