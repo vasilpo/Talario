@@ -687,6 +687,167 @@ function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
     ]);
 }
 
+function fn_talario_analytics_partner_sync_signed_dispatcher_install(): void
+{
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $enabled = $is_development
+        && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+    if (!$enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+
+    if ((string) ($_SERVER['REMOTE_ADDR'] ?? '') !== '85.137.90.47') {
+        fn_talario_analytics_json_response(403, ['error' => 'installer_source_not_allowed']);
+    }
+
+    $request_id = trim((string) ($_SERVER['HTTP_X_TALARIO_REQUEST_ID'] ?? ''));
+    $timestamp_raw = trim((string) ($_SERVER['HTTP_X_TALARIO_TIMESTAMP'] ?? ''));
+    $signature_b64 = trim((string) ($_SERVER['HTTP_X_TALARIO_SIGNATURE'] ?? ''));
+
+    if ($request_id !== 'part-sync-dispatcher-install-20260924') {
+        fn_talario_analytics_json_response(403, ['error' => 'installer_request_not_allowed']);
+    }
+    if (!preg_match('/^[0-9]{10}$/', $timestamp_raw)) {
+        fn_talario_analytics_json_response(400, ['error' => 'installer_timestamp_invalid']);
+    }
+    $timestamp = (int) $timestamp_raw;
+    if (abs(time() - $timestamp) > 120) {
+        fn_talario_analytics_json_response(403, ['error' => 'installer_request_expired']);
+    }
+    if ($signature_b64 === '' || strlen($signature_b64) > 8192) {
+        fn_talario_analytics_json_response(400, ['error' => 'installer_signature_invalid']);
+    }
+
+    $signature = base64_decode($signature_b64, true);
+    if (!is_string($signature)
+        || strlen($signature) < 128
+        || strlen($signature) > 4096
+        || strpos($signature, '-----BEGIN SSH SIGNATURE-----') !== 0
+    ) {
+        fn_talario_analytics_json_response(400, ['error' => 'installer_signature_invalid']);
+    }
+
+    $ssh_keygen = '/usr/bin/ssh-keygen';
+    $bash = '/usr/bin/bash';
+    $installer = DIR_ROOT . '/ops/beget/install-reviewed-dispatcher.sh';
+    if (!is_executable($ssh_keygen) || !is_executable($bash) || !is_file($installer) || is_link($installer)) {
+        fn_talario_analytics_json_response(503, ['error' => 'installer_runtime_unavailable']);
+    }
+
+    $tmp_dir = DIR_ROOT . '/var/cache';
+    if (!is_dir($tmp_dir) || is_link($tmp_dir) || !is_writable($tmp_dir)) {
+        fn_talario_analytics_json_response(503, ['error' => 'installer_temp_unavailable']);
+    }
+
+    $allowed_file = tempnam($tmp_dir, 'ps-allow-');
+    $signature_file = tempnam($tmp_dir, 'ps-sig-');
+    if (!is_string($allowed_file) || !is_string($signature_file)) {
+        fn_talario_analytics_json_response(503, ['error' => 'installer_temp_failed']);
+    }
+
+    $cleanup = static function () use ($allowed_file, $signature_file): void {
+        if (is_file($allowed_file)) {
+            @unlink($allowed_file);
+        }
+        if (is_file($signature_file)) {
+            @unlink($signature_file);
+        }
+    };
+
+    try {
+        $allowed_signer = 'github-actions-talario ssh-ed25519 '
+            . 'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK'
+            . PHP_EOL;
+        if (file_put_contents($allowed_file, $allowed_signer, LOCK_EX) !== strlen($allowed_signer)
+            || file_put_contents($signature_file, $signature, LOCK_EX) !== strlen($signature)
+        ) {
+            fn_talario_analytics_json_response(503, ['error' => 'installer_temp_write_failed']);
+        }
+        @chmod($allowed_file, 0600);
+        @chmod($signature_file, 0600);
+
+        $message = "talario-part-sync-dispatcher-install\n" . $request_id . "\n" . $timestamp_raw . "\n";
+        $verify = proc_open(
+            [
+                $ssh_keygen,
+                '-Y', 'verify',
+                '-f', $allowed_file,
+                '-I', 'github-actions-talario',
+                '-n', 'talario-part-sync',
+                '-s', $signature_file,
+            ],
+            [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ],
+            $verify_pipes,
+            DIR_ROOT,
+            ['PATH' => '/usr/bin:/bin']
+        );
+        if (!is_resource($verify)) {
+            fn_talario_analytics_json_response(503, ['error' => 'installer_signature_verifier_failed']);
+        }
+        fwrite($verify_pipes[0], $message);
+        fclose($verify_pipes[0]);
+        stream_get_contents($verify_pipes[1], 4096);
+        stream_get_contents($verify_pipes[2], 4096);
+        fclose($verify_pipes[1]);
+        fclose($verify_pipes[2]);
+        $verify_rc = proc_close($verify);
+        if ($verify_rc !== 0) {
+            fn_talario_analytics_json_response(403, ['error' => 'installer_signature_rejected']);
+        }
+
+        $account_home = dirname(DIR_ROOT, 3);
+        $process = proc_open(
+            [$bash, $installer],
+            [
+                0 => ['file', '/dev/null', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ],
+            $pipes,
+            DIR_ROOT,
+            ['HOME' => $account_home, 'PATH' => '/usr/bin:/bin']
+        );
+        if (!is_resource($process)) {
+            fn_talario_analytics_json_response(503, ['error' => 'dispatcher_installer_start_failed']);
+        }
+        $stdout = stream_get_contents($pipes[1], 8192);
+        $stderr = stream_get_contents($pipes[2], 8192);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $rc = proc_close($process);
+        if ($rc !== 0
+            || !is_string($stdout)
+            || strpos($stdout, 'DISPATCHER_INSTALL=PASS') === false
+            || strpos($stdout, 'REVIEWED_COMMIT_PRESENT=PASS') === false
+            || strpos($stdout, 'ANALYTICS_PROD_SYNC_ALLOWLIST=PASS') === false
+        ) {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync signed dispatcher install failed',
+                'exit_code' => $rc,
+                'stderr_present' => is_string($stderr) && trim($stderr) !== '',
+            ]);
+            fn_talario_analytics_json_response(503, ['error' => 'dispatcher_install_failed']);
+        }
+
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync signed dispatcher install completed',
+            'request_id_hash' => hash('sha256', $request_id),
+        ]);
+
+        fn_talario_analytics_json_response(200, [
+            'schema_version' => 'partner-sync.dispatcher-install.v1',
+            'status' => 'ok',
+        ]);
+    } finally {
+        $cleanup();
+    }
+}
+
 function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
@@ -759,7 +920,7 @@ function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
     ]);
 }
 
-if ($mode === 'catalog_variant_bootstrap') {
+if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_install'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
@@ -767,14 +928,14 @@ if ($mode === 'catalog_variant_bootstrap') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'dispatcher_install', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'dispatcher_install'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -783,7 +944,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'dispatcher_install'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -881,6 +1042,10 @@ if ($mode === 'catalog_variant_bootstrap') {
 
 if ($mode === 'dispatcher_status') {
     fn_talario_analytics_partner_sync_dispatcher_status_response();
+}
+
+if ($mode === 'dispatcher_install') {
+    fn_talario_analytics_partner_sync_signed_dispatcher_install();
 }
 
 if ($mode === 'catalog') {
