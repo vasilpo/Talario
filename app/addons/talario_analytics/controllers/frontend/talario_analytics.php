@@ -1052,6 +1052,10 @@ PHP;
             '45s',
             $php_real,
             '-d', 'display_errors=0',
+            '-d', 'html_errors=0',
+            '-d', 'log_errors=1',
+            '-d', 'error_log=/dev/stderr',
+            '-d', 'error_reporting=-1',
             '-r', $bootstrap,
             $runner_tmp,
         ],
@@ -1107,7 +1111,14 @@ PHP;
     $payload = json_decode(trim($stdout), true);
     if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
         $runner_failure = 'unknown';
+        $failure_text = '';
         if (is_string($stderr) && $stderr !== '') {
+            $failure_text .= $stderr;
+        }
+        if (is_string($stdout) && $stdout !== '') {
+            $failure_text .= "\n" . $stdout;
+        }
+        if ($failure_text !== '') {
             $failure_patterns = [
                 'permission_denied' => '/Permission denied/i',
                 'required_file_failed' => '/Failed opening required|failed to open stream/i',
@@ -1119,7 +1130,7 @@ PHP;
                 'fatal_error' => '/Fatal error|Uncaught (?:Error|Exception)/i',
             ];
             foreach ($failure_patterns as $failure_code => $pattern) {
-                if (preg_match($pattern, $stderr)) {
+                if (preg_match($pattern, $failure_text)) {
                     $runner_failure = $failure_code;
                     break;
                 }
