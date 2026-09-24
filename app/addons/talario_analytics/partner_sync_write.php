@@ -923,6 +923,25 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
     ];
 }
 
+function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $exception): ?string
+{
+    $allowed = [
+        'product_update_failed',
+        'variation_resolution_required',
+        'base_variation_features_update_failed',
+        'variation_group_create_failed',
+        'variation_group_readback_failed',
+        'variation_product_mapping_failed',
+        'variation_product_update_failed',
+        'variation_structure_change_not_supported',
+        'failed_create_group_cleanup_failed',
+    ];
+
+    $message = $exception->getMessage();
+    return in_array($message, $allowed, true) ? $message : null;
+}
+
+
 function fn_talario_analytics_partner_sync_write_response(): void
 {
     $payload = fn_talario_analytics_partner_sync_write_payload();
@@ -1090,14 +1109,25 @@ function fn_talario_analytics_partner_sync_write_response(): void
             fn_talario_analytics_partner_sync_cleanup_failed_create($product_id);
         }
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
-        fn_log_event('general', 'runtime', [
-            'message' => 'Talario Partner Sync dev write failed',
-            'operation' => $operation,
-            'approval_id_hash' => $approval_id_hash,
-            'recovery' => $operation === 'create' ? 'compensating_cleanup' : 'rerun_same_update',
-            'error_class' => get_class($exception),
-        ]);
-        fn_talario_analytics_json_response(500, ['error' => 'partner_sync_write_failed']);
+        $safe_error_detail = fn_talario_analytics_partner_sync_safe_write_error_detail($exception);
+        try {
+            fn_log_event('general', 'runtime', [
+                'message' => 'Talario Partner Sync dev write failed',
+                'operation' => $operation,
+                'approval_id_hash' => $approval_id_hash,
+                'recovery' => $operation === 'create' ? 'compensating_cleanup' : 'rerun_same_update',
+                'error_class' => get_class($exception),
+                'error_detail' => $safe_error_detail,
+            ]);
+        } catch (Throwable $log_exception) {
+            // Logging must never mask the primary bounded Partner Sync failure response.
+        }
+
+        $error_response = ['error' => 'partner_sync_write_failed'];
+        if ($safe_error_detail !== null) {
+            $error_response['detail'] = $safe_error_detail;
+        }
+        fn_talario_analytics_json_response(500, $error_response);
     }
 
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
