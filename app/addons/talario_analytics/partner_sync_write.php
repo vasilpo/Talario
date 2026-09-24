@@ -960,6 +960,20 @@ function fn_talario_analytics_partner_sync_set_cli_stage(string $stage, bool $ar
 
     $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] = $stage;
     $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'] = $armed;
+
+    if (!$armed) {
+        return;
+    }
+
+    $stage_file = getenv('TALARIO_PARTNER_SYNC_STAGE_FILE');
+    if (!is_string($stage_file) || $stage_file === '') {
+        return;
+    }
+
+    $written = @file_put_contents($stage_file, $stage, LOCK_EX);
+    if ($written === strlen($stage)) {
+        @chmod($stage_file, 0600);
+    }
 }
 
 function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $exception): ?string
