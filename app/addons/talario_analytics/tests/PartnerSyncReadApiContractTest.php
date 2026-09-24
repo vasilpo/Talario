@@ -226,7 +226,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_RUNNER_UID'", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39')", $this->controller);
+        self::assertStringContainsString("'/usr/bin/timeout'", $this->controller);
+        self::assertStringContainsString("'--kill-after=5s'", $this->controller);
+        self::assertStringContainsString("'45s'", $this->controller);
+        self::assertStringContainsString("'HOME' => $tmp_dir", $this->controller);
+        self::assertStringContainsString("'TMPDIR' => $tmp_dir", $this->controller);
+        self::assertStringContainsString("'pilot_cli_timeout'", $this->controller);
         self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
+        self::assertStringNotContainsString("'HOME' => (string) getenv('HOME')", $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED', $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE', $this->write_capability);
     }
