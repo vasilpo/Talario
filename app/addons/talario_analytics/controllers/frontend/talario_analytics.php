@@ -728,42 +728,42 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_runtime_unavailable']);
     }
 
-    $tmp_base = rtrim((string) sys_get_temp_dir(), DIRECTORY_SEPARATOR);
-    $tmp_dir = $tmp_base . DIRECTORY_SEPARATOR
-        . 'talario-part-sync-' . substr(hash('sha256', DIR_ROOT), 0, 16);
-    if (!is_dir($tmp_dir) && !@mkdir($tmp_dir, 0700, true) && !is_dir($tmp_dir)) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_unavailable']);
-    }
-    @chmod($tmp_dir, 0700);
-
-    $tmp_stat = @stat($tmp_dir);
-    $root_stat = @stat(DIR_ROOT);
-    if (!is_array($tmp_stat)
-        || !is_array($root_stat)
-        || is_link($tmp_dir)
-        || realpath($tmp_dir) !== $tmp_dir
-        || (int) $tmp_stat['uid'] !== (int) $root_stat['uid']
-        || (($tmp_stat['mode'] & 0777) !== 0700)
-        || !is_writable($tmp_dir)
-    ) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_untrusted']);
-    }
-
     try {
         $nonce = bin2hex(random_bytes(16));
     } catch (Throwable $exception) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_random_failed']);
     }
 
-    $allowed_file = $tmp_dir . DIRECTORY_SEPARATOR . 'allow-' . $nonce;
-    $signature_file = $tmp_dir . DIRECTORY_SEPARATOR . 'sig-' . $nonce;
+    $tmp_base = rtrim((string) sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+    $tmp_dir = $tmp_base . DIRECTORY_SEPARATOR . 'talario-part-sync-' . $nonce;
+    if (!@mkdir($tmp_dir, 0700, false)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_unavailable']);
+    }
+    @chmod($tmp_dir, 0700);
 
-    $cleanup = static function () use ($allowed_file, $signature_file): void {
+    $tmp_stat = @lstat($tmp_dir);
+    if (!is_array($tmp_stat)
+        || is_link($tmp_dir)
+        || realpath($tmp_dir) !== $tmp_dir
+        || (($tmp_stat['mode'] & 0777) !== 0700)
+        || !is_writable($tmp_dir)
+    ) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_untrusted']);
+    }
+
+    $allowed_file = $tmp_dir . DIRECTORY_SEPARATOR . 'allow';
+    $signature_file = $tmp_dir . DIRECTORY_SEPARATOR . 'sig';
+
+    $cleanup = static function () use ($allowed_file, $signature_file, $tmp_dir): void {
         if (is_file($allowed_file)) {
             @unlink($allowed_file);
         }
         if (is_file($signature_file)) {
             @unlink($signature_file);
+        }
+        if (is_dir($tmp_dir) && !is_link($tmp_dir)) {
+            @rmdir($tmp_dir);
         }
     };
     register_shutdown_function($cleanup);
