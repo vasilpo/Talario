@@ -697,10 +697,6 @@ function fn_talario_analytics_partner_sync_signed_dispatcher_install(): void
         fn_talario_analytics_json_response(404, ['error' => 'not_found']);
     }
 
-    if ((string) ($_SERVER['REMOTE_ADDR'] ?? '') !== '85.137.90.47') {
-        fn_talario_analytics_json_response(403, ['error' => 'installer_source_not_allowed']);
-    }
-
     $request_id = trim((string) ($_SERVER['HTTP_X_TALARIO_REQUEST_ID'] ?? ''));
     $timestamp_raw = trim((string) ($_SERVER['HTTP_X_TALARIO_TIMESTAMP'] ?? ''));
     $signature_b64 = trim((string) ($_SERVER['HTTP_X_TALARIO_SIGNATURE'] ?? ''));
@@ -731,8 +727,18 @@ function fn_talario_analytics_partner_sync_signed_dispatcher_install(): void
     $ssh_keygen = '/usr/bin/ssh-keygen';
     $bash = '/usr/bin/bash';
     $installer = DIR_ROOT . '/ops/beget/install-reviewed-dispatcher.sh';
+    $expected_installer_blob = 'b1641564b30833fcd211f394b227bd9115c84413';
     if (!is_executable($ssh_keygen) || !is_executable($bash) || !is_file($installer) || is_link($installer)) {
         fn_talario_analytics_json_response(503, ['error' => 'installer_runtime_unavailable']);
+    }
+
+    $installer_source = file_get_contents($installer);
+    if (!is_string($installer_source) || $installer_source === '') {
+        fn_talario_analytics_json_response(503, ['error' => 'installer_source_unavailable']);
+    }
+    $installer_blob = sha1('blob ' . strlen($installer_source) . "\0" . $installer_source);
+    if (!hash_equals($expected_installer_blob, $installer_blob)) {
+        fn_talario_analytics_json_response(409, ['error' => 'installer_source_not_reviewed']);
     }
 
     $tmp_dir = DIR_ROOT . '/var/cache';
@@ -754,6 +760,7 @@ function fn_talario_analytics_partner_sync_signed_dispatcher_install(): void
             @unlink($signature_file);
         }
     };
+    register_shutdown_function($cleanup);
 
     try {
         $allowed_signer = 'github-actions-talario ssh-ed25519 '
@@ -839,6 +846,7 @@ function fn_talario_analytics_partner_sync_signed_dispatcher_install(): void
             'request_id_hash' => hash('sha256', $request_id),
         ]);
 
+        $cleanup();
         fn_talario_analytics_json_response(200, [
             'schema_version' => 'partner-sync.dispatcher-install.v1',
             'status' => 'ok',
