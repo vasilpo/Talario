@@ -887,30 +887,104 @@ function fn_talario_analytics_partner_sync_penaty_bootstrap(): void
 
 function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
 {
-    $php = '/usr/local/bin/php8.2';
-    $php_real = realpath($php);
+    $php_alias = '/usr/local/bin/php8.2';
+    $php_real = realpath($php_alias);
+    $php_lstat = $php_real !== false ? @lstat($php_real) : false;
     $php_stat = $php_real !== false ? @stat($php_real) : false;
     if ($php_real === false
+        || !is_array($php_lstat)
         || !is_array($php_stat)
+        || is_link($php_real)
         || !is_file($php_real)
         || !is_executable($php_real)
         || (int) $php_stat['uid'] !== 0
         || (($php_stat['mode'] & 0022) !== 0)
+        || (($php_stat['mode'] & 06000) !== 0)
+        || (int) $php_lstat['dev'] !== (int) $php_stat['dev']
+        || (int) $php_lstat['ino'] !== (int) $php_stat['ino']
     ) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runtime_unavailable']);
     }
 
-    $runner = DIR_ROOT . '/ops/partner-sync-apply.php';
-    $runner_real = realpath($runner);
-    $runner_stat = $runner_real !== false ? @stat($runner_real) : false;
-    if ($runner_real === false
-        || $runner_real !== $runner
+    $trusted_owner_path = DIR_ROOT . '/init.php';
+    $trusted_owner_real = realpath($trusted_owner_path);
+    $trusted_owner_stat = $trusted_owner_real !== false ? @stat($trusted_owner_real) : false;
+    if ($trusted_owner_real === false
+        || $trusted_owner_real !== $trusted_owner_path
+        || !is_array($trusted_owner_stat)
+        || !is_file($trusted_owner_real)
+        || is_link($trusted_owner_path)
+        || (($trusted_owner_stat['mode'] & 0022) !== 0)
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_owner_reference_untrusted']);
+    }
+    $trusted_owner_uid = (int) $trusted_owner_stat['uid'];
+
+    $runner_path = DIR_ROOT . '/ops/partner-sync-apply.php';
+    $runner_handle = @fopen($runner_path, 'rb');
+    $runner_stat = is_resource($runner_handle) ? @fstat($runner_handle) : false;
+    if (!is_resource($runner_handle)
         || !is_array($runner_stat)
-        || !is_file($runner_real)
-        || is_link($runner)
+        || (($runner_stat['mode'] & 0170000) !== 0100000)
+        || (int) $runner_stat['uid'] !== $trusted_owner_uid
         || (($runner_stat['mode'] & 0022) !== 0)
     ) {
+        if (is_resource($runner_handle)) {
+            fclose($runner_handle);
+        }
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_untrusted']);
+    }
+
+    $runner_source = stream_get_contents($runner_handle, 1048576);
+    fclose($runner_handle);
+    $expected_runner_sha256 = '74bb7882e0f40b7984e66ed12985cf497c257b1c10f22c91efaea36fba55d407';
+    if (!is_string($runner_source)
+        || $runner_source === ''
+        || !hash_equals($expected_runner_sha256, hash('sha256', $runner_source))
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_integrity_failed']);
+    }
+
+    try {
+        $nonce = bin2hex(random_bytes(16));
+    } catch (Throwable $exception) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_random_failed']);
+    }
+    $tmp_base = rtrim((string) sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+    $tmp_dir = $tmp_base . DIRECTORY_SEPARATOR . 'talario-penaty-cli-' . $nonce;
+    if (!@mkdir($tmp_dir, 0700, false)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_unavailable']);
+    }
+    @chmod($tmp_dir, 0700);
+    $tmp_stat = @stat($tmp_dir);
+    if (!is_array($tmp_stat)
+        || is_link($tmp_dir)
+        || realpath($tmp_dir) !== $tmp_dir
+        || (($tmp_stat['mode'] & 0777) !== 0700)
+    ) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_untrusted']);
+    }
+
+    $runner_tmp = $tmp_dir . DIRECTORY_SEPARATOR . 'runner.php';
+    $tmp_handle = @fopen($runner_tmp, 'xb');
+    if (!is_resource($tmp_handle)) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_write_failed']);
+    }
+    @chmod($runner_tmp, 0600);
+    $written = fwrite($tmp_handle, $runner_source);
+    fflush($tmp_handle);
+    $snapshot_stat = fstat($tmp_handle);
+    fclose($tmp_handle);
+    if ($written !== strlen($runner_source)
+        || !is_array($snapshot_stat)
+        || (($snapshot_stat['mode'] & 0077) !== 0)
+        || !hash_equals($expected_runner_sha256, hash_file('sha256', $runner_tmp))
+    ) {
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_integrity_failed']);
     }
 
     $bootstrap = <<<'PHP'
@@ -924,7 +998,7 @@ require $argv[1];
 PHP;
 
     $process = proc_open(
-        [$php_real, '-d', 'display_errors=0', '-r', $bootstrap, $runner_real],
+        [$php_real, '-d', 'display_errors=0', '-r', $bootstrap, $runner_tmp],
         [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],
@@ -936,20 +1010,24 @@ PHP;
             'HOME' => (string) getenv('HOME'),
             'PATH' => '/usr/bin:/bin',
             'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT,
-            'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $runner_stat['uid']),
+            'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $snapshot_stat['uid']),
         ]
     );
     if (!is_resource($process)) {
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_start_failed']);
     }
 
-    $written = fwrite($pipes[0], $raw);
+    $written_input = fwrite($pipes[0], $raw);
     fclose($pipes[0]);
-    if ($written !== strlen($raw)) {
+    if ($written_input !== strlen($raw)) {
         fclose($pipes[1]);
         fclose($pipes[2]);
         proc_terminate($process);
         proc_close($process);
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_input_failed']);
     }
 
@@ -958,6 +1036,8 @@ PHP;
     fclose($pipes[1]);
     fclose($pipes[2]);
     $rc = proc_close($process);
+    @unlink($runner_tmp);
+    @rmdir($tmp_dir);
 
     if (!is_string($stdout) || strlen($stdout) > 1048576) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_output_invalid']);
