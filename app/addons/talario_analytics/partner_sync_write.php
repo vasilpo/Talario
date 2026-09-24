@@ -2,6 +2,24 @@
 
 defined('BOOTSTRAP') or die('Access denied');
 
+if (!function_exists('fn_talario_analytics_parse_date')) {
+    function fn_talario_analytics_parse_date(string $value): ?DateTimeImmutable
+    {
+        if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $value)) {
+            return null;
+        }
+
+        $timezone = new DateTimeZone('Europe/Moscow');
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value, $timezone);
+
+        if (!$date || $date->format('Y-m-d') !== $value) {
+            return null;
+        }
+
+        return $date;
+    }
+}
+
 /**
  * Development-only Partner Sync write capability.
  *
