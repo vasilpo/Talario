@@ -117,6 +117,21 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'catalog_variant_bootstrap' => true", $this->trusted_controllers);
     }
 
+    public function testDispatcherStatusIsReadOnlyDevOnlyAndSanitized(): void
+    {
+        self::assertStringContainsString("'dispatcher_status'", $this->controller);
+        self::assertStringContainsString("'dispatcher_status' => true", $this->trusted_controllers);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.dispatcher-status.v1'", $this->controller);
+        self::assertStringContainsString("'target_matches_source'", $this->controller);
+        self::assertStringContainsString("'target_has_dry_run'", $this->controller);
+        self::assertStringContainsString("'target_has_enable_penaty'", $this->controller);
+        self::assertStringContainsString("'authorized_v2_expected_command'", $this->controller);
+        self::assertStringNotContainsString("'authorized_keys' =>", $this->controller);
+        self::assertStringNotContainsString("'target_path' =>", $this->controller);
+        self::assertStringNotContainsString("'source_path' =>", $this->controller);
+    }
+
     public function testPartnerSyncWriteIsInternalCliOnly(): void
     {
         self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
