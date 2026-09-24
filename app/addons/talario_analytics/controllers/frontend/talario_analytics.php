@@ -1043,35 +1043,6 @@ if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
 }
 
 $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC'] = true;
-$GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] = 'writer_entry';
-$GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'] = false;
-
-register_shutdown_function(static function (): void {
-    if (empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'])) {
-        return;
-    }
-
-    $allowed_stages = [
-        'base_product_write',
-        'base_variation_features',
-        'variation_group_create',
-        'variation_group_map',
-        'variation_product_write',
-        'variation_capacity_write',
-        'failure_cleanup',
-        'readback',
-        'completion_log',
-    ];
-    $stage = (string) ($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] ?? '');
-    if (!in_array($stage, $allowed_stages, true)) {
-        $stage = 'unknown';
-    }
-
-    fwrite(STDOUT, json_encode([
-        'error' => 'pilot_cli_direct_exit_' . $stage,
-        'http_status' => 500,
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
-});
 
 try {
     require $argv[1];
@@ -1129,6 +1100,7 @@ PHP;
             'PATH' => '/usr/bin:/bin',
             'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT,
             'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $snapshot_stat['uid']),
+            'TALARIO_PARTNER_SYNC_STAGE_FILE' => $tmp_dir . DIRECTORY_SEPARATOR . 'stage',
         ]
     );
     if (!is_resource($process)) {
@@ -1154,6 +1126,37 @@ PHP;
     fclose($pipes[1]);
     fclose($pipes[2]);
     $rc = proc_close($process);
+
+    $stage_file = $tmp_dir . DIRECTORY_SEPARATOR . 'stage';
+    $runner_stage = null;
+    $stage_lstat = @lstat($stage_file);
+    $stage_stat = @stat($stage_file);
+    if (is_array($stage_lstat)
+        && is_array($stage_stat)
+        && !is_link($stage_file)
+        && (($stage_stat['mode'] & 0170000) === 0100000)
+        && (($stage_stat['mode'] & 0077) === 0)
+        && (int) $stage_stat['uid'] === (int) $snapshot_stat['uid']
+        && (int) $stage_stat['size'] > 0
+        && (int) $stage_stat['size'] <= 64
+    ) {
+        $candidate_stage = trim((string) @file_get_contents($stage_file));
+        $allowed_runner_stages = [
+            'base_product_write',
+            'base_variation_features',
+            'variation_group_create',
+            'variation_group_map',
+            'variation_product_write',
+            'variation_capacity_write',
+            'failure_cleanup',
+            'readback',
+            'completion_log',
+        ];
+        if (in_array($candidate_stage, $allowed_runner_stages, true)) {
+            $runner_stage = $candidate_stage;
+        }
+    }
+    @unlink($stage_file);
     @unlink($runner_tmp);
     @rmdir($tmp_dir);
 
@@ -1177,8 +1180,12 @@ PHP;
             70 => 'rc70',
             255 => 'rc255',
         ][(int) $rc] ?? 'rc_other';
+        $invalid_response_code = $invalid_response_error . '_' . $runner_rc_code;
+        if ($runner_stage !== null) {
+            $invalid_response_code .= '_' . $runner_stage;
+        }
         fn_talario_analytics_json_response(500, [
-            'error' => $invalid_response_error . '_' . $runner_rc_code,
+            'error' => $invalid_response_code,
             'runner_rc' => (int) $rc,
         ]);
     }
