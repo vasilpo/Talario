@@ -236,6 +236,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'TMPDIR' => $tmp_dir", $this->controller);
         self::assertStringContainsString("'pilot_cli_timeout'", $this->controller);
         self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
+        self::assertStringContainsString("'runner_failure'", $this->controller);
+        self::assertStringContainsString("'permission_denied'", $this->controller);
+        self::assertStringContainsString("'required_file_failed'", $this->controller);
+        self::assertStringContainsString("'undefined_function'", $this->controller);
+        self::assertStringContainsString("'undefined_class'", $this->controller);
+        self::assertStringContainsString("'undefined_constant'", $this->controller);
+        self::assertStringContainsString("'parse_error'", $this->controller);
+        self::assertStringContainsString("'memory_exhausted'", $this->controller);
         self::assertStringContainsString('$max_payload_bytes = 20971520;', $this->controller);
         self::assertStringContainsString("isset(\$_SERVER['CONTENT_LENGTH'])", $this->controller);
         self::assertStringContainsString('stream_get_contents($input, $max_payload_bytes + 1)', $this->controller);
