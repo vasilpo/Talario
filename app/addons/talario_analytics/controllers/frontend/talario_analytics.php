@@ -887,22 +887,37 @@ function fn_talario_analytics_partner_sync_penaty_bootstrap(): void
 
 function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
 {
-    $php_alias = '/usr/local/bin/php8.2';
-    $php_real = realpath($php_alias);
-    $php_lstat = $php_real !== false ? @lstat($php_real) : false;
-    $php_stat = $php_real !== false ? @stat($php_real) : false;
-    if ($php_real === false
-        || !is_array($php_lstat)
-        || !is_array($php_stat)
-        || is_link($php_real)
-        || !is_file($php_real)
-        || !is_executable($php_real)
-        || (int) $php_stat['uid'] !== 0
-        || (($php_stat['mode'] & 0022) !== 0)
-        || (($php_stat['mode'] & 06000) !== 0)
-        || (int) $php_lstat['dev'] !== (int) $php_stat['dev']
-        || (int) $php_lstat['ino'] !== (int) $php_stat['ino']
-    ) {
+    $php_real = false;
+    foreach ([
+        '/usr/local/bin/php8.2',
+        '/usr/bin/php8.2',
+        '/usr/local/php82/bin/php',
+    ] as $php_candidate) {
+        $candidate_lstat = @lstat($php_candidate);
+        if (!is_array($candidate_lstat) || is_link($php_candidate)) {
+            continue;
+        }
+
+        $candidate_real = realpath($php_candidate);
+        $candidate_stat = $candidate_real !== false ? @stat($candidate_real) : false;
+        if ($candidate_real === false
+            || $candidate_real !== $php_candidate
+            || !is_array($candidate_stat)
+            || !is_file($candidate_real)
+            || !is_executable($candidate_real)
+            || (int) $candidate_stat['uid'] !== 0
+            || (($candidate_stat['mode'] & 0022) !== 0)
+            || (($candidate_stat['mode'] & 06000) !== 0)
+            || (int) $candidate_lstat['dev'] !== (int) $candidate_stat['dev']
+            || (int) $candidate_lstat['ino'] !== (int) $candidate_stat['ino']
+        ) {
+            continue;
+        }
+
+        $php_real = $candidate_real;
+        break;
+    }
+    if ($php_real === false) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runtime_unavailable']);
     }
 
