@@ -1075,6 +1075,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
+        $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'base_product_write';
         $result_id = fn_update_product(
             $product_data,
             $operation === 'update' ? $product_id : 0,
@@ -1086,6 +1087,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         $product_id = (int) $result_id;
 
         if ($variation_resolution !== null) {
+            $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'variation_apply';
             $variation_write_result = fn_talario_analytics_partner_sync_apply_variation_plan(
                 $operation,
                 $product_id,
@@ -1103,6 +1105,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
     } catch (Throwable $exception) {
+        $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'failure_cleanup';
         // Never keep an incomplete new card: CREATE is compensating-cleaned.
         // UPDATE is idempotent by contract; rerunning the same approved payload is the repair path.
         if ($operation === 'create' && $product_id > 0) {
@@ -1130,8 +1133,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
         fn_talario_analytics_json_response(500, $error_response);
     }
 
+    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'readback';
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
 
+    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'completion_log';
     fn_log_event('general', 'runtime', [
         'message' => 'Talario Partner Sync dev write completed',
         'operation' => $operation,
