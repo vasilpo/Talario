@@ -11,9 +11,14 @@ defined('BOOTSTRAP') or die('Access denied');
 
 function fn_talario_analytics_partner_sync_write_payload(): array
 {
-    $raw = PHP_SAPI === 'cli'
-        ? (string) stream_get_contents(STDIN)
-        : (string) file_get_contents('php://input');
+    $signed_raw = $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'] ?? null;
+    if (is_string($signed_raw) && $signed_raw !== '') {
+        $raw = $signed_raw;
+    } else {
+        $raw = PHP_SAPI === 'cli'
+            ? (string) stream_get_contents(STDIN)
+            : (string) file_get_contents('php://input');
+    }
     if ($raw === '' || strlen($raw) > 20971520) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
     }

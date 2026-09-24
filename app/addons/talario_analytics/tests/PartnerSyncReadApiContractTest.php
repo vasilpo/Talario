@@ -132,6 +132,31 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("'source_path' =>", $this->controller);
     }
 
+    public function testSignedPenatyPilotIsDevOnlyPartnerAuthenticatedAndCompanyScoped(): void
+    {
+        self::assertStringContainsString("'penaty_bootstrap'", $this->controller);
+        self::assertStringContainsString("'penaty_apply'", $this->controller);
+        self::assertStringContainsString("'penaty_bootstrap' => true", $this->trusted_controllers);
+        self::assertStringContainsString("'penaty_apply' => true", $this->trusted_controllers);
+        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_apply'], true)", $this->controller);
+        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply']", $this->controller);
+        self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
+        self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
+        self::assertStringContainsString("'github-actions-talario'", $this->controller);
+        self::assertStringContainsString("'talario-part-sync'", $this->controller);
+        self::assertStringContainsString("hash('sha256', \$raw_body)", $this->controller);
+        self::assertStringContainsString("(int) (\$product['company_id'] ?? 0) !== 39", $this->controller);
+        self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
+        self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39')", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->controller);
+        self::assertStringContainsString("require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php'", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->write_capability);
+        self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
+        self::assertStringNotContainsString('shell_exec(', $this->controller);
+        self::assertStringNotContainsString('system(', $this->controller);
+        self::assertStringNotContainsString('eval(', $this->controller);
+    }
+
     public function testPartnerSyncWriteIsInternalCliOnly(): void
     {
         self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
