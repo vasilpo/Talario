@@ -234,8 +234,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'pilot_cli_timeout'", $this->controller);
         self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
         self::assertStringContainsString('$max_payload_bytes = 20971520;', $this->controller);
-        self::assertStringContainsString("isset($_SERVER['CONTENT_LENGTH'])", $this->controller);
-        self::assertStringContainsString("stream_get_contents($input, $max_payload_bytes + 1)", $this->controller);
+        self::assertStringContainsString("isset(\$_SERVER['CONTENT_LENGTH'])", $this->controller);
+        self::assertStringContainsString('stream_get_contents($input, $max_payload_bytes + 1)', $this->controller);
         self::assertStringContainsString("'payload_too_large'", $this->controller);
         self::assertStringNotContainsString("'HOME' => (string) getenv('HOME')", $this->controller);
         self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED', $this->controller);
