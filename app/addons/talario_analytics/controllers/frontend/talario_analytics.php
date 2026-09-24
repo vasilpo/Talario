@@ -7,9 +7,6 @@ use Tygh\Registry;
 
 function fn_talario_analytics_json_response(int $status, array $payload): void
 {
-    if (!empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'])) {
-        $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'] = false;
-    }
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -888,11 +885,246 @@ function fn_talario_analytics_partner_sync_penaty_bootstrap(): void
     fn_talario_analytics_partner_sync_dev_age_variant_bootstrap();
 }
 
+function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
+{
+    $php_real = false;
+    foreach ([
+        '/usr/local/bin/php8.2',
+        '/usr/bin/php8.2',
+        '/usr/local/php82/bin/php',
+    ] as $php_candidate) {
+        $candidate_lstat = @lstat($php_candidate);
+        if (!is_array($candidate_lstat) || is_link($php_candidate)) {
+            continue;
+        }
+
+        $candidate_real = realpath($php_candidate);
+        $candidate_stat = $candidate_real !== false ? @stat($candidate_real) : false;
+        if ($candidate_real === false
+            || $candidate_real !== $php_candidate
+            || !is_array($candidate_stat)
+            || !is_file($candidate_real)
+            || !is_executable($candidate_real)
+            || (int) $candidate_stat['uid'] !== 0
+            || (($candidate_stat['mode'] & 0022) !== 0)
+            || (($candidate_stat['mode'] & 06000) !== 0)
+            || (int) $candidate_lstat['dev'] !== (int) $candidate_stat['dev']
+            || (int) $candidate_lstat['ino'] !== (int) $candidate_stat['ino']
+        ) {
+            continue;
+        }
+
+        $php_real = $candidate_real;
+        break;
+    }
+    if ($php_real === false) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runtime_unavailable']);
+    }
+
+    $trusted_owner_path = DIR_ROOT . '/init.php';
+    $trusted_owner_real = realpath($trusted_owner_path);
+    $trusted_owner_stat = $trusted_owner_real !== false ? @stat($trusted_owner_real) : false;
+    if ($trusted_owner_real === false
+        || $trusted_owner_real !== $trusted_owner_path
+        || !is_array($trusted_owner_stat)
+        || !is_file($trusted_owner_real)
+        || is_link($trusted_owner_path)
+        || (($trusted_owner_stat['mode'] & 0022) !== 0)
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_owner_reference_untrusted']);
+    }
+    $trusted_owner_uid = (int) $trusted_owner_stat['uid'];
+
+    $runner_path = DIR_ROOT . '/ops/partner-sync-apply.php';
+    $runner_handle = @fopen($runner_path, 'rb');
+    $runner_stat = is_resource($runner_handle) ? @fstat($runner_handle) : false;
+    if (!is_resource($runner_handle)
+        || !is_array($runner_stat)
+        || (($runner_stat['mode'] & 0170000) !== 0100000)
+        || (int) $runner_stat['uid'] !== $trusted_owner_uid
+        || (($runner_stat['mode'] & 0022) !== 0)
+    ) {
+        if (is_resource($runner_handle)) {
+            fclose($runner_handle);
+        }
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_untrusted']);
+    }
+
+    $runner_source = stream_get_contents($runner_handle, 1048576);
+    fclose($runner_handle);
+    $expected_runner_sha256 = '74bb7882e0f40b7984e66ed12985cf497c257b1c10f22c91efaea36fba55d407';
+    if (!is_string($runner_source)
+        || $runner_source === ''
+        || !hash_equals($expected_runner_sha256, hash('sha256', $runner_source))
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_integrity_failed']);
+    }
+
+    try {
+        $nonce = bin2hex(random_bytes(16));
+    } catch (Throwable $exception) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_random_failed']);
+    }
+    $tmp_base = rtrim((string) sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+    $tmp_dir = $tmp_base . DIRECTORY_SEPARATOR . 'talario-penaty-cli-' . $nonce;
+    if (!@mkdir($tmp_dir, 0700, false)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_unavailable']);
+    }
+    @chmod($tmp_dir, 0700);
+    $tmp_stat = @stat($tmp_dir);
+    if (!is_array($tmp_stat)
+        || is_link($tmp_dir)
+        || realpath($tmp_dir) !== $tmp_dir
+        || (($tmp_stat['mode'] & 0777) !== 0700)
+    ) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_untrusted']);
+    }
+
+    $runner_tmp = $tmp_dir . DIRECTORY_SEPARATOR . 'runner.php';
+    $tmp_handle = @fopen($runner_tmp, 'xb');
+    if (!is_resource($tmp_handle)) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_write_failed']);
+    }
+    @chmod($runner_tmp, 0600);
+    $written = fwrite($tmp_handle, $runner_source);
+    fflush($tmp_handle);
+    $snapshot_stat = fstat($tmp_handle);
+    fclose($tmp_handle);
+    if ($written !== strlen($runner_source)
+        || !is_array($snapshot_stat)
+        || (($snapshot_stat['mode'] & 0077) !== 0)
+        || !hash_equals($expected_runner_sha256, hash_file('sha256', $runner_tmp))
+    ) {
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_integrity_failed']);
+    }
+
+    $timeout_binary = '/usr/bin/timeout';
+    $timeout_lstat = @lstat($timeout_binary);
+    $timeout_stat = @stat($timeout_binary);
+    if (!is_array($timeout_lstat)
+        || !is_array($timeout_stat)
+        || is_link($timeout_binary)
+        || !is_file($timeout_binary)
+        || !is_executable($timeout_binary)
+        || (int) $timeout_stat['uid'] !== 0
+        || (($timeout_stat['mode'] & 0022) !== 0)
+        || (($timeout_stat['mode'] & 06000) !== 0)
+        || (int) $timeout_lstat['dev'] !== (int) $timeout_stat['dev']
+        || (int) $timeout_lstat['ino'] !== (int) $timeout_stat['ino']
+    ) {
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_timeout_runtime_unavailable']);
+    }
+
+    $bootstrap = <<<'PHP'
+if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
+    define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
+}
+if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
+    define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');
+}
+require $argv[1];
+PHP;
+
+    $process = proc_open(
+        [
+            $timeout_binary,
+            '--signal=TERM',
+            '--kill-after=5s',
+            '45s',
+            $php_real,
+            '-d', 'display_errors=0',
+            '-r', $bootstrap,
+            $runner_tmp,
+        ],
+        [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ],
+        $pipes,
+        DIR_ROOT,
+        [
+            'HOME' => $tmp_dir,
+            'TMPDIR' => $tmp_dir,
+            'PATH' => '/usr/bin:/bin',
+            'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT,
+            'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $snapshot_stat['uid']),
+        ]
+    );
+    if (!is_resource($process)) {
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_start_failed']);
+    }
+
+    $written_input = fwrite($pipes[0], $raw);
+    fclose($pipes[0]);
+    if ($written_input !== strlen($raw)) {
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_terminate($process);
+        proc_close($process);
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_input_failed']);
+    }
+
+    $stdout = stream_get_contents($pipes[1], 1048576);
+    $stderr = stream_get_contents($pipes[2], 4096);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $rc = proc_close($process);
+    @unlink($runner_tmp);
+    @rmdir($tmp_dir);
+
+    if (in_array((int) $rc, [124, 137], true)) {
+        fn_talario_analytics_json_response(504, ['error' => 'pilot_cli_timeout']);
+    }
+
+    if (!is_string($stdout) || strlen($stdout) > 1048576) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_output_invalid']);
+    }
+
+    $payload = json_decode(trim($stdout), true);
+    if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
+        fn_talario_analytics_json_response(500, [
+            'error' => 'pilot_cli_invalid_response',
+            'runner_rc' => (int) $rc,
+        ]);
+    }
+
+    $status = isset($payload['http_status']) ? (int) $payload['http_status'] : ($rc === 0 ? 200 : 500);
+    unset($payload['http_status']);
+    $status = $status >= 400 && $status <= 599 ? $status : ($rc === 0 ? 200 : 500);
+
+    fn_talario_analytics_json_response($status, $payload);
+}
+
 function fn_talario_analytics_partner_sync_penaty_apply(): void
 {
-    $raw = (string) file_get_contents('php://input');
-    if ($raw === '' || strlen($raw) > 20971520) {
+    $max_payload_bytes = 20971520;
+    $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+    if ($content_length > $max_payload_bytes) {
+        fn_talario_analytics_json_response(413, ['error' => 'payload_too_large']);
+    }
+
+    $input = @fopen('php://input', 'rb');
+    if (!is_resource($input)) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
+    }
+    $raw = stream_get_contents($input, $max_payload_bytes + 1);
+    fclose($input);
+    if (!is_string($raw) || $raw === '') {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
+    }
+    if (strlen($raw) > $max_payload_bytes) {
+        fn_talario_analytics_json_response(413, ['error' => 'payload_too_large']);
     }
 
     $payload = json_decode($raw, true);
@@ -922,47 +1154,7 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
 
     fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
     fn_talario_analytics_partner_sync_enable_penaty_request_gate();
-
-    $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'] = $raw;
-    $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'] = true;
-    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'writer_entry';
-    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'] = true;
-
-    register_shutdown_function(static function (): void {
-        if (empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'])) {
-            return;
-        }
-
-        $allowed_stages = [
-            'writer_entry',
-            'base_product_write',
-            'variation_apply',
-            'failure_cleanup',
-            'readback',
-            'completion_log',
-        ];
-        $stage = (string) ($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] ?? 'writer_entry');
-        if (!in_array($stage, $allowed_stages, true)) {
-            $stage = 'writer_entry';
-        }
-
-        $last = error_get_last();
-        $fatal_type = is_array($last) && isset($last['type']) ? (int) $last['type'] : 0;
-
-        if (!headers_sent()) {
-            http_response_code(500);
-            header('Content-Type: application/json; charset=utf-8');
-            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-        }
-        echo json_encode([
-            'error' => 'pilot_write_aborted',
-            'stage' => $stage,
-            'fatal_type' => $fatal_type,
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    });
-
-    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
-    fn_talario_analytics_partner_sync_write_response();
+    fn_talario_analytics_partner_sync_run_penaty_cli($raw);
 }
 
 function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void

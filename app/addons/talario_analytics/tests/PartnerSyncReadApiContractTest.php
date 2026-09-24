@@ -148,10 +148,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("(int) (\$product['company_id'] ?? 0) !== 39", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39')", $this->controller);
-        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->controller);
-        self::assertStringContainsString("require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php'", $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_run_penaty_cli($raw)', $this->controller);
+        self::assertStringContainsString("'/ops/partner-sync-apply.php'", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT", $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->write_capability);
-        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->write_capability);
         self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS", $this->write_capability);
         self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
@@ -210,21 +210,37 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('New Partner Sync cards are hidden by default', $this->write_capability);
     }
 
-    public function testSignedPenatyShutdownDiagnosticIsBoundedAndDevScoped(): void
+    public function testSignedPenatyApplyUsesIsolatedReviewedCliRunner(): void
     {
-        self::assertStringContainsString('TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED', $this->controller);
-        self::assertStringContainsString("'pilot_write_aborted'", $this->controller);
-        self::assertStringContainsString("'fatal_type'", $this->controller);
-        self::assertStringContainsString("'base_product_write'", $this->controller);
-        self::assertStringContainsString("'variation_apply'", $this->controller);
-        self::assertStringContainsString("'failure_cleanup'", $this->controller);
-        self::assertStringContainsString("'readback'", $this->controller);
-        self::assertStringContainsString("'completion_log'", $this->controller);
-        self::assertStringNotContainsString("['message']", $this->controller);
-        self::assertStringContainsString("TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'base_product_write'", $this->write_capability);
-        self::assertStringContainsString("TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'variation_apply'", $this->write_capability);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_run_penaty_cli', $this->controller);
+        self::assertStringContainsString("'/usr/local/bin/php8.2'", $this->controller);
+        self::assertStringContainsString("'/usr/bin/php8.2'", $this->controller);
+        self::assertStringContainsString("'/usr/local/php82/bin/php'", $this->controller);
+        self::assertStringContainsString("is_link(\$php_candidate)", $this->controller);
+        self::assertStringContainsString("(\$candidate_stat['mode'] & 06000)", $this->controller);
+        self::assertStringContainsString("'/ops/partner-sync-apply.php'", $this->controller);
+        self::assertStringContainsString("'74bb7882e0f40b7984e66ed12985cf497c257b1c10f22c91efaea36fba55d407'", $this->controller);
+        self::assertStringContainsString("stream_get_contents(\$runner_handle", $this->controller);
+        self::assertStringContainsString("hash_equals(\$expected_runner_sha256, hash('sha256', \$runner_source))", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_RUNNER_UID'", $this->controller);
+        self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
+        self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39')", $this->controller);
+        self::assertStringContainsString("'/usr/bin/timeout'", $this->controller);
+        self::assertStringContainsString("'--kill-after=5s'", $this->controller);
+        self::assertStringContainsString("'45s'", $this->controller);
+        self::assertStringContainsString("'HOME' => $tmp_dir", $this->controller);
+        self::assertStringContainsString("'TMPDIR' => $tmp_dir", $this->controller);
+        self::assertStringContainsString("'pilot_cli_timeout'", $this->controller);
+        self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
+        self::assertStringContainsString('$max_payload_bytes = 20971520;', $this->controller);
+        self::assertStringContainsString("isset(\$_SERVER['CONTENT_LENGTH'])", $this->controller);
+        self::assertStringContainsString('stream_get_contents($input, $max_payload_bytes + 1)', $this->controller);
+        self::assertStringContainsString("'payload_too_large'", $this->controller);
+        self::assertStringNotContainsString("'HOME' => (string) getenv('HOME')", $this->controller);
+        self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED', $this->controller);
+        self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE', $this->write_capability);
     }
-
 
     public function testPartnerSyncWriteFailureDiagnosticIsBoundedAndLoggingCannotMaskIt(): void
     {
