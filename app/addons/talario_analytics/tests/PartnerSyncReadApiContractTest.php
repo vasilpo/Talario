@@ -154,6 +154,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->write_capability);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->write_capability);
         self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS", $this->write_capability);
+        self::assertStringContainsString("function_exists('fn_talario_analytics_parse_date')", $this->write_capability);
+        self::assertStringContainsString("DateTimeImmutable::createFromFormat('!Y-m-d'", $this->write_capability);
         self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
         self::assertStringNotContainsString('shell_exec(', $this->controller);
         self::assertStringNotContainsString('system(', $this->controller);
