@@ -584,13 +584,18 @@ function fn_talario_analytics_partner_sync_map_group_products(
 
 function fn_talario_analytics_partner_sync_assert_variation_write_gate(): void
 {
-    if (PHP_SAPI !== 'cli'
+    $signed_penaty = !empty($GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE']);
+
+    if ((!$signed_penaty && PHP_SAPI !== 'cli')
         || !function_exists('fn_is_development')
         || !fn_is_development()
         || !defined('TALARIO_PARTNER_SYNC_DEV_COPY')
         || TALARIO_PARTNER_SYNC_DEV_COPY !== true
         || !defined('TALARIO_PARTNER_SYNC_DEV_WRITE')
         || TALARIO_PARTNER_SYNC_DEV_WRITE !== true
+        || ($signed_penaty
+            && (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')
+                || trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS) !== '39'))
     ) {
         fn_talario_analytics_json_response(403, ['error' => 'variation_write_not_available']);
     }
