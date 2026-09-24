@@ -1035,16 +1035,18 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
     }
 
     $bootstrap = <<<'PHP'
-ini_set('display_errors', '0');
-ini_set('log_errors', '0');
-register_shutdown_function(static function (): void {
-    $error = error_get_last();
-    if (!is_array($error) || !in_array((int) ($error['type'] ?? 0), [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true)) {
-        return;
-    }
+if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
+    define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
+}
+if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
+    define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');
+}
 
-    $message = (string) ($error['message'] ?? '');
+try {
+    require $argv[1];
+} catch (Throwable $exception) {
     $failure = 'fatal_error';
+    $message = (string) $exception->getMessage();
     $patterns = [
         'permission_denied' => '/Permission denied/i',
         'required_file_failed' => '/Failed opening required|failed to open stream/i',
@@ -1061,16 +1063,14 @@ register_shutdown_function(static function (): void {
         }
     }
 
-    fwrite(STDERR, "TALARIO_CHILD_FATAL=" . $failure . PHP_EOL);
-});
-
-if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
-    define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
+    error_log('Talario Partner Sync Penaty child exception class=' . get_class($exception));
+    fwrite(STDOUT, json_encode([
+        'error' => 'pilot_cli_child_exception',
+        'runner_failure' => $failure,
+        'http_status' => 500,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
+    exit(70);
 }
-if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
-    define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');
-}
-require $argv[1];
 PHP;
 
     $process = proc_open(
@@ -1082,7 +1082,6 @@ PHP;
             $php_real,
             '-d', 'display_errors=0',
             '-d', 'html_errors=0',
-            '-d', 'log_errors=0',
             '-r', $bootstrap,
             $runner_tmp,
         ],
@@ -1137,20 +1136,9 @@ PHP;
 
     $payload = json_decode(trim($stdout), true);
     if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
-        $runner_failure = 'unknown';
-        if (is_string($stderr)
-            && preg_match(
-                '/(?:^|\\n)TALARIO_CHILD_FATAL=(permission_denied|required_file_failed|undefined_function|undefined_class|undefined_constant|parse_error|memory_exhausted|fatal_error)(?:\\n|$)/',
-                $stderr,
-                $failure_match
-            )
-        ) {
-            $runner_failure = $failure_match[1];
-        }
         fn_talario_analytics_json_response(500, [
             'error' => 'pilot_cli_invalid_response',
             'runner_rc' => (int) $rc,
-            'runner_failure' => $runner_failure,
         ]);
     }
 
