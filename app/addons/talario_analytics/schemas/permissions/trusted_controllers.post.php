@@ -7,6 +7,7 @@ $schema['talario_analytics'] = [
         'catalog' => true,
         'catalog_variant_bootstrap' => true,
         'dispatcher_status' => true,
+        'dispatcher_install' => true,
         'crm' => true,
     ],
     'default_allow' => false,
