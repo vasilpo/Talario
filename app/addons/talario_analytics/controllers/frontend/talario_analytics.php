@@ -7,6 +7,9 @@ use Tygh\Registry;
 
 function fn_talario_analytics_json_response(int $status, array $payload): void
 {
+    if (!empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'])) {
+        $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'] = false;
+    }
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -922,6 +925,42 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
 
     $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'] = $raw;
     $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'] = true;
+    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'writer_entry';
+    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'] = true;
+
+    register_shutdown_function(static function (): void {
+        if (empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED'])) {
+            return;
+        }
+
+        $allowed_stages = [
+            'writer_entry',
+            'base_product_write',
+            'variation_apply',
+            'failure_cleanup',
+            'readback',
+            'completion_log',
+        ];
+        $stage = (string) ($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] ?? 'writer_entry');
+        if (!in_array($stage, $allowed_stages, true)) {
+            $stage = 'writer_entry';
+        }
+
+        $last = error_get_last();
+        $fatal_type = is_array($last) && isset($last['type']) ? (int) $last['type'] : 0;
+
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json; charset=utf-8');
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        }
+        echo json_encode([
+            'error' => 'pilot_write_aborted',
+            'stage' => $stage,
+            'fatal_type' => $fatal_type,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    });
+
     require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
     fn_talario_analytics_partner_sync_write_response();
 }
