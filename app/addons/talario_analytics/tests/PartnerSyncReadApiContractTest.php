@@ -217,6 +217,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'/usr/bin/php8.2'", $this->controller);
         self::assertStringContainsString("'/usr/local/php82/bin/php'", $this->controller);
         self::assertStringContainsString("is_link(\$php_candidate)", $this->controller);
+        self::assertStringContainsString("(int) \$candidate_lstat['uid'] !== 0", $this->controller);
+        self::assertStringContainsString("(int) \$parent_stat['uid'] !== 0", $this->controller);
+        self::assertStringContainsString("(\$parent_stat['mode'] & 0022)", $this->controller);
         self::assertStringContainsString("(\$candidate_stat['mode'] & 06000)", $this->controller);
         self::assertStringContainsString("'/ops/partner-sync-apply.php'", $this->controller);
         self::assertStringContainsString("'74bb7882e0f40b7984e66ed12985cf497c257b1c10f22c91efaea36fba55d407'", $this->controller);

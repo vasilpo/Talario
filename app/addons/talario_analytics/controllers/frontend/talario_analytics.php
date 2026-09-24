@@ -894,21 +894,34 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
         '/usr/local/php82/bin/php',
     ] as $php_candidate) {
         $candidate_lstat = @lstat($php_candidate);
-        if (!is_array($candidate_lstat) || is_link($php_candidate)) {
-            continue;
-        }
-
         $candidate_real = realpath($php_candidate);
         $candidate_stat = $candidate_real !== false ? @stat($candidate_real) : false;
-        if ($candidate_real === false
-            || $candidate_real !== $php_candidate
+        $candidate_parent = dirname($php_candidate);
+        $parent_real = realpath($candidate_parent);
+        $parent_stat = $parent_real !== false ? @stat($parent_real) : false;
+
+        if (!is_array($candidate_lstat)
+            || $candidate_real === false
             || !is_array($candidate_stat)
             || !is_file($candidate_real)
             || !is_executable($candidate_real)
             || (int) $candidate_stat['uid'] !== 0
             || (($candidate_stat['mode'] & 0022) !== 0)
             || (($candidate_stat['mode'] & 06000) !== 0)
-            || (int) $candidate_lstat['dev'] !== (int) $candidate_stat['dev']
+            || $parent_real === false
+            || $parent_real !== $candidate_parent
+            || !is_array($parent_stat)
+            || (int) $parent_stat['uid'] !== 0
+            || (($parent_stat['mode'] & 0022) !== 0)
+        ) {
+            continue;
+        }
+
+        if (is_link($php_candidate)) {
+            if ((int) $candidate_lstat['uid'] !== 0) {
+                continue;
+            }
+        } elseif ((int) $candidate_lstat['dev'] !== (int) $candidate_stat['dev']
             || (int) $candidate_lstat['ino'] !== (int) $candidate_stat['ino']
         ) {
             continue;
