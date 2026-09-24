@@ -214,8 +214,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_run_penaty_cli', $this->controller);
         self::assertStringContainsString("'/usr/local/bin/php8.2'", $this->controller);
-        self::assertStringContainsString("is_link(\$php_real)", $this->controller);
-        self::assertStringContainsString("(\$php_stat['mode'] & 06000)", $this->controller);
+        self::assertStringContainsString("'/usr/bin/php8.2'", $this->controller);
+        self::assertStringContainsString("'/usr/local/php82/bin/php'", $this->controller);
+        self::assertStringContainsString("is_link(\$php_candidate)", $this->controller);
+        self::assertStringContainsString("(\$candidate_stat['mode'] & 06000)", $this->controller);
         self::assertStringContainsString("'/ops/partner-sync-apply.php'", $this->controller);
         self::assertStringContainsString("'74bb7882e0f40b7984e66ed12985cf497c257b1c10f22c91efaea36fba55d407'", $this->controller);
         self::assertStringContainsString("stream_get_contents(\$runner_handle", $this->controller);
