@@ -674,7 +674,10 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
             (int) $group_axis['feature_id'] => (int) $first['group_variant_id'],
             (int) $purchase_axis['feature_id'] => (int) $first['purchase_variant_id'],
         ];
-        if (!fn_update_product_features_value($base_product_id, $base_values, [], $lang_code)) {
+        fn_talario_analytics_partner_sync_set_cli_stage('base_variation_features', true);
+        $base_features_updated = fn_update_product_features_value($base_product_id, $base_values, [], $lang_code);
+        fn_talario_analytics_partner_sync_set_cli_stage('base_variation_features', false);
+        if (!$base_features_updated) {
             throw new RuntimeException('base_variation_features_update_failed');
         }
 
@@ -697,14 +700,18 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
             (int) $group_axis['feature_id'] => array_values(array_unique(array_column($items, 'group_variant_id'))),
             (int) $purchase_axis['feature_id'] => array_values(array_unique(array_column($items, 'purchase_variant_id'))),
         ]);
+        fn_talario_analytics_partner_sync_set_cli_stage('variation_group_create', true);
         $result = \Tygh\Addons\ProductVariations\ServiceProvider::getService()
             ->generateProductsAndCreateGroup($request);
+        fn_talario_analytics_partner_sync_set_cli_stage('variation_group_create', false);
         if (!$result->isSuccess()) {
             throw new RuntimeException('variation_group_create_failed');
         }
     }
 
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_map', true);
     $mapped = fn_talario_analytics_partner_sync_map_group_products($base_product_id, $resolution);
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_map', false);
     $expected_count = count($items);
     if (count($mapped['map']) !== $expected_count) {
         throw new RuntimeException(
@@ -731,14 +738,18 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
         // Keep the atomic scope narrow: one variation price + booking + capacity.
         db_query('START TRANSACTION');
         try {
+            fn_talario_analytics_partner_sync_set_cli_stage('variation_product_write', true);
             $result_id = fn_update_product([
                 'price' => (float) $item['price'],
                 'booking_data' => $booking_data,
             ], $variation_product_id, $lang_code);
+            fn_talario_analytics_partner_sync_set_cli_stage('variation_product_write', false);
             if (!$result_id) {
                 throw new RuntimeException('variation_product_update_failed');
             }
+            fn_talario_analytics_partner_sync_set_cli_stage('variation_capacity_write', true);
             fn_talario_analytics_partner_sync_apply_variation_capacity($variation_product_id, $item);
+            fn_talario_analytics_partner_sync_set_cli_stage('variation_capacity_write', false);
             db_query('COMMIT');
         } catch (Throwable $variation_exception) {
             db_query('ROLLBACK');
@@ -941,6 +952,16 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
     ];
 }
 
+function fn_talario_analytics_partner_sync_set_cli_stage(string $stage, bool $armed): void
+{
+    if (empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC'])) {
+        return;
+    }
+
+    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] = $stage;
+    $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'] = $armed;
+}
+
 function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $exception): ?string
 {
     $allowed = [
@@ -1093,11 +1114,13 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
+        fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true);
         $result_id = fn_update_product(
             $product_data,
             $operation === 'update' ? $product_id : 0,
             $lang_code
         );
+        fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', false);
         if (!$result_id) {
             throw new RuntimeException('product_update_failed');
         }
@@ -1121,12 +1144,14 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
     } catch (Throwable $exception) {
+        fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', true);
         // Never keep an incomplete new card: CREATE is compensating-cleaned.
         // UPDATE is idempotent by contract; rerunning the same approved payload is the repair path.
         if ($operation === 'create' && $product_id > 0) {
             fn_talario_analytics_partner_sync_cleanup_failed_create($product_id);
         }
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
+        fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', false);
         $safe_error_detail = fn_talario_analytics_partner_sync_safe_write_error_detail($exception);
         try {
             fn_log_event('general', 'runtime', [
@@ -1148,8 +1173,11 @@ function fn_talario_analytics_partner_sync_write_response(): void
         fn_talario_analytics_json_response(500, $error_response);
     }
 
+    fn_talario_analytics_partner_sync_set_cli_stage('readback', true);
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
+    fn_talario_analytics_partner_sync_set_cli_stage('readback', false);
 
+    fn_talario_analytics_partner_sync_set_cli_stage('completion_log', true);
     fn_log_event('general', 'runtime', [
         'message' => 'Talario Partner Sync dev write completed',
         'operation' => $operation,
@@ -1157,6 +1185,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'approval_id_hash' => $approval_id_hash,
         'payload_sha256' => hash('sha256', json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
     ]);
+    fn_talario_analytics_partner_sync_set_cli_stage('completion_log', false);
 
     fn_talario_analytics_json_response($operation === 'create' ? 201 : 200, [
         'schema_version' => 'partner-sync.write-result.v1',

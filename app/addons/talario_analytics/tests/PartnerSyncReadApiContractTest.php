@@ -258,8 +258,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('stream_get_contents($input, $max_payload_bytes + 1)', $this->controller);
         self::assertStringContainsString("'payload_too_large'", $this->controller);
         self::assertStringNotContainsString("'HOME' => (string) getenv('HOME')", $this->controller);
-        self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED', $this->controller);
-        self::assertStringNotContainsString('TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE', $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC', $this->controller);
+        self::assertStringContainsString("'pilot_cli_direct_exit_' . $stage", $this->controller);
+        self::assertStringContainsString("'base_product_write'", $this->controller);
+        self::assertStringContainsString("'failure_cleanup'", $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_set_cli_stage', $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true)", $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_product_write', true)", $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', true)", $this->write_capability);
     }
 
     public function testPartnerSyncWriteFailureDiagnosticIsBoundedAndLoggingCannotMaskIt(): void
