@@ -138,7 +138,6 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'dispatcher_install' => true", $this->trusted_controllers);
         self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'dispatcher_install'], true)", $this->controller);
         self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'dispatcher_install']", $this->controller);
-        self::assertStringContainsString("'85.137.90.47'", $this->controller);
         self::assertStringContainsString("'part-sync-dispatcher-install-20260924'", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
         self::assertStringContainsString("'github-actions-talario'", $this->controller);
@@ -146,6 +145,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'/usr/bin/ssh-keygen'", $this->controller);
         self::assertStringContainsString("'/usr/bin/bash'", $this->controller);
         self::assertStringContainsString("'/ops/beget/install-reviewed-dispatcher.sh'", $this->controller);
+        self::assertStringContainsString("'b1641564b30833fcd211f394b227bd9115c84413'", $this->controller);
+        self::assertStringContainsString("sha1('blob ' . strlen($installer_source)", $this->controller);
+        self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
         self::assertStringContainsString("'DISPATCHER_INSTALL=PASS'", $this->controller);
         self::assertStringNotContainsString('shell_exec(', $this->controller);
         self::assertStringNotContainsString('system(', $this->controller);
