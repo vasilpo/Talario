@@ -151,6 +151,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->controller);
         self::assertStringContainsString("require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php'", $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->write_capability);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->write_capability);
+        self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS", $this->write_capability);
         self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
         self::assertStringNotContainsString('shell_exec(', $this->controller);
         self::assertStringNotContainsString('system(', $this->controller);
