@@ -888,13 +888,11 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): voi
     }
 
     $runner_source = file_get_contents($runner_source_path);
-    $expected_runner_blob = 'ecda830d3384a141c32ed00e97a17f28da6b4f87';
-    $actual_runner_blob = is_string($runner_source)
-        ? sha1('blob ' . strlen($runner_source) . "\0" . $runner_source)
-        : '';
+    $expected_runner_sha256 = '74bb7882e0f40b7984e66ed12985cf497c257b1c10f22c91efaea36fba55d407';
+    $actual_runner_sha256 = is_string($runner_source) ? hash('sha256', $runner_source) : '';
     if (!is_string($runner_source)
         || $runner_source === ''
-        || !hash_equals($expected_runner_blob, $actual_runner_blob)
+        || !hash_equals($expected_runner_sha256, $actual_runner_sha256)
     ) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_not_reviewed']);
     }
@@ -940,6 +938,7 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): voi
             @rmdir($tmp_dir);
         }
     };
+    register_shutdown_function($cleanup);
 
     $written = fwrite($runner_handle, $runner_source);
     if ($written !== strlen($runner_source) || !fflush($runner_handle)) {
@@ -963,10 +962,8 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): voi
     $runner_handle = null;
 
     $installed = file_get_contents($runner_tmp);
-    $installed_blob = is_string($installed)
-        ? sha1('blob ' . strlen($installed) . "\0" . $installed)
-        : '';
-    if (!hash_equals($expected_runner_blob, $installed_blob)) {
+    $installed_sha256 = is_string($installed) ? hash('sha256', $installed) : '';
+    if (!hash_equals($expected_runner_sha256, $installed_sha256)) {
         $cleanup();
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_integrity_failed']);
     }
