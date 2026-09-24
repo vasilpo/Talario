@@ -1,4 +1,4 @@
-name: B1 Direct Beget Probe
+name: B1 PROD Analytics Hash Sync
 
 on:
   push:
@@ -9,12 +9,16 @@ permissions:
   contents: read
 
 jobs:
-  probe:
+  sync:
     if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    env:
+      EXPECTED_TALARIO_SHA: 2dea53c94eecc33d84980bab1b808a35258e03f7
+      ANALYTICS_TOKEN_SHA256: d0c89474d66be2bfe41688922b90a579bf2962324f246ef644331889668be06f
+
     steps:
-      - name: Configure Beget key
+      - name: Configure protected Beget channel
         shell: bash
         env:
           BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
@@ -31,13 +35,42 @@ jobs:
           printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/b1_beget_known_hosts
           chmod 600 ~/.ssh/b1_beget_known_hosts
 
-      - name: Probe protected Beget channel
+      - name: Exact-SHA PROD deploy and analytics hash sync
         shell: bash
         env:
           BEGET_USER: ${{ secrets.BEGET_USER }}
         run: |
           set -euo pipefail
-          ssh -o BatchMode=yes -o PasswordAuthentication=no             -o StrictHostKeyChecking=yes             -o UserKnownHostsFile="$HOME/.ssh/b1_beget_known_hosts"             -i "$HOME/.ssh/b1_beget_key"             "$BEGET_USER@salvage.beget.com" 'printf "B1_BEGET_CHANNEL=PASS\n"'
+          ssh -o BatchMode=yes -o PasswordAuthentication=no             -o StrictHostKeyChecking=yes             -o UserKnownHostsFile="$HOME/.ssh/b1_beget_known_hosts"             -i "$HOME/.ssh/b1_beget_key"             "$BEGET_USER@salvage.beget.com"             "EXPECTED_TALARIO_SHA='$EXPECTED_TALARIO_SHA' ANALYTICS_TOKEN_SHA256='$ANALYTICS_TOKEN_SHA256' bash -s" <<'REMOTE'
+          set -euo pipefail
+          ROOT="/home/t/tyman5tb/talario.ru/public_html"
+          cd "$ROOT"
+
+          git fetch --quiet https://github.com/vasilpo/Talario.git prod
+          target="$(git rev-parse FETCH_HEAD)"
+          [ "$target" = "$EXPECTED_TALARIO_SHA" ] || {
+            echo "ERROR: unexpected prod target"
+            exit 64
+          }
+
+          tmp="$HOME/.talario-prod-deploy-b1-hash-sync.sh"
+          git show "$target:ops/deploy-prod.sh" > "$tmp"
+          chmod 700 "$tmp"
+          trap 'rm -f "$tmp"' EXIT
+          TALARIO_CONFIRM_PROD_DEPLOY="$target" bash "$tmp" deploy
+          [ "$(git rev-parse HEAD)" = "$EXPECTED_TALARIO_SHA" ]
+          echo "TALARIO_PROD_EXACT_SHA=PASS"
+
+          [[ "$ANALYTICS_TOKEN_SHA256" =~ ^[a-f0-9]{64}$ ]]
+          bash ops/beget/sync-analytics-prod-hash.sh "$ANALYTICS_TOKEN_SHA256"
+
+          http="$(curl -L -sS -o /tmp/b1-home.html -w '%{http_code}' --max-time 20 https://talario.ru/)"
+          case "$http" in 200|301|302) ;; *) exit 70 ;; esac
+          grep -qi 'Talario' /tmp/b1-home.html
+          rm -f /tmp/b1-home.html
+          echo "STOREFRONT_HEALTH=PASS"
+          echo "B1_PROD_HASH_SYNC=PASS"
+          REMOTE
 
       - name: Cleanup
         if: always()
