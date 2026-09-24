@@ -1042,6 +1042,37 @@ if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
     define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');
 }
 
+$GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC'] = true;
+$GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] = 'writer_entry';
+$GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'] = false;
+
+register_shutdown_function(static function (): void {
+    if (empty($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'])) {
+        return;
+    }
+
+    $allowed_stages = [
+        'base_product_write',
+        'base_variation_features',
+        'variation_group_create',
+        'variation_group_map',
+        'variation_product_write',
+        'variation_capacity_write',
+        'failure_cleanup',
+        'readback',
+        'completion_log',
+    ];
+    $stage = (string) ($GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] ?? '');
+    if (!in_array($stage, $allowed_stages, true)) {
+        $stage = 'unknown';
+    }
+
+    fwrite(STDOUT, json_encode([
+        'error' => 'pilot_cli_direct_exit_' . $stage,
+        'http_status' => 500,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
+});
+
 try {
     require $argv[1];
 } catch (Throwable $exception) {
