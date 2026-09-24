@@ -238,7 +238,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'TMPDIR' => $tmp_dir", $this->controller);
         self::assertStringContainsString("'pilot_cli_timeout'", $this->controller);
         self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
-        self::assertStringContainsString("'pilot_cli_invalid_response_' . $runner_rc_code", $this->controller);
+        self::assertStringContainsString("$invalid_response_error . '_' . $runner_rc_code", $this->controller);
         self::assertStringContainsString("255 => 'rc255'", $this->controller);
         self::assertStringContainsString("?? 'rc_other'", $this->controller);
         self::assertStringContainsString("'runner_failure'", $this->controller);
