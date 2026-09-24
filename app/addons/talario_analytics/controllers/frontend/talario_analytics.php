@@ -728,16 +728,35 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_runtime_unavailable']);
     }
 
-    $tmp_dir = DIR_ROOT . '/var/cache';
-    if (!is_dir($tmp_dir) || is_link($tmp_dir) || !is_writable($tmp_dir)) {
+    $tmp_base = rtrim((string) sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+    $tmp_dir = $tmp_base . DIRECTORY_SEPARATOR
+        . 'talario-part-sync-' . substr(hash('sha256', DIR_ROOT), 0, 16);
+    if (!is_dir($tmp_dir) && !@mkdir($tmp_dir, 0700, true) && !is_dir($tmp_dir)) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_unavailable']);
     }
+    @chmod($tmp_dir, 0700);
 
-    $allowed_file = tempnam($tmp_dir, 'ps-allow-');
-    $signature_file = tempnam($tmp_dir, 'ps-sig-');
-    if (!is_string($allowed_file) || !is_string($signature_file)) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_failed']);
+    $tmp_stat = @stat($tmp_dir);
+    $root_stat = @stat(DIR_ROOT);
+    if (!is_array($tmp_stat)
+        || !is_array($root_stat)
+        || is_link($tmp_dir)
+        || realpath($tmp_dir) !== $tmp_dir
+        || (int) $tmp_stat['uid'] !== (int) $root_stat['uid']
+        || (($tmp_stat['mode'] & 0777) !== 0700)
+        || !is_writable($tmp_dir)
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_untrusted']);
     }
+
+    try {
+        $nonce = bin2hex(random_bytes(16));
+    } catch (Throwable $exception) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_random_failed']);
+    }
+
+    $allowed_file = $tmp_dir . DIRECTORY_SEPARATOR . 'allow-' . $nonce;
+    $signature_file = $tmp_dir . DIRECTORY_SEPARATOR . 'sig-' . $nonce;
 
     $cleanup = static function () use ($allowed_file, $signature_file): void {
         if (is_file($allowed_file)) {
@@ -749,17 +768,46 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     };
     register_shutdown_function($cleanup);
 
+    $allowed_handle = @fopen($allowed_file, 'xb');
+    $signature_handle = @fopen($signature_file, 'xb');
+    if (!is_resource($allowed_handle) || !is_resource($signature_handle)) {
+        if (is_resource($allowed_handle)) {
+            fclose($allowed_handle);
+        }
+        if (is_resource($signature_handle)) {
+            fclose($signature_handle);
+        }
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_failed']);
+    }
+
+    @chmod($allowed_file, 0600);
+    @chmod($signature_file, 0600);
+
     $allowed_signer = 'github-actions-talario ssh-ed25519 '
         . 'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK'
         . PHP_EOL;
-    if (file_put_contents($allowed_file, $allowed_signer, LOCK_EX) !== strlen($allowed_signer)
-        || file_put_contents($signature_file, $signature, LOCK_EX) !== strlen($signature)
+    $allowed_written = fwrite($allowed_handle, $allowed_signer);
+    $signature_written = fwrite($signature_handle, $signature);
+    fflush($allowed_handle);
+    fflush($signature_handle);
+    fclose($allowed_handle);
+    fclose($signature_handle);
+
+    $allowed_stat = @stat($allowed_file);
+    $signature_stat = @stat($signature_file);
+    if ($allowed_written !== strlen($allowed_signer)
+        || $signature_written !== strlen($signature)
+        || !is_array($allowed_stat)
+        || !is_array($signature_stat)
+        || (int) $allowed_stat['uid'] !== (int) $tmp_stat['uid']
+        || (int) $signature_stat['uid'] !== (int) $tmp_stat['uid']
+        || (($allowed_stat['mode'] & 0077) !== 0)
+        || (($signature_stat['mode'] & 0077) !== 0)
     ) {
         $cleanup();
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_write_failed']);
     }
-    @chmod($allowed_file, 0600);
-    @chmod($signature_file, 0600);
 
     $message = "talario-part-sync-penaty\n"
         . $purpose . "\n"
