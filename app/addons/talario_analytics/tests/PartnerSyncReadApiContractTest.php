@@ -210,6 +210,22 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('New Partner Sync cards are hidden by default', $this->write_capability);
     }
 
+    public function testSignedPenatyShutdownDiagnosticIsBoundedAndDevScoped(): void
+    {
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_PENATY_SHUTDOWN_ARMED', $this->controller);
+        self::assertStringContainsString("'pilot_write_aborted'", $this->controller);
+        self::assertStringContainsString("'fatal_type'", $this->controller);
+        self::assertStringContainsString("'base_product_write'", $this->controller);
+        self::assertStringContainsString("'variation_apply'", $this->controller);
+        self::assertStringContainsString("'failure_cleanup'", $this->controller);
+        self::assertStringContainsString("'readback'", $this->controller);
+        self::assertStringContainsString("'completion_log'", $this->controller);
+        self::assertStringNotContainsString("['message']", $this->controller);
+        self::assertStringContainsString("TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'base_product_write'", $this->write_capability);
+        self::assertStringContainsString("TALARIO_PARTNER_SYNC_PENATY_WRITE_STAGE'] = 'variation_apply'", $this->write_capability);
+    }
+
+
     public function testPartnerSyncWriteFailureDiagnosticIsBoundedAndLoggingCannotMaskIt(): void
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_safe_write_error_detail', $this->write_capability);
