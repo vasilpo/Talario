@@ -1108,9 +1108,23 @@ PHP;
 
 function fn_talario_analytics_partner_sync_penaty_apply(): void
 {
-    $raw = (string) file_get_contents('php://input');
-    if ($raw === '' || strlen($raw) > 20971520) {
+    $max_payload_bytes = 20971520;
+    $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+    if ($content_length > $max_payload_bytes) {
+        fn_talario_analytics_json_response(413, ['error' => 'payload_too_large']);
+    }
+
+    $input = @fopen('php://input', 'rb');
+    if (!is_resource($input)) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
+    }
+    $raw = stream_get_contents($input, $max_payload_bytes + 1);
+    fclose($input);
+    if (!is_string($raw) || $raw === '') {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
+    }
+    if (strlen($raw) > $max_payload_bytes) {
+        fn_talario_analytics_json_response(413, ['error' => 'payload_too_large']);
     }
 
     $payload = json_decode($raw, true);
