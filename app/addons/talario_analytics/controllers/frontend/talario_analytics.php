@@ -623,6 +623,70 @@ function fn_talario_analytics_catalog_response(): void
     ]);
 }
 
+function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
+{
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $enabled = $is_development
+        && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+    if (!$enabled) {
+        fn_talario_analytics_json_response(404, ['error' => 'not_found']);
+    }
+
+    $account_home = dirname(DIR_ROOT, 3);
+    $source_path = DIR_ROOT . '/ops/beget/talario-dev-github-dispatcher.sh';
+    $target_path = $account_home . '/.local/bin/talario-dev-github-dispatcher';
+    $authorized_keys_path = $account_home . '/.ssh/authorized_keys';
+
+    $source = is_file($source_path) && !is_link($source_path)
+        ? file_get_contents($source_path)
+        : false;
+    $target = is_file($target_path) && !is_link($target_path)
+        ? file_get_contents($target_path)
+        : false;
+
+    $binding_expected = false;
+    $binding_v2_present = false;
+    if (is_readable($authorized_keys_path) && !is_link($authorized_keys_path)) {
+        $authorized_keys = file($authorized_keys_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (is_array($authorized_keys)) {
+            $expected_command = 'command="' . $target_path . '"';
+            foreach ($authorized_keys as $line) {
+                if (!is_string($line) || strlen($line) > 16384) {
+                    continue;
+                }
+                if (strpos($line, 'github-actions-talario-dev-v2') !== false) {
+                    $binding_v2_present = true;
+                    if (strpos($line, $expected_command) !== false) {
+                        $binding_expected = true;
+                    }
+                }
+            }
+        }
+    }
+
+    $target_mode = is_file($target_path) ? (fileperms($target_path) & 0777) : null;
+    $source_ok = is_string($source) && $source !== '';
+    $target_ok = is_string($target) && $target !== '';
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'partner-sync.dispatcher-status.v1',
+        'source_ok' => $source_ok,
+        'target_ok' => $target_ok,
+        'target_matches_source' => $source_ok && $target_ok
+            ? hash_equals(hash('sha256', $source), hash('sha256', $target))
+            : false,
+        'target_has_dry_run' => $target_ok
+            && strpos($target, '"talario-partner-sync-dry-run"') !== false,
+        'target_has_enable_penaty' => $target_ok
+            && strpos($target, '"talario-partner-sync-enable-penaty-pilot"') !== false,
+        'target_mode_0700' => $target_mode === 0700,
+        'authorized_keys_readable' => is_readable($authorized_keys_path) && !is_link($authorized_keys_path),
+        'authorized_v2_present' => $binding_v2_present,
+        'authorized_v2_expected_command' => $binding_expected,
+    ]);
+}
+
 function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
@@ -703,14 +767,14 @@ if ($mode === 'catalog_variant_bootstrap') {
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -719,7 +783,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if ($mode === 'catalog_variant_bootstrap') {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -744,7 +808,7 @@ if ($mode === 'crm') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -791,7 +855,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap'], true)) {
+    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
@@ -813,6 +877,10 @@ if (strlen($provided_token) < 32 || !hash_equals($stored_token_hash, $provided_c
 
 if ($mode === 'catalog_variant_bootstrap') {
     fn_talario_analytics_partner_sync_dev_age_variant_bootstrap();
+}
+
+if ($mode === 'dispatcher_status') {
+    fn_talario_analytics_partner_sync_dispatcher_status_response();
 }
 
 if ($mode === 'catalog') {
