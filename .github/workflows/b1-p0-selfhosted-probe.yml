@@ -1,0 +1,75 @@
+name: B1 P0 Self-hosted Probe
+# rerun 2026-09-23
+
+on:
+  push:
+    branches:
+      - b1/p0-selfhosted-probe
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  probe:
+    if: github.actor == github.repository_owner && contains(github.event.head_commit.message, '[B1-P0-RUNNER-PROBE]')
+    runs-on: [self-hosted, talario-assistant-vps]
+    timeout-minutes: 10
+
+    steps:
+      - name: Probe runner, runtime and Beget credential
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          runner=YES
+          env_read=NO
+          env_write=NO
+          docker_ok=NO
+          beget=NO
+
+          [ -r /opt/talario-assistant/.env ] && env_read=YES || true
+          [ -w /opt/talario-assistant/.env ] && env_write=YES || true
+          docker ps >/dev/null 2>&1 && docker_ok=YES || true
+
+          mkdir -p "$RUNNER_TEMP/b1-probe-ssh"
+          chmod 700 "$RUNNER_TEMP/b1-probe-ssh"
+          key="$RUNNER_TEMP/b1-probe-ssh/id_ed25519"
+          known="$RUNNER_TEMP/b1-probe-ssh/known_hosts"
+          if [ -n "${BEGET_SSH_KEY:-}" ] && [ -n "${BEGET_USER:-}" ]; then
+            printf '%s' "$BEGET_SSH_KEY" | base64 --decode > "$key"
+            chmod 600 "$key"
+            printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > "$known"
+            chmod 600 "$known"
+            probe="$(ssh -o BatchMode=yes -o PasswordAuthentication=no -o ConnectTimeout=8 -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$known" -i "$key" "$BEGET_USER@salvage.beget.com" 'printf BEGET_OK' 2>/dev/null || true)"
+            [ "$probe" = "BEGET_OK" ] && beget=YES || true
+          fi
+
+          description="runner=$runner beget=$beget envR=$env_read envW=$env_write docker=$docker_ok"
+          python3 - "$description" "$SHA" <<'PY'
+          import json, os, sys, urllib.request
+          description, sha = sys.argv[1], sys.argv[2]
+          req = urllib.request.Request(
+              f"https://api.github.com/repos/vasilpo/Talario/statuses/{sha}",
+              data=json.dumps({
+                  "state": "success",
+                  "context": "b1-p0-selfhosted-probe",
+                  "description": description[:140],
+              }).encode(),
+              method="POST",
+              headers={
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "Content-Type": "application/json",
+              },
+          )
+          with urllib.request.urlopen(req, timeout=30):
+              pass
+          PY
+
+          rm -rf "$RUNNER_TEMP/b1-probe-ssh"
