@@ -854,38 +854,126 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
 
 function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): void
 {
-    $php = '/usr/local/bin/php8.2';
-    $timeout = '/usr/bin/timeout';
-    $runner = DIR_ROOT . '/ops/partner-sync-apply.php';
-
-    $php_stat = @stat($php);
-    $timeout_stat = @stat($timeout);
-    $runner_real = realpath($runner);
-    $runner_stat = $runner_real !== false ? @stat($runner_real) : false;
-
-    foreach ([[$php, $php_stat], [$timeout, $timeout_stat]] as [$binary, $stat]) {
-        if (!is_array($stat)
-            || !is_executable($binary)
-            || (int) $stat['uid'] !== 0
-            || (($stat['mode'] & 0022) !== 0)
-        ) {
-            fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runtime_unavailable']);
+    $resolve_trusted_binary = static function (array $candidates): ?string {
+        foreach ($candidates as $candidate) {
+            $real = realpath($candidate);
+            $stat = $real !== false ? @stat($real) : false;
+            if ($real !== false
+                && is_array($stat)
+                && is_file($real)
+                && is_executable($real)
+                && (int) $stat['uid'] === 0
+                && (($stat['mode'] & 0022) === 0)
+            ) {
+                return $real;
+            }
         }
+        return null;
+    };
+
+    $php = $resolve_trusted_binary(['/usr/local/bin/php8.2', '/usr/bin/php8.2']);
+    $timeout = $resolve_trusted_binary(['/usr/bin/timeout', '/bin/timeout']);
+    if ($php === null || $timeout === null) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runtime_unavailable']);
     }
 
-    if ($runner_real === false
-        || $runner_real !== $runner
-        || !is_array($runner_stat)
-        || is_link($runner)
-        || !is_file($runner)
-        || (($runner_stat['mode'] & 0022) !== 0)
+    $runner_source_path = DIR_ROOT . '/ops/partner-sync-apply.php';
+    $runner_source_real = realpath($runner_source_path);
+    if ($runner_source_real === false
+        || $runner_source_real !== $runner_source_path
+        || is_link($runner_source_path)
+        || !is_file($runner_source_path)
     ) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_untrusted']);
     }
 
+    $runner_source = file_get_contents($runner_source_path);
+    $expected_runner_blob = 'ecda830d3384a141c32ed00e97a17f28da6b4f87';
+    $actual_runner_blob = is_string($runner_source)
+        ? sha1('blob ' . strlen($runner_source) . "\0" . $runner_source)
+        : '';
+    if (!is_string($runner_source)
+        || $runner_source === ''
+        || !hash_equals($expected_runner_blob, $actual_runner_blob)
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_not_reviewed']);
+    }
+
+    try {
+        $nonce = bin2hex(random_bytes(16));
+    } catch (Throwable $exception) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_random_failed']);
+    }
+
+    $tmp_base = rtrim((string) sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+    $tmp_dir = $tmp_base . DIRECTORY_SEPARATOR . 'talario-part-sync-cli-' . $nonce;
+    if (!@mkdir($tmp_dir, 0700, false)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_unavailable']);
+    }
+    @chmod($tmp_dir, 0700);
+
+    $tmp_dir_stat = @lstat($tmp_dir);
+    if (!is_array($tmp_dir_stat)
+        || is_link($tmp_dir)
+        || realpath($tmp_dir) !== $tmp_dir
+        || (($tmp_dir_stat['mode'] & 0777) !== 0700)
+    ) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_untrusted']);
+    }
+
+    $runner_tmp = $tmp_dir . DIRECTORY_SEPARATOR . 'runner.php';
+    $runner_handle = @fopen($runner_tmp, 'xb');
+    if (!is_resource($runner_handle)) {
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_create_failed']);
+    }
+
+    $cleanup = static function () use (&$runner_handle, $runner_tmp, $tmp_dir): void {
+        if (is_resource($runner_handle)) {
+            @fclose($runner_handle);
+        }
+        if (is_file($runner_tmp)) {
+            @unlink($runner_tmp);
+        }
+        if (is_dir($tmp_dir) && !is_link($tmp_dir)) {
+            @rmdir($tmp_dir);
+        }
+    };
+
+    $written = fwrite($runner_handle, $runner_source);
+    if ($written !== strlen($runner_source) || !fflush($runner_handle)) {
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_write_failed']);
+    }
+    if (function_exists('fsync')) {
+        @fsync($runner_handle);
+    }
+    @chmod($runner_tmp, 0600);
+
+    $runner_stat = @fstat($runner_handle);
+    if (!is_array($runner_stat)
+        || (($runner_stat['mode'] & 0170000) !== 0100000)
+        || (($runner_stat['mode'] & 0777) !== 0600)
+    ) {
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_verify_failed']);
+    }
+    fclose($runner_handle);
+    $runner_handle = null;
+
+    $installed = file_get_contents($runner_tmp);
+    $installed_blob = is_string($installed)
+        ? sha1('blob ' . strlen($installed) . "\0" . $installed)
+        : '';
+    if (!hash_equals($expected_runner_blob, $installed_blob)) {
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_integrity_failed']);
+    }
+
     $bootstrap = "define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);"
         . "define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');"
-        . 'require ' . var_export($runner, true) . ';';
+        . 'require ' . var_export($runner_tmp, true) . ';';
 
     $process = proc_open(
         [
@@ -913,6 +1001,7 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): voi
     );
 
     if (!is_resource($process)) {
+        $cleanup();
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_start_failed']);
     }
 
@@ -924,6 +1013,7 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): voi
     fclose($pipes[1]);
     fclose($pipes[2]);
     $rc = proc_close($process);
+    $cleanup();
 
     $decoded = is_string($stdout) ? json_decode(trim($stdout), true) : null;
     if (!is_array($decoded)) {
