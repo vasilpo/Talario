@@ -1106,9 +1106,29 @@ PHP;
 
     $payload = json_decode(trim($stdout), true);
     if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
+        $runner_failure = 'unknown';
+        if (is_string($stderr) && $stderr !== '') {
+            $failure_patterns = [
+                'permission_denied' => '/Permission denied/i',
+                'required_file_failed' => '/Failed opening required|failed to open stream/i',
+                'undefined_function' => '/Call to undefined function/i',
+                'undefined_class' => '/Class [^\\r\\n]+ not found/i',
+                'undefined_constant' => '/Undefined constant/i',
+                'parse_error' => '/Parse error|syntax error/i',
+                'memory_exhausted' => '/Allowed memory size .* exhausted/i',
+                'fatal_error' => '/Fatal error|Uncaught (?:Error|Exception)/i',
+            ];
+            foreach ($failure_patterns as $failure_code => $pattern) {
+                if (preg_match($pattern, $stderr)) {
+                    $runner_failure = $failure_code;
+                    break;
+                }
+            }
+        }
         fn_talario_analytics_json_response(500, [
             'error' => 'pilot_cli_invalid_response',
             'runner_rc' => (int) $rc,
+            'runner_failure' => $runner_failure,
         ]);
     }
 
