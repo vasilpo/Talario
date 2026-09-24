@@ -245,6 +245,12 @@
         }
     }
 
+    $(document).on('click', '[data-talario-article-marketplace]', function () {
+        emit('talario_article_marketplace_click', {
+            path: pagePath()
+        });
+    });
+
     $(document).on('submit', 'form[name="search_form"]', function () {
         emit('talario_search_submit', {
             path: pagePath()
