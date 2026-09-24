@@ -1136,8 +1136,18 @@ PHP;
 
     $payload = json_decode(trim($stdout), true);
     if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
+        $invalid_response_error = 'pilot_cli_invalid_response';
+        $runner_rc_code = [
+            0 => 'rc0',
+            1 => 'rc1',
+            2 => 'rc2',
+            3 => 'rc3',
+            4 => 'rc4',
+            70 => 'rc70',
+            255 => 'rc255',
+        ][(int) $rc] ?? 'rc_other';
         fn_talario_analytics_json_response(500, [
-            'error' => 'pilot_cli_invalid_response',
+            'error' => $invalid_response_error . '_' . $runner_rc_code,
             'runner_rc' => (int) $rc,
         ]);
     }
