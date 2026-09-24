@@ -148,10 +148,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("(int) (\$product['company_id'] ?? 0) !== 39", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39')", $this->controller);
-        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->controller);
-        self::assertStringContainsString("require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php'", $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_run_penaty_cli($raw)', $this->controller);
+        self::assertStringContainsString("'/ops/partner-sync-apply.php'", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT", $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'", $this->write_capability);
-        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'", $this->write_capability);
         self::assertStringContainsString("TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS", $this->write_capability);
         self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
