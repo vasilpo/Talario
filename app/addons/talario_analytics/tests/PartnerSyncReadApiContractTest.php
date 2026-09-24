@@ -146,7 +146,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'/usr/bin/bash'", $this->controller);
         self::assertStringContainsString("'/ops/beget/install-reviewed-dispatcher.sh'", $this->controller);
         self::assertStringContainsString("'b1641564b30833fcd211f394b227bd9115c84413'", $this->controller);
-        self::assertStringContainsString("sha1('blob ' . strlen($installer_source)", $this->controller);
+        self::assertStringContainsString('sha1(\'blob \' . strlen($installer_source)', $this->controller);
         self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
         self::assertStringContainsString("'DISPATCHER_INSTALL=PASS'", $this->controller);
         self::assertStringNotContainsString('shell_exec(', $this->controller);
