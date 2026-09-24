@@ -259,7 +259,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'payload_too_large'", $this->controller);
         self::assertStringNotContainsString("'HOME' => (string) getenv('HOME')", $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC', $this->controller);
-        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_STAGE_FILE' => $tmp_dir . DIRECTORY_SEPARATOR . 'stage'", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_STAGE_FILE' => \$tmp_dir . DIRECTORY_SEPARATOR . 'stage'", $this->controller);
         self::assertStringContainsString('$runner_stage = null;', $this->controller);
         self::assertStringContainsString('$invalid_response_code .= \'_\' . $runner_stage;', $this->controller);
         self::assertStringNotContainsString('register_shutdown_function(static function', $this->controller);
