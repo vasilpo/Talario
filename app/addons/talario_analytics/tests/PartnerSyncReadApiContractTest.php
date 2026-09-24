@@ -237,6 +237,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'pilot_cli_timeout'", $this->controller);
         self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
         self::assertStringContainsString("'runner_failure'", $this->controller);
+        self::assertStringContainsString("'pilot_cli_child_exception'", $this->controller);
+        self::assertStringContainsString("error_log('Talario Partner Sync Penaty child exception class='", $this->controller);
+        self::assertStringNotContainsString('TALARIO_CHILD_FATAL=', $this->controller);
+        self::assertStringNotContainsString("'error_log=/dev/stderr'", $this->controller);
         self::assertStringContainsString("'permission_denied'", $this->controller);
         self::assertStringContainsString("'required_file_failed'", $this->controller);
         self::assertStringContainsString("'undefined_function'", $this->controller);
