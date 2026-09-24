@@ -852,6 +852,102 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     }
 }
 
+function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw_body): void
+{
+    $php = '/usr/local/bin/php8.2';
+    $timeout = '/usr/bin/timeout';
+    $runner = DIR_ROOT . '/ops/partner-sync-apply.php';
+
+    $php_stat = @stat($php);
+    $timeout_stat = @stat($timeout);
+    $runner_real = realpath($runner);
+    $runner_stat = $runner_real !== false ? @stat($runner_real) : false;
+
+    foreach ([[$php, $php_stat], [$timeout, $timeout_stat]] as [$binary, $stat]) {
+        if (!is_array($stat)
+            || !is_executable($binary)
+            || (int) $stat['uid'] !== 0
+            || (($stat['mode'] & 0022) !== 0)
+        ) {
+            fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runtime_unavailable']);
+        }
+    }
+
+    if ($runner_real === false
+        || $runner_real !== $runner
+        || !is_array($runner_stat)
+        || is_link($runner)
+        || !is_file($runner)
+        || (($runner_stat['mode'] & 0022) !== 0)
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_runner_untrusted']);
+    }
+
+    $bootstrap = "define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);"
+        . "define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');"
+        . 'require ' . var_export($runner, true) . ';';
+
+    $process = proc_open(
+        [
+            $timeout,
+            '--signal=TERM',
+            '--kill-after=5s',
+            '60s',
+            $php,
+            '-r',
+            $bootstrap,
+        ],
+        [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ],
+        $pipes,
+        DIR_ROOT,
+        [
+            'HOME' => (string) getenv('HOME'),
+            'PATH' => '/usr/bin:/bin',
+            'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT,
+            'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $runner_stat['uid']),
+        ]
+    );
+
+    if (!is_resource($process)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_start_failed']);
+    }
+
+    fwrite($pipes[0], $raw_body);
+    fclose($pipes[0]);
+
+    $stdout = stream_get_contents($pipes[1], 1048576);
+    $stderr = stream_get_contents($pipes[2], 65536);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $rc = proc_close($process);
+
+    $decoded = is_string($stdout) ? json_decode(trim($stdout), true) : null;
+    if (!is_array($decoded)) {
+        fn_log_event('general', 'runtime', [
+            'message' => 'Talario Partner Sync signed CLI bridge returned invalid response',
+            'cli_rc' => $rc,
+            'stderr_sha256' => is_string($stderr) ? hash('sha256', $stderr) : null,
+        ]);
+        fn_talario_analytics_json_response(500, [
+            'error' => 'pilot_cli_invalid_response',
+            'cli_rc' => $rc,
+        ]);
+    }
+
+    $status = isset($decoded['http_status']) ? (int) $decoded['http_status'] : ($rc === 0 ? 200 : 500);
+    unset($decoded['http_status']);
+    if ($status < 100 || $status > 599) {
+        $status = 500;
+        $decoded = ['error' => 'pilot_cli_invalid_status'];
+    }
+
+    fn_talario_analytics_json_response($status, $decoded);
+}
+
 function fn_talario_analytics_partner_sync_enable_penaty_request_gate(): void
 {
     if (defined('TALARIO_PARTNER_SYNC_DEV_WRITE')
@@ -918,12 +1014,7 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
     }
 
     fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
-    fn_talario_analytics_partner_sync_enable_penaty_request_gate();
-
-    $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'] = $raw;
-    $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'] = true;
-    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
-    fn_talario_analytics_partner_sync_write_response();
+    fn_talario_analytics_partner_sync_run_penaty_cli($raw);
 }
 
 function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
