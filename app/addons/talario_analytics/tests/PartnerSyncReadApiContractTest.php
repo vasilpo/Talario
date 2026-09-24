@@ -155,6 +155,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39')", $this->controller);
         self::assertStringContainsString("'pilot_cli_invalid_response'", $this->controller);
+        self::assertStringContainsString("'ecda830d3384a141c32ed00e97a17f28da6b4f87'", $this->controller);
+        self::assertStringContainsString("sha1('blob ' . strlen($runner_source)", $this->controller);
+        self::assertStringContainsString("fopen($runner_tmp, 'xb')", $this->controller);
+        self::assertStringContainsString("@chmod($runner_tmp, 0600)", $this->controller);
+        self::assertStringContainsString("'talario-part-sync-cli-' . $nonce", $this->controller);
+        self::assertStringContainsString("['/usr/local/bin/php8.2', '/usr/bin/php8.2']", $this->controller);
+        self::assertStringContainsString("['/usr/bin/timeout', '/bin/timeout']", $this->controller);
         self::assertStringContainsString("proc_open(", $this->controller);
         self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->cli_runner);
         self::assertStringContainsString('register_shutdown_function($cleanup);', $this->controller);
