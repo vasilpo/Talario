@@ -259,10 +259,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'payload_too_large'", $this->controller);
         self::assertStringNotContainsString("'HOME' => (string) getenv('HOME')", $this->controller);
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC', $this->controller);
-        self::assertStringContainsString("'pilot_cli_direct_exit_' . $stage", $this->controller);
+        self::assertStringContainsString("'TALARIO_PARTNER_SYNC_STAGE_FILE' => $tmp_dir . DIRECTORY_SEPARATOR . 'stage'", $this->controller);
+        self::assertStringContainsString('$runner_stage = null;', $this->controller);
+        self::assertStringContainsString('$invalid_response_code .= \'_\' . $runner_stage;', $this->controller);
+        self::assertStringNotContainsString('register_shutdown_function(static function', $this->controller);
         self::assertStringContainsString("'base_product_write'", $this->controller);
         self::assertStringContainsString("'failure_cleanup'", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_set_cli_stage', $this->write_capability);
+        self::assertStringContainsString("getenv('TALARIO_PARTNER_SYNC_STAGE_FILE')", $this->write_capability);
+        self::assertStringContainsString('@file_put_contents($stage_file, $stage, LOCK_EX)', $this->write_capability);
+        self::assertStringContainsString('@chmod($stage_file, 0600)', $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_product_write', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', true)", $this->write_capability);
