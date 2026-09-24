@@ -969,7 +969,7 @@ if ($mode === 'crm') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'dispatcher_install'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -1016,7 +1016,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'], true)) {
+    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'dispatcher_install'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
