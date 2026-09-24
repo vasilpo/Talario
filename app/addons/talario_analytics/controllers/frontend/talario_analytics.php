@@ -1002,6 +1002,25 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_temp_integrity_failed']);
     }
 
+    $timeout_binary = '/usr/bin/timeout';
+    $timeout_lstat = @lstat($timeout_binary);
+    $timeout_stat = @stat($timeout_binary);
+    if (!is_array($timeout_lstat)
+        || !is_array($timeout_stat)
+        || is_link($timeout_binary)
+        || !is_file($timeout_binary)
+        || !is_executable($timeout_binary)
+        || (int) $timeout_stat['uid'] !== 0
+        || (($timeout_stat['mode'] & 0022) !== 0)
+        || (($timeout_stat['mode'] & 06000) !== 0)
+        || (int) $timeout_lstat['dev'] !== (int) $timeout_stat['dev']
+        || (int) $timeout_lstat['ino'] !== (int) $timeout_stat['ino']
+    ) {
+        @unlink($runner_tmp);
+        @rmdir($tmp_dir);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_timeout_runtime_unavailable']);
+    }
+
     $bootstrap = <<<'PHP'
 if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
     define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
@@ -1013,7 +1032,16 @@ require $argv[1];
 PHP;
 
     $process = proc_open(
-        [$php_real, '-d', 'display_errors=0', '-r', $bootstrap, $runner_tmp],
+        [
+            $timeout_binary,
+            '--signal=TERM',
+            '--kill-after=5s',
+            '45s',
+            $php_real,
+            '-d', 'display_errors=0',
+            '-r', $bootstrap,
+            $runner_tmp,
+        ],
         [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],
@@ -1022,7 +1050,8 @@ PHP;
         $pipes,
         DIR_ROOT,
         [
-            'HOME' => (string) getenv('HOME'),
+            'HOME' => $tmp_dir,
+            'TMPDIR' => $tmp_dir,
             'PATH' => '/usr/bin:/bin',
             'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT,
             'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $snapshot_stat['uid']),
@@ -1053,6 +1082,10 @@ PHP;
     $rc = proc_close($process);
     @unlink($runner_tmp);
     @rmdir($tmp_dir);
+
+    if (in_array((int) $rc, [124, 137], true)) {
+        fn_talario_analytics_json_response(504, ['error' => 'pilot_cli_timeout']);
+    }
 
     if (!is_string($stdout) || strlen($stdout) > 1048576) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_cli_output_invalid']);
