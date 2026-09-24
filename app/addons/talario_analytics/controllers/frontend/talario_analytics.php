@@ -921,6 +921,7 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
     fn_talario_analytics_partner_sync_enable_penaty_request_gate();
 
     $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_RAW_BODY'] = $raw;
+    $GLOBALS['TALARIO_PARTNER_SYNC_SIGNED_PENATY_WRITE'] = true;
     require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
     fn_talario_analytics_partner_sync_write_response();
 }
