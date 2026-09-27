@@ -1129,18 +1129,22 @@ PHP;
 
     $stage_file = $tmp_dir . DIRECTORY_SEPARATOR . 'stage';
     $runner_stage = null;
+    $stage_handle = @fopen($stage_file, 'rb');
+    $stage_stat = is_resource($stage_handle) ? @fstat($stage_handle) : false;
     $stage_lstat = @lstat($stage_file);
-    $stage_stat = @stat($stage_file);
-    if (is_array($stage_lstat)
+    if (is_resource($stage_handle)
+        && is_array($stage_lstat)
         && is_array($stage_stat)
-        && !is_link($stage_file)
+        && (($stage_lstat['mode'] & 0170000) === 0100000)
         && (($stage_stat['mode'] & 0170000) === 0100000)
+        && (int) $stage_lstat['dev'] === (int) $stage_stat['dev']
+        && (int) $stage_lstat['ino'] === (int) $stage_stat['ino']
         && (($stage_stat['mode'] & 0077) === 0)
         && (int) $stage_stat['uid'] === (int) $snapshot_stat['uid']
         && (int) $stage_stat['size'] > 0
         && (int) $stage_stat['size'] <= 64
     ) {
-        $candidate_stage = trim((string) @file_get_contents($stage_file));
+        $candidate_stage = trim((string) stream_get_contents($stage_handle, 65));
         $allowed_runner_stages = [
             'base_product_write',
             'base_variation_features',
@@ -1155,6 +1159,9 @@ PHP;
         if (in_array($candidate_stage, $allowed_runner_stages, true)) {
             $runner_stage = $candidate_stage;
         }
+    }
+    if (is_resource($stage_handle)) {
+        fclose($stage_handle);
     }
     @unlink($stage_file);
     @unlink($runner_tmp);
