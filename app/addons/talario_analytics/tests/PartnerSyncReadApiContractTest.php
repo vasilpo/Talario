@@ -295,7 +295,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'variation_group_create_failed'", $this->write_capability);
         self::assertStringContainsString("'variation_product_mapping_failed'", $this->write_capability);
         self::assertStringContainsString("'variation_product_update_failed'", $this->write_capability);
-        self::assertStringContainsString("'image_upload_dir_unsafe'", $this->write_capability);
+        self::assertStringContainsString("'image_update_failed'", $this->write_capability);
         self::assertStringContainsString("'image_temp_file_unsafe'", $this->write_capability);
         self::assertStringContainsString('catch (Throwable $log_exception)', $this->write_capability);
         self::assertStringContainsString('$error_response[\'detail\'] = $safe_error_detail', $this->write_capability);
@@ -308,22 +308,44 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('content_base64', $this->write_capability);
         self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
         self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
-        self::assertStringContainsString('fn_get_files_dir_path()', $this->write_capability);
-        self::assertStringContainsString('.talario_partner_sync_upload', $this->write_capability);
+
+        self::assertStringContainsString("fn_get_cache_path(false)", $this->write_capability);
         self::assertStringContainsString('random_bytes(16)', $this->write_capability);
+        self::assertStringContainsString("mkdir(\$temp_dir, 0700, false)", $this->write_capability);
+        self::assertStringContainsString('if (!chmod($temp_dir, 0700))', $this->write_capability);
         self::assertStringContainsString("fopen(\$tmp, 'x+b')", $this->write_capability);
-        self::assertStringContainsString('chmod($tmp, 0600);', $this->write_capability);
-        self::assertStringContainsString('fstat($handle)', $this->write_capability);
+        self::assertStringContainsString('if (!chmod($tmp, 0600))', $this->write_capability);
         self::assertStringContainsString('flock($handle, LOCK_EX)', $this->write_capability);
-        self::assertStringContainsString("function_exists('posix_geteuid')", $this->write_capability);
-        self::assertStringContainsString("(int) \$upload_dir_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringContainsString('fstat($handle)', $this->write_capability);
+        self::assertStringContainsString("(int) \$temp_dir_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringContainsString("(int) \$temp_dir_stat_after['ino'] !== \$verified_dir_ino", $this->write_capability);
+        self::assertStringContainsString("(int) \$file_lstat['ino'] !== (int) \$file_stat['ino']", $this->write_capability);
+        self::assertStringContainsString("((int) \$file_stat['mode'] & 0777) !== 0600", $this->write_capability);
         self::assertStringContainsString("(int) \$file_stat['uid'] !== \$expected_uid", $this->write_capability);
-        self::assertStringContainsString("(int) \$upload_dir_stat_after['ino'] !== \$verified_dir_ino", $this->write_capability);
+        self::assertStringNotContainsString('@chmod($tmp, 0600)', $this->write_capability);
+
+        self::assertStringContainsString('fn_update_image_pairs(', $this->write_capability);
+        self::assertStringContainsString('update_alt_desc: true', $this->write_capability);
+        self::assertStringContainsString("object_type: 'product'", $this->write_capability);
+        self::assertStringContainsString("'is_new' => \$index === 0 ? 'Y' : 'N'", $this->write_capability);
+        self::assertStringContainsString("'image_update_failed'", $this->write_capability);
+        self::assertStringContainsString('SELECT pair_id, object_id, object_type, type, detailed_id', $this->write_capability);
+        self::assertStringContainsString('$main_count !== 1', $this->write_capability);
+        self::assertStringContainsString('$additional_count !== $expected_count - 1', $this->write_capability);
+        self::assertStringContainsString('array_diff($current_pair_ids, $old_pair_ids)', $this->write_capability);
+        self::assertStringContainsString('fn_delete_image_pair((int) $partial_pair_id)', $this->write_capability);
+
         self::assertStringNotContainsString('runtime.allow_upload_external_paths', $this->write_capability);
-        self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
+        self::assertStringNotContainsString('skip_area_checking', $this->write_capability);
+        self::assertStringNotContainsString("'server'", $this->write_capability);
+
+        $images_core = (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.images.php');
+        self::assertStringContainsString(
+            'function fn_update_image_pairs($icons, $detailed, $pairs_data, $object_id = 0, $object_type = \'product_lists\', $object_ids = array(), $update_alt_desc = true, $lang_code = CART_LANGUAGE, $from_exist_pairs = false)',
+            $images_core
+        );
         self::assertStringContainsString("'images' => [", $this->write_capability);
     }
-
 
     public function testDevDispatcherHasFixedPartnerSyncCommands(): void
     {
