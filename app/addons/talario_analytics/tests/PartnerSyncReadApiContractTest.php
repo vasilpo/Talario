@@ -458,6 +458,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'error' => 'invalid_variation_schedule_item'", $this->write_capability);
         self::assertStringContainsString("'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'", $this->write_capability);
         self::assertStringContainsString("\$duration > 1440", $this->write_capability);
+        self::assertStringContainsString("'duration' => \$item['duration']", $this->write_capability);
     }
 
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
