@@ -833,6 +833,7 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
         throw new RuntimeException('image_temp_dir_stat_failed');
     }
     if (is_link($temp_dir)) {
+        unlink($temp_dir);
         throw new RuntimeException('image_temp_dir_symlink');
     }
     if (fn_normalize_path($temp_dir_real, '/') !== $temp_dir) {
@@ -961,7 +962,9 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
             if (file_exists($tmp) && !is_link($tmp)) {
                 unlink($tmp);
             }
-            if (is_dir($temp_dir) && !is_link($temp_dir)) {
+            if (is_link($temp_dir)) {
+                unlink($temp_dir);
+            } elseif (is_dir($temp_dir)) {
                 rmdir($temp_dir);
             }
         }
