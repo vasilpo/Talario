@@ -814,24 +814,38 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
     }
     if (!chmod($temp_dir, 0700)) {
         rmdir($temp_dir);
-        throw new RuntimeException('image_temp_file_unsafe');
+        throw new RuntimeException('image_temp_dir_chmod_failed');
     }
 
     clearstatcache(true, $temp_dir);
     $temp_dir_real = realpath($temp_dir);
     $temp_dir_stat = lstat($temp_dir);
-    if (
-        $temp_dir_real === false
-        || !is_array($temp_dir_stat)
-        || is_link($temp_dir)
-        || fn_normalize_path($temp_dir_real, '/') !== $temp_dir
-        || dirname(fn_normalize_path($temp_dir_real, '/')) !== $cache_tmp_real
-        || ((int) $temp_dir_stat['mode'] & 0777) !== 0700
-    ) {
+    if ($temp_dir_real === false) {
         if (is_dir($temp_dir) && !is_link($temp_dir)) {
             rmdir($temp_dir);
         }
-        throw new RuntimeException('image_temp_file_unsafe');
+        throw new RuntimeException('image_temp_dir_realpath_failed');
+    }
+    if (!is_array($temp_dir_stat)) {
+        if (is_dir($temp_dir) && !is_link($temp_dir)) {
+            rmdir($temp_dir);
+        }
+        throw new RuntimeException('image_temp_dir_stat_failed');
+    }
+    if (is_link($temp_dir)) {
+        throw new RuntimeException('image_temp_dir_symlink');
+    }
+    if (fn_normalize_path($temp_dir_real, '/') !== $temp_dir) {
+        rmdir($temp_dir);
+        throw new RuntimeException('image_temp_dir_path_mismatch');
+    }
+    if (dirname(fn_normalize_path($temp_dir_real, '/')) !== $cache_tmp_real) {
+        rmdir($temp_dir);
+        throw new RuntimeException('image_temp_dir_parent_mismatch');
+    }
+    if (((int) $temp_dir_stat['mode'] & 0777) !== 0700) {
+        rmdir($temp_dir);
+        throw new RuntimeException('image_temp_dir_mode_mismatch');
     }
 
     $verified_dir_dev = (int) $temp_dir_stat['dev'];
@@ -839,7 +853,7 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
     $staging_uid = (int) $temp_dir_stat['uid'];
     if ($staging_uid < 0) {
         rmdir($temp_dir);
-        throw new RuntimeException('image_temp_file_unsafe');
+        throw new RuntimeException('image_temp_dir_uid_invalid');
     }
     $tmp = $temp_dir . '/image';
     $handle = fopen($tmp, 'x+b');
@@ -851,10 +865,10 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
     $safe = false;
     try {
         if (!chmod($tmp, 0600)) {
-            throw new RuntimeException('image_temp_file_unsafe');
+            throw new RuntimeException('image_temp_file_chmod_failed');
         }
         if (!flock($handle, LOCK_EX)) {
-            throw new RuntimeException('image_temp_file_unsafe');
+            throw new RuntimeException('image_temp_file_lock_failed');
         }
 
         $length = strlen($binary);
@@ -862,12 +876,12 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
         while ($offset < $length) {
             $written = fwrite($handle, substr($binary, $offset));
             if (!is_int($written) || $written <= 0) {
-                throw new RuntimeException('image_temp_file_unsafe');
+                throw new RuntimeException('image_temp_file_write_failed');
             }
             $offset += $written;
         }
         if (!fflush($handle)) {
-            throw new RuntimeException('image_temp_file_unsafe');
+            throw new RuntimeException('image_temp_file_flush_failed');
         }
 
         $file_stat = fstat($handle);
@@ -878,29 +892,65 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
         $temp_dir_stat_after = lstat($temp_dir);
         $temp_dir_real_after = realpath($temp_dir);
 
-        if (
-            !is_array($file_stat)
-            || !is_array($file_lstat)
-            || !is_array($temp_dir_stat_after)
-            || $tmp_real === false
-            || $temp_dir_real_after === false
-            || is_link($tmp)
-            || is_link($temp_dir)
-            || fn_normalize_path($temp_dir_real_after, '/') !== $temp_dir
-            || (int) $temp_dir_stat_after['dev'] !== $verified_dir_dev
-            || (int) $temp_dir_stat_after['ino'] !== $verified_dir_ino
-            || ((int) $temp_dir_stat_after['mode'] & 0777) !== 0700
-            || (int) $temp_dir_stat_after['uid'] !== $staging_uid
-            || dirname(fn_normalize_path($tmp_real, '/')) !== $temp_dir
-            || (int) $file_lstat['dev'] !== (int) $file_stat['dev']
-            || (int) $file_lstat['ino'] !== (int) $file_stat['ino']
-            || ((int) $file_stat['mode'] & 0170000) !== 0100000
-            || ((int) $file_stat['mode'] & 0777) !== 0600
-            || (int) $file_stat['uid'] !== $staging_uid
-            || (int) $file_lstat['uid'] !== $staging_uid
-            || (int) $file_stat['size'] !== $length
-        ) {
-            throw new RuntimeException('image_temp_file_unsafe');
+        if (!is_array($file_stat)) {
+            throw new RuntimeException('image_temp_file_fstat_failed');
+        }
+        if (!is_array($file_lstat)) {
+            throw new RuntimeException('image_temp_file_lstat_failed');
+        }
+        if (!is_array($temp_dir_stat_after)) {
+            throw new RuntimeException('image_temp_dir_restat_failed');
+        }
+        if ($tmp_real === false) {
+            throw new RuntimeException('image_temp_file_realpath_failed');
+        }
+        if ($temp_dir_real_after === false) {
+            throw new RuntimeException('image_temp_dir_rerealpath_failed');
+        }
+        if (is_link($tmp)) {
+            throw new RuntimeException('image_temp_file_symlink');
+        }
+        if (is_link($temp_dir)) {
+            throw new RuntimeException('image_temp_dir_symlink_after');
+        }
+        if (fn_normalize_path($temp_dir_real_after, '/') !== $temp_dir) {
+            throw new RuntimeException('image_temp_dir_path_changed');
+        }
+        if ((int) $temp_dir_stat_after['dev'] !== $verified_dir_dev) {
+            throw new RuntimeException('image_temp_dir_dev_changed');
+        }
+        if ((int) $temp_dir_stat_after['ino'] !== $verified_dir_ino) {
+            throw new RuntimeException('image_temp_dir_ino_changed');
+        }
+        if (((int) $temp_dir_stat_after['mode'] & 0777) !== 0700) {
+            throw new RuntimeException('image_temp_dir_mode_changed');
+        }
+        if ((int) $temp_dir_stat_after['uid'] !== $staging_uid) {
+            throw new RuntimeException('image_temp_dir_uid_changed');
+        }
+        if (dirname(fn_normalize_path($tmp_real, '/')) !== $temp_dir) {
+            throw new RuntimeException('image_temp_file_parent_mismatch');
+        }
+        if ((int) $file_lstat['dev'] !== (int) $file_stat['dev']) {
+            throw new RuntimeException('image_temp_file_dev_mismatch');
+        }
+        if ((int) $file_lstat['ino'] !== (int) $file_stat['ino']) {
+            throw new RuntimeException('image_temp_file_ino_mismatch');
+        }
+        if (((int) $file_stat['mode'] & 0170000) !== 0100000) {
+            throw new RuntimeException('image_temp_file_type_mismatch');
+        }
+        if (((int) $file_stat['mode'] & 0777) !== 0600) {
+            throw new RuntimeException('image_temp_file_mode_mismatch');
+        }
+        if ((int) $file_stat['uid'] !== $staging_uid) {
+            throw new RuntimeException('image_temp_file_uid_mismatch');
+        }
+        if ((int) $file_lstat['uid'] !== $staging_uid) {
+            throw new RuntimeException('image_temp_file_lstat_uid_mismatch');
+        }
+        if ((int) $file_stat['size'] !== $length) {
+            throw new RuntimeException('image_temp_file_size_mismatch');
         }
 
         $safe = true;
@@ -1239,7 +1289,38 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'failed_create_group_cleanup_failed',
         'image_update_failed',
         'image_temp_create_failed',
-        'image_temp_file_unsafe',
+        'image_temp_dir_chmod_failed',
+        'image_temp_dir_realpath_failed',
+        'image_temp_dir_stat_failed',
+        'image_temp_dir_symlink',
+        'image_temp_dir_path_mismatch',
+        'image_temp_dir_parent_mismatch',
+        'image_temp_dir_mode_mismatch',
+        'image_temp_dir_uid_invalid',
+        'image_temp_file_chmod_failed',
+        'image_temp_file_lock_failed',
+        'image_temp_file_write_failed',
+        'image_temp_file_flush_failed',
+        'image_temp_file_fstat_failed',
+        'image_temp_file_lstat_failed',
+        'image_temp_dir_restat_failed',
+        'image_temp_file_realpath_failed',
+        'image_temp_dir_rerealpath_failed',
+        'image_temp_file_symlink',
+        'image_temp_dir_symlink_after',
+        'image_temp_dir_path_changed',
+        'image_temp_dir_dev_changed',
+        'image_temp_dir_ino_changed',
+        'image_temp_dir_mode_changed',
+        'image_temp_dir_uid_changed',
+        'image_temp_file_parent_mismatch',
+        'image_temp_file_dev_mismatch',
+        'image_temp_file_ino_mismatch',
+        'image_temp_file_type_mismatch',
+        'image_temp_file_mode_mismatch',
+        'image_temp_file_uid_mismatch',
+        'image_temp_file_lstat_uid_mismatch',
+        'image_temp_file_size_mismatch',
     ];
 
     $message = $exception->getMessage();
