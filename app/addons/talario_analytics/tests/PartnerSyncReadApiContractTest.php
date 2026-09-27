@@ -405,6 +405,29 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
     }
 
+    public function testPartnerSyncVariationGroupMappingUsesNativeStructuralRepository(): void
+    {
+        $map_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_map_group_products'
+        );
+        self::assertNotFalse($map_offset);
+        $map_end = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_assert_variation_write_gate',
+            $map_offset
+        );
+        self::assertNotFalse($map_end);
+        $map_section = substr($this->write_capability, $map_offset, $map_end - $map_offset);
+
+        self::assertStringContainsString('ServiceProvider::getGroupRepository()', $map_section);
+        self::assertStringContainsString('findGroupProductsFeaturesValues', $map_section);
+        self::assertStringContainsString('$group->getProductIds()', $map_section);
+        self::assertStringNotContainsString('ServiceProvider::getProductRepository()', $map_section);
+        self::assertStringNotContainsString('->findProducts(', $map_section);
+        self::assertStringNotContainsString('->loadProductsFeatures(', $map_section);
+    }
+
     public function testPartnerSyncVariationResponseDoesNotExposeInternalIds(): void
     {
         $public_offset = strpos(
