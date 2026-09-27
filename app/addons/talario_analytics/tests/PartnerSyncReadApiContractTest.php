@@ -317,11 +317,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('if (!chmod($tmp, 0600))', $this->write_capability);
         self::assertStringContainsString('flock($handle, LOCK_EX)', $this->write_capability);
         self::assertStringContainsString('fstat($handle)', $this->write_capability);
-        self::assertStringContainsString("(int) \$temp_dir_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringContainsString("\$staging_uid = (int) \$temp_dir_stat['uid']", $this->write_capability);
         self::assertStringContainsString("(int) \$temp_dir_stat_after['ino'] !== \$verified_dir_ino", $this->write_capability);
         self::assertStringContainsString("(int) \$file_lstat['ino'] !== (int) \$file_stat['ino']", $this->write_capability);
         self::assertStringContainsString("((int) \$file_stat['mode'] & 0777) !== 0600", $this->write_capability);
-        self::assertStringContainsString("(int) \$file_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringContainsString("(int) \$temp_dir_stat_after['uid'] !== \$staging_uid", $this->write_capability);
+        self::assertStringContainsString("(int) \$file_stat['uid'] !== \$staging_uid", $this->write_capability);
+        self::assertStringContainsString("(int) \$file_lstat['uid'] !== \$staging_uid", $this->write_capability);
+        self::assertStringNotContainsString('posix_geteuid()', $this->write_capability);
         self::assertStringNotContainsString('@chmod($tmp, 0600)', $this->write_capability);
 
         self::assertStringContainsString('fn_update_image_pairs(', $this->write_capability);
