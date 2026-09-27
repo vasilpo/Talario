@@ -280,6 +280,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_lookup', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_feature_values', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_product_ids', true)", $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_booking_build', true)", $this->write_capability);
+        self::assertStringContainsString('} finally {', $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_booking_build', false)", $this->write_capability);
+        self::assertStringContainsString("'variation_booking_build'", $this->controller);
         self::assertStringNotContainsString('unlink($stage_file)', $this->write_capability);
         self::assertStringContainsString("'variation_group_lookup'", $this->controller);
         self::assertStringContainsString("'variation_group_feature_values'", $this->controller);

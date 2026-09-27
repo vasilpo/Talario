@@ -743,7 +743,12 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
         }
 
         $variation_product_id = (int) $mapped['map'][$key];
-        $booking_data = fn_talario_analytics_partner_sync_build_variation_booking($item, $base_booking_input);
+        fn_talario_analytics_partner_sync_set_cli_stage('variation_booking_build', true);
+        try {
+            $booking_data = fn_talario_analytics_partner_sync_build_variation_booking($item, $base_booking_input);
+        } finally {
+            fn_talario_analytics_partner_sync_set_cli_stage('variation_booking_build', false);
+        }
 
         // Keep the atomic scope narrow: one variation price + booking + capacity.
         db_query('START TRANSACTION');
