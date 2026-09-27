@@ -306,8 +306,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('content_base64', $this->write_capability);
         self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
         self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
-        self::assertStringContainsString('fn_create_temp_file()', $this->write_capability);
+        self::assertStringContainsString('fn_get_files_dir_path()', $this->write_capability);
+        self::assertStringContainsString("'/.talario_partner_sync_upload'", $this->write_capability);
+        self::assertStringContainsString('@mkdir($upload_dir, 0700)', $this->write_capability);
         self::assertStringContainsString('@chmod($tmp, 0600);', $this->write_capability);
+        self::assertStringContainsString("function_exists('posix_geteuid')", $this->write_capability);
+        self::assertStringContainsString("((int) \$file_stat['mode'] & 0777) !== 0600", $this->write_capability);
+        self::assertStringContainsString("(int) \$file_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringContainsString('strpos(fn_normalize_path($tmp_real, \'/\'), $upload_prefix) !== 0', $this->write_capability);
+        self::assertStringNotContainsString('runtime.allow_upload_external_paths', $this->write_capability);
         self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
         self::assertStringContainsString("'images' => [", $this->write_capability);
     }

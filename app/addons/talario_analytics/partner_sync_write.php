@@ -785,6 +785,67 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
     ];
 }
 
+function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $binary): string
+{
+    $allowed_root = realpath(fn_get_files_dir_path());
+    if ($allowed_root === false || !is_dir($allowed_root) || is_link($allowed_root)) {
+        throw new RuntimeException('image_upload_root_unavailable');
+    }
+
+    $allowed_root = rtrim(fn_normalize_path($allowed_root, '/'), '/');
+    $upload_dir = $allowed_root . '/.talario_partner_sync_upload';
+    if (!is_dir($upload_dir) && !@mkdir($upload_dir, 0700)) {
+        throw new RuntimeException('image_upload_dir_unavailable');
+    }
+
+    @chmod($upload_dir, 0700);
+    clearstatcache(true, $upload_dir);
+    $upload_dir_real = realpath($upload_dir);
+    $upload_dir_stat = @lstat($upload_dir);
+    $expected_uid = function_exists('posix_geteuid')
+        ? (int) posix_geteuid()
+        : (int) @fileowner(__FILE__);
+
+    if (
+        $upload_dir_real === false
+        || !is_array($upload_dir_stat)
+        || is_link($upload_dir)
+        || rtrim(fn_normalize_path($upload_dir_real, '/'), '/') !== $upload_dir
+        || ((int) $upload_dir_stat['mode'] & 0777) !== 0700
+        || (int) $upload_dir_stat['uid'] !== $expected_uid
+    ) {
+        throw new RuntimeException('image_upload_dir_unsafe');
+    }
+
+    $tmp = @tempnam($upload_dir, 'image_');
+    if (!is_string($tmp) || $tmp === '') {
+        throw new RuntimeException('image_temp_create_failed');
+    }
+
+    @chmod($tmp, 0600);
+    $written = @file_put_contents($tmp, $binary, LOCK_EX);
+    clearstatcache(true, $tmp);
+    $tmp_real = realpath($tmp);
+    $file_stat = @lstat($tmp);
+    $upload_prefix = $upload_dir . '/';
+
+    if (
+        $written !== strlen($binary)
+        || $tmp_real === false
+        || !is_array($file_stat)
+        || is_link($tmp)
+        || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
+        || ((int) $file_stat['mode'] & 0170000) !== 0100000
+        || ((int) $file_stat['mode'] & 0777) !== 0600
+        || (int) $file_stat['uid'] !== $expected_uid
+    ) {
+        @unlink($tmp);
+        throw new RuntimeException('image_temp_file_unsafe');
+    }
+
+    return $tmp_real;
+}
+
 function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
 {
     if (count($images) > 12) {
@@ -858,9 +919,7 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
     $_REQUEST['product_add_additional_image_data'] = [];
 
     foreach ($decoded_images as $index => $image) {
-        $tmp = fn_create_temp_file();
-        fn_put_contents($tmp, $image['binary']);
-        @chmod($tmp, 0600);
+        $tmp = fn_talario_analytics_partner_sync_write_create_image_temp_file($image['binary']);
         $temp_files[] = $tmp;
 
         if ($index === 0) {
