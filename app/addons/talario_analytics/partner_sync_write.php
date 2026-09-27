@@ -802,9 +802,6 @@ function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $
     clearstatcache(true, $upload_dir);
     $upload_dir_real = realpath($upload_dir);
     $upload_dir_stat = @lstat($upload_dir);
-    $expected_uid = function_exists('posix_geteuid')
-        ? (int) posix_geteuid()
-        : (int) @fileowner(__FILE__);
 
     if (
         $upload_dir_real === false
@@ -812,7 +809,6 @@ function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $
         || is_link($upload_dir)
         || rtrim(fn_normalize_path($upload_dir_real, '/'), '/') !== $upload_dir
         || ((int) $upload_dir_stat['mode'] & 0777) !== 0700
-        || (int) $upload_dir_stat['uid'] !== $expected_uid
     ) {
         throw new RuntimeException('image_upload_dir_unsafe');
     }
@@ -837,7 +833,7 @@ function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $
         || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
         || ((int) $file_stat['mode'] & 0170000) !== 0100000
         || ((int) $file_stat['mode'] & 0777) !== 0600
-        || (int) $file_stat['uid'] !== $expected_uid
+        || (int) $file_stat['uid'] !== (int) $upload_dir_stat['uid']
     ) {
         @unlink($tmp);
         throw new RuntimeException('image_temp_file_unsafe');
