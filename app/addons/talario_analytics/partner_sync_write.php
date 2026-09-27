@@ -785,116 +785,6 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
     ];
 }
 
-function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $binary): string
-{
-    $configured_root = rtrim(fn_normalize_path(fn_get_files_dir_path(), '/'), '/');
-    $allowed_root_real = realpath($configured_root);
-    if ($allowed_root_real === false || !is_dir($allowed_root_real)) {
-        throw new RuntimeException('image_upload_root_unavailable');
-    }
-
-    $allowed_root_real = rtrim(fn_normalize_path($allowed_root_real, '/'), '/');
-    $expected_uid = function_exists('posix_geteuid')
-        ? (int) posix_geteuid()
-        : (int) fileowner(__FILE__);
-    if ($expected_uid < 0) {
-        throw new RuntimeException('image_upload_owner_unavailable');
-    }
-
-    $upload_dir = $configured_root . '/.talario_partner_sync_upload';
-    if (!is_dir($upload_dir) && !mkdir($upload_dir, 0700)) {
-        throw new RuntimeException('image_upload_dir_unavailable');
-    }
-
-    chmod($upload_dir, 0700);
-    clearstatcache(true, $upload_dir);
-    $upload_dir_real = realpath($upload_dir);
-    $upload_dir_stat = lstat($upload_dir);
-    if (
-        $upload_dir_real === false
-        || !is_array($upload_dir_stat)
-        || is_link($upload_dir)
-        || ((int) $upload_dir_stat['mode'] & 0777) !== 0700
-        || (int) $upload_dir_stat['uid'] !== $expected_uid
-        || dirname(fn_normalize_path($upload_dir_real, '/')) !== $allowed_root_real
-    ) {
-        throw new RuntimeException('image_upload_dir_unsafe');
-    }
-
-    $verified_dir_real = fn_normalize_path($upload_dir_real, '/');
-    $verified_dir_dev = (int) $upload_dir_stat['dev'];
-    $verified_dir_ino = (int) $upload_dir_stat['ino'];
-
-    try {
-        $token = bin2hex(random_bytes(16));
-    } catch (Throwable $exception) {
-        throw new RuntimeException('image_temp_create_failed');
-    }
-
-    $tmp = $upload_dir . '/image_' . $token;
-    $handle = fopen($tmp, 'x+b');
-    if (!is_resource($handle)) {
-        throw new RuntimeException('image_temp_create_failed');
-    }
-
-    $safe = false;
-    try {
-        chmod($tmp, 0600);
-        if (!flock($handle, LOCK_EX)) {
-            throw new RuntimeException('image_temp_file_unsafe');
-        }
-
-        $length = strlen($binary);
-        $offset = 0;
-        while ($offset < $length) {
-            $written = fwrite($handle, substr($binary, $offset));
-            if (!is_int($written) || $written <= 0) {
-                throw new RuntimeException('image_temp_file_unsafe');
-            }
-            $offset += $written;
-        }
-        fflush($handle);
-
-        $file_stat = fstat($handle);
-        $tmp_real = realpath($tmp);
-        clearstatcache(true, $upload_dir);
-        $upload_dir_stat_after = lstat($upload_dir);
-        $upload_dir_real_after = realpath($upload_dir);
-        $upload_prefix = rtrim($verified_dir_real, '/') . '/';
-
-        if (
-            !is_array($file_stat)
-            || !is_array($upload_dir_stat_after)
-            || $tmp_real === false
-            || $upload_dir_real_after === false
-            || is_link($tmp)
-            || is_link($upload_dir)
-            || fn_normalize_path($upload_dir_real_after, '/') !== $verified_dir_real
-            || (int) $upload_dir_stat_after['dev'] !== $verified_dir_dev
-            || (int) $upload_dir_stat_after['ino'] !== $verified_dir_ino
-            || ((int) $upload_dir_stat_after['mode'] & 0777) !== 0700
-            || (int) $upload_dir_stat_after['uid'] !== $expected_uid
-            || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
-            || ((int) $file_stat['mode'] & 0170000) !== 0100000
-            || ((int) $file_stat['mode'] & 0777) !== 0600
-            || (int) $file_stat['uid'] !== $expected_uid
-        ) {
-            throw new RuntimeException('image_temp_file_unsafe');
-        }
-
-        $safe = true;
-        flock($handle, LOCK_UN);
-    } finally {
-        fclose($handle);
-        if (!$safe && file_exists($tmp)) {
-            unlink($tmp);
-        }
-    }
-
-    // Use only the basename from the validated canonical path, reconstructed under
-    // CS-Cart's configured files-root spelling that fn_get_server_data() allowlists.
-    return $upload_dir . '/' . basename((string) $tmp_real);
-}
 function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
 {
     if (count($images) > 12) {
@@ -903,9 +793,15 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
 
     $temp_files = [];
     $old_pair_ids = [];
-    $decoded_images = [];
+    $detailed_images = [];
+    $pairs_data = [];
     $total_bytes = 0;
     $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
+    $extensions_by_mime = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
 
     foreach ($images as $index => $image) {
         if (!is_array($image)) {
@@ -933,14 +829,36 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
             fn_talario_analytics_json_response(400, ['error' => 'images_too_large', 'max_bytes' => 16777216]);
         }
 
-        $decoded_images[] = [
-            'binary' => $binary,
-            'alt' => mb_substr(trim((string) ($image['alt'] ?? '')), 0, 255, 'UTF-8'),
-        ];
-    }
+        $tmp = fn_create_temp_file();
+        if (!is_string($tmp) || $tmp === '') {
+            throw new RuntimeException('image_temp_create_failed');
+        }
+        fn_put_contents($tmp, $binary);
+        @chmod($tmp, 0600);
+        clearstatcache(true, $tmp);
+        if (!is_file($tmp) || is_link($tmp) || filesize($tmp) !== strlen($binary)) {
+            fn_rm($tmp);
+            throw new RuntimeException('image_temp_file_unsafe');
+        }
+        $temp_files[] = $tmp;
 
-    if (!$decoded_images) {
-        return [];
+        $detailed_images[] = [
+            'name' => 'partner-sync-' . ($index + 1) . '.' . $extensions_by_mime[$mime],
+            'path' => $tmp,
+            'size' => strlen($binary),
+            'error' => 0,
+        ];
+        $pairs_data[] = [
+            'position' => $index,
+            'pair_id' => 0,
+            'type' => $index === 0 ? 'M' : 'A',
+            'object_id' => 0,
+            'image_alt' => '',
+            'detailed_alt' => mb_substr(trim((string) ($image['alt'] ?? '')), 0, 255, 'UTF-8'),
+            // Main must be a fresh pair so an existing main image is preserved until
+            // the complete replacement set has been written and verified.
+            'is_new' => $index === 0 ? 'Y' : 'N',
+        ];
     }
 
     if ($product_id > 0) {
@@ -955,50 +873,99 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
         }
     }
 
-    $_REQUEST['file_product_main_image_icon'] = [];
-    $_REQUEST['type_product_main_image_icon'] = [];
-    $_REQUEST['file_product_main_image_detailed'] = [];
-    $_REQUEST['type_product_main_image_detailed'] = [];
-    $_REQUEST['product_main_image_data'] = [];
-
-    $_REQUEST['file_product_add_additional_image_icon'] = [];
-    $_REQUEST['type_product_add_additional_image_icon'] = [];
-    $_REQUEST['file_product_add_additional_image_detailed'] = [];
-    $_REQUEST['type_product_add_additional_image_detailed'] = [];
-    $_REQUEST['product_add_additional_image_data'] = [];
-
-    foreach ($decoded_images as $index => $image) {
-        $tmp = fn_talario_analytics_partner_sync_write_create_image_temp_file($image['binary']);
-        $temp_files[] = $tmp;
-
-        if ($index === 0) {
-            $_REQUEST['file_product_main_image_detailed'][] = $tmp;
-            $_REQUEST['type_product_main_image_detailed'][] = 'server';
-            $_REQUEST['product_main_image_data'][] = [
-                'pair_id' => 0,
-                'type' => 'M',
-                'object_id' => 0,
-                'image_alt' => '',
-                'detailed_alt' => $image['alt'],
-            ];
-        } else {
-            $_REQUEST['file_product_add_additional_image_detailed'][] = $tmp;
-            $_REQUEST['type_product_add_additional_image_detailed'][] = 'server';
-            $_REQUEST['product_add_additional_image_data'][] = [
-                'position' => $index,
-                'pair_id' => 0,
-                'type' => 'A',
-                'object_id' => 0,
-                'image_alt' => '',
-                'detailed_alt' => $image['alt'],
-            ];
-        }
-    }
-
     return [
         'temp_files' => $temp_files,
         'old_pair_ids' => array_values(array_unique($old_pair_ids)),
+        'detailed_images' => $detailed_images,
+        'pairs_data' => $pairs_data,
     ];
+}
+
+function fn_talario_analytics_partner_sync_write_apply_images(
+    int $product_id,
+    array $prepared_images,
+    string $lang_code
+): array {
+    $pairs_data = isset($prepared_images['pairs_data']) && is_array($prepared_images['pairs_data'])
+        ? $prepared_images['pairs_data']
+        : [];
+    $detailed_images = isset($prepared_images['detailed_images']) && is_array($prepared_images['detailed_images'])
+        ? $prepared_images['detailed_images']
+        : [];
+    $old_pair_ids = isset($prepared_images['old_pair_ids']) && is_array($prepared_images['old_pair_ids'])
+        ? array_values(array_unique(array_map('intval', $prepared_images['old_pair_ids'])))
+        : [];
+
+    if (count($pairs_data) !== count($detailed_images)) {
+        throw new RuntimeException('image_update_failed');
+    }
+    if (!$pairs_data) {
+        return [];
+    }
+
+    // Exact CS-Cart 4.20.1 core API. Named arguments make it explicit that
+    // update_alt_desc is being enabled; no area/upload bypass flag exists here.
+    $new_pair_ids = array_values(array_filter(array_map('intval', (array) fn_update_image_pairs(
+        icons: [],
+        detailed: $detailed_images,
+        pairs_data: $pairs_data,
+        object_id: $product_id,
+        object_type: 'product',
+        object_ids: [],
+        update_alt_desc: true,
+        lang_code: $lang_code
+    ))));
+
+    $expected_count = count($pairs_data);
+    if (count($new_pair_ids) !== $expected_count) {
+        foreach ($new_pair_ids as $new_pair_id) {
+            fn_delete_image_pair($new_pair_id);
+        }
+        throw new RuntimeException('image_update_failed');
+    }
+
+    $written = db_get_array(
+        'SELECT pair_id, object_id, object_type, type, detailed_id'
+        . ' FROM ?:images_links WHERE pair_id IN (?n)',
+        $new_pair_ids
+    );
+    $main_count = 0;
+    $additional_count = 0;
+    $valid = count($written) === $expected_count;
+    foreach ($written as $row) {
+        $type = (string) ($row['type'] ?? '');
+        if ($type === 'M') {
+            $main_count++;
+        } elseif ($type === 'A') {
+            $additional_count++;
+        } else {
+            $valid = false;
+        }
+
+        if (
+            (int) ($row['object_id'] ?? 0) !== $product_id
+            || (string) ($row['object_type'] ?? '') !== 'product'
+            || (int) ($row['detailed_id'] ?? 0) <= 0
+        ) {
+            $valid = false;
+        }
+    }
+
+    if (!$valid || $main_count !== 1 || $additional_count !== $expected_count - 1) {
+        foreach ($new_pair_ids as $new_pair_id) {
+            fn_delete_image_pair($new_pair_id);
+        }
+        throw new RuntimeException('image_update_failed');
+    }
+
+    // Replacement is committed only after the complete new pair set is verified.
+    foreach ($old_pair_ids as $old_pair_id) {
+        if (!in_array($old_pair_id, $new_pair_ids, true)) {
+            fn_delete_image_pair($old_pair_id);
+        }
+    }
+
+    return $new_pair_ids;
 }
 
 function fn_talario_analytics_partner_sync_write_cleanup_images(array $temp_files): void
