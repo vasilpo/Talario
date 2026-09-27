@@ -1144,12 +1144,27 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
+        $allow_external_uploads = null;
+        if ($images !== null) {
+            // CS-Cart's server-side uploader rejects generated cache temp files unless this
+            // runtime gate is enabled. The files are already bounded and MIME-validated above.
+            // Keep the gate open only for the single base product write and always restore it.
+            $allow_external_uploads = \Tygh\Registry::ifGet('runtime.allow_upload_external_paths', false);
+            \Tygh\Registry::set('runtime.allow_upload_external_paths', true, true);
+        }
+
         fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true);
-        $result_id = fn_update_product(
-            $product_data,
-            $operation === 'update' ? $product_id : 0,
-            $lang_code
-        );
+        try {
+            $result_id = fn_update_product(
+                $product_data,
+                $operation === 'update' ? $product_id : 0,
+                $lang_code
+            );
+        } finally {
+            if ($images !== null) {
+                \Tygh\Registry::set('runtime.allow_upload_external_paths', $allow_external_uploads, true);
+            }
+        }
         fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', false);
         if (!$result_id) {
             throw new RuntimeException('product_update_failed');
