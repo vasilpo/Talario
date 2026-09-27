@@ -1079,12 +1079,7 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'variation_product_update_failed',
         'variation_structure_change_not_supported',
         'failed_create_group_cleanup_failed',
-        'image_upload_root_unavailable',
-        'image_upload_root_unsafe',
-        'image_upload_owner_unavailable',
-        'image_upload_dir_unavailable',
-        'image_upload_dir_unsafe',
-        'image_upload_dir_owner_mismatch',
+        'image_update_failed',
         'image_temp_create_failed',
         'image_temp_file_unsafe',
     ];
@@ -1214,7 +1209,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
     $approval_id_hash = hash('sha256', $approval_id);
     $temp_files = [];
-    $old_pair_ids = [];
+    $prepared_images = null;
     $variation_write_result = null;
     try {
         if ($images !== null) {
@@ -1223,7 +1218,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
                 $operation === 'update' ? $product_id : 0
             );
             $temp_files = $prepared_images['temp_files'];
-            $old_pair_ids = $prepared_images['old_pair_ids'];
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
@@ -1249,10 +1243,12 @@ function fn_talario_analytics_partner_sync_write_response(): void
             );
         }
 
-
-        // Only after the new product/images are safely saved do we remove the prior image pairs.
-        foreach ($old_pair_ids as $old_pair_id) {
-            fn_delete_image_pair((int) $old_pair_id);
+        if ($prepared_images !== null) {
+            fn_talario_analytics_partner_sync_write_apply_images(
+                $product_id,
+                $prepared_images,
+                $lang_code
+            );
         }
 
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
