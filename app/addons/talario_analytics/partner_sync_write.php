@@ -798,19 +798,16 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
     }
     $cache_tmp_real = rtrim(fn_normalize_path($cache_tmp_real, '/'), '/');
 
-    $expected_uid = function_exists('posix_geteuid')
-        ? (int) posix_geteuid()
-        : (int) fileowner(__FILE__);
-    if ($expected_uid < 0) {
-        throw new RuntimeException('image_temp_file_unsafe');
-    }
-
     try {
         $token = bin2hex(random_bytes(16));
     } catch (Throwable $exception) {
         throw new RuntimeException('image_temp_create_failed');
     }
 
+    // The directory name is unpredictable and mkdir() must succeed, so the staging
+    // directory is freshly created by this process even on hosting where filesystem
+    // UID mapping differs from posix_geteuid(). Bind later file ownership to the
+    // freshly created directory's UID instead of assuming host UID identity.
     $temp_dir = $cache_tmp_real . '/talario_partner_sync_' . $token;
     if (!mkdir($temp_dir, 0700, false)) {
         throw new RuntimeException('image_temp_create_failed');
@@ -830,7 +827,6 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
         || fn_normalize_path($temp_dir_real, '/') !== $temp_dir
         || dirname(fn_normalize_path($temp_dir_real, '/')) !== $cache_tmp_real
         || ((int) $temp_dir_stat['mode'] & 0777) !== 0700
-        || (int) $temp_dir_stat['uid'] !== $expected_uid
     ) {
         if (is_dir($temp_dir) && !is_link($temp_dir)) {
             rmdir($temp_dir);
@@ -840,6 +836,11 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
 
     $verified_dir_dev = (int) $temp_dir_stat['dev'];
     $verified_dir_ino = (int) $temp_dir_stat['ino'];
+    $staging_uid = (int) $temp_dir_stat['uid'];
+    if ($staging_uid < 0) {
+        rmdir($temp_dir);
+        throw new RuntimeException('image_temp_file_unsafe');
+    }
     $tmp = $temp_dir . '/image';
     $handle = fopen($tmp, 'x+b');
     if (!is_resource($handle)) {
@@ -889,13 +890,14 @@ function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file(s
             || (int) $temp_dir_stat_after['dev'] !== $verified_dir_dev
             || (int) $temp_dir_stat_after['ino'] !== $verified_dir_ino
             || ((int) $temp_dir_stat_after['mode'] & 0777) !== 0700
-            || (int) $temp_dir_stat_after['uid'] !== $expected_uid
+            || (int) $temp_dir_stat_after['uid'] !== $staging_uid
             || dirname(fn_normalize_path($tmp_real, '/')) !== $temp_dir
             || (int) $file_lstat['dev'] !== (int) $file_stat['dev']
             || (int) $file_lstat['ino'] !== (int) $file_stat['ino']
             || ((int) $file_stat['mode'] & 0170000) !== 0100000
             || ((int) $file_stat['mode'] & 0777) !== 0600
-            || (int) $file_stat['uid'] !== $expected_uid
+            || (int) $file_stat['uid'] !== $staging_uid
+            || (int) $file_lstat['uid'] !== $staging_uid
             || (int) $file_stat['size'] !== $length
         ) {
             throw new RuntimeException('image_temp_file_unsafe');
