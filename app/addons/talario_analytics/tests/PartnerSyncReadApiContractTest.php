@@ -277,6 +277,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_product_write', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', true)", $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_lookup', true)", $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_feature_values', true)", $this->write_capability);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_product_ids', true)", $this->write_capability);
+        self::assertStringContainsString('@unlink($stage_file);', $this->write_capability);
+        self::assertStringContainsString("'variation_group_lookup'", $this->controller);
+        self::assertStringContainsString("'variation_group_feature_values'", $this->controller);
     }
 
     public function testPartnerSyncWriteFailureDiagnosticIsBoundedAndLoggingCannotMaskIt(): void
