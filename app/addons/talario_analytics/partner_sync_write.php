@@ -472,6 +472,7 @@ function fn_talario_analytics_partner_sync_resolve_variation_plan(array $variati
             'age_group' => $item['age_group'],
             'purchase_option' => $item['purchase_option'],
             'price' => $item['price'],
+            'duration' => $item['duration'],
             'schedule' => $item['schedule'],
             'group_variant_id' => $group_axis['resolved']
                 ? $group_axis['variants'][$item['age_group']]
