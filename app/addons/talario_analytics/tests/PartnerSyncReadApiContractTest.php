@@ -315,7 +315,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("((int) \$file_stat['mode'] & 0777) !== 0600", $this->write_capability);
         self::assertStringContainsString("(int) \$file_stat['uid'] !== (int) \$upload_dir_stat['uid']", $this->write_capability);
         self::assertStringNotContainsString("function_exists('posix_geteuid')", $this->write_capability);
-        self::assertStringNotContainsString("$expected_uid", $this->write_capability);
+        self::assertStringNotContainsString('$expected_uid', $this->write_capability);
         self::assertStringContainsString('strpos(fn_normalize_path($tmp_real, \'/\'), $upload_prefix) !== 0', $this->write_capability);
         self::assertStringNotContainsString('runtime.allow_upload_external_paths', $this->write_capability);
         self::assertStringContainsString("fn_attach_image_pairs", (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.products.php'));
