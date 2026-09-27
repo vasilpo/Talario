@@ -334,6 +334,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("throw new RuntimeException('image_temp_file_fstat_failed')", $this->write_capability);
         self::assertStringContainsString("throw new RuntimeException('image_temp_file_ino_mismatch')", $this->write_capability);
         self::assertStringContainsString("throw new RuntimeException('image_temp_file_lstat_uid_mismatch')", $this->write_capability);
+        self::assertStringContainsString("if (is_link(\$temp_dir)) {", $this->write_capability);
+        self::assertStringContainsString("unlink(\$temp_dir);", $this->write_capability);
 
         self::assertStringContainsString('fn_update_image_pairs(', $this->write_capability);
         self::assertStringContainsString('update_alt_desc: true', $this->write_capability);
