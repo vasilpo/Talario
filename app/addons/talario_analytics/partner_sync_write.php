@@ -1144,13 +1144,33 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
+        $allow_external_uploads_overridden = false;
+        $current_allow_external_uploads = false;
+        if ($images !== null && $temp_files) {
+            // CS-Cart accepts programmatic server-path uploads only while this runtime gate is enabled.
+            // The paths are Partner Sync-owned 0600 temp files created above; restore the prior value immediately.
+            $current_allow_external_uploads = \Tygh\Registry::ifGet('runtime.allow_upload_external_paths', false);
+            \Tygh\Registry::set('runtime.allow_upload_external_paths', true, true);
+            $allow_external_uploads_overridden = true;
+        }
+
         fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true);
-        $result_id = fn_update_product(
-            $product_data,
-            $operation === 'update' ? $product_id : 0,
-            $lang_code
-        );
-        fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', false);
+        try {
+            $result_id = fn_update_product(
+                $product_data,
+                $operation === 'update' ? $product_id : 0,
+                $lang_code
+            );
+        } finally {
+            fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', false);
+            if ($allow_external_uploads_overridden) {
+                \Tygh\Registry::set(
+                    'runtime.allow_upload_external_paths',
+                    $current_allow_external_uploads,
+                    true
+                );
+            }
+        }
         if (!$result_id) {
             throw new RuntimeException('product_update_failed');
         }
