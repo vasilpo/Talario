@@ -557,8 +557,8 @@ function fn_talario_analytics_partner_sync_map_group_products(
     int $base_product_id,
     array $resolution
 ): array {
-    $group = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository()
-        ->findGroupByProductId($base_product_id);
+    $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+    $group = $group_repository->findGroupByProductId($base_product_id);
     if (!$group) {
         throw new RuntimeException('variation_group_readback_failed');
     }
@@ -576,20 +576,20 @@ function fn_talario_analytics_partner_sync_map_group_products(
         ),
     ]);
 
-    $repository = \Tygh\Addons\ProductVariations\ServiceProvider::getProductRepository();
-    $products = $repository->findProducts($group->getProductIds());
-    $products = $repository->loadProductsFeatures($products, $features);
+    // Structural mapping does not need storefront/admin product loading.
+    // Read the variation group's own persisted feature values directly through
+    // the Product Variations repository used by CS-Cart itself.
+    $feature_values_by_product = $group_repository
+        ->findGroupProductsFeaturesValues([(int) $group->getId()]);
 
     $map = [];
-    foreach ($products as $product) {
-        $variants = [];
-        foreach ((array) ($product['variation_features'] ?? []) as $feature_id => $feature) {
-            $variants[(int) $feature_id] = (int) ($feature['variant_id'] ?? 0);
-        }
-        $key = ($variants[(int) $group_axis['feature_id']] ?? 0)
-            . ':' . ($variants[(int) $purchase_axis['feature_id']] ?? 0);
+    foreach ((array) $group->getProductIds() as $product_id) {
+        $product_id = (int) $product_id;
+        $variants = (array) ($feature_values_by_product[$product_id] ?? []);
+        $key = (int) ($variants[(int) $group_axis['feature_id']] ?? 0)
+            . ':' . (int) ($variants[(int) $purchase_axis['feature_id']] ?? 0);
         if ($key !== '0:0') {
-            $map[$key] = (int) $product['product_id'];
+            $map[$key] = $product_id;
         }
     }
 
