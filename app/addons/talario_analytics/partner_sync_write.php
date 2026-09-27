@@ -787,8 +787,17 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
 
 function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $binary): string
 {
-    $allowed_root = realpath(fn_get_files_dir_path());
-    if ($allowed_root === false || !is_dir($allowed_root) || is_link($allowed_root)) {
+    $allowed_root_path = rtrim(fn_normalize_path(fn_get_files_dir_path(), '/'), '/');
+    if ($allowed_root_path === '' || is_link($allowed_root_path)) {
+        throw new RuntimeException('image_upload_root_unavailable');
+    }
+    if (!is_dir($allowed_root_path) && !fn_mkdir($allowed_root_path)) {
+        throw new RuntimeException('image_upload_root_unavailable');
+    }
+
+    clearstatcache(true, $allowed_root_path);
+    $allowed_root = realpath($allowed_root_path);
+    if ($allowed_root === false || !is_dir($allowed_root) || is_link($allowed_root_path)) {
         throw new RuntimeException('image_upload_root_unavailable');
     }
 
