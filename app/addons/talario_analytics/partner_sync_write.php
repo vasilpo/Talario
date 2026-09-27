@@ -793,9 +793,15 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
 
     $temp_files = [];
     $old_pair_ids = [];
-    $decoded_images = [];
+    $detailed_images = [];
+    $pairs_data = [];
     $total_bytes = 0;
     $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
+    $extensions_by_mime = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
 
     foreach ($images as $index => $image) {
         if (!is_array($image)) {
@@ -823,14 +829,26 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
             fn_talario_analytics_json_response(400, ['error' => 'images_too_large', 'max_bytes' => 16777216]);
         }
 
-        $decoded_images[] = [
-            'binary' => $binary,
-            'alt' => mb_substr(trim((string) ($image['alt'] ?? '')), 0, 255, 'UTF-8'),
-        ];
-    }
+        $tmp = fn_create_temp_file();
+        fn_put_contents($tmp, $binary);
+        @chmod($tmp, 0600);
+        $temp_files[] = $tmp;
 
-    if (!$decoded_images) {
-        return [];
+        $detailed_images[] = [
+            'name' => 'partner-sync-' . ($index + 1) . '.' . $extensions_by_mime[$mime],
+            'path' => $tmp,
+            'size' => strlen($binary),
+            'error' => 0,
+        ];
+        $pairs_data[] = [
+            'position' => $index,
+            'pair_id' => 0,
+            'type' => $index === 0 ? 'M' : 'A',
+            'object_id' => 0,
+            'image_alt' => '',
+            'detailed_alt' => mb_substr(trim((string) ($image['alt'] ?? '')), 0, 255, 'UTF-8'),
+            'is_new' => $index === 0 ? 'Y' : 'N',
+        ];
     }
 
     if ($product_id > 0) {
@@ -845,52 +863,63 @@ function fn_talario_analytics_partner_sync_write_prepare_images(array $images, i
         }
     }
 
-    $_REQUEST['file_product_main_image_icon'] = [];
-    $_REQUEST['type_product_main_image_icon'] = [];
-    $_REQUEST['file_product_main_image_detailed'] = [];
-    $_REQUEST['type_product_main_image_detailed'] = [];
-    $_REQUEST['product_main_image_data'] = [];
-
-    $_REQUEST['file_product_add_additional_image_icon'] = [];
-    $_REQUEST['type_product_add_additional_image_icon'] = [];
-    $_REQUEST['file_product_add_additional_image_detailed'] = [];
-    $_REQUEST['type_product_add_additional_image_detailed'] = [];
-    $_REQUEST['product_add_additional_image_data'] = [];
-
-    foreach ($decoded_images as $index => $image) {
-        $tmp = fn_create_temp_file();
-        fn_put_contents($tmp, $image['binary']);
-        @chmod($tmp, 0600);
-        $temp_files[] = $tmp;
-
-        if ($index === 0) {
-            $_REQUEST['file_product_main_image_detailed'][] = $tmp;
-            $_REQUEST['type_product_main_image_detailed'][] = 'server';
-            $_REQUEST['product_main_image_data'][] = [
-                'pair_id' => 0,
-                'type' => 'M',
-                'object_id' => 0,
-                'image_alt' => '',
-                'detailed_alt' => $image['alt'],
-            ];
-        } else {
-            $_REQUEST['file_product_add_additional_image_detailed'][] = $tmp;
-            $_REQUEST['type_product_add_additional_image_detailed'][] = 'server';
-            $_REQUEST['product_add_additional_image_data'][] = [
-                'position' => $index,
-                'pair_id' => 0,
-                'type' => 'A',
-                'object_id' => 0,
-                'image_alt' => '',
-                'detailed_alt' => $image['alt'],
-            ];
-        }
-    }
-
     return [
         'temp_files' => $temp_files,
         'old_pair_ids' => array_values(array_unique($old_pair_ids)),
+        'detailed_images' => $detailed_images,
+        'pairs_data' => $pairs_data,
     ];
+}
+
+function fn_talario_analytics_partner_sync_write_apply_images(
+    int $product_id,
+    array $prepared_images,
+    string $lang_code
+): array {
+    $pairs_data = isset($prepared_images['pairs_data']) && is_array($prepared_images['pairs_data'])
+        ? $prepared_images['pairs_data']
+        : [];
+    $detailed_images = isset($prepared_images['detailed_images']) && is_array($prepared_images['detailed_images'])
+        ? $prepared_images['detailed_images']
+        : [];
+    $old_pair_ids = isset($prepared_images['old_pair_ids']) && is_array($prepared_images['old_pair_ids'])
+        ? array_values(array_unique(array_map('intval', $prepared_images['old_pair_ids'])))
+        : [];
+
+    if (count($pairs_data) !== count($detailed_images)) {
+        throw new RuntimeException('image_update_failed');
+    }
+
+    $new_pair_ids = [];
+    if ($pairs_data) {
+        fn_talario_analytics_partner_sync_set_cli_stage('image_write', true);
+        $new_pair_ids = array_values(array_filter(array_map('intval', (array) fn_update_image_pairs(
+            [],
+            $detailed_images,
+            $pairs_data,
+            $product_id,
+            'product',
+            [],
+            true,
+            $lang_code
+        ))));
+        fn_talario_analytics_partner_sync_set_cli_stage('image_write', false);
+
+        if (count($new_pair_ids) !== count($pairs_data)) {
+            foreach ($new_pair_ids as $new_pair_id) {
+                fn_delete_image_pair($new_pair_id);
+            }
+            throw new RuntimeException('image_update_failed');
+        }
+    }
+
+    foreach ($old_pair_ids as $old_pair_id) {
+        if (!in_array($old_pair_id, $new_pair_ids, true)) {
+            fn_delete_image_pair($old_pair_id);
+        }
+    }
+
+    return $new_pair_ids;
 }
 
 function fn_talario_analytics_partner_sync_write_cleanup_images(array $temp_files): void
@@ -996,6 +1025,7 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
 {
     $allowed = [
         'product_update_failed',
+        'image_update_failed',
         'variation_resolution_required',
         'base_variation_features_update_failed',
         'variation_group_create_failed',
@@ -1131,7 +1161,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
 
     $approval_id_hash = hash('sha256', $approval_id);
     $temp_files = [];
-    $old_pair_ids = [];
+    $prepared_images = null;
     $variation_write_result = null;
     try {
         if ($images !== null) {
@@ -1140,7 +1170,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
                 $operation === 'update' ? $product_id : 0
             );
             $temp_files = $prepared_images['temp_files'];
-            $old_pair_ids = $prepared_images['old_pair_ids'];
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
@@ -1156,6 +1185,14 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
         $product_id = (int) $result_id;
 
+        if ($prepared_images !== null) {
+            fn_talario_analytics_partner_sync_write_apply_images(
+                $product_id,
+                $prepared_images,
+                $lang_code
+            );
+        }
+
         if ($variation_resolution !== null) {
             $variation_write_result = fn_talario_analytics_partner_sync_apply_variation_plan(
                 $operation,
@@ -1166,11 +1203,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
             );
         }
 
-
-        // Only after the new product/images are safely saved do we remove the prior image pairs.
-        foreach ($old_pair_ids as $old_pair_id) {
-            fn_delete_image_pair((int) $old_pair_id);
-        }
 
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files);
     } catch (Throwable $exception) {
