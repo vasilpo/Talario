@@ -308,8 +308,22 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('content_base64', $this->write_capability);
         self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
         self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
-        self::assertStringContainsString('fn_create_temp_file()', $this->write_capability);
-        self::assertStringContainsString('@chmod($tmp, 0600);', $this->write_capability);
+
+        self::assertStringContainsString("fn_get_cache_path(false)", $this->write_capability);
+        self::assertStringContainsString('random_bytes(16)', $this->write_capability);
+        self::assertStringContainsString("mkdir(\$temp_dir, 0700, false)", $this->write_capability);
+        self::assertStringContainsString('if (!chmod($temp_dir, 0700))', $this->write_capability);
+        self::assertStringContainsString("fopen(\$tmp, 'x+b')", $this->write_capability);
+        self::assertStringContainsString('if (!chmod($tmp, 0600))', $this->write_capability);
+        self::assertStringContainsString('flock($handle, LOCK_EX)', $this->write_capability);
+        self::assertStringContainsString('fstat($handle)', $this->write_capability);
+        self::assertStringContainsString("(int) \$temp_dir_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringContainsString("(int) \$temp_dir_stat_after['ino'] !== \$verified_dir_ino", $this->write_capability);
+        self::assertStringContainsString("(int) \$file_lstat['ino'] !== (int) \$file_stat['ino']", $this->write_capability);
+        self::assertStringContainsString("((int) \$file_stat['mode'] & 0777) !== 0600", $this->write_capability);
+        self::assertStringContainsString("(int) \$file_stat['uid'] !== \$expected_uid", $this->write_capability);
+        self::assertStringNotContainsString('@chmod($tmp, 0600)', $this->write_capability);
+
         self::assertStringContainsString('fn_update_image_pairs(', $this->write_capability);
         self::assertStringContainsString('update_alt_desc: true', $this->write_capability);
         self::assertStringContainsString("object_type: 'product'", $this->write_capability);
@@ -318,8 +332,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('SELECT pair_id, object_id, object_type, type, detailed_id', $this->write_capability);
         self::assertStringContainsString('$main_count !== 1', $this->write_capability);
         self::assertStringContainsString('$additional_count !== $expected_count - 1', $this->write_capability);
+        self::assertStringContainsString('array_diff($current_pair_ids, $old_pair_ids)', $this->write_capability);
+        self::assertStringContainsString('fn_delete_image_pair((int) $partial_pair_id)', $this->write_capability);
+
         self::assertStringNotContainsString('runtime.allow_upload_external_paths', $this->write_capability);
         self::assertStringNotContainsString('skip_area_checking', $this->write_capability);
+        self::assertStringNotContainsString("'server'", $this->write_capability);
 
         $images_core = (string) file_get_contents(dirname(__DIR__, 3) . '/functions/fn.images.php');
         self::assertStringContainsString(
