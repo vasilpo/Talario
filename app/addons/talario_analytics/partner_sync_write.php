@@ -1035,16 +1035,28 @@ function fn_talario_analytics_partner_sync_write_apply_images(
 
     // Exact CS-Cart 4.20.1 core API. Named arguments make it explicit that
     // update_alt_desc is being enabled; no area/upload bypass flag exists here.
-    $new_pair_ids = array_values(array_filter(array_map('intval', (array) fn_update_image_pairs(
-        icons: [],
-        detailed: $detailed_images,
-        pairs_data: $pairs_data,
-        object_id: $product_id,
-        object_type: 'product',
-        object_ids: [],
-        update_alt_desc: true,
-        lang_code: $lang_code
-    ))));
+    try {
+        $new_pair_ids = array_values(array_filter(array_map('intval', (array) fn_update_image_pairs(
+            icons: [],
+            detailed: $detailed_images,
+            pairs_data: $pairs_data,
+            object_id: $product_id,
+            object_type: 'product',
+            object_ids: [],
+            update_alt_desc: true,
+            lang_code: $lang_code
+        ))));
+    } catch (Throwable $exception) {
+        $current_pair_ids = array_map('intval', db_get_fields(
+            'SELECT pair_id FROM ?:images_links WHERE object_id = ?i AND object_type = ?s',
+            $product_id,
+            'product'
+        ));
+        foreach (array_diff($current_pair_ids, $old_pair_ids) as $partial_pair_id) {
+            fn_delete_image_pair((int) $partial_pair_id);
+        }
+        throw new RuntimeException('image_update_failed', 0, $exception);
+    }
 
     $expected_count = count($pairs_data);
     if (count($new_pair_ids) !== $expected_count) {
