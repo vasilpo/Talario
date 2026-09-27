@@ -311,6 +311,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('fn_get_files_dir_path()', $this->write_capability);
         self::assertStringContainsString("'/.talario_partner_sync_upload'", $this->write_capability);
         self::assertStringContainsString('@mkdir($upload_dir, 0700)', $this->write_capability);
+        self::assertStringContainsString("((int) \$upload_dir_stat['mode'] & 0777) !== 0700", $this->write_capability);
+        self::assertStringContainsString('is_link($upload_dir)', $this->write_capability);
         self::assertStringContainsString('@chmod($tmp, 0600);', $this->write_capability);
         self::assertStringContainsString("((int) \$file_stat['mode'] & 0777) !== 0600", $this->write_capability);
         self::assertStringContainsString("(int) \$file_stat['uid'] !== (int) \$upload_dir_stat['uid']", $this->write_capability);
