@@ -971,35 +971,12 @@ function fn_talario_analytics_partner_sync_set_cli_stage(string $stage, bool $ar
     $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE'] = $stage;
     $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_STAGE_ARMED'] = $armed;
 
-    $stage_file = getenv('TALARIO_PARTNER_SYNC_STAGE_FILE');
-    $stage_home = getenv('HOME');
-    if (!is_string($stage_file)
-        || !is_string($stage_home)
-        || $stage_file === ''
-        || $stage_home === ''
-    ) {
-        return;
-    }
-
-    $stage_home_real = realpath($stage_home);
-    $stage_home_stat = $stage_home_real !== false ? @stat($stage_home_real) : false;
-    $expected_stage_file = $stage_home_real !== false
-        ? $stage_home_real . DIRECTORY_SEPARATOR . 'stage'
-        : '';
-    if ($stage_home_real === false
-        || !is_array($stage_home_stat)
-        || !is_dir($stage_home_real)
-        || is_link($stage_home)
-        || (($stage_home_stat['mode'] & 0777) !== 0700)
-        || $stage_file !== $expected_stage_file
-    ) {
-        return;
-    }
-
     if (!$armed) {
-        if (file_exists($stage_file) && !unlink($stage_file)) {
-            error_log('Talario Partner Sync stage marker cleanup failed');
-        }
+        return;
+    }
+
+    $stage_file = getenv('TALARIO_PARTNER_SYNC_STAGE_FILE');
+    if (!is_string($stage_file) || $stage_file === '') {
         return;
     }
 
