@@ -787,37 +787,13 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
 
 function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $binary): string
 {
-    $allowed_root = realpath(fn_get_files_dir_path());
-    if ($allowed_root === false || !is_dir($allowed_root) || is_link($allowed_root)) {
+    $allowed_root = rtrim(fn_normalize_path(fn_get_files_dir_path(), '/'), '/');
+    $allowed_root_real = realpath($allowed_root);
+    if ($allowed_root_real === false || !is_dir($allowed_root)) {
         throw new RuntimeException('image_upload_root_unavailable');
     }
 
-    $allowed_root = rtrim(fn_normalize_path($allowed_root, '/'), '/');
-    $upload_dir = $allowed_root . '/.talario_partner_sync_upload';
-    if (!is_dir($upload_dir) && !@mkdir($upload_dir, 0700)) {
-        throw new RuntimeException('image_upload_dir_unavailable');
-    }
-
-    @chmod($upload_dir, 0700);
-    clearstatcache(true, $upload_dir);
-    $upload_dir_real = realpath($upload_dir);
-    $upload_dir_stat = @lstat($upload_dir);
-    $expected_uid = function_exists('posix_geteuid')
-        ? (int) posix_geteuid()
-        : (int) @fileowner(__FILE__);
-
-    if (
-        $upload_dir_real === false
-        || !is_array($upload_dir_stat)
-        || is_link($upload_dir)
-        || rtrim(fn_normalize_path($upload_dir_real, '/'), '/') !== $upload_dir
-        || ((int) $upload_dir_stat['mode'] & 0777) !== 0700
-        || (int) $upload_dir_stat['uid'] !== $expected_uid
-    ) {
-        throw new RuntimeException('image_upload_dir_unsafe');
-    }
-
-    $tmp = @tempnam($upload_dir, 'image_');
+    $tmp = @tempnam($allowed_root, 'talario_partner_sync_');
     if (!is_string($tmp) || $tmp === '') {
         throw new RuntimeException('image_temp_create_failed');
     }
@@ -827,14 +803,17 @@ function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $
     clearstatcache(true, $tmp);
     $tmp_real = realpath($tmp);
     $file_stat = @lstat($tmp);
-    $upload_prefix = $upload_dir . '/';
+    $expected_uid = function_exists('posix_geteuid')
+        ? (int) posix_geteuid()
+        : (int) @fileowner(__FILE__);
+    $allowed_real_prefix = rtrim(fn_normalize_path($allowed_root_real, '/'), '/') . '/';
 
     if (
         $written !== strlen($binary)
         || $tmp_real === false
         || !is_array($file_stat)
         || is_link($tmp)
-        || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
+        || strpos(fn_normalize_path($tmp_real, '/'), $allowed_real_prefix) !== 0
         || ((int) $file_stat['mode'] & 0170000) !== 0100000
         || ((int) $file_stat['mode'] & 0777) !== 0600
         || (int) $file_stat['uid'] !== $expected_uid
@@ -843,9 +822,10 @@ function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $
         throw new RuntimeException('image_temp_file_unsafe');
     }
 
-    return $tmp_real;
+    // Keep the non-realpath spelling returned under CS-Cart's own allowed files root.
+    // fn_get_server_data() validates server uploads against that same configured root.
+    return fn_normalize_path($tmp, '/');
 }
-
 function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
 {
     if (count($images) > 12) {
