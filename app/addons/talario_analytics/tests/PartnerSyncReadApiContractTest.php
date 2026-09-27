@@ -136,10 +136,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
     {
         self::assertStringContainsString("'penaty_bootstrap'", $this->controller);
         self::assertStringContainsString("'penaty_apply'", $this->controller);
+        self::assertStringContainsString("'penaty_preview'", $this->controller);
         self::assertStringContainsString("'penaty_bootstrap' => true", $this->trusted_controllers);
         self::assertStringContainsString("'penaty_apply' => true", $this->trusted_controllers);
-        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_apply'], true)", $this->controller);
-        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply']", $this->controller);
+        self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
+        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)", $this->controller);
+        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview']", $this->controller);
         self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
         self::assertStringContainsString("'github-actions-talario'", $this->controller);
@@ -160,6 +162,27 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('shell_exec(', $this->controller);
         self::assertStringNotContainsString('system(', $this->controller);
         self::assertStringNotContainsString('eval(', $this->controller);
+    }
+
+    public function testSignedPenatyPreviewIsSingleTargetDevOnlyAndUsesStandardPreviewSession(): void
+    {
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview', $this->controller);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('preview', \$raw)", $this->controller);
+        self::assertStringContainsString("array_keys(\$payload) !== ['product_id']", $this->controller);
+        self::assertStringContainsString("(int) \$payload['product_id'] !== 1158", $this->controller);
+        self::assertStringContainsString("(int) \$product['company_id'] !== 39", $this->controller);
+        self::assertStringContainsString("(string) \$product['status'] !== 'H'", $this->controller);
+        self::assertStringContainsString('fn_get_company_root_admin_user_id(39)', $this->controller);
+        self::assertStringContainsString("fn_fill_auth(\$user_data, [], true, 'C')", $this->controller);
+        self::assertStringContainsString('fn_init_user_session_data($sess_data, $user_id, true)', $this->controller);
+        self::assertStringContainsString("bin2hex(random_bytes(24))", $this->controller);
+        self::assertStringContainsString("'session_' . \$session_key . '_data'", $this->controller);
+        self::assertStringContainsString("fn_set_storage_data(\$storage_key, serialize(\$sess_data))", $this->controller);
+        self::assertStringContainsString("'&action=preview'", $this->controller);
+        self::assertStringContainsString("'single_use' => true", $this->controller);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v1'", $this->controller);
+        self::assertStringContainsString("'/dev_copy/'", $this->controller);
+        self::assertStringNotContainsString("'password' =>", $this->controller);
     }
 
     public function testPartnerSyncWriteIsInternalCliOnly(): void
