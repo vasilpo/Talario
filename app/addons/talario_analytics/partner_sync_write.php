@@ -850,13 +850,18 @@ function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $
         $tmp_real = realpath($tmp);
         clearstatcache(true, $upload_dir);
         $upload_dir_stat = @lstat($upload_dir);
+        $upload_dir_real_after = realpath($upload_dir);
         $upload_prefix = rtrim(fn_normalize_path((string) $upload_dir_real, '/'), '/') . '/';
 
         if (
             !is_array($file_stat)
             || !is_array($upload_dir_stat)
             || $tmp_real === false
+            || $upload_dir_real_after === false
             || is_link($tmp)
+            || is_link($upload_dir)
+            || fn_normalize_path($upload_dir_real_after, '/') !== fn_normalize_path((string) $upload_dir_real, '/')
+            || ((int) $upload_dir_stat['mode'] & 0777) !== 0700
             || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
             || ((int) $file_stat['mode'] & 0170000) !== 0100000
             || ((int) $file_stat['mode'] & 0777) !== 0600
