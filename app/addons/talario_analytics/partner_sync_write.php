@@ -787,65 +787,114 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
 
 function fn_talario_analytics_partner_sync_write_create_image_temp_file(string $binary): string
 {
-    $allowed_root = realpath(fn_get_files_dir_path());
-    if ($allowed_root === false || !is_dir($allowed_root) || is_link($allowed_root)) {
+    $configured_root = rtrim(fn_normalize_path(fn_get_files_dir_path(), '/'), '/');
+    $allowed_root_real = realpath($configured_root);
+    if ($allowed_root_real === false || !is_dir($allowed_root_real)) {
         throw new RuntimeException('image_upload_root_unavailable');
     }
 
-    $allowed_root = rtrim(fn_normalize_path($allowed_root, '/'), '/');
-    $upload_dir = $allowed_root . '/.talario_partner_sync_upload';
-    if (!is_dir($upload_dir) && !@mkdir($upload_dir, 0700)) {
+    $allowed_root_real = rtrim(fn_normalize_path($allowed_root_real, '/'), '/');
+    $expected_uid = function_exists('posix_geteuid')
+        ? (int) posix_geteuid()
+        : (int) fileowner(__FILE__);
+    if ($expected_uid < 0) {
+        throw new RuntimeException('image_upload_owner_unavailable');
+    }
+
+    $upload_dir = $configured_root . '/.talario_partner_sync_upload';
+    if (!is_dir($upload_dir) && !mkdir($upload_dir, 0700)) {
         throw new RuntimeException('image_upload_dir_unavailable');
     }
 
-    @chmod($upload_dir, 0700);
+    chmod($upload_dir, 0700);
     clearstatcache(true, $upload_dir);
     $upload_dir_real = realpath($upload_dir);
-    $upload_dir_stat = @lstat($upload_dir);
-    $expected_uid = function_exists('posix_geteuid')
-        ? (int) posix_geteuid()
-        : (int) @fileowner(__FILE__);
-
+    $upload_dir_stat = lstat($upload_dir);
     if (
         $upload_dir_real === false
         || !is_array($upload_dir_stat)
         || is_link($upload_dir)
-        || rtrim(fn_normalize_path($upload_dir_real, '/'), '/') !== $upload_dir
         || ((int) $upload_dir_stat['mode'] & 0777) !== 0700
         || (int) $upload_dir_stat['uid'] !== $expected_uid
+        || dirname(fn_normalize_path($upload_dir_real, '/')) !== $allowed_root_real
     ) {
         throw new RuntimeException('image_upload_dir_unsafe');
     }
 
-    $tmp = @tempnam($upload_dir, 'image_');
-    if (!is_string($tmp) || $tmp === '') {
+    $verified_dir_real = fn_normalize_path($upload_dir_real, '/');
+    $verified_dir_dev = (int) $upload_dir_stat['dev'];
+    $verified_dir_ino = (int) $upload_dir_stat['ino'];
+
+    try {
+        $token = bin2hex(random_bytes(16));
+    } catch (Throwable $exception) {
         throw new RuntimeException('image_temp_create_failed');
     }
 
-    @chmod($tmp, 0600);
-    $written = @file_put_contents($tmp, $binary, LOCK_EX);
-    clearstatcache(true, $tmp);
-    $tmp_real = realpath($tmp);
-    $file_stat = @lstat($tmp);
-    $upload_prefix = $upload_dir . '/';
-
-    if (
-        $written !== strlen($binary)
-        || $tmp_real === false
-        || !is_array($file_stat)
-        || is_link($tmp)
-        || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
-        || ((int) $file_stat['mode'] & 0170000) !== 0100000
-        || ((int) $file_stat['mode'] & 0777) !== 0600
-        || (int) $file_stat['uid'] !== $expected_uid
-    ) {
-        @unlink($tmp);
-        throw new RuntimeException('image_temp_file_unsafe');
+    $tmp = $upload_dir . '/image_' . $token;
+    $handle = fopen($tmp, 'x+b');
+    if (!is_resource($handle)) {
+        throw new RuntimeException('image_temp_create_failed');
     }
 
-    return $tmp_real;
-}
+    $safe = false;
+    try {
+        chmod($tmp, 0600);
+        if (!flock($handle, LOCK_EX)) {
+            throw new RuntimeException('image_temp_file_unsafe');
+        }
 
+        $length = strlen($binary);
+        $offset = 0;
+        while ($offset < $length) {
+            $written = fwrite($handle, substr($binary, $offset));
+            if (!is_int($written) || $written <= 0) {
+                throw new RuntimeException('image_temp_file_unsafe');
+            }
+            $offset += $written;
+        }
+        fflush($handle);
+
+        $file_stat = fstat($handle);
+        $tmp_real = realpath($tmp);
+        clearstatcache(true, $upload_dir);
+        $upload_dir_stat_after = lstat($upload_dir);
+        $upload_dir_real_after = realpath($upload_dir);
+        $upload_prefix = rtrim($verified_dir_real, '/') . '/';
+
+        if (
+            !is_array($file_stat)
+            || !is_array($upload_dir_stat_after)
+            || $tmp_real === false
+            || $upload_dir_real_after === false
+            || is_link($tmp)
+            || is_link($upload_dir)
+            || fn_normalize_path($upload_dir_real_after, '/') !== $verified_dir_real
+            || (int) $upload_dir_stat_after['dev'] !== $verified_dir_dev
+            || (int) $upload_dir_stat_after['ino'] !== $verified_dir_ino
+            || ((int) $upload_dir_stat_after['mode'] & 0777) !== 0700
+            || (int) $upload_dir_stat_after['uid'] !== $expected_uid
+            || strpos(fn_normalize_path($tmp_real, '/'), $upload_prefix) !== 0
+            || ((int) $file_stat['mode'] & 0170000) !== 0100000
+            || ((int) $file_stat['mode'] & 0777) !== 0600
+            || (int) $file_stat['uid'] !== $expected_uid
+        ) {
+            throw new RuntimeException('image_temp_file_unsafe');
+        }
+
+        $safe = true;
+        flock($handle, LOCK_UN);
+    } finally {
+        fclose($handle);
+        if (!$safe && file_exists($tmp)) {
+            unlink($tmp);
+        }
+    }
+
+    // Use only the basename from the validated canonical path, reconstructed under
+    // CS-Cart's configured files-root spelling that fn_get_server_data() allowlists.
+    return $upload_dir . '/' . basename((string) $tmp_real);
+}
 function fn_talario_analytics_partner_sync_write_prepare_images(array $images, int $product_id): array
 {
     if (count($images) > 12) {
@@ -1064,8 +1113,11 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'variation_structure_change_not_supported',
         'failed_create_group_cleanup_failed',
         'image_upload_root_unavailable',
+        'image_upload_root_unsafe',
+        'image_upload_owner_unavailable',
         'image_upload_dir_unavailable',
         'image_upload_dir_unsafe',
+        'image_upload_dir_owner_mismatch',
         'image_temp_create_failed',
         'image_temp_file_unsafe',
     ];
