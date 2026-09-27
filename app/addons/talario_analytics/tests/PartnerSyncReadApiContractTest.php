@@ -295,6 +295,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'variation_group_create_failed'", $this->write_capability);
         self::assertStringContainsString("'variation_product_mapping_failed'", $this->write_capability);
         self::assertStringContainsString("'variation_product_update_failed'", $this->write_capability);
+        self::assertStringContainsString("'image_upload_dir_unsafe'", $this->write_capability);
+        self::assertStringContainsString("'image_temp_file_unsafe'", $this->write_capability);
         self::assertStringContainsString('catch (Throwable $log_exception)', $this->write_capability);
         self::assertStringContainsString('$error_response[\'detail\'] = $safe_error_detail', $this->write_capability);
         self::assertStringNotContainsString('$exception->getTraceAsString()', $this->write_capability);
