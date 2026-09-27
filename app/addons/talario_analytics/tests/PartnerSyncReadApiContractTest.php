@@ -313,7 +313,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('fn_update_image_pairs(', $this->write_capability);
         self::assertStringContainsString('update_alt_desc: true', $this->write_capability);
         self::assertStringContainsString("object_type: 'product'", $this->write_capability);
-        self::assertStringContainsString("'is_new' => $index === 0 ? 'Y' : 'N'", $this->write_capability);
+        self::assertStringContainsString("'is_new' => \$index === 0 ? 'Y' : 'N'", $this->write_capability);
         self::assertStringContainsString("'image_update_failed'", $this->write_capability);
         self::assertStringContainsString('SELECT pair_id, object_id, object_type, type, detailed_id', $this->write_capability);
         self::assertStringContainsString('$main_count !== 1', $this->write_capability);
