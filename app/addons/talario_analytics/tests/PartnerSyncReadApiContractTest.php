@@ -261,6 +261,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC', $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_STAGE_FILE' => \$tmp_dir . DIRECTORY_SEPARATOR . 'stage'", $this->controller);
         self::assertStringContainsString('$runner_stage = null;', $this->controller);
+        self::assertStringContainsString("@fopen(\$stage_file, 'rb')", $this->controller);
+        self::assertStringContainsString('@fstat($stage_handle)', $this->controller);
+        self::assertStringContainsString("(int) \$stage_lstat['ino'] === (int) \$stage_stat['ino']", $this->controller);
+        self::assertStringContainsString('stream_get_contents($stage_handle, 65)', $this->controller);
+        self::assertStringNotContainsString('@file_get_contents($stage_file)', $this->controller);
         self::assertStringContainsString('$invalid_response_code .= \'_\' . $runner_stage;', $this->controller);
         self::assertStringNotContainsString('register_shutdown_function(static function', $this->controller);
         self::assertStringContainsString("'base_product_write'", $this->controller);
