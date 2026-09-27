@@ -1154,6 +1154,7 @@ PHP;
             'variation_group_features',
             'variation_group_feature_values',
             'variation_group_product_ids',
+            'variation_booking_build',
             'variation_product_write',
             'variation_capacity_write',
             'failure_cleanup',
