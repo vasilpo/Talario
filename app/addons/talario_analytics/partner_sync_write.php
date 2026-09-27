@@ -1063,6 +1063,11 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'variation_product_update_failed',
         'variation_structure_change_not_supported',
         'failed_create_group_cleanup_failed',
+        'image_upload_root_unavailable',
+        'image_upload_dir_unavailable',
+        'image_upload_dir_unsafe',
+        'image_temp_create_failed',
+        'image_temp_file_unsafe',
     ];
 
     $message = $exception->getMessage();
