@@ -557,14 +557,17 @@ function fn_talario_analytics_partner_sync_map_group_products(
     int $base_product_id,
     array $resolution
 ): array {
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_lookup', true);
     $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
     $group = $group_repository->findGroupByProductId($base_product_id);
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_lookup', false);
     if (!$group) {
         throw new RuntimeException('variation_group_readback_failed');
     }
 
     $group_axis = $resolution['group_axis'];
     $purchase_axis = $resolution['purchase_axis'];
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_features', true);
     $features = new \Tygh\Addons\ProductVariations\Product\Group\GroupFeatureCollection([
         new \Tygh\Addons\ProductVariations\Product\Group\GroupFeature(
             (int) $group_axis['feature_id'],
@@ -575,15 +578,22 @@ function fn_talario_analytics_partner_sync_map_group_products(
             (string) $purchase_axis['purpose']
         ),
     ]);
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_features', false);
 
     // Structural mapping does not need storefront/admin product loading.
     // Read the variation group's own persisted feature values directly through
     // the Product Variations repository used by CS-Cart itself.
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_feature_values', true);
     $feature_values_by_product = $group_repository
         ->findGroupProductsFeaturesValues([(int) $group->getId()]);
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_feature_values', false);
+
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_product_ids', true);
+    $group_product_ids = (array) $group->getProductIds();
+    fn_talario_analytics_partner_sync_set_cli_stage('variation_group_product_ids', false);
 
     $map = [];
-    foreach ((array) $group->getProductIds() as $product_id) {
+    foreach ($group_product_ids as $product_id) {
         $product_id = (int) $product_id;
         $variants = (array) ($feature_values_by_product[$product_id] ?? []);
         $key = (int) ($variants[(int) $group_axis['feature_id']] ?? 0)
