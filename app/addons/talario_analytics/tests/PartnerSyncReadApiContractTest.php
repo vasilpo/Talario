@@ -296,7 +296,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'variation_product_mapping_failed'", $this->write_capability);
         self::assertStringContainsString("'variation_product_update_failed'", $this->write_capability);
         self::assertStringContainsString("'image_update_failed'", $this->write_capability);
-        self::assertStringContainsString("'image_temp_file_unsafe'", $this->write_capability);
+        self::assertStringContainsString("'image_temp_dir_mode_mismatch'", $this->write_capability);
+        self::assertStringContainsString("'image_temp_dir_uid_changed'", $this->write_capability);
+        self::assertStringContainsString("'image_temp_file_mode_mismatch'", $this->write_capability);
+        self::assertStringContainsString("'image_temp_file_uid_mismatch'", $this->write_capability);
+        self::assertStringContainsString("'image_temp_file_size_mismatch'", $this->write_capability);
+        self::assertStringNotContainsString("'image_temp_file_unsafe'", $this->write_capability);
         self::assertStringContainsString('catch (Throwable $log_exception)', $this->write_capability);
         self::assertStringContainsString('$error_response[\'detail\'] = $safe_error_detail', $this->write_capability);
         self::assertStringNotContainsString('$exception->getTraceAsString()', $this->write_capability);
@@ -326,6 +331,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("(int) \$file_lstat['uid'] !== \$staging_uid", $this->write_capability);
         self::assertStringNotContainsString('$expected_uid', $this->write_capability);
         self::assertStringNotContainsString('@chmod($tmp, 0600)', $this->write_capability);
+        self::assertStringContainsString("throw new RuntimeException('image_temp_file_fstat_failed')", $this->write_capability);
+        self::assertStringContainsString("throw new RuntimeException('image_temp_file_ino_mismatch')", $this->write_capability);
+        self::assertStringContainsString("throw new RuntimeException('image_temp_file_lstat_uid_mismatch')", $this->write_capability);
 
         self::assertStringContainsString('fn_update_image_pairs(', $this->write_capability);
         self::assertStringContainsString('update_alt_desc: true', $this->write_capability);
