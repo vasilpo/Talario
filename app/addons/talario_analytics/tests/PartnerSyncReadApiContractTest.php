@@ -280,7 +280,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_lookup', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_feature_values', true)", $this->write_capability);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_set_cli_stage('variation_group_product_ids', true)", $this->write_capability);
-        self::assertStringContainsString('@unlink($stage_file);', $this->write_capability);
+        self::assertStringContainsString("getenv('HOME')", $this->write_capability);
+        self::assertStringContainsString("$stage_home_real . DIRECTORY_SEPARATOR . 'stage'", $this->write_capability);
+        self::assertStringContainsString("(\$stage_home_stat['mode'] & 0777) !== 0700", $this->write_capability);
+        self::assertStringContainsString('!unlink($stage_file)', $this->write_capability);
+        self::assertStringContainsString('Talario Partner Sync stage marker cleanup failed', $this->write_capability);
         self::assertStringContainsString("'variation_group_lookup'", $this->controller);
         self::assertStringContainsString("'variation_group_feature_values'", $this->controller);
     }
