@@ -307,7 +307,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('getimagesizefromstring', $this->write_capability);
         self::assertStringContainsString("['image/jpeg', 'image/png', 'image/webp']", $this->write_capability);
         self::assertStringContainsString('fn_get_files_dir_path()', $this->write_capability);
-        self::assertStringContainsString("'.talario_partner_sync_upload'", $this->write_capability);
+        self::assertStringContainsString("'/\.talario_partner_sync_upload'", $this->write_capability);
         self::assertStringContainsString('@mkdir($upload_dir, 0700)', $this->write_capability);
         self::assertStringContainsString('@chmod($tmp, 0600);', $this->write_capability);
         self::assertStringContainsString("function_exists('posix_geteuid')", $this->write_capability);
