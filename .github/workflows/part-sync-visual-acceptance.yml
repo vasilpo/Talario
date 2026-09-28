@@ -10,18 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Diagnose dev_copy storefront card 1158
+      - name: Probe canonical dev_copy card 1158
         shell: python
         run: |
           import html, re, urllib.request, urllib.error
-          url = "https://talario.ru/dev_copy/index.php?dispatch=products.view&product_id=1158"
-          class NoRedirect(urllib.request.HTTPRedirectHandler):
-              def redirect_request(self, req, fp, code, msg, headers, newurl):
-                  return None
-          req = urllib.request.Request(url, headers={"User-Agent": "Talario-Visual-Acceptance/1.0"})
-          opener = urllib.request.build_opener(NoRedirect)
+          url = "https://talario.ru/dev_copy/rannee-razvitie/akademiya-intellekta-detskiy-centr-penaty-krasnogorsk-ru-13/"
+          req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 Talario-Visual-Acceptance/1.0"})
           try:
-              r = opener.open(req, timeout=30)
+              r = urllib.request.urlopen(req, timeout=30)
           except urllib.error.HTTPError as e:
               r = e
           body = r.read().decode("utf-8", "replace")
@@ -30,8 +26,15 @@ jobs:
               s = re.sub(r"<style[\\s\\S]*?</style>", " ", s, flags=re.I)
               s = re.sub(r"<[^>]+>", " ", s)
               return re.sub(r"\\s+", " ", html.unescape(s)).strip()
-          print("HTTP_STATUS=", r.status)
-          print("URL=", r.geturl())
-          print("LOCATION=", r.headers.get("Location", ""))
-          print("BODY_TEXT=", clean(body)[:4000])
-          assert r.status in (200, 301, 302, 303, 307, 308)
+          text = clean(body)
+          title = re.search(r"<title[^>]*>([\\s\\S]*?)</title>", body, re.I)
+          h1 = re.search(r"<h1[^>]*>([\\s\\S]*?)</h1>", body, re.I)
+          print("HTTP_STATUS=", r.status); print("FINAL_URL=", r.geturl())
+          print("TITLE=", clean(title.group(1))[:300] if title else "")
+          print("H1=", clean(h1.group(1))[:300] if h1 else "")
+          print("IMG_COUNT=", len(re.findall(r"<img\\b", body, re.I)))
+          print("BODY_TEXT=", text[:6000])
+          assert r.status == 200
+          assert "Пенаты" in text
+          assert len(re.findall(r"<img\\b", body, re.I)) > 0
+          assert not re.search(r"(страница не найдена|товар не найден|fatal error|uncaught exception)", text, re.I)
