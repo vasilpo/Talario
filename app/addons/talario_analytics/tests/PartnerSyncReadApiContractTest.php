@@ -792,7 +792,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "'schedule' => $variation_readback['schedule']",
+            "'schedule' => \$variation_readback['schedule']",
             $this->write_capability
         );
     }
