@@ -739,6 +739,64 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertLessThan($bearer_auth, $signed_dispatch);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('apply', \$raw);", $this->controller);
     }
+    public function testSignedPartnerApplyBootstrapsOnlyApprovedAgeTaxonomyAfterSignature(): void
+    {
+        $bootstrap_offset = strpos(
+            $this->controller,
+            'function fn_talario_analytics_partner_sync_bootstrap_approved_age_variants'
+        );
+        self::assertNotFalse($bootstrap_offset);
+        $bootstrap_section = substr($this->controller, $bootstrap_offset, 5200);
+
+        self::assertStringContainsString("['до 3 лет', '3-5 лет', '6-9 лет']", $bootstrap_section);
+        self::assertStringContainsString("'age_variant_bootstrap_not_allowed'", $bootstrap_section);
+        self::assertStringContainsString("'age_variant_bootstrap_scope_mismatch'", $bootstrap_section);
+        self::assertStringContainsString("'Возраст'", $bootstrap_section);
+        self::assertStringContainsString("'group_variation_catalog_item'", $bootstrap_section);
+        self::assertStringContainsString('fn_update_product_feature_variant(', $bootstrap_section);
+
+        $verify = strpos(
+            $this->controller,
+            "fn_talario_analytics_partner_sync_verify_penaty_signature('apply', \$raw);"
+        );
+        $bootstrap_call = strpos(
+            $this->controller,
+            'fn_talario_analytics_partner_sync_bootstrap_approved_age_variants($payload);',
+            $verify
+        );
+        self::assertNotFalse($verify);
+        self::assertNotFalse($bootstrap_call);
+        self::assertGreaterThan($verify, $bootstrap_call);
+    }
+
+    public function testVariationWritePerformsDatabaseReadbackForPriceScheduleAndCapacity(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_readback_variation_state',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'variation_readback_mismatch'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "SELECT price FROM ?:product_prices",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "SELECT slot_time, days_data FROM ?:ec_table_booking_system",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "['time_by_amount']",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'schedule' => $variation_readback['schedule']",
+            $this->write_capability
+        );
+    }
+
 
 }
 
