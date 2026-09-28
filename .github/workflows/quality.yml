@@ -156,6 +156,7 @@ jobs:
         run: bash tests/talario_schedule_resources/run.sh
 
 
+  # Required branch-protection gate: security invariants plus all prerequisite checks.
   talario-review-agent:
     name: Talario Review Agent
     runs-on: ubuntu-latest
