@@ -1,0 +1,45 @@
+name: PART-SYNC Step 6 Beget read-only capabilities
+
+on:
+  push:
+    branches:
+      - part-sync/clay-safe-failure-diagnostics
+    paths:
+      - '.github/workflows/part-sync-step6-beget-help.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Inspect allowlisted Beget dev ops commands
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${BEGET_SSH_KEY:-}"
+          test -n "${BEGET_USER:-}"
+          work="$RUNNER_TEMP/step6-beget-help"
+          rm -rf "$work"; install -d -m 700 "$work"
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > "$work/key"
+          chmod 600 "$work/key"
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > "$work/known_hosts"
+          for cmd in "talario-dev-ops help" "talario-dev-ops" "talario-partner-sync-help"; do
+            echo "STEP6_BEGET_CMD=$cmd"
+            set +e
+            out="$(ssh -o BatchMode=yes -o PasswordAuthentication=no -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile="$work/known_hosts" -i "$work/key" \
+              "$BEGET_USER@salvage.beget.com" "$cmd" 2>&1)"
+            rc=$?
+            set -e
+            echo "STEP6_BEGET_RC=$rc"
+            printf '%s\n' "$out" | head -80
+          done
+      - name: Cleanup
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/step6-beget-help"
