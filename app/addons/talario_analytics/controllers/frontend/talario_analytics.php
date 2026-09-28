@@ -866,17 +866,8 @@ function fn_talario_analytics_partner_sync_enable_penaty_request_gate(): void
     ) {
         fn_talario_analytics_json_response(409, ['error' => 'pilot_write_gate_conflict']);
     }
-    if (defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')
-        && trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS) !== '39'
-    ) {
-        fn_talario_analytics_json_response(409, ['error' => 'pilot_company_gate_conflict']);
-    }
-
     if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
         define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
-    }
-    if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
-        define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');
     }
 }
 
