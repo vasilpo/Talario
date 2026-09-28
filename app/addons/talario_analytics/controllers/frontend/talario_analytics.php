@@ -695,9 +695,15 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     $timestamp_raw = trim((string) ($_SERVER['HTTP_X_TALARIO_TIMESTAMP'] ?? ''));
     $signature_b64 = trim((string) ($_SERVER['HTTP_X_TALARIO_SIGNATURE'] ?? ''));
 
-    $expected_request_id = 'part-sync-penaty-' . $purpose . '-20260924';
-    if (!hash_equals($expected_request_id, $request_id)) {
-        fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+    if ($purpose === 'apply') {
+        if (!preg_match('/^part-sync-apply-[A-Za-z0-9._:-]{6,96}$/', $request_id)) {
+            fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+        }
+    } else {
+        $expected_request_id = 'part-sync-penaty-' . $purpose . '-20260924';
+        if (!hash_equals($expected_request_id, $request_id)) {
+            fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+        }
     }
     if (!preg_match('/^[0-9]{10}$/', $timestamp_raw)) {
         fn_talario_analytics_json_response(400, ['error' => 'pilot_timestamp_invalid']);
@@ -809,7 +815,8 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_write_failed']);
     }
 
-    $message = "talario-part-sync-penaty\n"
+    $signature_scope = $purpose === 'apply' ? 'talario-part-sync' : 'talario-part-sync-penaty';
+    $message = $signature_scope . "\n"
         . $purpose . "\n"
         . $request_id . "\n"
         . $timestamp_raw . "\n"
@@ -885,7 +892,7 @@ function fn_talario_analytics_partner_sync_penaty_bootstrap(): void
     fn_talario_analytics_partner_sync_dev_age_variant_bootstrap();
 }
 
-function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
+function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw, int $approved_company_id): void
 {
     $php_real = false;
     foreach ([
@@ -1038,8 +1045,16 @@ function fn_talario_analytics_partner_sync_run_penaty_cli(string $raw): void
 if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
     define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
 }
+$approved_company_id = getenv('TALARIO_PARTNER_SYNC_APPROVED_COMPANY_ID');
+if (!is_string($approved_company_id) || !ctype_digit($approved_company_id) || (int) $approved_company_id <= 0) {
+    fwrite(STDOUT, json_encode([
+        'error' => 'approved_company_context_required',
+        'http_status' => 403,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
+    exit(4);
+}
 if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
-    define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '39');
+    define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', (string) ((int) $approved_company_id));
 }
 
 $GLOBALS['TALARIO_PARTNER_SYNC_PENATY_CLI_DIAGNOSTIC'] = true;
@@ -1101,6 +1116,7 @@ PHP;
             'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT,
             'TALARIO_PARTNER_SYNC_RUNNER_UID' => (string) ((int) $snapshot_stat['uid']),
             'TALARIO_PARTNER_SYNC_STAGE_FILE' => $tmp_dir . DIRECTORY_SEPARATOR . 'stage',
+            'TALARIO_PARTNER_SYNC_APPROVED_COMPANY_ID' => (string) $approved_company_id,
         ]
     );
     if (!is_resource($process)) {
@@ -1209,7 +1225,7 @@ PHP;
     fn_talario_analytics_json_response($status, $payload);
 }
 
-function fn_talario_analytics_partner_sync_penaty_apply(): void
+function fn_talario_analytics_partner_sync_apply(): void
 {
     $max_payload_bytes = 20971520;
     $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
@@ -1240,24 +1256,29 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
         fn_talario_analytics_json_response(400, ['error' => 'invalid_operation']);
     }
     $product = isset($payload['product']) && is_array($payload['product']) ? $payload['product'] : [];
-    if ($operation === 'create' && (int) ($product['company_id'] ?? 0) !== 39) {
-        fn_talario_analytics_json_response(403, ['error' => 'pilot_company_not_allowed']);
+    $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
+    $payload_company_id = (int) ($product['company_id'] ?? 0);
+    if ($approved_company_id <= 0) {
+        fn_talario_analytics_json_response(400, ['error' => 'approved_company_id_required']);
     }
-    if (isset($product['company_id']) && (int) $product['company_id'] !== 39) {
-        fn_talario_analytics_json_response(403, ['error' => 'pilot_company_not_allowed']);
+    if ($operation === 'create' && $payload_company_id !== $approved_company_id) {
+        fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
+    }
+    if ($payload_company_id > 0 && $payload_company_id !== $approved_company_id) {
+        fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
     }
 
     $dry_run = !array_key_exists('dry_run', $payload) || (bool) $payload['dry_run'];
     if (!$dry_run) {
         $approval_id = trim((string) ($payload['approval_id'] ?? ''));
-        if (!preg_match('/^part-sync-penaty-[A-Za-z0-9._:-]{6,96}$/', $approval_id)) {
+        if (!preg_match('/^part-sync-[A-Za-z0-9._:-]{6,112}$/', $approval_id)) {
             fn_talario_analytics_json_response(400, ['error' => 'pilot_approval_id_required']);
         }
     }
 
     fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
     fn_talario_analytics_partner_sync_enable_penaty_request_gate();
-    fn_talario_analytics_partner_sync_run_penaty_cli($raw);
+    fn_talario_analytics_partner_sync_run_penaty_cli($raw, $approved_company_id);
 }
 
 function fn_talario_analytics_partner_sync_penaty_preview(): void
@@ -1401,7 +1422,7 @@ function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
     ]);
 }
 
-if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
@@ -1409,14 +1430,14 @@ if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_ap
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -1425,7 +1446,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -1450,7 +1471,7 @@ if ($mode === 'crm') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -1497,7 +1518,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
@@ -1529,8 +1550,8 @@ if ($mode === 'penaty_bootstrap') {
     fn_talario_analytics_partner_sync_penaty_bootstrap();
 }
 
-if ($mode === 'penaty_apply') {
-    fn_talario_analytics_partner_sync_penaty_apply();
+if ($mode === 'partner_apply') {
+    fn_talario_analytics_partner_sync_apply();
 }
 
 if ($mode === 'penaty_preview') {

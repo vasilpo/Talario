@@ -11,7 +11,6 @@ define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
 define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
 // Optional and dev_copy-only. Enables approved internal CLI apply after dry-run.
 define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
-define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '43'); // server-controlled, rotate/update for explicitly approved test partners
 ```
 
 ## Production read-only mode
@@ -44,11 +43,11 @@ The raw token belongs in the authorized caller's secret store/runtime environmen
 
 Write is not exposed through the storefront/controller API.
 
-The only supported apply entrypoint is the internal CLI runner:
+The write engine is the internal CLI runner:
 
 `php ops/partner-sync-apply.php < payload.json`
 
-It is intended to be invoked only through the existing authenticated dev_copy forced-command/maintenance channel.
+The signed dev_copy `partner_apply` controller verifies the trusted signature, timestamp and per-run company binding before launching this isolated runner. Direct CLI use remains restricted to the authenticated maintenance path.
 
 Safety properties:
 
@@ -59,7 +58,9 @@ Safety properties:
 - `TALARIO_PARTNER_SYNC_DEV_COPY=true` must be present;
 - dry-run is the default;
 - an actual apply additionally requires `TALARIO_PARTNER_SYNC_DEV_WRITE=true`;
-- the requested partner is resolved per explicit operator run; the payload must bind `approved_company_id` to the exact target `company_id`; that ID must also be present in the server-controlled `TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS`, and the company must exist and be active;
+- the requested partner is resolved per explicit operator run; there is no permanent partner/company allowlist in dev_copy configuration;
+- for the signed apply path, the verified request binds `approved_company_id` to the exact target `company_id`; only after signature verification is that one company ID passed into the isolated child runtime as the per-run server-side allowlist;
+- the target company must exist and be active; a payload cannot reassign an existing product to another company;
 - an actual apply requires a non-empty `approval_id`; only its SHA-256 hash is logged/returned;
 - new products default to status `H` unless the caller explicitly supplies `A`;
 - partner reassignment on update is rejected;
