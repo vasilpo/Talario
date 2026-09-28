@@ -1,0 +1,108 @@
+import {
+  createDecipheriv,
+  createHash,
+  createHmac,
+  createPrivateKey,
+  createPublicKey,
+  diffieHellman,
+  hkdfSync,
+} from 'node:crypto';
+import fs from 'node:fs';
+
+const [keyPath, envelopePath, outPath] = process.argv.slice(2);
+if (!keyPath || !envelopePath || !outPath) throw new Error('ARGS_REQUIRED');
+
+const pem = fs.readFileSync(keyPath, 'utf8');
+const body = pem.split(/\r?\n/).filter((line) => line && !line.startsWith('-----')).join('');
+const raw = Buffer.from(body, 'base64');
+const magic = Buffer.from('openssh-key-v1\0');
+if (!raw.subarray(0, magic.length).equals(magic)) throw new Error('OPENSSH_KEY_FORMAT_INVALID');
+
+let pos = magic.length;
+function readString(buf) {
+  if (pos + 4 > buf.length) throw new Error('OPENSSH_KEY_PARSE_FAILED');
+  const n = buf.readUInt32BE(pos); pos += 4;
+  const end = pos + n;
+  if (end > buf.length) throw new Error('OPENSSH_KEY_PARSE_FAILED');
+  const value = buf.subarray(pos, end); pos = end;
+  return value;
+}
+const cipher = readString(raw);
+const kdf = readString(raw);
+readString(raw);
+if (cipher.toString() !== 'none' || kdf.toString() !== 'none') throw new Error('ENCRYPTED_SIGNING_KEY_UNSUPPORTED');
+if (pos + 4 > raw.length) throw new Error('OPENSSH_KEY_PARSE_FAILED');
+const nkeys = raw.readUInt32BE(pos); pos += 4;
+if (nkeys !== 1) throw new Error('OPENSSH_KEY_COUNT_INVALID');
+readString(raw);
+const privateBlock = readString(raw);
+
+let q = 0;
+if (privateBlock.length < 8) throw new Error('OPENSSH_PRIVATE_BLOCK_INVALID');
+const check1 = privateBlock.readUInt32BE(q); q += 4;
+const check2 = privateBlock.readUInt32BE(q); q += 4;
+if (check1 !== check2) throw new Error('OPENSSH_CHECKINT_INVALID');
+function privateString() {
+  if (q + 4 > privateBlock.length) throw new Error('OPENSSH_PRIVATE_PARSE_FAILED');
+  const n = privateBlock.readUInt32BE(q); q += 4;
+  const end = q + n;
+  if (end > privateBlock.length) throw new Error('OPENSSH_PRIVATE_PARSE_FAILED');
+  const value = privateBlock.subarray(q, end); q = end;
+  return value;
+}
+const keyType = privateString();
+const publicEd = privateString();
+const privateEd = privateString();
+privateString();
+if (keyType.toString() !== 'ssh-ed25519' || publicEd.length !== 32 || privateEd.length !== 64) {
+  throw new Error('OPENSSH_ED25519_PRIVATE_INVALID');
+}
+if (!privateEd.subarray(32).equals(publicEd)) throw new Error('OPENSSH_ED25519_PUBLIC_MISMATCH');
+
+const seed = privateEd.subarray(0, 32);
+const h = createHash('sha512').update(seed).digest();
+const scalar = Buffer.from(h.subarray(0, 32));
+scalar[0] &= 248;
+scalar[31] &= 127;
+scalar[31] |= 64;
+
+const xPrivateDer = Buffer.concat([
+  Buffer.from('302e020100300506032b656e04220420', 'hex'),
+  scalar,
+]);
+const xPrivate = createPrivateKey({ key: xPrivateDer, format: 'der', type: 'pkcs8' });
+
+const env = JSON.parse(fs.readFileSync(envelopePath, 'utf8'));
+if (env.schema_version !== 'talario.part-sync.encrypted-create.v1') throw new Error('ENVELOPE_SCHEMA_INVALID');
+if (env.aad !== 'talario-part-sync-step6-create-v1') throw new Error('ENVELOPE_AAD_INVALID');
+
+const eph = Buffer.from(env.ephemeral_x25519_public_b64, 'base64');
+if (eph.length !== 32) throw new Error('EPHEMERAL_PUBLIC_INVALID');
+const xPublicDer = Buffer.concat([
+  Buffer.from('302a300506032b656e032100', 'hex'),
+  eph,
+]);
+const xPublic = createPublicKey({ key: xPublicDer, format: 'der', type: 'spki' });
+const shared = diffieHellman({ privateKey: xPrivate, publicKey: xPublic });
+const aad = Buffer.from(env.aad, 'utf8');
+const key = Buffer.from(hkdfSync('sha256', shared, Buffer.alloc(0), aad, 32));
+
+const nonce = Buffer.from(env.nonce_b64, 'base64');
+const combined = Buffer.from(env.ciphertext_b64, 'base64');
+if (nonce.length !== 12 || combined.length < 17) throw new Error('CIPHERTEXT_INVALID');
+const ciphertext = combined.subarray(0, combined.length - 16);
+const tag = combined.subarray(combined.length - 16);
+
+const decipher = createDecipheriv('chacha20-poly1305', key, nonce, { authTagLength: 16 });
+decipher.setAAD(aad);
+decipher.setAuthTag(tag);
+const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+
+if (plaintext.length !== Number(env.plaintext_bytes)) throw new Error('PLAINTEXT_BYTES_MISMATCH');
+const sha = createHash('sha256').update(plaintext).digest('hex');
+if (sha !== env.plaintext_sha256) throw new Error('PLAINTEXT_SHA256_MISMATCH');
+if (sha !== '0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c') {
+  throw new Error('PINNED_PAYLOAD_SHA256_MISMATCH');
+}
+fs.writeFileSync(outPath, plaintext, { mode: 0o600 });
+console.log('STEP6B_DECRYPT=PASS');
