@@ -14,12 +14,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Signed dry-run
         env:
-          PARTNER_SYNC_TOKEN: ${{ secrets.PARTNER_SYNC_TOKEN }}
           SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
         shell: bash
         run: |
           set -euo pipefail
-          test -n "${PARTNER_SYNC_TOKEN:-}" || { echo "RESULT=missing_partner_sync_token_secret"; exit 2; }
           test -n "${SIGNING_KEY:-}" || { echo "RESULT=missing_signing_key_secret"; exit 2; }
           umask 077
           printf '%s\n' "$SIGNING_KEY" > key
@@ -35,7 +33,7 @@ jobs:
               sch=[{"day":d,"start":s,"end":e,"duration":60} for d,s,e in sessions]
               for option,price in prices:
                   vp.append({"age_group":age,"purchase_option":option,"price":price,"capacity":5,"schedule":sch})
-          payload={"operation":"create","dry_run":True,"approved_company_name":"Глиняные Чудеса","category_name":"Керамика","product":{"name":"Первая кружка","price":0,"status":"H","full_description":description},"booking":{"from":"2026-09-28","to":"2027-09-28","slot_time":60,"free_time":0,"days":{"monday":{"enabled":True,"start":"10:00","end":"11:00"}}},"variation_plan":vp}
+          payload={"operation":"create","dry_run":True,"approved_company_name":"Глиняные Чудеса","category_name":"Керамика","product":{"name":"Первая кржука","price":0,"status":"H","full_description":description},"booking":{"from":"2026-09-28","to":"2027-09-28","slot_time":60,"free_time":0,"days":{"monday":{"enabled":True,"start":"10:00","end":"11:00"}}},"variation_plan":vp}
           open("payload.json","w",encoding="utf-8").write(json.dumps(payload,ensure_ascii=False,separators=(",",":")))
           PY
           request_id="part-sync-apply-clay-wonders-dryrun"
@@ -44,7 +42,7 @@ jobs:
           printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$request_id" "$ts" "$hash" > message
           ssh-keygen -Y sign -f key -n talario-part-sync message >/dev/null
           sig="$(base64 -w0 message.sig)"
-          code="$(curl -sS -o response.json -w '%{http_code}' --max-time 60 -X POST 'https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply' -H "Authorization: Bearer $PARTNER_SYNC_TOKEN" -H "Content-Type: application/json" -H "X-Talario-Request-Id: $request_id" -H "X-Talario-Timestamp: $ts" -H "X-Talario-Signature: $sig" --data-binary @payload.json)"
+          code="$(curl -sS -o response.json -w '%{http_code}' --max-time 60 -X POST 'https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply' -H "Content-Type: application/json" -H "X-Talario-Request-Id: $request_id" -H "X-Talario-Timestamp: $ts" -H "X-Talario-Signature: $sig" --data-binary @payload.json)"
           echo "HTTP_STATUS=$code"
           python3 -c 'import json; print(json.dumps(json.load(open("response.json")),ensure_ascii=False))'
           test "$code" = "200"
