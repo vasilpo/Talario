@@ -1407,6 +1407,29 @@ function fn_talario_analytics_partner_sync_set_cli_stage(string $stage, bool $ar
     }
 }
 
+function fn_talario_analytics_partner_sync_safe_write_error_kind(Throwable $exception): string
+{
+    $message = mb_strtolower(trim($exception->getMessage()), 'UTF-8');
+
+    if ($exception instanceof TypeError || str_contains($message, 'must be of type')) {
+        return 'type_error';
+    }
+    if (str_contains($message, 'duplicate entry')) {
+        return 'db_duplicate';
+    }
+    if (str_contains($message, 'unknown column')) {
+        return 'db_unknown_column';
+    }
+    if (str_contains($message, 'call to undefined') || str_contains($message, 'undefined function')) {
+        return 'undefined_call';
+    }
+    if ($exception instanceof RuntimeException) {
+        return 'runtime_exception';
+    }
+
+    return 'other';
+}
+
 function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $exception): ?string
 {
     $allowed = [
@@ -1574,8 +1597,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
     $temp_dirs = [];
     $prepared_images = null;
     $variation_write_result = null;
+    $write_stage = 'pre_write';
     try {
         if ($images !== null) {
+            $write_stage = 'image_prepare';
             $prepared_images = fn_talario_analytics_partner_sync_write_prepare_images(
                 $images,
                 $operation === 'update' ? $product_id : 0
@@ -1585,6 +1610,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
 
         $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
+        $write_stage = 'base_product_write';
         fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true);
         $result_id = fn_update_product(
             $product_data,
@@ -1598,6 +1624,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         $product_id = (int) $result_id;
 
         if ($variation_resolution !== null) {
+            $write_stage = 'variation_write';
             $variation_write_result = fn_talario_analytics_partner_sync_apply_variation_plan(
                 $operation,
                 $product_id,
@@ -1608,6 +1635,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
 
         if ($prepared_images !== null) {
+            $write_stage = 'image_write';
             fn_talario_analytics_partner_sync_write_apply_images(
                 $product_id,
                 $prepared_images,
@@ -1615,8 +1643,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
             );
         }
 
+        $write_stage = 'success_cleanup';
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files, $temp_dirs);
     } catch (Throwable $exception) {
+        $failed_stage = $write_stage;
         fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', true);
         // Never keep an incomplete new card: CREATE is compensating-cleaned.
         // UPDATE is idempotent by contract; rerunning the same approved payload is the repair path.
@@ -1626,6 +1656,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
         fn_talario_analytics_partner_sync_write_cleanup_images($temp_files, $temp_dirs);
         fn_talario_analytics_partner_sync_set_cli_stage('failure_cleanup', false);
         $safe_error_detail = fn_talario_analytics_partner_sync_safe_write_error_detail($exception);
+        $safe_error_kind = fn_talario_analytics_partner_sync_safe_write_error_kind($exception);
         try {
             fn_log_event('general', 'runtime', [
                 'message' => 'Talario Partner Sync dev write failed',
@@ -1633,13 +1664,19 @@ function fn_talario_analytics_partner_sync_write_response(): void
                 'approval_id_hash' => $approval_id_hash,
                 'recovery' => $operation === 'create' ? 'compensating_cleanup' : 'rerun_same_update',
                 'error_class' => get_class($exception),
+                'error_kind' => $safe_error_kind,
+                'failed_stage' => $failed_stage,
                 'error_detail' => $safe_error_detail,
             ]);
         } catch (Throwable $log_exception) {
             // Logging must never mask the primary bounded Partner Sync failure response.
         }
 
-        $error_response = ['error' => 'partner_sync_write_failed'];
+        $error_response = [
+            'error' => 'partner_sync_write_failed',
+            'stage' => $failed_stage,
+            'kind' => $safe_error_kind,
+        ];
         if ($safe_error_detail !== null) {
             $error_response['detail'] = $safe_error_detail;
         }
