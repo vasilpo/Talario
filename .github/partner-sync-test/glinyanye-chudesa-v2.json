@@ -1,0 +1,399 @@
+{
+  "request_id": "part-sync-test-glinyanye-chudesa-20260928",
+  "approved_company_name": "Глиняные Чудеса",
+  "parent_category_name": "Творчество",
+  "category_name": "Керамика",
+  "operation": "create",
+  "dry_run": false,
+  "approval_id": "part-sync-test-glinyanye-chudesa-20260928",
+  "product": {
+    "name": "Первая кружка. Глиняные чудеса. Красногорск",
+    "price": 1500,
+    "status": "H",
+    "short_description": "Занятия по керамике для детей: знакомство с глиной, разные техники лепки и создание собственных изделий.",
+    "full_description": "<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p>\n<p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p>\n<p>Работа с глиной развивает мелкую моторику, воображение, чувство формы, аккуратность и творческое мышление. А ещё это увлекательный процесс, в котором ребёнок может отвлечься от гаджетов и полностью погрузиться в творчество.</p>\n<p><strong>Что взять с собой:</strong> воду.</p>\n<h3>Возраст и расписание</h3><ul><li><strong>до 3 лет</strong> — понедельник и среда, 10:00–11:00.</li><li><strong>3–5 лет</strong> — вторник и четверг, 11:00–12:00.</li><li><strong>6–9 лет</strong> — среда и пятница, 15:00–16:00.</li><li>На каждое время доступно <strong>5 мест</strong>.</li></ul>\n<p><strong>Занятие</strong> длится 60 минут.</p><p>В онлайн-календаре <strong>Таларио</strong> отображается актуальное расписание и количество свободных мест. Вы можете увидеть доступные места и сразу записаться на занятие.</p>\n<h3>Стоимость занятий</h3><ul><li><strong>Пробное занятие — бесплатно</strong></li><li>Разовое занятие — 1500 ₽</li><li>Абонемент на 4 занятия — 3600 ₽</li><li>Абонемент на 8 занятий — 6800 ₽</li><li>Абонемент на 12 занятий — 9600 ₽</li></ul>\n<h3>Адрес</h3><p><strong>Красногорск, ул. Осенняя, д. 1, стр. 1</strong></p><p>Есть общая парковка во дворе. Зайдите во двор дома, поверните направо и идите вдоль дома. Вход — белая дверь с названием.</p>\n<div style=\"position:relative;overflow:hidden;\"><a href=\"https://yandex.ru/maps/?text=%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE%D0%B3%D0%BE%D1%80%D1%81%D0%BA%2C%20%D1%83%D0%BB.%20%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D1%8F%D1%8F%2C%201%2C%20%D1%81%D1%82%D1%80.%201\" style=\"color:#eee;font-size:12px;position:absolute;top:0px;\">Красногорск, ул. Осенняя, д. 1, стр. 1 — Яндекс Карты</a><iframe src=\"https://yandex.ru/map-widget/v1/?mode=search&amp;text=%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE%D0%B3%D0%BE%D1%80%D1%81%D0%BA%2C%20%D1%83%D0%BB.%20%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D1%8F%D1%8F%2C%201%2C%20%D1%81%D1%82%D1%80.%201&amp;z=16\" width=\"100%\" height=\"400\" frameborder=\"1\" allowfullscreen=\"true\" style=\"position:relative;\"></iframe></div>",
+    "meta_keywords": "керамика, лепка, глина, дети, Красногорск"
+  },
+  "booking": {
+    "from": "28/09/2026",
+    "to": "31/12/2026",
+    "slot_time": 60,
+    "free_time": 0,
+    "days": {
+      "monday": {
+        "enabled": true,
+        "start": "10:00",
+        "end": "11:00"
+      },
+      "tuesday": {
+        "enabled": true,
+        "start": "11:00",
+        "end": "12:00"
+      },
+      "wednesday": {
+        "enabled": true,
+        "start": "10:00",
+        "end": "11:00"
+      },
+      "thursday": {
+        "enabled": true,
+        "start": "11:00",
+        "end": "12:00"
+      },
+      "friday": {
+        "enabled": true,
+        "start": "15:00",
+        "end": "16:00"
+      },
+      "saturday": {
+        "enabled": false,
+        "start": "",
+        "end": ""
+      },
+      "sunday": {
+        "enabled": false,
+        "start": "",
+        "end": ""
+      }
+    }
+  },
+  "capacity": 5,
+  "variation_plan": [
+    {
+      "age_group": "до 3 лет",
+      "purchase_option": "Пробное занятие",
+      "price": 0,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "monday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "wednesday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "до 3 лет",
+      "purchase_option": "Разовое занятие",
+      "price": 1500,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "monday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "wednesday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "до 3 лет",
+      "purchase_option": "Абонемент 4 занятия",
+      "price": 3600,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "monday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "wednesday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "до 3 лет",
+      "purchase_option": "Абонемент 8 занятий",
+      "price": 6800,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "monday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "wednesday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "до 3 лет",
+      "purchase_option": "Абонемент 12 занятий",
+      "price": 9600,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "monday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "wednesday",
+          "start": "10:00",
+          "end": "11:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "3-5 лет",
+      "purchase_option": "Пробное занятие",
+      "price": 0,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "tuesday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "thursday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "3-5 лет",
+      "purchase_option": "Разовое занятие",
+      "price": 1500,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "tuesday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "thursday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "3-5 лет",
+      "purchase_option": "Абонемент 4 занятия",
+      "price": 3600,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "tuesday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "thursday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "3-5 лет",
+      "purchase_option": "Абонемент 8 занятий",
+      "price": 6800,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "tuesday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "thursday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "3-5 лет",
+      "purchase_option": "Абонемент 12 занятий",
+      "price": 9600,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "tuesday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "thursday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "6-9 лет",
+      "purchase_option": "Пробное занятие",
+      "price": 0,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "wednesday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "friday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "6-9 лет",
+      "purchase_option": "Разовое занятие",
+      "price": 1500,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "wednesday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "friday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "6-9 лет",
+      "purchase_option": "Абонемент 4 занятия",
+      "price": 3600,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "wednesday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "friday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "6-9 лет",
+      "purchase_option": "Абонемент 8 занятий",
+      "price": 6800,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "wednesday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "friday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    },
+    {
+      "age_group": "6-9 лет",
+      "purchase_option": "Абонемент 12 занятий",
+      "price": 9600,
+      "capacity": 5,
+      "schedule": [
+        {
+          "day": "wednesday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "friday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ]
+    }
+  ],
+  "image_drive_ids": [
+    "1lTISmlz74-JAMCOLST9GFD93gXUPNhYg",
+    "1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij",
+    "1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0"
+  ],
+  "bootstrap_missing_age_variants": true
+}
