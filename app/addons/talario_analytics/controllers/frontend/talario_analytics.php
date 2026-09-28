@@ -1322,8 +1322,9 @@ function fn_talario_analytics_partner_sync_apply(): void
     if (!is_string($resolved_raw) || $resolved_raw === '' || strlen($resolved_raw) > $max_payload_bytes) {
         fn_talario_analytics_json_response(500, ['error' => 'resolved_payload_invalid']);
     }
+    $raw = $resolved_raw;
     fn_talario_analytics_partner_sync_enable_penaty_request_gate();
-    fn_talario_analytics_partner_sync_run_penaty_cli($resolved_raw, $approved_company_id);
+    fn_talario_analytics_partner_sync_run_penaty_cli($raw, $approved_company_id);
 }
 
 function fn_talario_analytics_partner_sync_penaty_preview(): void
