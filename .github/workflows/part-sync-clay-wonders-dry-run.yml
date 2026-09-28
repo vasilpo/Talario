@@ -48,14 +48,14 @@ jobs:
             id="$(jq -r '.id' <<<"$entry")"
             expected_sha="$(jq -r '.sha256' <<<"$entry")"
             expected_bytes="$(jq -r '.bytes' <<<"$entry")"
-            [[ "$id" =~ ^[A-Za-z0-9_-]+$ ]]
-            [[ "$expected_sha" =~ ^[0-9a-f]{64}$ ]]
-            [[ "$expected_bytes" =~ ^[0-9]+$ ]]
-            test "$expected_bytes" -gt 0
-            test "$expected_bytes" -le 5242880
+            if ! [[ "$id" =~ ^[A-Za-z0-9_-]+$ ]]; then exit 13; fi
+            if ! [[ "$expected_sha" =~ ^[0-9a-f]{64}$ ]]; then exit 14; fi
+            if ! [[ "$expected_bytes" =~ ^[0-9]+$ ]]; then exit 15; fi
+            if ! test "$expected_bytes" -gt 0; then exit 16; fi
+            if ! test "$expected_bytes" -le 5242880; then exit 17; fi
             file="$(mktemp image.XXXXXX)"
             curl --fail --location --silent --show-error --max-time 60               "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t"               --output "$file"
-            bytes="$(stat -c '%s' "$file")"
+            bytes="$(wc -c < "$file" | tr -d '[:space:]')"
             test "$bytes" -eq "$expected_bytes"
             actual_sha="$(sha256sum "$file" | awk '{print $1}')"
             test "$actual_sha" = "$expected_sha"
