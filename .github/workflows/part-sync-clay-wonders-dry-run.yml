@@ -8,7 +8,7 @@ permissions:
 jobs:
   approved-create:
     if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -49,7 +49,8 @@ jobs:
             expected_sha="$(jq -r '.sha256' <<<"$entry")"
             expected_bytes="$(jq -r '.bytes' <<<"$entry")"
             if ! [[ "$id" =~ ^[A-Za-z0-9_-]+$ ]]; then exit 13; fi
-            if ! [[ "$expected_sha" =~ ^[0-9a-f]{64}$ ]]; then exit 14; fi
+            if ! [[ "$expected_sha" =~ ^[0-9A-Fa-f]{64}$ ]]; then exit 14; fi
+            expected_sha="$(printf '%s' "$expected_sha" | tr '[:upper:]' '[:lower:]')"
             if ! [[ "$expected_bytes" =~ ^[0-9]+$ ]]; then exit 15; fi
             if ! test "$expected_bytes" -gt 0; then exit 16; fi
             if ! test "$expected_bytes" -le 5242880; then exit 17; fi
