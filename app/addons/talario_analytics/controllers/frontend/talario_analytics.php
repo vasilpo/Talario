@@ -1225,7 +1225,7 @@ PHP;
     fn_talario_analytics_json_response($status, $payload);
 }
 
-function fn_talario_analytics_partner_sync_penaty_apply(): void
+function fn_talario_analytics_partner_sync_apply(): void
 {
     $max_payload_bytes = 20971520;
     $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
@@ -1422,7 +1422,7 @@ function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
     ]);
 }
 
-if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
@@ -1430,14 +1430,14 @@ if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_ap
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -1446,7 +1446,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -1471,7 +1471,7 @@ if ($mode === 'crm') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -1518,7 +1518,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
@@ -1550,8 +1550,8 @@ if ($mode === 'penaty_bootstrap') {
     fn_talario_analytics_partner_sync_penaty_bootstrap();
 }
 
-if ($mode === 'penaty_apply') {
-    fn_talario_analytics_partner_sync_penaty_apply();
+if ($mode === 'partner_apply') {
+    fn_talario_analytics_partner_sync_apply();
 }
 
 if ($mode === 'penaty_preview') {
