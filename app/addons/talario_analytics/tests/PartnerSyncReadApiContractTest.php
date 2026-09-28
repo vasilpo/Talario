@@ -798,6 +798,25 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+
+    public function testPartnerSyncWriteFailureResponseIsBoundedAndStageAware(): void
+    {
+        self::assertStringContainsString(
+            'function fn_talario_analytics_partner_sync_safe_write_error_kind',
+            $this->write_capability
+        );
+        foreach (['image_prepare', 'base_product_write', 'variation_write', 'image_write', 'success_cleanup'] as $stage) {
+            self::assertStringContainsString("'" . $stage . "'", $this->write_capability);
+        }
+        self::assertStringContainsString("'stage' => $failed_stage", $this->write_capability);
+        self::assertStringContainsString("'kind' => $safe_error_kind", $this->write_capability);
+        self::assertStringNotContainsString(
+            "'message' => $exception->getMessage()",
+            $this->write_capability
+        );
+    }
+
+
 }
 
 
