@@ -98,3 +98,5 @@ Example dry-run payload:
 ```
 
 For an actual dev_copy apply, send the same normalized payload with `"dry_run": false` and an `approval_id`. Production write remains disabled and requires a separate explicit decision.
+
+<!-- PART-SYNC dev_copy deployment trigger: PR #296 visual acceptance -->
