@@ -1,0 +1,84 @@
+name: PART-SYNC Test Glinyanye Chudesa
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - '.github/partner-sync-test/glinyanye-chudesa.json'
+      - '.github/workflows/partner-sync-test-glinyanye-chudesa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  create-hidden-test-card:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build payload with Drive images
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .github/partner-sync-test/glinyanye-chudesa.json /tmp/request.json
+          jq 'del(.image_drive_ids)' /tmp/request.json > /tmp/base.json
+          echo '[]' > /tmp/images.json
+          i=0
+          while read -r id; do
+            i=$((i+1))
+            file="/tmp/image-$i"
+            curl --fail --location --silent --show-error \
+              "https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t" \
+              --output "$file"
+            bytes=$(wc -c < "$file")
+            test "$bytes" -gt 0
+            test "$bytes" -le 5242880
+            mime=$(file --brief --mime-type "$file")
+            case "$mime" in image/jpeg|image/png|image/webp) ;; *) echo "unsupported image mime"; exit 12;; esac
+            b64=$(base64 -w0 "$file")
+            jq --arg b64 "$b64" --arg alt "Глиняные чудеса" '. + [{content_base64:$b64,alt:$alt}]' /tmp/images.json > /tmp/images.next
+            mv /tmp/images.next /tmp/images.json
+          done < <(jq -r '.image_drive_ids[]' /tmp/request.json)
+          jq --slurpfile imgs /tmp/images.json '. + {images:$imgs[0]}' /tmp/base.json > /tmp/apply.json
+          jq '.dry_run=true | del(.approval_id)' /tmp/apply.json > /tmp/dry.json
+
+      - name: Prepare signing key
+        shell: bash
+        env:
+          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s\n' "$SIGNING_KEY" > /tmp/signing_key
+          chmod 600 /tmp/signing_key
+          actual=$(ssh-keygen -y -f /tmp/signing_key)
+          expected='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP'
+          test "$actual" = "$expected"
+
+      - name: Signed dry-run then create Hidden card
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.api&mode=partner_apply'
+          sign_and_post() {
+            body="$1"; req="$2"; out="$3"
+            ts=$(date +%s)
+            hash=$(sha256sum "$body" | awk '{print $1}')
+            printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$hash" > /tmp/message
+            rm -f /tmp/message.sig
+            ssh-keygen -Y sign -q -f /tmp/signing_key -n talario-part-sync /tmp/message
+            sig=$(base64 -w0 /tmp/message.sig)
+            code=$(curl --silent --show-error --output "$out" --write-out '%{http_code}' \
+              -X POST "$endpoint" -H 'Content-Type: application/json' \
+              -H "X-Talario-Request-Id: $req" -H "X-Talario-Timestamp: $ts" \
+              -H "X-Talario-Signature: $sig" --data-binary "@$body")
+            echo "$code"
+          }
+          dry_code=$(sign_and_post /tmp/dry.json 'part-sync-apply-glina-dry-20260928' /tmp/dry.out)
+          test "$dry_code" = 200
+          jq -e '.dry_run == true and .plan.operation == "create" and .plan.product.status == "H"' /tmp/dry.out >/dev/null
+          apply_code=$(sign_and_post /tmp/apply.json 'part-sync-apply-glina-create-20260928' /tmp/apply.out)
+          test "$apply_code" = 201
+          jq -e '.dry_run == false and .operation == "create" and .readback.status == "H" and .readback.images.main == 1 and .readback.images.additional == 2' /tmp/apply.out >/dev/null
+          jq '{schema_version,operation,product_id,readback:{company_id:.readback.company_id,name:.readback.name,status:.readback.status,price:.readback.price,images:.readback.images},variations}' /tmp/apply.out
