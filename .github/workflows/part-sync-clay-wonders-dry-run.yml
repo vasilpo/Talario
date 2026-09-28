@@ -22,6 +22,7 @@ jobs:
           umask 077
           printf '%s' "$SIGNING_KEY" | base64 --decode > key
           pub="$(ssh-keygen -y -f key | awk '{print $2}')"
+          echo "SIGNING_PUBLIC_KEY=$pub"
           test "$pub" = "AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK" || { echo "RESULT=signing_key_mismatch"; exit 3; }
           python3 - <<'PY'
           import json
