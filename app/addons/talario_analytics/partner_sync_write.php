@@ -669,34 +669,71 @@ function fn_talario_analytics_partner_sync_cleanup_failed_create(int $base_produ
     }
 }
 
+function fn_talario_analytics_partner_sync_readback_serialized_capacity(
+    string $serialized,
+    string $day,
+    string $start,
+    string $end
+): ?int {
+    if ($serialized === '' || strlen($serialized) > 16384) {
+        return null;
+    }
+
+    $day_marker = 's:' . strlen($day) . ':"' . $day . '";a:';
+    $day_offset = strpos($serialized, $day_marker);
+    if ($day_offset === false) {
+        return null;
+    }
+
+    $window = substr($serialized, $day_offset, 2048);
+    $amount_offset = strpos($window, 's:14:"time_by_amount";a:');
+    if ($amount_offset === false || $amount_offset > 256) {
+        return null;
+    }
+    $window = substr($window, $amount_offset, 1024);
+
+    $pattern = '/s:10:"start_time";s:\\d+:"([^"]*)";'
+        . 's:8:"end_time";s:\\d+:"([^"]*)";'
+        . 's:6:"amount";(?:i:(\\d+);|s:\\d+:"(\\d+)";)/';
+    if (preg_match_all($pattern, $window, $matches, PREG_SET_ORDER) !== 1) {
+        return null;
+    }
+
+    $match = $matches[0];
+    if ((string) $match[1] !== $start || (string) $match[2] !== $end) {
+        return null;
+    }
+
+    $raw_capacity = $match[3] !== '' ? $match[3] : ($match[4] ?? '');
+    if ($raw_capacity === '' || !ctype_digit((string) $raw_capacity)) {
+        return null;
+    }
+
+    return (int) $raw_capacity;
+}
+
 function fn_talario_analytics_partner_sync_readback_variation_state(
     int $product_id,
     array $item
 ): array {
-    $price = (float) db_get_field(
-        'SELECT price FROM ?:product_prices WHERE product_id = ?i AND lower_limit = 1 AND usergroup_id = 0',
-        $product_id
-    );
-    if (abs($price - (float) $item['price']) > 0.001) {
+    $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
+    if (!$readback || abs((float) $readback['price'] - (float) $item['price']) > 0.001) {
         throw new RuntimeException('variation_readback_mismatch');
     }
 
-    $booking = db_get_row(
-        'SELECT slot_time, days_data FROM ?:ec_table_booking_system WHERE product_id = ?i',
-        $product_id
-    );
+    $booking = isset($readback['booking']) && is_array($readback['booking'])
+        ? $readback['booking']
+        : null;
     if (!$booking || (int) $booking['slot_time'] !== (int) $item['duration']) {
         throw new RuntimeException('variation_readback_mismatch');
     }
-
-    $serialized = (string) ($booking['days_data'] ?? '');
-    if ($serialized === '' || strlen($serialized) > 16384 || !preg_match('/^a:\\d+:\\{/', $serialized)) {
-        throw new RuntimeException('variation_readback_mismatch');
-    }
-    $days_data = @unserialize($serialized, ['allowed_classes' => false, 'max_depth' => 8]);
-    if (!is_array($days_data)) {
-        throw new RuntimeException('variation_readback_mismatch');
-    }
+    $days_data = isset($booking['days_data']) && is_array($booking['days_data'])
+        ? $booking['days_data']
+        : [];
+    $serialized_days = (string) db_get_field(
+        'SELECT days_data FROM ?:ec_table_booking_system WHERE product_id = ?i',
+        $product_id
+    );
 
     $expected_by_day = [];
     foreach ($item['schedule'] as $session) {
@@ -720,22 +757,12 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
             throw new RuntimeException('variation_readback_mismatch');
         }
 
-        $capacity = null;
-        $amount_rows = isset($days_data[$day]['time_by_amount']) && is_array($days_data[$day]['time_by_amount'])
-            ? $days_data[$day]['time_by_amount']
-            : [];
-        foreach ($amount_rows as $amount_row) {
-            if (!is_array($amount_row)) {
-                continue;
-            }
-            if (
-                trim((string) ($amount_row['start_time'] ?? '')) === (string) $expected['start']
-                && trim((string) ($amount_row['end_time'] ?? '')) === (string) $expected['end']
-            ) {
-                $capacity = (int) ($amount_row['amount'] ?? 0);
-                break;
-            }
-        }
+        $capacity = fn_talario_analytics_partner_sync_readback_serialized_capacity(
+            $serialized_days,
+            $day,
+            $start,
+            $end
+        );
         if ($capacity !== (int) ($expected['capacity'] ?? 0)) {
             throw new RuntimeException('variation_readback_mismatch');
         }
@@ -754,7 +781,7 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
     }
 
     return [
-        'price' => $price,
+        'price' => (float) $readback['price'],
         'duration' => (int) $booking['slot_time'],
         'schedule' => $readback_schedule,
     ];
