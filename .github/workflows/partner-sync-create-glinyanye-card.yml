@@ -1,0 +1,34 @@
+name: PART-SYNC Create Glinyanye Chudesa Card
+on:
+  push:
+    branches: [development]
+    paths: ['.github/partner-sync-test/glinyanye-chudesa-create.json']
+permissions:
+  contents: read
+jobs:
+  create:
+    if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Signed dry-run and explicit rerun apply
+        env:
+          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s' "$SIGNING_KEY" | base64 --decode > key
+          cp .github/partner-sync-test/glinyanye-chudesa-create.json apply.json
+          jq '.dry_run=true | del(.approval_id)' apply.json > dry.json
+          endpoint='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
+          post_signed(){ body="$1"; req="$2"; out="$3"; ts=$(date +%s); hash=$(sha256sum "$body"|awk '{print $1}'); printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$hash" > message; rm -f message.sig; ssh-keygen -Y sign -q -f key -n talario-part-sync message; sig=$(base64 -w0 message.sig); curl -sS -o "$out" -w '%{http_code}' --max-time 120 -X POST "$endpoint" -H 'Content-Type: application/json' -H "X-Talario-Request-Id: $req" -H "X-Talario-Timestamp: $ts" -H "X-Talario-Signature: $sig" --data-binary "@$body"; }
+          code=$(post_signed dry.json part-sync-apply-glina-card-dry dry.out)
+          test "$code" = 200
+          jq -e '.dry_run==true and .plan.product.status=="H" and .plan.product.company_id==12 and .plan.product.category_ids==[269]' dry.out >/dev/null
+          if [ "${GITHUB_RUN_ATTEMPT}" = "1" ]; then echo 'RESULT=DRY_RUN_PASS_REQUIRES_EXPLICIT_RERUN'; exit 42; fi
+          code=$(post_signed apply.json part-sync-apply-glina-card-create apply.out)
+          test "$code" = 201
+          jq -e '.readback.status=="H" and .readback.company_id==12' apply.out >/dev/null
+          jq '{product_id,operation,readback:{company_id:.readback.company_id,name:.readback.name,status:.readback.status,price:.readback.price,images:.readback.images}}' apply.out
