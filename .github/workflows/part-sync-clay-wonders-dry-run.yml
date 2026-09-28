@@ -8,7 +8,7 @@ permissions:
 jobs:
   approved-create:
     if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +35,9 @@ jobs:
         run: |
           set -euo pipefail
           test -n "${SIGNING_KEY:-}" || exit 2
+          for tool in jq curl sha256sum file base64 ssh-keygen; do
+            command -v "$tool" >/dev/null 2>&1 || exit 18
+          done
           umask 077
           printf '%s' "$SIGNING_KEY" | base64 --decode > key
           chmod 600 key
