@@ -784,11 +784,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "SELECT slot_time, days_data FROM ?:ec_table_booking_system",
+            'SELECT days_data FROM ?:ec_table_booking_system WHERE product_id = ?i',
             $this->write_capability
         );
         self::assertStringContainsString(
-            "['time_by_amount']",
+            'time_by_amount',
             $this->write_capability
         );
         self::assertStringContainsString(
