@@ -695,9 +695,15 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     $timestamp_raw = trim((string) ($_SERVER['HTTP_X_TALARIO_TIMESTAMP'] ?? ''));
     $signature_b64 = trim((string) ($_SERVER['HTTP_X_TALARIO_SIGNATURE'] ?? ''));
 
-    $expected_request_id = 'part-sync-penaty-' . $purpose . '-20260924';
-    if (!hash_equals($expected_request_id, $request_id)) {
-        fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+    if ($purpose === 'apply') {
+        if (!preg_match('/^part-sync-apply-[A-Za-z0-9._:-]{6,96}$/', $request_id)) {
+            fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+        }
+    } else {
+        $expected_request_id = 'part-sync-penaty-' . $purpose . '-20260924';
+        if (!hash_equals($expected_request_id, $request_id)) {
+            fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+        }
     }
     if (!preg_match('/^[0-9]{10}$/', $timestamp_raw)) {
         fn_talario_analytics_json_response(400, ['error' => 'pilot_timestamp_invalid']);
@@ -809,7 +815,8 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_write_failed']);
     }
 
-    $message = "talario-part-sync-penaty\n"
+    $signature_scope = $purpose === 'apply' ? 'talario-part-sync' : 'talario-part-sync-penaty';
+    $message = $signature_scope . "\n"
         . $purpose . "\n"
         . $request_id . "\n"
         . $timestamp_raw . "\n"
