@@ -49,6 +49,22 @@ function fn_talario_analytics_partner_sync_write_payload(): array
     return $payload;
 }
 
+function fn_talario_analytics_partner_sync_write_require_run_company(int $company_id, array $payload): void
+{
+    $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
+    if ($approved_company_id <= 0 || $approved_company_id !== $company_id) {
+        fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
+    }
+
+    $company_status = (string) db_get_field(
+        'SELECT status FROM ?:companies WHERE company_id = ?i',
+        $company_id
+    );
+    if ($company_status !== 'A') {
+        fn_talario_analytics_json_response(400, ['error' => 'company_not_active']);
+    }
+}
+
 function fn_talario_analytics_partner_sync_write_normalize_product(array $payload): array
 {
     $operation = (string) ($payload['operation'] ?? '');
@@ -1325,16 +1341,11 @@ function fn_talario_analytics_partner_sync_write_response(): void
         if (isset($product_data['company_id']) && (int) $existing['company_id'] !== (int) $product_data['company_id']) {
             fn_talario_analytics_json_response(409, ['error' => 'company_change_forbidden']);
         }
+        fn_talario_analytics_partner_sync_write_require_run_company((int) $existing['company_id'], $payload);
     }
 
-    if (isset($product_data['company_id'])) {
-        $company_status = (string) db_get_field(
-            'SELECT status FROM ?:companies WHERE company_id = ?i',
-            (int) $product_data['company_id']
-        );
-        if ($company_status !== 'A') {
-            fn_talario_analytics_json_response(400, ['error' => 'company_not_active']);
-        }
+    if ($operation === 'create') {
+        fn_talario_analytics_partner_sync_write_require_run_company((int) $product_data['company_id'], $payload);
     }
 
     if (isset($product_data['category_ids'])) {
