@@ -210,7 +210,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncWriteRequiresSeparateDevWriteGateAndApproval(): void
     {
         self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE', $this->write_capability);
-        self::assertStringNotContainsString("['error' => 'company_not_write_allowed']", $this->write_capability);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', $this->write_capability);
+        self::assertStringContainsString("['error' => 'company_not_write_allowed']", $this->write_capability);
         self::assertStringContainsString("SELECT status FROM ?:companies WHERE company_id = ?i", $this->write_capability);
         self::assertStringContainsString("['approved_company_id']", $this->write_capability);
         self::assertStringContainsString("['error' => 'company_run_approval_required']", $this->write_capability);
