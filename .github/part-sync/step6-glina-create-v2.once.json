@@ -1,0 +1,10 @@
+{
+  "schema_version": "talario.part-sync.step6b.request.v1",
+  "request_id": "part-sync-glina-step6-v2-20260928",
+  "source_run_id": 36476246274,
+  "artifact_id": 10993567144,
+  "artifact_zip_sha256": "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094",
+  "plaintext_sha256": "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c",
+  "plaintext_bytes": 2391697,
+  "artifact_url": "https://sdmntprnortheu.oaiusercontent.com/files/00000000-a5bc-81f4-ae92-51bc3fa4aee6/raw?se=2026-09-28T20%3A16%3A03Z&sp=r&sv=2026-02-06&sr=b&scid=d8c6b62e-21e8-5c60-a6d8-a2b75ef8cb56&skoid=061609b8-1cdb-4a5b-9e68-c7ab9a523a8f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-28T19%3A19%3A58Z&ske=2026-09-29T19%3A19%3A58Z&sks=b&skv=2026-02-06&sig=ASzC9RdSW9X7uq26an9OAPf/V6tutnjx8jvmAU434pI%3D"
+}
