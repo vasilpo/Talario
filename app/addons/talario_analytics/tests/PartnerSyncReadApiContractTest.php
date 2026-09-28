@@ -135,13 +135,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testSignedPenatyPilotIsDevOnlyPartnerAuthenticatedAndCompanyScoped(): void
     {
         self::assertStringContainsString("'penaty_bootstrap'", $this->controller);
-        self::assertStringContainsString("'penaty_apply'", $this->controller);
+        self::assertStringContainsString("'partner_apply'", $this->controller);
         self::assertStringContainsString("'penaty_preview'", $this->controller);
         self::assertStringContainsString("'penaty_bootstrap' => true", $this->trusted_controllers);
-        self::assertStringContainsString("'penaty_apply' => true", $this->trusted_controllers);
+        self::assertStringContainsString("'partner_apply' => true", $this->trusted_controllers);
         self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
-        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview'], true)", $this->controller);
-        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'penaty_apply', 'penaty_preview']", $this->controller);
+        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)", $this->controller);
+        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview']", $this->controller);
         self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
         self::assertStringContainsString("'github-actions-talario'", $this->controller);
