@@ -669,6 +669,97 @@ function fn_talario_analytics_partner_sync_cleanup_failed_create(int $base_produ
     }
 }
 
+function fn_talario_analytics_partner_sync_readback_variation_state(
+    int $product_id,
+    array $item
+): array {
+    $price = (float) db_get_field(
+        'SELECT price FROM ?:product_prices WHERE product_id = ?i AND lower_limit = 1 AND usergroup_id = 0',
+        $product_id
+    );
+    if (abs($price - (float) $item['price']) > 0.001) {
+        throw new RuntimeException('variation_readback_mismatch');
+    }
+
+    $booking = db_get_row(
+        'SELECT slot_time, days_data FROM ?:ec_table_booking_system WHERE product_id = ?i',
+        $product_id
+    );
+    if (!$booking || (int) $booking['slot_time'] !== (int) $item['duration']) {
+        throw new RuntimeException('variation_readback_mismatch');
+    }
+
+    $serialized = (string) ($booking['days_data'] ?? '');
+    if ($serialized === '' || strlen($serialized) > 16384 || !preg_match('/^a:\\d+:\\{/', $serialized)) {
+        throw new RuntimeException('variation_readback_mismatch');
+    }
+    $days_data = @unserialize($serialized, ['allowed_classes' => false, 'max_depth' => 8]);
+    if (!is_array($days_data)) {
+        throw new RuntimeException('variation_readback_mismatch');
+    }
+
+    $expected_by_day = [];
+    foreach ($item['schedule'] as $session) {
+        $expected_by_day[(string) $session['day']] = $session;
+    }
+
+    $readback_schedule = [];
+    foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
+        $expected = $expected_by_day[$day] ?? null;
+        $enabled = (string) ($days_data[$day . '_status'] ?? '0') === '1';
+        if (($expected !== null) !== $enabled) {
+            throw new RuntimeException('variation_readback_mismatch');
+        }
+        if ($expected === null) {
+            continue;
+        }
+
+        $start = trim((string) ($days_data[$day . '_timing_start_time'] ?? ''));
+        $end = trim((string) ($days_data[$day . '_timing_end_time'] ?? ''));
+        if ($start !== (string) $expected['start'] || $end !== (string) $expected['end']) {
+            throw new RuntimeException('variation_readback_mismatch');
+        }
+
+        $capacity = null;
+        $amount_rows = isset($days_data[$day]['time_by_amount']) && is_array($days_data[$day]['time_by_amount'])
+            ? $days_data[$day]['time_by_amount']
+            : [];
+        foreach ($amount_rows as $amount_row) {
+            if (!is_array($amount_row)) {
+                continue;
+            }
+            if (
+                trim((string) ($amount_row['start_time'] ?? '')) === (string) $expected['start']
+                && trim((string) ($amount_row['end_time'] ?? '')) === (string) $expected['end']
+            ) {
+                $capacity = (int) ($amount_row['amount'] ?? 0);
+                break;
+            }
+        }
+        if ($capacity !== (int) ($expected['capacity'] ?? 0)) {
+            throw new RuntimeException('variation_readback_mismatch');
+        }
+
+        $readback_schedule[] = [
+            'day' => $day,
+            'start' => $start,
+            'end' => $end,
+            'duration' => (int) $booking['slot_time'],
+            'capacity' => $capacity,
+        ];
+    }
+
+    if (count($readback_schedule) !== count($item['schedule'])) {
+        throw new RuntimeException('variation_readback_mismatch');
+    }
+
+    return [
+        'price' => $price,
+        'duration' => (int) $booking['slot_time'],
+        'schedule' => $readback_schedule,
+    ];
+}
+
 function fn_talario_analytics_partner_sync_apply_variation_plan(
     string $operation,
     int $base_product_id,
@@ -777,10 +868,16 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
             throw $variation_exception;
         }
 
+        $variation_readback = fn_talario_analytics_partner_sync_readback_variation_state(
+            $variation_product_id,
+            $item
+        );
         $updated[] = [
             'age_group' => $item['age_group'],
             'purchase_option' => $item['purchase_option'],
-            'price' => (float) $item['price'],
+            'price' => $variation_readback['price'],
+            'duration' => $variation_readback['duration'],
+            'schedule' => $variation_readback['schedule'],
         ];
     }
 
@@ -1294,6 +1391,7 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'variation_product_mapping_failed',
         'variation_product_update_failed',
         'variation_structure_change_not_supported',
+        'variation_readback_mismatch',
         'failed_create_group_cleanup_failed',
         'image_update_failed',
         'image_temp_create_failed',
