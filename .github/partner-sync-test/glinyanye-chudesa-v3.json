@@ -1,8 +1,7 @@
 {
   "request_id": "part-sync-test-glinyanye-chudesa-20260928",
   "approved_company_name": "Глиняные Чудеса",
-  "parent_category_name": "Творчество",
-  "category_name": "Керамика",
+  "category_name": "Творчество",
   "operation": "create",
   "dry_run": false,
   "approval_id": "part-sync-test-glinyanye-chudesa-card-20260928",
