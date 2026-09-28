@@ -1230,6 +1230,73 @@ PHP;
     fn_talario_analytics_json_response($status, $payload);
 }
 
+function fn_talario_analytics_partner_sync_ensure_age_variants(array $payload): void
+{
+    if (empty($payload['bootstrap_missing_age_variants']) || empty($payload['variation_plan']) || !is_array($payload['variation_plan'])) {
+        return;
+    }
+
+    $labels = [];
+    foreach ($payload['variation_plan'] as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $label = trim((string) ($item['age_group'] ?? ''));
+        if ($label !== '') {
+            $labels[$label] = true;
+        }
+    }
+    $labels = array_keys($labels);
+    if (!$labels || count($labels) > 20) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_age_variant_bootstrap']);
+    }
+    foreach ($labels as $label) {
+        if (mb_strlen($label, 'UTF-8') > 120) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_age_variant_bootstrap']);
+        }
+    }
+
+    $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+    $features = db_get_array(
+        'SELECT pf.feature_id, pf.feature_type FROM ?:product_features pf'
+        . ' INNER JOIN ?:product_features_descriptions pfd'
+        . ' ON pfd.feature_id = pf.feature_id AND pfd.lang_code = ?s'
+        . ' WHERE pfd.description = ?s AND pf.purpose = ?s',
+        $lang_code,
+        'Возраст',
+        'group_variation_catalog_item'
+    );
+    if (count($features) !== 1) {
+        fn_talario_analytics_json_response(409, ['error' => 'age_feature_ambiguous']);
+    }
+
+    $feature_id = (int) $features[0]['feature_id'];
+    $feature_type = (string) $features[0]['feature_type'];
+    foreach ($labels as $label) {
+        $existing = (int) db_get_field(
+            'SELECT pfv.variant_id FROM ?:product_feature_variants pfv'
+            . ' INNER JOIN ?:product_feature_variant_descriptions pfvd'
+            . ' ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s'
+            . ' WHERE pfv.feature_id = ?i AND pfvd.variant = ?s',
+            $lang_code,
+            $feature_id,
+            $label
+        );
+        if ($existing > 0) {
+            continue;
+        }
+        $variant_id = fn_update_product_feature_variant(
+            $feature_id,
+            $feature_type,
+            ['variant' => $label],
+            $lang_code
+        );
+        if (!$variant_id) {
+            fn_talario_analytics_json_response(500, ['error' => 'age_variant_create_failed']);
+        }
+    }
+}
+
 function fn_talario_analytics_partner_sync_apply(): void
 {
     $max_payload_bytes = 20971520;
@@ -1342,6 +1409,9 @@ function fn_talario_analytics_partner_sync_apply(): void
     }
 
     fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
+    if (empty($payload['dry_run'])) {
+        fn_talario_analytics_partner_sync_ensure_age_variants($payload);
+    }
     $resolved_raw = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     if (!is_string($resolved_raw) || $resolved_raw === '' || strlen($resolved_raw) > $max_payload_bytes) {
         fn_talario_analytics_json_response(500, ['error' => 'resolved_payload_invalid']);
