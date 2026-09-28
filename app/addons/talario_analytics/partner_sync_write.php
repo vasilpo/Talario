@@ -49,34 +49,6 @@ function fn_talario_analytics_partner_sync_write_payload(): array
     return $payload;
 }
 
-function fn_talario_analytics_partner_sync_write_allowed_company_ids(): array
-{
-    if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
-        return [];
-    }
-
-    $raw = trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS);
-    if ($raw === '') {
-        return [];
-    }
-
-    $ids = array_values(array_unique(array_filter(array_map(
-        'intval',
-        preg_split('/\s*,\s*/', $raw) ?: []
-    ))));
-    sort($ids);
-
-    return $ids;
-}
-
-function fn_talario_analytics_partner_sync_write_require_company_allowed(int $company_id): void
-{
-    $allowed = fn_talario_analytics_partner_sync_write_allowed_company_ids();
-    if (!$allowed || !in_array($company_id, $allowed, true)) {
-        fn_talario_analytics_json_response(403, ['error' => 'company_not_write_allowed']);
-    }
-}
-
 function fn_talario_analytics_partner_sync_write_normalize_product(array $payload): array
 {
     $operation = (string) ($payload['operation'] ?? '');
@@ -1353,11 +1325,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
         if (isset($product_data['company_id']) && (int) $existing['company_id'] !== (int) $product_data['company_id']) {
             fn_talario_analytics_json_response(409, ['error' => 'company_change_forbidden']);
         }
-        fn_talario_analytics_partner_sync_write_require_company_allowed((int) $existing['company_id']);
-    }
-
-    if ($operation === 'create') {
-        fn_talario_analytics_partner_sync_write_require_company_allowed((int) $product_data['company_id']);
     }
 
     if (isset($product_data['company_id'])) {
