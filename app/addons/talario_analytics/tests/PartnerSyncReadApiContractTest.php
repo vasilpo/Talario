@@ -780,7 +780,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "SELECT price FROM ?:product_prices",
+            "fn_talario_analytics_partner_sync_write_readback($product_id)",
             $this->write_capability
         );
         self::assertStringContainsString(
