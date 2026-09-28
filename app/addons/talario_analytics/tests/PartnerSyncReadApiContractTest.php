@@ -149,7 +149,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("hash('sha256', \$raw_body)", $this->controller);
         self::assertStringContainsString("'approved_company_id_required'", $this->controller);
         self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE', true)", $this->controller);
-        self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', (string) ((int) $approved_company_id))", $this->controller);
+        self::assertStringContainsString("define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', (string) ((int) \$approved_company_id))", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_run_penaty_cli($raw, $approved_company_id)', $this->controller);
         self::assertStringContainsString("'/ops/partner-sync-apply.php'", $this->controller);
         self::assertStringContainsString("'TALARIO_PARTNER_SYNC_ROOT' => DIR_ROOT", $this->controller);
