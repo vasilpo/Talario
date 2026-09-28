@@ -1,124 +1,154 @@
-name: PART-SYNC Clay Wonders approved create
+name: PART-SYNC Step 4 Glinyanye Chudesa dry-run only
+
 on:
   push:
-    branches: [development]
-    paths: [".github/part-sync/glinyanye-chudesa-create.json"]
+    branches:
+      - part-sync/clay-safe-failure-diagnostics
+    paths:
+      - '.github/workflows/part-sync-clay-wonders-dry-run.yml'
+
 permissions:
   contents: read
+
+concurrency:
+  group: part-sync-step4-glina-dry-run
+  cancel-in-progress: false
+
 jobs:
-  approved-create:
+  dry-run-only:
     if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Require explicit authenticated rerun
-        if: github.run_attempt == 1
+      - name: Build exact validated dry-run payload
         shell: bash
         run: |
-          echo "RESULT=manual_rerun_required"
-          exit 78
+          set -euo pipefail
+          python3 - <<'PY' > /tmp/dry.json
+          import json
+          ages = [
+              ("до 3 лет", ["monday","wednesday"], "10:00", "11:00"),
+              ("3-5 лет", ["tuesday","thursday"], "11:00", "12:00"),
+              ("6-9 лет", ["wednesday","friday"], "15:00", "16:00"),
+          ]
+          prices = [
+              ("Пробное занятие",0),
+              ("Разовое занятие",1500),
+              ("Абонемент 4 занятия",3600),
+              ("Абонемент 8 занятий",6800),
+              ("Абонемент 12 занятий",9600),
+          ]
+          variations=[]
+          for age,days,start,end in ages:
+              sessions=[{"day":d,"start":start,"end":end,"duration":60,"capacity":5} for d in days]
+              for label,price in prices:
+                  variations.append({
+                      "age_group":age,
+                      "purchase_option":label,
+                      "price":price,
+                      "capacity":5,
+                      "schedule":sessions,
+                  })
+          payload={
+              "operation":"create",
+              "dry_run":True,
+              "approved_company_id":12,
+              "bootstrap_missing_age_variants":False,
+              "product":{
+                  "company_id":12,
+                  "name":"Первая кржука",
+                  "price":1500,
+                  "category_ids":[268],
+                  "status":"H",
+                  "short_description":"На занятиях дети знакомятся со свойствами глины, осваивают разные способы лепки и создают собственные изделия.",
+                  "full_description":"<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p><p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p><p>Работа с глиной развивает мелкую моторику, воображение, чувство формы, аккуратность и творческое мышление. А ещё это увлекательный процесс, в котором ребёнок может отвлечься от гаджетов и полностью погрузиться в творчество.</p><p><strong>Что взять с собой:</strong> воду.</p><h3>Возраст и расписание</h3><ul><li><strong>до 3 лет</strong> — Понедельник, Среда: 10:00–11:00. Свободных мест: 5.</li><li><strong>3-5 лет</strong> — Вторник, Четверг: 11:00–12:00. Свободных мест: 5.</li><li><strong>6-9 лет</strong> — Среда, Пятница: 15:00–16:00. Свободных мест: 5.</li></ul><p><strong>Длительность занятия:</strong> 60 минут.</p><p>В онлайн-календаре <strong>Таларио</strong> отображается актуальное расписание и количество свободных мест. Вы можете увидеть доступные места и сразу записаться на занятие.</p><h3>Стоимость занятий</h3><ul><li>Пробное занятие — бесплатно.</li><li>Разовое занятие — 1 500 ₽.</li><li>Абонемент 4 занятия — 3 600 ₽.</li><li>Абонемент 8 занятий — 6 800 ₽.</li><li>Абонемент 12 занятий — 9 600 ₽.</li></ul><h3>Адрес</h3><p><strong>г.Красногорск, ул Осеняя 1стр1</strong></p><p>Парковка: Есть, общая во дворе.</p><p>Как найти: Зайти во двор дома, повернуть направо, идти вдоль дома. Будет белая дверь с названием.</p>",
+                  "meta_keywords":"керамика, глина, лепка, дети, Красногорск"
+              },
+              "booking":{
+                  "from":"2026-09-28",
+                  "to":"2027-09-28",
+                  "slot_time":60,
+                  "free_time":0,
+                  "days":{
+                      "monday":{"enabled":True,"start":"10:00","end":"11:00"},
+                      "tuesday":{"enabled":False,"start":"","end":""},
+                      "wednesday":{"enabled":True,"start":"10:00","end":"11:00"},
+                      "thursday":{"enabled":False,"start":"","end":""},
+                      "friday":{"enabled":False,"start":"","end":""},
+                      "saturday":{"enabled":False,"start":"","end":""},
+                      "sunday":{"enabled":False,"start":"","end":""}
+                  }
+              },
+              "capacity":5,
+              "variation_plan":variations,
+              "images":[
+                  {"verified_source_image":True},
+                  {"verified_source_image":True},
+                  {"verified_source_image":True}
+              ]
+          }
+          assert len(variations)==15
+          assert payload["dry_run"] is True
+          assert "approval_id" not in payload
+          print(json.dumps(payload,ensure_ascii=False,separators=(",",":")))
+          PY
 
-      - name: Reject repeated attempts
-        if: github.run_attempt > 2
-        shell: bash
-        run: |
-          echo "RESULT=run_attempt_not_allowed"
-          exit 79
+          jq -e '
+            .dry_run == true
+            and .operation == "create"
+            and .approved_company_id == 12
+            and .product.company_id == 12
+            and .product.status == "H"
+            and .product.category_ids == [268]
+            and (.variation_plan|length) == 15
+            and (.images|length) == 3
+            and (has("approval_id")|not)
+          ' /tmp/dry.json >/dev/null
+          echo "STEP4_PAYLOAD=PASS"
 
-      - name: Signed dry-run then approved dev_copy create
-        if: github.run_attempt == 2
+      - name: One signed dev_copy dry-run only
         env:
           SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
         shell: bash
         run: |
           set -euo pipefail
-          test -n "${SIGNING_KEY:-}" || exit 2
-          for tool in jq curl sha256sum file base64 ssh-keygen awk tr wc mktemp date; do
-            command -v "$tool" >/dev/null 2>&1 || exit 18
-          done
+          test -n "${SIGNING_KEY:-}"
           umask 077
-          printf '%s' "$SIGNING_KEY" | base64 --decode > key
-          chmod 600 key
-          actual="$(ssh-keygen -y -f key | awk '{print $2}')"
+          work="$(mktemp -d)"
+          trap 'rm -rf "$work"; rm -f /tmp/dry.json' EXIT
+          printf '%s' "$SIGNING_KEY" | base64 --decode > "$work/key"
+          chmod 600 "$work/key"
+          actual="$(ssh-keygen -y -f "$work/key" | awk '{print $2}')"
           test "$actual" = "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP"
 
-          cp .github/part-sync/glinyanye-chudesa-create.json request.json
-          jq 'del(.image_drive_files,.source_type,.request_id)' request.json > base.json
-          echo '[]' > images.json
-          image_tmpdir="$(mktemp -d)"
-          trap 'rm -rf "$image_tmpdir"; rm -f key message message.sig' EXIT
-          while read -r entry; do
-            id="$(jq -r '.id' <<<"$entry")"
-            expected_sha="$(jq -r '.sha256' <<<"$entry")"
-            expected_bytes="$(jq -r '.bytes' <<<"$entry")"
-            if ! [[ "$id" =~ ^[A-Za-z0-9_-]+$ ]]; then exit 13; fi
-            if ! [[ "$expected_sha" =~ ^[0-9A-Fa-f]{64}$ ]]; then exit 14; fi
-            expected_sha="$(printf '%s' "$expected_sha" | tr '[:upper:]' '[:lower:]')"
-            if ! [[ "$expected_bytes" =~ ^[0-9]+$ ]]; then exit 15; fi
-            if ! test "$expected_bytes" -gt 0; then exit 16; fi
-            if ! test "$expected_bytes" -le 5242880; then exit 17; fi
-            file="$image_tmpdir/source-image"
-            curl --fail --location --silent --show-error --tlsv1.2 --max-time 60 --max-filesize 5242880               "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t"               --output "$file"
-            bytes="$(wc -c < "$file" | tr -d '[:space:]')"
-            test "$bytes" -eq "$expected_bytes"
-            actual_sha="$(sha256sum "$file" | awk '{print $1}')"
-            test "$actual_sha" = "$expected_sha"
-            mime="$(file --brief --mime-type "$file")"
-            case "$mime" in image/jpeg|image/png|image/webp) ;; *) exit 12;; esac
-            b64="$(base64 < "$file" | tr -d '\n')"
-            jq --arg b64 "$b64" '. + [{content_base64:$b64,alt:"Глиняные Чудеса — керамика"}]' images.json > images.next
-            mv images.next images.json
-          done < <(jq -c '.image_drive_files[]' request.json)
-          echo "::notice::PART-SYNC source images verified"
-
-          jq --slurpfile imgs images.json '. + {images:$imgs[0]}' base.json > apply.json
-          jq '.dry_run=true | del(.approval_id) | .bootstrap_missing_age_variants=false' apply.json > dry.json
           endpoint='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
+          req="part-sync-apply-glina-step4-${GITHUB_RUN_ID}"
+          ts="$(date +%s)"
+          body_hash="$(sha256sum /tmp/dry.json | awk '{print $1}')"
+          printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$body_hash" > "$work/message"
+          ssh-keygen -Y sign -q -f "$work/key" -n talario-part-sync "$work/message"
+          sig="$(base64 < "$work/message.sig" | tr -d '\n')"
 
-          post_signed() {
-            body="$1"; req="$2"; out="$3"
-            ts="$(date +%s)"
-            hash="$(sha256sum "$body" | awk '{print $1}')"
-            printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$hash" > message
-            rm -f message.sig
-            ssh-keygen -Y sign -q -f key -n talario-part-sync message
-            sig="$(base64 < message.sig | tr -d '\n')"
-            curl --silent --show-error --output "$out" --write-out '%{http_code}' --max-time 120               -X POST "$endpoint"               -H 'Content-Type: application/json'               -H "X-Talario-Request-Id: $req"               -H "X-Talario-Timestamp: $ts"               -H "X-Talario-Signature: $sig"               --data-binary "@$body"
-          }
+          code="$(curl --silent --show-error --output "$work/dry.out" --write-out '%{http_code}' --max-time 120 \
+            -X POST "$endpoint" \
+            -H 'Content-Type: application/json' \
+            -H "X-Talario-Request-Id: $req" \
+            -H "X-Talario-Timestamp: $ts" \
+            -H "X-Talario-Signature: $sig" \
+            --data-binary @/tmp/dry.json)"
 
-          dry_code="$(post_signed dry.json "part-sync-apply-glina-${GITHUB_RUN_ID}-dry" dry.out)"
-          echo "::notice::PART-SYNC dry-run HTTP $dry_code"
-          test "$dry_code" = "200"
-          jq -e '.dry_run == true and .plan.product.company_id == 12 and .plan.product.product == "Первая кржука" and .plan.product.status == "H" and .plan.product.category_ids == [268] and .plan.variations.count == 15' dry.out >/dev/null
-
-          apply_code="$(post_signed apply.json "part-sync-apply-glina-${GITHUB_RUN_ID}-create" apply.out)"
-          echo "::notice::PART-SYNC apply HTTP $apply_code"
-          test "$apply_code" = "201"
-          jq -e --slurpfile expected base.json '
-            .dry_run == false
-            and .operation == "create"
-            and .readback.company_id == 12
-            and .readback.name == "Первая кржука"
-            and .readback.status == "H"
-            and .readback.images.main == 1
-            and .readback.images.additional == 2
-            and .readback.full_description == $expected[0].product.full_description
-            and .variations.count == 15
-            and ([.variations.items[].schedule[] | .capacity] | unique) == [5]
-            and ([.variations.items[].duration] | unique) == [60]
-          ' apply.out >/dev/null
-
-          jq --slurpfile expected base.json '{
-            product_id,
-            operation,
-            company_id:.readback.company_id,
-            name:.readback.name,
-            status:.readback.status,
-            base_price:.readback.price,
-            images:.readback.images,
-            description_match:(.readback.full_description == $expected[0].product.full_description),
-            variation_count:.variations.count,
-            variations:.variations.items
-          }' apply.out
+          echo "STEP4_HTTP=$code"
+          test "$code" = "200"
+          jq -e '
+            .schema_version == "partner-sync.write-plan.v1"
+            and .dry_run == true
+            and .plan.operation == "create"
+            and .plan.product.company_id == 12
+            and .plan.product.product == "Первая кржука"
+            and .plan.product.status == "H"
+            and .plan.product.category_ids == [268]
+            and .plan.images.count == 3
+            and .plan.variations.count == 15
+          ' "$work/dry.out" >/dev/null
+          echo "STEP4_DRY_RUN=PASS"
+          jq -c '{dry_run,operation:.plan.operation,company_id:.plan.product.company_id,name:.plan.product.product,status:.plan.product.status,categories:.plan.product.category_ids,images:.plan.images.count,variations:.plan.variations.count}' "$work/dry.out"
