@@ -47,6 +47,8 @@ jobs:
           cp .github/part-sync/glinyanye-chudesa-create.json request.json
           jq 'del(.image_drive_files,.source_type,.request_id)' request.json > base.json
           echo '[]' > images.json
+          image_tmpdir="$(mktemp -d)"
+          trap 'rm -rf "$image_tmpdir"' EXIT
           while read -r entry; do
             id="$(jq -r '.id' <<<"$entry")"
             expected_sha="$(jq -r '.sha256' <<<"$entry")"
@@ -57,15 +59,15 @@ jobs:
             if ! [[ "$expected_bytes" =~ ^[0-9]+$ ]]; then exit 15; fi
             if ! test "$expected_bytes" -gt 0; then exit 16; fi
             if ! test "$expected_bytes" -le 5242880; then exit 17; fi
-            file="$(mktemp image.XXXXXX)"
-            curl --fail --location --silent --show-error --max-time 60               "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t"               --output "$file"
+            file="$image_tmpdir/source-image"
+            curl --fail --location --silent --show-error --tlsv1.2 --max-time 60 --max-filesize 5242880               "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t"               --output "$file"
             bytes="$(wc -c < "$file" | tr -d '[:space:]')"
             test "$bytes" -eq "$expected_bytes"
             actual_sha="$(sha256sum "$file" | awk '{print $1}')"
             test "$actual_sha" = "$expected_sha"
             mime="$(file --brief --mime-type "$file")"
             case "$mime" in image/jpeg|image/png|image/webp) ;; *) exit 12;; esac
-            b64="$(base64 -w0 "$file")"
+            b64="$(base64 < "$file" | tr -d '\n')"
             jq --arg b64 "$b64" '. + [{content_base64:$b64,alt:"Глиняные Чудеса — керамика"}]' images.json > images.next
             mv images.next images.json
           done < <(jq -c '.image_drive_files[]' request.json)
@@ -81,7 +83,7 @@ jobs:
             printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$hash" > message
             rm -f message.sig
             ssh-keygen -Y sign -q -f key -n talario-part-sync message
-            sig="$(base64 -w0 message.sig)"
+            sig="$(base64 < message.sig | tr -d '\n')"
             curl --silent --show-error --output "$out" --write-out '%{http_code}' --max-time 120               -X POST "$endpoint"               -H 'Content-Type: application/json'               -H "X-Talario-Request-Id: $req"               -H "X-Talario-Timestamp: $ts"               -H "X-Talario-Signature: $sig"               --data-binary "@$body"
           }
 
