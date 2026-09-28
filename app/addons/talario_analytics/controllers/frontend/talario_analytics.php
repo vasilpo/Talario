@@ -1260,30 +1260,6 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
     fn_talario_analytics_partner_sync_run_penaty_cli($raw);
 }
 
-function fn_talario_analytics_partner_sync_preview_session_is_plain($value, int $depth = 0): bool
-{
-    if ($depth > 12) {
-        return false;
-    }
-    if (is_null($value) || is_scalar($value)) {
-        return true;
-    }
-    if (!is_array($value)) {
-        return false;
-    }
-
-    foreach ($value as $key => $item) {
-        if (!(is_int($key) || is_string($key))) {
-            return false;
-        }
-        if (!fn_talario_analytics_partner_sync_preview_session_is_plain($item, $depth + 1)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 function fn_talario_analytics_partner_sync_penaty_preview(): void
 {
     $max_payload_bytes = 1024;
@@ -1292,12 +1268,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(413, ['error' => 'payload_too_large']);
     }
 
-    $input = @fopen('php://input', 'rb');
-    if (!is_resource($input)) {
-        fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
-    }
-    $raw = stream_get_contents($input, $max_payload_bytes + 1);
-    fclose($input);
+    $raw = file_get_contents('php://input', false, null, 0, $max_payload_bytes + 1);
     if (!is_string($raw) || $raw === '' || strlen($raw) > $max_payload_bytes) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
     }
@@ -1316,30 +1287,8 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         'SELECT product_id, company_id, status FROM ?:products WHERE product_id = ?i',
         1158
     );
-    if (
-        !$product
-        || (int) $product['company_id'] !== 39
-        || (string) $product['status'] !== 'H'
-    ) {
+    if (!$product || (int) $product['company_id'] !== 39 || (string) $product['status'] !== 'H') {
         fn_talario_analytics_json_response(409, ['error' => 'pilot_preview_target_invalid']);
-    }
-
-    $user_id = (int) fn_get_company_root_admin_user_id(39);
-    if ($user_id <= 0) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_user_unavailable']);
-    }
-
-    $user_data = db_get_row(
-        'SELECT user_id, helpdesk_user_id, user_type, tax_exempt, last_login,'
-        . ' password_change_timestamp, company_id, is_root, status'
-        . ' FROM ?:users WHERE user_id = ?i AND company_id = ?i AND user_type = ?s AND status = ?s',
-        $user_id,
-        39,
-        'V',
-        'A'
-    );
-    if (!$user_data) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_user_unavailable']);
     }
 
     /** @var \Tygh\Storefront\Repository $storefront_repository */
@@ -1358,23 +1307,24 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_failed']);
     }
 
+    // Deliberately do not impersonate a vendor/admin user. The handoff grants only
+    // CS-Cart's preview-area flag for one exact hidden product. A post-controller
+    // consumes the marker during that same request and restores storefront area.
+    $guest_auth = isset(Tygh::$app['session']['auth']) && is_array(Tygh::$app['session']['auth'])
+        ? Tygh::$app['session']['auth']
+        : [];
+    $guest_auth['area'] = 'A';
+    $guest_auth['user_id'] = 0;
+    $guest_auth['user_type'] = 'C';
+
     $sess_data = [
-        'auth' => fn_fill_auth($user_data, [], true, 'C'),
-        'store_access_key' => $storefront->access_key,
+        'auth' => $guest_auth,
+        'talario_partner_sync_preview' => [
+            'product_id' => 1158,
+            'nonce' => bin2hex(random_bytes(16)),
+        ],
     ];
-    fn_init_user_session_data($sess_data, $user_id, true);
-
-    if (!fn_talario_analytics_partner_sync_preview_session_is_plain($sess_data)) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_failed']);
-    }
-
     $storage_key = 'session_' . $session_key . '_data';
-
-    // This is the stock CS-Cart act-as-user handoff format used by backend/profiles.php.
-    // Core frontend/init.php reads this exact key, clears it before unserialize(), then
-    // redirects without skey. Contract tests pin that consume-before-unserialize behavior,
-    // so the URL is genuinely one-time. The payload is restricted above to arrays/scalars
-    // only, preventing object instantiation through unserialize().
     fn_set_storage_data($storage_key, serialize($sess_data));
 
     $redirect_uri = 'products.view?product_id=1158'
@@ -1396,7 +1346,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     }
 
     fn_talario_analytics_json_response(200, [
-        'schema_version' => 'partner-sync.preview.v1',
+        'schema_version' => 'partner-sync.preview.v2',
         'product_id' => 1158,
         'company_id' => 39,
         'status' => 'H',
