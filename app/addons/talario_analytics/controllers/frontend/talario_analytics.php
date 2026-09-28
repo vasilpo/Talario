@@ -1260,6 +1260,30 @@ function fn_talario_analytics_partner_sync_penaty_apply(): void
     fn_talario_analytics_partner_sync_run_penaty_cli($raw);
 }
 
+function fn_talario_analytics_partner_sync_preview_session_is_plain($value, int $depth = 0): bool
+{
+    if ($depth > 12) {
+        return false;
+    }
+    if (is_null($value) || is_scalar($value)) {
+        return true;
+    }
+    if (!is_array($value)) {
+        return false;
+    }
+
+    foreach ($value as $key => $item) {
+        if (!(is_int($key) || is_string($key))) {
+            return false;
+        }
+        if (!fn_talario_analytics_partner_sync_preview_session_is_plain($item, $depth + 1)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function fn_talario_analytics_partner_sync_penaty_preview(): void
 {
     $max_payload_bytes = 1024;
@@ -1306,7 +1330,9 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     }
 
     $user_data = db_get_row(
-        'SELECT * FROM ?:users WHERE user_id = ?i AND company_id = ?i AND user_type = ?s AND status = ?s',
+        'SELECT user_id, helpdesk_user_id, user_type, tax_exempt, last_login,'
+        . ' password_change_timestamp, company_id, is_root, status'
+        . ' FROM ?:users WHERE user_id = ?i AND company_id = ?i AND user_type = ?s AND status = ?s',
         $user_id,
         39,
         'V',
@@ -1338,7 +1364,17 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     ];
     fn_init_user_session_data($sess_data, $user_id, true);
 
+    if (!fn_talario_analytics_partner_sync_preview_session_is_plain($sess_data)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_failed']);
+    }
+
     $storage_key = 'session_' . $session_key . '_data';
+
+    // This is the stock CS-Cart act-as-user handoff format used by backend/profiles.php.
+    // Core frontend/init.php reads this exact key, clears it before unserialize(), then
+    // redirects without skey. Contract tests pin that consume-before-unserialize behavior,
+    // so the URL is genuinely one-time. The payload is restricted above to arrays/scalars
+    // only, preventing object instantiation through unserialize().
     fn_set_storage_data($storage_key, serialize($sess_data));
 
     $redirect_uri = 'products.view?product_id=1158'
