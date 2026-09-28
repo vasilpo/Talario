@@ -1,4 +1,4 @@
-name: PART-SYNC Step 4 Glinyanye Chudesa dry-run only
+name: PART-SYNC Step 6B Glinyanye Chudesa one-shot CREATE
 
 on:
   push:
@@ -11,144 +11,201 @@ permissions:
   contents: read
 
 concurrency:
-  group: part-sync-step4-glina-dry-run
+  group: part-sync-step6b-glina-create
   cancel-in-progress: false
 
 jobs:
-  dry-run-only:
+  one-shot-create:
     if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      ARTIFACT_URL: 'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-10a4-820a-8875-7437dde0518f/raw?se=2026-09-28T20%3A09%3A05Z&sp=r&sv=2026-02-06&sr=b&scid=0a2441b3-0e02-50ff-99d8-37e359fcb0a1&skoid=061609b8-1cdb-4a5b-9e68-c7ab9a523a8f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-28T19%3A45%3A03Z&ske=2026-09-29T19%3A45%3A03Z&sks=b&skv=2026-02-06&sig=v%2BoBnu96Yj8XJGpovWJduWYTcb2H3ROjNVqSc/l7jE8%3D'
+      ARTIFACT_SHA256: 'df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094'
+      PAYLOAD_SHA256: '0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c'
+      PAYLOAD_BYTES: '2391697'
     steps:
-      - name: Build exact validated dry-run payload
+      - name: Fetch encrypted handoff only
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY' > /tmp/dry.json
-          import json
-          ages = [
-              ("до 3 лет", ["monday","wednesday"], "10:00", "11:00"),
-              ("3-5 лет", ["tuesday","thursday"], "11:00", "12:00"),
-              ("6-9 лет", ["wednesday","friday"], "15:00", "16:00"),
-          ]
-          prices = [
-              ("Пробное занятие",0),
-              ("Разовое занятие",1500),
-              ("Абонемент 4 занятия",3600),
-              ("Абонемент 8 занятий",6800),
-              ("Абонемент 12 занятий",9600),
-          ]
-          variations=[]
-          for age,days,start,end in ages:
-              sessions=[{"day":d,"start":start,"end":end,"duration":60,"capacity":5} for d in days]
-              for label,price in prices:
-                  variations.append({
-                      "age_group":age,
-                      "purchase_option":label,
-                      "price":price,
-                      "capacity":5,
-                      "schedule":sessions,
-                  })
-          payload={
-              "operation":"create",
-              "dry_run":True,
-              "approved_company_id":12,
-              "bootstrap_missing_age_variants":False,
-              "product":{
-                  "company_id":12,
-                  "name":"Первая кржука",
-                  "price":1500,
-                  "category_ids":[268],
-                  "status":"H",
-                  "short_description":"На занятиях дети знакомятся со свойствами глины, осваивают разные способы лепки и создают собственные изделия.",
-                  "full_description":"<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p><p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p><p>Работа с глиной развивает мелкую моторику, воображение, чувство формы, аккуратность и творческое мышление. А ещё это увлекательный процесс, в котором ребёнок может отвлечься от гаджетов и полностью погрузиться в творчество.</p><p><strong>Что взять с собой:</strong> воду.</p><h3>Возраст и расписание</h3><ul><li><strong>до 3 лет</strong> — Понедельник, Среда: 10:00–11:00. Свободных мест: 5.</li><li><strong>3-5 лет</strong> — Вторник, Четверг: 11:00–12:00. Свободных мест: 5.</li><li><strong>6-9 лет</strong> — Среда, Пятница: 15:00–16:00. Свободных мест: 5.</li></ul><p><strong>Длительность занятия:</strong> 60 минут.</p><p>В онлайн-календаре <strong>Таларио</strong> отображается актуальное расписание и количество свободных мест. Вы можете увидеть доступные места и сразу записаться на занятие.</p><h3>Стоимость занятий</h3><ul><li>Пробное занятие — бесплатно.</li><li>Разовое занятие — 1 500 ₽.</li><li>Абонемент 4 занятия — 3 600 ₽.</li><li>Абонемент 8 занятий — 6 800 ₽.</li><li>Абонемент 12 занятий — 9 600 ₽.</li></ul><h3>Адрес</h3><p><strong>г.Красногорск, ул Осеняя 1стр1</strong></p><p>Парковка: Есть, общая во дворе.</p><p>Как найти: Зайти во двор дома, повернуть направо, идти вдоль дома. Будет белая дверь с названием.</p>",
-                  "meta_keywords":"керамика, глина, лепка, дети, Красногорск"
-              },
-              "booking":{
-                  "from":"2026-09-28",
-                  "to":"2027-09-28",
-                  "slot_time":60,
-                  "free_time":0,
-                  "days":{
-                      "monday":{"enabled":True,"start":"10:00","end":"11:00"},
-                      "tuesday":{"enabled":False,"start":"","end":""},
-                      "wednesday":{"enabled":True,"start":"10:00","end":"11:00"},
-                      "thursday":{"enabled":False,"start":"","end":""},
-                      "friday":{"enabled":False,"start":"","end":""},
-                      "saturday":{"enabled":False,"start":"","end":""},
-                      "sunday":{"enabled":False,"start":"","end":""}
-                  }
-              },
-              "capacity":5,
-              "variation_plan":variations,
-              "images":[
-                  {"verified_source_image":True},
-                  {"verified_source_image":True},
-                  {"verified_source_image":True}
-              ]
+          umask 077
+          work="$RUNNER_TEMP/part-sync-step6b"
+          rm -rf "$work"
+          install -d -m 700 "$work"
+          curl --fail --location --silent --show-error --max-time 90 \
+            "$ARTIFACT_URL" -o "$work/handoff.zip"
+          test "$(sha256sum "$work/handoff.zip" | awk '{print $1}')" = "$ARTIFACT_SHA256"
+          unzip -q "$work/handoff.zip" -d "$work/handoff"
+          test -f "$work/handoff/envelope.json"
+          test "$(find "$work/handoff" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "1"
+          python3 - "$work/handoff/envelope.json" <<'PY'
+          import json,sys
+          e=json.load(open(sys.argv[1],encoding="utf-8"))
+          assert e["schema_version"]=="talario.part-sync.encrypted-create.v1"
+          assert e["aad"]=="talario-part-sync-step6-create-v1"
+          assert e["plaintext_sha256"]=="0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+          assert e["plaintext_bytes"]==2391697
+          assert e["policy"]=={
+              "target":"dev_copy","operation":"create","dry_run":False,"company_id":12,
+              "category_id":268,"status":"H","variation_count":15,"image_count":3,
+              "auto_retry":False,"expected_http":201
           }
-          assert len(variations)==15
-          assert payload["dry_run"] is True
-          assert "approval_id" not in payload
-          print(json.dumps(payload,ensure_ascii=False,separators=(",",":")))
+          print("STEP6B_ENCRYPTED_HANDOFF=PASS")
           PY
 
-          jq -e '
-            .dry_run == true
-            and .operation == "create"
-            and .approved_company_id == 12
-            and .product.company_id == 12
-            and .product.status == "H"
-            and .product.category_ids == [268]
-            and (.variation_plan|length) == 15
-            and (.images|length) == 3
-            and (has("approval_id")|not)
-          ' /tmp/dry.json >/dev/null
-          echo "STEP4_PAYLOAD=PASS"
-
-      - name: One signed dev_copy dry-run only
+      - name: Decrypt and verify exact approved CREATE payload
         env:
           SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
         shell: bash
         run: |
           set -euo pipefail
+          work="$RUNNER_TEMP/part-sync-step6b"
           test -n "${SIGNING_KEY:-}"
-          umask 077
-          work="$(mktemp -d)"
-          trap 'rm -rf "$work"; rm -f /tmp/dry.json' EXIT
           printf '%s' "$SIGNING_KEY" | base64 --decode > "$work/key"
           chmod 600 "$work/key"
-          actual="$(ssh-keygen -y -f "$work/key" | awk '{print $2}')"
-          test "$actual" = "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP"
+          pub="$(ssh-keygen -y -f "$work/key" | awk '{print $2}')"
+          test "$pub" = "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP"
+          python3 -m pip install --disable-pip-version-check --no-cache-dir 'cryptography==46.0.4' >/dev/null
 
+          python3 - "$work/handoff/envelope.json" "$work/key" "$work/apply.json" <<'PY'
+          import base64,hashlib,json,sys
+          from cryptography.hazmat.primitives import hashes,serialization
+          from cryptography.hazmat.primitives.asymmetric import ed25519,x25519
+          from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+          from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
+          env_path,key_path,out_path=sys.argv[1:4]
+          e=json.load(open(env_path,encoding="utf-8"))
+          private_key=serialization.load_ssh_private_key(open(key_path,"rb").read(),password=None)
+          if not isinstance(private_key,ed25519.Ed25519PrivateKey):
+              raise SystemExit("SIGNING_KEY_TYPE_INVALID")
+          seed=private_key.private_bytes(
+              serialization.Encoding.Raw,serialization.PrivateFormat.Raw,serialization.NoEncryption()
+          )
+          h=hashlib.sha512(seed).digest()
+          scalar=bytearray(h[:32]); scalar[0]&=248; scalar[31]&=127; scalar[31]|=64
+          curve_private=x25519.X25519PrivateKey.from_private_bytes(bytes(scalar))
+          ephemeral=x25519.X25519PublicKey.from_public_bytes(
+              base64.b64decode(e["ephemeral_x25519_public_b64"],validate=True)
+          )
+          aad=e["aad"].encode("utf-8")
+          shared=curve_private.exchange(ephemeral)
+          key=HKDF(algorithm=hashes.SHA256(),length=32,salt=None,info=aad).derive(shared)
+          raw=ChaCha20Poly1305(key).decrypt(
+              base64.b64decode(e["nonce_b64"],validate=True),
+              base64.b64decode(e["ciphertext_b64"],validate=True),
+              aad,
+          )
+          actual_sha=hashlib.sha256(raw).hexdigest()
+          if len(raw)!=2391697 or actual_sha!="0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c":
+              raise SystemExit("DECRYPTED_PAYLOAD_PIN_MISMATCH")
+
+          p=json.loads(raw)
+          assert list(p.keys())==[
+              "operation","dry_run","approved_company_id","bootstrap_missing_age_variants",
+              "product","booking","capacity","variation_plan","images","approval_id"
+          ]
+          assert p["operation"]=="create"
+          assert p["dry_run"] is False
+          assert p["approval_id"]=="part-sync-glinyanye-chudesa-20260928-step6"
+          assert p["approved_company_id"]==12
+          assert p["bootstrap_missing_age_variants"] is True
+          assert p["product"]["company_id"]==12
+          assert p["product"]["name"]=="Первая кржука"
+          assert p["product"]["status"]=="H"
+          assert p["product"]["category_ids"]==[268]
+          assert p["product"]["price"]==1500
+          assert "<iframe" not in p["product"]["full_description"]
+          assert "map-widget" not in p["product"]["full_description"]
+          assert len(p["variation_plan"])==15
+          assert sorted(set(int(v["price"]) for v in p["variation_plan"]))==[0,1500,3600,6800,9600]
+          assert sorted(set(int(v["capacity"]) for v in p["variation_plan"]))==[5]
+          assert sorted(set(int(s["duration"]) for v in p["variation_plan"] for s in v["schedule"]))==[60]
+
+          expected={
+              "1lTISmlz74-JAMCOLST9GFD93gXUPNhYg":("2bc3bebea638a37b5550a7e366e40c1e00c403d95988331bed2c9156c36b5f49",1333492),
+              "1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij":("5b1b957d211b22a6b6ef201899daedeb973bb9e3bec0649dd8dbd89cb3d44fb9",393816),
+              "1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0":("ea95cc2758b3185bd8ab24717494f9378c45c46024b510faaced1d21c17b3b21",60168),
+          }
+          assert len(p["images"])==3
+          assert [i["source_drive_id"] for i in p["images"]]==list(expected)
+          for image in p["images"]:
+              sha,size=expected[image["source_drive_id"]]
+              binary=base64.b64decode(image["content_base64"],validate=True)
+              assert len(binary)==size==int(image["source_bytes"])
+              assert hashlib.sha256(binary).hexdigest()==sha==image["source_sha256"]
+              assert binary[:2]==b"\xff\xd8"
+
+          open(out_path,"wb").write(raw)
+          print("STEP6B_DECRYPT=PASS")
+          print("STEP6B_PAYLOAD=PASS")
+          print("STEP6B_PHOTOS=PASS count=3")
+          PY
+
+          test "$(wc -c < "$work/apply.json" | tr -d ' ')" = "$PAYLOAD_BYTES"
+          test "$(sha256sum "$work/apply.json" | awk '{print $1}')" = "$PAYLOAD_SHA256"
+
+      - name: Exactly one signed CREATE to dev_copy
+        env:
+          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/part-sync-step6b"
           endpoint='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
-          req="part-sync-apply-glina-step4-${GITHUB_RUN_ID}"
+          req="part-sync-apply-glina-step6-${GITHUB_RUN_ID}"
           ts="$(date +%s)"
-          body_hash="$(sha256sum /tmp/dry.json | awk '{print $1}')"
+          body_hash="$(sha256sum "$work/apply.json" | awk '{print $1}')"
+          test "$body_hash" = "$PAYLOAD_SHA256"
+
           printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$body_hash" > "$work/message"
           ssh-keygen -Y sign -q -f "$work/key" -n talario-part-sync "$work/message"
           sig="$(base64 < "$work/message.sig" | tr -d '\n')"
 
-          code="$(curl --silent --show-error --output "$work/dry.out" --write-out '%{http_code}' --max-time 120 \
+          echo "STEP6B_CREATE_ATTEMPTS=1"
+          code="$(curl --silent --show-error --output "$work/apply.out" --write-out '%{http_code}' \
+            --connect-timeout 15 --max-time 180 \
             -X POST "$endpoint" \
             -H 'Content-Type: application/json' \
             -H "X-Talario-Request-Id: $req" \
             -H "X-Talario-Timestamp: $ts" \
             -H "X-Talario-Signature: $sig" \
-            --data-binary @/tmp/dry.json)"
+            --data-binary "@$work/apply.json")"
 
-          echo "STEP4_HTTP=$code"
-          test "$code" = "200"
-          jq -e '
-            .schema_version == "partner-sync.write-plan.v1"
-            and .dry_run == true
-            and .plan.operation == "create"
-            and .plan.product.company_id == 12
-            and .plan.product.product == "Первая кржука"
-            and .plan.product.status == "H"
-            and .plan.product.category_ids == [268]
-            and .plan.images.count == 3
-            and .plan.variations.count == 15
-          ' "$work/dry.out" >/dev/null
-          echo "STEP4_DRY_RUN=PASS"
-          jq -c '{dry_run,operation:.plan.operation,company_id:.plan.product.company_id,name:.plan.product.product,status:.plan.product.status,categories:.plan.product.category_ids,images:.plan.images.count,variations:.plan.variations.count}' "$work/dry.out"
+          echo "STEP6B_HTTP=$code"
+          if [ "$code" != "201" ]; then
+            echo "STEP6B_CREATE=STOP_NON_201"
+            jq -c '{error:(.error // null),runner_rc:(.runner_rc // null),operation:(.operation // null),dry_run:(.dry_run // null)}' "$work/apply.out" 2>/dev/null || true
+            exit 61
+          fi
+
+          python3 - "$work/apply.json" "$work/apply.out" <<'PY'
+          import json,sys
+          expected=json.load(open(sys.argv[1],encoding="utf-8"))
+          r=json.load(open(sys.argv[2],encoding="utf-8"))
+          assert r.get("dry_run") is False
+          assert r.get("operation")=="create"
+          assert int(r["readback"]["company_id"])==12
+          assert r["readback"]["name"]=="Первая кржука"
+          assert r["readback"]["status"]=="H"
+          assert float(r["readback"]["price"])==1500.0
+          assert r["readback"]["full_description"]==expected["product"]["full_description"]
+          assert int(r["readback"]["images"]["main"])==1
+          assert int(r["readback"]["images"]["additional"])==2
+          assert int(r["variations"]["count"])==15
+          items=r["variations"]["items"]
+          assert sorted(set(int(float(v["price"])) for v in items))==[0,1500,3600,6800,9600]
+          assert sorted(set(int(s["capacity"]) for v in items for s in v["schedule"]))==[5]
+          assert sorted(set(int(v["duration"]) for v in items))==[60]
+          assert int(r["product_id"])>0
+          print("STEP6B_READBACK=PASS")
+          print("STEP6B_PRODUCT_ID="+str(int(r["product_id"])))
+          print("STEP6B_RESULT=PASS")
+          PY
+
+      - name: Cleanup plaintext and key
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/part-sync-step6b"
