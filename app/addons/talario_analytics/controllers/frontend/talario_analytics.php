@@ -1256,10 +1256,29 @@ function fn_talario_analytics_partner_sync_apply(): void
         fn_talario_analytics_json_response(400, ['error' => 'invalid_operation']);
     }
     $product = isset($payload['product']) && is_array($payload['product']) ? $payload['product'] : [];
+
     $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
-    $payload_company_id = (int) ($product['company_id'] ?? 0);
     if ($approved_company_id <= 0) {
-        fn_talario_analytics_json_response(400, ['error' => 'approved_company_id_required']);
+        $approved_company_name = trim((string) ($payload['approved_company_name'] ?? ''));
+        if ($approved_company_name === '' || mb_strlen($approved_company_name, 'UTF-8') > 255) {
+            fn_talario_analytics_json_response(400, ['error' => 'approved_company_context_required']);
+        }
+        $company_ids = db_get_fields(
+            'SELECT company_id FROM ?:companies WHERE company = ?s AND status = ?s ORDER BY company_id ASC LIMIT 2',
+            $approved_company_name,
+            'A'
+        );
+        if (count($company_ids) !== 1) {
+            fn_talario_analytics_json_response(409, ['error' => 'approved_company_not_unique']);
+        }
+        $approved_company_id = (int) reset($company_ids);
+        $payload['approved_company_id'] = $approved_company_id;
+    }
+
+    $payload_company_id = (int) ($product['company_id'] ?? 0);
+    if ($operation === 'create' && $payload_company_id <= 0) {
+        $product['company_id'] = $approved_company_id;
+        $payload_company_id = $approved_company_id;
     }
     if ($operation === 'create' && $payload_company_id !== $approved_company_id) {
         fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
@@ -1267,6 +1286,28 @@ function fn_talario_analytics_partner_sync_apply(): void
     if ($payload_company_id > 0 && $payload_company_id !== $approved_company_id) {
         fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
     }
+
+    if ($operation === 'create' && empty($product['category_ids'])) {
+        $category_name = trim((string) ($payload['category_name'] ?? ''));
+        if ($category_name === '' || mb_strlen($category_name, 'UTF-8') > 255) {
+            fn_talario_analytics_json_response(400, ['error' => 'category_context_required']);
+        }
+        $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+        $category_ids = db_get_fields(
+            'SELECT cd.category_id FROM ?:category_descriptions cd'
+            . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+            . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND c.status IN (?a)'
+            . ' ORDER BY cd.category_id ASC LIMIT 2',
+            $category_name,
+            $lang_code,
+            ['A', 'H']
+        );
+        if (count($category_ids) !== 1) {
+            fn_talario_analytics_json_response(409, ['error' => 'category_not_unique']);
+        }
+        $product['category_ids'] = [(int) reset($category_ids)];
+    }
+    $payload['product'] = $product;
 
     $dry_run = !array_key_exists('dry_run', $payload) || (bool) $payload['dry_run'];
     if (!$dry_run) {
@@ -1277,8 +1318,12 @@ function fn_talario_analytics_partner_sync_apply(): void
     }
 
     fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
+    $resolved_raw = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (!is_string($resolved_raw) || $resolved_raw === '' || strlen($resolved_raw) > $max_payload_bytes) {
+        fn_talario_analytics_json_response(500, ['error' => 'resolved_payload_invalid']);
+    }
     fn_talario_analytics_partner_sync_enable_penaty_request_gate();
-    fn_talario_analytics_partner_sync_run_penaty_cli($raw, $approved_company_id);
+    fn_talario_analytics_partner_sync_run_penaty_cli($resolved_raw, $approved_company_id);
 }
 
 function fn_talario_analytics_partner_sync_penaty_preview(): void
