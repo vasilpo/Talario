@@ -71,6 +71,7 @@ jobs:
             jq --arg b64 "$b64" '. + [{content_base64:$b64,alt:"Глиняные Чудеса — керамика"}]' images.json > images.next
             mv images.next images.json
           done < <(jq -c '.image_drive_files[]' request.json)
+          echo "::notice::PART-SYNC source images verified"
 
           jq --slurpfile imgs images.json '. + {images:$imgs[0]}' base.json > apply.json
           jq '.dry_run=true | del(.approval_id) | .bootstrap_missing_age_variants=false' apply.json > dry.json
@@ -88,10 +89,12 @@ jobs:
           }
 
           dry_code="$(post_signed dry.json "part-sync-apply-glina-${GITHUB_RUN_ID}-dry" dry.out)"
+          echo "::notice::PART-SYNC dry-run HTTP $dry_code"
           test "$dry_code" = "200"
           jq -e '.dry_run == true and .plan.product.company_id == 12 and .plan.product.product == "Первая кржука" and .plan.product.status == "H" and .plan.product.category_ids == [268] and .plan.variations.count == 15' dry.out >/dev/null
 
           apply_code="$(post_signed apply.json "part-sync-apply-glina-${GITHUB_RUN_ID}-create" apply.out)"
+          echo "::notice::PART-SYNC apply HTTP $apply_code"
           test "$apply_code" = "201"
           jq -e --slurpfile expected base.json '
             .dry_run == false
