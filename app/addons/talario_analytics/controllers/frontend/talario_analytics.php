@@ -791,7 +791,7 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     @chmod($signature_file, 0600);
 
     $allowed_signer = 'github-actions-talario ssh-ed25519 '
-        . 'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK'
+        . 'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP'
         . PHP_EOL;
     $allowed_written = fwrite($allowed_handle, $allowed_signer);
     $signature_written = fwrite($signature_handle, $signature);
