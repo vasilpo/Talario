@@ -728,6 +728,18 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+
+    public function testSignedPartnerApplyDispatchesBeforeBearerAuthentication(): void
+    {
+        $signed_dispatch = strpos($this->controller, "if (\$mode === 'partner_apply') {");
+        $bearer_auth = strpos($this->controller, '$provided_token = fn_talario_analytics_bearer_token();');
+
+        self::assertNotFalse($signed_dispatch);
+        self::assertNotFalse($bearer_auth);
+        self::assertLessThan($bearer_auth, $signed_dispatch);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('apply', \$raw);", $this->controller);
+    }
+
 }
 
 
