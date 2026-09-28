@@ -175,26 +175,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('fn_fill_auth(', $this->controller);
         self::assertStringNotContainsString('fn_init_user_session_data(', $this->controller);
         self::assertStringNotContainsString('store_access_key', $this->controller);
-        self::assertStringContainsString("\$guest_auth['area'] = 'A'", $this->controller);
-        self::assertStringContainsString("\$guest_auth['user_id'] = 0", $this->controller);
-        self::assertStringContainsString("\$guest_auth['user_type'] = 'C'", $this->controller);
-        self::assertStringContainsString("'talario_partner_sync_preview'", $this->controller);
-        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v2'", $this->controller);
-
-        $preview_post = (string) file_get_contents(dirname(__DIR__) . '/controllers/frontend/products.post.php');
-        self::assertStringContainsString("(int) \$preview['product_id'] !== 1158", $preview_post);
-        self::assertStringContainsString("(int) \$_REQUEST['product_id'] !== 1158", $preview_post);
-        self::assertStringContainsString("\$_REQUEST['action'] !== 'preview'", $preview_post);
-        self::assertStringContainsString("Tygh::\$app['session']['auth']['area'] = 'C'", $preview_post);
-        self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $preview_post);
-
-        $frontend_init = (string) file_get_contents(dirname(__DIR__, 3) . '/controllers/frontend/init.php');
-        $core_read = "fn_get_storage_data('session_' . \$_REQUEST['skey'] . '_data')";
-        $core_clear = "fn_set_storage_data('session_' . \$_REQUEST['skey'] . '_data', '')";
-        $core_unserialize = 'unserialize($session_data)';
-        self::assertStringContainsString($core_read, $frontend_init);
-        self::assertStringContainsString($core_clear, $frontend_init);
-        self::assertLessThan(strpos($frontend_init, $core_unserialize), strpos($frontend_init, $core_clear));
+        self::assertStringNotContainsString("\$guest_auth['area'] = 'A'", $this->controller);
+        self::assertStringNotContainsString("'talario_partner_sync_preview'", $this->controller);
+        self::assertStringNotContainsString("'action=preview'", $this->controller);
+        self::assertStringNotContainsString("'skey='", $this->controller);
+        self::assertStringNotContainsString("serialize(\$sess_data)", $this->controller);
+        self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v3'", $this->controller);
     }
 
     public function testPartnerSyncWriteIsInternalCliOnly(): void
