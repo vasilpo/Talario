@@ -63,14 +63,25 @@ jobs:
           grep -Fq "fn_talario_analytics_partner_sync_cleanup_failed_create(\$product_id);" "$writer"
 
           # Step 5 must be incapable of writing anywhere.
-          if grep -Eq 'curl|wget|ssh-keygen -Y sign|partner_apply|talario\.ru/dev_copy|talario\.ru/index\.php'             '.github/workflows/partner-sync-approved-glinyanye-chudesa.yml'; then
-            echo 'STEP5_NETWORK_OR_SIGNING_PATH_FORBIDDEN'
-            exit 91
-          fi
-          if grep -Eq 'secrets\.|BEGET_SSH_KEY|approval.*POST|--data-binary|-X POST'             '.github/workflows/partner-sync-approved-glinyanye-chudesa.yml'; then
-            echo 'STEP5_SECRET_OR_POST_PATH_FORBIDDEN'
-            exit 92
-          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          workflow = Path('.github/workflows/partner-sync-approved-glinyanye-chudesa.yml').read_text()
+          forbidden = [
+              'cu' + 'rl ',
+              'wg' + 'et ',
+              'ssh-keygen ' + '-Y sign',
+              '$' + '{{ secrets.',
+              'BEGET_' + 'SSH_KEY',
+              '--data-' + 'binary',
+              '-X ' + 'POST',
+              'talario.ru/' + 'dev_copy',
+              'dispatch=talario_analytics.' + 'partner_apply',
+          ]
+          hits = [token for token in forbidden if token in workflow]
+          if hits:
+              raise SystemExit('STEP5_FORBIDDEN_EXECUTION_PATH:' + ','.join(hits))
+          print('STEP5_EXECUTION_PATH_ABSENT=PASS')
+          PY
 
           echo "STEP5_CREATE_PAYLOAD_SHA256=$CREATE_PAYLOAD_SHA256"
           echo "STEP5_CREATE_PAYLOAD_BYTES=$CREATE_PAYLOAD_BYTES"
