@@ -859,13 +859,27 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     }
 }
 
-function fn_talario_analytics_partner_sync_enable_penaty_request_gate(): void
+function fn_talario_analytics_partner_sync_enable_penaty_request_gate(?int $approved_company_id = null): void
 {
     if (defined('TALARIO_PARTNER_SYNC_DEV_WRITE')
         && TALARIO_PARTNER_SYNC_DEV_WRITE !== true
     ) {
         fn_talario_analytics_json_response(409, ['error' => 'pilot_write_gate_conflict']);
     }
+    if ($approved_company_id !== null) {
+        if ($approved_company_id <= 0) {
+            fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
+        }
+        if (defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')
+            && trim((string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS) !== (string) $approved_company_id
+        ) {
+            fn_talario_analytics_json_response(409, ['error' => 'company_run_gate_conflict']);
+        }
+        if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
+            define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', (string) $approved_company_id);
+        }
+    }
+
     if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE')) {
         define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
     }
@@ -1314,7 +1328,7 @@ function fn_talario_analytics_partner_sync_apply(): void
         fn_talario_analytics_json_response(500, ['error' => 'resolved_payload_invalid']);
     }
     $raw = $resolved_raw;
-    fn_talario_analytics_partner_sync_enable_penaty_request_gate();
+    fn_talario_analytics_partner_sync_enable_penaty_request_gate($approved_company_id);
     fn_talario_analytics_partner_sync_run_penaty_cli($raw, $approved_company_id);
 }
 
