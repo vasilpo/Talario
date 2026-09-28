@@ -9,6 +9,7 @@ $schema['talario_analytics'] = [
         'dispatcher_status' => true,
         'penaty_bootstrap' => true,
         'penaty_apply' => true,
+        'penaty_preview' => true,
         'crm' => true,
     ],
     'default_allow' => false,
