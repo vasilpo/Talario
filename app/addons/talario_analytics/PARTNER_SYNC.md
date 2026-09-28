@@ -11,7 +11,7 @@ define('TALARIO_PARTNER_SYNC_DEV_COPY', true);
 define('TALARIO_PARTNER_SYNC_TOKEN_HASH', 'sha256:<64 hex characters>');
 // Optional and dev_copy-only. Enables approved internal CLI apply after dry-run.
 define('TALARIO_PARTNER_SYNC_DEV_WRITE', true);
-define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '43');
+define('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS', '43'); // server-controlled, rotate/update for explicitly approved test partners
 ```
 
 ## Production read-only mode
@@ -59,7 +59,7 @@ Safety properties:
 - `TALARIO_PARTNER_SYNC_DEV_COPY=true` must be present;
 - dry-run is the default;
 - an actual apply additionally requires `TALARIO_PARTNER_SYNC_DEV_WRITE=true`;
-- writes are restricted to server-side allow-listed partner IDs from `TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS`;
+- the requested partner is resolved per explicit operator run; the payload must bind `approved_company_id` to the exact target `company_id`; that ID must also be present in the server-controlled `TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS`, and the company must exist and be active;
 - an actual apply requires a non-empty `approval_id`; only its SHA-256 hash is logged/returned;
 - new products default to status `H` unless the caller explicitly supplies `A`;
 - partner reassignment on update is rejected;
@@ -75,6 +75,7 @@ Example dry-run payload:
 {
   "operation": "create",
   "dry_run": true,
+  "approved_company_id": 43,
   "product": {
     "company_id": 43,
     "name": "Тестовое занятие",
