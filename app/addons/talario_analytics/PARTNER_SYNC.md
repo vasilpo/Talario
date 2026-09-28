@@ -47,7 +47,7 @@ The write engine is the internal CLI runner:
 
 `php ops/partner-sync-apply.php < payload.json`
 
-The signed dev_copy apply controller verifies the trusted signature, timestamp and per-run company binding before launching this isolated runner. Direct CLI use remains restricted to the authenticated maintenance path.
+The signed dev_copy `partner_apply` controller verifies the trusted signature, timestamp and per-run company binding before launching this isolated runner. Direct CLI use remains restricted to the authenticated maintenance path.
 
 Safety properties:
 
