@@ -1298,15 +1298,34 @@ function fn_talario_analytics_partner_sync_apply(): void
             fn_talario_analytics_json_response(400, ['error' => 'category_context_required']);
         }
         $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
-        $category_ids = db_get_fields(
-            'SELECT cd.category_id FROM ?:category_descriptions cd'
-            . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
-            . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND c.status IN (?a)'
-            . ' ORDER BY cd.category_id ASC LIMIT 2',
-            $category_name,
-            $lang_code,
-            ['A', 'H']
-        );
+        $parent_category_name = trim((string) ($payload['parent_category_name'] ?? ''));
+        if ($parent_category_name !== '' && mb_strlen($parent_category_name, 'UTF-8') > 255) {
+            fn_talario_analytics_json_response(400, ['error' => 'parent_category_context_invalid']);
+        }
+        if ($parent_category_name !== '') {
+            $category_ids = db_get_fields(
+                'SELECT cd.category_id FROM ?:category_descriptions cd'
+                . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+                . ' INNER JOIN ?:category_descriptions pcd'
+                . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
+                . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND pcd.category = ?s AND c.status IN (?a)'
+                . ' ORDER BY cd.category_id ASC LIMIT 2',
+                $category_name,
+                $lang_code,
+                $parent_category_name,
+                ['A', 'H']
+            );
+        } else {
+            $category_ids = db_get_fields(
+                'SELECT cd.category_id FROM ?:category_descriptions cd'
+                . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+                . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND c.status IN (?a)'
+                . ' ORDER BY cd.category_id ASC LIMIT 2',
+                $category_name,
+                $lang_code,
+                ['A', 'H']
+            );
+        }
         if (count($category_ids) !== 1) {
             fn_talario_analytics_json_response(409, ['error' => 'category_not_unique']);
         }
