@@ -58,7 +58,7 @@ Safety properties:
 - `TALARIO_PARTNER_SYNC_DEV_COPY=true` must be present;
 - dry-run is the default;
 - an actual apply additionally requires `TALARIO_PARTNER_SYNC_DEV_WRITE=true`;
-- the requested partner is resolved per explicit operator run; the write path verifies that the referenced company exists and is active;
+- the requested partner is resolved per explicit operator run; the payload must bind `approved_company_id` to the exact target `company_id`, and the write path verifies that this company exists and is active;
 - an actual apply requires a non-empty `approval_id`; only its SHA-256 hash is logged/returned;
 - new products default to status `H` unless the caller explicitly supplies `A`;
 - partner reassignment on update is rejected;
@@ -74,6 +74,7 @@ Example dry-run payload:
 {
   "operation": "create",
   "dry_run": true,
+  "approved_company_id": 43,
   "product": {
     "company_id": 43,
     "name": "Тестовое занятие",
