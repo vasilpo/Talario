@@ -1520,6 +1520,13 @@ if ($mode === 'crm') {
     }
 }
 
+// Signed Partner Sync apply authenticates with the dedicated Ed25519 request signature,
+// timestamp/replay guard and dev_copy-only runtime gate. It does not require the
+// separate read/catalog bearer credential.
+if ($mode === 'partner_apply') {
+    fn_talario_analytics_partner_sync_apply();
+}
+
 $rate_count = fn_talario_analytics_rate_limit();
 
 if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
@@ -1599,10 +1606,6 @@ if ($mode === 'dispatcher_status') {
 
 if ($mode === 'penaty_bootstrap') {
     fn_talario_analytics_partner_sync_penaty_bootstrap();
-}
-
-if ($mode === 'partner_apply') {
-    fn_talario_analytics_partner_sync_apply();
 }
 
 if ($mode === 'penaty_preview') {
