@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "${SIGNING_KEY:-}" || exit 2
-          for tool in jq curl sha256sum file base64 ssh-keygen; do
+          for tool in jq curl sha256sum file base64 ssh-keygen awk tr wc mktemp date; do
             command -v "$tool" >/dev/null 2>&1 || exit 18
           done
           umask 077
@@ -48,7 +48,7 @@ jobs:
           jq 'del(.image_drive_files,.source_type,.request_id)' request.json > base.json
           echo '[]' > images.json
           image_tmpdir="$(mktemp -d)"
-          trap 'rm -rf "$image_tmpdir"' EXIT
+          trap 'rm -rf "$image_tmpdir"; rm -f key message message.sig' EXIT
           while read -r entry; do
             id="$(jq -r '.id' <<<"$entry")"
             expected_sha="$(jq -r '.sha256' <<<"$entry")"
