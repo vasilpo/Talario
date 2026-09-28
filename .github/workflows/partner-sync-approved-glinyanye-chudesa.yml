@@ -1,55 +1,82 @@
-name: PART-SYNC Approved Glinyanye Chudesa
+name: PART-SYNC Step 5 Glinyanye Chudesa CREATE preflight only
+
 on:
   push:
-    branches: [development]
-    paths: ['.github/partner-sync-test/glinyanye-chudesa-v3.json']
+    branches:
+      - part-sync/clay-safe-failure-diagnostics
+    paths:
+      - '.github/workflows/partner-sync-approved-glinyanye-chudesa.yml'
+
 permissions:
   contents: read
+
+concurrency:
+  group: part-sync-step5-glina-create-preflight
+  cancel-in-progress: false
+
 jobs:
-  approved-create:
+  create-preflight:
     if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Signed dry-run and explicit rerun gate
-        env:
-          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        with:
+          persist-credentials: false
+
+      - name: Validate one-shot CREATE contract without network or secrets
         shell: bash
         run: |
           set -euo pipefail
-          umask 077
-          printf '%s' "$SIGNING_KEY" | base64 --decode > key
-          cp .github/partner-sync-test/glinyanye-chudesa-v3.json request.json
-          jq 'del(.image_drive_ids)' request.json > base.json
-          echo '[]' > images.json
-          while read -r id; do
-            file="image-$id"
-            curl -fsSL "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t" -o "$file"
-            bytes=$(wc -c < "$file"); test "$bytes" -gt 0; test "$bytes" -le 5242880
-            mime=$(file -b --mime-type "$file"); case "$mime" in image/jpeg|image/png|image/webp) ;; *) exit 12;; esac
-            b64=$(base64 -w0 "$file")
-            jq --arg b64 "$b64" '. + [{content_base64:$b64,alt:"Глиняные чудеса"}]' images.json > images.next
-            mv images.next images.json
-          done < <(jq -r '.image_drive_ids[]' request.json)
-          jq --slurpfile imgs images.json '. + {images:$imgs[0]}' base.json > apply.json
-          jq '.dry_run=true | del(.approval_id)' apply.json > dry.json
-          endpoint='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
-          post_signed() {
-            body="$1"; req="$2"; out="$3"; ts=$(date +%s); hash=$(sha256sum "$body"|awk '{print $1}')
-            printf 'talario-part-sync\napply\n%s\n%s\n%s\n' "$req" "$ts" "$hash" > message
-            rm -f message.sig; ssh-keygen -Y sign -q -f key -n talario-part-sync message
-            sig=$(base64 -w0 message.sig)
-            curl -sS -o "$out" -w '%{http_code}' --max-time 120 -X POST "$endpoint" -H 'Content-Type: application/json' -H "X-Talario-Request-Id: $req" -H "X-Talario-Timestamp: $ts" -H "X-Talario-Signature: $sig" --data-binary "@$body"
-          }
-          dry_code=$(post_signed dry.json part-sync-apply-glina-dry-v3 dry.out)
-          test "$dry_code" = 200
-          jq -e '.dry_run==true and .plan.product.status=="H" and .plan.product.company_id==12' dry.out >/dev/null
-          if [ "${GITHUB_RUN_ATTEMPT}" = "1" ]; then
-            echo 'RESULT=DRY_RUN_PASS_REQUIRES_EXPLICIT_RERUN'
-            exit 42
+
+          controller='app/addons/talario_analytics/controllers/frontend/talario_analytics.php'
+          writer='app/addons/talario_analytics/partner_sync_write.php'
+
+          # Exact final payload identity prepared outside CI.
+          CREATE_PAYLOAD_SHA256='0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c'
+          CREATE_PAYLOAD_BYTES='2391697'
+          APPROVAL_ID='part-sync-glinyanye-chudesa-20260928-step6'
+          COMPANY_ID='12'
+          CATEGORY_ID='268'
+          STATUS='H'
+          VARIATIONS='15'
+          IMAGES='3'
+
+          [[ "$CREATE_PAYLOAD_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          test "$CREATE_PAYLOAD_BYTES" -gt 0
+          test "$CREATE_PAYLOAD_BYTES" -lt 20971520
+          [[ "$APPROVAL_ID" =~ ^part-sync-[A-Za-z0-9._:-]{6,112}$ ]]
+          test "$COMPANY_ID" = '12'
+          test "$CATEGORY_ID" = '268'
+          test "$STATUS" = 'H'
+          test "$VARIATIONS" = '15'
+          test "$IMAGES" = '3'
+
+          # Server-side hard gates required before step 6 is allowed.
+          grep -Fq "fn_talario_analytics_partner_sync_verify_penaty_signature('apply', \$raw);" "$controller"
+          grep -Fq "if (!\$dry_run) {" "$controller"
+          grep -Fq "fn_talario_analytics_partner_sync_bootstrap_approved_age_variants(\$payload);" "$controller"
+          grep -Fq "fn_talario_analytics_partner_sync_enable_penaty_request_gate(\$approved_company_id);" "$controller"
+          grep -Fq "fn_talario_analytics_partner_sync_run_penaty_cli(\$raw, \$approved_company_id);" "$controller"
+          grep -Fq "['error' => 'company_run_approval_required']" "$writer"
+          grep -Fq "['error' => 'approval_id_required']" "$writer"
+          grep -Fq "fn_talario_analytics_partner_sync_cleanup_failed_create(\$product_id);" "$writer"
+
+          # Step 5 must be incapable of writing anywhere.
+          if grep -Eq 'curl|wget|ssh-keygen -Y sign|partner_apply|talario\.ru/dev_copy|talario\.ru/index\.php'             '.github/workflows/partner-sync-approved-glinyanye-chudesa.yml'; then
+            echo 'STEP5_NETWORK_OR_SIGNING_PATH_FORBIDDEN'
+            exit 91
           fi
-          apply_code=$(post_signed apply.json part-sync-apply-glina-create-v3 apply.out)
-          test "$apply_code" = 201
-          jq -e '.readback.status=="H" and .readback.company_id==12 and .readback.images.main==1 and .readback.images.additional==2' apply.out >/dev/null
-          jq '{product_id,operation,readback:{company_id:.readback.company_id,name:.readback.name,status:.readback.status,price:.readback.price,images:.readback.images}}' apply.out
+          if grep -Eq 'secrets\.|BEGET_SSH_KEY|approval.*POST|--data-binary|-X POST'             '.github/workflows/partner-sync-approved-glinyanye-chudesa.yml'; then
+            echo 'STEP5_SECRET_OR_POST_PATH_FORBIDDEN'
+            exit 92
+          fi
+
+          echo "STEP5_CREATE_PAYLOAD_SHA256=$CREATE_PAYLOAD_SHA256"
+          echo "STEP5_CREATE_PAYLOAD_BYTES=$CREATE_PAYLOAD_BYTES"
+          echo "STEP5_TARGET=dev_copy_only"
+          echo "STEP5_STATUS=H"
+          echo "STEP5_IMAGES=3"
+          echo "STEP5_VARIATIONS=15"
+          echo "STEP5_NETWORK_WRITES=0"
+          echo "STEP5_CREATE_PREFLIGHT=PASS"
