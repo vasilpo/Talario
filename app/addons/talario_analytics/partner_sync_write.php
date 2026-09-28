@@ -49,11 +49,29 @@ function fn_talario_analytics_partner_sync_write_payload(): array
     return $payload;
 }
 
+function fn_talario_analytics_partner_sync_write_allowed_company_ids(): array
+{
+    if (!defined('TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS')) {
+        return [];
+    }
+
+    $raw_ids = preg_split('/\\s*,\\s*/', (string) TALARIO_PARTNER_SYNC_DEV_WRITE_COMPANY_IDS, -1, PREG_SPLIT_NO_EMPTY);
+    $company_ids = array_values(array_unique(array_filter(array_map('intval', $raw_ids), static function ($company_id) {
+        return $company_id > 0;
+    })));
+
+    return $company_ids;
+}
+
 function fn_talario_analytics_partner_sync_write_require_run_company(int $company_id, array $payload): void
 {
     $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
     if ($approved_company_id <= 0 || $approved_company_id !== $company_id) {
         fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
+    }
+
+    if (!in_array($company_id, fn_talario_analytics_partner_sync_write_allowed_company_ids(), true)) {
+        fn_talario_analytics_json_response(403, ['error' => 'company_not_write_allowed']);
     }
 
     $company_status = (string) db_get_field(
