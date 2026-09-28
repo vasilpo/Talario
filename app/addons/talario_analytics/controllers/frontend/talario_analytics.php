@@ -1301,36 +1301,12 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_storefront_unavailable']);
     }
 
-    try {
-        $session_key = bin2hex(random_bytes(24));
-    } catch (Throwable $exception) {
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_failed']);
-    }
-
-    // Deliberately do not impersonate a vendor/admin user. The handoff grants only
-    // CS-Cart's preview-area flag for one exact hidden product. A post-controller
-    // consumes the marker during that same request and restores storefront area.
-    $guest_auth = isset(Tygh::$app['session']['auth']) && is_array(Tygh::$app['session']['auth'])
-        ? Tygh::$app['session']['auth']
-        : [];
-    $guest_auth['area'] = 'A';
-    $guest_auth['user_id'] = 0;
-    $guest_auth['user_type'] = 'C';
-
-    $sess_data = [
-        'auth' => $guest_auth,
-        'talario_partner_sync_preview' => [
-            'product_id' => 1158,
-            'nonce' => bin2hex(random_bytes(16)),
-        ],
-    ];
-    $storage_key = 'session_' . $session_key . '_data';
-    fn_set_storage_data($storage_key, serialize($sess_data));
-
+    // CS-Cart's storefront product reader already allows status H by direct URL.
+    // Therefore visual acceptance needs no admin area, user impersonation, session
+    // handoff or preview action. Keep the signed endpoint only as an exact-target
+    // dev_copy URL resolver for the controlled Penaty pilot.
     $redirect_uri = 'products.view?product_id=1158'
-        . '&storefront_id=' . (int) $storefront->storefront_id
-        . '&action=preview'
-        . '&skey=' . rawurlencode($session_key);
+        . '&storefront_id=' . (int) $storefront->storefront_id;
     $lang_code = (string) Registry::get('settings.Appearance.frontend_default_language') ?: 'ru';
     $preview_url = (string) fn_url($redirect_uri, 'C', 'https', $lang_code);
 
@@ -1341,16 +1317,14 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         || strtolower((string) ($parts['host'] ?? '')) !== 'talario.ru'
         || strpos((string) ($parts['path'] ?? ''), '/dev_copy/') !== 0
     ) {
-        fn_set_storage_data($storage_key, '');
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_url_invalid']);
     }
 
     fn_talario_analytics_json_response(200, [
-        'schema_version' => 'partner-sync.preview.v2',
+        'schema_version' => 'partner-sync.preview.v3',
         'product_id' => 1158,
         'company_id' => 39,
         'status' => 'H',
-        'single_use' => true,
         'preview_url' => $preview_url,
     ]);
 }
