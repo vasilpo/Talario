@@ -33,7 +33,7 @@ jobs:
               sch=[{"day":d,"start":s,"end":e,"duration":60} for d,s,e in sessions]
               for option,price in prices:
                   vp.append({"age_group":age,"purchase_option":option,"price":price,"capacity":5,"schedule":sch})
-          payload={"operation":"create","dry_run":True,"approved_company_name":"Глиняные Чудеса","category_name":"Керамика","parent_category_name":"Творчество","product":{"name":"Первая кржука","price":0,"status":"H","full_description":description},"booking":{"from":"2026-09-28","to":"2027-09-28","slot_time":60,"free_time":0,"days":{"monday":{"enabled":True,"start":"10:00","end":"11:00"}}},"variation_plan":vp}
+          payload={"operation":"create","dry_run":True,"approved_company_name":"Глиняные Чудеса","category_name":"Творчество","product":{"name":"Первая кржука","price":0,"status":"H","full_description":description},"booking":{"from":"2026-09-28","to":"2027-09-28","slot_time":60,"free_time":0,"days":{"monday":{"enabled":True,"start":"10:00","end":"11:00"}}},"variation_plan":vp}
           open("payload.json","w",encoding="utf-8").write(json.dumps(payload,ensure_ascii=False,separators=(",",":")))
           PY
           request_id="part-sync-apply-clay-wonders-dryrun"
