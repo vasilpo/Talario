@@ -5,7 +5,7 @@
   "category_name": "Керамика",
   "operation": "create",
   "dry_run": false,
-  "approval_id": "part-sync-test-glinyanye-chudesa-20260928",
+  "approval_id": "part-sync-test-glinyanye-chudesa-card-20260928",
   "product": {
     "name": "Первая кружка. Глиняные чудеса. Красногорск",
     "price": 1500,
@@ -57,10 +57,5 @@
       }
     }
   },
-  "capacity": 5,
-  "image_drive_ids": [
-    "1lTISmlz74-JAMCOLST9GFD93gXUPNhYg",
-    "1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij",
-    "1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0"
-  ]
+  "capacity": 5
 }
