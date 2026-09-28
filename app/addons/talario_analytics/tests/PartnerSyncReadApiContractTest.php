@@ -164,33 +164,29 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('eval(', $this->controller);
     }
 
-    public function testSignedPenatyPreviewIsSingleTargetDevOnlyAndUsesStandardPreviewSession(): void
+    public function testSignedPenatyPreviewIsSingleTargetDevOnlyAndNeverImpersonatesVendorAdmin(): void
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview', $this->controller);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('preview', \$raw)", $this->controller);
-        self::assertStringContainsString("array_keys(\$payload) !== ['product_id']", $this->controller);
         self::assertStringContainsString("(int) \$payload['product_id'] !== 1158", $this->controller);
         self::assertStringContainsString("(int) \$product['company_id'] !== 39", $this->controller);
         self::assertStringContainsString("(string) \$product['status'] !== 'H'", $this->controller);
-        self::assertStringContainsString('fn_get_company_root_admin_user_id(39)', $this->controller);
-        self::assertStringContainsString(
-            'SELECT user_id, helpdesk_user_id, user_type, tax_exempt, last_login,',
-            $this->controller
-        );
-        self::assertStringNotContainsString('SELECT * FROM ?:users', $this->controller);
-        self::assertStringContainsString("fn_fill_auth(\$user_data, [], true, 'C')", $this->controller);
-        self::assertStringContainsString('fn_init_user_session_data($sess_data, $user_id, true)', $this->controller);
-        self::assertStringContainsString('fn_talario_analytics_partner_sync_preview_session_is_plain', $this->controller);
-        self::assertStringContainsString('if (!is_array($value))', $this->controller);
-        self::assertStringContainsString('if ($depth > 12)', $this->controller);
-        self::assertStringContainsString("bin2hex(random_bytes(24))", $this->controller);
-        self::assertStringContainsString("'session_' . \$session_key . '_data'", $this->controller);
-        self::assertStringContainsString("fn_set_storage_data(\$storage_key, serialize(\$sess_data))", $this->controller);
-        self::assertStringContainsString("'&action=preview'", $this->controller);
-        self::assertStringContainsString("'single_use' => true", $this->controller);
-        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v1'", $this->controller);
-        self::assertStringContainsString("'/dev_copy/'", $this->controller);
-        self::assertStringNotContainsString("'password' =>", $this->controller);
+        self::assertStringNotContainsString('fn_get_company_root_admin_user_id', $this->controller);
+        self::assertStringNotContainsString('fn_fill_auth(', $this->controller);
+        self::assertStringNotContainsString('fn_init_user_session_data(', $this->controller);
+        self::assertStringNotContainsString('store_access_key', $this->controller);
+        self::assertStringContainsString("\$guest_auth['area'] = 'A'", $this->controller);
+        self::assertStringContainsString("\$guest_auth['user_id'] = 0", $this->controller);
+        self::assertStringContainsString("\$guest_auth['user_type'] = 'C'", $this->controller);
+        self::assertStringContainsString("'talario_partner_sync_preview'", $this->controller);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v2'", $this->controller);
+
+        $preview_post = (string) file_get_contents(dirname(__DIR__) . '/controllers/frontend/products.post.php');
+        self::assertStringContainsString("(int) \$preview['product_id'] !== 1158", $preview_post);
+        self::assertStringContainsString("(int) \$_REQUEST['product_id'] !== 1158", $preview_post);
+        self::assertStringContainsString("\$_REQUEST['action'] !== 'preview'", $preview_post);
+        self::assertStringContainsString("Tygh::\$app['session']['auth']['area'] = 'C'", $preview_post);
+        self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $preview_post);
 
         $frontend_init = (string) file_get_contents(dirname(__DIR__, 3) . '/controllers/frontend/init.php');
         $core_read = "fn_get_storage_data('session_' . \$_REQUEST['skey'] . '_data')";
@@ -198,7 +194,6 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $core_unserialize = 'unserialize($session_data)';
         self::assertStringContainsString($core_read, $frontend_init);
         self::assertStringContainsString($core_clear, $frontend_init);
-        self::assertStringContainsString($core_unserialize, $frontend_init);
         self::assertLessThan(strpos($frontend_init, $core_unserialize), strpos($frontend_init, $core_clear));
     }
 
