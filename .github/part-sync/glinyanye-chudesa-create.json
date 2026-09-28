@@ -391,9 +391,21 @@
       ]
     }
   ],
-  "image_drive_ids": [
-    "1lTISmlz74-JAMCOLST9GFD93gXUPNhYg",
-    "1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij",
-    "1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0"
+  "image_drive_files": [
+    {
+      "id": "1lTISmlz74-JAMCOLST9GFD93gXUPNhYg",
+      "sha256": "2bc3bebea638a37b5550a7e366e40c1e00c403d95988331bed2c9156c36b5f49",
+      "bytes": 1333492
+    },
+    {
+      "id": "1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij",
+      "sha256": "5b1b957d211b22a6b6ef201899daedeb973bb9e3bec0649dd8dbd89cb3d44fb9",
+      "bytes": 393816
+    },
+    {
+      "id": "1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0",
+      "sha256": "ea95cc2758b3185bd8ab24717494f9378c45c46024b510faaced1d21c17b3b21",
+      "bytes": 60168
+    }
   ]
 }
