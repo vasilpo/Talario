@@ -833,7 +833,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $copy_schema
         );
         self::assertStringContainsString(
-            "return [['NOT IN', 'feature_id', $feature_ids]];",
+            "return [['NOT IN', 'feature_id', \$feature_ids]];",
             $copy_functions
         );
 
