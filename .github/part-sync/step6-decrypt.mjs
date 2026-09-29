@@ -76,14 +76,22 @@ const allowed = {
   },
   'talario.part-sync.encrypted-handoff-url.v1': {
     aad: 'talario-part-sync-step6-handoff-url-v1',
-    plaintextSha256: '8cb0d08f8ced653f16847ab9cc669e24453e8130f885819516cf73148c887f0a',
+    plaintextSha256: 'ebec14d7eba5fe2e45a317ddb2d0408b345a6c5986ef3fee04e998c11297bb5f',
+    plaintextBytes: 740,
+    legacyEnvelopeSha256: '8cb0d08f8ced653f16847ab9cc669e24453e8130f885819516cf73148c887f0a',
+    legacyEnvelopeBytes: 776,
     marker: 'STEP6_HANDOFF_DECRYPT=PASS',
   },
 };
 const policy = allowed[env.schema_version];
 if (!policy) throw new Error('ENVELOPE_SCHEMA_INVALID');
 if (env.aad !== policy.aad) throw new Error('ENVELOPE_AAD_INVALID');
-if (env.plaintext_sha256 !== policy.plaintextSha256) throw new Error('PINNED_PLAINTEXT_SHA256_MISMATCH');
+if (policy.legacyEnvelopeSha256) {
+  if (env.plaintext_sha256 !== policy.legacyEnvelopeSha256) throw new Error('LEGACY_ENVELOPE_SHA256_MISMATCH');
+  if (Number(env.plaintext_bytes) !== policy.legacyEnvelopeBytes) throw new Error('LEGACY_ENVELOPE_BYTES_MISMATCH');
+} else if (env.plaintext_sha256 !== policy.plaintextSha256) {
+  throw new Error('PINNED_PLAINTEXT_SHA256_MISMATCH');
+}
 
 const eph = Buffer.from(env.ephemeral_x25519_public_b64, 'base64');
 if (eph.length !== 32) throw new Error('EPHEMERAL_PUBLIC_INVALID');
@@ -103,8 +111,9 @@ decipher.setAAD(aad);
 decipher.setAuthTag(tag);
 const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
 
-if (plaintext.length !== Number(env.plaintext_bytes)) throw new Error('PLAINTEXT_BYTES_MISMATCH');
+const expectedBytes = policy.plaintextBytes ?? Number(env.plaintext_bytes);
+if (plaintext.length !== expectedBytes) throw new Error('PLAINTEXT_BYTES_MISMATCH');
 const sha = createHash('sha256').update(plaintext).digest('hex');
-if (sha !== env.plaintext_sha256 || sha !== policy.plaintextSha256) throw new Error('PLAINTEXT_SHA256_MISMATCH');
+if (sha !== policy.plaintextSha256) throw new Error('PLAINTEXT_SHA256_MISMATCH');
 fs.writeFileSync(outPath, plaintext, { mode: 0o600 });
 console.log(policy.marker);

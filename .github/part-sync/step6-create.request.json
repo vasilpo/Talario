@@ -6,5 +6,6 @@
   "company_id": 12,
   "status": "H",
   "payload_sha256": "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c",
-  "explicit_rerun_required": true
+  "explicit_rerun_required": true,
+  "trigger_nonce": "fresh-handoff-20260929-1128"
 }
