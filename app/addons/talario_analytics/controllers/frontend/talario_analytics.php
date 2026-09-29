@@ -1591,7 +1591,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
         . ' INNER JOIN ?:product_descriptions pd'
         . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
         . ' WHERE p.company_id = ?i AND pd.product = ?s'
-        . ' ORDER BY p.product_id ASC LIMIT 3',
+        . ' ORDER BY p.product_id ASC LIMIT 4',
         $lang_code,
         $target_company_id,
         $target_name
@@ -1625,7 +1625,43 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
 
 
     if (count($matching_product_ids) !== 1) {
-        $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+        if (count($matching_product_ids) > 3) {
+            fn_talario_analytics_json_response(200, [
+                'schema_version' => 'partner-sync.step6-acceptance.v1',
+                'pass' => false,
+                'duplicate_count' => 4,
+                'complete_shape_count' => 0,
+                'partial_shape_count' => 4,
+                'failures' => ['candidate_limit_exceeded'],
+            ]);
+        }
+
+        if (!class_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider')
+            || !method_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider', 'getGroupRepository')
+        ) {
+            fn_talario_analytics_json_response(200, [
+                'schema_version' => 'partner-sync.step6-acceptance.v1',
+                'pass' => false,
+                'duplicate_count' => count($matching_product_ids),
+                'complete_shape_count' => 0,
+                'partial_shape_count' => count($matching_product_ids),
+                'failures' => ['variation_service_unavailable'],
+            ]);
+        }
+
+        try {
+            $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+        } catch (Throwable $exception) {
+            fn_talario_analytics_json_response(200, [
+                'schema_version' => 'partner-sync.step6-acceptance.v1',
+                'pass' => false,
+                'duplicate_count' => count($matching_product_ids),
+                'complete_shape_count' => 0,
+                'partial_shape_count' => count($matching_product_ids),
+                'failures' => ['variation_service_unavailable'],
+            ]);
+        }
+
         $complete_shape_count = 0;
 
         foreach ($matching_product_ids as $candidate_product_id) {
@@ -1647,7 +1683,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             ));
             sort($candidate_categories);
 
-            $candidate_main_image = fn_get_image_pairs(
+            $candidate_main_image = (array) fn_get_image_pairs(
                 $candidate_product_id,
                 'product',
                 'M',
