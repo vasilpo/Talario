@@ -112,7 +112,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertLessThan($filter_query, $dev_gate);
 
         self::assertStringContainsString("'variation_features' => $variation_features", $this->controller);
-        self::assertStringNotContainsString("'feature_id' => (int) $feature['feature_id']", $this->controller);
+        self::assertStringNotContainsString("'feature_id' => (int) \$feature['feature_id']", $this->controller);
         self::assertStringNotContainsString("'variant_id' =>", $this->controller);
     }
 
