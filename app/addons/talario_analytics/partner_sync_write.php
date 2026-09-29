@@ -1668,6 +1668,17 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
         $product_id = (int) $result_id;
 
+        // On CREATE, Product Variations clones images_links from the completed base product.
+        // Attach images before generating variations so every generated product inherits them.
+        if ($operation === 'create' && $variation_resolution !== null && $prepared_images !== null) {
+            $write_stage = 'image_write_before_variations';
+            fn_talario_analytics_partner_sync_write_apply_images(
+                $product_id,
+                $prepared_images,
+                $lang_code
+            );
+        }
+
         if ($variation_resolution !== null) {
             $write_stage = 'variation_write';
             $variation_write_result = fn_talario_analytics_partner_sync_apply_variation_plan(
@@ -1679,7 +1690,10 @@ function fn_talario_analytics_partner_sync_write_response(): void
             );
         }
 
-        if ($prepared_images !== null) {
+        if (
+            $prepared_images !== null
+            && !($operation === 'create' && $variation_resolution !== null)
+        ) {
             $write_stage = 'image_write';
             fn_talario_analytics_partner_sync_write_apply_images(
                 $product_id,
