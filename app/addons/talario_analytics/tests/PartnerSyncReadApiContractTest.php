@@ -248,6 +248,30 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+    public function testPartnerSyncRemovesRemainingCapacityFromCardCopyOnly(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_remove_capacity_copy',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'Свободных\\s+мест',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_remove_capacity_copy(\$value)',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "\$capacity = isset(\$item['capacity'])",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'amount' => \$capacity",
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncWriteUsesCoreProductAndEcarterHooks(): void
     {
         self::assertStringContainsString('fn_update_product(', $this->write_capability);
