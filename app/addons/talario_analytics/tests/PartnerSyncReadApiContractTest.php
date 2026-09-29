@@ -88,6 +88,34 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("'variant_id' =>", $this->controller);
     }
 
+    public function testDevCopyCatalogExposesFilterFeatureMappingWithoutChangingVariationTaxonomy(): void
+    {
+        self::assertStringContainsString("'dev_copy_filter_features'", $this->controller);
+        self::assertStringContainsString("'dev_copy_filter_feature_samples'", $this->controller);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->controller);
+        self::assertStringContainsString('?:product_filters', $this->controller);
+        self::assertStringContainsString('?:product_filter_descriptions', $this->controller);
+        self::assertStringContainsString("'filter_feature_id' =>", $this->controller);
+        self::assertStringContainsString("'filter_variant_id' =>", $this->controller);
+        self::assertStringContainsString("'feature_type' =>", $this->controller);
+        self::assertStringContainsString("'purpose' =>", $this->controller);
+        self::assertStringContainsString("['%Возраст%', '%Катег%']", $this->controller);
+        self::assertStringContainsString('?:product_features_values', $this->controller);
+        self::assertStringContainsString("'category_ids' => array_map('intval'", $this->controller);
+
+        $dev_gate = strpos($this->controller, '$include_dev_copy_filter_features = $is_development');
+        $filter_query = strpos($this->controller, "' FROM ?:product_filters fl'");
+        $response_gate = strpos($this->controller, 'if ($include_dev_copy_filter_features) {', $filter_query);
+        self::assertNotFalse($dev_gate);
+        self::assertNotFalse($filter_query);
+        self::assertNotFalse($response_gate);
+        self::assertLessThan($filter_query, $dev_gate);
+
+        self::assertStringContainsString("'variation_features' => $variation_features", $this->controller);
+        self::assertStringNotContainsString("'feature_id' => (int) $feature['feature_id']", $this->controller);
+        self::assertStringNotContainsString("'variant_id' =>", $this->controller);
+    }
+
     public function testLegacyScheduleSupportsEcarterTimestampDates(): void
     {
         self::assertStringContainsString("is_numeric(\$raw_from)", $this->controller);
