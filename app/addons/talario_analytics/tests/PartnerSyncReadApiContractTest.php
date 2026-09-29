@@ -196,7 +196,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("db_query('ROLLBACK')", $this->controller);
         self::assertStringContainsString("db_query('COMMIT')", $this->controller);
         self::assertStringContainsString("'updated_count' => 15", $this->controller);
-        self::assertStringNotContainsString("$_REQUEST['product_id']", $this->controller);
+        self::assertStringNotContainsString("\$_REQUEST['product_id']", $this->controller);
     }
 
     public function testSignedPenatyPilotIsDevOnlyPartnerAuthenticatedAndCompanyScoped(): void
