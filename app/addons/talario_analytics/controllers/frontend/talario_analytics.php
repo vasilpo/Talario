@@ -1894,6 +1894,23 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             $expected_text = $normalize_text($expected_full_description);
             $actual_text = $normalize_text($actual_full_description);
 
+            $text_first_diff = null;
+            $expected_text_length = mb_strlen($expected_text, 'UTF-8');
+            $actual_text_length = mb_strlen($actual_text, 'UTF-8');
+            $min_text_length = min($expected_text_length, $actual_text_length);
+            for ($text_offset = 0; $text_offset < $min_text_length; $text_offset++) {
+                if (mb_substr($expected_text, $text_offset, 1, 'UTF-8')
+                    !== mb_substr($actual_text, $text_offset, 1, 'UTF-8')
+                ) {
+                    $text_first_diff = $text_offset;
+                    break;
+                }
+            }
+            if ($text_first_diff === null && $expected_text_length !== $actual_text_length) {
+                $text_first_diff = $min_text_length;
+            }
+            $text_excerpt_offset = max(0, (int) ($text_first_diff ?? 0) - 60);
+
             $description_diagnostics = [
                 'exact' => hash_equals(
                     hash('sha256', $expected_full_description),
@@ -1911,6 +1928,11 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
                 'actual_canonical_sha256' => hash('sha256', $actual_canonical_html),
                 'expected_text_sha256' => hash('sha256', $expected_text),
                 'actual_text_sha256' => hash('sha256', $actual_text),
+                'expected_text_chars' => $expected_text_length,
+                'actual_text_chars' => $actual_text_length,
+                'text_first_diff_offset' => $text_first_diff,
+                'expected_text_excerpt' => mb_substr($expected_text, $text_excerpt_offset, 180, 'UTF-8'),
+                'actual_text_excerpt' => mb_substr($actual_text, $text_excerpt_offset, 180, 'UTF-8'),
                 'expected_sha256' => hash('sha256', $expected_full_description),
                 'actual_sha256' => hash('sha256', $actual_full_description),
                 'expected_bytes' => strlen($expected_full_description),
