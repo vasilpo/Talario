@@ -806,12 +806,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
             \fn_talario_analytics_partner_sync_category_filter_label('Иностранные языки')
         );
 
-        self::assertStringContainsString(
-            "fn_talario_analytics_partner_sync_resolve_find_products_feature(\n            'Возраст',\n            'M'",
+        self::assertMatchesRegularExpression(
+            "/fn_talario_analytics_partner_sync_resolve_find_products_feature\\(\\s*'Возраст',\\s*'M'/u",
             $this->write_capability
         );
-        self::assertStringContainsString(
-            "fn_talario_analytics_partner_sync_resolve_find_products_feature(\n            'Категории',\n            'S'",
+        self::assertMatchesRegularExpression(
+            "/fn_talario_analytics_partner_sync_resolve_find_products_feature\\(\\s*'Категории',\\s*'S'/u",
             $this->write_capability
         );
         self::assertStringContainsString("'find_products'", $this->write_capability);
