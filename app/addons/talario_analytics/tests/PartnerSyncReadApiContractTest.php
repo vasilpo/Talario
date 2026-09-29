@@ -288,6 +288,39 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'schema_version' => 'partner-sync.write-result.v1'", $this->write_capability);
     }
 
+    public function testPartnerSyncCreateUsesGlobalDetailsLayoutInheritance(): void
+    {
+        self::assertStringContainsString(
+            "if (array_key_exists('details_layout', \$product))",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "\$data['details_layout'] = 'default';",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'invalid_details_layout'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "p.details_layout",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'details_layout' => (string) \$row['details_layout']",
+            $this->write_capability
+        );
+
+        $copy_schema = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/product_variations/schemas/product_variations/product_data_copy.php'
+        );
+        self::assertStringContainsString(
+            "MainTable::create('products', 'product_id'",
+            $copy_schema
+        );
+        self::assertStringNotContainsString("'details_layout'", $copy_schema);
+    }
+
     public function testPartnerSyncCreateDefaultsToHidden(): void
     {
         self::assertStringContainsString("\$data['status'] = 'H';", $this->write_capability);
