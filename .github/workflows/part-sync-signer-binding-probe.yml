@@ -1,0 +1,35 @@
+name: PART-SYNC signer binding probe
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - '.github/workflows/part-sync-signer-binding-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.repository == 'vasilpo/Talario' && github.actor == github.repository_owner && contains(github.event.head_commit.message, '[PART-SYNC-SIGNER-PROBE]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Derive public half of current deploy signing key
+        shell: bash
+        env:
+          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "${SIGNING_KEY:-}"
+          tmp="$(mktemp)"
+          trap 'rm -f "$tmp"' EXIT
+          chmod 600 "$tmp"
+          printf '%s' "$SIGNING_KEY" | base64 --decode > "$tmp"
+          pub="$(ssh-keygen -y -f "$tmp")"
+          case "$pub" in
+            ssh-ed25519\ *) ;;
+            *) echo "RESULT=unexpected_public_key_type"; exit 3 ;;
+          esac
+          echo "SIGNER_PUBLIC=$pub"
+          echo "RESULT=PASS"
