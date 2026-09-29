@@ -1893,6 +1893,17 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             $actual_canonical_html = $normalize_html($actual_full_description);
             $expected_text = $normalize_text($expected_full_description);
             $actual_text = $normalize_text($actual_full_description);
+            $normalize_semantic_text = static function (string $html): string {
+                $with_tag_separators = preg_replace('/<[^>]+>/u', ' ', $html);
+                if (!is_string($with_tag_separators)) {
+                    $with_tag_separators = $html;
+                }
+                $text = html_entity_decode($with_tag_separators, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $normalized = preg_replace('/\s+/u', ' ', trim($text));
+                return is_string($normalized) ? $normalized : trim($text);
+            };
+            $expected_semantic_text = $normalize_semantic_text($expected_full_description);
+            $actual_semantic_text = $normalize_semantic_text($actual_full_description);
 
             $text_first_diff = null;
             $expected_text_length = mb_strlen($expected_text, 'UTF-8');
@@ -1910,6 +1921,23 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
                 $text_first_diff = $min_text_length;
             }
             $text_excerpt_offset = max(0, (int) ($text_first_diff ?? 0) - 60);
+
+            $semantic_first_diff = null;
+            $expected_semantic_length = mb_strlen($expected_semantic_text, 'UTF-8');
+            $actual_semantic_length = mb_strlen($actual_semantic_text, 'UTF-8');
+            $min_semantic_length = min($expected_semantic_length, $actual_semantic_length);
+            for ($semantic_offset = 0; $semantic_offset < $min_semantic_length; $semantic_offset++) {
+                if (mb_substr($expected_semantic_text, $semantic_offset, 1, 'UTF-8')
+                    !== mb_substr($actual_semantic_text, $semantic_offset, 1, 'UTF-8')
+                ) {
+                    $semantic_first_diff = $semantic_offset;
+                    break;
+                }
+            }
+            if ($semantic_first_diff === null && $expected_semantic_length !== $actual_semantic_length) {
+                $semantic_first_diff = $min_semantic_length;
+            }
+            $semantic_excerpt_offset = max(0, (int) ($semantic_first_diff ?? 0) - 60);
 
             $description_diagnostics = [
                 'exact' => hash_equals(
@@ -1933,6 +1961,27 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
                 'text_first_diff_offset' => $text_first_diff,
                 'expected_text_excerpt' => mb_substr($expected_text, $text_excerpt_offset, 180, 'UTF-8'),
                 'actual_text_excerpt' => mb_substr($actual_text, $text_excerpt_offset, 180, 'UTF-8'),
+                'semantic_text_equal' => hash_equals(
+                    hash('sha256', $expected_semantic_text),
+                    hash('sha256', $actual_semantic_text)
+                ),
+                'expected_semantic_sha256' => hash('sha256', $expected_semantic_text),
+                'actual_semantic_sha256' => hash('sha256', $actual_semantic_text),
+                'expected_semantic_chars' => $expected_semantic_length,
+                'actual_semantic_chars' => $actual_semantic_length,
+                'semantic_first_diff_offset' => $semantic_first_diff,
+                'expected_semantic_excerpt' => mb_substr(
+                    $expected_semantic_text,
+                    $semantic_excerpt_offset,
+                    180,
+                    'UTF-8'
+                ),
+                'actual_semantic_excerpt' => mb_substr(
+                    $actual_semantic_text,
+                    $semantic_excerpt_offset,
+                    180,
+                    'UTF-8'
+                ),
                 'expected_sha256' => hash('sha256', $expected_full_description),
                 'actual_sha256' => hash('sha256', $actual_full_description),
                 'expected_bytes' => strlen($expected_full_description),
