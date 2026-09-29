@@ -1624,6 +1624,8 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
 <p>Как найти: зайти во двор дома, повернуть направо, идти вдоль дома; белая дверь с названием.</p>';
 
 
+    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
+
     if (count($matching_product_ids) !== 1) {
         if (!class_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider')
             || !method_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider', 'getGroupRepository')
@@ -1743,20 +1745,200 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             ];
         }
 
+        $group_acceptance = null;
+        if (count($group_summaries) === 1) {
+            $group_summary = reset($group_summaries);
+            $group_product_ids = array_values((array) ($group_summary['product_ids'] ?? []));
+            $anchor_product_id = 0;
+            foreach ($candidate_summaries as $candidate_summary) {
+                if ((int) ($candidate_summary['images']['main'] ?? 0) === 1
+                    && (int) ($candidate_summary['images']['additional'] ?? 0) === 2
+                ) {
+                    $anchor_product_id = (int) $candidate_summary['product_id'];
+                    break;
+                }
+            }
+            if ($anchor_product_id <= 0 && $group_product_ids) {
+                $anchor_product_id = (int) reset($group_product_ids);
+            }
+
+            $group_checks = [
+                'single_group' => true,
+                'variation_product_count' => count($group_product_ids) === 15,
+                'anchor_product' => $anchor_product_id > 0,
+            ];
+            $group_variation_items = [];
+            $group_variation_failures = [];
+
+            if ($anchor_product_id > 0 && count($group_product_ids) === 15) {
+                $age_schedules = [
+                    'до 3 лет' => [
+                        ['day' => 'monday', 'start' => '10:00', 'end' => '11:00', 'duration' => 60, 'capacity' => 5],
+                        ['day' => 'wednesday', 'start' => '10:00', 'end' => '11:00', 'duration' => 60, 'capacity' => 5],
+                    ],
+                    '3-5 лет' => [
+                        ['day' => 'tuesday', 'start' => '11:00', 'end' => '12:00', 'duration' => 60, 'capacity' => 5],
+                        ['day' => 'thursday', 'start' => '11:00', 'end' => '12:00', 'duration' => 60, 'capacity' => 5],
+                    ],
+                    '6-9 лет' => [
+                        ['day' => 'wednesday', 'start' => '15:00', 'end' => '16:00', 'duration' => 60, 'capacity' => 5],
+                        ['day' => 'friday', 'start' => '15:00', 'end' => '16:00', 'duration' => 60, 'capacity' => 5],
+                    ],
+                ];
+                $purchase_options = [
+                    'Разовое занятие' => 1500,
+                    'Пробное занятие' => 0,
+                    'Абонемент 4 занятия' => 3600,
+                    'Абонемент 8 занятий' => 6800,
+                    'Абонемент 12 занятий' => 9600,
+                ];
+                $raw_variation_plan = [];
+                foreach ($age_schedules as $age_group => $schedule) {
+                    foreach ($purchase_options as $purchase_option => $price) {
+                        $raw_variation_plan[] = [
+                            'age_group' => $age_group,
+                            'purchase_option' => $purchase_option,
+                            'price' => $price,
+                            'capacity' => 5,
+                            'schedule' => $schedule,
+                        ];
+                    }
+                }
+
+                try {
+                    $normalized_plan = fn_talario_analytics_partner_sync_normalize_variation_plan([
+                        'capacity' => 5,
+                        'variation_plan' => $raw_variation_plan,
+                    ]);
+                    $resolution = fn_talario_analytics_partner_sync_resolve_variation_plan((array) $normalized_plan);
+                    if (empty($resolution['resolved'])) {
+                        $group_variation_failures[] = ['detail' => 'variation_resolution_required'];
+                    } else {
+                        $mapped = fn_talario_analytics_partner_sync_map_group_products($anchor_product_id, $resolution);
+                        $group_checks['variation_mapping_count'] = count((array) ($mapped['map'] ?? [])) === 15;
+                        foreach ((array) $resolution['items'] as $item) {
+                            $key = (int) $item['group_variant_id'] . ':' . (int) $item['purchase_variant_id'];
+                            $variation_product_id = (int) ($mapped['map'][$key] ?? 0);
+                            if ($variation_product_id <= 0) {
+                                $group_variation_failures[] = [
+                                    'age_group' => (string) $item['age_group'],
+                                    'purchase_option' => (string) $item['purchase_option'],
+                                    'detail' => 'variation_product_mapping_failed',
+                                ];
+                                continue;
+                            }
+                            try {
+                                $state = fn_talario_analytics_partner_sync_readback_variation_state(
+                                    $variation_product_id,
+                                    $item
+                                );
+                                $group_variation_items[] = [
+                                    'age_group' => (string) $item['age_group'],
+                                    'purchase_option' => (string) $item['purchase_option'],
+                                    'product_id' => $variation_product_id,
+                                    'price' => (float) $state['price'],
+                                    'duration' => (int) $state['duration'],
+                                    'schedule' => $state['schedule'],
+                                ];
+                            } catch (Throwable $exception) {
+                                $group_variation_failures[] = [
+                                    'age_group' => (string) $item['age_group'],
+                                    'purchase_option' => (string) $item['purchase_option'],
+                                    'detail' => fn_talario_analytics_partner_sync_safe_write_error_detail($exception)
+                                        ?: 'variation_readback_mismatch',
+                                ];
+                            }
+                        }
+                    }
+                } catch (Throwable $exception) {
+                    $group_variation_failures[] = [
+                        'detail' => fn_talario_analytics_partner_sync_safe_write_error_detail($exception)
+                            ?: 'variation_readback_failed',
+                    ];
+                }
+            }
+
+            $group_checks['variation_items'] = count($group_variation_items) === 15
+                && !$group_variation_failures;
+
+            $anchor_readback = $anchor_product_id > 0
+                ? fn_talario_analytics_partner_sync_write_readback($anchor_product_id)
+                : [];
+            $actual_full_description = (string) ($anchor_readback['full_description'] ?? '');
+            $description_first_diff = null;
+            $min_description_length = min(strlen($actual_full_description), strlen($expected_full_description));
+            for ($offset = 0; $offset < $min_description_length; $offset++) {
+                if ($actual_full_description[$offset] !== $expected_full_description[$offset]) {
+                    $description_first_diff = $offset;
+                    break;
+                }
+            }
+            if ($description_first_diff === null
+                && strlen($actual_full_description) !== strlen($expected_full_description)
+            ) {
+                $description_first_diff = $min_description_length;
+            }
+            $excerpt_offset = max(0, (int) ($description_first_diff ?? 0) - 60);
+            $description_diagnostics = [
+                'exact' => hash_equals(
+                    hash('sha256', $expected_full_description),
+                    hash('sha256', $actual_full_description)
+                ),
+                'expected_sha256' => hash('sha256', $expected_full_description),
+                'actual_sha256' => hash('sha256', $actual_full_description),
+                'expected_bytes' => strlen($expected_full_description),
+                'actual_bytes' => strlen($actual_full_description),
+                'first_diff_offset' => $description_first_diff,
+                'expected_excerpt' => mb_substr($expected_full_description, $excerpt_offset, 180, 'UTF-8'),
+                'actual_excerpt' => mb_substr($actual_full_description, $excerpt_offset, 180, 'UTF-8'),
+            ];
+            $group_checks['description_exact'] = !empty($description_diagnostics['exact']);
+
+            $group_failures = [];
+            foreach ($group_checks as $check_name => $passed) {
+                if (!$passed) {
+                    $group_failures[] = $check_name;
+                }
+            }
+            foreach ($group_variation_failures as $failure) {
+                $group_failures[] = (string) $failure['detail'];
+            }
+
+            $prices = array_values(array_unique(array_map(
+                static fn(array $item): int => (int) round((float) $item['price']),
+                $group_variation_items
+            )));
+            sort($prices);
+
+            $group_acceptance = [
+                'pass' => !$group_failures,
+                'group_id' => (int) ($group_summary['group_id'] ?? 0),
+                'anchor_product_id' => $anchor_product_id,
+                'checks' => $group_checks,
+                'variation_count' => count($group_variation_items),
+                'prices' => $prices,
+                'variations' => $group_variation_items,
+                'variation_failures' => $group_variation_failures,
+                'description' => $description_diagnostics,
+                'failures' => array_values(array_unique($group_failures)),
+            ];
+        }
+
         fn_talario_analytics_json_response(200, [
             'schema_version' => 'partner-sync.step6-acceptance.v1',
-            'pass' => false,
+            'pass' => is_array($group_acceptance) && !empty($group_acceptance['pass']),
             'duplicate_count' => count($matching_product_ids),
             'complete_shape_count' => $complete_shape_count,
             'partial_shape_count' => count($matching_product_ids) - $complete_shape_count,
             'distinct_group_count' => count($group_summaries),
             'groups' => array_values($group_summaries),
             'candidates' => $candidate_summaries,
-            'failures' => ['target_card_count_mismatch'],
+            'group_acceptance' => $group_acceptance,
+            'failures' => is_array($group_acceptance)
+                ? (array) ($group_acceptance['failures'] ?? [])
+                : ['target_card_count_mismatch'],
         ]);
     }
-
-    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
 
     $product_id = (int) reset($matching_product_ids);
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
