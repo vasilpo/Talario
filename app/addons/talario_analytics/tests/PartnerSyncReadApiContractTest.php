@@ -224,6 +224,30 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'dry_run' => true", $this->write_capability);
     }
 
+    public function testPartnerSyncNormalizesUnderThreeAgeCopyWithoutChangingVariationTaxonomy(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_normalize_age_copy',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'до 3х лет'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "if (\$field === 'full_description')",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "fn_talario_analytics_partner_sync_normalize_age_copy(\$value)",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "['Возраст', 'Возрастная группа', 'Класс']",
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncWriteUsesCoreProductAndEcarterHooks(): void
     {
         self::assertStringContainsString('fn_update_product(', $this->write_capability);
