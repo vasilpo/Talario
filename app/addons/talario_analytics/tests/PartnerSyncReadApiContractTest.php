@@ -141,6 +141,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'Первая кржука'", $this->controller);
         self::assertStringContainsString("'category_id' => \$category_ids === [268]", $this->controller);
         self::assertStringContainsString("'full_description_exact'", $this->controller);
+        self::assertStringContainsString("'canonical_html_equal'", $this->controller);
+        self::assertStringContainsString("'text_equal'", $this->controller);
+        self::assertStringContainsString("preg_replace('/>\\s+</u', '><'", $this->controller);
+        self::assertStringContainsString("html_entity_decode(strip_tags(\$html)", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_readback_variation_state', $this->controller);
         self::assertStringContainsString("'variation_count' => count(\$variation_items)", $this->controller);
         self::assertStringContainsString("'duplicate_count' => 1", $this->controller);
