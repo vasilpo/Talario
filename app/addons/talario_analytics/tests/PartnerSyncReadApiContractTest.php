@@ -161,6 +161,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'variation_mapping_count'", $this->controller);
         self::assertStringContainsString("'description' => \$description_diagnostics", $this->controller);
         self::assertStringContainsString("'first_diff_offset' => \$description_first_diff", $this->controller);
+        self::assertStringContainsString("'html_canonical_exact'", $this->controller);
+        self::assertStringContainsString("'text_canonical_exact'", $this->controller);
+        self::assertStringContainsString("preg_replace('/>\\\\s+</u', '><'", $this->controller);
         self::assertStringNotContainsString("fn_update_product(", substr(
             $this->controller,
             strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'),
