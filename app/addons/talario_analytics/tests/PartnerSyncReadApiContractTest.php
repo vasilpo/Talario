@@ -346,7 +346,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('?:product_feature_variants', $helper_section);
 
         self::assertStringContainsString(
-            "if (\\$operation === 'create' && \\$variation_plan !== null)",
+            "if (\$operation === 'create' && \$variation_plan !== null)",
             $this->write_capability
         );
         self::assertStringContainsString(
@@ -354,7 +354,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "'short_description' => (string) \\$row['short_description']",
+            "'short_description' => (string) \$row['short_description']",
             $this->write_capability
         );
     }
