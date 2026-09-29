@@ -146,6 +146,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'text_first_diff_offset'", $this->controller);
         self::assertStringContainsString("'expected_text_excerpt'", $this->controller);
         self::assertStringContainsString("'actual_text_excerpt'", $this->controller);
+        self::assertStringContainsString("'semantic_text_equal'", $this->controller);
+        self::assertStringContainsString("'semantic_first_diff_offset'", $this->controller);
+        self::assertStringContainsString("'expected_semantic_excerpt'", $this->controller);
+        self::assertStringContainsString("'actual_semantic_excerpt'", $this->controller);
         self::assertStringContainsString("preg_replace('/>\\s+</u', '><'", $this->controller);
         self::assertStringContainsString("html_entity_decode(strip_tags(\$html)", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_readback_variation_state', $this->controller);
