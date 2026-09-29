@@ -15,6 +15,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $dev_dispatcher;
     private string $dev_ops_workflow;
     private string $cli_runner;
+    private string $feature_discovery_runner;
+    private string $deploy_workflow;
 
     protected function setUp(): void
     {
@@ -28,6 +30,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $this->dev_dispatcher = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/beget/talario-dev-github-dispatcher.sh');
         $this->dev_ops_workflow = (string) file_get_contents(dirname(__DIR__, 4) . '/.github/workflows/dev-copy-ops.yml');
         $this->cli_runner = (string) file_get_contents(dirname(__DIR__, 4) . '/ops/partner-sync-apply.php');
+        $this->feature_discovery_runner = (string) file_get_contents(
+            dirname(__DIR__, 4) . '/ops/partner-sync-feature-discovery.php'
+        );
+        $this->deploy_workflow = (string) file_get_contents(
+            dirname(__DIR__, 4) . '/.github/workflows/deploy-development.yml'
+        );
     }
 
     public function testPartnerSyncUsesDedicatedServerConfigToken(): void
@@ -182,6 +190,59 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("serialize(\$sess_data)", $this->controller);
         self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
         self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v3'", $this->controller);
+    }
+
+    public function testFeatureDiscoveryIsBoundedReadOnlyDevCopyProbe(): void
+    {
+        self::assertStringContainsString("PHP_SAPI !== 'cli'", $this->feature_discovery_runner);
+        self::assertStringContainsString("'/talario.ru/public_html/dev_copy'", $this->feature_discovery_runner);
+        self::assertStringContainsString('fn_is_development()', $this->feature_discovery_runner);
+        self::assertStringContainsString('TALARIO_PARTNER_SYNC_DEV_COPY', $this->feature_discovery_runner);
+        self::assertStringContainsString('?:product_filters', $this->feature_discovery_runner);
+        self::assertStringContainsString('?:product_features_values', $this->feature_discovery_runner);
+        self::assertStringContainsString('?:product_feature_variants', $this->feature_discovery_runner);
+        self::assertStringContainsString('%Возраст%', $this->feature_discovery_runner);
+        self::assertStringContainsString('%Катег%', $this->feature_discovery_runner);
+        self::assertStringContainsString(
+            "'schema_version' => 'partner-sync.feature-discovery.v1'",
+            $this->feature_discovery_runner
+        );
+        self::assertStringNotContainsString('db_query(', $this->feature_discovery_runner);
+        self::assertStringNotContainsString('fn_update_', $this->feature_discovery_runner);
+        self::assertStringNotContainsString('INSERT INTO', $this->feature_discovery_runner);
+        self::assertStringNotContainsString('DELETE FROM', $this->feature_discovery_runner);
+        self::assertStringNotContainsString('UPDATE ?:', $this->feature_discovery_runner);
+
+        self::assertStringContainsString(
+            '"talario-partner-sync-feature-discovery")',
+            $this->dev_dispatcher
+        );
+        $runner_hash = hash('sha256', $this->feature_discovery_runner);
+        self::assertStringContainsString(
+            'EXPECTED_RUNNER_SHA256="' . $runner_hash . '"',
+            $this->dev_dispatcher
+        );
+        self::assertStringContainsString(
+            'TALARIO_PARTNER_SYNC_ROOT="$DEV_COPY"',
+            $this->dev_dispatcher
+        );
+        self::assertStringContainsString(
+            'dev_copy worktree must be clean for feature discovery',
+            $this->dev_dispatcher
+        );
+
+        self::assertStringContainsString(
+            "contains(github.event.head_commit.message, 'PART-SYNC: feature discovery probe')",
+            $this->deploy_workflow
+        );
+        self::assertStringContainsString(
+            'talario-partner-sync-feature-discovery',
+            $this->deploy_workflow
+        );
+        self::assertStringContainsString(
+            'partner-sync.feature-discovery.v1',
+            $this->deploy_workflow
+        );
     }
 
     public function testPartnerSyncWriteIsInternalCliOnly(): void

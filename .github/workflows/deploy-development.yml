@@ -66,3 +66,33 @@ jobs:
 
           printf '%s\n' "$DISPATCHER_LINE"
           printf '%s\n' "$DEPLOY_LINE"
+
+      - name: PART-SYNC Step 7.7 read-only feature discovery
+        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: feature discovery probe') }}"
+        shell: bash
+        env:
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        run: |
+          set -euo pipefail
+          BEGET_HOST="salvage.beget.com"
+
+          set +e
+          RAW_OUTPUT="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@$BEGET_HOST" talario-partner-sync-feature-discovery 2>&1)"
+          RC=$?
+          set -e
+
+          MARKERS="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^(DISPATCHER=talario-dev-github-v1|OPERATION=partner-sync-feature-discovery)$' || true)"
+          DISCOVERY="$(printf '%s\n' "$RAW_OUTPUT" | jq -Rrc 'fromjson? | select(.schema_version == "partner-sync.feature-discovery.v1") | {schema_version, source, features, samples}' | tail -1)"
+          SAFE_ERROR="$(printf '%s\n' "$RAW_OUTPUT" | grep -E '^PARTNER_SYNC_FEATURE_DISCOVERY_[A-Z_]+$' | tail -1 || true)"
+
+          printf '%s\n' "$MARKERS"
+          if [ -n "$DISCOVERY" ]; then
+            printf 'DISCOVERY=%s\n' "$DISCOVERY"
+          elif [ -n "$SAFE_ERROR" ]; then
+            printf 'DISCOVERY_ERROR=%s\n' "$SAFE_ERROR"
+          else
+            printf 'DISCOVERY_ERROR=REMOTE_OPERATION_FAILED_rc_%s\n' "$RC"
+          fi
+
+          [ "$RC" -eq 0 ]
+          [ -n "$DISCOVERY" ]
