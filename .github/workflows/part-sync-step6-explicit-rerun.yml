@@ -1,0 +1,211 @@
+name: PART-SYNC Step 6 explicit-rerun CREATE
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - '.github/part-sync/step6-create.request.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: part-sync-step6-glina-explicit-rerun
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate request and encrypted handoff metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_RUN_ATTEMPT}" -le 2
+          req='.github/part-sync/step6-create.request.json'
+          handoff='.github/part-sync/step6-handoff-url.encrypted.json'
+          jq -e '
+            .schema_version == "talario.part-sync.step6.request.v1"
+            and .request_id == "part-sync-glina-step6-diagnostic-retry-20260929"
+            and .target == "dev_copy"
+            and .operation == "create"
+            and .company_id == 12
+            and .status == "H"
+            and .payload_sha256 == "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+            and .explicit_rerun_required == true
+          ' "$req" >/dev/null
+          jq -e '
+            .schema_version == "talario.part-sync.encrypted-handoff-url.v1"
+            and .aad == "talario-part-sync-step6-handoff-url-v1"
+            and .plaintext_sha256 == "8cb0d08f8ced653f16847ab9cc669e24453e8130f885819516cf73148c887f0a"
+            and .plaintext_bytes == 776
+            and .artifact_id == 10993567144
+            and .artifact_zip_sha256 == "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094"
+            and .payload_sha256 == "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+            and .target == "dev_copy"
+            and .operation == "create"
+            and .first_run == "validate_only"
+            and .second_run == "explicit_rerun_only"
+          ' "$handoff" >/dev/null
+          echo 'STEP6_HANDOFF_METADATA=PASS'
+          if [ "${GITHUB_RUN_ATTEMPT}" = "1" ]; then
+            echo 'STEP6_VALIDATE_ONLY=PASS'
+            echo 'STEP6_REQUIRES_EXPLICIT_RERUN=PASS'
+          fi
+
+  create-once:
+    needs: validate
+    if: github.run_attempt == 2 && github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Decrypt handoff pointer and fetch encrypted artifact
+        env:
+          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "${SIGNING_KEY:-}"
+          work="$RUNNER_TEMP/part-sync-step6"
+          rm -rf "$work"; install -d -m 700 "$work"
+          printf '%s' "$SIGNING_KEY" | base64 --decode > "$work/key"
+          chmod 600 "$work/key"
+          pub="$(ssh-keygen -y -f "$work/key" | awk '{print $2}')"
+          test "$pub" = "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP"
+
+          node .github/part-sync/step6-decrypt.mjs             "$work/key"             .github/part-sync/step6-handoff-url.encrypted.json             "$work/handoff.json"
+
+          jq -e '
+            .artifact_id == 10993567144
+            and .artifact_zip_sha256 == "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094"
+            and .artifact_envelope_sha256 == "1a0ee71200c7d7434b13f6822b01b07e46ff3be78243af9615d49f8bff500e16"
+            and .payload_sha256 == "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+            and .payload_bytes == 2391697
+          ' "$work/handoff.json" >/dev/null
+          artifact_url="$(jq -er '.artifact_url' "$work/handoff.json")"
+          echo "::add-mask::$artifact_url"
+          case "$artifact_url" in
+            https://sdmntpr*.oaiusercontent.com/files/*/raw?*) ;;
+            *) echo 'HANDOFF_URL_HOST_REJECTED'; exit 42 ;;
+          esac
+          curl --fail --location --silent --show-error --max-time 90             "$artifact_url" -o "$work/handoff.zip"
+          unset artifact_url
+          test "$(sha256sum "$work/handoff.zip" | awk '{print $1}')" = "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094"
+          unzip -q "$work/handoff.zip" -d "$work/artifact"
+          test -f "$work/artifact/envelope.json"
+          test "$(find "$work/artifact" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "1"
+          test "$(sha256sum "$work/artifact/envelope.json" | awk '{print $1}')" = "1a0ee71200c7d7434b13f6822b01b07e46ff3be78243af9615d49f8bff500e16"
+          echo 'STEP6_ENCRYPTED_ARTIFACT=PASS'
+
+      - name: Decrypt and verify exact approved CREATE payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/part-sync-step6"
+          node .github/part-sync/step6-decrypt.mjs             "$work/key" "$work/artifact/envelope.json" "$work/apply.json"
+          test "$(wc -c < "$work/apply.json" | tr -d ' ')" = "2391697"
+          test "$(sha256sum "$work/apply.json" | awk '{print $1}')" = "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+          python3 - "$work/apply.json" <<'PY'
+          import base64, hashlib, json, sys
+          p=json.load(open(sys.argv[1],encoding='utf-8'))
+          assert p['operation']=='create'
+          assert p['dry_run'] is False
+          assert p['approval_id']=='part-sync-glinyanye-chudesa-20260928-step6'
+          assert p['approved_company_id']==12
+          assert p['bootstrap_missing_age_variants'] is True
+          assert p['product']['company_id']==12
+          assert p['product']['name']=='\u041f\u0435\u0440\u0432\u0430\u044f \u043a\u0440\u0436\u0443\u043a\u0430'
+          assert p['product']['status']=='H'
+          assert p['product']['category_ids']==[268]
+          assert p['product']['price']==1500
+          assert '<iframe' not in p['product']['full_description']
+          assert 'map-widget' not in p['product']['full_description']
+          assert len(p['variation_plan'])==15
+          assert sorted({int(v['price']) for v in p['variation_plan']})==[0,1500,3600,6800,9600]
+          assert sorted({int(v['capacity']) for v in p['variation_plan']})==[5]
+          assert sorted({int(s['duration']) for v in p['variation_plan'] for s in v['schedule']})==[60]
+          expected={
+            '1lTISmlz74-JAMCOLST9GFD93gXUPNhYg':('2bc3bebea638a37b5550a7e366e40c1e00c403d95988331bed2c9156c36b5f49',1333492),
+            '1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij':('5b1b957d211b22a6b6ef201899daedeb973bb9e3bec0649dd8dbd89cb3d44fb9',393816),
+            '1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0':('ea95cc2758b3185bd8ab24717494f9378c45c46024b510faaced1d21c17b3b21',60168),
+          }
+          assert len(p['images'])==3
+          assert [x['source_drive_id'] for x in p['images']]==list(expected)
+          for image in p['images']:
+            sha,size=expected[image['source_drive_id']]
+            raw=base64.b64decode(image['content_base64'],validate=True)
+            assert len(raw)==size==int(image['source_bytes'])
+            assert hashlib.sha256(raw).hexdigest()==sha==image['source_sha256']
+            assert raw[:2]==b'\xff\xd8'
+          print('STEP6_PAYLOAD=PASS')
+          print('STEP6_PHOTOS=PASS count=3')
+          PY
+
+      - name: Exactly one signed CREATE to dev_copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/part-sync-step6"
+          endpoint='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
+          req="part-sync-apply-glina-step6-diagnostic-${GITHUB_RUN_ID}"
+          ts="$(date +%s)"
+          body_hash="$(sha256sum "$work/apply.json" | awk '{print $1}')"
+          test "$body_hash" = "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+          printf 'talario-part-sync
+apply
+%s
+%s
+%s
+' "$req" "$ts" "$body_hash" > "$work/message"
+          ssh-keygen -Y sign -q -f "$work/key" -n talario-part-sync "$work/message"
+          sig="$(base64 < "$work/message.sig" | tr -d '
+')"
+          echo 'STEP6_CREATE_ATTEMPTS=1'
+          code="$(curl --silent --show-error --output "$work/apply.out" --write-out '%{http_code}'             --connect-timeout 15 --max-time 180             -X POST "$endpoint"             -H 'Content-Type: application/json'             -H "X-Talario-Request-Id: $req"             -H "X-Talario-Timestamp: $ts"             -H "X-Talario-Signature: $sig"             --data-binary "@$work/apply.json")"
+          echo "STEP6_HTTP=$code"
+          if [ "$code" != "201" ]; then
+            echo 'STEP6_CREATE=STOP_NON_201'
+            jq -c '{error:(.error//null),stage:(.stage//null),kind:(.kind//null),detail:(.detail//null)}' "$work/apply.out" 2>/dev/null || true
+            exit 61
+          fi
+          python3 - "$work/apply.json" "$work/apply.out" <<'PY'
+          import json,sys
+          expected=json.load(open(sys.argv[1],encoding='utf-8'))
+          r=json.load(open(sys.argv[2],encoding='utf-8'))
+          assert r.get('dry_run') is False
+          assert r.get('operation')=='create'
+          assert int(r['product_id'])>0
+          assert int(r['readback']['company_id'])==12
+          assert r['readback']['name']=='\u041f\u0435\u0440\u0432\u0430\u044f \u043a\u0440\u0436\u0443\u043a\u0430'
+          assert r['readback']['status']=='H'
+          assert float(r['readback']['price'])==1500.0
+          assert r['readback']['full_description']==expected['product']['full_description']
+          assert int(r['readback']['images']['main'])==1
+          assert int(r['readback']['images']['additional'])==2
+          assert int(r['variations']['count'])==15
+          items=r['variations']['items']
+          assert sorted({int(float(v['price'])) for v in items})==[0,1500,3600,6800,9600]
+          assert sorted({int(s['capacity']) for v in items for s in v['schedule']})==[5]
+          assert sorted({int(v['duration']) for v in items})==[60]
+          print('STEP6_READBACK=PASS')
+          print('STEP6_PRODUCT_ID='+str(int(r['product_id'])))
+          print('STEP6_RESULT=PASS')
+          PY
+
+      - name: Cleanup plaintext and key
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/part-sync-step6"
