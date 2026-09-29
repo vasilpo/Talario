@@ -2185,7 +2185,190 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
     ]);
 }
 
-if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+
+function fn_talario_analytics_partner_sync_step6_fix_description(): void
+{
+    $raw = file_get_contents('php://input');
+    $request = is_string($raw) ? json_decode($raw, true) : null;
+    if (!is_array($request)
+        || array_keys($request) !== ['action']
+        || (string) ($request['action'] ?? '') !== 'step6-fix-description-v1'
+    ) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_step6_fix_request']);
+    }
+
+    if (!class_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider')
+        || !method_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider', 'getGroupRepository')
+    ) {
+        fn_talario_analytics_json_response(409, ['error' => 'variation_service_unavailable']);
+    }
+
+    $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+    $expected_name = 'Первая кржука';
+    $expected_company_id = 12;
+    $expected_group_id = 145;
+    $expected_product_ids = range(1207, 1221);
+    $expected_full_description = '<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p>
+<p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p>
+<p>Работа с глиной развивает мелкую моторику, воображение, чувство формы, аккуратность и творческое мышление. А ещё это увлекательный процесс, в котором ребёнок может отвлечься от гаджетов и полностью погрузиться в творчество.</p>
+<p><strong>Что взять с собой:</strong> воду.</p>
+<h3>Возраст и расписание</h3>
+<ul>
+<li><strong>до 3 лет</strong> — понедельник, среда, 10:00–11:00. Свободных мест: 5.</li>
+<li><strong>3–5 лет</strong> — вторник, четверг, 11:00–12:00. Свободных мест: 5.</li>
+<li><strong>6–9 лет</strong> — среда, пятница, 15:00–16:00. Свободных мест: 5.</li>
+</ul>
+<p><strong>Длительность занятия:</strong> 60 минут.</p>
+<p>В онлайн-календаре <strong>Таларио</strong> отображается актуальное расписание и количество свободных мест. Вы можете увидеть доступные места и сразу записаться на занятие.</p>
+<h3>Стоимость занятий</h3>
+<ul>
+<li>Пробное занятие — бесплатно.</li>
+<li>Разовое занятие — 1500 ₽.</li>
+<li>Абонемент на 4 занятия — 3600 ₽.</li>
+<li>Абонемент на 8 занятий — 6800 ₽.</li>
+<li>Абонемент на 12 занятий — 9600 ₽.</li>
+</ul>
+<h3>Адрес</h3>
+<p><strong>г. Красногорск, ул. Осеняя 1стр1</strong></p>
+<p>Парковка: есть, общая во дворе.</p>
+<p>Как найти: зайти во двор дома, повернуть направо, идти вдоль дома; белая дверь с названием.</p>';
+    $expected_sha256 = hash('sha256', $expected_full_description);
+    $allowed_before_sha256 = 'aca16cbfad17a6a399bad66006c98c77ddc534c2cc36c798b1dcde4a021068c5';
+
+    try {
+        $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+        $group = $group_repository->findGroupByProductId(1207);
+    } catch (Throwable $exception) {
+        fn_talario_analytics_json_response(409, ['error' => 'variation_service_unavailable']);
+    }
+
+    if (!$group || (int) $group->getId() !== $expected_group_id) {
+        fn_talario_analytics_json_response(409, ['error' => 'step6_group_mismatch']);
+    }
+
+    $group_product_ids = array_values(array_unique(array_map('intval', (array) $group->getProductIds())));
+    sort($group_product_ids);
+    if ($group_product_ids !== $expected_product_ids) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'step6_group_products_mismatch',
+            'product_count' => count($group_product_ids),
+        ]);
+    }
+
+    $rows = db_get_array(
+        'SELECT p.product_id, p.company_id, p.status, pd.product, pd.full_description'
+        . ' FROM ?:products p'
+        . ' INNER JOIN ?:product_descriptions pd'
+        . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' WHERE p.product_id IN (?n)'
+        . ' ORDER BY p.product_id ASC',
+        $lang_code,
+        $expected_product_ids
+    );
+
+    if (count($rows) !== 15) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'step6_description_row_count_mismatch',
+            'row_count' => count($rows),
+        ]);
+    }
+
+    $before_hashes = [];
+    foreach ($rows as $row) {
+        if ((int) ($row['company_id'] ?? 0) !== $expected_company_id
+            || (string) ($row['status'] ?? '') !== 'H'
+            || (string) ($row['product'] ?? '') !== $expected_name
+        ) {
+            fn_talario_analytics_json_response(409, [
+                'error' => 'step6_description_target_mismatch',
+                'product_id' => (int) ($row['product_id'] ?? 0),
+            ]);
+        }
+        $before_hashes[] = hash('sha256', (string) ($row['full_description'] ?? ''));
+    }
+
+    $before_hashes = array_values(array_unique($before_hashes));
+    sort($before_hashes);
+
+    if ($before_hashes === [$expected_sha256]) {
+        fn_talario_analytics_json_response(200, [
+            'pass' => true,
+            'already_fixed' => true,
+            'updated_count' => 0,
+            'group_id' => $expected_group_id,
+            'product_count' => 15,
+            'after_sha256' => $expected_sha256,
+        ]);
+    }
+
+    if ($before_hashes !== [$allowed_before_sha256]) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'step6_description_precondition_failed',
+            'distinct_before_hashes' => count($before_hashes),
+        ]);
+    }
+
+    db_query('START TRANSACTION');
+    try {
+        foreach ($expected_product_ids as $product_id) {
+            db_query(
+                'UPDATE ?:product_descriptions'
+                . ' SET full_description = ?s'
+                . ' WHERE product_id = ?i AND lang_code = ?s',
+                $expected_full_description,
+                $product_id,
+                $lang_code
+            );
+        }
+
+        $after_descriptions = db_get_hash_single_array(
+            'SELECT product_id, full_description'
+            . ' FROM ?:product_descriptions'
+            . ' WHERE product_id IN (?n) AND lang_code = ?s'
+            . ' ORDER BY product_id ASC',
+            ['product_id', 'full_description'],
+            $expected_product_ids,
+            $lang_code
+        );
+
+        if (count($after_descriptions) !== 15) {
+            throw new RuntimeException('step6_description_verify_count_failed');
+        }
+
+        foreach ($expected_product_ids as $product_id) {
+            if (!isset($after_descriptions[$product_id])
+                || !hash_equals(
+                    $expected_sha256,
+                    hash('sha256', (string) $after_descriptions[$product_id])
+                )
+            ) {
+                throw new RuntimeException('step6_description_verify_hash_failed');
+            }
+        }
+
+        db_query('COMMIT');
+    } catch (Throwable $exception) {
+        db_query('ROLLBACK');
+        fn_talario_analytics_json_response(500, [
+            'error' => in_array(
+                $exception->getMessage(),
+                ['step6_description_verify_count_failed', 'step6_description_verify_hash_failed'],
+                true
+            ) ? $exception->getMessage() : 'step6_description_update_failed',
+        ]);
+    }
+
+    fn_talario_analytics_json_response(200, [
+        'pass' => true,
+        'already_fixed' => false,
+        'updated_count' => 15,
+        'group_id' => $expected_group_id,
+        'product_count' => 15,
+        'after_sha256' => $expected_sha256,
+    ]);
+}
+
+if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_fix_description'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
@@ -2193,14 +2376,14 @@ if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_a
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance', 'partner_step6_fix_description', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance', 'partner_step6_fix_description'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -2209,7 +2392,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance', 'partner_step6_fix_description'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -2241,6 +2424,10 @@ if ($mode === 'partner_apply') {
 
 if ($mode === 'partner_step6_acceptance') {
     fn_talario_analytics_partner_sync_step6_acceptance();
+}
+
+if ($mode === 'partner_step6_fix_description') {
+    fn_talario_analytics_partner_sync_step6_fix_description();
 }
 
 $rate_count = fn_talario_analytics_rate_limit();
