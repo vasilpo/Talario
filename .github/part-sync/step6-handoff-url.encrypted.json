@@ -1,0 +1,16 @@
+{
+  "schema_version": "talario.part-sync.encrypted-handoff-url.v1",
+  "aad": "talario-part-sync-step6-handoff-url-v1",
+  "ephemeral_x25519_public_b64": "lAQoE2RLC5IAbbdtHsg2ezkdfyH7fGhWAKr2kIPacHM=",
+  "nonce_b64": "736wHC/Ybc9WdTXE",
+  "ciphertext_b64": "aZdcuK4TWw5yYaWQiYFJgUuNydh5y6Bl0u/osOiaBbYVKb9NmMAYOGT+wyuqb6KPcPNb9B7IG0RT0LvzihC7xYlOg7xcXIuWCoDszB3DTvdmvM0+fipAAmKCk5Ug4CGUbK43zocTnXJagaTe6KLlqxbHZpiS8mSWGwSpcmuH9xJvb+U0gsDGH9E0eoHMgx5uOuadcubRbL8qJMmJBWkLRMXCpp7cmO6csFxzHx3ylEFz+ArmTVrubgA0EzGj94pLnZAsj6oPWm7oHeqab5BqCha5alrq5JfiLFtjnLTa2+3+kdNHuKQ4Z+UZ+6ntk694OdJpkkeLfMsPkONmq7W3+YEyuhiMh24O8VFdtWAO6qtOPawYBJIIXSlYCTeG8fBpnHACfJzUT/oz7D/jJP4UMg1IqCnRUTez9kbGbKrj8SUNnUwM3dIVQNVgIEkHpgZ7eM2ROr8K+0cqOWEXdQ0nh8VtzZ0efh51buj7TW/R19sAvpoVy8qTyqYr69v4WZb4hqz8mZrTy6t1pBJ6mnFDNyNpiadw3oOqMnb6J3dXe8UaLIfvI43A659utkBpfZK2Qz0B5zhvIA410RwgSCPFVS93t2HUoBk56/ZTOrr68eI+kKMF920GVs6Z7wTxrlIi13ElKI7B0Ro1aw5PPmleb5tDtMFwU4C3UgPCKiui3qm+Dq1KaBfvSUnlrvP/OUcitNAv4HaYV6gGw80OotMDq6/CFIPiptKYxzQVCHp65P4QVKM+zNeGVxT4yq8gHukInAPmTPO5EZQahKvfJULk1UPYNz+mtbzrr2KKjB81XFb4rN3/Y6CSCQE7mOukue+upi3u9G9ajwhBVts4WH/OscP+TLnj8szxJ6gXxWSl4vTCFUNOugEhQs70mMTXUO8UAOlI+XKTJ54fwU27ZhveK53Xx0bKLIamMaSI481HKyxUpqXRBn+Hc9eXKYgIFQ7aUmqSJh2oRhz9+B8sopbalS4l1IU1pgD0qGBbgm2j75W8RO8aP8BIQR2x90D3a7ufcKrBRnKtXSiswdwL4q3dlc7xvGb+5Hlp",
+  "plaintext_sha256": "8cb0d08f8ced653f16847ab9cc669e24453e8130f885819516cf73148c887f0a",
+  "plaintext_bytes": 776,
+  "artifact_id": 10993567144,
+  "artifact_zip_sha256": "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094",
+  "payload_sha256": "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c",
+  "target": "dev_copy",
+  "operation": "create",
+  "first_run": "validate_only",
+  "second_run": "explicit_rerun_only"
+}
