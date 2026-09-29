@@ -123,7 +123,11 @@ function fn_talario_analytics_partner_sync_minimum_age_short_description(string 
         return $current;
     }
 
-    $label = 'с ' . $minimum . 'х лет';
+    $label = $minimum === 1
+        ? 'с 1го года'
+        : ($minimum >= 2 && $minimum <= 4
+            ? 'с ' . $minimum . 'х лет'
+            : 'с ' . $minimum . ' лет');
     $remainder = preg_replace(
         '/^\\s*с\\s+\\d+\\s*(?:х\\s*)?лет(?![\\p{L}\\p{N}])[\\s.,;:—–-]*/ui',
         '',
