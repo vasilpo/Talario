@@ -1597,54 +1597,6 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
         $target_name
     ));
 
-    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
-
-    if (count($matching_product_ids) !== 1) {
-        $candidates = [];
-        $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
-        foreach ($matching_product_ids as $candidate_product_id) {
-            $candidate_readback = fn_talario_analytics_partner_sync_write_readback($candidate_product_id);
-            $candidate_categories = array_map('intval', db_get_fields(
-                'SELECT category_id FROM ?:products_categories'
-                . ' WHERE product_id = ?i ORDER BY category_id ASC',
-                $candidate_product_id
-            ));
-            sort($candidate_categories);
-
-            $candidate_group = $group_repository->findGroupByProductId($candidate_product_id);
-            $candidate_group_ids = $candidate_group
-                ? array_values(array_unique(array_map('intval', (array) $candidate_group->getProductIds())))
-                : [];
-
-            $candidates[] = [
-                'product_id' => $candidate_product_id,
-                'status' => (string) ($candidate_readback['status'] ?? ''),
-                'price' => (float) ($candidate_readback['price'] ?? 0),
-                'category_ids' => $candidate_categories,
-                'images' => $candidate_readback['images'] ?? null,
-                'variation_group_count' => count($candidate_group_ids),
-                'has_booking' => !empty($candidate_readback['booking']),
-            ];
-        }
-
-        fn_talario_analytics_json_response(200, [
-            'schema_version' => 'partner-sync.step6-acceptance.v1',
-            'pass' => false,
-            'duplicate_count' => count($matching_product_ids),
-            'candidates' => $candidates,
-            'failures' => ['target_card_count_mismatch'],
-        ]);
-    }
-
-    $product_id = (int) reset($matching_product_ids);
-    $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
-    $category_ids = array_map('intval', db_get_fields(
-        'SELECT category_id FROM ?:products_categories'
-        . ' WHERE product_id = ?i ORDER BY category_id ASC',
-        $product_id
-    ));
-    sort($category_ids);
-
     $expected_short_description = 'На занятиях дети знакомятся со свойствами глины, осваивают разные способы лепки и создают собственные изделия.';
     $expected_full_description = '<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p>
 <p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p>
@@ -1670,6 +1622,93 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
 <p><strong>г. Красногорск, ул. Осеняя 1стр1</strong></p>
 <p>Парковка: есть, общая во дворе.</p>
 <p>Как найти: зайти во двор дома, повернуть направо, идти вдоль дома; белая дверь с названием.</p>';
+
+
+    if (count($matching_product_ids) !== 1) {
+        $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+        $complete_shape_count = 0;
+
+        foreach ($matching_product_ids as $candidate_product_id) {
+            $candidate = db_get_row(
+                'SELECT p.status, pd.short_description, pd.full_description, COALESCE(pp.price, 0) AS price'
+                . ' FROM ?:products p'
+                . ' INNER JOIN ?:product_descriptions pd'
+                . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+                . ' LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id'
+                . ' AND pp.lower_limit = 1 AND pp.usergroup_id = 0'
+                . ' WHERE p.product_id = ?i',
+                $lang_code,
+                $candidate_product_id
+            );
+            $candidate_categories = array_map('intval', db_get_fields(
+                'SELECT category_id FROM ?:products_categories'
+                . ' WHERE product_id = ?i ORDER BY category_id ASC',
+                $candidate_product_id
+            ));
+            sort($candidate_categories);
+
+            $candidate_main_image = fn_get_image_pairs(
+                $candidate_product_id,
+                'product',
+                'M',
+                true,
+                true,
+                DEFAULT_LANGUAGE
+            );
+            $candidate_additional_images = (array) fn_get_image_pairs(
+                $candidate_product_id,
+                'product',
+                'A',
+                true,
+                true,
+                DEFAULT_LANGUAGE
+            );
+
+            $candidate_group = $group_repository->findGroupByProductId($candidate_product_id);
+            $candidate_group_count = $candidate_group
+                ? count(array_values(array_unique(array_map('intval', (array) $candidate_group->getProductIds()))))
+                : 0;
+            $candidate_has_booking = (int) db_get_field(
+                'SELECT COUNT(*) FROM ?:ec_table_booking_system WHERE product_id = ?i',
+                $candidate_product_id
+            ) === 1;
+
+            $candidate_complete_shape = $candidate
+                && (string) $candidate['status'] === 'H'
+                && abs((float) $candidate['price'] - 1500.0) < 0.001
+                && $candidate_categories === [268]
+                && !empty($candidate_main_image['pair_id'])
+                && count($candidate_additional_images) === 2
+                && $candidate_group_count === 15
+                && $candidate_has_booking
+                && (string) $candidate['short_description'] === $expected_short_description
+                && (string) $candidate['full_description'] === $expected_full_description;
+
+            if ($candidate_complete_shape) {
+                $complete_shape_count++;
+            }
+        }
+
+        fn_talario_analytics_json_response(200, [
+            'schema_version' => 'partner-sync.step6-acceptance.v1',
+            'pass' => false,
+            'duplicate_count' => count($matching_product_ids),
+            'complete_shape_count' => $complete_shape_count,
+            'partial_shape_count' => count($matching_product_ids) - $complete_shape_count,
+            'failures' => ['target_card_count_mismatch'],
+        ]);
+    }
+
+    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
+
+    $product_id = (int) reset($matching_product_ids);
+    $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
+    $category_ids = array_map('intval', db_get_fields(
+        'SELECT category_id FROM ?:products_categories'
+        . ' WHERE product_id = ?i ORDER BY category_id ASC',
+        $product_id
+    ));
+    sort($category_ids);
 
     $checks = [
         'company_id' => (int) ($readback['company_id'] ?? 0) === 12,
