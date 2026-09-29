@@ -164,15 +164,9 @@ jobs:
           ts="$(date +%s)"
           body_hash="$(sha256sum "$work/apply.json" | awk '{print $1}')"
           test "$body_hash" = "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
-          printf 'talario-part-sync
-apply
-%s
-%s
-%s
-' "$req" "$ts" "$body_hash" > "$work/message"
+          printf 'talario-part-sync\\napply\\n%s\\n%s\\n%s\\n' "$req" "$ts" "$body_hash" > "$work/message"
           ssh-keygen -Y sign -q -f "$work/key" -n talario-part-sync "$work/message"
-          sig="$(base64 < "$work/message.sig" | tr -d '
-')"
+          sig="$(base64 < "$work/message.sig" | tr -d '\\n')"
           echo 'STEP6_CREATE_ATTEMPTS=1'
           code="$(curl --silent --show-error --output "$work/apply.out" --write-out '%{http_code}'             --connect-timeout 15 --max-time 180             -X POST "$endpoint"             -H 'Content-Type: application/json'             -H "X-Talario-Request-Id: $req"             -H "X-Talario-Timestamp: $ts"             -H "X-Talario-Signature: $sig"             --data-binary "@$work/apply.json")"
           echo "STEP6_HTTP=$code"
