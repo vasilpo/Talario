@@ -1879,11 +1879,38 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
                 $description_first_diff = $min_description_length;
             }
             $excerpt_offset = max(0, (int) ($description_first_diff ?? 0) - 60);
+            $normalize_html = static function (string $html): string {
+                $html = str_replace(["\r\n", "\r"], "\n", $html);
+                $normalized = preg_replace('/>\s+</u', '><', trim($html));
+                return is_string($normalized) ? $normalized : trim($html);
+            };
+            $normalize_text = static function (string $html): string {
+                $text = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $normalized = preg_replace('/\s+/u', ' ', trim($text));
+                return is_string($normalized) ? $normalized : trim($text);
+            };
+            $expected_canonical_html = $normalize_html($expected_full_description);
+            $actual_canonical_html = $normalize_html($actual_full_description);
+            $expected_text = $normalize_text($expected_full_description);
+            $actual_text = $normalize_text($actual_full_description);
+
             $description_diagnostics = [
                 'exact' => hash_equals(
                     hash('sha256', $expected_full_description),
                     hash('sha256', $actual_full_description)
                 ),
+                'canonical_html_equal' => hash_equals(
+                    hash('sha256', $expected_canonical_html),
+                    hash('sha256', $actual_canonical_html)
+                ),
+                'text_equal' => hash_equals(
+                    hash('sha256', $expected_text),
+                    hash('sha256', $actual_text)
+                ),
+                'expected_canonical_sha256' => hash('sha256', $expected_canonical_html),
+                'actual_canonical_sha256' => hash('sha256', $actual_canonical_html),
+                'expected_text_sha256' => hash('sha256', $expected_text),
+                'actual_text_sha256' => hash('sha256', $actual_text),
                 'expected_sha256' => hash('sha256', $expected_full_description),
                 'actual_sha256' => hash('sha256', $actual_full_description),
                 'expected_bytes' => strlen($expected_full_description),
