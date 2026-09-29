@@ -337,7 +337,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $helper_section = substr($this->write_capability, $helper_offset, $helper_end - $helper_offset);
 
         self::assertStringContainsString("['age_group']", $helper_section);
-        self::assertStringContainsString("'с ' . \\$minimum . 'х лет'", $helper_section);
+        self::assertStringContainsString("'с 1го года'", $helper_section);
+        self::assertStringContainsString("$minimum >= 2 && $minimum <= 4", $helper_section);
+        self::assertStringContainsString("'с ' . $minimum . 'х лет'", $helper_section);
+        self::assertStringContainsString("'с ' . $minimum . ' лет'", $helper_section);
         self::assertStringNotContainsString('fn_update_product_feature_variant(', $helper_section);
         self::assertStringNotContainsString('?:product_feature_variants', $helper_section);
 
