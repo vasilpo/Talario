@@ -144,6 +144,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('fn_talario_analytics_partner_sync_readback_variation_state', $this->controller);
         self::assertStringContainsString("'variation_count' => count(\$variation_items)", $this->controller);
         self::assertStringContainsString("'duplicate_count' => 1", $this->controller);
+        self::assertStringContainsString("'complete_shape_count' => \$complete_shape_count", $this->controller);
+        self::assertStringContainsString("'partial_shape_count' => count(\$matching_product_ids) - \$complete_shape_count", $this->controller);
+        self::assertStringContainsString("LIMIT 4", $this->controller);
+        self::assertStringContainsString("'candidate_limit_exceeded'", $this->controller);
+        self::assertStringContainsString("class_exists('\\\\Tygh\\\\Addons\\\\ProductVariations\\\\ServiceProvider')", $this->controller);
+        self::assertStringContainsString("'variation_service_unavailable'", $this->controller);
+        self::assertStringContainsString("\$candidate_main_image = (array) fn_get_image_pairs(", $this->controller);
+        self::assertStringNotContainsString("'candidates' => \$candidates", $this->controller);
         self::assertStringNotContainsString("fn_update_product(", substr(
             $this->controller,
             strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'),
