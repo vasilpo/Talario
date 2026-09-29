@@ -156,6 +156,17 @@ function fn_talario_analytics_partner_sync_write_normalize_product(array $payloa
         $data['status'] = 'H';
     }
 
+    if (array_key_exists('details_layout', $product)) {
+        $details_layout = trim((string) $product['details_layout']);
+        if ($details_layout !== 'default') {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_details_layout']);
+        }
+        $data['details_layout'] = 'default';
+    } elseif ($operation === 'create') {
+        // "default" means inherit the category/global Product details view in CS-Cart.
+        $data['details_layout'] = 'default';
+    }
+
     if (array_key_exists('category_ids', $product)) {
         if (!is_array($product['category_ids']) || !$product['category_ids']) {
             fn_talario_analytics_json_response(400, ['error' => 'invalid_category_ids']);
@@ -1359,7 +1370,7 @@ function fn_talario_analytics_partner_sync_write_cleanup_images(
 function fn_talario_analytics_partner_sync_write_readback(int $product_id): array
 {
     $row = db_get_row(
-        'SELECT p.product_id, p.company_id, p.status, pd.product, pd.short_description,'
+        'SELECT p.product_id, p.company_id, p.status, p.details_layout, pd.product, pd.short_description,'
         . ' pd.full_description, COALESCE(pp.price, 0) AS price'
         . ' FROM ?:products p'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
@@ -1404,6 +1415,7 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         'company_id' => (int) $row['company_id'],
         'name' => (string) $row['product'],
         'status' => (string) $row['status'],
+        'details_layout' => (string) $row['details_layout'],
         'price' => (float) $row['price'],
         'short_description' => (string) $row['short_description'],
         'full_description' => (string) $row['full_description'],
