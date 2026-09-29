@@ -1225,7 +1225,7 @@ PHP;
 
     $status = isset($payload['http_status']) ? (int) $payload['http_status'] : ($rc === 0 ? 200 : 500);
     unset($payload['http_status']);
-    $status = $status >= 400 && $status <= 599 ? $status : ($rc === 0 ? 200 : 500);
+    $status = $status >= 200 && $status <= 599 ? $status : ($rc === 0 ? 200 : 500);
 
     fn_talario_analytics_json_response($status, $payload);
 }
