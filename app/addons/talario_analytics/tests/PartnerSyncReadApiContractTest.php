@@ -359,6 +359,76 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+    public function testPartnerSyncCreateEnforcesPopularityFloorBeforeVariations(): void
+    {
+        $helper_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_ensure_popularity_floor'
+        );
+        self::assertNotFalse($helper_offset);
+        $helper_end = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_readback',
+            $helper_offset
+        );
+        self::assertNotFalse($helper_end);
+        $helper_section = substr($this->write_capability, $helper_offset, $helper_end - $helper_offset);
+
+        self::assertStringContainsString(
+            'SELECT total FROM ?:product_popularity WHERE product_id = ?i',
+            $helper_section
+        );
+        self::assertStringContainsString(
+            'fn_update_product_popularity($product_id',
+            $helper_section
+        );
+        self::assertStringContainsString(
+            "'product_popularity_floor_failed'",
+            $this->write_capability
+        );
+
+        $response_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_response'
+        );
+        self::assertNotFalse($response_offset);
+        $response_section = substr($this->write_capability, $response_offset);
+
+        $popularity_offset = strpos(
+            $response_section,
+            'fn_talario_analytics_partner_sync_ensure_popularity_floor($product_id, 1000)'
+        );
+        $variation_offset = strpos(
+            $response_section,
+            'fn_talario_analytics_partner_sync_apply_variation_plan('
+        );
+        self::assertNotFalse($popularity_offset);
+        self::assertNotFalse($variation_offset);
+        self::assertLessThan($variation_offset, $popularity_offset);
+        self::assertStringContainsString(
+            "if (\$operation === 'create')",
+            $response_section
+        );
+        self::assertStringContainsString(
+            "'popularity_write'",
+            $response_section
+        );
+
+        self::assertStringContainsString(
+            'LEFT JOIN ?:product_popularity pop ON pop.product_id = p.product_id',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'popularity' => (int) \$row['popularity']",
+            $this->write_capability
+        );
+
+        $copy_schema = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/product_variations/schemas/product_variations/product_data_copy.php'
+        );
+        self::assertStringContainsString("'product_popularity'", $copy_schema);
+    }
+
     public function testPartnerSyncCreateDefaultsToHidden(): void
     {
         self::assertStringContainsString("\$data['status'] = 'H';", $this->write_capability);
@@ -971,7 +1041,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             'function fn_talario_analytics_partner_sync_safe_write_error_kind',
             $this->write_capability
         );
-        foreach (['image_prepare', 'base_product_write', 'variation_write', 'image_write', 'success_cleanup'] as $stage) {
+        foreach (['image_prepare', 'base_product_write', 'popularity_write', 'variation_write', 'image_write', 'success_cleanup'] as $stage) {
             self::assertStringContainsString("'" . $stage . "'", $this->write_capability);
         }
         self::assertStringContainsString("'stage' => $failed_stage", $this->write_capability);
