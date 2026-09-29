@@ -807,11 +807,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
 
         self::assertStringContainsString(
-            "fn_talario_analytics_partner_sync_resolve_find_products_feature(\n        'Возраст',\n        'M'",
+            "fn_talario_analytics_partner_sync_resolve_find_products_feature(\n            'Возраст',\n            'M'",
             $this->write_capability
         );
         self::assertStringContainsString(
-            "fn_talario_analytics_partner_sync_resolve_find_products_feature(\n        'Категории',\n        'S'",
+            "fn_talario_analytics_partner_sync_resolve_find_products_feature(\n            'Категории',\n            'S'",
             $this->write_capability
         );
         self::assertStringContainsString("'find_products'", $this->write_capability);
