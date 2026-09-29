@@ -1,6 +1,6 @@
 {
   "schema_version": "talario.part-sync.step6.request.v1",
-  "request_id": "part-sync-glina-step6-static-envelope-20260929",
+  "request_id": "part-sync-glina-step6-post331-20260929",
   "target": "dev_copy",
   "operation": "create",
   "company_id": 12,
