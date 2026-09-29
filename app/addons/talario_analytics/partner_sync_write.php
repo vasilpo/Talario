@@ -416,6 +416,430 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
     return $normalized;
 }
 
+function fn_talario_analytics_partner_sync_filter_age_years(array $variation_plan): array
+{
+    $ages = [];
+    $unsupported = [];
+
+    foreach ($variation_plan as $item) {
+        $group = trim((string) ($item['age_group'] ?? ''));
+        $normalized = mb_strtolower(str_replace(['–', '—'], '-', $group), 'UTF-8');
+        $normalized = preg_replace('/\s+/u', ' ', $normalized) ?? $normalized;
+
+        $from = null;
+        $to = null;
+        if (preg_match('/^(\d+)\s*-\s*(\d+)\s*(?:год|года|лет)$/u', $normalized, $match)) {
+            $from = (int) $match[1];
+            $to = (int) $match[2];
+        } elseif (preg_match('/^(\d+)\s*(?:год|года|лет)$/u', $normalized, $match)) {
+            $from = (int) $match[1];
+            $to = $from;
+        }
+
+        if ($from === null || $to === null || $from < 0 || $to < $from || $to > 120) {
+            $unsupported[] = $group;
+            continue;
+        }
+
+        for ($age = $from; $age <= $to; $age++) {
+            $ages[$age] = true;
+        }
+    }
+
+    $resolved_ages = array_map('intval', array_keys($ages));
+    sort($resolved_ages, SORT_NUMERIC);
+
+    return [
+        'resolved' => !$unsupported && (bool) $resolved_ages,
+        'ages' => $resolved_ages,
+        'unsupported_age_groups' => array_values(array_unique($unsupported)),
+    ];
+}
+
+function fn_talario_analytics_partner_sync_category_filter_label(string $root_category_name): ?string
+{
+    $aliases = [
+        'Спорт' => 'Спорт',
+        'Творчество' => 'Творчество',
+        'Танцы' => 'Танцы',
+        'Раннее развитие' => 'Ранее развитие',
+        'Музыка' => 'Музыка',
+        'Программирование для детей' => 'Программирование',
+        'Робототехника для детей' => 'Робототехника',
+        'Школьные предметы' => 'Школьные предметы',
+        'Иностранные языки' => 'Языки',
+        'Интеллектуальные занятия' => 'Интеллектуальные занятия',
+        'Детские лагеря' => 'Детские лагеря',
+    ];
+
+    return $aliases[$root_category_name] ?? null;
+}
+
+function fn_talario_analytics_partner_sync_resolve_find_products_feature(
+    string $feature_name,
+    string $feature_type,
+    string $lang_code
+): array {
+    $features = db_get_array(
+        'SELECT pf.feature_id, pf.feature_type, pf.purpose, pfd.description'
+        . ' FROM ?:product_features pf'
+        . ' INNER JOIN ?:product_features_descriptions pfd'
+        . ' ON pfd.feature_id = pf.feature_id AND pfd.lang_code = ?s'
+        . ' WHERE pfd.description = ?s AND pf.feature_type = ?s AND pf.purpose = ?s'
+        . ' ORDER BY pf.feature_id ASC',
+        $lang_code,
+        $feature_name,
+        $feature_type,
+        'find_products'
+    );
+
+    if (count($features) !== 1) {
+        return ['resolved' => false, 'feature_id' => null, 'variants' => []];
+    }
+
+    $feature_id = (int) $features[0]['feature_id'];
+    $active_filter_count = (int) db_get_field(
+        'SELECT COUNT(*) FROM ?:product_filters WHERE feature_id = ?i AND status = ?s',
+        $feature_id,
+        'A'
+    );
+    if ($active_filter_count < 1) {
+        return ['resolved' => false, 'feature_id' => null, 'variants' => []];
+    }
+
+    $variants = [];
+    foreach (db_get_array(
+        'SELECT pfv.variant_id, pfvd.variant'
+        . ' FROM ?:product_feature_variants pfv'
+        . ' INNER JOIN ?:product_feature_variant_descriptions pfvd'
+        . ' ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s'
+        . ' WHERE pfv.feature_id = ?i'
+        . ' ORDER BY pfv.position ASC, pfv.variant_id ASC',
+        $lang_code,
+        $feature_id
+    ) as $row) {
+        $label = trim((string) $row['variant']);
+        if ($label === '' || isset($variants[$label])) {
+            continue;
+        }
+        $variants[$label] = (int) $row['variant_id'];
+    }
+
+    return [
+        'resolved' => true,
+        'feature_id' => $feature_id,
+        'feature_name' => (string) $features[0]['description'],
+        'feature_type' => (string) $features[0]['feature_type'],
+        'purpose' => (string) $features[0]['purpose'],
+        'variants' => $variants,
+    ];
+}
+
+function fn_talario_analytics_partner_sync_resolve_filter_feature_plan(
+    array $product_data,
+    ?array $variation_plan,
+    string $lang_code
+): array {
+    $values = [];
+    $public = [
+        'ages' => [],
+        'category' => null,
+    ];
+
+    $category_ids = array_values(array_unique(array_filter(array_map(
+        'intval',
+        (array) ($product_data['category_ids'] ?? [])
+    ))));
+    if (!$category_ids) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'category_filter_resolution_required',
+            'reason' => 'category_ids_missing',
+        ]);
+    }
+
+    $root_ids = [];
+    foreach (db_get_array(
+        'SELECT category_id, id_path FROM ?:categories WHERE category_id IN (?n)',
+        $category_ids
+    ) as $row) {
+        $path_ids = array_values(array_filter(array_map(
+            'intval',
+            explode('/', (string) ($row['id_path'] ?? ''))
+        )));
+        if ($path_ids) {
+            $root_ids[(int) $path_ids[0]] = true;
+        }
+    }
+    $root_ids = array_map('intval', array_keys($root_ids));
+    if (count($root_ids) !== 1) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'category_filter_resolution_required',
+            'reason' => 'root_category_ambiguous',
+        ]);
+    }
+
+    $root_name = trim((string) db_get_field(
+        'SELECT category FROM ?:category_descriptions'
+        . ' WHERE category_id = ?i AND lang_code = ?s',
+        (int) $root_ids[0],
+        $lang_code
+    ));
+    $category_filter_label = fn_talario_analytics_partner_sync_category_filter_label($root_name);
+    if ($category_filter_label === null) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'category_filter_resolution_required',
+            'reason' => 'root_category_unmapped',
+        ]);
+    }
+
+    $category_feature = fn_talario_analytics_partner_sync_resolve_find_products_feature(
+        'Категории',
+        'S',
+        $lang_code
+    );
+    if (empty($category_feature['resolved'])
+        || empty($category_feature['variants'][$category_filter_label])
+    ) {
+        fn_talario_analytics_json_response(409, [
+            'error' => 'category_filter_resolution_required',
+            'reason' => 'filter_variant_missing',
+        ]);
+    }
+
+    $category_feature_id = (int) $category_feature['feature_id'];
+    $category_variant_id = (int) $category_feature['variants'][$category_filter_label];
+    $values[$category_feature_id] = $category_variant_id;
+    $public['category'] = $category_filter_label;
+
+    if ($variation_plan !== null) {
+        $age_spec = fn_talario_analytics_partner_sync_filter_age_years($variation_plan);
+        if (empty($age_spec['resolved'])) {
+            fn_talario_analytics_json_response(409, [
+                'error' => 'age_filter_resolution_required',
+                'reason' => 'unsupported_age_group',
+                'age_groups' => array_values((array) ($age_spec['unsupported_age_groups'] ?? [])),
+            ]);
+        }
+
+        $age_feature = fn_talario_analytics_partner_sync_resolve_find_products_feature(
+            'Возраст',
+            'M',
+            $lang_code
+        );
+        if (empty($age_feature['resolved'])) {
+            fn_talario_analytics_json_response(409, [
+                'error' => 'age_filter_resolution_required',
+                'reason' => 'filter_feature_missing',
+            ]);
+        }
+
+        $variants_by_age = [];
+        foreach ((array) $age_feature['variants'] as $label => $variant_id) {
+            if (preg_match('/^(\d+)\s*(?:год|года|лет)$/u', trim((string) $label), $match)) {
+                $variants_by_age[(int) $match[1]] = (int) $variant_id;
+            }
+        }
+
+        $missing_ages = [];
+        $age_variant_ids = [];
+        foreach ((array) $age_spec['ages'] as $age) {
+            $age = (int) $age;
+            if (!isset($variants_by_age[$age])) {
+                $missing_ages[] = $age;
+                continue;
+            }
+            $age_variant_ids[] = $variants_by_age[$age];
+        }
+        if ($missing_ages) {
+            fn_talario_analytics_json_response(409, [
+                'error' => 'age_filter_resolution_required',
+                'reason' => 'filter_age_missing',
+                'ages' => $missing_ages,
+            ]);
+        }
+
+        $age_feature_id = (int) $age_feature['feature_id'];
+        $values[$age_feature_id] = array_values(array_unique(array_map('intval', $age_variant_ids)));
+        $public['ages'] = array_values(array_map('intval', (array) $age_spec['ages']));
+    }
+
+    return [
+        'values' => $values,
+        'public' => $public,
+    ];
+}
+
+function fn_talario_analytics_partner_sync_filter_feature_readback(
+    int $product_id,
+    array $filter_feature_plan,
+    string $lang_code
+): array {
+    $feature_ids = array_values(array_unique(array_map(
+        'intval',
+        array_keys((array) ($filter_feature_plan['values'] ?? []))
+    )));
+    if (!$feature_ids) {
+        return [];
+    }
+
+    $actual = [];
+    foreach (db_get_array(
+        'SELECT feature_id, variant_id FROM ?:product_features_values'
+        . ' WHERE product_id = ?i AND feature_id IN (?n) AND lang_code = ?s'
+        . ' ORDER BY feature_id ASC, variant_id ASC',
+        $product_id,
+        $feature_ids,
+        $lang_code
+    ) as $row) {
+        $feature_id = (int) $row['feature_id'];
+        $variant_id = (int) $row['variant_id'];
+        if ($feature_id > 0 && $variant_id > 0) {
+            $actual[$feature_id][] = $variant_id;
+        }
+    }
+
+    foreach ($actual as &$variant_ids) {
+        $variant_ids = array_values(array_unique(array_map('intval', $variant_ids)));
+        sort($variant_ids, SORT_NUMERIC);
+    }
+    unset($variant_ids);
+
+    return $actual;
+}
+
+function fn_talario_analytics_partner_sync_assert_filter_feature_readback(
+    int $product_id,
+    array $filter_feature_plan,
+    string $lang_code,
+    string $error_detail
+): void {
+    $expected = [];
+    foreach ((array) ($filter_feature_plan['values'] ?? []) as $feature_id => $value) {
+        $variant_ids = is_array($value) ? $value : [$value];
+        $variant_ids = array_values(array_unique(array_filter(array_map('intval', $variant_ids))));
+        sort($variant_ids, SORT_NUMERIC);
+        $expected[(int) $feature_id] = $variant_ids;
+    }
+    ksort($expected, SORT_NUMERIC);
+
+    $actual = fn_talario_analytics_partner_sync_filter_feature_readback(
+        $product_id,
+        $filter_feature_plan,
+        $lang_code
+    );
+    ksort($actual, SORT_NUMERIC);
+
+    if ($actual !== $expected) {
+        throw new RuntimeException($error_detail);
+    }
+}
+
+function fn_talario_analytics_partner_sync_apply_filter_features(
+    int $product_id,
+    array $filter_feature_plan,
+    string $lang_code
+): void {
+    $values = (array) ($filter_feature_plan['values'] ?? []);
+    if (!$values) {
+        return;
+    }
+
+    $updated = fn_update_product_features_value($product_id, $values, [], $lang_code);
+    if (!$updated) {
+        throw new RuntimeException('filter_features_update_failed');
+    }
+
+    fn_talario_analytics_partner_sync_assert_filter_feature_readback(
+        $product_id,
+        $filter_feature_plan,
+        $lang_code,
+        'filter_features_readback_mismatch'
+    );
+}
+
+function fn_talario_analytics_partner_sync_assert_filter_features_copied_to_variations(
+    int $base_product_id,
+    array $filter_feature_plan,
+    string $lang_code
+): void {
+    $group = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository()
+        ->findGroupByProductId($base_product_id);
+    if (!$group) {
+        throw new RuntimeException('filter_features_variation_copy_mismatch');
+    }
+
+    foreach ((array) $group->getProductIds() as $product_id) {
+        fn_talario_analytics_partner_sync_assert_filter_feature_readback(
+            (int) $product_id,
+            $filter_feature_plan,
+            $lang_code,
+            'filter_features_variation_copy_mismatch'
+        );
+    }
+}
+
+function fn_talario_analytics_partner_sync_public_filter_feature_readback(
+    int $product_id,
+    string $lang_code
+): array {
+    $age_feature = fn_talario_analytics_partner_sync_resolve_find_products_feature('Возраст', 'M', $lang_code);
+    $category_feature = fn_talario_analytics_partner_sync_resolve_find_products_feature('Категории', 'S', $lang_code);
+
+    $feature_ids = [];
+    foreach ([$age_feature, $category_feature] as $feature) {
+        if (!empty($feature['resolved']) && !empty($feature['feature_id'])) {
+            $feature_ids[] = (int) $feature['feature_id'];
+        }
+    }
+    if (!$feature_ids) {
+        return ['ages' => [], 'category' => null];
+    }
+
+    $rows = db_get_array(
+        'SELECT feature_id, variant_id FROM ?:product_features_values'
+        . ' WHERE product_id = ?i AND feature_id IN (?n) AND lang_code = ?s'
+        . ' ORDER BY feature_id ASC, variant_id ASC',
+        $product_id,
+        $feature_ids,
+        $lang_code
+    );
+
+    $ids_by_feature = [];
+    foreach ($rows as $row) {
+        $ids_by_feature[(int) $row['feature_id']][] = (int) $row['variant_id'];
+    }
+
+    $ages = [];
+    if (!empty($age_feature['resolved'])) {
+        $labels_by_id = array_flip(array_map('intval', (array) $age_feature['variants']));
+        foreach ((array) ($ids_by_feature[(int) $age_feature['feature_id']] ?? []) as $variant_id) {
+            $label = (string) ($labels_by_id[(int) $variant_id] ?? '');
+            if (preg_match('/^(\d+)\s*(?:год|года|лет)$/u', $label, $match)) {
+                $ages[] = (int) $match[1];
+            }
+        }
+    }
+    $ages = array_values(array_unique($ages));
+    sort($ages, SORT_NUMERIC);
+
+    $category = null;
+    if (!empty($category_feature['resolved'])) {
+        $labels_by_id = array_flip(array_map('intval', (array) $category_feature['variants']));
+        $category_ids = (array) ($ids_by_feature[(int) $category_feature['feature_id']] ?? []);
+        if ($category_ids) {
+            $category = (string) ($labels_by_id[(int) reset($category_ids)] ?? '');
+            if ($category === '') {
+                $category = null;
+            }
+        }
+    }
+
+    return [
+        'ages' => $ages,
+        'category' => $category,
+    ];
+}
+
 function fn_talario_analytics_partner_sync_variation_label_key(string $label, bool $purchase_axis = false): string
 {
     $key = mb_strtolower(trim($label), 'UTF-8');
