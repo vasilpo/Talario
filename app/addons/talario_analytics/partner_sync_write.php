@@ -675,41 +675,56 @@ function fn_talario_analytics_partner_sync_readback_serialized_capacity(
     string $start,
     string $end
 ): ?int {
-    if ($serialized === '' || strlen($serialized) > 16384) {
+    if ($serialized === '' || strlen($serialized) > 16384 || !preg_match('/^a:\\d+:\\{/', $serialized)) {
         return null;
     }
 
-    $day_marker = 's:' . strlen($day) . ':"' . $day . '";a:';
-    $day_offset = strpos($serialized, $day_marker);
-    if ($day_offset === false) {
+    $decoded = @unserialize($serialized, ['allowed_classes' => false, 'max_depth' => 8]);
+    if (!is_array($decoded) || count($decoded) > 32) {
         return null;
     }
 
-    $window = substr($serialized, $day_offset, 2048);
-    $amount_offset = strpos($window, 's:14:"time_by_amount";a:');
-    if ($amount_offset === false || $amount_offset > 256) {
-        return null;
-    }
-    $window = substr($window, $amount_offset, 1024);
-
-    $pattern = '/s:10:"start_time";s:\\d+:"([^"]*)";'
-        . 's:8:"end_time";s:\\d+:"([^"]*)";'
-        . 's:6:"amount";(?:i:(\\d+);|s:\\d+:"(\\d+)";)/';
-    if (preg_match_all($pattern, $window, $matches, PREG_SET_ORDER) !== 1) {
+    $day_data = $decoded[$day] ?? null;
+    if (!is_array($day_data) || count($day_data) > 16) {
         return null;
     }
 
-    $match = $matches[0];
-    if ((string) $match[1] !== $start || (string) $match[2] !== $end) {
+    $amount_rows = $day_data['time_by_amount'] ?? null;
+    if (!is_array($amount_rows) || !$amount_rows || count($amount_rows) > 32) {
         return null;
     }
 
-    $raw_capacity = $match[3] !== '' ? $match[3] : ($match[4] ?? '');
-    if ($raw_capacity === '' || !ctype_digit((string) $raw_capacity)) {
-        return null;
+    $matched_capacity = null;
+    $match_count = 0;
+    foreach ($amount_rows as $amount_row) {
+        if (!is_array($amount_row) || count($amount_row) > 8) {
+            continue;
+        }
+
+        $row_start = trim((string) ($amount_row['start_time'] ?? ''));
+        $row_end = trim((string) ($amount_row['end_time'] ?? ''));
+        if ($row_start !== $start || $row_end !== $end) {
+            continue;
+        }
+
+        $raw_capacity = $amount_row['amount'] ?? null;
+        if (is_int($raw_capacity)) {
+            $capacity = $raw_capacity;
+        } elseif (is_string($raw_capacity) && ctype_digit($raw_capacity)) {
+            $capacity = (int) $raw_capacity;
+        } else {
+            return null;
+        }
+
+        if ($capacity < 0 || $capacity > 100000) {
+            return null;
+        }
+
+        $matched_capacity = $capacity;
+        $match_count++;
     }
 
-    return (int) $raw_capacity;
+    return $match_count === 1 ? $matched_capacity : null;
 }
 
 function fn_talario_analytics_partner_sync_readback_variation_state(
@@ -718,14 +733,14 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
 ): array {
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
     if (!$readback || abs((float) $readback['price'] - (float) $item['price']) > 0.001) {
-        throw new RuntimeException('variation_readback_mismatch');
+        throw new RuntimeException('variation_readback_price_mismatch');
     }
 
     $booking = isset($readback['booking']) && is_array($readback['booking'])
         ? $readback['booking']
         : null;
     if (!$booking || (int) $booking['slot_time'] !== (int) $item['duration']) {
-        throw new RuntimeException('variation_readback_mismatch');
+        throw new RuntimeException('variation_readback_booking_mismatch');
     }
     $days_data = isset($booking['days_data']) && is_array($booking['days_data'])
         ? $booking['days_data']
@@ -745,7 +760,7 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
         $expected = $expected_by_day[$day] ?? null;
         $enabled = (string) ($days_data[$day . '_status'] ?? '0') === '1';
         if (($expected !== null) !== $enabled) {
-            throw new RuntimeException('variation_readback_mismatch');
+            throw new RuntimeException('variation_readback_status_mismatch');
         }
         if ($expected === null) {
             continue;
@@ -754,7 +769,7 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
         $start = trim((string) ($days_data[$day . '_timing_start_time'] ?? ''));
         $end = trim((string) ($days_data[$day . '_timing_end_time'] ?? ''));
         if ($start !== (string) $expected['start'] || $end !== (string) $expected['end']) {
-            throw new RuntimeException('variation_readback_mismatch');
+            throw new RuntimeException('variation_readback_time_mismatch');
         }
 
         $capacity = fn_talario_analytics_partner_sync_readback_serialized_capacity(
@@ -764,7 +779,7 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
             $end
         );
         if ($capacity !== (int) ($expected['capacity'] ?? 0)) {
-            throw new RuntimeException('variation_readback_mismatch');
+            throw new RuntimeException('variation_readback_capacity_mismatch');
         }
 
         $readback_schedule[] = [
@@ -777,7 +792,7 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
     }
 
     if (count($readback_schedule) !== count($item['schedule'])) {
-        throw new RuntimeException('variation_readback_mismatch');
+        throw new RuntimeException('variation_readback_schedule_count_mismatch');
     }
 
     return [
@@ -1442,6 +1457,12 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'variation_product_update_failed',
         'variation_structure_change_not_supported',
         'variation_readback_mismatch',
+        'variation_readback_price_mismatch',
+        'variation_readback_booking_mismatch',
+        'variation_readback_status_mismatch',
+        'variation_readback_time_mismatch',
+        'variation_readback_capacity_mismatch',
+        'variation_readback_schedule_count_mismatch',
         'failed_create_group_cleanup_failed',
         'image_update_failed',
         'image_temp_create_failed',
