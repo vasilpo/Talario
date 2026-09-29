@@ -103,6 +103,45 @@ function fn_talario_analytics_partner_sync_strip_availability_count_copy(string 
     return is_string($normalized) ? $normalized : $value;
 }
 
+function fn_talario_analytics_partner_sync_minimum_age_short_description(string $current, array $variation_plan): string
+{
+    $minimum = null;
+    foreach ($variation_plan as $item) {
+        $group = is_array($item) ? (string) ($item['age_group'] ?? '') : '';
+        if (!preg_match('/\\d+/', $group, $match)) {
+            continue;
+        }
+
+        $age = (int) $match[0];
+        if ($age <= 0) {
+            continue;
+        }
+        $minimum = $minimum === null ? $age : min($minimum, $age);
+    }
+
+    if ($minimum === null) {
+        return $current;
+    }
+
+    $label = $minimum === 1
+        ? 'с 1го года'
+        : ($minimum >= 2 && $minimum <= 4
+            ? 'с ' . $minimum . 'х лет'
+            : 'с ' . $minimum . ' лет');
+    $remainder = preg_replace(
+        '/^\\s*с\\s+\\d+\\s*(?:(?:го\\s*)?года|(?:х\\s*)?лет)(?![\\p{L}\\p{N}])[\\s.,;:—–-]*/ui',
+        '',
+        $current
+    );
+    if (!is_string($remainder)) {
+        $remainder = $current;
+    }
+    $remainder = trim($remainder);
+
+    return $remainder === '' ? $label : $label . '. ' . $remainder;
+}
+
+
 function fn_talario_analytics_partner_sync_write_normalize_product(array $payload): array
 {
     $operation = (string) ($payload['operation'] ?? '');
@@ -1584,6 +1623,17 @@ function fn_talario_analytics_partner_sync_write_response(): void
     }
 
     $variation_plan = fn_talario_analytics_partner_sync_normalize_variation_plan($payload);
+    if ($operation === 'create' && $variation_plan !== null) {
+        $short_description = fn_talario_analytics_partner_sync_minimum_age_short_description(
+            (string) ($product_data['short_description'] ?? ''),
+            $variation_plan
+        );
+        if (mb_strlen($short_description, 'UTF-8') > 5000) {
+            fn_talario_analytics_json_response(400, ['error' => 'field_too_long', 'field' => 'short_description']);
+        }
+        $product_data['short_description'] = $short_description;
+    }
+
     $variation_resolution = $variation_plan === null
         ? null
         : fn_talario_analytics_partner_sync_resolve_variation_plan($variation_plan);
