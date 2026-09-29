@@ -1578,6 +1578,209 @@ function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
     ]);
 }
 
+
+function fn_talario_analytics_partner_sync_step6_acceptance(): void
+{
+    $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+    $target_name = 'Первая кржука';
+    $target_company_id = 12;
+
+    $matching_product_ids = array_map('intval', db_get_fields(
+        'SELECT p.product_id'
+        . ' FROM ?:products p'
+        . ' INNER JOIN ?:product_descriptions pd'
+        . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' WHERE p.company_id = ?i AND pd.product = ?s'
+        . ' ORDER BY p.product_id ASC LIMIT 3',
+        $lang_code,
+        $target_company_id,
+        $target_name
+    ));
+
+    if (count($matching_product_ids) !== 1) {
+        fn_talario_analytics_json_response(200, [
+            'schema_version' => 'partner-sync.step6-acceptance.v1',
+            'pass' => false,
+            'duplicate_count' => count($matching_product_ids),
+            'failures' => ['target_card_count_mismatch'],
+        ]);
+    }
+
+    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
+
+    $product_id = (int) reset($matching_product_ids);
+    $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
+    $category_ids = array_map('intval', db_get_fields(
+        'SELECT category_id FROM ?:products_categories'
+        . ' WHERE product_id = ?i ORDER BY category_id ASC',
+        $product_id
+    ));
+    sort($category_ids);
+
+    $expected_short_description = 'На занятиях дети знакомятся со свойствами глины, осваивают разные способы лепки и создают собственные изделия.';
+    $expected_full_description = '<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p>
+<p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p>
+<p>Работа с глиной развивает мелкую моторику, воображение, чувство формы, аккуратность и творческое мышление. А ещё это увлекательный процесс, в котором ребёнок может отвлечься от гаджетов и полностью погрузиться в творчество.</p>
+<p><strong>Что взять с собой:</strong> воду.</p>
+<h3>Возраст и расписание</h3>
+<ul>
+<li><strong>до 3 лет</strong> — понедельник, среда, 10:00–11:00. Свободных мест: 5.</li>
+<li><strong>3–5 лет</strong> — вторник, четверг, 11:00–12:00. Свободных мест: 5.</li>
+<li><strong>6–9 лет</strong> — среда, пятница, 15:00–16:00. Свободных мест: 5.</li>
+</ul>
+<p><strong>Длительность занятия:</strong> 60 минут.</p>
+<p>В онлайн-календаре <strong>Таларио</strong> отображается актуальное расписание и количество свободных мест. Вы можете увидеть доступные места и сразу записаться на занятие.</p>
+<h3>Стоимость занятий</h3>
+<ul>
+<li>Пробное занятие — бесплатно.</li>
+<li>Разовое занятие — 1500 ₽.</li>
+<li>Абонемент на 4 занятия — 3600 ₽.</li>
+<li>Абонемент на 8 занятий — 6800 ₽.</li>
+<li>Абонемент на 12 занятий — 9600 ₽.</li>
+</ul>
+<h3>Адрес</h3>
+<p><strong>г. Красногорск, ул. Осеняя 1стр1</strong></p>
+<p>Парковка: есть, общая во дворе.</p>
+<p>Как найти: зайти во двор дома, повернуть направо, идти вдоль дома; белая дверь с названием.</p>';
+
+    $checks = [
+        'company_id' => (int) ($readback['company_id'] ?? 0) === 12,
+        'name' => (string) ($readback['name'] ?? '') === $target_name,
+        'status' => (string) ($readback['status'] ?? '') === 'H',
+        'category_id' => $category_ids === [268],
+        'base_price' => abs((float) ($readback['price'] ?? -1) - 1500.0) < 0.001,
+        'images' => (int) ($readback['images']['main'] ?? 0) === 1
+            && (int) ($readback['images']['additional'] ?? -1) === 2,
+        'short_description_exact' => (string) ($readback['short_description'] ?? '') === $expected_short_description,
+        'full_description_exact' => (string) ($readback['full_description'] ?? '') === $expected_full_description,
+    ];
+
+    $age_schedules = [
+        'до 3 лет' => [
+            ['day' => 'monday', 'start' => '10:00', 'end' => '11:00', 'duration' => 60, 'capacity' => 5],
+            ['day' => 'wednesday', 'start' => '10:00', 'end' => '11:00', 'duration' => 60, 'capacity' => 5],
+        ],
+        '3-5 лет' => [
+            ['day' => 'tuesday', 'start' => '11:00', 'end' => '12:00', 'duration' => 60, 'capacity' => 5],
+            ['day' => 'thursday', 'start' => '11:00', 'end' => '12:00', 'duration' => 60, 'capacity' => 5],
+        ],
+        '6-9 лет' => [
+            ['day' => 'wednesday', 'start' => '15:00', 'end' => '16:00', 'duration' => 60, 'capacity' => 5],
+            ['day' => 'friday', 'start' => '15:00', 'end' => '16:00', 'duration' => 60, 'capacity' => 5],
+        ],
+    ];
+    $purchase_options = [
+        'Разовое занятие' => 1500,
+        'Пробное занятие' => 0,
+        'Абонемент 4 занятия' => 3600,
+        'Абонемент 8 занятий' => 6800,
+        'Абонемент 12 занятий' => 9600,
+    ];
+
+    $raw_variation_plan = [];
+    foreach ($age_schedules as $age_group => $schedule) {
+        foreach ($purchase_options as $purchase_option => $price) {
+            $raw_variation_plan[] = [
+                'age_group' => $age_group,
+                'purchase_option' => $purchase_option,
+                'price' => $price,
+                'capacity' => 5,
+                'schedule' => $schedule,
+            ];
+        }
+    }
+
+    $variation_items = [];
+    $variation_failures = [];
+    try {
+        $normalized_plan = fn_talario_analytics_partner_sync_normalize_variation_plan([
+            'capacity' => 5,
+            'variation_plan' => $raw_variation_plan,
+        ]);
+        $resolution = fn_talario_analytics_partner_sync_resolve_variation_plan((array) $normalized_plan);
+        if (empty($resolution['resolved'])) {
+            $variation_failures[] = ['detail' => 'variation_resolution_required'];
+        } else {
+            $mapped = fn_talario_analytics_partner_sync_map_group_products($product_id, $resolution);
+            $checks['variation_count'] = count((array) ($mapped['map'] ?? [])) === 15;
+
+            foreach ((array) $resolution['items'] as $item) {
+                $key = (int) $item['group_variant_id'] . ':' . (int) $item['purchase_variant_id'];
+                $variation_product_id = (int) ($mapped['map'][$key] ?? 0);
+                if ($variation_product_id <= 0) {
+                    $variation_failures[] = [
+                        'age_group' => (string) $item['age_group'],
+                        'purchase_option' => (string) $item['purchase_option'],
+                        'detail' => 'variation_product_mapping_failed',
+                    ];
+                    continue;
+                }
+
+                try {
+                    $state = fn_talario_analytics_partner_sync_readback_variation_state(
+                        $variation_product_id,
+                        $item
+                    );
+                    $variation_items[] = [
+                        'age_group' => (string) $item['age_group'],
+                        'purchase_option' => (string) $item['purchase_option'],
+                        'product_id' => $variation_product_id,
+                        'price' => (float) $state['price'],
+                        'duration' => (int) $state['duration'],
+                        'schedule' => $state['schedule'],
+                    ];
+                } catch (Throwable $exception) {
+                    $variation_failures[] = [
+                        'age_group' => (string) $item['age_group'],
+                        'purchase_option' => (string) $item['purchase_option'],
+                        'detail' => fn_talario_analytics_partner_sync_safe_write_error_detail($exception)
+                            ?: 'variation_readback_mismatch',
+                    ];
+                }
+            }
+        }
+    } catch (Throwable $exception) {
+        $variation_failures[] = [
+            'detail' => fn_talario_analytics_partner_sync_safe_write_error_detail($exception)
+                ?: 'variation_readback_failed',
+        ];
+    }
+
+    $checks['variation_items'] = count($variation_items) === 15 && !$variation_failures;
+
+    $failures = [];
+    foreach ($checks as $name => $passed) {
+        if (!$passed) {
+            $failures[] = $name;
+        }
+    }
+    foreach ($variation_failures as $failure) {
+        $failures[] = $failure['detail'];
+    }
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'partner-sync.step6-acceptance.v1',
+        'pass' => !$failures,
+        'product_id' => $product_id,
+        'duplicate_count' => 1,
+        'company_id' => (int) ($readback['company_id'] ?? 0),
+        'name' => (string) ($readback['name'] ?? ''),
+        'status' => (string) ($readback['status'] ?? ''),
+        'category_ids' => $category_ids,
+        'images' => $readback['images'] ?? null,
+        'description_exact' => !empty($checks['full_description_exact']),
+        'checks' => $checks,
+        'variation_count' => count($variation_items),
+        'prices' => array_values(array_unique(array_map(
+            static fn(array $item): int => (int) round((float) $item['price']),
+            $variation_items
+        ))),
+        'variations' => $variation_items,
+        'variation_failures' => $variation_failures,
+        'failures' => array_values(array_unique($failures)),
+    ]);
+}
+
 if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
@@ -1586,14 +1789,14 @@ if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_a
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -1602,7 +1805,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -1630,6 +1833,10 @@ if ($mode === 'crm') {
 // separate read/catalog bearer credential.
 if ($mode === 'partner_apply') {
     fn_talario_analytics_partner_sync_apply();
+}
+
+if ($mode === 'partner_step6_acceptance') {
+    fn_talario_analytics_partner_sync_step6_acceptance();
 }
 
 $rate_count = fn_talario_analytics_rate_limit();

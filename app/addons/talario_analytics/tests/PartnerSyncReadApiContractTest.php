@@ -132,6 +132,26 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("'source_path' =>", $this->controller);
     }
 
+    public function testStep6AcceptanceProbeIsExactDevOnlyReadOnlyAndBounded(): void
+    {
+        self::assertStringContainsString("'partner_step6_acceptance'", $this->controller);
+        self::assertStringContainsString("'partner_step6_acceptance' => true", $this->trusted_controllers);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_step6_acceptance', $this->controller);
+        self::assertStringNotContainsString("acceptance_key", $this->controller);
+        self::assertStringContainsString("'Первая кржука'", $this->controller);
+        self::assertStringContainsString("'category_id' => \$category_ids === [268]", $this->controller);
+        self::assertStringContainsString("'full_description_exact'", $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_readback_variation_state', $this->controller);
+        self::assertStringContainsString("'variation_count' => count(\$variation_items)", $this->controller);
+        self::assertStringContainsString("'duplicate_count' => 1", $this->controller);
+        self::assertStringNotContainsString("fn_update_product(", substr(
+            $this->controller,
+            strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'),
+            strpos($this->controller, "if (in_array(\$mode, ['catalog_variant_bootstrap'", strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'))
+                - strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance')
+        ));
+    }
+
     public function testSignedPenatyPilotIsDevOnlyPartnerAuthenticatedAndCompanyScoped(): void
     {
         self::assertStringContainsString("'penaty_bootstrap'", $this->controller);
@@ -141,7 +161,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'partner_apply' => true", $this->trusted_controllers);
         self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
         self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)", $this->controller);
-        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview']", $this->controller);
+        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance']", $this->controller);
         self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
         self::assertStringContainsString("'github-actions-talario'", $this->controller);
