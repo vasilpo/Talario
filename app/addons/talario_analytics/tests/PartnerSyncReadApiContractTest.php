@@ -321,6 +321,40 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("'details_layout'", $copy_schema);
     }
 
+    public function testPartnerSyncCreateShortDescriptionContainsMinimumAge(): void
+    {
+        $helper_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_minimum_age_short_description'
+        );
+        self::assertNotFalse($helper_offset);
+        $helper_end = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_normalize_product',
+            $helper_offset
+        );
+        self::assertNotFalse($helper_end);
+        $helper_section = substr($this->write_capability, $helper_offset, $helper_end - $helper_offset);
+
+        self::assertStringContainsString("['age_group']", $helper_section);
+        self::assertStringContainsString("'с ' . \\$minimum . 'х лет'", $helper_section);
+        self::assertStringNotContainsString('fn_update_product_feature_variant(', $helper_section);
+        self::assertStringNotContainsString('?:product_feature_variants', $helper_section);
+
+        self::assertStringContainsString(
+            "if (\\$operation === 'create' && \\$variation_plan !== null)",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_minimum_age_short_description(',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'short_description' => (string) \\$row['short_description']",
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncCreateDefaultsToHidden(): void
     {
         self::assertStringContainsString("\$data['status'] = 'H';", $this->write_capability);
