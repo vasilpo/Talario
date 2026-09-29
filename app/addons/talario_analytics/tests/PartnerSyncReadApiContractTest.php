@@ -248,6 +248,38 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+    public function testPartnerSyncStripsNumericAvailabilityFromDescriptionOnly(): void
+    {
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_strip_availability_count_copy',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'свободных\\\\s+мест',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'мест\\\\s+осталось',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'осталось\\\\s+\\\\d+\\\\s+мест',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "if (\$field === 'full_description')",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_talario_analytics_partner_sync_strip_availability_count_copy($value)',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'fn_ec_save_booking_data_by_amount',
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncWriteUsesCoreProductAndEcarterHooks(): void
     {
         self::assertStringContainsString('fn_update_product(', $this->write_capability);

@@ -90,6 +90,19 @@ function fn_talario_analytics_partner_sync_normalize_age_copy(string $value): st
     return is_string($normalized) ? $normalized : $value;
 }
 
+function fn_talario_analytics_partner_sync_strip_availability_count_copy(string $value): string
+{
+    $patterns = [
+        '/(?:&nbsp;|\\x{00A0}|\\s)*свободных\\s+мест\\s*[:—–-]\\s*\\d+\\s*\\.?/ui',
+        '/(?:&nbsp;|\\x{00A0}|\\s)*мест\\s+осталось\\s*[:—–-]?\\s*\\d+\\s*\\.?/ui',
+        '/(?:&nbsp;|\\x{00A0}|\\s)*осталось\\s+\\d+\\s+мест(?:а)?\\s*\\.?/ui',
+    ];
+
+    $normalized = preg_replace($patterns, '', $value);
+
+    return is_string($normalized) ? $normalized : $value;
+}
+
 function fn_talario_analytics_partner_sync_write_normalize_product(array $payload): array
 {
     $operation = (string) ($payload['operation'] ?? '');
@@ -163,6 +176,7 @@ function fn_talario_analytics_partner_sync_write_normalize_product(array $payloa
         $value = (string) $product[$field];
         if ($field === 'full_description') {
             $value = fn_talario_analytics_partner_sync_normalize_age_copy($value);
+            $value = fn_talario_analytics_partner_sync_strip_availability_count_copy($value);
         }
         $max = $field === 'full_description' ? 50000 : 5000;
         if (mb_strlen($value, 'UTF-8') > $max) {
