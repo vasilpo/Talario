@@ -1653,6 +1653,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
 
         $complete_shape_count = 0;
         $candidate_summaries = [];
+        $group_summaries = [];
 
         foreach ($matching_product_ids as $candidate_product_id) {
             $candidate = db_get_row(
@@ -1691,9 +1692,19 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             );
 
             $candidate_group = $group_repository->findGroupByProductId($candidate_product_id);
-            $candidate_group_count = $candidate_group
-                ? count(array_values(array_unique(array_map('intval', (array) $candidate_group->getProductIds()))))
-                : 0;
+            $candidate_group_ids = $candidate_group
+                ? array_values(array_unique(array_map('intval', (array) $candidate_group->getProductIds())))
+                : [];
+            sort($candidate_group_ids);
+            $candidate_group_count = count($candidate_group_ids);
+            $candidate_group_id = $candidate_group ? (int) $candidate_group->getId() : 0;
+            if ($candidate_group_id > 0 && !isset($group_summaries[$candidate_group_id])) {
+                $group_summaries[$candidate_group_id] = [
+                    'group_id' => $candidate_group_id,
+                    'product_ids' => $candidate_group_ids,
+                    'product_count' => $candidate_group_count,
+                ];
+            }
             $candidate_has_booking = (int) db_get_field(
                 'SELECT COUNT(*) FROM ?:ec_table_booking_system WHERE product_id = ?i',
                 $candidate_product_id
@@ -1723,6 +1734,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
                     'main' => !empty($candidate_main_image['pair_id']) ? 1 : 0,
                     'additional' => count($candidate_additional_images),
                 ],
+                'variation_group_id' => $candidate_group_id,
                 'variation_group_count' => $candidate_group_count,
                 'has_booking' => $candidate_has_booking,
                 'short_description_exact' => (string) ($candidate['short_description'] ?? '') === $expected_short_description,
@@ -1737,6 +1749,8 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             'duplicate_count' => count($matching_product_ids),
             'complete_shape_count' => $complete_shape_count,
             'partial_shape_count' => count($matching_product_ids) - $complete_shape_count,
+            'distinct_group_count' => count($group_summaries),
+            'groups' => array_values($group_summaries),
             'candidates' => $candidate_summaries,
             'failures' => ['target_card_count_mismatch'],
         ]);
