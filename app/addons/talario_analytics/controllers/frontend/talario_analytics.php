@@ -1591,7 +1591,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
         . ' INNER JOIN ?:product_descriptions pd'
         . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
         . ' WHERE p.company_id = ?i AND pd.product = ?s'
-        . ' ORDER BY p.product_id ASC LIMIT 4',
+        . ' ORDER BY p.product_id ASC LIMIT 10',
         $lang_code,
         $target_company_id,
         $target_name
@@ -1625,17 +1625,6 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
 
 
     if (count($matching_product_ids) !== 1) {
-        if (count($matching_product_ids) > 3) {
-            fn_talario_analytics_json_response(200, [
-                'schema_version' => 'partner-sync.step6-acceptance.v1',
-                'pass' => false,
-                'duplicate_count' => 4,
-                'complete_shape_count' => 0,
-                'partial_shape_count' => 4,
-                'failures' => ['candidate_limit_exceeded'],
-            ]);
-        }
-
         if (!class_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider')
             || !method_exists('\\Tygh\\Addons\\ProductVariations\\ServiceProvider', 'getGroupRepository')
         ) {
@@ -1663,6 +1652,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
         }
 
         $complete_shape_count = 0;
+        $candidate_summaries = [];
 
         foreach ($matching_product_ids as $candidate_product_id) {
             $candidate = db_get_row(
@@ -1723,6 +1713,22 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             if ($candidate_complete_shape) {
                 $complete_shape_count++;
             }
+
+            $candidate_summaries[] = [
+                'product_id' => (int) $candidate_product_id,
+                'status' => (string) ($candidate['status'] ?? ''),
+                'price' => (float) ($candidate['price'] ?? 0),
+                'category_ids' => $candidate_categories,
+                'images' => [
+                    'main' => !empty($candidate_main_image['pair_id']) ? 1 : 0,
+                    'additional' => count($candidate_additional_images),
+                ],
+                'variation_group_count' => $candidate_group_count,
+                'has_booking' => $candidate_has_booking,
+                'short_description_exact' => (string) ($candidate['short_description'] ?? '') === $expected_short_description,
+                'full_description_exact' => (string) ($candidate['full_description'] ?? '') === $expected_full_description,
+                'complete_shape' => $candidate_complete_shape,
+            ];
         }
 
         fn_talario_analytics_json_response(200, [
@@ -1731,6 +1737,7 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
             'duplicate_count' => count($matching_product_ids),
             'complete_shape_count' => $complete_shape_count,
             'partial_shape_count' => count($matching_product_ids) - $complete_shape_count,
+            'candidates' => $candidate_summaries,
             'failures' => ['target_card_count_mismatch'],
         ]);
     }
