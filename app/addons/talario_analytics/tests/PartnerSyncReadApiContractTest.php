@@ -755,7 +755,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
 
         $copy_schema = (string) file_get_contents(
-            dirname(__DIR__, 3) . '/product_variations/schemas/product_variations/product_data_copy.php'
+            dirname(__DIR__, 2) . '/product_variations/schemas/product_variations/product_data_copy.php'
         );
         self::assertStringContainsString("'images_links'", $copy_schema);
         self::assertStringContainsString("'object_type' => 'product'", $copy_schema);
