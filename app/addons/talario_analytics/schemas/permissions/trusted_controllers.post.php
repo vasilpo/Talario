@@ -10,8 +10,6 @@ $schema['talario_analytics'] = [
         'penaty_bootstrap' => true,
         'partner_apply' => true,
         'penaty_preview' => true,
-        'partner_step6_acceptance' => true,
-        'partner_step6_fix_description' => true,
         'crm' => true,
     ],
     'default_allow' => false,
