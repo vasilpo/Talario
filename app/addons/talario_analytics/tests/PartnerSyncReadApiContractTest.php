@@ -724,6 +724,43 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'items' => \$updated", $apply_section);
     }
 
+    public function testPartnerSyncCreateAttachesImagesBeforeVariationGeneration(): void
+    {
+        $response_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_response'
+        );
+        self::assertNotFalse($response_offset);
+        $response_section = substr($this->write_capability, $response_offset);
+
+        $image_before_offset = strpos(
+            $response_section,
+            "if (\$operation === 'create' && \$variation_resolution !== null && \$prepared_images !== null)"
+        );
+        $variation_offset = strpos(
+            $response_section,
+            'fn_talario_analytics_partner_sync_apply_variation_plan('
+        );
+        self::assertNotFalse($image_before_offset);
+        self::assertNotFalse($variation_offset);
+        self::assertLessThan($variation_offset, $image_before_offset);
+
+        self::assertStringContainsString(
+            "'image_write_before_variations'",
+            $response_section
+        );
+        self::assertStringContainsString(
+            "&& !(\$operation === 'create' && \$variation_resolution !== null)",
+            $response_section
+        );
+
+        $copy_schema = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/product_variations/schemas/product_variations/product_data_copy.php'
+        );
+        self::assertStringContainsString("'images_links'", $copy_schema);
+        self::assertStringContainsString("'object_type' => 'product'", $copy_schema);
+    }
+
     public function testPartnerSyncVariationGenerationIsNotWrappedInLongOuterTransaction(): void
     {
         $response_offset = strpos(
