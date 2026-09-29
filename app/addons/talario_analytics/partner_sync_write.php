@@ -129,7 +129,7 @@ function fn_talario_analytics_partner_sync_minimum_age_short_description(string 
             ? 'с ' . $minimum . 'х лет'
             : 'с ' . $minimum . ' лет');
     $remainder = preg_replace(
-        '/^\\s*с\\s+\\d+\\s*(?:х\\s*)?лет(?![\\p{L}\\p{N}])[\\s.,;:—–-]*/ui',
+        '/^\\s*с\\s+\\d+\\s*(?:(?:го\\s*)?года|(?:х\\s*)?лет)(?![\\p{L}\\p{N}])[\\s.,;:—–-]*/ui',
         '',
         $current
     );
