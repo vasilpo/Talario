@@ -1597,16 +1597,44 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
         $target_name
     ));
 
+    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
+
     if (count($matching_product_ids) !== 1) {
+        $candidates = [];
+        $group_repository = \Tygh\Addons\ProductVariations\ServiceProvider::getGroupRepository();
+        foreach ($matching_product_ids as $candidate_product_id) {
+            $candidate_readback = fn_talario_analytics_partner_sync_write_readback($candidate_product_id);
+            $candidate_categories = array_map('intval', db_get_fields(
+                'SELECT category_id FROM ?:products_categories'
+                . ' WHERE product_id = ?i ORDER BY category_id ASC',
+                $candidate_product_id
+            ));
+            sort($candidate_categories);
+
+            $candidate_group = $group_repository->findGroupByProductId($candidate_product_id);
+            $candidate_group_ids = $candidate_group
+                ? array_values(array_unique(array_map('intval', (array) $candidate_group->getProductIds())))
+                : [];
+
+            $candidates[] = [
+                'product_id' => $candidate_product_id,
+                'status' => (string) ($candidate_readback['status'] ?? ''),
+                'price' => (float) ($candidate_readback['price'] ?? 0),
+                'category_ids' => $candidate_categories,
+                'images' => $candidate_readback['images'] ?? null,
+                'variation_group_count' => count($candidate_group_ids),
+                'has_booking' => !empty($candidate_readback['booking']),
+            ];
+        }
+
         fn_talario_analytics_json_response(200, [
             'schema_version' => 'partner-sync.step6-acceptance.v1',
             'pass' => false,
             'duplicate_count' => count($matching_product_ids),
+            'candidates' => $candidates,
             'failures' => ['target_card_count_mismatch'],
         ]);
     }
-
-    require_once DIR_ROOT . '/app/addons/talario_analytics/partner_sync_write.php';
 
     $product_id = (int) reset($matching_product_ids);
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
