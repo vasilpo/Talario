@@ -1860,6 +1860,7 @@ function fn_talario_analytics_partner_sync_ensure_popularity_floor(int $product_
 
 function fn_talario_analytics_partner_sync_write_readback(int $product_id): array
 {
+    $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
     $row = db_get_row(
         'SELECT p.product_id, p.company_id, p.status, p.details_layout, pd.product, pd.short_description,'
         . ' pd.full_description, COALESCE(pp.price, 0) AS price, COALESCE(pop.total, 0) AS popularity'
@@ -1869,7 +1870,7 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         . ' AND pp.lower_limit = 1 AND pp.usergroup_id = 0'
         . ' LEFT JOIN ?:product_popularity pop ON pop.product_id = p.product_id'
         . ' WHERE p.product_id = ?i',
-        (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru',
+        $lang_code,
         $product_id
     );
 
@@ -1912,6 +1913,10 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         'popularity' => (int) $row['popularity'],
         'short_description' => (string) $row['short_description'],
         'full_description' => (string) $row['full_description'],
+        'filter_features' => fn_talario_analytics_partner_sync_public_filter_feature_readback(
+            $product_id,
+            $lang_code
+        ),
         'images' => [
             'main' => !empty($main_image['pair_id']) ? 1 : 0,
             'additional' => count($additional_images),
@@ -1979,6 +1984,9 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
     $allowed = [
         'product_update_failed',
         'product_popularity_floor_failed',
+        'filter_features_update_failed',
+        'filter_features_readback_mismatch',
+        'filter_features_variation_copy_mismatch',
         'variation_resolution_required',
         'base_variation_features_update_failed',
         'variation_group_create_failed',
