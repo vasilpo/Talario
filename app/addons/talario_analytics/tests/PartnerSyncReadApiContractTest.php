@@ -132,73 +132,6 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("'source_path' =>", $this->controller);
     }
 
-    public function testStep6AcceptanceProbeIsExactDevOnlyReadOnlyAndBounded(): void
-    {
-        self::assertStringContainsString("'partner_step6_acceptance'", $this->controller);
-        self::assertStringContainsString("'partner_step6_acceptance' => true", $this->trusted_controllers);
-        self::assertStringContainsString('fn_talario_analytics_partner_sync_step6_acceptance', $this->controller);
-        self::assertStringNotContainsString("acceptance_key", $this->controller);
-        self::assertStringContainsString("'Первая кржука'", $this->controller);
-        self::assertStringContainsString("'category_id' => \$category_ids === [268]", $this->controller);
-        self::assertStringContainsString("'full_description_exact'", $this->controller);
-        self::assertStringContainsString("'canonical_html_equal'", $this->controller);
-        self::assertStringContainsString("'text_equal'", $this->controller);
-        self::assertStringContainsString("'text_first_diff_offset'", $this->controller);
-        self::assertStringContainsString("'expected_text_excerpt'", $this->controller);
-        self::assertStringContainsString("'actual_text_excerpt'", $this->controller);
-        self::assertStringContainsString("'semantic_text_equal'", $this->controller);
-        self::assertStringContainsString("'semantic_first_diff_offset'", $this->controller);
-        self::assertStringContainsString("'expected_semantic_excerpt'", $this->controller);
-        self::assertStringContainsString("'actual_semantic_excerpt'", $this->controller);
-        self::assertStringContainsString("preg_replace('/>\\s+</u', '><'", $this->controller);
-        self::assertStringContainsString("html_entity_decode(strip_tags(\$html)", $this->controller);
-        self::assertStringContainsString('fn_talario_analytics_partner_sync_readback_variation_state', $this->controller);
-        self::assertStringContainsString("'variation_count' => count(\$variation_items)", $this->controller);
-        self::assertStringContainsString("'duplicate_count' => 1", $this->controller);
-        self::assertStringContainsString("'complete_shape_count' => \$complete_shape_count", $this->controller);
-        self::assertStringContainsString("'partial_shape_count' => count(\$matching_product_ids) - \$complete_shape_count", $this->controller);
-        self::assertStringContainsString("LIMIT 10", $this->controller);
-        self::assertStringNotContainsString("'candidate_limit_exceeded'", $this->controller);
-        self::assertStringContainsString("class_exists('\\\\Tygh\\\\Addons\\\\ProductVariations\\\\ServiceProvider')", $this->controller);
-        self::assertStringContainsString("'variation_service_unavailable'", $this->controller);
-        self::assertStringContainsString("\$candidate_main_image = (array) fn_get_image_pairs(", $this->controller);
-        self::assertStringContainsString("'candidates' => \$candidate_summaries", $this->controller);
-        self::assertStringContainsString("'complete_shape' => \$candidate_complete_shape", $this->controller);
-        self::assertStringContainsString("'product_id' => (int) \$candidate_product_id", $this->controller);
-        self::assertStringContainsString("'variation_group_id' => \$candidate_group_id", $this->controller);
-        self::assertStringContainsString("'distinct_group_count' => count(\$group_summaries)", $this->controller);
-        self::assertStringContainsString("'groups' => array_values(\$group_summaries)", $this->controller);
-        self::assertStringContainsString("'group_acceptance' => \$group_acceptance", $this->controller);
-        self::assertStringContainsString("'variation_mapping_count'", $this->controller);
-        self::assertStringContainsString("'description' => \$description_diagnostics", $this->controller);
-        self::assertStringContainsString("'first_diff_offset' => \$description_first_diff", $this->controller);
-        self::assertStringNotContainsString("fn_update_product(", substr(
-            $this->controller,
-            strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'),
-            strpos($this->controller, "if (in_array(\$mode, ['catalog_variant_bootstrap'", strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'))
-                - strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance')
-        ));
-    }
-
-    public function testStep6DescriptionRepairIsFixedTargetPostOnlyAndCompareAndSwapGuarded(): void
-    {
-        self::assertStringContainsString("'partner_step6_fix_description'", $this->controller);
-        self::assertStringContainsString("'partner_step6_fix_description' => true", $this->trusted_controllers);
-        self::assertStringContainsString('fn_talario_analytics_partner_sync_step6_fix_description', $this->controller);
-        self::assertStringContainsString("'step6-fix-description-v1'", $this->controller);
-        self::assertStringContainsString("'aca16cbfad17a6a399bad66006c98c77ddc534c2cc36c798b1dcde4a021068c5'", $this->controller);
-        self::assertStringContainsString("'Первая кржука'", $this->controller);
-        self::assertStringContainsString('$expected_company_id = 12;', $this->controller);
-        self::assertStringContainsString('$expected_group_id = 145;', $this->controller);
-        self::assertStringContainsString('$expected_product_ids = range(1207, 1221);', $this->controller);
-        self::assertStringContainsString("'step6_description_precondition_failed'", $this->controller);
-        self::assertStringContainsString("db_query('START TRANSACTION')", $this->controller);
-        self::assertStringContainsString("db_query('ROLLBACK')", $this->controller);
-        self::assertStringContainsString("db_query('COMMIT')", $this->controller);
-        self::assertStringContainsString("'updated_count' => 15", $this->controller);
-        self::assertStringNotContainsString("\$_REQUEST['product_id']", $this->controller);
-    }
-
     public function testSignedPenatyPilotIsDevOnlyPartnerAuthenticatedAndCompanyScoped(): void
     {
         self::assertStringContainsString("'penaty_bootstrap'", $this->controller);
@@ -207,8 +140,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'penaty_bootstrap' => true", $this->trusted_controllers);
         self::assertStringContainsString("'partner_apply' => true", $this->trusted_controllers);
         self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
-        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_fix_description'], true)", $this->controller);
-        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'partner_step6_acceptance', 'partner_step6_fix_description']", $this->controller);
+        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)", $this->controller);
+        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview']", $this->controller);
         self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
         self::assertStringContainsString("'github-actions-talario'", $this->controller);
