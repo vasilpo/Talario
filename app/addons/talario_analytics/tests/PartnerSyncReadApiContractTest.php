@@ -766,6 +766,111 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'missing_variants' => array_values", $this->write_capability);
     }
 
+    public function testPartnerSyncFilterFeaturesUseDynamicRangesNativeWriteAndNativeVariationCopy(): void
+    {
+        if (!defined('BOOTSTRAP')) {
+            define('BOOTSTRAP', true);
+        }
+        require_once dirname(__DIR__) . '/partner_sync_write.php';
+
+        $resolved = \fn_talario_analytics_partner_sync_filter_age_years([
+            ['age_group' => '3–5 лет'],
+            ['age_group' => '5-7 лет'],
+            ['age_group' => '6-9 лет'],
+        ]);
+        self::assertTrue($resolved['resolved']);
+        self::assertSame([3, 4, 5, 6, 7, 8, 9], $resolved['ages']);
+
+        $unsupported = \fn_talario_analytics_partner_sync_filter_age_years([
+            ['age_group' => 'до 3 лет'],
+            ['age_group' => '1,5-3 года'],
+            ['age_group' => '16+ лет'],
+        ]);
+        self::assertFalse($unsupported['resolved']);
+        self::assertSame(['до 3 лет', '1,5-3 года', '16+ лет'], $unsupported['unsupported_age_groups']);
+
+        self::assertSame(
+            'Ранее развитие',
+            \fn_talario_analytics_partner_sync_category_filter_label('Раннее развитие')
+        );
+        self::assertSame(
+            'Программирование',
+            \fn_talario_analytics_partner_sync_category_filter_label('Программирование для детей')
+        );
+        self::assertSame(
+            'Робототехника',
+            \fn_talario_analytics_partner_sync_category_filter_label('Робототехника для детей')
+        );
+        self::assertSame(
+            'Языки',
+            \fn_talario_analytics_partner_sync_category_filter_label('Иностранные языки')
+        );
+
+        self::assertMatchesRegularExpression(
+            "/fn_talario_analytics_partner_sync_resolve_find_products_feature\\(\\s*'Возраст',\\s*'M'/u",
+            $this->write_capability
+        );
+        self::assertMatchesRegularExpression(
+            "/fn_talario_analytics_partner_sync_resolve_find_products_feature\\(\\s*'Категории',\\s*'S'/u",
+            $this->write_capability
+        );
+        self::assertStringContainsString("'find_products'", $this->write_capability);
+        self::assertStringContainsString('?:product_filters', $this->write_capability);
+        self::assertStringContainsString('fn_update_product_features_value($product_id, $values, [], $lang_code)', $this->write_capability);
+        self::assertStringContainsString('filter_features_readback_mismatch', $this->write_capability);
+        self::assertStringContainsString('filter_features_variation_copy_mismatch', $this->write_capability);
+        self::assertStringNotContainsString('fn_update_product_feature_variant(', $this->write_capability);
+
+        $copy_schema = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/product_variations/schemas/product_variations/product_data_copy.php'
+        );
+        $copy_functions = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/product_variations/schemas/product_variations/functions.php'
+        );
+        self::assertStringContainsString("'product_features_values'", $copy_schema);
+        self::assertStringContainsString(
+            'fn_product_variations_get_product_sync_feature_conditions',
+            $copy_schema
+        );
+        self::assertStringContainsString(
+            "return [['NOT IN', 'feature_id', \$feature_ids]];",
+            $copy_functions
+        );
+
+        $response_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_response'
+        );
+        self::assertNotFalse($response_offset);
+        $response_section = substr($this->write_capability, $response_offset);
+        $filter_offset = strpos(
+            $response_section,
+            'fn_talario_analytics_partner_sync_apply_filter_features('
+        );
+        $variation_offset = strpos(
+            $response_section,
+            'fn_talario_analytics_partner_sync_apply_variation_plan('
+        );
+        self::assertNotFalse($filter_offset);
+        self::assertNotFalse($variation_offset);
+        self::assertLessThan($variation_offset, $filter_offset);
+
+        $apply_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_apply_variation_plan'
+        );
+        $prepare_offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_write_create_direct_image_temp_file',
+            $apply_offset
+        );
+        self::assertNotFalse($apply_offset);
+        self::assertNotFalse($prepare_offset);
+        $variation_section = substr($this->write_capability, $apply_offset, $prepare_offset - $apply_offset);
+        self::assertStringNotContainsString("'find_products'", $variation_section);
+        self::assertStringNotContainsString("'Категории'", $variation_section);
+    }
+
     public function testPartnerSyncVariationLabelMatchingNormalizesEquivalentCommercialLabels(): void
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_variation_label_key', $this->write_capability);
@@ -1130,7 +1235,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             'function fn_talario_analytics_partner_sync_safe_write_error_kind',
             $this->write_capability
         );
-        foreach (['image_prepare', 'base_product_write', 'popularity_write', 'variation_write', 'image_write', 'success_cleanup'] as $stage) {
+        foreach (['image_prepare', 'base_product_write', 'popularity_write', 'filter_feature_write', 'variation_write', 'filter_feature_variation_readback', 'image_write', 'success_cleanup'] as $stage) {
             self::assertStringContainsString("'" . $stage . "'", $this->write_capability);
         }
         self::assertStringContainsString("'stage' => $failed_stage", $this->write_capability);
