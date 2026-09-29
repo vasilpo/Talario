@@ -90,6 +90,17 @@ function fn_talario_analytics_partner_sync_normalize_age_copy(string $value): st
     return is_string($normalized) ? $normalized : $value;
 }
 
+function fn_talario_analytics_partner_sync_remove_capacity_copy(string $value): string
+{
+    $normalized = preg_replace(
+        '/(?:\\s|&nbsp;)*Свободных\\s+мест\\s*:\\s*\\d+(?:\\s*мест(?:а|о)?)?\\.?/ui',
+        '',
+        $value
+    );
+
+    return is_string($normalized) ? $normalized : $value;
+}
+
 function fn_talario_analytics_partner_sync_write_normalize_product(array $payload): array
 {
     $operation = (string) ($payload['operation'] ?? '');
@@ -163,6 +174,7 @@ function fn_talario_analytics_partner_sync_write_normalize_product(array $payloa
         $value = (string) $product[$field];
         if ($field === 'full_description') {
             $value = fn_talario_analytics_partner_sync_normalize_age_copy($value);
+            $value = fn_talario_analytics_partner_sync_remove_capacity_copy($value);
         }
         $max = $field === 'full_description' ? 50000 : 5000;
         if (mb_strlen($value, 'UTF-8') > $max) {
