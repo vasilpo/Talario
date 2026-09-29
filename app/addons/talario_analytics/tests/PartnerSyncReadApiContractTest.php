@@ -154,6 +154,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'candidates' => \$candidate_summaries", $this->controller);
         self::assertStringContainsString("'complete_shape' => \$candidate_complete_shape", $this->controller);
         self::assertStringContainsString("'product_id' => (int) \$candidate_product_id", $this->controller);
+        self::assertStringContainsString("'variation_group_id' => \$candidate_group_id", $this->controller);
+        self::assertStringContainsString("'distinct_group_count' => count(\$group_summaries)", $this->controller);
+        self::assertStringContainsString("'groups' => array_values(\$group_summaries)", $this->controller);
         self::assertStringNotContainsString("fn_update_product(", substr(
             $this->controller,
             strpos($this->controller, 'function fn_talario_analytics_partner_sync_step6_acceptance'),
