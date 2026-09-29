@@ -2089,9 +2089,17 @@ function fn_talario_analytics_partner_sync_write_response(): void
         $product_data['short_description'] = $short_description;
     }
 
+    $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
     $variation_resolution = $variation_plan === null
         ? null
         : fn_talario_analytics_partner_sync_resolve_variation_plan($variation_plan);
+    $filter_feature_plan = $operation === 'create'
+        ? fn_talario_analytics_partner_sync_resolve_filter_feature_plan(
+            $product_data,
+            $variation_plan,
+            $lang_code
+        )
+        : null;
 
     $images = null;
     if (isset($payload['images'])) {
@@ -2122,6 +2130,9 @@ function fn_talario_analytics_partner_sync_write_response(): void
         'variations' => $variation_resolution === null
             ? null
             : fn_talario_analytics_partner_sync_public_variation_resolution($variation_resolution),
+        'filter_features' => $filter_feature_plan === null
+            ? null
+            : (array) ($filter_feature_plan['public'] ?? []),
     ];
 
     if ($dry_run) {
@@ -2171,7 +2182,6 @@ function fn_talario_analytics_partner_sync_write_response(): void
             $temp_dirs = $prepared_images['temp_dirs'];
         }
 
-        $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
         $write_stage = 'base_product_write';
         fn_talario_analytics_partner_sync_set_cli_stage('base_product_write', true);
         $result_id = fn_update_product(
@@ -2190,7 +2200,16 @@ function fn_talario_analytics_partner_sync_write_response(): void
             fn_talario_analytics_partner_sync_ensure_popularity_floor($product_id, 1000);
         }
 
-        // On CREATE, Product Variations clones images_links and product_popularity from the completed base product.
+        if ($filter_feature_plan !== null) {
+            $write_stage = 'filter_feature_write';
+            fn_talario_analytics_partner_sync_apply_filter_features(
+                $product_id,
+                $filter_feature_plan,
+                $lang_code
+            );
+        }
+
+        // On CREATE, Product Variations clones images_links, product_popularity and non-axis product_features_values from the completed base product.
         // Attach images before generating variations so every generated product inherits them.
         if ($operation === 'create' && $variation_resolution !== null && $prepared_images !== null) {
             $write_stage = 'image_write_before_variations';
@@ -2208,6 +2227,15 @@ function fn_talario_analytics_partner_sync_write_response(): void
                 $product_id,
                 $variation_resolution,
                 (array) $payload['booking'],
+                $lang_code
+            );
+        }
+
+        if ($operation === 'create' && $variation_resolution !== null && $filter_feature_plan !== null) {
+            $write_stage = 'filter_feature_variation_readback';
+            fn_talario_analytics_partner_sync_assert_filter_features_copied_to_variations(
+                $product_id,
+                $filter_feature_plan,
                 $lang_code
             );
         }
