@@ -1406,15 +1406,44 @@ function fn_talario_analytics_partner_sync_write_cleanup_images(
     }
 }
 
+function fn_talario_analytics_partner_sync_ensure_popularity_floor(int $product_id, int $minimum = 1000): int
+{
+    if ($product_id <= 0 || $minimum < 0) {
+        throw new RuntimeException('product_popularity_floor_failed');
+    }
+
+    $current = (int) db_get_field(
+        'SELECT total FROM ?:product_popularity WHERE product_id = ?i',
+        $product_id
+    );
+    if ($current < $minimum) {
+        fn_update_product_popularity($product_id, [
+            'total' => $minimum - $current,
+        ]);
+    }
+
+    $stored = (int) db_get_field(
+        'SELECT total FROM ?:product_popularity WHERE product_id = ?i',
+        $product_id
+    );
+    if ($stored < $minimum) {
+        throw new RuntimeException('product_popularity_floor_failed');
+    }
+
+    return $stored;
+}
+
+
 function fn_talario_analytics_partner_sync_write_readback(int $product_id): array
 {
     $row = db_get_row(
         'SELECT p.product_id, p.company_id, p.status, p.details_layout, pd.product, pd.short_description,'
-        . ' pd.full_description, COALESCE(pp.price, 0) AS price'
+        . ' pd.full_description, COALESCE(pp.price, 0) AS price, COALESCE(pop.total, 0) AS popularity'
         . ' FROM ?:products p'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
         . ' LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id'
         . ' AND pp.lower_limit = 1 AND pp.usergroup_id = 0'
+        . ' LEFT JOIN ?:product_popularity pop ON pop.product_id = p.product_id'
         . ' WHERE p.product_id = ?i',
         (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru',
         $product_id
@@ -1456,6 +1485,7 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         'status' => (string) $row['status'],
         'details_layout' => (string) $row['details_layout'],
         'price' => (float) $row['price'],
+        'popularity' => (int) $row['popularity'],
         'short_description' => (string) $row['short_description'],
         'full_description' => (string) $row['full_description'],
         'images' => [
@@ -1524,6 +1554,7 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
 {
     $allowed = [
         'product_update_failed',
+        'product_popularity_floor_failed',
         'variation_resolution_required',
         'base_variation_features_update_failed',
         'variation_group_create_failed',
@@ -1730,7 +1761,12 @@ function fn_talario_analytics_partner_sync_write_response(): void
         }
         $product_id = (int) $result_id;
 
-        // On CREATE, Product Variations clones images_links from the completed base product.
+        if ($operation === 'create') {
+            $write_stage = 'popularity_write';
+            fn_talario_analytics_partner_sync_ensure_popularity_floor($product_id, 1000);
+        }
+
+        // On CREATE, Product Variations clones images_links and product_popularity from the completed base product.
         // Attach images before generating variations so every generated product inherits them.
         if ($operation === 'create' && $variation_resolution !== null && $prepared_images !== null) {
             $write_stage = 'image_write_before_variations';
