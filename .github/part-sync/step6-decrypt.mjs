@@ -82,6 +82,12 @@ const allowed = {
     legacyEnvelopeBytes: 776,
     marker: 'STEP6_HANDOFF_DECRYPT=PASS',
   },
+  'talario.part-sync.encrypted-mirror-url.v1': {
+    aad: 'talario-part-sync-step6-mirror-url-v1',
+    plaintextSha256: '057e6c2e14a88614999e3ca05ea20c5d221344b3231822956c9ff81e45a5af77',
+    plaintextBytes: 823,
+    marker: 'STEP6_MIRROR_POINTER_DECRYPT=PASS',
+  },
 };
 const policy = allowed[env.schema_version];
 if (!policy) throw new Error('ENVELOPE_SCHEMA_INVALID');

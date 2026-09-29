@@ -1,0 +1,105 @@
+name: PART-SYNC Step 6 mirror encrypted artifact
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - '.github/part-sync/step6-mirror-url.encrypted.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: part-sync-step6-mirror
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: github.repository == 'vasilpo/Talario' && github.actor == 'vasilpo'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Decrypt mirror pointer and validate source
+        env:
+          SIGNING_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "${SIGNING_KEY:-}"
+          work="$RUNNER_TEMP/part-sync-step6-mirror"
+          rm -rf "$work"
+          install -d -m 700 "$work"
+
+          printf '%s' "$SIGNING_KEY" | base64 --decode > "$work/key"
+          chmod 600 "$work/key"
+          pub="$(ssh-keygen -y -f "$work/key" | awk '{print $2}')"
+          test "$pub" = "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP"
+
+          node .github/part-sync/step6-decrypt.mjs             "$work/key"             .github/part-sync/step6-mirror-url.encrypted.json             "$work/mirror.json"
+
+          jq -e '
+            .artifact_id == 10993567144
+            and .artifact_zip_sha256 == "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094"
+            and .artifact_envelope_sha256 == "1a0ee71200c7d7434b13f6822b01b07e46ff3be78243af9615d49f8bff500e16"
+            and .payload_sha256 == "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+            and .payload_bytes == 2391697
+            and .mirror_target_repo == "vasilpo/Talario"
+            and .mirror_mode == "encrypted-artifact-only"
+          ' "$work/mirror.json" >/dev/null
+
+          artifact_url="$(jq -er '.artifact_url' "$work/mirror.json")"
+          echo "::add-mask::$artifact_url"
+          case "$artifact_url" in
+            https://sdmntpr*.oaiusercontent.com/files/*/raw?*) ;;
+            *) echo 'MIRROR_URL_HOST_REJECTED'; exit 42 ;;
+          esac
+
+          curl --fail --location --silent --show-error --max-time 90             "$artifact_url" -o "$work/source.zip"
+          unset artifact_url
+
+          test "$(sha256sum "$work/source.zip" | awk '{print $1}')" =             "df84953e2b441d64daf89685a9a92c05b3084143dad4aaffcf3a762a7600f094"
+
+          unzip -q "$work/source.zip" -d "$work/source"
+          test -f "$work/source/envelope.json"
+          test "$(find "$work/source" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "1"
+          test "$(sha256sum "$work/source/envelope.json" | awk '{print $1}')" =             "1a0ee71200c7d7434b13f6822b01b07e46ff3be78243af9615d49f8bff500e16"
+
+          jq -e '
+            .schema_version == "talario.part-sync.encrypted-create.v1"
+            and .aad == "talario-part-sync-step6-create-v1"
+            and .plaintext_sha256 == "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c"
+            and .plaintext_bytes == 2391697
+            and .policy.target == "dev_copy"
+            and .policy.operation == "create"
+            and .policy.dry_run == false
+            and .policy.company_id == 12
+            and .policy.category_id == 268
+            and .policy.status == "H"
+            and .policy.variation_count == 15
+            and .policy.image_count == 3
+            and .policy.auto_retry == false
+            and .policy.expected_http == 201
+          ' "$work/source/envelope.json" >/dev/null
+
+          rm -f "$work/key" "$work/mirror.json" "$work/source.zip"
+          echo 'STEP6_MIRROR_SOURCE=PASS'
+
+      - name: Upload stable same-repo encrypted artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: part-sync-step6-encrypted-create
+          path: ${{ runner.temp }}/part-sync-step6-mirror/source/envelope.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/part-sync-step6-mirror"
