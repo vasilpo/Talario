@@ -361,6 +361,71 @@ function fn_talario_analytics_catalog_response(): void
         ];
     }
 
+    $dev_copy_filter_features = [];
+    $is_development = function_exists('fn_is_development') && fn_is_development();
+    $include_dev_copy_filter_features = $is_development
+        && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
+        && TALARIO_PARTNER_SYNC_DEV_COPY === true;
+
+    if ($include_dev_copy_filter_features) {
+        $target_feature_patterns = ['%Возраст%', '%Катег%'];
+        $filter_rows = db_get_array(
+            'SELECT fl.filter_id, fl.feature_id, fl.status AS filter_status,'
+            . ' fld.filter AS filter_name, f.feature_type, f.purpose, fd.description AS feature_name'
+            . ' FROM ?:product_filters fl'
+            . ' LEFT JOIN ?:product_filter_descriptions fld'
+            . ' ON fld.filter_id = fl.filter_id AND fld.lang_code = ?s'
+            . ' INNER JOIN ?:product_features f ON f.feature_id = fl.feature_id'
+            . ' LEFT JOIN ?:product_features_descriptions fd'
+            . ' ON fd.feature_id = f.feature_id AND fd.lang_code = ?s'
+            . ' WHERE fld.filter LIKE ?s OR fd.description LIKE ?s'
+            . ' OR fld.filter LIKE ?s OR fd.description LIKE ?s'
+            . ' ORDER BY fl.filter_id ASC, fl.feature_id ASC',
+            $lang_code,
+            $lang_code,
+            $target_feature_patterns[0],
+            $target_feature_patterns[0],
+            $target_feature_patterns[1],
+            $target_feature_patterns[1]
+        );
+
+        foreach ($filter_rows as $filter_row) {
+            $filter_feature_id = (int) $filter_row['feature_id'];
+            if ($filter_feature_id <= 0) {
+                continue;
+            }
+
+            $filter_variants = [];
+            foreach (db_get_array(
+                'SELECT pfv.variant_id, pfvd.variant'
+                . ' FROM ?:product_feature_variants pfv'
+                . ' INNER JOIN ?:product_feature_variant_descriptions pfvd'
+                . ' ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s'
+                . ' WHERE pfv.feature_id = ?i'
+                . ' ORDER BY pfv.position ASC, pfv.variant_id ASC'
+                . ' LIMIT 500',
+                $lang_code,
+                $filter_feature_id
+            ) as $filter_variant) {
+                $filter_variants[] = [
+                    'filter_variant_id' => (int) $filter_variant['variant_id'],
+                    'label' => (string) $filter_variant['variant'],
+                ];
+            }
+
+            $dev_copy_filter_features[] = [
+                'filter_id' => (int) $filter_row['filter_id'],
+                'filter_name' => (string) ($filter_row['filter_name'] ?? ''),
+                'filter_status' => (string) ($filter_row['filter_status'] ?? ''),
+                'filter_feature_id' => $filter_feature_id,
+                'feature_name' => (string) ($filter_row['feature_name'] ?? ''),
+                'feature_type' => (string) ($filter_row['feature_type'] ?? ''),
+                'purpose' => (string) ($filter_row['purpose'] ?? ''),
+                'variants' => $filter_variants,
+            ];
+        }
+    }
+
     $partners = [];
     foreach (db_get_array(
         'SELECT company_id, company, status FROM ?:companies WHERE status = ?s ORDER BY company_id ASC',
@@ -601,7 +666,7 @@ function fn_talario_analytics_catalog_response(): void
         'source_ip_hash' => hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
     ]);
 
-    fn_talario_analytics_json_response(200, [
+    $catalog_response = [
         'schema_version' => 'partner-sync.catalog.v1',
         'generated_at' => (new DateTimeImmutable('now', $timezone))->format(DateTimeInterface::ATOM),
         'timezone' => 'Europe/Moscow',
@@ -620,7 +685,53 @@ function fn_talario_analytics_catalog_response(): void
             ? (int) array_key_last($products)
             : null,
         'next_schedule_marker' => $next_schedule_marker,
-    ]);
+    ];
+
+    if ($include_dev_copy_filter_features) {
+        $feature_samples = [];
+        $filter_feature_ids = array_values(array_unique(array_map(
+            static function (array $item): int {
+                return (int) ($item['filter_feature_id'] ?? 0);
+            },
+            $dev_copy_filter_features
+        )));
+        $filter_feature_ids = array_values(array_filter($filter_feature_ids));
+
+        if ($filter_feature_ids) {
+            foreach (db_get_array(
+                'SELECT pfv.product_id, pfv.feature_id, pfv.variant_id, pfvd.variant'
+                . ' FROM ?:product_features_values pfv'
+                . ' LEFT JOIN ?:product_feature_variant_descriptions pfvd'
+                . ' ON pfvd.variant_id = pfv.variant_id AND pfvd.lang_code = ?s'
+                . ' WHERE pfv.feature_id IN (?n) AND pfv.lang_code = ?s'
+                . ' AND pfv.variant_id > 0'
+                . ' ORDER BY pfv.product_id DESC, pfv.feature_id ASC, pfv.variant_id ASC'
+                . ' LIMIT 160',
+                $lang_code,
+                $filter_feature_ids,
+                $lang_code
+            ) as $feature_sample) {
+                $sample_product_id = (int) $feature_sample['product_id'];
+                $feature_samples[] = [
+                    'product_id' => $sample_product_id,
+                    'filter_feature_id' => (int) $feature_sample['feature_id'],
+                    'filter_variant_id' => (int) $feature_sample['variant_id'],
+                    'label' => (string) ($feature_sample['variant'] ?? ''),
+                    'category_ids' => array_map('intval', db_get_fields(
+                        'SELECT category_id FROM ?:products_categories'
+                        . ' WHERE product_id = ?i'
+                        . ' ORDER BY position ASC, category_id ASC',
+                        $sample_product_id
+                    )),
+                ];
+            }
+        }
+
+        $catalog_response['dev_copy_filter_features'] = $dev_copy_filter_features;
+        $catalog_response['dev_copy_filter_feature_samples'] = $feature_samples;
+    }
+
+    fn_talario_analytics_json_response(200, $catalog_response);
 }
 
 function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
