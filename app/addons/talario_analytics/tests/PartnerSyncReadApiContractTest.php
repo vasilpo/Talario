@@ -817,6 +817,43 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+    public function testVariationCapacityReadbackUsesBoundedStructuredUnserialize(): void
+    {
+        $offset = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_readback_serialized_capacity'
+        );
+        self::assertNotFalse($offset);
+        $next = strpos(
+            $this->write_capability,
+            'function fn_talario_analytics_partner_sync_readback_variation_state',
+            $offset
+        );
+        self::assertNotFalse($next);
+        $section = substr($this->write_capability, $offset, $next - $offset);
+
+        self::assertStringContainsString("strlen($serialized) > 16384", $section);
+        self::assertStringContainsString(
+            "@unserialize($serialized, ['allowed_classes' => false, 'max_depth' => 8])",
+            $section
+        );
+        self::assertStringContainsString("$day_data['time_by_amount']", $section);
+        self::assertStringContainsString('$match_count === 1', $section);
+        self::assertStringNotContainsString('preg_match_all(', $section);
+
+        foreach ([
+            'variation_readback_price_mismatch',
+            'variation_readback_booking_mismatch',
+            'variation_readback_status_mismatch',
+            'variation_readback_time_mismatch',
+            'variation_readback_capacity_mismatch',
+            'variation_readback_schedule_count_mismatch',
+        ] as $detail) {
+            self::assertStringContainsString("'".$detail."'", $this->write_capability);
+        }
+    }
+
+
 }
 
 
