@@ -255,15 +255,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            'свободных\\s+мест',
+            'свободных\\\\s+мест',
             $this->write_capability
         );
         self::assertStringContainsString(
-            'мест\\s+осталось',
+            'мест\\\\s+осталось',
             $this->write_capability
         );
         self::assertStringContainsString(
-            'осталось\\s+\\d+\\s+мест',
+            'осталось\\\\s+\\\\d+\\\\s+мест',
             $this->write_capability
         );
         self::assertStringContainsString(
