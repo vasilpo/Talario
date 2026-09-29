@@ -327,6 +327,51 @@ case "$REQUEST" in
     esac
     ;;
 
+  "talario-partner-sync-feature-discovery")
+    mark_dispatcher
+    echo "OPERATION=partner-sync-feature-discovery"
+
+    [ "$DEV_COPY" = "$EXPECTED_PATH" ] || fail "unexpected dev_copy root" 86
+    [ "$(/usr/bin/realpath "$DEV_COPY")" = "$EXPECTED_PATH" ] || fail "unexpected dev_copy realpath" 86
+    [ -x /usr/bin/git ] || fail "required git binary unavailable" 81
+
+    PHP_REAL="$(/usr/bin/realpath /usr/local/bin/php8.2)"
+    [ -n "$PHP_REAL" ] && [ -f "$PHP_REAL" ] && [ -x "$PHP_REAL" ] || fail "trusted PHP binary resolution failed" 82
+    PHP_UID="$(/usr/bin/stat -c '%u' "$PHP_REAL")"
+    [ "$PHP_UID" = "0" ] || fail "trusted PHP binary owner mismatch" 82
+    PHP_MODE="$(/usr/bin/stat -c '%a' "$PHP_REAL")"
+    (( (8#$PHP_MODE & 0022) == 0 )) || fail "trusted PHP binary is group/world writable" 82
+
+    [ -z "$(/usr/bin/git -C "$DEV_COPY" status --porcelain --untracked-files=all)" ]       || fail "dev_copy worktree must be clean for feature discovery" 79
+    RUNNER_COMMIT="$(/usr/bin/git -C "$DEV_COPY" rev-parse HEAD)"
+    [ -n "$RUNNER_COMMIT" ] || fail "feature discovery commit resolution failed" 80
+
+    STATE_DIR="$HOME/.local/state/talario/partner-sync"
+    mkdir -p "$STATE_DIR"
+    chmod 700 "$STATE_DIR"
+    [ -d "$STATE_DIR" ] && [ ! -L "$STATE_DIR" ] || fail "invalid partner sync state directory" 74
+
+    RUNNER_REL="ops/partner-sync-feature-discovery.php"
+    EXPECTED_RUNNER_SHA256="b026b3e218c3ad898f0e2a33684223181337d5a36033bd084907156908b02542"
+    RUNNER_TMP="$(/usr/bin/mktemp "$STATE_DIR/feature-discovery.XXXXXX.php")"
+    chmod 600 "$RUNNER_TMP"
+    trap 'rm -f -- "$RUNNER_TMP"' EXIT HUP INT TERM
+
+    /usr/bin/git -C "$DEV_COPY" show "$RUNNER_COMMIT:$RUNNER_REL" > "$RUNNER_TMP"       || fail "feature discovery runner integrity check failed" 80
+    [ -s "$RUNNER_TMP" ] || fail "feature discovery runner integrity check failed" 80
+    ACTUAL_RUNNER_SHA256="$(/usr/bin/sha256sum "$RUNNER_TMP" | /usr/bin/awk '{print $1}')"
+    [ "$ACTUAL_RUNNER_SHA256" = "$EXPECTED_RUNNER_SHA256" ]       || fail "feature discovery runner is not allowlisted" 84
+
+    set +e
+    /usr/bin/timeout --signal=TERM --kill-after=5s 30s       /usr/bin/env -i HOME="$HOME" PATH="/usr/bin:/bin"       TALARIO_PARTNER_SYNC_ROOT="$DEV_COPY"       "$PHP_REAL" "$RUNNER_TMP"
+    RUN_RC=$?
+    set -e
+    case "$RUN_RC" in
+      124|137) fail "feature discovery execution timeout" 83 ;;
+      *) exit "$RUN_RC" ;;
+    esac
+    ;;
+
   "talario-dev-ops worktree-repair")
     mark_dispatcher
     echo "OPERATION=worktree-repair"
