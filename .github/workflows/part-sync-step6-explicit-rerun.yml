@@ -33,7 +33,7 @@ jobs:
           handoff='.github/part-sync/step6-handoff-url.encrypted.json'
           jq -e '
             .schema_version == "talario.part-sync.step6.request.v1"
-            and .request_id == "part-sync-glina-step6-diagnostic-retry-20260929"
+            and .request_id == "part-sync-glina-step6-validate-retrigger-20260929"
             and .target == "dev_copy"
             and .operation == "create"
             and .company_id == 12

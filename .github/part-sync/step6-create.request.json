@@ -1,6 +1,6 @@
 {
   "schema_version": "talario.part-sync.step6.request.v1",
-  "request_id": "part-sync-glina-step6-diagnostic-retry-20260929",
+  "request_id": "part-sync-glina-step6-validate-retrigger-20260929",
   "target": "dev_copy",
   "operation": "create",
   "company_id": 12,
