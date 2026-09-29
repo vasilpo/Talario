@@ -1879,13 +1879,38 @@ function fn_talario_analytics_partner_sync_step6_acceptance(): void
                 $description_first_diff = $min_description_length;
             }
             $excerpt_offset = max(0, (int) ($description_first_diff ?? 0) - 60);
+            $canonicalize_html = static function (string $value): string {
+                $value = str_replace(["\r\n", "\r"], "\n", trim($value));
+                return preg_replace('/>\\s+</u', '><', $value) ?? $value;
+            };
+            $canonicalize_text = static function (string $value): string {
+                $value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                return trim(preg_replace('/\\s+/u', ' ', $value) ?? $value);
+            };
+            $expected_html_canonical = $canonicalize_html($expected_full_description);
+            $actual_html_canonical = $canonicalize_html($actual_full_description);
+            $expected_text_canonical = $canonicalize_text($expected_full_description);
+            $actual_text_canonical = $canonicalize_text($actual_full_description);
+
             $description_diagnostics = [
                 'exact' => hash_equals(
                     hash('sha256', $expected_full_description),
                     hash('sha256', $actual_full_description)
                 ),
+                'html_canonical_exact' => hash_equals(
+                    hash('sha256', $expected_html_canonical),
+                    hash('sha256', $actual_html_canonical)
+                ),
+                'text_canonical_exact' => hash_equals(
+                    hash('sha256', $expected_text_canonical),
+                    hash('sha256', $actual_text_canonical)
+                ),
                 'expected_sha256' => hash('sha256', $expected_full_description),
                 'actual_sha256' => hash('sha256', $actual_full_description),
+                'expected_html_canonical_sha256' => hash('sha256', $expected_html_canonical),
+                'actual_html_canonical_sha256' => hash('sha256', $actual_html_canonical),
+                'expected_text_canonical_sha256' => hash('sha256', $expected_text_canonical),
+                'actual_text_canonical_sha256' => hash('sha256', $actual_text_canonical),
                 'expected_bytes' => strlen($expected_full_description),
                 'actual_bytes' => strlen($actual_full_description),
                 'first_diff_offset' => $description_first_diff,
