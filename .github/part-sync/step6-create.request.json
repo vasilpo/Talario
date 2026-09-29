@@ -1,12 +1,12 @@
 {
-  "schema_version": "talario.part-sync.step6.request.v1",
-  "request_id": "part-sync-glina-step6-post331-20260929",
-  "target": "dev_copy",
-  "operation": "create",
-  "company_id": 12,
-  "status": "H",
-  "payload_sha256": "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c",
-  "encrypted_envelope_sha256": "1a0ee71200c7d7434b13f6822b01b07e46ff3be78243af9615d49f8bff500e16",
-  "transport": "git-encrypted-envelope",
-  "explicit_rerun_required": true
+    "schema_version": "talario.part-sync.step6.request.v1",
+    "request_id": "part-sync-glina-step6-post331-20260929",
+    "target": "dev_copy",
+    "operation": "create",
+    "company_id": 12,
+    "status": "H",
+    "payload_sha256": "0e4c0eeccb2ffac735d026f0962d5fdb4ca138aaafa21bf8a9273d60c60cac3c",
+    "encrypted_envelope_sha256": "1a0ee71200c7d7434b13f6822b01b07e46ff3be78243af9615d49f8bff500e16",
+    "transport": "git-encrypted-envelope",
+    "explicit_rerun_required": true
 }
