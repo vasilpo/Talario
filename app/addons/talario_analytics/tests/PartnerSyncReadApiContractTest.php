@@ -965,6 +965,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
             "'variation_readback_booking_window_mismatch'",
             $this->write_capability
         );
+        self::assertStringContainsString(
+            "'reason' => 'minute_out_of_range'",
+            $this->write_capability
+        );
+        self::assertStringNotContainsString(
+            "InvalidArgumentException('booking_window_minute_out_of_range')",
+            $this->write_capability
+        );
     }
 
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
