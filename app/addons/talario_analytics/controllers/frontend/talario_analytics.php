@@ -1754,12 +1754,10 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         . '&skey=' . rawurlencode($session_key);
     $lang_code = (string) Registry::get('settings.Appearance.frontend_default_language') ?: 'ru';
     $preview_url = (string) fn_url($redirect_uri, 'C', 'https', $lang_code);
-    $state_url = (string) fn_url(
-        'talario_analytics.penaty_preview_state',
-        'C',
-        'https',
-        $lang_code
-    );
+    // Keep the diagnostic POST on the exact dev_copy front-controller route.
+    // The previous fn_url() route returned HTTP 405 before this controller,
+    // while the same signed preview workflow already proves this exact route accepts POST.
+    $state_url = 'https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.penaty_preview_state';
 
     $parts = parse_url($preview_url);
     if (
