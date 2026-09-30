@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   probe:
-    if: github.repository == 'vasilpo/Talario' && github.actor == github.repository_owner && contains(github.event.head_commit.message, '[PART-SYNC-SIGNER-PROBE]')
+    if: github.repository == 'vasilpo/Talario' && github.actor == github.repository_owner
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
