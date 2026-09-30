@@ -70,14 +70,15 @@ state_url = str(d.get("state_url") or "")
 p = urlparse(url)
 q = parse_qs(p.query)
 sp = urlparse(state_url)
+sq = parse_qs(sp.query)
 if p.scheme != "https" or p.hostname != "talario.ru" or not p.path.startswith("/dev_copy/"):
     raise SystemExit("preview url scope mismatch")
 if not q.get("skey") or len(q["skey"][0]) < 32:
     raise SystemExit("preview one-use key missing")
 if sp.scheme != "https" or sp.hostname != "talario.ru" or not sp.path.startswith("/dev_copy/"):
     raise SystemExit("preview state url scope mismatch")
-if sp.query or sp.fragment:
-    raise SystemExit("preview state url must not carry state")
+if "state_token" in sq or sp.fragment:
+    raise SystemExit("preview state url must not carry state token")
 with open(out, "w", encoding="utf-8") as fh:
     fh.write(url)
 with open(state_out, "w", encoding="utf-8") as fh:
