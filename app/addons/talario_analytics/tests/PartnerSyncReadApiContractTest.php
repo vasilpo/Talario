@@ -978,6 +978,30 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'duration' => \$item['duration']", $this->write_capability);
     }
 
+    public function testPartnerSyncWritesDedicatedLessonAddress(): void
+    {
+        self::assertStringContainsString(
+            "array_key_exists('address', \\$product)",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "mb_strlen(\\$address, 'UTF-8') > 255",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "['error' => 'invalid_address']",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'address' => (string) \\$row['address']",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'pd.full_description, pd.address, COALESCE(pp.price, 0)',
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncSeparatesEcarterBookingWindowFromActualSlot(): void
     {
         self::assertStringContainsString(
