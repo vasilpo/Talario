@@ -180,7 +180,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'penaty_bootstrap' => true", $this->trusted_controllers);
         self::assertStringContainsString("'partner_apply' => true", $this->trusted_controllers);
         self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
-        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)", $this->controller);
+        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)", $this->controller);
         self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview']", $this->controller);
         self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
@@ -237,7 +237,6 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'talario_partner_sync_preview_state_issued_at' => time()", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview_state', $this->controller);
         self::assertStringContainsString("strtoupper((string) (\$_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST'", $this->controller);
-        self::assertStringContainsString("['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state']", $this->controller);
         self::assertStringContainsString("HTTP_ORIGIN", $this->controller);
         self::assertStringContainsString("HTTP_REFERER", $this->controller);
         self::assertStringContainsString("HTTP_SEC_FETCH_SITE", $this->controller);
