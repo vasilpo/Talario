@@ -734,6 +734,46 @@ function fn_talario_analytics_catalog_response(): void
     fn_talario_analytics_json_response(200, $catalog_response);
 }
 
+function fn_talario_analytics_partner_sync_penaty_preview_state(): void
+{
+    $provided = trim((string) ($_GET['state_token'] ?? ''));
+    $stored = (string) (Tygh::$app['session']['talario_partner_sync_preview_state_token'] ?? '');
+    $token_match = strlen($provided) >= 32
+        && strlen($stored) >= 32
+        && hash_equals($stored, $provided);
+
+    if (!$token_match) {
+        fn_talario_analytics_json_response(403, [
+            'schema_version' => 'partner-sync.preview-state.v1',
+            'state_token_match' => false,
+        ]);
+    }
+
+    unset(Tygh::$app['session']['talario_partner_sync_preview_state_token']);
+
+    $preview = Tygh::$app['session']['talario_partner_sync_preview'] ?? null;
+    $preview_exact = is_array($preview)
+        && (int) ($preview['product_id'] ?? 0) === 1158
+        && (string) ($preview['purpose'] ?? '') === 'visual_acceptance';
+
+    /** @var \Tygh\Storefront\Storefront $runtime_storefront */
+    $runtime_storefront = Tygh::$app['storefront'];
+    $session_store_key = (string) (Tygh::$app['session']['store_access_key'] ?? '');
+    $runtime_store_key = trim((string) $runtime_storefront->access_key);
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'partner-sync.preview-state.v1',
+        'state_token_match' => true,
+        'preview_marker_exact' => $preview_exact,
+        'store_access_key_present' => $session_store_key !== '',
+        'store_access_key_matches_runtime' => $session_store_key !== ''
+            && $runtime_store_key !== ''
+            && hash_equals($runtime_store_key, $session_store_key),
+        'runtime_storefront_id' => (int) $runtime_storefront->storefront_id,
+        'runtime_storefront_status' => (string) $runtime_storefront->status,
+    ]);
+}
+
 function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
@@ -1646,6 +1686,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
 
     try {
         $session_key = bin2hex(random_bytes(24));
+        $state_token = bin2hex(random_bytes(24));
     } catch (Throwable $e) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_key_unavailable']);
     }
@@ -1659,6 +1700,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
             'product_id' => 1158,
             'purpose' => 'visual_acceptance',
         ],
+        'talario_partner_sync_preview_state_token' => $state_token,
     ];
     $serialized = serialize($sess_data);
     if ($serialized === '' || strlen($serialized) > 4096) {
@@ -1675,6 +1717,12 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         . '&skey=' . rawurlencode($session_key);
     $lang_code = (string) Registry::get('settings.Appearance.frontend_default_language') ?: 'ru';
     $preview_url = (string) fn_url($redirect_uri, 'C', 'https', $lang_code);
+    $state_url = (string) fn_url(
+        'talario_analytics.penaty_preview_state?state_token=' . rawurlencode($state_token),
+        'C',
+        'https',
+        $lang_code
+    );
 
     $parts = parse_url($preview_url);
     if (
@@ -1685,6 +1733,17 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     ) {
         fn_set_storage_data($storage_key, '');
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_url_invalid']);
+    }
+
+    $state_parts = parse_url($state_url);
+    if (
+        !is_array($state_parts)
+        || strtolower((string) ($state_parts['scheme'] ?? '')) !== 'https'
+        || strtolower((string) ($state_parts['host'] ?? '')) !== 'talario.ru'
+        || strpos((string) ($state_parts['path'] ?? ''), '/dev_copy/') !== 0
+    ) {
+        fn_set_storage_data($storage_key, '');
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_state_url_invalid']);
     }
 
     fn_talario_analytics_json_response(200, [
@@ -1704,6 +1763,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
             'company_scope' => $company_ids ? in_array(39, $company_ids, true) : true,
         ],
         'preview_url' => $preview_url,
+        'state_url' => $state_url,
     ]);
 }
 
@@ -1787,14 +1847,14 @@ if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_a
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -1803,7 +1863,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -1834,6 +1894,9 @@ if ($mode === 'partner_apply') {
 }
 if ($mode === 'penaty_preview') {
     fn_talario_analytics_partner_sync_penaty_preview();
+}
+if ($mode === 'penaty_preview_state') {
+    fn_talario_analytics_partner_sync_penaty_preview_state();
 }
 
 $rate_count = fn_talario_analytics_rate_limit();
