@@ -214,6 +214,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('fn_get_company_root_admin_user_id', $this->controller);
         self::assertStringNotContainsString('fn_fill_auth(', $this->controller);
         self::assertStringNotContainsString('fn_init_user_session_data(', $this->controller);
+        self::assertStringContainsString("(int) (\$probe_auth['user_id'] ?? 0) !== 0", $this->controller);
+        self::assertStringContainsString("(int) (\$probe_auth['company_id'] ?? 0) !== 0", $this->controller);
+        self::assertStringContainsString("(string) (\$probe_auth['user_type'] ?? '') !== 'C'", $this->controller);
+        self::assertStringContainsString("(string) (\$probe_auth['area'] ?? '') !== 'C'", $this->controller);
+        self::assertStringContainsString("(string) (\$probe_auth['is_root'] ?? '') !== 'N'", $this->controller);
+        self::assertStringContainsString("!is_array(\$probe_auth['usergroup_ids'])", $this->controller);
+        self::assertStringContainsString("'pilot_preview_guest_session_invalid'", $this->controller);
+        self::assertStringContainsString("'auth' => \$probe_auth", $this->controller);
+        self::assertStringContainsString("'cart' => []", $this->controller);
         self::assertStringNotContainsString("\$guest_auth['area'] = 'A'", $this->controller);
         self::assertStringContainsString("'store_access_key' => \$store_access_key", $this->controller);
         self::assertStringContainsString("\$storefront_repository->findByUrl('https://talario.ru/dev_copy/')", $this->controller);
