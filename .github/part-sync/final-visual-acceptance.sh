@@ -11,9 +11,10 @@ echo "TRUST_GATE=PASS"
 echo "SIGNER_READY=PASS"
 
 tmp="${RUNNER_TEMP}/part-sync-final-visual"
-rm -rf "$tmp"
-mkdir -p "$tmp"
-chmod 700 "$tmp"
+evidence="${RUNNER_TEMP}/part-sync-final-visual-evidence"
+rm -rf "$tmp" "$evidence"
+mkdir -p "$tmp" "$evidence"
+chmod 700 "$tmp" "$evidence"
 trap 'rm -rf "$tmp"' EXIT
 
 printf '%s' '{"product_id":1158}' > "$tmp/body.json"
@@ -66,7 +67,7 @@ chmod 600 "$tmp/preview_url"
 command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null || command -v chromium >/dev/null
 python3 -m pip install --quiet selenium
 
-python3 - "$tmp/preview_url" "$tmp/screenshot.png" "$tmp/visual-summary.txt" <<'PY'
+python3 - "$tmp/preview_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
 import sys, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -94,24 +95,27 @@ try:
 
     current = driver.current_url
     body = driver.find_element(By.TAG_NAME, "body").text
+    body_lower = body.lower()
     compact = body.replace(" ", "").replace("\u00a0", "")
     from urllib.parse import urlparse
     current_parts = urlparse(current)
-    if current_parts.scheme != "https" or current_parts.hostname != "talario.ru" or not current_parts.path.startswith("/dev_copy/"):
-        raise SystemExit("visual final url mismatch")
-    if "LUNCH" in body or "closed for maintenance" in body.lower():
-        raise SystemExit("maintenance stub still visible")
-    if "Для доступа к этому ресурсу необходима авторизация" in body or "auth.login_form" in current:
-        raise SystemExit("login page visible")
-    if "Академия интеллекта" not in body and "Минисад" not in body:
-        raise SystemExit("Penaty marker missing")
-    if "2500" not in compact:
-        raise SystemExit("price marker missing")
 
     img_count = len(driver.find_elements(By.TAG_NAME, "img"))
     iframe_count = len(driver.find_elements(By.TAG_NAME, "iframe"))
     select_count = len(driver.find_elements(By.TAG_NAME, "select"))
     button_count = len(driver.find_elements(By.TAG_NAME, "button"))
+    h1_count = len(driver.find_elements(By.TAG_NAME, "h1"))
+
+    has_maintenance = "LUNCH" in body or "closed for maintenance" in body_lower
+    has_login = "Для доступа к этому ресурсу необходима авторизация" in body or "auth.login_form" in current
+    has_penaty = "Академия интеллекта" in body or "Минисад" in body
+    has_price = "2500" in compact
+    has_not_found = (
+        "страница не найдена" in body_lower
+        or "товар не найден" in body_lower
+        or "product not found" in body_lower
+        or "404" in body
+    )
 
     height = int(driver.execute_script(
         "return Math.min(Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 3000), 12000)"
@@ -122,17 +126,39 @@ try:
         raise SystemExit("screenshot failed")
 
     with open(summary_file, "w", encoding="utf-8") as fh:
-        fh.write("VISUAL_PAGE=PASS\n")
         fh.write("PRODUCT_ID=1158\n")
-        fh.write("MAINTENANCE_STUB=ABSENT\n")
-        fh.write("LOGIN_PAGE=ABSENT\n")
-        fh.write("PENATY_MARKER=PASS\n")
-        fh.write("PRICE_MARKER=PASS\n")
+        fh.write(f"URL_SCOPE={'PASS' if current_parts.scheme == 'https' and current_parts.hostname == 'talario.ru' and current_parts.path.startswith('/dev_copy/') else 'FAIL'}\n")
+        fh.write(f"MAINTENANCE={'YES' if has_maintenance else 'NO'}\n")
+        fh.write(f"LOGIN={'YES' if has_login else 'NO'}\n")
+        fh.write(f"NOT_FOUND={'YES' if has_not_found else 'NO'}\n")
+        fh.write(f"PENATY={'YES' if has_penaty else 'NO'}\n")
+        fh.write(f"PRICE_2500={'YES' if has_price else 'NO'}\n")
+        fh.write(f"BODY_LEN={len(body)}\n")
+        fh.write(f"H1_COUNT={h1_count}\n")
         fh.write(f"IMG_COUNT={img_count}\n")
         fh.write(f"IFRAME_COUNT={iframe_count}\n")
         fh.write(f"SELECT_COUNT={select_count}\n")
         fh.write(f"BUTTON_COUNT={button_count}\n")
         fh.write(f"SCREENSHOT_HEIGHT={height}\n")
+
+    if current_parts.scheme != "https" or current_parts.hostname != "talario.ru" or not current_parts.path.startswith("/dev_copy/"):
+        raise SystemExit("visual final url mismatch")
+    if has_maintenance:
+        raise SystemExit("maintenance stub still visible")
+    if has_login:
+        raise SystemExit("login page visible")
+    if has_not_found:
+        raise SystemExit("product page not found")
+    if not has_penaty:
+        raise SystemExit("Penaty marker missing")
+    if not has_price:
+        raise SystemExit("price marker missing")
+
+    with open(summary_file, "a", encoding="utf-8") as fh:
+        fh.write("VISUAL_PAGE=PASS\n")
+        fh.write("PENATY_MARKER=PASS\n")
+        fh.write("PRICE_MARKER=PASS\n")
+        fh.write("SCREENSHOT=PASS\n")
 
     print("VISUAL_PAGE=PASS")
     print("PENATY_MARKER=PASS")
