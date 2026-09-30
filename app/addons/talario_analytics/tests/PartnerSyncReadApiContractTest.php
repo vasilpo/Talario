@@ -234,6 +234,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview_state', $this->controller);
         self::assertStringContainsString("strtoupper((string) (\$_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST'", $this->controller);
         self::assertStringContainsString("HTTP_ORIGIN", $this->controller);
+        self::assertStringContainsString("HTTP_REFERER", $this->controller);
+        self::assertStringContainsString("HTTP_SEC_FETCH_SITE", $this->controller);
+        self::assertStringContainsString("HTTP_SEC_FETCH_MODE", $this->controller);
+        self::assertStringContainsString("'same-origin'", $this->controller);
         self::assertStringNotContainsString("penaty_preview_state?state_token=", $this->controller);
         self::assertStringNotContainsString("(\$_GET['state_token'] ?? '')", $this->controller);
         self::assertStringNotContainsString("(\$_POST['state_token'] ?? '')", $this->controller);
