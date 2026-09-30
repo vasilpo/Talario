@@ -52,6 +52,19 @@ if int(d.get("company_id") or 0) != 39:
     raise SystemExit("preview company mismatch")
 if d.get("status") != "H" or d.get("single_use") is not True:
     raise SystemExit("preview state mismatch")
+visibility = d.get("visibility") or {}
+safe = {
+    "NORMAL_VISIBLE": bool(visibility.get("normal")),
+    "PREVIEW_VISIBLE": bool(visibility.get("preview")),
+    "COMPANY_STATUS": str(visibility.get("company_status", "")),
+    "MAIN_CATEGORY_ID": int(visibility.get("main_category_id") or 0),
+    "MAIN_CATEGORY_STATUS": str(visibility.get("main_category_status", "")),
+    "MAIN_CATEGORY_STOREFRONT_ID": int(visibility.get("main_category_storefront_id") or 0),
+    "RESOLVED_STOREFRONT_ID": int(visibility.get("resolved_storefront_id") or 0),
+    "COMPANY_SCOPE": bool(visibility.get("company_scope")),
+}
+for key, value in safe.items():
+    print(f"VISIBILITY_{key}={value}")
 url = str(d.get("preview_url") or "")
 p = urlparse(url)
 q = parse_qs(p.query)
