@@ -70,15 +70,14 @@ state_url = str(d.get("state_url") or "")
 p = urlparse(url)
 q = parse_qs(p.query)
 sp = urlparse(state_url)
-sq = parse_qs(sp.query)
 if p.scheme != "https" or p.hostname != "talario.ru" or not p.path.startswith("/dev_copy/"):
     raise SystemExit("preview url scope mismatch")
 if not q.get("skey") or len(q["skey"][0]) < 32:
     raise SystemExit("preview one-use key missing")
 if sp.scheme != "https" or sp.hostname != "talario.ru" or not sp.path.startswith("/dev_copy/"):
     raise SystemExit("preview state url scope mismatch")
-if not sq.get("state_token") or len(sq["state_token"][0]) < 32:
-    raise SystemExit("preview state token missing")
+if sp.query or sp.fragment:
+    raise SystemExit("preview state url must not carry state")
 with open(out, "w", encoding="utf-8") as fh:
     fh.write(url)
 with open(state_out, "w", encoding="utf-8") as fh:
@@ -91,7 +90,7 @@ command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null ||
 python3 -m pip install --quiet selenium
 
 python3 - "$tmp/preview_url" "$tmp/state_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
-import os, sys, time
+import json, os, sys, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -151,25 +150,41 @@ try:
     os.chmod(screenshot, 0o600)
 
     # Probe the same browser session after preserving the product-page screenshot.
-    driver.get(state_url)
-    deadline = time.time() + 10
-    while time.time() < deadline:
-        if driver.execute_script("return document.readyState") == "complete":
-            break
-        time.sleep(0.2)
-    state_body = driver.find_element(By.TAG_NAME, "body").text
+    # POST is same-origin and carries no diagnostic token in the URL or body.
+    state_result_raw = driver.execute_async_script("""
+const stateUrl = arguments[0];
+const done = arguments[arguments.length - 1];
+fetch(stateUrl, {
+  method: "POST",
+  credentials: "same-origin",
+  cache: "no-store",
+  redirect: "error",
+  referrerPolicy: "no-referrer",
+  headers: {"Accept": "application/json"}
+}).then(async (response) => {
+  done(JSON.stringify({status: response.status, body: await response.text()}));
+}).catch(() => {
+  done(JSON.stringify({status: 0, body: ""}));
+});
+""", state_url)
     try:
-        state = __import__("json").loads(state_body)
+        state_result = json.loads(state_result_raw)
+    except Exception:
+        state_result = {"status": 0, "body": ""}
+    state_status = int(state_result.get("status") or 0)
+    try:
+        state = json.loads(state_result.get("body") or "{}") if state_status == 200 else {}
     except Exception:
         state = {}
-    state_token_match = state.get("state_token_match") is True
+    session_handoff_token_valid = state.get("session_handoff_token_valid") is True
     preview_marker_exact = state.get("preview_marker_exact") is True
     store_key_present = state.get("store_access_key_present") is True
     store_key_matches = state.get("store_access_key_matches_runtime") is True
     runtime_storefront_id = int(state.get("runtime_storefront_id") or 0)
     runtime_storefront_status = str(state.get("runtime_storefront_status", ""))
 
-    print(f"SESSION_STATE_TOKEN_MATCH={state_token_match}")
+    print(f"SESSION_STATE_HTTP={state_status}")
+    print(f"SESSION_HANDOFF_TOKEN_VALID={session_handoff_token_valid}")
     print(f"SESSION_PREVIEW_MARKER_EXACT={preview_marker_exact}")
     print(f"SESSION_STORE_KEY_PRESENT={store_key_present}")
     print(f"SESSION_STORE_KEY_MATCHES_RUNTIME={store_key_matches}")
@@ -178,7 +193,8 @@ try:
 
     with open(summary_file, "w", encoding="utf-8") as fh:
         fh.write("PRODUCT_ID=1158\n")
-        fh.write(f"SESSION_STATE_TOKEN_MATCH={'YES' if state_token_match else 'NO'}\n")
+        fh.write(f"SESSION_STATE_HTTP={state_status}\n")
+        fh.write(f"SESSION_HANDOFF_TOKEN_VALID={'YES' if session_handoff_token_valid else 'NO'}\n")
         fh.write(f"SESSION_PREVIEW_MARKER_EXACT={'YES' if preview_marker_exact else 'NO'}\n")
         fh.write(f"SESSION_STORE_KEY_PRESENT={'YES' if store_key_present else 'NO'}\n")
         fh.write(f"SESSION_STORE_KEY_MATCHES_RUNTIME={'YES' if store_key_matches else 'NO'}\n")
