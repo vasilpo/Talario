@@ -736,7 +736,11 @@ function fn_talario_analytics_catalog_response(): void
 
 function fn_talario_analytics_partner_sync_penaty_preview_state(): void
 {
-    $provided = trim((string) ($_GET['state_token'] ?? ''));
+    if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
+        fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
+    }
+
+    $provided = trim((string) ($_POST['state_token'] ?? ''));
     $stored = (string) (Tygh::$app['session']['talario_partner_sync_preview_state_token'] ?? '');
     $token_match = strlen($provided) >= 32
         && strlen($stored) >= 32
