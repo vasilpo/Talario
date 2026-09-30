@@ -160,7 +160,7 @@ fetch(stateUrl, {
   credentials: "same-origin",
   cache: "no-store",
   redirect: "error",
-  referrerPolicy: "no-referrer",
+  referrerPolicy: "same-origin",
   headers: {"Accept": "application/json"}
 }).then(async (response) => {
   done(JSON.stringify({status: response.status, body: await response.text()}));
