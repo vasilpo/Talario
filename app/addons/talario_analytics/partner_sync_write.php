@@ -298,6 +298,23 @@ function fn_talario_analytics_partner_sync_write_normalize_booking(array $bookin
     return $data;
 }
 
+function fn_talario_analytics_partner_sync_time_to_minutes(string $time): ?int
+{
+    if (!preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $time)) {
+        return null;
+    }
+    [$hour, $minute] = array_map('intval', explode(':', $time));
+    return ($hour * 60) + $minute;
+}
+
+function fn_talario_analytics_partner_sync_minutes_to_time(int $minutes): string
+{
+    if ($minutes < 0 || $minutes > 1439) {
+        throw new InvalidArgumentException('booking_window_minute_out_of_range');
+    }
+    return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
+}
+
 
 function fn_talario_analytics_partner_sync_normalize_variation_plan(array $payload): ?array
 {
@@ -370,6 +387,20 @@ function fn_talario_analytics_partner_sync_normalize_variation_plan(array $paylo
                     'session_index' => $session_index,
                 ]);
             }
+            $start_minutes = fn_talario_analytics_partner_sync_time_to_minutes($start);
+            $end_minutes = fn_talario_analytics_partner_sync_time_to_minutes($end);
+            if ($start_minutes === null
+                || $end_minutes === null
+                || ($end_minutes - $start_minutes) !== $duration
+            ) {
+                fn_talario_analytics_json_response(409, [
+                    'error' => 'schedule_not_representable',
+                    'reason' => 'duration_mismatch',
+                    'index' => $index,
+                    'session_index' => $session_index,
+                ]);
+            }
+
             if ($variation_duration === null) {
                 $variation_duration = $duration;
             } elseif ($variation_duration !== $duration) {
@@ -1019,24 +1050,90 @@ function fn_talario_analytics_partner_sync_public_variation_resolution(array $re
 function fn_talario_analytics_partner_sync_build_variation_booking(array $item, array $base_booking_input): array
 {
     $days = [];
+    $windows = [];
+    $base_days = isset($base_booking_input['days']) && is_array($base_booking_input['days'])
+        ? $base_booking_input['days']
+        : [];
+
     foreach (['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] as $day) {
         $days[$day] = ['enabled' => false, 'start' => '', 'end' => ''];
     }
+
     foreach ($item['schedule'] as $session) {
-        $days[$session['day']] = [
+        $day = (string) $session['day'];
+        $session_start = (string) $session['start'];
+        $session_end = (string) $session['end'];
+        $session_start_minutes = fn_talario_analytics_partner_sync_time_to_minutes($session_start);
+        $session_end_minutes = fn_talario_analytics_partner_sync_time_to_minutes($session_end);
+        if ($session_start_minutes === null || $session_end_minutes === null) {
+            fn_talario_analytics_json_response(409, [
+                'error' => 'booking_window_not_representable',
+                'reason' => 'invalid_actual_slot',
+                'day' => $day,
+            ]);
+        }
+
+        $base_day = isset($base_days[$day]) && is_array($base_days[$day]) ? $base_days[$day] : [];
+        $use_base_window = !empty($base_day['enabled']);
+        $window_start = $use_base_window ? trim((string) ($base_day['start'] ?? '')) : $session_start;
+        $window_end = $use_base_window ? trim((string) ($base_day['end'] ?? '')) : $session_end;
+        $window_start_minutes = fn_talario_analytics_partner_sync_time_to_minutes($window_start);
+        $window_end_minutes = fn_talario_analytics_partner_sync_time_to_minutes($window_end);
+
+        if ($window_start_minutes === null
+            || $window_end_minutes === null
+            || $window_start_minutes > $session_start_minutes
+            || $window_end_minutes < $session_end_minutes
+        ) {
+            fn_talario_analytics_json_response(409, [
+                'error' => 'booking_window_not_representable',
+                'reason' => 'actual_slot_outside_window',
+                'day' => $day,
+            ]);
+        }
+
+        // Ecarter checks the iterator after adding slot_time. An exact
+        // [start,end] window can therefore suppress a valid slot. Keep the
+        // weekly window strictly wider while capacity stays on the actual slot.
+        if ($window_start_minutes === $session_start_minutes
+            && $window_end_minutes === $session_end_minutes
+        ) {
+            if ($session_end_minutes < 1439) {
+                $window_end_minutes = $session_end_minutes + 1;
+            } elseif ($session_start_minutes > 0) {
+                $window_start_minutes = $session_start_minutes - 1;
+            } else {
+                fn_talario_analytics_json_response(409, [
+                    'error' => 'booking_window_not_representable',
+                    'reason' => 'cannot_widen',
+                    'day' => $day,
+                ]);
+            }
+        }
+
+        $window_start = fn_talario_analytics_partner_sync_minutes_to_time($window_start_minutes);
+        $window_end = fn_talario_analytics_partner_sync_minutes_to_time($window_end_minutes);
+        $days[$day] = [
             'enabled' => true,
-            'start' => $session['start'],
-            'end' => $session['end'],
+            'start' => $window_start,
+            'end' => $window_end,
+        ];
+        $windows[$day] = [
+            'start' => $window_start,
+            'end' => $window_end,
         ];
     }
 
-    return fn_talario_analytics_partner_sync_write_normalize_booking([
-        'from' => (string) ($base_booking_input['from'] ?? ''),
-        'to' => (string) ($base_booking_input['to'] ?? ''),
-        'slot_time' => (int) $item['duration'],
-        'free_time' => 0,
-        'days' => $days,
-    ]);
+    return [
+        'booking' => fn_talario_analytics_partner_sync_write_normalize_booking([
+            'from' => (string) ($base_booking_input['from'] ?? ''),
+            'to' => (string) ($base_booking_input['to'] ?? ''),
+            'slot_time' => (int) $item['duration'],
+            'free_time' => 0,
+            'days' => $days,
+        ]),
+        'windows' => $windows,
+    ];
 }
 
 function fn_talario_analytics_partner_sync_apply_variation_capacity(int $product_id, array $item): void
@@ -1227,7 +1324,8 @@ function fn_talario_analytics_partner_sync_readback_serialized_capacity(
 
 function fn_talario_analytics_partner_sync_readback_variation_state(
     int $product_id,
-    array $item
+    array $item,
+    array $booking_plan
 ): array {
     $readback = fn_talario_analytics_partner_sync_write_readback($product_id);
     if (!$readback || abs((float) $readback['price'] - (float) $item['price']) > 0.001) {
@@ -1264,17 +1362,28 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
             continue;
         }
 
-        $start = trim((string) ($days_data[$day . '_timing_start_time'] ?? ''));
-        $end = trim((string) ($days_data[$day . '_timing_end_time'] ?? ''));
-        if ($start !== (string) $expected['start'] || $end !== (string) $expected['end']) {
-            throw new RuntimeException('variation_readback_time_mismatch');
+        $window = isset($booking_plan['windows'][$day]) && is_array($booking_plan['windows'][$day])
+            ? $booking_plan['windows'][$day]
+            : null;
+        if ($window === null) {
+            throw new RuntimeException('variation_booking_plan_missing');
         }
 
+        $window_start = trim((string) ($days_data[$day . '_timing_start_time'] ?? ''));
+        $window_end = trim((string) ($days_data[$day . '_timing_end_time'] ?? ''));
+        if ($window_start !== (string) ($window['start'] ?? '')
+            || $window_end !== (string) ($window['end'] ?? '')
+        ) {
+            throw new RuntimeException('variation_readback_booking_window_mismatch');
+        }
+
+        $actual_start = (string) $expected['start'];
+        $actual_end = (string) $expected['end'];
         $capacity = fn_talario_analytics_partner_sync_readback_serialized_capacity(
             $serialized_days,
             $day,
-            $start,
-            $end
+            $actual_start,
+            $actual_end
         );
         if ($capacity !== (int) ($expected['capacity'] ?? 0)) {
             throw new RuntimeException('variation_readback_capacity_mismatch');
@@ -1282,10 +1391,14 @@ function fn_talario_analytics_partner_sync_readback_variation_state(
 
         $readback_schedule[] = [
             'day' => $day,
-            'start' => $start,
-            'end' => $end,
+            'start' => $actual_start,
+            'end' => $actual_end,
             'duration' => (int) $booking['slot_time'],
             'capacity' => $capacity,
+            'booking_window' => [
+                'start' => $window_start,
+                'end' => $window_end,
+            ],
         ];
     }
 
@@ -1304,7 +1417,7 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
     string $operation,
     int $base_product_id,
     array $resolution,
-    array $base_booking_input,
+    array $variation_booking_plans,
     string $lang_code
 ): array {
     if (empty($resolution['resolved'])) {
@@ -1382,7 +1495,15 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
         $variation_product_id = (int) $mapped['map'][$key];
         fn_talario_analytics_partner_sync_set_cli_stage('variation_booking_build', true);
         try {
-            $booking_data = fn_talario_analytics_partner_sync_build_variation_booking($item, $base_booking_input);
+            $label_key = mb_strtolower(
+                trim((string) $item['age_group']) . "\n" . trim((string) $item['purchase_option']),
+                'UTF-8'
+            );
+            $booking_plan = $variation_booking_plans[$label_key] ?? null;
+            if (!is_array($booking_plan) || empty($booking_plan['booking']) || empty($booking_plan['windows'])) {
+                throw new RuntimeException('variation_booking_plan_missing');
+            }
+            $booking_data = (array) $booking_plan['booking'];
         } finally {
             fn_talario_analytics_partner_sync_set_cli_stage('variation_booking_build', false);
         }
@@ -1410,7 +1531,8 @@ function fn_talario_analytics_partner_sync_apply_variation_plan(
 
         $variation_readback = fn_talario_analytics_partner_sync_readback_variation_state(
             $variation_product_id,
-            $item
+            $item,
+            $booking_plan
         );
         $updated[] = [
             'age_group' => $item['age_group'],
@@ -1997,8 +2119,10 @@ function fn_talario_analytics_partner_sync_safe_write_error_detail(Throwable $ex
         'variation_readback_mismatch',
         'variation_readback_price_mismatch',
         'variation_readback_booking_mismatch',
+        'variation_booking_plan_missing',
         'variation_readback_status_mismatch',
         'variation_readback_time_mismatch',
+        'variation_readback_booking_window_mismatch',
         'variation_readback_capacity_mismatch',
         'variation_readback_schedule_count_mismatch',
         'failed_create_group_cleanup_failed',
@@ -2129,11 +2253,53 @@ function fn_talario_analytics_partner_sync_write_response(): void
         $product_data['booking_data'] = $booking_data;
     }
 
+    $variation_booking_plans = null;
+    $public_variation_booking_windows = null;
+    if ($variation_plan !== null) {
+        $variation_booking_plans = [];
+        $public_variation_booking_windows = [];
+        foreach ($variation_plan as $item) {
+            $label_key = mb_strtolower(
+                trim((string) $item['age_group']) . "\n" . trim((string) $item['purchase_option']),
+                'UTF-8'
+            );
+            $booking_plan = fn_talario_analytics_partner_sync_build_variation_booking(
+                $item,
+                (array) $payload['booking']
+            );
+            $variation_booking_plans[$label_key] = $booking_plan;
+
+            $public_schedule = [];
+            foreach ($item['schedule'] as $session) {
+                $day = (string) $session['day'];
+                $window = (array) ($booking_plan['windows'][$day] ?? []);
+                $public_schedule[] = [
+                    'day' => $day,
+                    'start' => (string) $session['start'],
+                    'end' => (string) $session['end'],
+                    'duration' => (int) $session['duration'],
+                    'capacity' => (int) $session['capacity'],
+                    'booking_window' => [
+                        'start' => (string) ($window['start'] ?? ''),
+                        'end' => (string) ($window['end'] ?? ''),
+                    ],
+                ];
+            }
+            $public_variation_booking_windows[] = [
+                'age_group' => (string) $item['age_group'],
+                'purchase_option' => (string) $item['purchase_option'],
+                'duration' => (int) $item['duration'],
+                'schedule' => $public_schedule,
+            ];
+        }
+    }
+
     $plan = [
         'operation' => $operation,
         'product_id' => $operation === 'update' ? $product_id : null,
         'product' => array_diff_key($product_data, ['booking_data' => true]),
         'booking' => $booking_data,
+        'variation_booking_windows' => $public_variation_booking_windows,
         'images' => $images === null ? null : ['count' => count($images), 'replace' => true],
         'variations' => $variation_resolution === null
             ? null
@@ -2234,7 +2400,7 @@ function fn_talario_analytics_partner_sync_write_response(): void
                 $operation,
                 $product_id,
                 $variation_resolution,
-                (array) $payload['booking'],
+                (array) $variation_booking_plans,
                 $lang_code
             );
         }
