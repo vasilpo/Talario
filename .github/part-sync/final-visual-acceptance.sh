@@ -38,11 +38,11 @@ code="$(curl --silent --show-error --request POST \
 echo "PREVIEW_HTTP=$code"
 test "$code" = "200"
 
-python3 - "$tmp/preview.json" "$tmp/preview_url" <<'PY'
+python3 - "$tmp/preview.json" "$tmp/preview_url" "$tmp/state_url" <<'PY'
 import json, sys
 from urllib.parse import urlparse, parse_qs
 
-src, out = sys.argv[1], sys.argv[2]
+src, out, state_out = sys.argv[1:4]
 d = json.load(open(src, encoding="utf-8"))
 if d.get("schema_version") != "partner-sync.preview.v4":
     raise SystemExit("preview schema mismatch")
@@ -66,29 +66,39 @@ safe = {
 for key, value in safe.items():
     print(f"VISIBILITY_{key}={value}")
 url = str(d.get("preview_url") or "")
+state_url = str(d.get("state_url") or "")
 p = urlparse(url)
 q = parse_qs(p.query)
+sp = urlparse(state_url)
+sq = parse_qs(sp.query)
 if p.scheme != "https" or p.hostname != "talario.ru" or not p.path.startswith("/dev_copy/"):
     raise SystemExit("preview url scope mismatch")
 if not q.get("skey") or len(q["skey"][0]) < 32:
     raise SystemExit("preview one-use key missing")
+if sp.scheme != "https" or sp.hostname != "talario.ru" or not sp.path.startswith("/dev_copy/"):
+    raise SystemExit("preview state url scope mismatch")
+if "state_token" in sq or sp.fragment:
+    raise SystemExit("preview state url must not carry state token")
 with open(out, "w", encoding="utf-8") as fh:
     fh.write(url)
+with open(state_out, "w", encoding="utf-8") as fh:
+    fh.write(state_url)
 print("PREVIEW_RESOLVE=PASS")
 PY
-chmod 600 "$tmp/preview_url"
+chmod 600 "$tmp/preview_url" "$tmp/state_url"
 
 command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null || command -v chromium >/dev/null
 python3 -m pip install --quiet selenium
 
-python3 - "$tmp/preview_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
-import os, sys, time
+python3 - "$tmp/preview_url" "$tmp/state_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
+import json, os, sys, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-url_file, screenshot, summary_file = sys.argv[1:4]
+url_file, state_url_file, screenshot, summary_file = sys.argv[1:5]
 url = open(url_file, encoding="utf-8").read().strip()
+state_url = open(state_url_file, encoding="utf-8").read().strip()
 
 opts = Options()
 opts.add_argument("--headless=new")
@@ -140,8 +150,57 @@ try:
         raise SystemExit("screenshot failed")
     os.chmod(screenshot, 0o600)
 
+    # Probe the same browser session after preserving the product-page screenshot.
+    # POST is same-origin and carries no diagnostic token in the URL or body.
+    state_result_raw = driver.execute_async_script("""
+const stateUrl = arguments[0];
+const done = arguments[arguments.length - 1];
+fetch(stateUrl, {
+  method: "POST",
+  credentials: "same-origin",
+  cache: "no-store",
+  redirect: "error",
+  referrerPolicy: "same-origin",
+  headers: {"Accept": "application/json"}
+}).then(async (response) => {
+  done(JSON.stringify({status: response.status, body: await response.text()}));
+}).catch(() => {
+  done(JSON.stringify({status: 0, body: ""}));
+});
+""", state_url)
+    try:
+        state_result = json.loads(state_result_raw)
+    except Exception:
+        state_result = {"status": 0, "body": ""}
+    state_status = int(state_result.get("status") or 0)
+    try:
+        state = json.loads(state_result.get("body") or "{}") if state_status == 200 else {}
+    except Exception:
+        state = {}
+    session_handoff_token_valid = state.get("session_handoff_token_valid") is True
+    preview_marker_exact = state.get("preview_marker_exact") is True
+    store_key_present = state.get("store_access_key_present") is True
+    store_key_matches = state.get("store_access_key_matches_runtime") is True
+    runtime_storefront_id = int(state.get("runtime_storefront_id") or 0)
+    runtime_storefront_status = str(state.get("runtime_storefront_status", ""))
+
+    print(f"SESSION_STATE_HTTP={state_status}")
+    print(f"SESSION_HANDOFF_TOKEN_VALID={session_handoff_token_valid}")
+    print(f"SESSION_PREVIEW_MARKER_EXACT={preview_marker_exact}")
+    print(f"SESSION_STORE_KEY_PRESENT={store_key_present}")
+    print(f"SESSION_STORE_KEY_MATCHES_RUNTIME={store_key_matches}")
+    print(f"SESSION_RUNTIME_STOREFRONT_ID={runtime_storefront_id}")
+    print(f"SESSION_RUNTIME_STOREFRONT_STATUS={runtime_storefront_status}")
+
     with open(summary_file, "w", encoding="utf-8") as fh:
         fh.write("PRODUCT_ID=1158\n")
+        fh.write(f"SESSION_STATE_HTTP={state_status}\n")
+        fh.write(f"SESSION_HANDOFF_TOKEN_VALID={'YES' if session_handoff_token_valid else 'NO'}\n")
+        fh.write(f"SESSION_PREVIEW_MARKER_EXACT={'YES' if preview_marker_exact else 'NO'}\n")
+        fh.write(f"SESSION_STORE_KEY_PRESENT={'YES' if store_key_present else 'NO'}\n")
+        fh.write(f"SESSION_STORE_KEY_MATCHES_RUNTIME={'YES' if store_key_matches else 'NO'}\n")
+        fh.write(f"SESSION_RUNTIME_STOREFRONT_ID={runtime_storefront_id}\n")
+        fh.write(f"SESSION_RUNTIME_STOREFRONT_STATUS={runtime_storefront_status}\n")
         fh.write(f"URL_SCOPE={'PASS' if current_parts.scheme == 'https' and current_parts.hostname == 'talario.ru' and current_parts.path.startswith('/dev_copy/') else 'FAIL'}\n")
         fh.write(f"MAINTENANCE={'YES' if has_maintenance else 'NO'}\n")
         fh.write(f"LOGIN={'YES' if has_login else 'NO'}\n")
