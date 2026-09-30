@@ -989,7 +989,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "['error' => 'invalid_address']",
+            "['error' => 'invalid_product_address']",
             $this->write_capability
         );
         self::assertStringContainsString(
