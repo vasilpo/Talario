@@ -927,6 +927,54 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'duration' => \$item['duration']", $this->write_capability);
     }
 
+    public function testPartnerSyncSeparatesEcarterBookingWindowFromActualSlot(): void
+    {
+        self::assertStringContainsString(
+            'function fn_talario_analytics_partner_sync_build_variation_booking',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            '$window_end_minutes = $session_end_minutes + 1;',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'error' => 'booking_window_not_representable'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'reason' => 'duration_mismatch'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'variation_booking_windows' => \$public_variation_booking_windows",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'booking_window' => [",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'start_time' => \$session['start']",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'end_time' => \$session['end']",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'variation_readback_booking_window_mismatch'",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'reason' => 'minute_out_of_range'",
+            $this->write_capability
+        );
+        self::assertStringNotContainsString(
+            "InvalidArgumentException('booking_window_minute_out_of_range')",
+            $this->write_capability
+        );
+    }
+
     public function testPartnerSyncWriteRejectsPartnerReassignment(): void
     {
         self::assertStringContainsString("['error' => 'company_change_forbidden']", $this->write_capability);
