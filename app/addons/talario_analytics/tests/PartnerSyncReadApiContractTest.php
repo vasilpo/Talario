@@ -216,6 +216,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('fn_init_user_session_data(', $this->controller);
         self::assertStringNotContainsString("\$guest_auth['area'] = 'A'", $this->controller);
         self::assertStringContainsString("'store_access_key' => \$store_access_key", $this->controller);
+        self::assertStringContainsString("\$storefront_repository->findByUrl('talario.ru')", $this->controller);
+        self::assertStringContainsString("\$storefront_repository->findDefault()", $this->controller);
+        self::assertStringContainsString("\$storefront->getCompanyIds()", $this->controller);
+        self::assertStringContainsString("'pilot_preview_storefront_scope_invalid'", $this->controller);
+        self::assertStringNotContainsString("\$storefront_repository->findByCompanyId(39)", $this->controller);
         self::assertStringContainsString("'talario_partner_sync_preview' => [", $this->controller);
         self::assertStringContainsString("'purpose' => 'visual_acceptance'", $this->controller);
         self::assertStringContainsString("'&skey=' . rawurlencode(\$session_key)", $this->controller);
