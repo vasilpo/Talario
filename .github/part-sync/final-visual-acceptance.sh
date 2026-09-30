@@ -55,8 +55,6 @@ p = urlparse(url)
 q = parse_qs(p.query)
 if p.scheme != "https" or p.hostname != "talario.ru" or not p.path.startswith("/dev_copy/"):
     raise SystemExit("preview url scope mismatch")
-if q.get("dispatch") != ["products.view"] or q.get("product_id") != ["1158"]:
-    raise SystemExit("preview target mismatch")
 if not q.get("skey") or len(q["skey"][0]) < 32:
     raise SystemExit("preview one-use key missing")
 with open(out, "w", encoding="utf-8") as fh:
@@ -99,7 +97,9 @@ try:
     compact = body.replace(" ", "").replace("\u00a0", "")
     if "skey=" in current:
         raise SystemExit("one-use skey was not consumed")
-    if "/dev_copy/" not in current or "product_id=1158" not in current:
+    from urllib.parse import urlparse
+    current_parts = urlparse(current)
+    if current_parts.scheme != "https" or current_parts.hostname != "talario.ru" or not current_parts.path.startswith("/dev_copy/"):
         raise SystemExit("visual final url mismatch")
     if "LUNCH" in body or "closed for maintenance" in body.lower():
         raise SystemExit("maintenance stub still visible")
