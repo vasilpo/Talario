@@ -1602,6 +1602,48 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_storefront_key_unavailable']);
     }
 
+    // Bounded read-only diagnostics for the final dev_copy visual closure gate.
+    $probe_auth = (array) (Tygh::$app['session']['auth'] ?? []);
+    $probe_normal = fn_get_product_data(
+        1158,
+        $probe_auth,
+        CART_LANGUAGE,
+        '?:products.product_id',
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    );
+    $probe_preview = fn_get_product_data(
+        1158,
+        $probe_auth,
+        CART_LANGUAGE,
+        '?:products.product_id',
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+    );
+    $company_status = (string) db_get_field(
+        'SELECT status FROM ?:companies WHERE company_id = ?i',
+        39
+    );
+    $main_category = db_get_row(
+        'SELECT c.category_id, c.status, c.storefront_id'
+        . ' FROM ?:products_categories pc'
+        . ' INNER JOIN ?:categories c ON c.category_id = pc.category_id'
+        . ' WHERE pc.product_id = ?i AND pc.link_type = ?s'
+        . ' LIMIT 1',
+        1158,
+        'M'
+    ) ?: [];
+
     try {
         $session_key = bin2hex(random_bytes(24));
     } catch (Throwable $e) {
@@ -1651,6 +1693,16 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         'company_id' => 39,
         'status' => 'H',
         'single_use' => true,
+        'visibility' => [
+            'normal' => !empty($probe_normal),
+            'preview' => !empty($probe_preview),
+            'company_status' => $company_status,
+            'main_category_id' => (int) ($main_category['category_id'] ?? 0),
+            'main_category_status' => (string) ($main_category['status'] ?? ''),
+            'main_category_storefront_id' => (int) ($main_category['storefront_id'] ?? 0),
+            'resolved_storefront_id' => (int) $storefront->storefront_id,
+            'company_scope' => $company_ids ? in_array(39, $company_ids, true) : true,
+        ],
         'preview_url' => $preview_url,
     ]);
 }
