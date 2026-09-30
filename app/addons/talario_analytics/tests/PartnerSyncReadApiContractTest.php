@@ -229,6 +229,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v4'", $this->controller);
         self::assertStringContainsString("'single_use' => true", $this->controller);
         self::assertStringContainsString("'state_url' => \$state_url", $this->controller);
+        self::assertStringContainsString(
+            "'https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.penaty_preview_state'",
+            $this->controller
+        );
         self::assertStringContainsString("'talario_partner_sync_preview_state_token' => \$state_token", $this->controller);
         self::assertStringContainsString("'talario_partner_sync_preview_state_issued_at' => time()", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview_state', $this->controller);
