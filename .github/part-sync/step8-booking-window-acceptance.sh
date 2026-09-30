@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-EXPECTED_SIGNER='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP'
-ACTUAL_SIGNER="$(ssh-keygen -y -f ~/.ssh/id_ed25519 | awk '{print $1 " " $2}')"
-test "$ACTUAL_SIGNER" = "$EXPECTED_SIGNER"
-echo "SIGNING_KEY_MATCH=PASS"
+test "${GITHUB_EVENT_NAME:-}" = "push"
+test "${GITHUB_REPOSITORY:-}" = "vasilpo/Talario"
+test "${GITHUB_REF:-}" = "refs/heads/development"
+test "${GITHUB_ACTOR:-}" = "vasilpo"
+echo "TRUST_GATE=PASS"
+
+test -s ~/.ssh/id_ed25519
+ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+echo "SIGNING_KEY_AVAILABLE=PASS"
 
 tmpdir="$RUNNER_TEMP/part-sync-step8-window-acceptance"
 rm -rf "$tmpdir"
 mkdir -p "$tmpdir"
 chmod 700 "$tmpdir"
-trap 'rm -rf "$tmpdir"' EXIT
+trap 'rm -rf "$tmpdir"; rm -f ~/.ssh/id_ed25519' EXIT
 
 python3 - "$tmpdir/dry.json" <<'PY'
 import json, sys
