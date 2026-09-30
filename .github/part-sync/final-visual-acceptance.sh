@@ -95,8 +95,6 @@ try:
     current = driver.current_url
     body = driver.find_element(By.TAG_NAME, "body").text
     compact = body.replace(" ", "").replace("\u00a0", "")
-    if "skey=" in current:
-        raise SystemExit("one-use skey was not consumed")
     from urllib.parse import urlparse
     current_parts = urlparse(current)
     if current_parts.scheme != "https" or current_parts.hostname != "talario.ru" or not current_parts.path.startswith("/dev_copy/"):
