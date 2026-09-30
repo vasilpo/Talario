@@ -1581,12 +1581,20 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
 
     /** @var \Tygh\Storefront\Repository $storefront_repository */
     $storefront_repository = Tygh::$app['storefront.repository'];
-    $storefront = $storefront_repository->findByCompanyId(39);
+
+    // The one-time preview URL is hard-bound below to talario.ru/dev_copy, so
+    // resolve the access key exactly the same way as the storefront runtime:
+    // request host first, default storefront only as the native fallback.
+    $storefront = $storefront_repository->findByUrl('talario.ru');
     if (!$storefront) {
         $storefront = $storefront_repository->findDefault();
     }
     if (!$storefront) {
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_storefront_unavailable']);
+    }
+    $company_ids = $storefront->getCompanyIds();
+    if ($company_ids && !in_array(39, $company_ids, true)) {
+        fn_talario_analytics_json_response(409, ['error' => 'pilot_preview_storefront_scope_invalid']);
     }
 
     $store_access_key = trim((string) $storefront->access_key);
