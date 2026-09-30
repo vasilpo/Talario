@@ -1416,6 +1416,24 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+
+    public function testPartnerSyncLessonMapUsesDedicatedAddressAndStockGeoMaps(): void
+    {
+        $template_path = dirname(__DIR__, 4)
+            . '/design/themes/abt__unitheme2/templates/addons/talario_analytics/hooks/products/bottom_product_layer.post.tpl';
+
+        self::assertFileExists($template_path);
+        $template = (string) file_get_contents($template_path);
+
+        self::assertStringContainsString('$product.address', $template);
+        self::assertStringContainsString('cm-geo-map-container', $template);
+        self::assertStringContainsString('cm-aom-map-container', $template);
+        self::assertStringContainsString('data-ca-aom-address', $template);
+        self::assertStringContainsString('js/addons/geo_maps/func.js', $template);
+        self::assertStringNotContainsString('<iframe', $template);
+        self::assertStringNotContainsString('full_description', $template);
+    }
+
 }
 
 
