@@ -219,6 +219,18 @@ function fn_talario_analytics_partner_sync_write_normalize_product(array $payloa
         fn_talario_analytics_json_response(400, ['error' => 'category_ids_required']);
     }
 
+    if (array_key_exists('address', $product)) {
+        $address = trim((string) $product['address']);
+        if (mb_strlen($address, 'UTF-8') > 255
+            || str_contains($address, '<')
+            || str_contains($address, '>')
+            || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', $address)
+        ) {
+            fn_talario_analytics_json_response(400, ['error' => 'invalid_product_address']);
+        }
+        $data['address'] = $address;
+    }
+
     foreach (['short_description', 'full_description', 'meta_keywords'] as $field) {
         if (!array_key_exists($field, $product)) {
             continue;
@@ -1988,7 +2000,7 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
     $lang_code = (string) \Tygh\Registry::get('settings.Appearance.default_language') ?: 'ru';
     $row = db_get_row(
         'SELECT p.product_id, p.company_id, p.status, p.details_layout, pd.product, pd.short_description,'
-        . ' pd.full_description, COALESCE(pp.price, 0) AS price, COALESCE(pop.total, 0) AS popularity'
+        . ' pd.full_description, pd.address, COALESCE(pp.price, 0) AS price, COALESCE(pop.total, 0) AS popularity'
         . ' FROM ?:products p'
         . ' INNER JOIN ?:product_descriptions pd ON pd.product_id = p.product_id AND pd.lang_code = ?s'
         . ' LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id'
@@ -2038,6 +2050,7 @@ function fn_talario_analytics_partner_sync_write_readback(int $product_id): arra
         'popularity' => (int) $row['popularity'],
         'short_description' => (string) $row['short_description'],
         'full_description' => (string) $row['full_description'],
+        'address' => (string) $row['address'],
         'filter_features' => fn_talario_analytics_partner_sync_public_filter_feature_readback(
             $product_id,
             $lang_code
