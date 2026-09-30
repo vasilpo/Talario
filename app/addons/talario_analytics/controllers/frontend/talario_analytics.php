@@ -1727,10 +1727,25 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_key_unavailable']);
     }
 
-    // Use CS-Cart's native one-time skey handoff, but store only the closed-storefront
-    // access key and an exact-target marker. No user/auth/admin-area impersonation.
+    // The skey handoff replaces the entire session. Preserve only the already-initialized
+    // anonymous storefront auth shape required by CS-Cart permission checks. Never copy
+    // an authenticated/admin/vendor identity into the visual-acceptance session.
+    if (
+        (int) ($probe_auth['user_id'] ?? 0) !== 0
+        || (int) ($probe_auth['company_id'] ?? 0) !== 0
+        || (string) ($probe_auth['user_type'] ?? '') !== 'C'
+        || (string) ($probe_auth['area'] ?? '') !== 'C'
+        || (string) ($probe_auth['is_root'] ?? '') !== 'N'
+        || !isset($probe_auth['usergroup_ids'])
+        || !is_array($probe_auth['usergroup_ids'])
+    ) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_guest_session_invalid']);
+    }
+
     // Core frontend/init.php clears the skey storage entry before unserialize.
     $sess_data = [
+        'auth' => $probe_auth,
+        'cart' => [],
         'store_access_key' => $store_access_key,
         'talario_partner_sync_preview' => [
             'product_id' => 1158,
