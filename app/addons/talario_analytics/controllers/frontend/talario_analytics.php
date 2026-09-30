@@ -1874,7 +1874,7 @@ function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
     ]);
 }
 
-if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
