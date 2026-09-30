@@ -230,8 +230,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'single_use' => true", $this->controller);
         self::assertStringContainsString("'state_url' => \$state_url", $this->controller);
         self::assertStringContainsString("'talario_partner_sync_preview_state_token' => \$state_token", $this->controller);
+        self::assertStringContainsString("'talario_partner_sync_preview_state_issued_at' => time()", $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview_state', $this->controller);
-        self::assertStringContainsString("'state_token_match' => true", $this->controller);
+        self::assertStringContainsString("strtoupper((string) (\$_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST'", $this->controller);
+        self::assertStringContainsString("HTTP_ORIGIN", $this->controller);
+        self::assertStringNotContainsString("penaty_preview_state?state_token=", $this->controller);
+        self::assertStringNotContainsString("(\$_GET['state_token'] ?? '')", $this->controller);
+        self::assertStringNotContainsString("(\$_POST['state_token'] ?? '')", $this->controller);
+        self::assertStringContainsString("($now - $issued_at) <= 300", $this->controller);
+        self::assertStringContainsString("'session_handoff_token_valid' => true", $this->controller);
         self::assertStringContainsString("'preview_marker_exact' => \$preview_exact", $this->controller);
         self::assertStringContainsString("'store_access_key_present'", $this->controller);
         self::assertStringContainsString("'store_access_key_matches_runtime'", $this->controller);
