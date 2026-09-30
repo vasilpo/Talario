@@ -15,7 +15,7 @@ tmpdir="$RUNNER_TEMP/part-sync-step8-window-acceptance"
 rm -rf "$tmpdir"
 mkdir -p "$tmpdir"
 chmod 700 "$tmpdir"
-trap 'rm -rf "$tmpdir"; rm -f ~/.ssh/id_ed25519' EXIT
+trap 'rm -rf "$tmpdir"' EXIT
 
 python3 - "$tmpdir/dry.json" <<'PY'
 import json, sys
