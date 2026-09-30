@@ -38,11 +38,11 @@ code="$(curl --silent --show-error --request POST \
 echo "PREVIEW_HTTP=$code"
 test "$code" = "200"
 
-python3 - "$tmp/preview.json" "$tmp/preview_url" <<'PY'
+python3 - "$tmp/preview.json" "$tmp/preview_url" "$tmp/state_url" <<'PY'
 import json, sys
 from urllib.parse import urlparse, parse_qs
 
-src, out = sys.argv[1], sys.argv[2]
+src, out, state_out = sys.argv[1:4]
 d = json.load(open(src, encoding="utf-8"))
 if d.get("schema_version") != "partner-sync.preview.v4":
     raise SystemExit("preview schema mismatch")
@@ -66,29 +66,39 @@ safe = {
 for key, value in safe.items():
     print(f"VISIBILITY_{key}={value}")
 url = str(d.get("preview_url") or "")
+state_url = str(d.get("state_url") or "")
 p = urlparse(url)
 q = parse_qs(p.query)
+sp = urlparse(state_url)
+sq = parse_qs(sp.query)
 if p.scheme != "https" or p.hostname != "talario.ru" or not p.path.startswith("/dev_copy/"):
     raise SystemExit("preview url scope mismatch")
 if not q.get("skey") or len(q["skey"][0]) < 32:
     raise SystemExit("preview one-use key missing")
+if sp.scheme != "https" or sp.hostname != "talario.ru" or not sp.path.startswith("/dev_copy/"):
+    raise SystemExit("preview state url scope mismatch")
+if not sq.get("state_token") or len(sq["state_token"][0]) < 32:
+    raise SystemExit("preview state token missing")
 with open(out, "w", encoding="utf-8") as fh:
     fh.write(url)
+with open(state_out, "w", encoding="utf-8") as fh:
+    fh.write(state_url)
 print("PREVIEW_RESOLVE=PASS")
 PY
-chmod 600 "$tmp/preview_url"
+chmod 600 "$tmp/preview_url" "$tmp/state_url"
 
 command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null || command -v chromium >/dev/null
 python3 -m pip install --quiet selenium
 
-python3 - "$tmp/preview_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
+python3 - "$tmp/preview_url" "$tmp/state_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
 import os, sys, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-url_file, screenshot, summary_file = sys.argv[1:4]
+url_file, state_url_file, screenshot, summary_file = sys.argv[1:5]
 url = open(url_file, encoding="utf-8").read().strip()
+state_url = open(state_url_file, encoding="utf-8").read().strip()
 
 opts = Options()
 opts.add_argument("--headless=new")
@@ -140,8 +150,40 @@ try:
         raise SystemExit("screenshot failed")
     os.chmod(screenshot, 0o600)
 
+    # Probe the same browser session after preserving the product-page screenshot.
+    driver.get(state_url)
+    deadline = time.time() + 10
+    while time.time() < deadline:
+        if driver.execute_script("return document.readyState") == "complete":
+            break
+        time.sleep(0.2)
+    state_body = driver.find_element(By.TAG_NAME, "body").text
+    try:
+        state = __import__("json").loads(state_body)
+    except Exception:
+        state = {}
+    state_token_match = state.get("state_token_match") is True
+    preview_marker_exact = state.get("preview_marker_exact") is True
+    store_key_present = state.get("store_access_key_present") is True
+    store_key_matches = state.get("store_access_key_matches_runtime") is True
+    runtime_storefront_id = int(state.get("runtime_storefront_id") or 0)
+    runtime_storefront_status = str(state.get("runtime_storefront_status", ""))
+
+    print(f"SESSION_STATE_TOKEN_MATCH={state_token_match}")
+    print(f"SESSION_PREVIEW_MARKER_EXACT={preview_marker_exact}")
+    print(f"SESSION_STORE_KEY_PRESENT={store_key_present}")
+    print(f"SESSION_STORE_KEY_MATCHES_RUNTIME={store_key_matches}")
+    print(f"SESSION_RUNTIME_STOREFRONT_ID={runtime_storefront_id}")
+    print(f"SESSION_RUNTIME_STOREFRONT_STATUS={runtime_storefront_status}")
+
     with open(summary_file, "w", encoding="utf-8") as fh:
         fh.write("PRODUCT_ID=1158\n")
+        fh.write(f"SESSION_STATE_TOKEN_MATCH={'YES' if state_token_match else 'NO'}\n")
+        fh.write(f"SESSION_PREVIEW_MARKER_EXACT={'YES' if preview_marker_exact else 'NO'}\n")
+        fh.write(f"SESSION_STORE_KEY_PRESENT={'YES' if store_key_present else 'NO'}\n")
+        fh.write(f"SESSION_STORE_KEY_MATCHES_RUNTIME={'YES' if store_key_matches else 'NO'}\n")
+        fh.write(f"SESSION_RUNTIME_STOREFRONT_ID={runtime_storefront_id}\n")
+        fh.write(f"SESSION_RUNTIME_STOREFRONT_STATUS={runtime_storefront_status}\n")
         fh.write(f"URL_SCOPE={'PASS' if current_parts.scheme == 'https' and current_parts.hostname == 'talario.ru' and current_parts.path.startswith('/dev_copy/') else 'FAIL'}\n")
         fh.write(f"MAINTENANCE={'YES' if has_maintenance else 'NO'}\n")
         fh.write(f"LOGIN={'YES' if has_login else 'NO'}\n")
