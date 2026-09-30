@@ -736,24 +736,43 @@ function fn_talario_analytics_catalog_response(): void
 
 function fn_talario_analytics_partner_sync_penaty_preview_state(): void
 {
+    // Dev-only same-origin diagnostic. POST + exact Origin + a random,
+    // short-lived server-side session nonce provide CSRF/replay protection.
+    // The nonce never appears in a URL, response, log or artifact.
     if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
-
-    $provided = trim((string) ($_POST['state_token'] ?? ''));
-    $stored = (string) (Tygh::$app['session']['talario_partner_sync_preview_state_token'] ?? '');
-    $token_match = strlen($provided) >= 32
-        && strlen($stored) >= 32
-        && hash_equals($stored, $provided);
-
-    if (!$token_match) {
+    if (strtolower(trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''))) !== 'https://talario.ru') {
         fn_talario_analytics_json_response(403, [
             'schema_version' => 'partner-sync.preview-state.v1',
-            'state_token_match' => false,
+            'session_handoff_token_valid' => false,
         ]);
     }
 
-    unset(Tygh::$app['session']['talario_partner_sync_preview_state_token']);
+    $stored = (string) (Tygh::$app['session']['talario_partner_sync_preview_state_token'] ?? '');
+    $issued_at = (int) (Tygh::$app['session']['talario_partner_sync_preview_state_issued_at'] ?? 0);
+    $now = time();
+    $token_valid = strlen($stored) >= 32
+        && $issued_at > 0
+        && $now >= $issued_at
+        && ($now - $issued_at) <= 300;
+
+    if (!$token_valid) {
+        unset(
+            Tygh::$app['session']['talario_partner_sync_preview_state_token'],
+            Tygh::$app['session']['talario_partner_sync_preview_state_issued_at']
+        );
+        fn_talario_analytics_json_response(403, [
+            'schema_version' => 'partner-sync.preview-state.v1',
+            'session_handoff_token_valid' => false,
+        ]);
+    }
+
+    // Successful inspection consumes the random nonce: single-use by construction.
+    unset(
+        Tygh::$app['session']['talario_partner_sync_preview_state_token'],
+        Tygh::$app['session']['talario_partner_sync_preview_state_issued_at']
+    );
 
     $preview = Tygh::$app['session']['talario_partner_sync_preview'] ?? null;
     $preview_exact = is_array($preview)
@@ -767,7 +786,7 @@ function fn_talario_analytics_partner_sync_penaty_preview_state(): void
 
     fn_talario_analytics_json_response(200, [
         'schema_version' => 'partner-sync.preview-state.v1',
-        'state_token_match' => true,
+        'session_handoff_token_valid' => true,
         'preview_marker_exact' => $preview_exact,
         'store_access_key_present' => $session_store_key !== '',
         'store_access_key_matches_runtime' => $session_store_key !== ''
@@ -777,7 +796,6 @@ function fn_talario_analytics_partner_sync_penaty_preview_state(): void
         'runtime_storefront_status' => (string) $runtime_storefront->status,
     ]);
 }
-
 function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
 {
     $is_development = function_exists('fn_is_development') && fn_is_development();
@@ -1705,6 +1723,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
             'purpose' => 'visual_acceptance',
         ],
         'talario_partner_sync_preview_state_token' => $state_token,
+        'talario_partner_sync_preview_state_issued_at' => time(),
     ];
     $serialized = serialize($sess_data);
     if ($serialized === '' || strlen($serialized) > 4096) {
@@ -1722,7 +1741,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     $lang_code = (string) Registry::get('settings.Appearance.frontend_default_language') ?: 'ru';
     $preview_url = (string) fn_url($redirect_uri, 'C', 'https', $lang_code);
     $state_url = (string) fn_url(
-        'talario_analytics.penaty_preview_state?state_token=' . rawurlencode($state_token),
+        'talario_analytics.penaty_preview_state',
         'C',
         'https',
         $lang_code
