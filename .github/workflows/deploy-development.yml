@@ -266,6 +266,12 @@ jobs:
           print("VARIATION_FILTER_COPY=PASS")
           PY
 
+      - name: Checkout Step 8 acceptance script
+        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: step8 booking-window acceptance runner') }}"
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - name: PART-SYNC Step 8 booking-window acceptance
         if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: step8 booking-window acceptance runner') }}"
         shell: bash
