@@ -14,7 +14,8 @@ tmp="${RUNNER_TEMP}/part-sync-final-visual"
 evidence="${RUNNER_TEMP}/part-sync-final-visual-evidence"
 rm -rf "$tmp" "$evidence"
 mkdir -p "$tmp" "$evidence"
-chmod 700 "$tmp" "$evidence"
+chmod 700 "$tmp"
+chmod 700 "$evidence"
 trap 'rm -rf "$tmp"' EXIT
 
 printf '%s' '{"product_id":1158}' > "$tmp/body.json"
@@ -68,7 +69,7 @@ command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null ||
 python3 -m pip install --quiet selenium
 
 python3 - "$tmp/preview_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
-import sys, time
+import os, sys, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -124,6 +125,7 @@ try:
     time.sleep(1)
     if not driver.save_screenshot(screenshot):
         raise SystemExit("screenshot failed")
+    os.chmod(screenshot, 0o600)
 
     with open(summary_file, "w", encoding="utf-8") as fh:
         fh.write("PRODUCT_ID=1158\n")
@@ -140,6 +142,7 @@ try:
         fh.write(f"SELECT_COUNT={select_count}\n")
         fh.write(f"BUTTON_COUNT={button_count}\n")
         fh.write(f"SCREENSHOT_HEIGHT={height}\n")
+    os.chmod(summary_file, 0o600)
 
     if current_parts.scheme != "https" or current_parts.hostname != "talario.ru" or not current_parts.path.startswith("/dev_copy/"):
         raise SystemExit("visual final url mismatch")
