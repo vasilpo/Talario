@@ -241,7 +241,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("penaty_preview_state?state_token=", $this->controller);
         self::assertStringNotContainsString("(\$_GET['state_token'] ?? '')", $this->controller);
         self::assertStringNotContainsString("(\$_POST['state_token'] ?? '')", $this->controller);
-        self::assertStringContainsString("($now - $issued_at) <= 300", $this->controller);
+        self::assertStringContainsString("(\$now - \$issued_at) <= 300", $this->controller);
         self::assertStringContainsString("'session_handoff_token_valid' => true", $this->controller);
         self::assertStringContainsString("'preview_marker_exact' => \$preview_exact", $this->controller);
         self::assertStringContainsString("'store_access_key_present'", $this->controller);
