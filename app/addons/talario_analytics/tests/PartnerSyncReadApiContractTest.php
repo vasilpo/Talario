@@ -228,6 +228,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
         self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v4'", $this->controller);
         self::assertStringContainsString("'single_use' => true", $this->controller);
+        self::assertStringContainsString("'visibility' => [", $this->controller);
+        self::assertStringContainsString("'normal' => !empty(\$probe_normal)", $this->controller);
+        self::assertStringContainsString("'preview' => !empty(\$probe_preview)", $this->controller);
+        self::assertStringContainsString("'company_status' => \$company_status", $this->controller);
+        self::assertStringContainsString("'main_category_storefront_id'", $this->controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['store_access_key'])", $this->preview_post_controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $this->preview_post_controller);
         self::assertStringContainsString("(int) \$_REQUEST['product_id'] === 1158", $this->preview_post_controller);
