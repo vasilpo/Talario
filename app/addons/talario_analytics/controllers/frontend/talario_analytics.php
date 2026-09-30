@@ -1585,7 +1585,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     // The one-time preview URL is hard-bound below to talario.ru/dev_copy, so
     // resolve the access key exactly the same way as the storefront runtime:
     // request host first, default storefront only as the native fallback.
-    $storefront = $storefront_repository->findByUrl('talario.ru');
+    $storefront = $storefront_repository->findByUrl('https://talario.ru/dev_copy/');
     if (!$storefront) {
         $storefront = $storefront_repository->findDefault();
     }
