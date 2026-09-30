@@ -310,7 +310,10 @@ function fn_talario_analytics_partner_sync_time_to_minutes(string $time): ?int
 function fn_talario_analytics_partner_sync_minutes_to_time(int $minutes): string
 {
     if ($minutes < 0 || $minutes > 1439) {
-        throw new InvalidArgumentException('booking_window_minute_out_of_range');
+        fn_talario_analytics_json_response(409, [
+            'error' => 'booking_window_not_representable',
+            'reason' => 'minute_out_of_range',
+        ]);
     }
     return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
 }
