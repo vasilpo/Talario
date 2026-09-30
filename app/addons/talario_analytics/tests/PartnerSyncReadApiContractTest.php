@@ -946,7 +946,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "'variation_booking_windows' => $public_variation_booking_windows",
+            "'variation_booking_windows' => \$public_variation_booking_windows",
             $this->write_capability
         );
         self::assertStringContainsString(
@@ -954,11 +954,11 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $this->write_capability
         );
         self::assertStringContainsString(
-            "'start_time' => $session['start']",
+            "'start_time' => \$session['start']",
             $this->write_capability
         );
         self::assertStringContainsString(
-            "'end_time' => $session['end']",
+            "'end_time' => \$session['end']",
             $this->write_capability
         );
         self::assertStringContainsString(
