@@ -218,7 +218,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'store_access_key' => \$store_access_key", $this->controller);
         self::assertStringContainsString("'talario_partner_sync_preview' => [", $this->controller);
         self::assertStringContainsString("'purpose' => 'visual_acceptance'", $this->controller);
-        self::assertStringContainsString("'skey=' . rawurlencode(\$session_key)", $this->controller);
+        self::assertStringContainsString("'&skey=' . rawurlencode(\$session_key)", $this->controller);
         self::assertStringContainsString("serialize(\$sess_data)", $this->controller);
         self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
         self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v4'", $this->controller);
