@@ -17,6 +17,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $cli_runner;
     private string $feature_discovery_runner;
     private string $deploy_workflow;
+    private string $preview_post_controller;
 
     protected function setUp(): void
     {
@@ -35,6 +36,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
         $this->deploy_workflow = (string) file_get_contents(
             dirname(__DIR__, 4) . '/.github/workflows/deploy-development.yml'
+        );
+        $this->preview_post_controller = (string) file_get_contents(
+            dirname(__DIR__) . '/controllers/frontend/products.post.php'
         );
     }
 
@@ -210,14 +214,20 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('fn_get_company_root_admin_user_id', $this->controller);
         self::assertStringNotContainsString('fn_fill_auth(', $this->controller);
         self::assertStringNotContainsString('fn_init_user_session_data(', $this->controller);
-        self::assertStringNotContainsString('store_access_key', $this->controller);
         self::assertStringNotContainsString("\$guest_auth['area'] = 'A'", $this->controller);
-        self::assertStringNotContainsString("'talario_partner_sync_preview'", $this->controller);
-        self::assertStringNotContainsString("'action=preview'", $this->controller);
-        self::assertStringNotContainsString("'skey='", $this->controller);
-        self::assertStringNotContainsString("serialize(\$sess_data)", $this->controller);
+        self::assertStringContainsString("'store_access_key' => \$store_access_key", $this->controller);
+        self::assertStringContainsString("'talario_partner_sync_preview' => [", $this->controller);
+        self::assertStringContainsString("'purpose' => 'visual_acceptance'", $this->controller);
+        self::assertStringContainsString("'&skey=' . rawurlencode(\$session_key)", $this->controller);
+        self::assertStringContainsString("serialize(\$sess_data)", $this->controller);
         self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
-        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v3'", $this->controller);
+        self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v4'", $this->controller);
+        self::assertStringContainsString("'single_use' => true", $this->controller);
+        self::assertStringContainsString("unset(Tygh::\$app['session']['store_access_key'])", $this->preview_post_controller);
+        self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $this->preview_post_controller);
+        self::assertStringContainsString("(int) \$_REQUEST['product_id'] === 1158", $this->preview_post_controller);
+        self::assertStringContainsString("'visual_acceptance'", $this->preview_post_controller);
+        self::assertStringNotContainsString("['auth']", $this->preview_post_controller);
     }
 
     public function testFeatureDiscoveryIsBoundedReadOnlyDevCopyProbe(): void
