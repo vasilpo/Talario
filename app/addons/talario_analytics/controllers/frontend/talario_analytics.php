@@ -1589,12 +1589,40 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_storefront_unavailable']);
     }
 
-    // CS-Cart's storefront product reader already allows status H by direct URL.
-    // Therefore visual acceptance needs no admin area, user impersonation, session
-    // handoff or preview action. Keep the signed endpoint only as an exact-target
-    // dev_copy URL resolver for the controlled Penaty pilot.
+    $store_access_key = trim((string) $storefront->access_key);
+    if ($store_access_key === '') {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_storefront_key_unavailable']);
+    }
+
+    try {
+        $session_key = bin2hex(random_bytes(24));
+    } catch (Throwable $e) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_key_unavailable']);
+    }
+
+    // Use CS-Cart's native one-time skey handoff, but store only the closed-storefront
+    // access key and an exact-target marker. No user/auth/admin-area impersonation.
+    // Core frontend/init.php clears the skey storage entry before unserialize.
+    $sess_data = [
+        'store_access_key' => $store_access_key,
+        'talario_partner_sync_preview' => [
+            'product_id' => 1158,
+            'purpose' => 'visual_acceptance',
+        ],
+    ];
+    $serialized = serialize($sess_data);
+    if ($serialized === '' || strlen($serialized) > 4096) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_invalid']);
+    }
+
+    $storage_key = 'session_' . $session_key . '_data';
+    if (!fn_set_storage_data($storage_key, $serialized)) {
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_store_failed']);
+    }
+
     $redirect_uri = 'products.view?product_id=1158'
-        . '&storefront_id=' . (int) $storefront->storefront_id;
+        . '&storefront_id=' . (int) $storefront->storefront_id
+        . '&skey=' . rawurlencode($session_key);
     $lang_code = (string) Registry::get('settings.Appearance.frontend_default_language') ?: 'ru';
     $preview_url = (string) fn_url($redirect_uri, 'C', 'https', $lang_code);
 
@@ -1605,14 +1633,16 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         || strtolower((string) ($parts['host'] ?? '')) !== 'talario.ru'
         || strpos((string) ($parts['path'] ?? ''), '/dev_copy/') !== 0
     ) {
+        fn_set_storage_data($storage_key, '');
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_url_invalid']);
     }
 
     fn_talario_analytics_json_response(200, [
-        'schema_version' => 'partner-sync.preview.v3',
+        'schema_version' => 'partner-sync.preview.v4',
         'product_id' => 1158,
         'company_id' => 39,
         'status' => 'H',
+        'single_use' => true,
         'preview_url' => $preview_url,
     ]);
 }
@@ -1736,11 +1766,14 @@ if ($mode === 'crm') {
     }
 }
 
-// Signed Partner Sync apply authenticates with the dedicated Ed25519 request signature,
-// timestamp/replay guard and dev_copy-only runtime gate. It does not require the
-// separate read/catalog bearer credential.
+// Signed Partner Sync write/preview operations authenticate with the dedicated
+// Ed25519 request signature, timestamp/replay guard and dev_copy-only runtime gate.
+// They do not require the separate read/catalog bearer credential.
 if ($mode === 'partner_apply') {
     fn_talario_analytics_partner_sync_apply();
+}
+if ($mode === 'penaty_preview') {
+    fn_talario_analytics_partner_sync_penaty_preview();
 }
 
 $rate_count = fn_talario_analytics_rate_limit();
