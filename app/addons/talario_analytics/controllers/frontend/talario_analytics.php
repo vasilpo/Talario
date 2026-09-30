@@ -736,13 +736,27 @@ function fn_talario_analytics_catalog_response(): void
 
 function fn_talario_analytics_partner_sync_penaty_preview_state(): void
 {
-    // Dev-only same-origin diagnostic. POST + exact Origin + a random,
-    // short-lived server-side session nonce provide CSRF/replay protection.
+    // Dev-only browser diagnostic. POST + same-origin browser headers + a
+    // random short-lived server-session nonce provide layered CSRF/replay protection.
     // The nonce never appears in a URL, response, log or artifact.
     if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
-    if (strtolower(trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''))) !== 'https://talario.ru') {
+    $origin = strtolower(trim((string) ($_SERVER['HTTP_ORIGIN'] ?? '')));
+    $referer = trim((string) ($_SERVER['HTTP_REFERER'] ?? ''));
+    $referer_parts = parse_url($referer);
+    $same_dev_copy_referer = is_array($referer_parts)
+        && strtolower((string) ($referer_parts['scheme'] ?? '')) === 'https'
+        && strtolower((string) ($referer_parts['host'] ?? '')) === 'talario.ru'
+        && strpos((string) ($referer_parts['path'] ?? ''), '/dev_copy/') === 0;
+    $fetch_site = strtolower(trim((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '')));
+    $fetch_mode = strtolower(trim((string) ($_SERVER['HTTP_SEC_FETCH_MODE'] ?? '')));
+    if (
+        $origin !== 'https://talario.ru'
+        || !$same_dev_copy_referer
+        || $fetch_site !== 'same-origin'
+        || $fetch_mode !== 'cors'
+    ) {
         fn_talario_analytics_json_response(403, [
             'schema_version' => 'partner-sync.preview-state.v1',
             'session_handoff_token_valid' => false,
