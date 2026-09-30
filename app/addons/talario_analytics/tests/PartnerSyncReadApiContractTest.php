@@ -1383,6 +1383,39 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+
+    public function testPartnerSyncPersistsDedicatedLessonAddressAndReadback(): void
+    {
+        self::assertStringContainsString(
+            "array_key_exists('address', \$product)",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "mb_strlen(\$address, 'UTF-8') > 255",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "\$data['address'] = \$address;",
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            'pd.full_description, pd.address',
+            $this->write_capability
+        );
+        self::assertStringContainsString(
+            "'address' => (string) \$row['address']",
+            $this->write_capability
+        );
+
+        $design_addon = (string) file_get_contents(
+            dirname(__DIR__, 2) . '/sd_design_changes/addon.xml'
+        );
+        self::assertStringContainsString(
+            'ALTER TABLE ?:product_descriptions ADD address varchar(255)',
+            $design_addon
+        );
+    }
+
 }
 
 
