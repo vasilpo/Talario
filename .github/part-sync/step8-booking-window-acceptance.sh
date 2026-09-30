@@ -103,7 +103,7 @@ post_signed() {
     --write-out '%{http_code}'
 }
 
-dry_code="$(post_signed "$tmpdir/dry.json" 'part-sync-step8-window-dry-20260930-v1' "$tmpdir/dry.out")"
+dry_code="$(post_signed "$tmpdir/dry.json" 'part-sync-apply-step8-window-dry-20260930-v1' "$tmpdir/dry.out")"
 echo "DRY_HTTP=$dry_code"
 test "$dry_code" = "200"
 
@@ -162,7 +162,7 @@ with open(sys.argv[2],"w",encoding="utf-8") as fh:
     json.dump(p,fh,ensure_ascii=False,separators=(",",":"))
 PY
 
-create_code="$(post_signed "$tmpdir/create.json" 'part-sync-step8-window-create-20260930-v1' "$tmpdir/create.out")"
+create_code="$(post_signed "$tmpdir/create.json" 'part-sync-apply-step8-window-create-20260930-v1' "$tmpdir/create.out")"
 echo "CREATE_HTTP=$create_code"
 test "$create_code" = "201"
 
