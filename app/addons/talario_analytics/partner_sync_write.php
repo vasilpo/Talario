@@ -231,17 +231,6 @@ function fn_talario_analytics_partner_sync_write_normalize_product(array $payloa
         $data['address'] = $address;
     }
 
-    if (array_key_exists('address', $product)) {
-        $address = trim((string) $product['address']);
-        if (mb_strlen($address, 'UTF-8') > 255
-            || preg_match('/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/u', $address)
-            || str_contains($address, '<')
-            || str_contains($address, '>')
-        ) {
-            fn_talario_analytics_json_response(400, ['error' => 'invalid_address']);
-        }
-        $data['address'] = $address;
-    }
 
     foreach (['short_description', 'full_description', 'meta_keywords'] as $field) {
         if (!array_key_exists($field, $product)) {
