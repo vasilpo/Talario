@@ -893,6 +893,10 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         if (!$generic_request && !hash_equals($legacy_request_id, $request_id)) {
             fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
         }
+    } elseif ($purpose === 'lookup') {
+        if (!preg_match('/^part-sync-lookup-[A-Za-z0-9._:-]{6,96}$/', $request_id)) {
+            fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
+        }
     } else {
         fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
     }
@@ -1725,6 +1729,138 @@ function fn_talario_analytics_partner_sync_category_candidates(
     return array_slice($candidates, 0, 10);
 }
 
+function fn_talario_analytics_partner_sync_lookup(): void
+{
+    $max_payload_bytes = 4096;
+    $raw = file_get_contents('php://input', false, null, 0, $max_payload_bytes + 1);
+    if (!is_string($raw) || $raw === '' || strlen($raw) > $max_payload_bytes) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_payload']);
+    }
+
+    $payload = json_decode($raw, true);
+    if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_json']);
+    }
+
+    $keys = array_keys($payload);
+    sort($keys);
+    if ($keys !== ['approved_company_id', 'product_name', 'status']) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_lookup_contract']);
+    }
+
+    $company_id = (int) ($payload['approved_company_id'] ?? 0);
+    $product_name = trim((string) ($payload['product_name'] ?? ''));
+    $status = trim((string) ($payload['status'] ?? ''));
+
+    if ($company_id <= 0
+        || $product_name === ''
+        || mb_strlen($product_name, 'UTF-8') > 255
+        || $status !== 'H'
+    ) {
+        fn_talario_analytics_json_response(400, ['error' => 'invalid_lookup_contract']);
+    }
+
+    fn_talario_analytics_partner_sync_verify_penaty_signature('lookup', $raw);
+
+    $company_status = (string) db_get_field(
+        'SELECT status FROM ?:companies WHERE company_id = ?i',
+        $company_id
+    );
+    if ($company_status !== 'A') {
+        fn_talario_analytics_json_response(409, ['error' => 'lookup_company_not_active']);
+    }
+
+    $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+    $rows = db_get_array(
+        'SELECT p.product_id, p.company_id, p.status, p.parent_product_id, p.updated_timestamp,'
+        . ' pd.product, pd.short_description, pd.full_description, pd.address,'
+        . ' COALESCE(pp.price, 0) AS price'
+        . ' FROM ?:products p'
+        . ' INNER JOIN ?:product_descriptions pd'
+        . ' ON pd.product_id = p.product_id AND pd.lang_code = ?s'
+        . ' LEFT JOIN ?:product_prices pp ON pp.product_id = p.product_id'
+        . ' AND pp.lower_limit = 1 AND pp.usergroup_id = 0'
+        . ' WHERE p.company_id = ?i AND p.status = ?s AND p.parent_product_id = 0'
+        . ' AND pd.product = ?s'
+        . ' ORDER BY p.product_id DESC LIMIT 10',
+        $lang_code,
+        $company_id,
+        $status,
+        $product_name
+    );
+
+    $candidates = [];
+    foreach ($rows as $row) {
+        $product_id = (int) $row['product_id'];
+        $category_ids = array_map('intval', db_get_fields(
+            'SELECT category_id FROM ?:products_categories'
+            . ' WHERE product_id = ?i'
+            . ' ORDER BY position ASC, category_id ASC',
+            $product_id
+        ));
+        sort($category_ids, SORT_NUMERIC);
+
+        $group_id = (int) db_get_field(
+            'SELECT group_id FROM ?:product_variation_group_products'
+            . ' WHERE product_id = ?i'
+            . ' ORDER BY group_id DESC LIMIT 1',
+            $product_id
+        );
+        $variation_prices = [];
+        $variation_count = 0;
+        if ($group_id > 0) {
+            foreach (db_get_array(
+                'SELECT vgp.product_id, COALESCE(pp.price, 0) AS price'
+                . ' FROM ?:product_variation_group_products vgp'
+                . ' LEFT JOIN ?:product_prices pp ON pp.product_id = vgp.product_id'
+                . ' AND pp.lower_limit = 1 AND pp.usergroup_id = 0'
+                . ' WHERE vgp.group_id = ?i'
+                . ' ORDER BY vgp.product_id ASC',
+                $group_id
+            ) as $variation_row) {
+                $variation_prices[] = (float) $variation_row['price'];
+            }
+            $variation_count = count($variation_prices);
+            sort($variation_prices, SORT_NUMERIC);
+        }
+
+        $main_image = fn_get_image_pairs($product_id, 'product', 'M', true, true, DEFAULT_LANGUAGE);
+        $additional_images = (array) fn_get_image_pairs(
+            $product_id,
+            'product',
+            'A',
+            true,
+            true,
+            DEFAULT_LANGUAGE
+        );
+
+        $candidates[] = [
+            'product_id' => $product_id,
+            'company_id' => (int) $row['company_id'],
+            'status' => (string) $row['status'],
+            'name' => (string) $row['product'],
+            'base_price' => (float) $row['price'],
+            'category_ids' => $category_ids,
+            'address_sha256' => hash('sha256', (string) $row['address']),
+            'short_description_sha256' => hash('sha256', (string) $row['short_description']),
+            'full_description_sha256' => hash('sha256', (string) $row['full_description']),
+            'variation_group_id' => $group_id,
+            'variation_count' => $variation_count,
+            'variation_prices' => $variation_prices,
+            'image_count' => (!empty($main_image['pair_id']) ? 1 : 0) + count($additional_images),
+            'updated_timestamp' => (int) $row['updated_timestamp'],
+        ];
+    }
+
+    fn_talario_analytics_json_response(200, [
+        'schema_version' => 'partner-sync.lookup.v1',
+        'company_id' => $company_id,
+        'product_name' => $product_name,
+        'status' => $status,
+        'candidates' => $candidates,
+    ]);
+}
+
 function fn_talario_analytics_partner_sync_apply(): void
 {
     $max_payload_bytes = 20971520;
@@ -2231,7 +2367,7 @@ function fn_talario_analytics_partner_sync_dev_age_variant_bootstrap(): void
     ]);
 }
 
-if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)) {
+if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview', 'penaty_preview_state'], true)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
     }
@@ -2239,14 +2375,14 @@ if (in_array($mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_a
     fn_talario_analytics_json_response(405, ['error' => 'method_not_allowed']);
 }
 
-if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state', 'crm'], true)) {
+if (!in_array($mode, ['orders', 'catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview', 'penaty_preview_state', 'crm'], true)) {
     fn_talario_analytics_json_response(404, ['error' => 'not_found']);
 }
 
 // Partner Sync catalog is enabled only when an explicit local runtime gate is present.
 // Development uses the dev_copy gate. Production read access requires a separate
 // production-only constant and a separately approved rollout.
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview', 'penaty_preview_state'], true)) {
     $is_development = function_exists('fn_is_development') && fn_is_development();
     $dev_copy_enabled = $is_development
         && defined('TALARIO_PARTNER_SYNC_DEV_COPY')
@@ -2255,7 +2391,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
         && defined('TALARIO_PARTNER_SYNC_PROD_READ')
         && TALARIO_PARTNER_SYNC_PROD_READ === true;
 
-    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)) {
+    if (in_array($mode, ['catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview', 'penaty_preview_state'], true)) {
         if (!$dev_copy_enabled) {
             fn_talario_analytics_json_response(404, ['error' => 'not_found']);
         }
@@ -2284,6 +2420,9 @@ if ($mode === 'crm') {
 if ($mode === 'partner_apply') {
     fn_talario_analytics_partner_sync_apply();
 }
+if ($mode === 'partner_lookup') {
+    fn_talario_analytics_partner_sync_lookup();
+}
 if ($mode === 'penaty_preview') {
     fn_talario_analytics_partner_sync_penaty_preview();
 }
@@ -2293,7 +2432,7 @@ if ($mode === 'penaty_preview_state') {
 
 $rate_count = fn_talario_analytics_rate_limit();
 
-if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview'], true)) {
     $stored_token_hash = fn_talario_analytics_canonical_token_hash(
         defined('TALARIO_PARTNER_SYNC_TOKEN_HASH') ? (string) TALARIO_PARTNER_SYNC_TOKEN_HASH : ''
     );
@@ -2340,7 +2479,7 @@ if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status'
 
 if (!preg_match('/^sha256:[a-f0-9]{64}$/', $stored_token_hash)) {
     $error = 'analytics_api_not_configured';
-    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview'], true)) {
+    if (in_array($mode, ['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview'], true)) {
         $error = 'partner_sync_api_not_configured';
     } elseif ($mode === 'crm') {
         $error = 'crm_api_not_configured';
