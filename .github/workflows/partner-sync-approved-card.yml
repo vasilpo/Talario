@@ -105,13 +105,14 @@ jobs:
         run: |
           bash .github/part-sync/run-approved-card.sh "${{ steps.request.outputs.request_file }}" "${GITHUB_RUN_ATTEMPT}"
 
-      - name: Upload bounded storefront evidence
-        if: always() && github.run_attempt == 2
+      - name: Upload Partner Sync checkpoint and bounded evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: partner-sync-card-evidence-${{ github.run_id }}
+          name: partner-sync-card-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/partner-sync-approved-card-evidence/screenshot.png
+            ${{ runner.temp }}/partner-sync-approved-card-evidence/needs-input.json
             ${{ runner.temp }}/partner-sync-approved-card-evidence/summary.txt
-          retention-days: 2
+            ${{ runner.temp }}/partner-sync-approved-card-evidence/screenshot.png
+          retention-days: 14
           if-no-files-found: ignore

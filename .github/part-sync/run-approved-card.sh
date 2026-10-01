@@ -76,6 +76,21 @@ if vp is not None:
         raise SystemExit("variation_plan invalid")
     if not isinstance(p.get("booking"),dict):
         raise SystemExit("booking required with variations")
+human=p.get("human_decisions")
+if human is not None:
+    if not isinstance(human,dict):
+        raise SystemExit("human_decisions must be an object")
+    category=(human.get("category") or {})
+    if category:
+        if not isinstance(category,dict):
+            raise SystemExit("human category decision invalid")
+        category_id=category.get("category_id")
+        if not isinstance(category_id,int) or category_id<=0:
+            raise SystemExit("human category decision id invalid")
+        if not str(category.get("selected_by") or "").strip():
+            raise SystemExit("human category selected_by required")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z",str(category.get("selected_at") or "")):
+            raise SystemExit("human category selected_at invalid")
 print("REQUEST_SCHEMA=PASS")
 print("REQUEST_STATUS=H")
 print("REQUEST_IMAGES="+str(len(images)))
@@ -83,18 +98,29 @@ print("REQUEST_VARIATIONS="+str(len(vp or [])))
 PY
 
 cp "$REQUEST_FILE" "$work/request.json"
-jq 'del(
-  .target,
-  .request_id,
-  .source_type,
-  .source_sheet_id,
-  .source_sheet_name,
-  .source_sheet_row,
-  .source_image_folder,
-  .source_image_count,
-  .ignore_row,
-  .image_drive_files
-)' "$work/request.json" > "$work/base.json"
+human_category_id="$(jq -r '.human_decisions.category.category_id // empty' "$work/request.json")"
+if [ -n "$human_category_id" ]; then
+  echo "HUMAN_DECISION_CATEGORY_ID=$human_category_id"
+fi
+jq '
+  if ((.human_decisions.category.category_id? // 0) > 0)
+  then .product.category_ids=[.human_decisions.category.category_id]
+  else .
+  end
+  | del(
+      .target,
+      .request_id,
+      .source_type,
+      .source_sheet_id,
+      .source_sheet_name,
+      .source_sheet_row,
+      .source_image_folder,
+      .source_image_count,
+      .ignore_row,
+      .image_drive_files,
+      .human_decisions
+    )
+' "$work/request.json" > "$work/base.json"
 
 echo '[]' > "$work/images.json"
 image_tmpdir="$work/images"
@@ -154,6 +180,109 @@ dry_req="part-sync-apply-${GITHUB_RUN_ID}-dry"
 dry_code="$(post_signed 'talario-part-sync' 'apply' "$work/dry.json" "$dry_req" "$work/dry.out")"
 echo "SIGNED_DRY_RUN_HTTP=$dry_code"
 if [ "$dry_code" != "200" ]; then
+  if python3 - "$REQUEST_FILE" "$work/dry.out" "$evidence/needs-input.json" "$evidence/summary.txt" <<'PY'
+import hashlib,json,sys
+request_path,response_path,checkpoint_path,summary_path=sys.argv[1:5]
+try:
+    request=json.load(open(request_path,encoding="utf-8"))
+    response=json.load(open(response_path,encoding="utf-8"))
+except Exception:
+    raise SystemExit(1)
+
+error=str(response.get("error") or "")
+human_errors={
+    "category_resolution_required",
+    "category_selection_invalid",
+    "variation_resolution_required",
+    "approved_company_not_unique",
+}
+if error not in human_errors:
+    raise SystemExit(1)
+
+stage={
+    "category_resolution_required":"category_resolution",
+    "category_selection_invalid":"category_resolution",
+    "variation_resolution_required":"variation_resolution",
+    "approved_company_not_unique":"partner_resolution",
+}[error]
+
+candidates=response.get("candidates") if isinstance(response.get("candidates"),list) else []
+requested_category=str(response.get("requested_category") or request.get("category_name") or "")
+requested_parent=str(response.get("requested_parent") or request.get("parent_category_name") or "")
+
+if stage=="category_resolution":
+    if candidates:
+        question=f"Не удалось однозначно выбрать категорию «{requested_category}»"
+        if requested_parent:
+            question+=f" внутри «{requested_parent}»"
+        question+=". Выбери один из найденных вариантов."
+    else:
+        question=f"Категория «{requested_category}» не найдена однозначно. Укажи правильную категорию или её ID."
+elif stage=="variation_resolution":
+    question="Не удалось однозначно сопоставить вариации карточки. Нужен выбор или уточнение таксономии."
+else:
+    question="Не удалось однозначно определить партнёра. Нужен выбор правильного партнёра."
+
+allowed=[]
+for index,candidate in enumerate(candidates,1):
+    if not isinstance(candidate,dict):
+        continue
+    value=candidate.get("category_id") or candidate.get("company_id")
+    if not isinstance(value,int) or value<=0:
+        continue
+    name=str(candidate.get("name") or candidate.get("company") or "")
+    parent=str(candidate.get("parent_name") or "")
+    label=name + (f" → {parent}" if parent else "")
+    allowed.append({"option":index,"value":value,"label":label})
+
+raw=open(request_path,"rb").read()
+checkpoint={
+    "schema_version":"talario.part-sync.needs-input.v1",
+    "state":"NEEDS_INPUT",
+    "stage":stage,
+    "error":error,
+    "request_id":str(request.get("request_id") or ""),
+    "request_file":request_path,
+    "request_sha256":hashlib.sha256(raw).hexdigest(),
+    "question":question,
+    "requested":{
+        "category_name":requested_category,
+        "parent_category_name":requested_parent,
+    },
+    "candidates":candidates,
+    "allowed_answers":allowed,
+    "resume_contract":{
+        "requires_request_revision":True,
+        "category_decision_path":"human_decisions.category.category_id" if stage=="category_resolution" else None,
+        "preserve_target":"dev_copy",
+        "restart_from":"signed_dry_run",
+    },
+}
+with open(checkpoint_path,"w",encoding="utf-8") as fh:
+    json.dump(checkpoint,fh,ensure_ascii=False,indent=2)
+with open(summary_path,"w",encoding="utf-8") as fh:
+    fh.write("PARTNER_SYNC_STATE=NEEDS_INPUT\n")
+    fh.write("STAGE="+stage+"\n")
+    fh.write("ERROR="+error+"\n")
+    fh.write("QUESTION="+question+"\n")
+    for option in allowed:
+        fh.write(f"OPTION_{option['option']}={option['value']}|{option['label']}\n")
+print("PARTNER_SYNC_STATE=NEEDS_INPUT")
+print("NEEDS_INPUT_STAGE="+stage)
+print("NEEDS_INPUT_ERROR="+error)
+print("NEEDS_INPUT_QUESTION="+question)
+for option in allowed:
+    print(f"NEEDS_INPUT_OPTION_{option['option']}={option['value']}|{option['label']}")
+PY
+  then
+    {
+      echo "## Partner Sync: NEEDS_INPUT"
+      echo
+      cat "$evidence/summary.txt"
+    } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+    exit 0
+  fi
+
   safe_error="$(jq -c '{
     error:(.error//null),
     stage:(.stage//null),
@@ -208,6 +337,12 @@ print("RESOLVED_VARIATIONS="+str(len(vp or [])))
 PY
 
 if [ "$ATTEMPT" = "1" ]; then
+  cat > "$evidence/summary.txt" <<EOF
+PARTNER_SYNC_STATE=READY_FOR_CREATE
+SIGNED_DRY_RUN=PASS
+NEXT=explicit_authenticated_rerun
+EOF
+  echo "PARTNER_SYNC_STATE=READY_FOR_CREATE"
   echo "RESULT=DRY_RUN_PASS_REQUIRES_EXPLICIT_RERUN"
   exit 78
 fi

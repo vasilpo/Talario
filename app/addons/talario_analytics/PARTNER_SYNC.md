@@ -131,3 +131,49 @@ Card requests:
 Adding another card therefore requires a new approved request JSON, not a new signing key, workflow, company allowlist, or partner-specific code path.
 
 PROD write remains disabled and is not affected by this dev_copy pipeline.
+
+
+## Human-in-the-loop resolution
+
+Partner Sync distinguishes a technical failure from a business ambiguity.
+
+A signed dry-run may return a resolvable state instead of a hard failure. The generic runner converts supported ambiguities into a machine-readable checkpoint:
+
+- `state=NEEDS_INPUT`;
+- exact stage and reason;
+- a bounded operator question;
+- candidate IDs and labels when the server can discover them safely;
+- the immutable request SHA-256;
+- a resume contract.
+
+The workflow exits successfully without CREATE and uploads `needs-input.json` plus a short summary artifact. No partial product is written.
+
+### Category resolver
+
+Category resolution follows this order:
+
+1. explicit reviewed `product.category_ids`;
+2. a recorded human decision at `human_decisions.category.category_id`;
+3. one exact active/hidden category match under the requested parent;
+4. one normalized exact match for harmless spelling-format differences (case, spacing, punctuation, `ё/е`);
+5. otherwise `NEEDS_INPUT` with up to ten bounded candidates.
+
+Fuzzy candidates are suggestions only and are never auto-selected. This prevents a spelling variant from silently assigning a card to the wrong taxonomy branch.
+
+To resume after a human answer, update the same approved request with:
+
+```json
+{
+  "human_decisions": {
+    "category": {
+      "category_id": 123,
+      "selected_by": "vasiliy",
+      "selected_at": "2026-10-01T18:20:00Z"
+    }
+  }
+}
+```
+
+The runner injects the selected category ID into the signed payload, removes the audit-only `human_decisions` object from transport, and repeats the signed dry-run. The server revalidates that the selected category still exists and is active/hidden before any write.
+
+After a successful resumed dry-run, the existing explicit authenticated rerun gate remains mandatory before CREATE. Therefore a human answer resolves ambiguity without bypassing signature verification, dry-run, readback or storefront QA.
