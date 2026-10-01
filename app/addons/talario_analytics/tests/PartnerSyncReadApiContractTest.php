@@ -174,7 +174,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'target_matches_source'", $this->controller);
         self::assertStringContainsString("'target_has_dry_run'", $this->controller);
         self::assertStringContainsString("'target_has_enable_penaty'", $this->controller);
-        self::assertStringContainsString("'authorized_v2_expected_command'", $this->controller);
+        self::assertStringContainsString("'authorized_forced_signer_count'", $this->controller);
+        self::assertStringContainsString("'authorized_expected_command'", $this->controller);
         self::assertStringNotContainsString("'authorized_keys' =>", $this->controller);
         self::assertStringNotContainsString("'target_path' =>", $this->controller);
         self::assertStringNotContainsString("'source_path' =>", $this->controller);
@@ -1282,8 +1283,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testPartnerSyncSignedWriterDerivesSignerFromForcedCommandAuthorizedKeys(): void
     {
         self::assertStringContainsString("/.ssh/authorized_keys", $this->controller);
-        self::assertStringContainsString('github-actions-talario-dev-v2', $this->controller);
         self::assertStringContainsString('talario-dev-github-dispatcher', $this->controller);
+        self::assertStringContainsString('authorized_forced_signer_count', $this->controller);
+        self::assertStringContainsString('authorized_expected_command', $this->controller);
         self::assertStringContainsString('pilot_signature_signer_unavailable', $this->controller);
         self::assertStringContainsString('pilot_signature_signer_ambiguous', $this->controller);
         self::assertStringNotContainsString(
@@ -1294,6 +1296,27 @@ final class PartnerSyncReadApiContractTest extends TestCase
             'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP',
             $this->controller
         );
+    }
+
+
+    public function testPartnerSyncSignerTrustDoesNotDependOnAuthorizedKeyComment(): void
+    {
+        $verify_offset = strpos(
+            $this->controller,
+            'function fn_talario_analytics_partner_sync_verify_penaty_signature'
+        );
+        self::assertNotFalse($verify_offset);
+        $apply_offset = strpos(
+            $this->controller,
+            'function fn_talario_analytics_partner_sync_apply',
+            $verify_offset
+        );
+        self::assertNotFalse($apply_offset);
+        $section = substr($this->controller, $verify_offset, $apply_offset - $verify_offset);
+
+        self::assertStringContainsString('$expected_command', $section);
+        self::assertStringContainsString('(ssh-ed25519)', $section);
+        self::assertStringNotContainsString('github-actions-talario-dev-v2', $section);
     }
 
     public function testApprovedCardPipelineIsGenericSerializedAndNeverHardcodesSigner(): void

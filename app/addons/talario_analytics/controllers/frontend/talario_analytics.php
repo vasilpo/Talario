@@ -834,7 +834,7 @@ function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
         : false;
 
     $binding_expected = false;
-    $binding_v2_present = false;
+    $forced_signer_count = 0;
     if (is_readable($authorized_keys_path) && !is_link($authorized_keys_path)) {
         $authorized_keys = file($authorized_keys_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         if (is_array($authorized_keys)) {
@@ -843,11 +843,11 @@ function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
                 if (!is_string($line) || strlen($line) > 16384) {
                     continue;
                 }
-                if (strpos($line, 'github-actions-talario-dev-v2') !== false) {
-                    $binding_v2_present = true;
-                    if (strpos($line, $expected_command) !== false) {
-                        $binding_expected = true;
-                    }
+                if (strpos($line, $expected_command) !== false
+                    && preg_match('/(?:^|\\s)ssh-ed25519\\s+[A-Za-z0-9+\\/]+={0,3}(?:\\s|$)/', $line)
+                ) {
+                    $binding_expected = true;
+                    $forced_signer_count++;
                 }
             }
         }
@@ -870,8 +870,8 @@ function fn_talario_analytics_partner_sync_dispatcher_status_response(): void
             && strpos($target, '"talario-partner-sync-enable-penaty-pilot"') !== false,
         'target_mode_0700' => $target_mode === 0700,
         'authorized_keys_readable' => is_readable($authorized_keys_path) && !is_link($authorized_keys_path),
-        'authorized_v2_present' => $binding_v2_present,
-        'authorized_v2_expected_command' => $binding_expected,
+        'authorized_forced_signer_count' => $forced_signer_count,
+        'authorized_expected_command' => $binding_expected,
     ]);
 }
 
@@ -1005,7 +1005,6 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
             if (!is_string($line)
                 || strlen($line) > 16384
                 || strpos($line, $expected_command) === false
-                || strpos($line, 'github-actions-talario-dev-v2') === false
                 || !preg_match('/(?:^|\\s)(ssh-ed25519)\\s+([A-Za-z0-9+\\/]+={0,3})(?:\\s|$)/', $line, $key_match)
             ) {
                 continue;
