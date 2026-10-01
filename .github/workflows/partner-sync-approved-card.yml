@@ -65,7 +65,30 @@ jobs:
           chmod 700 ~/.ssh
           printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          derived="$(ssh-keygen -y -f ~/.ssh/id_ed25519)"
+          algorithm="$(awk '{print $1}' <<<"$derived")"
+          public_key="$(awk '{print $2}' <<<"$derived")"
+          test "$algorithm" = "ssh-ed25519"
+          [[ "$public_key" =~ ^[A-Za-z0-9+/]+={0,3}$ ]]
+
+          manifest='app/addons/talario_analytics/config/partner_sync_signers.json'
+          jq -e '
+            .schema_version == "talario.partner-sync.signers.v1"
+            and (.signers | type == "array")
+            and (.signers | length >= 1 and length <= 4)
+          ' "$manifest" >/dev/null
+          match_count="$(jq --arg algorithm "$algorithm" --arg public_key "$public_key" '
+            [.signers[]
+              | select(
+                  .algorithm == $algorithm
+                  and .public_key == $public_key
+                  and (.status == "active" or .status == "next")
+                )
+            ] | length
+          ' "$manifest")"
+          test "$match_count" = "1"
+          echo "SIGNER_MANIFEST_MATCH=PASS"
+
           printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
           ssh-keygen -lf ~/.ssh/id_ed25519 -E sha256 | awk '{print "SIGNER_FINGERPRINT="$2}'

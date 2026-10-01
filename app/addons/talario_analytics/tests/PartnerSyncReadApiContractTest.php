@@ -20,6 +20,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $preview_post_controller;
     private string $approved_card_workflow;
     private string $approved_card_runner;
+    private string $signer_manifest;
 
     protected function setUp(): void
     {
@@ -47,6 +48,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
         $this->approved_card_runner = (string) file_get_contents(
             dirname(__DIR__, 4) . '/.github/part-sync/run-approved-card.sh'
+        );
+        $this->signer_manifest = (string) file_get_contents(
+            dirname(__DIR__) . '/config/partner_sync_signers.json'
         );
     }
 
@@ -1280,27 +1284,16 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
-    public function testPartnerSyncSignedWriterDerivesSignerFromForcedCommandAuthorizedKeys(): void
+    public function testPartnerSyncSignedWriterUsesReviewedPublicSignerManifest(): void
     {
-        self::assertStringContainsString("/.ssh/authorized_keys", $this->controller);
-        self::assertStringContainsString('talario-dev-github-dispatcher', $this->controller);
-        self::assertStringContainsString('authorized_forced_signer_count', $this->controller);
-        self::assertStringContainsString('authorized_expected_command', $this->controller);
-        self::assertStringContainsString('pilot_signature_signer_unavailable', $this->controller);
-        self::assertStringContainsString('pilot_signature_signer_ambiguous', $this->controller);
-        self::assertStringNotContainsString(
-            'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK',
+        self::assertStringContainsString(
+            "app/addons/talario_analytics/config/partner_sync_signers.json",
             $this->controller
         );
-        self::assertStringNotContainsString(
-            'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP',
-            $this->controller
-        );
-    }
+        self::assertStringContainsString('talario.partner-sync.signers.v1', $this->controller);
+        self::assertStringContainsString("'pilot_signature_signer_manifest_unavailable'", $this->controller);
+        self::assertStringContainsString("'pilot_signature_signer_manifest_invalid'", $this->controller);
 
-
-    public function testPartnerSyncSignerTrustDoesNotDependOnAuthorizedKeyComment(): void
-    {
         $verify_offset = strpos(
             $this->controller,
             'function fn_talario_analytics_partner_sync_verify_penaty_signature'
@@ -1312,11 +1305,43 @@ final class PartnerSyncReadApiContractTest extends TestCase
             $verify_offset
         );
         self::assertNotFalse($apply_offset);
-        $section = substr($this->controller, $verify_offset, $apply_offset - $verify_offset);
+        $verify_section = substr($this->controller, $verify_offset, $apply_offset - $verify_offset);
 
-        self::assertStringContainsString('$expected_command', $section);
-        self::assertStringContainsString('(ssh-ed25519)', $section);
-        self::assertStringNotContainsString('github-actions-talario-dev-v2', $section);
+        self::assertStringNotContainsString('/.ssh/authorized_keys', $verify_section);
+        self::assertStringNotContainsString('talario-dev-github-dispatcher', $verify_section);
+        self::assertStringNotContainsString(
+            'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK',
+            $verify_section
+        );
+        self::assertStringNotContainsString(
+            'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP',
+            $verify_section
+        );
+    }
+
+    public function testPartnerSyncSignerManifestIsBoundedAndPublicOnly(): void
+    {
+        $manifest = json_decode($this->signer_manifest, true);
+        self::assertIsArray($manifest);
+        self::assertSame('talario.partner-sync.signers.v1', $manifest['schema_version'] ?? null);
+        self::assertIsArray($manifest['signers'] ?? null);
+        self::assertGreaterThanOrEqual(1, count($manifest['signers']));
+        self::assertLessThanOrEqual(4, count($manifest['signers']));
+
+        $ids = [];
+        foreach ($manifest['signers'] as $signer) {
+            self::assertIsArray($signer);
+            self::assertMatchesRegularExpression('/^[A-Za-z0-9._:-]{3,64}$/', (string) ($signer['id'] ?? ''));
+            self::assertSame('ssh-ed25519', $signer['algorithm'] ?? null);
+            self::assertContains($signer['status'] ?? null, ['active', 'next']);
+            self::assertMatchesRegularExpression(
+                '/^[A-Za-z0-9+\/]+={0,3}$/',
+                (string) ($signer['public_key'] ?? '')
+            );
+            self::assertArrayNotHasKey('private_key', $signer);
+            self::assertNotContains((string) $signer['id'], $ids);
+            $ids[] = $signer['id'];
+        }
     }
 
     public function testApprovedCardPipelineIsGenericSerializedAndNeverHardcodesSigner(): void
@@ -1325,6 +1350,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'.github/part-sync/requests/*.json'", $this->approved_card_workflow);
         self::assertStringContainsString('GITHUB_RUN_ATTEMPT', $this->approved_card_workflow);
         self::assertStringContainsString('SSH_TRUST_PREFLIGHT=PASS', $this->approved_card_workflow);
+        self::assertStringContainsString('SIGNER_MANIFEST_MATCH=PASS', $this->approved_card_workflow);
+        self::assertStringContainsString('partner_sync_signers.json', $this->approved_card_workflow);
         self::assertStringContainsString('DEV_COPY_HEAD_MATCH=PASS', $this->approved_card_workflow);
         self::assertStringContainsString('remote_head', $this->approved_card_workflow);
         self::assertStringContainsString('GITHUB_SHA', $this->approved_card_workflow);
