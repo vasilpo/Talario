@@ -178,3 +178,24 @@ To resume after a human answer, update the same approved request with:
 The runner injects the selected category ID into the signed payload, removes the audit-only `human_decisions` object from transport, and repeats the signed dry-run. The server revalidates that the selected category still exists and is active/hidden before any write.
 
 After a successful resumed dry-run, the existing explicit authenticated rerun gate remains mandatory before CREATE. Therefore a human answer resolves ambiguity without bypassing signature verification, dry-run, readback or storefront QA.
+
+
+### Chat/session termination rule
+
+`NEEDS_INPUT` is a normal terminal state for the current agent session, not a background wait and not a technical failure.
+
+When the runner emits:
+
+- `PARTNER_SYNC_STATE=NEEDS_INPUT`;
+- `SESSION_TERMINAL=YES`;
+- `ASSISTANT_ACTION=ASK_USER`;
+
+the orchestrating agent must stop all further tool calls for that card in the current session and immediately return the checkpoint question to the operator. It must not keep polling GitHub, retrying the card, changing taxonomy, or choosing a candidate on the operator's behalf.
+
+The next session starts only after the operator answers. That answer is recorded as an audited `human_decisions` entry and the flow resumes from signed dry-run.
+
+This rule exists so the operator can always distinguish three outcomes in chat:
+
+1. `DONE` — card created and verified;
+2. `NEEDS_INPUT` — current session ended and a concrete decision is required;
+3. `FAIL` — technical failure requiring investigation.

@@ -1357,6 +1357,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('GITHUB_SHA', $this->approved_card_workflow);
         self::assertStringContainsString('SIGNED_DRY_RUN_ERROR=', $this->approved_card_runner);
         self::assertStringContainsString('PARTNER_SYNC_STATE=NEEDS_INPUT', $this->approved_card_runner);
+        self::assertStringContainsString('SESSION_TERMINAL=YES', $this->approved_card_runner);
+        self::assertStringContainsString('ASSISTANT_ACTION=ASK_USER', $this->approved_card_runner);
+        self::assertStringContainsString('terminal_for_current_session', $this->approved_card_runner);
+        self::assertStringContainsString('do_not_continue_tools', $this->approved_card_runner);
         self::assertStringContainsString('talario.part-sync.needs-input.v1', $this->approved_card_runner);
         self::assertStringContainsString('human_decisions.category.category_id', $this->approved_card_runner);
         self::assertStringContainsString('PARTNER_SYNC_STATE=READY_FOR_CREATE', $this->approved_card_runner);

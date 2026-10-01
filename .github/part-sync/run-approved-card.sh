@@ -251,6 +251,12 @@ checkpoint={
     },
     "candidates":candidates,
     "allowed_answers":allowed,
+    "session_contract":{
+        "terminal_for_current_session":True,
+        "assistant_action":"ASK_USER",
+        "requires_user_response":True,
+        "do_not_continue_tools":True,
+    },
     "resume_contract":{
         "requires_request_revision":True,
         "category_decision_path":"human_decisions.category.category_id" if stage=="category_resolution" else None,
@@ -264,10 +270,14 @@ with open(summary_path,"w",encoding="utf-8") as fh:
     fh.write("PARTNER_SYNC_STATE=NEEDS_INPUT\n")
     fh.write("STAGE="+stage+"\n")
     fh.write("ERROR="+error+"\n")
+    fh.write("SESSION_TERMINAL=YES\n")
+    fh.write("ASSISTANT_ACTION=ASK_USER\n")
     fh.write("QUESTION="+question+"\n")
     for option in allowed:
         fh.write(f"OPTION_{option['option']}={option['value']}|{option['label']}\n")
 print("PARTNER_SYNC_STATE=NEEDS_INPUT")
+print("SESSION_TERMINAL=YES")
+print("ASSISTANT_ACTION=ASK_USER")
 print("NEEDS_INPUT_STAGE="+stage)
 print("NEEDS_INPUT_ERROR="+error)
 print("NEEDS_INPUT_QUESTION="+question)
@@ -279,7 +289,10 @@ PY
       echo "## Partner Sync: NEEDS_INPUT"
       echo
       cat "$evidence/summary.txt"
+      echo
+      echo "Current agent session must stop here and ask the operator for a decision."
     } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+    echo "::notice title=Partner Sync waits for user input::Current session is complete. Ask the operator the NEEDS_INPUT question and do not continue any tools until an answer is received."
     exit 0
   fi
 
