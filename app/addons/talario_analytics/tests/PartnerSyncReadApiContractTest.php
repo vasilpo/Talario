@@ -477,6 +477,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         $helper_section = substr($this->write_capability, $helper_offset, $helper_end - $helper_offset);
 
         self::assertStringContainsString("['age_group']", $helper_section);
+        self::assertStringContainsString("'до\\\\s+'", $helper_section);
         self::assertStringContainsString("'с 1го года'", $helper_section);
         self::assertStringContainsString("\$minimum >= 2 && \$minimum <= 4", $helper_section);
         self::assertStringContainsString("'с ' . \$minimum . 'х лет'", $helper_section);
@@ -825,21 +826,31 @@ final class PartnerSyncReadApiContractTest extends TestCase
         require_once dirname(__DIR__) . '/partner_sync_write.php';
 
         $resolved = \fn_talario_analytics_partner_sync_filter_age_years([
+            ['age_group' => 'до 3 лет'],
             ['age_group' => '3–5 лет'],
             ['age_group' => '5-7 лет'],
             ['age_group' => '6-9 лет'],
         ]);
         self::assertTrue($resolved['resolved']);
-        self::assertSame([3, 4, 5, 6, 7, 8, 9], $resolved['ages']);
+        self::assertSame([1, 2, 3, 4, 5, 6, 7, 8, 9], $resolved['ages']);
+
+        $under_three_copy = \fn_talario_analytics_partner_sync_minimum_age_short_description(
+            'Каратэ для детей',
+            [['age_group' => 'до 3 лет'], ['age_group' => '3-5 лет']]
+        );
+        self::assertSame('с 1го года. Каратэ для детей', $under_three_copy);
 
         $unsupported = \fn_talario_analytics_partner_sync_filter_age_years([
-            ['age_group' => 'до 3 лет'],
             ['age_group' => '1,5-3 года'],
             ['age_group' => '16+ лет'],
         ]);
         self::assertFalse($unsupported['resolved']);
-        self::assertSame(['до 3 лет', '1,5-3 года', '16+ лет'], $unsupported['unsupported_age_groups']);
+        self::assertSame(['1,5-3 года', '16+ лет'], $unsupported['unsupported_age_groups']);
 
+        self::assertSame(
+            'Единоборства',
+            \fn_talario_analytics_partner_sync_category_filter_label('Единоборства')
+        );
         self::assertSame(
             'Ранее развитие',
             \fn_talario_analytics_partner_sync_category_filter_label('Раннее развитие')
