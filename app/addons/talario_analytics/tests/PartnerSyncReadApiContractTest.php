@@ -269,7 +269,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $this->preview_post_controller);
         self::assertStringContainsString("(int) \$_REQUEST['product_id'] === \$preview_product_id", $this->preview_post_controller);
         self::assertStringContainsString("'visual_acceptance'", $this->preview_post_controller);
-        self::assertStringContainsString('in_array($preview_company_id, [12, 39], true)', $this->preview_post_controller);
+        self::assertStringContainsString('$preview_company_id > 0', $this->preview_post_controller);
         self::assertStringNotContainsString("['auth']", $this->preview_post_controller);
     }
 
@@ -1270,9 +1270,14 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
-    public function testPartnerSyncSignedWriterUsesCurrentRotatedPublicKey(): void
+    public function testPartnerSyncSignedWriterDerivesSignerFromForcedCommandAuthorizedKeys(): void
     {
-        self::assertStringContainsString(
+        self::assertStringContainsString("'/ .ssh/authorized_keys'", str_replace('/.ssh/authorized_keys', '/ .ssh/authorized_keys', $this->controller));
+        self::assertStringContainsString('github-actions-talario-dev-v2', $this->controller);
+        self::assertStringContainsString('talario-dev-github-dispatcher', $this->controller);
+        self::assertStringContainsString('pilot_signature_signer_unavailable', $this->controller);
+        self::assertStringContainsString('pilot_signature_signer_ambiguous', $this->controller);
+        self::assertStringNotContainsString(
             'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK',
             $this->controller
         );
