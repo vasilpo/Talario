@@ -144,3 +144,47 @@ jobs:
             variation_count:.variations.count,
             variations:.variations.items
           }' apply.out
+
+          product_id="$(jq -r '.product_id' apply.out)"
+          test "$product_id" -gt 0
+          jq -n --argjson product_id "$product_id" '{product_id:$product_id,approved_company_id:12}' > preview.json
+          preview_req='part-sync-penaty-preview-20260924'
+          preview_ts="$(date +%s)"
+          preview_hash="$(sha256sum preview.json | awk '{print $1}')"
+          printf 'talario-part-sync-penaty\npreview\n%s\n%s\n%s\n' "$preview_req" "$preview_ts" "$preview_hash" > preview.message
+          rm -f preview.message.sig
+          ssh-keygen -Y sign -q -f key -n talario-part-sync preview.message
+          preview_sig="$(base64 < preview.message.sig | tr -d '\n')"
+          preview_code="$(curl --silent --show-error --output preview.out --write-out '%{http_code}' --max-time 60 \
+            -X POST 'https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.penaty_preview' \
+            -H 'Content-Type: application/json' \
+            -H "X-Talario-Request-Id: $preview_req" \
+            -H "X-Talario-Timestamp: $preview_ts" \
+            -H "X-Talario-Signature: $preview_sig" \
+            --data-binary @preview.json)"
+          echo "::notice::PART-SYNC signed preview HTTP $preview_code"
+          test "$preview_code" = "200"
+          jq -e --argjson pid "$product_id" '
+            .schema_version == "partner-sync.preview.v4"
+            and .product_id == $pid
+            and .company_id == 12
+            and .status == "H"
+            and .single_use == true
+            and .visibility.preview == true
+            and .visibility.company_scope == true
+            and (.preview_url | startswith("https://talario.ru/dev_copy/"))
+          ' preview.out >/dev/null
+
+          preview_url="$(jq -r '.preview_url' preview.out)"
+          storefront_code="$(curl --silent --show-error --location --max-time 90 \
+            --cookie-jar storefront.cookies --cookie storefront.cookies \
+            --output storefront.html --write-out '%{http_code}' "$preview_url")"
+          echo "::notice::PART-SYNC storefront HTTP $storefront_code"
+          test "$storefront_code" = "200"
+          grep -F 'Первый удар' storefront.html >/dev/null
+          grep -F 'Глиняные Чудеса' storefront.html >/dev/null
+          grep -F 'Ленина 1стр1' storefront.html >/dev/null
+          grep -F 'Расписание' storefront.html >/dev/null
+          if grep -qi 'магазин закрыт на обслуживание' storefront.html; then exit 44; fi
+          if grep -qi 'страница не найдена' storefront.html; then exit 45; fi
+          echo "::notice::STOREFRONT_CARD=PASS"
