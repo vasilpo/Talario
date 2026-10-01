@@ -110,12 +110,13 @@ Approved dev_copy card creation uses one generic, serialized pipeline instead of
 
 Trust and key handling:
 
-- the private signing key remains in the GitHub Actions secret store;
-- the request verifier does not hard-code a public key in the repository;
-- accepted Ed25519 signers are derived at runtime from the server's own `~/.ssh/authorized_keys` entries bound to the exact reviewed `talario-dev-github-dispatcher` forced command; SSH key comments are treated as non-security metadata and are ignored;
-- up to four simultaneously authorized matching keys are accepted so key rotation can overlap safely without downtime;
-- every run performs an SSH trust preflight with the same key before it signs a Partner Sync request;
-- no raw private key or public-key material is written to the repository or response logs.
+- the private signing key remains only in the GitHub Actions secret store;
+- public verification keys live in the reviewed `app/addons/talario_analytics/config/partner_sync_signers.json` manifest; public keys are not secrets;
+- the verifier accepts only bounded `ssh-ed25519` entries with status `active` or `next`, maximum four unique signers;
+- the workflow derives the public half from the actual GitHub secret and requires exactly one match in the reviewed manifest before any Partner Sync request;
+- every run separately performs the existing SSH forced-command preflight with the same private key, so the credential must pass both the reviewed HTTP-signature allowlist and the server SSH trust boundary;
+- raw private key material is never committed or printed; logs expose only the public fingerprint;
+- key rotation uses overlap: add the next public key to the manifest after/beside server SSH authorization, switch the GitHub secret, prove both preflights and signed dry-run, then remove the retired public key.
 
 Card requests:
 
