@@ -70,19 +70,31 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
           ssh-keygen -lf ~/.ssh/id_ed25519 -E sha256 | awk '{print "SIGNER_FINGERPRINT="$2}'
 
-      - name: Preflight server trust and dev_copy state
+      - name: Preflight server trust and exact dev_copy revision
         shell: bash
         env:
           BEGET_USER: ${{ secrets.BEGET_USER }}
         run: |
           set -euo pipefail
           test -n "${BEGET_USER:-}"
-          output="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@salvage.beget.com" "talario-dev-ops status")"
-          printf '%s\n' "$output" | grep -F -x 'DISPATCHER=talario-dev-github-v1'
-          printf '%s\n' "$output" | grep -F -x 'OPERATION=status'
-          printf '%s\n' "$output" | grep -F -x 'BRANCH=development'
-          printf '%s\n' "$output" | grep -F -x 'WORKTREE=CLEAN'
-          printf '%s\n' "$output" | grep -F -x 'DEV_COPY_FLAG=PRESENT'
+          matched=0
+          for attempt in $(seq 1 24); do
+            output="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@salvage.beget.com" "talario-dev-ops status")"
+            printf '%s\n' "$output" | grep -F -x 'DISPATCHER=talario-dev-github-v1'
+            printf '%s\n' "$output" | grep -F -x 'OPERATION=status'
+            printf '%s\n' "$output" | grep -F -x 'BRANCH=development'
+            printf '%s\n' "$output" | grep -F -x 'WORKTREE=CLEAN'
+            printf '%s\n' "$output" | grep -F -x 'DEV_COPY_FLAG=PRESENT'
+            remote_head="$(printf '%s\n' "$output" | awk -F= '$1=="HEAD"{print $2}')"
+            if [ "$remote_head" = "${GITHUB_SHA}" ]; then
+              matched=1
+              echo "DEV_COPY_HEAD_MATCH=PASS"
+              break
+            fi
+            echo "DEV_COPY_WAIT attempt=$attempt"
+            sleep 5
+          done
+          test "$matched" = "1"
           echo 'SSH_TRUST_PREFLIGHT=PASS'
           echo 'DEV_COPY_PREFLIGHT=PASS'
 
