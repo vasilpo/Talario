@@ -102,3 +102,32 @@ Example dry-run payload:
 For an actual dev_copy apply, send the same normalized payload with `"dry_run": false` and an `approval_id`. Production write remains disabled and requires a separate explicit decision.
 
 <!-- PART-SYNC dev_copy deployment trigger: PR #296 visual acceptance -->
+
+
+## Scalable approved-card pipeline
+
+Approved dev_copy card creation uses one generic, serialized pipeline instead of partner-specific workflows.
+
+Trust and key handling:
+
+- the private signing key remains in the GitHub Actions secret store;
+- the request verifier does not hard-code a public key in the repository;
+- the accepted Ed25519 signer is derived at runtime from the server's own `~/.ssh/authorized_keys` entry that is bound to the reviewed `talario-dev-github-dispatcher` forced command;
+- up to four simultaneously authorized matching keys are accepted so key rotation can overlap safely without downtime;
+- every run performs an SSH trust preflight with the same key before it signs a Partner Sync request;
+- no raw private key or public-key material is written to the repository or response logs.
+
+Card requests:
+
+- one approved request is stored under `.github/part-sync/requests/*.json`;
+- the request must be `operation=create`, `dry_run=false`, and default to product status `H`;
+- the first workflow attempt performs source/image validation plus a signed dry-run and then stops;
+- only an explicit authenticated rerun may perform the CREATE;
+- the apply payload is rebuilt explicitly with `dry_run=false` and a non-empty `approval_id`, so a dry-run payload can never accidentally be reused as an apply payload;
+- dev_copy writes are globally serialized with GitHub Actions concurrency to prevent simultaneous card writes;
+- CREATE is followed by readback comparison against the dry-run plan and the approved source payload;
+- hidden-card storefront QA uses a product/company-bound one-use signed preview, browser rendering, session-state verification, and a short-lived screenshot artifact.
+
+Adding another card therefore requires a new approved request JSON, not a new signing key, workflow, company allowlist, or partner-specific code path.
+
+PROD write remains disabled and is not affected by this dev_copy pipeline.
