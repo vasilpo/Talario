@@ -266,6 +266,17 @@ jobs:
           print("VARIATION_FILTER_COPY=PASS")
           PY
 
+      - name: Checkout PART-SYNC map E2E acceptance script
+        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: map e2e acceptance runner') }}"
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: PART-SYNC map E2E acceptance
+        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: map e2e acceptance runner') }}"
+        shell: bash
+        run: bash .github/part-sync/map-e2e-acceptance.sh
+
       - name: Checkout Step 8 acceptance script
         if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: step8 booking-window acceptance runner') }}"
         uses: actions/checkout@v4
