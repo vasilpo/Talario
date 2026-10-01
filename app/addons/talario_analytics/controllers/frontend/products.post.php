@@ -13,7 +13,7 @@ $preview_product_id = (int) ($preview['product_id'] ?? 0);
 $preview_company_id = (int) ($preview['company_id'] ?? 0);
 $is_exact_preview = isset($_REQUEST['product_id'])
     && $preview_product_id > 0
-    && in_array($preview_company_id, [12, 39], true)
+    && $preview_company_id > 0
     && (string) ($preview['purpose'] ?? '') === 'visual_acceptance'
     && (int) $_REQUEST['product_id'] === $preview_product_id;
 
