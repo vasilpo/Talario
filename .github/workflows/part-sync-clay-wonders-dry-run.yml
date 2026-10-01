@@ -42,7 +42,7 @@ jobs:
           printf '%s' "$SIGNING_KEY" | base64 --decode > key
           chmod 600 key
           actual="$(ssh-keygen -y -f key | awk '{print $2}')"
-          test "$actual" = "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP"
+          test "$actual" = "AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK"
 
           cp .github/part-sync/glinyanye-chudesa-create.json request.json
           jq 'del(.image_drive_files,.source_type,.request_id)' request.json > base.json
@@ -91,7 +91,21 @@ jobs:
           dry_code="$(post_signed dry.json "part-sync-apply-glina-${GITHUB_RUN_ID}-dry" dry.out)"
           echo "::notice::PART-SYNC dry-run HTTP $dry_code"
           test "$dry_code" = "200"
-          jq -e '.dry_run == true and .plan.product.company_id == 12 and .plan.product.product == "Первая кржука" and .plan.product.status == "H" and .plan.product.category_ids == [268] and .plan.variations.count == 15' dry.out >/dev/null
+          jq -e '
+            .dry_run == true
+            and .plan.product.company_id == 12
+            and .plan.product.product == "Первый удар"
+            and .plan.product.status == "H"
+            and .plan.product.address == "г.Красногорск, ул Ленина 1стр1"
+            and (.plan.product.category_ids | length) == 1
+            and .plan.images.count == 0
+            and .plan.filter_features.ages == [1,2,3,4,5,6,7,8,9]
+            and .plan.filter_features.category == "Единоборства"
+            and .plan.variations.resolved == true
+            and .plan.variations.count == 15
+            and (.plan.variation_booking_windows | length) == 15
+          ' dry.out >/dev/null
+          echo "::notice::SIGNED_DRY_RUN=PASS"
 
           apply_code="$(post_signed apply.json "part-sync-apply-glina-${GITHUB_RUN_ID}-create" apply.out)"
           echo "::notice::PART-SYNC apply HTTP $apply_code"
@@ -100,15 +114,21 @@ jobs:
             .dry_run == false
             and .operation == "create"
             and .readback.company_id == 12
-            and .readback.name == "Первая кржука"
+            and .readback.name == "Первый удар"
             and .readback.status == "H"
-            and .readback.images.main == 1
-            and .readback.images.additional == 2
+            and .readback.address == "г.Красногорск, ул Ленина 1стр1"
+            and .readback.details_layout == "default"
+            and .readback.popularity >= 1000
+            and .readback.images.main == 0
+            and .readback.images.additional == 0
             and .readback.full_description == $expected[0].product.full_description
+            and .readback.filter_features.ages == [1,2,3,4,5,6,7,8,9]
+            and .readback.filter_features.category == "Единоборства"
             and .variations.count == 15
             and ([.variations.items[].schedule[] | .capacity] | unique) == [5]
             and ([.variations.items[].duration] | unique) == [60]
           ' apply.out >/dev/null
+          echo "::notice::CREATE_READBACK=PASS"
 
           jq --slurpfile expected base.json '{
             product_id,
@@ -119,6 +139,8 @@ jobs:
             base_price:.readback.price,
             images:.readback.images,
             description_match:(.readback.full_description == $expected[0].product.full_description),
+            address:.readback.address,
+            filter_features:.readback.filter_features,
             variation_count:.variations.count,
             variations:.variations.items
           }' apply.out
