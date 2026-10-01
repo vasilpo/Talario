@@ -1370,6 +1370,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('.dry_run=true | del(.approval_id)', $this->approved_card_runner);
         self::assertStringContainsString('SIGNED_DRY_RUN=PASS', $this->approved_card_runner);
         self::assertStringContainsString('CREATE_READBACK=PASS', $this->approved_card_runner);
+        self::assertStringContainsString('expected_short_description', $this->approved_card_runner);
+        self::assertStringContainsString('dry-run product field mismatch: short_description', $this->approved_card_runner);
+        self::assertStringContainsString('readback mismatch: short_description', $this->approved_card_runner);
         self::assertStringContainsString('STOREFRONT_CARD=PASS', $this->approved_card_runner);
         self::assertStringContainsString('part-sync-preview-', $this->approved_card_runner);
         self::assertStringNotContainsString(
