@@ -1584,6 +1584,11 @@ function fn_talario_analytics_partner_sync_apply(): void
     if (!in_array($operation, ['create', 'update'], true)) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_operation']);
     }
+
+    // Authenticate the exact raw request before any partner/category discovery.
+    // This keeps diagnostic taxonomy details behind the same signed trust boundary as writes.
+    fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
+
     $product = isset($payload['product']) && is_array($payload['product']) ? $payload['product'] : [];
 
     $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
@@ -1651,7 +1656,39 @@ function fn_talario_analytics_partner_sync_apply(): void
             );
         }
         if (count($category_ids) !== 1) {
-            fn_talario_analytics_json_response(409, ['error' => 'category_not_unique']);
+            $category_prefix_length = min(5, mb_strlen($category_name, 'UTF-8'));
+            $category_prefix = mb_substr($category_name, 0, $category_prefix_length, 'UTF-8') . '%';
+            $category_candidates = [];
+            foreach (db_get_array(
+                'SELECT cd.category_id, cd.category, c.parent_id, c.status, c.storefront_id,'
+                . ' COALESCE(pcd.category, ?s) AS parent_category'
+                . ' FROM ?:category_descriptions cd'
+                . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+                . ' LEFT JOIN ?:category_descriptions pcd'
+                . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
+                . ' WHERE cd.lang_code = ?s AND cd.category LIKE ?s AND c.status IN (?a)'
+                . ' ORDER BY cd.category ASC, cd.category_id ASC LIMIT 10',
+                '',
+                $lang_code,
+                $category_prefix,
+                ['A', 'H']
+            ) as $candidate) {
+                $category_candidates[] = [
+                    'category_id' => (int) $candidate['category_id'],
+                    'name' => (string) $candidate['category'],
+                    'parent_id' => (int) $candidate['parent_id'],
+                    'parent_name' => (string) ($candidate['parent_category'] ?? ''),
+                    'status' => (string) $candidate['status'],
+                    'storefront_id' => (int) ($candidate['storefront_id'] ?? 0),
+                ];
+            }
+            fn_talario_analytics_json_response(409, [
+                'error' => 'category_not_unique',
+                'requested_category' => $category_name,
+                'requested_parent' => $parent_category_name,
+                'exact_match_count_capped' => count($category_ids),
+                'candidates' => $category_candidates,
+            ]);
         }
         $product['category_ids'] = [(int) reset($category_ids)];
     }
@@ -1665,7 +1702,6 @@ function fn_talario_analytics_partner_sync_apply(): void
         }
     }
 
-    fn_talario_analytics_partner_sync_verify_penaty_signature('apply', $raw);
     if (!$dry_run) {
         fn_talario_analytics_partner_sync_bootstrap_approved_age_variants($payload);
     }
