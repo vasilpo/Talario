@@ -335,13 +335,13 @@ def expected_short_description(current, variation_plan):
     minimum=None
     for item in variation_plan or []:
         group=str((item or {}).get("age_group") or "").strip().lower().replace("–","-").replace("—","-")
-        group=re.sub(r"\\s+"," ",group)
-        m=re.match(r"^до\\s+(\\d+)\\s*(?:х\\s*)?(?:год|года|лет)$",group)
+        group=re.sub(r"\s+"," ",group)
+        m=re.match(r"^до\s+(\d+)\s*(?:х\s*)?(?:год|года|лет)$",group)
         if m:
             upper=int(m.group(1))
             age=1 if upper>1 else 0
         else:
-            m=re.search(r"\\d+",group)
+            m=re.search(r"\d+",group)
             if not m:
                 continue
             age=int(m.group(0))
@@ -357,7 +357,7 @@ def expected_short_description(current, variation_plan):
     else:
         label=f"с {minimum} лет"
     remainder=re.sub(
-        r"^\\s*с\\s+\\d+\\s*(?:(?:го\\s*)?года|(?:х\\s*)?лет)(?![\\w])[\\s.,;:—–-]*",
+        r"^\s*с\s+\d+\s*(?:(?:го\s*)?года|(?:х\s*)?лет)(?![\w])[\s.,;:—–-]*",
         "",
         current,
         flags=re.IGNORECASE,
