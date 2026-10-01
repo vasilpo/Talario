@@ -208,8 +208,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview', $this->controller);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('preview', \$raw)", $this->controller);
-        self::assertStringContainsString("(int) \$payload['product_id'] !== 1158", $this->controller);
-        self::assertStringContainsString("(int) \$product['company_id'] !== 39", $this->controller);
+        self::assertStringContainsString("\$approved_company_id === 12", $this->controller);
+        self::assertStringContainsString("(int) \$product['company_id'] !== \$approved_company_id", $this->controller);
         self::assertStringContainsString("(string) \$product['status'] !== 'H'", $this->controller);
         self::assertStringNotContainsString('fn_get_company_root_admin_user_id', $this->controller);
         self::assertStringNotContainsString('fn_fill_auth(', $this->controller);
@@ -232,9 +232,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("\$storefront_repository->findByCompanyId(39)", $this->controller);
         self::assertStringContainsString("'talario_partner_sync_preview' => [", $this->controller);
         self::assertStringContainsString("'purpose' => 'visual_acceptance'", $this->controller);
+        self::assertStringContainsString("'company_id' => \$approved_company_id", $this->controller);
         self::assertStringContainsString("'&skey=' . rawurlencode(\$session_key)", $this->controller);
         self::assertStringContainsString("serialize(\$sess_data)", $this->controller);
-        self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
+        self::assertStringContainsString("'products.view?product_id=' . \$product_id", $this->controller);
         self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v4'", $this->controller);
         self::assertStringContainsString("'single_use' => true", $this->controller);
         self::assertStringContainsString("'state_url' => \$state_url", $this->controller);
@@ -266,8 +267,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'main_category_storefront_id'", $this->controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['store_access_key'])", $this->preview_post_controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $this->preview_post_controller);
-        self::assertStringContainsString("(int) \$_REQUEST['product_id'] === 1158", $this->preview_post_controller);
+        self::assertStringContainsString("(int) \$_REQUEST['product_id'] === \$preview_product_id", $this->preview_post_controller);
         self::assertStringContainsString("'visual_acceptance'", $this->preview_post_controller);
+        self::assertStringContainsString('in_array($preview_company_id, [12, 39], true)', $this->preview_post_controller);
         self::assertStringNotContainsString("['auth']", $this->preview_post_controller);
     }
 
@@ -825,21 +827,31 @@ final class PartnerSyncReadApiContractTest extends TestCase
         require_once dirname(__DIR__) . '/partner_sync_write.php';
 
         $resolved = \fn_talario_analytics_partner_sync_filter_age_years([
+            ['age_group' => 'до 3 лет'],
             ['age_group' => '3–5 лет'],
             ['age_group' => '5-7 лет'],
             ['age_group' => '6-9 лет'],
         ]);
         self::assertTrue($resolved['resolved']);
-        self::assertSame([3, 4, 5, 6, 7, 8, 9], $resolved['ages']);
+        self::assertSame([1, 2, 3, 4, 5, 6, 7, 8, 9], $resolved['ages']);
+
+        $under_three_copy = \fn_talario_analytics_partner_sync_minimum_age_short_description(
+            'Каратэ для детей',
+            [['age_group' => 'до 3 лет'], ['age_group' => '3-5 лет']]
+        );
+        self::assertSame('с 1го года. Каратэ для детей', $under_three_copy);
 
         $unsupported = \fn_talario_analytics_partner_sync_filter_age_years([
-            ['age_group' => 'до 3 лет'],
             ['age_group' => '1,5-3 года'],
             ['age_group' => '16+ лет'],
         ]);
         self::assertFalse($unsupported['resolved']);
-        self::assertSame(['до 3 лет', '1,5-3 года', '16+ лет'], $unsupported['unsupported_age_groups']);
+        self::assertSame(['1,5-3 года', '16+ лет'], $unsupported['unsupported_age_groups']);
 
+        self::assertSame(
+            'Единоборства',
+            \fn_talario_analytics_partner_sync_category_filter_label('Единоборства')
+        );
         self::assertSame(
             'Ранее развитие',
             \fn_talario_analytics_partner_sync_category_filter_label('Раннее развитие')
