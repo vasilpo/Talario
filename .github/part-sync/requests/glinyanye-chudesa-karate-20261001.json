@@ -1,8 +1,8 @@
 {
-  "request_id": "part-sync-glinyanye-chudesa-karate-20261001-v6-signer-manifest",
+  "request_id": "part-sync-glinyanye-chudesa-karate-20261001-v7-edinoborstva",
   "approved_company_name": "Глиняные Чудеса",
-  "category_name": "Каратэ",
-  "parent_category_name": "Единоборства",
+  "category_name": "Единоборства",
+  "parent_category_name": "",
   "source_type": "Каратэ",
   "source_sheet_id": "1xdBojHi2UEOlRPmfqpE2CX2qNd-aAc1MmC-qK-ZituM",
   "source_sheet_name": "Лист1",
