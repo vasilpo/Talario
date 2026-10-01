@@ -1,23 +1,30 @@
 {
-  "request_id": "part-sync-glinyanye-chudesa-20260928-image-manifest",
+  "request_id": "part-sync-glinyanye-chudesa-karate-20261001",
   "approved_company_name": "Глиняные Чудеса",
-  "category_name": "Творчество",
-  "source_type": "Керамика",
+  "category_name": "Карате",
+  "parent_category_name": "Единоборства",
+  "source_type": "Каратэ",
+  "source_sheet_id": "1xdBojHi2UEOlRPmfqpE2CX2qNd-aAc1MmC-qK-ZituM",
+  "source_sheet_name": "Лист1",
+  "source_sheet_row": 4,
+  "source_image_folder": "Фото/Спорт",
+  "source_image_count": 0,
+  "ignore_row": "ОБРАЗЕЦ",
   "operation": "create",
-  "dry_run": false,
-  "approval_id": "part-sync-glinyanye-chudesa-20260928",
+  "dry_run": true,
   "bootstrap_missing_age_variants": true,
   "product": {
-    "name": "Первая кржука",
+    "name": "Первый удар",
     "price": 1500,
     "status": "H",
-    "short_description": "На занятиях дети знакомятся со свойствами глины, осваивают разные способы лепки и создают собственные изделия.",
-    "full_description": "<p>На занятиях дети знакомятся со свойствами глины, учатся правильно с ней работать, осваивают разные способы и техники лепки и постепенно создают собственные изделия.</p>\n<p>Можно придумать свою идею или сделать работу вместе с мастером: посуду, фигурки, декоративные изделия и многое другое.</p>\n<p>Работа с глиной развивает мелкую моторику, воображение, чувство формы, аккуратность и творческое мышление. А ещё это увлекательный процесс, в котором ребёнок может отвлечься от гаджетов и полностью погрузиться в творчество.</p>\n<p><strong>Что взять с собой:</strong> воду.</p>\n<h3>Возраст и расписание</h3>\n<ul>\n<li><strong>до 3 лет</strong> — понедельник, среда, 10:00–11:00. Свободных мест: 5.</li>\n<li><strong>3–5 лет</strong> — вторник, четверг, 11:00–12:00. Свободных мест: 5.</li>\n<li><strong>6–9 лет</strong> — среда, пятница, 15:00–16:00. Свободных мест: 5.</li>\n</ul>\n<p><strong>Длительность занятия:</strong> 60 минут.</p>\n<p>В онлайн-календаре <strong>Таларио</strong> отображается актуальное расписание и количество свободных мест. Вы можете увидеть доступные места и сразу записаться на занятие.</p>\n<h3>Стоимость занятий</h3>\n<ul>\n<li>Пробное занятие — бесплатно.</li>\n<li>Разовое занятие — 1500 ₽.</li>\n<li>Абонемент на 4 занятия — 3600 ₽.</li>\n<li>Абонемент на 8 занятий — 6800 ₽.</li>\n<li>Абонемент на 12 занятий — 9600 ₽.</li>\n</ul>\n<h3>Адрес</h3>\n<p><strong>г. Красногорск, ул. Осеняя 1стр1</strong></p>\n<p>Парковка: есть, общая во дворе.</p>\n<p>Как найти: зайти во двор дома, повернуть направо, идти вдоль дома; белая дверь с названием.</p>",
-    "meta_keywords": "керамика, глина, лепка, дети, Красногорск"
+    "address": "г.Красногорск, ул Ленина 1стр1",
+    "short_description": "Каратэ для детей: техника, координация, дисциплина и уверенность.",
+    "full_description": "<p>Ваш ребенок мечтает быть сильным, ловким и уверенным в себе? Хотите, чтобы он научился по-настоящему уважать себя и других, развил неуклонную дисциплину и обрел неуязвимую внутреннюю силу? Добро пожаловать в нашу детскую школу традиционного каратэ!</p>\n<p>Здесь НЕТ места агрессии! Наш подход – это гармоничное развитие личности через древнее искусство каратэ. Под чутким руководством опытных сертифицированных сенсеев (мастеров с педагогическим образованием и спортивными званиями) ваш ребенок:</p>\n<p><strong>Освоит базовую технику безопасно.</strong> Постановка ударов (цуки), блоки (укэ), стойки (дачи) – все отрабатывается в паре с инструктором и на снарядах, с акцентом на контроль и точность, а не на силу. Первые годы обучения – строго бесконтактные.</p>\n<p><strong>Укрепит тело и дух.</strong> Разовьет координацию, гибкость, скорость и выносливость. Улучшит осанку и общее физическое состояние. Научится концентрироваться и владеть своими эмоциями.</p>\n<p><strong>Воспитает характер.</strong> Каратэ – это путь уважения (к учителю, сопернику, себе), дисциплины, честности, терпения и настойчивости в достижении целей (система поясов – кю).</p>\n<p><strong>Обретет уверенность.</strong> Знание базовых приемов самообороны (в рамках возрастной группы) и осознание своих растущих возможностей дают ребенку чувство защищенности и веры в себя.</p>\n<p><strong>Найдет друзей и единомышленников.</strong> Тренировки в группе сверстников – это команда, поддержка и здоровая мотивация стать лучше.</p>\n<h3>Что взять с собой на занятие:</h3>\n<p>Спортивную одежду и воду.</p>\n<h3>Расписание</h3>\n<p><strong>До 3х лет</strong><br>Понедельник, среда: 10:00–11:00</p>\n<p><strong>3–5 лет</strong><br>Вторник, четверг: 11:00–12:00</p>\n<p><strong>6–9 лет</strong><br>Среда, пятница: 15:00–16:00</p>\n<p>Длительность занятия — 60 минут.</p>\n<h3>Стоимость занятий</h3>\n<ul><li>Пробное занятие — бесплатно</li><li>Разовое занятие — 1500 ₽</li><li>Абонемент на 4 занятия — 3600 ₽</li><li>Абонемент на 8 занятий — 6800 ₽</li><li>Абонемент на 12 занятий — 9600 ₽</li></ul>\n<h3>Адрес и как добраться</h3>\n<p>г. Красногорск, ул Ленина 1стр1.</p>\n<p>Есть общая парковка во дворе. Зайти во двор дома, повернуть направо, идти вдоль дома. Будет белая дверь с названием.</p>",
+    "meta_keywords": "каратэ, карате, единоборства, дети, Красногорск"
   },
   "booking": {
-    "from": "2026-09-28",
-    "to": "2027-09-28",
+    "from": "2026-10-01",
+    "to": "2027-10-01",
     "slot_time": 60,
     "free_time": 0,
     "days": {
@@ -27,24 +34,24 @@
         "end": "11:00"
       },
       "tuesday": {
-        "enabled": false,
-        "start": "",
-        "end": ""
+        "enabled": true,
+        "start": "11:00",
+        "end": "12:00"
       },
       "wednesday": {
-        "enabled": false,
-        "start": "",
-        "end": ""
+        "enabled": true,
+        "start": "10:00",
+        "end": "16:00"
       },
       "thursday": {
-        "enabled": false,
-        "start": "",
-        "end": ""
+        "enabled": true,
+        "start": "11:00",
+        "end": "12:00"
       },
       "friday": {
-        "enabled": false,
-        "start": "",
-        "end": ""
+        "enabled": true,
+        "start": "15:00",
+        "end": "16:00"
       },
       "saturday": {
         "enabled": false,
@@ -62,9 +69,9 @@
   "variation_plan": [
     {
       "age_group": "до 3 лет",
-      "purchase_option": "Разовое занятие",
-      "price": 1500,
-      "capacity": 5,
+      "purchase_option": "Пробное занятие",
+      "price": 0,
+      "duration": 60,
       "schedule": [
         {
           "day": "monday",
@@ -80,13 +87,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "до 3 лет",
-      "purchase_option": "Пробное занятие",
-      "price": 0,
-      "capacity": 5,
+      "purchase_option": "Разовое занятие",
+      "price": 1500,
+      "duration": 60,
       "schedule": [
         {
           "day": "monday",
@@ -102,13 +110,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "до 3 лет",
       "purchase_option": "Абонемент 4 занятия",
       "price": 3600,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "monday",
@@ -124,13 +133,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "до 3 лет",
       "purchase_option": "Абонемент 8 занятий",
       "price": 6800,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "monday",
@@ -146,13 +156,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "до 3 лет",
       "purchase_option": "Абонемент 12 занятий",
       "price": 9600,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "monday",
@@ -168,35 +179,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
-    },
-    {
-      "age_group": "3-5 лет",
-      "purchase_option": "Разовое занятие",
-      "price": 1500,
-      "capacity": 5,
-      "schedule": [
-        {
-          "day": "tuesday",
-          "start": "11:00",
-          "end": "12:00",
-          "duration": 60,
-          "capacity": 5
-        },
-        {
-          "day": "thursday",
-          "start": "11:00",
-          "end": "12:00",
-          "duration": 60,
-          "capacity": 5
-        }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "3-5 лет",
       "purchase_option": "Пробное занятие",
       "price": 0,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "tuesday",
@@ -212,13 +202,37 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
+    },
+    {
+      "age_group": "3-5 лет",
+      "purchase_option": "Разовое занятие",
+      "price": 1500,
+      "duration": 60,
+      "schedule": [
+        {
+          "day": "tuesday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "thursday",
+          "start": "11:00",
+          "end": "12:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ],
+      "capacity": 5
     },
     {
       "age_group": "3-5 лет",
       "purchase_option": "Абонемент 4 занятия",
       "price": 3600,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "tuesday",
@@ -234,13 +248,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "3-5 лет",
       "purchase_option": "Абонемент 8 занятий",
       "price": 6800,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "tuesday",
@@ -256,13 +271,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "3-5 лет",
       "purchase_option": "Абонемент 12 занятий",
       "price": 9600,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "tuesday",
@@ -278,35 +294,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
-    },
-    {
-      "age_group": "6-9 лет",
-      "purchase_option": "Разовое занятие",
-      "price": 1500,
-      "capacity": 5,
-      "schedule": [
-        {
-          "day": "wednesday",
-          "start": "15:00",
-          "end": "16:00",
-          "duration": 60,
-          "capacity": 5
-        },
-        {
-          "day": "friday",
-          "start": "15:00",
-          "end": "16:00",
-          "duration": 60,
-          "capacity": 5
-        }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "6-9 лет",
       "purchase_option": "Пробное занятие",
       "price": 0,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "wednesday",
@@ -322,13 +317,37 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
+    },
+    {
+      "age_group": "6-9 лет",
+      "purchase_option": "Разовое занятие",
+      "price": 1500,
+      "duration": 60,
+      "schedule": [
+        {
+          "day": "wednesday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        },
+        {
+          "day": "friday",
+          "start": "15:00",
+          "end": "16:00",
+          "duration": 60,
+          "capacity": 5
+        }
+      ],
+      "capacity": 5
     },
     {
       "age_group": "6-9 лет",
       "purchase_option": "Абонемент 4 занятия",
       "price": 3600,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "wednesday",
@@ -344,13 +363,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "6-9 лет",
       "purchase_option": "Абонемент 8 занятий",
       "price": 6800,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "wednesday",
@@ -366,13 +386,14 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     },
     {
       "age_group": "6-9 лет",
       "purchase_option": "Абонемент 12 занятий",
       "price": 9600,
-      "capacity": 5,
+      "duration": 60,
       "schedule": [
         {
           "day": "wednesday",
@@ -388,24 +409,9 @@
           "duration": 60,
           "capacity": 5
         }
-      ]
+      ],
+      "capacity": 5
     }
   ],
-  "image_drive_files": [
-    {
-      "id": "1lTISmlz74-JAMCOLST9GFD93gXUPNhYg",
-      "sha256": "2bc3bebea638a37b5550a7e366e40c1e00c403d95988331bed2c9156c36b5f49",
-      "bytes": 1333492
-    },
-    {
-      "id": "1lrG4Y9JPyFcA-BF02s6_7MPQxVo4XLij",
-      "sha256": "5b1b957d211b22a6b6ef201899daedeb973bb9e3bec0649dd8dbd89cb3d44fb9",
-      "bytes": 393816
-    },
-    {
-      "id": "1Xv1qQNhMWU2i2pBBWFIG1OCIOoh_IUA0",
-      "sha256": "ea95cc2758b3185bd8ab24717494f9378c45c46024b510faaced1d21c17b3b21",
-      "bytes": 60168
-    }
-  ]
+  "image_drive_files": []
 }
