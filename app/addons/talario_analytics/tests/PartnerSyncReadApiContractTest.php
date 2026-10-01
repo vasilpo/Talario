@@ -208,8 +208,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview', $this->controller);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('preview', \$raw)", $this->controller);
-        self::assertStringContainsString("(int) \$payload['product_id'] !== 1158", $this->controller);
-        self::assertStringContainsString("(int) \$product['company_id'] !== 39", $this->controller);
+        self::assertStringContainsString("\$approved_company_id === 12", $this->controller);
+        self::assertStringContainsString("(int) \$product['company_id'] !== \$approved_company_id", $this->controller);
         self::assertStringContainsString("(string) \$product['status'] !== 'H'", $this->controller);
         self::assertStringNotContainsString('fn_get_company_root_admin_user_id', $this->controller);
         self::assertStringNotContainsString('fn_fill_auth(', $this->controller);
@@ -232,9 +232,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString("\$storefront_repository->findByCompanyId(39)", $this->controller);
         self::assertStringContainsString("'talario_partner_sync_preview' => [", $this->controller);
         self::assertStringContainsString("'purpose' => 'visual_acceptance'", $this->controller);
+        self::assertStringContainsString("'company_id' => \$approved_company_id", $this->controller);
         self::assertStringContainsString("'&skey=' . rawurlencode(\$session_key)", $this->controller);
         self::assertStringContainsString("serialize(\$sess_data)", $this->controller);
-        self::assertStringContainsString("'products.view?product_id=1158'", $this->controller);
+        self::assertStringContainsString("'products.view?product_id=' . \$product_id", $this->controller);
         self::assertStringContainsString("'schema_version' => 'partner-sync.preview.v4'", $this->controller);
         self::assertStringContainsString("'single_use' => true", $this->controller);
         self::assertStringContainsString("'state_url' => \$state_url", $this->controller);
@@ -266,8 +267,9 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'main_category_storefront_id'", $this->controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['store_access_key'])", $this->preview_post_controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $this->preview_post_controller);
-        self::assertStringContainsString("(int) \$_REQUEST['product_id'] === 1158", $this->preview_post_controller);
+        self::assertStringContainsString("(int) \$_REQUEST['product_id'] === \$preview_product_id", $this->preview_post_controller);
         self::assertStringContainsString("'visual_acceptance'", $this->preview_post_controller);
+        self::assertStringContainsString('in_array($preview_company_id, [12, 39], true)', $this->preview_post_controller);
         self::assertStringNotContainsString("['auth']", $this->preview_post_controller);
     }
 
