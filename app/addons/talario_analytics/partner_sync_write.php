@@ -107,12 +107,19 @@ function fn_talario_analytics_partner_sync_minimum_age_short_description(string 
 {
     $minimum = null;
     foreach ($variation_plan as $item) {
-        $group = is_array($item) ? (string) ($item['age_group'] ?? '') : '';
-        if (!preg_match('/\\d+/', $group, $match)) {
+        $group = is_array($item) ? trim((string) ($item['age_group'] ?? '')) : '';
+        $normalized_group = mb_strtolower(str_replace(['–', '—'], '-', $group), 'UTF-8');
+        $normalized_group = preg_replace('/\\s+/u', ' ', $normalized_group) ?? $normalized_group;
+
+        if (preg_match('/^до\\s+(\\d+)\\s*(?:х\\s*)?(?:год|года|лет)$/u', $normalized_group, $under_match)) {
+            $exclusive_upper = (int) $under_match[1];
+            $age = $exclusive_upper > 1 ? 1 : 0;
+        } elseif (preg_match('/\\d+/', $normalized_group, $match)) {
+            $age = (int) $match[0];
+        } else {
             continue;
         }
 
-        $age = (int) $match[0];
         if ($age <= 0) {
             continue;
         }
@@ -474,10 +481,16 @@ function fn_talario_analytics_partner_sync_filter_age_years(array $variation_pla
 
         $from = null;
         $to = null;
-        if (preg_match('/^(\d+)\s*-\s*(\d+)\s*(?:год|года|лет)$/u', $normalized, $match)) {
+        if (preg_match('/^до\\s+(\\d+)\\s*(?:х\\s*)?(?:год|года|лет)$/u', $normalized, $match)) {
+            $exclusive_upper = (int) $match[1];
+            if ($exclusive_upper > 1) {
+                $from = 1;
+                $to = $exclusive_upper - 1;
+            }
+        } elseif (preg_match('/^(\\d+)\\s*-\\s*(\\d+)\\s*(?:год|года|лет)$/u', $normalized, $match)) {
             $from = (int) $match[1];
             $to = (int) $match[2];
-        } elseif (preg_match('/^(\d+)\s*(?:год|года|лет)$/u', $normalized, $match)) {
+        } elseif (preg_match('/^(\\d+)\\s*(?:год|года|лет)$/u', $normalized, $match)) {
             $from = (int) $match[1];
             $to = $from;
         }
@@ -506,6 +519,7 @@ function fn_talario_analytics_partner_sync_category_filter_label(string $root_ca
 {
     $aliases = [
         'Спорт' => 'Спорт',
+        'Единоборства' => 'Единоборства',
         'Творчество' => 'Творчество',
         'Танцы' => 'Танцы',
         'Раннее развитие' => 'Ранее развитие',
