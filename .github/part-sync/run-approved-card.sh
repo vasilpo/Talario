@@ -153,7 +153,21 @@ post_signed() {
 dry_req="part-sync-apply-${GITHUB_RUN_ID}-dry"
 dry_code="$(post_signed 'talario-part-sync' 'apply' "$work/dry.json" "$dry_req" "$work/dry.out")"
 echo "SIGNED_DRY_RUN_HTTP=$dry_code"
-test "$dry_code" = "200"
+if [ "$dry_code" != "200" ]; then
+  safe_error="$(jq -c '{
+    error:(.error//null),
+    stage:(.stage//null),
+    kind:(.kind//null),
+    detail:(.detail//null),
+    variation_resolution:(.variation_resolution//null)
+  }' "$work/dry.out" 2>/dev/null || true)"
+  if [ -n "$safe_error" ]; then
+    echo "SIGNED_DRY_RUN_ERROR=$safe_error"
+  else
+    echo "SIGNED_DRY_RUN_ERROR={\"error\":\"non_json_response\"}"
+  fi
+  exit 60
+fi
 
 python3 - "$work/request.json" "$work/dry.out" <<'PY'
 import json,sys
