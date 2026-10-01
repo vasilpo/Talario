@@ -1364,6 +1364,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('talario.part-sync.needs-input.v1', $this->approved_card_runner);
         self::assertStringContainsString('human_decisions.category.category_id', $this->approved_card_runner);
         self::assertStringContainsString('PARTNER_SYNC_STATE=READY_FOR_CREATE', $this->approved_card_runner);
+        self::assertStringContainsString('LOOKUP_ENDPOINT=', $this->approved_card_runner);
+        self::assertStringContainsString('RECOVERY_EXISTING_PRODUCT=PASS', $this->approved_card_runner);
+        self::assertStringContainsString('READY_FOR_RECOVERY', $this->approved_card_runner);
+        self::assertStringContainsString('variation price readback mismatch', $this->approved_card_runner);
+        self::assertStringContainsString('existing_card_ambiguous', $this->approved_card_runner);
+        self::assertStringContainsString('recovery.json', $this->approved_card_workflow);
+        self::assertStringContainsString('create-result.json', $this->approved_card_workflow);
         self::assertStringContainsString('needs-input.json', $this->approved_card_workflow);
         self::assertStringContainsString('retention-days: 14', $this->approved_card_workflow);
         self::assertStringContainsString('.dry_run=false', $this->approved_card_runner);
@@ -1412,6 +1419,19 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('fn_talario_analytics_partner_sync_category_normalize', $this->controller);
         self::assertStringContainsString('fn_talario_analytics_partner_sync_category_distance', $this->controller);
         self::assertStringContainsString('LIMIT 100', $this->controller);
+    }
+
+    public function testSignedPartnerLookupIsDevCopyOnlyAndAuthenticatedBeforeRead(): void
+    {
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('lookup', \\$raw);", $this->controller);
+        self::assertStringContainsString('partner-sync.lookup.v1', $this->controller);
+        self::assertStringContainsString('part-sync-lookup-[A-Za-z0-9._:-]{6,96}', $this->controller);
+        self::assertStringContainsString("'partner_lookup'", $this->controller);
+        self::assertStringContainsString("'address_sha256'", $this->controller);
+        self::assertStringContainsString("'short_description_sha256'", $this->controller);
+        self::assertStringContainsString("'full_description_sha256'", $this->controller);
+        self::assertStringContainsString("'variation_prices'", $this->controller);
+        self::assertStringContainsString("'image_count'", $this->controller);
     }
 
     public function testSignedPartnerApplyDispatchesBeforeBearerAuthentication(): void
