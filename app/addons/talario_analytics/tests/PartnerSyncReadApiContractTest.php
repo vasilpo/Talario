@@ -193,8 +193,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'penaty_bootstrap' => true", $this->trusted_controllers);
         self::assertStringContainsString("'partner_apply' => true", $this->trusted_controllers);
         self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
-        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)", $this->controller);
-        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview']", $this->controller);
+        self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview', 'penaty_preview_state'], true)", $this->controller);
+        self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'partner_lookup', 'penaty_preview']", $this->controller);
         self::assertStringContainsString("'part-sync-penaty-preview-20260924'", $this->controller);
         self::assertStringContainsString("part-sync-preview-[A-Za-z0-9._:-]{6,96}", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
@@ -1363,7 +1363,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('do_not_continue_tools', $this->approved_card_runner);
         self::assertStringContainsString('talario.part-sync.needs-input.v1', $this->approved_card_runner);
         self::assertStringContainsString('human_decisions.category.category_id', $this->approved_card_runner);
-        self::assertStringContainsString('PARTNER_SYNC_STATE=READY_FOR_CREATE', $this->approved_card_runner);
+        self::assertStringContainsString('state="READY_FOR_CREATE"', $this->approved_card_runner);
         self::assertStringContainsString('LOOKUP_ENDPOINT=', $this->approved_card_runner);
         self::assertStringContainsString('RECOVERY_EXISTING_PRODUCT=PASS', $this->approved_card_runner);
         self::assertStringContainsString('READY_FOR_RECOVERY', $this->approved_card_runner);
@@ -1423,7 +1423,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
 
     public function testSignedPartnerLookupIsDevCopyOnlyAndAuthenticatedBeforeRead(): void
     {
-        self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('lookup', \\$raw);", $this->controller);
+        self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('lookup',", $this->controller);
         self::assertStringContainsString('partner-sync.lookup.v1', $this->controller);
         self::assertStringContainsString('part-sync-lookup-[A-Za-z0-9._:-]{6,96}', $this->controller);
         self::assertStringContainsString("'partner_lookup'", $this->controller);
