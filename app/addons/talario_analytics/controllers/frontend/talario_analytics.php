@@ -790,7 +790,8 @@ function fn_talario_analytics_partner_sync_penaty_preview_state(): void
 
     $preview = Tygh::$app['session']['talario_partner_sync_preview'] ?? null;
     $preview_exact = is_array($preview)
-        && (int) ($preview['product_id'] ?? 0) === 1158
+        && (int) ($preview['product_id'] ?? 0) > 0
+        && in_array((int) ($preview['company_id'] ?? 0), [12, 39], true)
         && (string) ($preview['purpose'] ?? '') === 'visual_acceptance';
 
     /** @var \Tygh\Storefront\Storefront $runtime_storefront */
@@ -1641,17 +1642,31 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     if (!is_array($payload) || json_last_error() !== JSON_ERROR_NONE) {
         fn_talario_analytics_json_response(400, ['error' => 'invalid_json']);
     }
-    if (array_keys($payload) !== ['product_id'] || (int) $payload['product_id'] !== 1158) {
+    $payload_keys = array_keys($payload);
+    sort($payload_keys);
+    $product_id = (int) ($payload['product_id'] ?? 0);
+    $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
+    $legacy_penaty_target = $payload_keys === ['product_id'] && $product_id === 1158;
+    $glinyanye_visual_target = $payload_keys === ['approved_company_id', 'product_id']
+        && $approved_company_id === 12
+        && $product_id > 0;
+    if (!$legacy_penaty_target && !$glinyanye_visual_target) {
         fn_talario_analytics_json_response(403, ['error' => 'pilot_preview_target_not_allowed']);
+    }
+    if ($legacy_penaty_target) {
+        $approved_company_id = 39;
     }
 
     fn_talario_analytics_partner_sync_verify_penaty_signature('preview', $raw);
 
     $product = db_get_row(
         'SELECT product_id, company_id, status FROM ?:products WHERE product_id = ?i',
-        1158
+        $product_id
     );
-    if (!$product || (int) $product['company_id'] !== 39 || (string) $product['status'] !== 'H') {
+    if (!$product
+        || (int) $product['company_id'] !== $approved_company_id
+        || (string) $product['status'] !== 'H'
+    ) {
         fn_talario_analytics_json_response(409, ['error' => 'pilot_preview_target_invalid']);
     }
 
@@ -1669,7 +1684,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_storefront_unavailable']);
     }
     $company_ids = $storefront->getCompanyIds();
-    if ($company_ids && !in_array(39, $company_ids, true)) {
+    if ($company_ids && !in_array($approved_company_id, $company_ids, true)) {
         fn_talario_analytics_json_response(409, ['error' => 'pilot_preview_storefront_scope_invalid']);
     }
 
@@ -1681,7 +1696,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     // Bounded read-only diagnostics for the final dev_copy visual closure gate.
     $probe_auth = (array) (Tygh::$app['session']['auth'] ?? []);
     $probe_normal = fn_get_product_data(
-        1158,
+        $product_id,
         $probe_auth,
         CART_LANGUAGE,
         '?:products.product_id',
@@ -1694,7 +1709,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         false
     );
     $probe_preview = fn_get_product_data(
-        1158,
+        $product_id,
         $probe_auth,
         CART_LANGUAGE,
         '?:products.product_id',
@@ -1708,7 +1723,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     );
     $company_status = (string) db_get_field(
         'SELECT status FROM ?:companies WHERE company_id = ?i',
-        39
+        $approved_company_id
     );
     $main_category = db_get_row(
         'SELECT c.category_id, c.status, c.storefront_id'
@@ -1716,7 +1731,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         . ' INNER JOIN ?:categories c ON c.category_id = pc.category_id'
         . ' WHERE pc.product_id = ?i AND pc.link_type = ?s'
         . ' LIMIT 1',
-        1158,
+        $product_id,
         'M'
     ) ?: [];
 
@@ -1748,7 +1763,8 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         'cart' => [],
         'store_access_key' => $store_access_key,
         'talario_partner_sync_preview' => [
-            'product_id' => 1158,
+            'product_id' => $product_id,
+            'company_id' => $approved_company_id,
             'purpose' => 'visual_acceptance',
         ],
         'talario_partner_sync_preview_state_token' => $state_token,
@@ -1764,7 +1780,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         fn_talario_analytics_json_response(503, ['error' => 'pilot_preview_session_store_failed']);
     }
 
-    $redirect_uri = 'products.view?product_id=1158'
+    $redirect_uri = 'products.view?product_id=' . $product_id
         . '&storefront_id=' . (int) $storefront->storefront_id
         . '&skey=' . rawurlencode($session_key);
     $lang_code = (string) Registry::get('settings.Appearance.frontend_default_language') ?: 'ru';
@@ -1798,8 +1814,8 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
 
     fn_talario_analytics_json_response(200, [
         'schema_version' => 'partner-sync.preview.v4',
-        'product_id' => 1158,
-        'company_id' => 39,
+        'product_id' => $product_id,
+        'company_id' => $approved_company_id,
         'status' => 'H',
         'single_use' => true,
         'visibility' => [
@@ -1810,7 +1826,7 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
             'main_category_status' => (string) ($main_category['status'] ?? ''),
             'main_category_storefront_id' => (int) ($main_category['storefront_id'] ?? 0),
             'resolved_storefront_id' => (int) $storefront->storefront_id,
-            'company_scope' => $company_ids ? in_array(39, $company_ids, true) : true,
+            'company_scope' => $company_ids ? in_array($approved_company_id, $company_ids, true) : true,
         ],
         'preview_url' => $preview_url,
         'state_url' => $state_url,
