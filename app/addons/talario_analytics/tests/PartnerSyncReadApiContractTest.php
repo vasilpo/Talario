@@ -1322,6 +1322,26 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
     }
 
+    public function testSignedPartnerApplyAuthenticatesBeforePartnerAndCategoryDiscovery(): void
+    {
+        $signature = strpos(
+            $this->controller,
+            "fn_talario_analytics_partner_sync_verify_penaty_signature('apply', \$raw);"
+        );
+        $company_lookup = strpos($this->controller, 'SELECT company_id FROM ?:companies WHERE company = ?s');
+        $category_lookup = strpos($this->controller, 'SELECT cd.category_id FROM ?:category_descriptions cd');
+
+        self::assertNotFalse($signature);
+        self::assertNotFalse($company_lookup);
+        self::assertNotFalse($category_lookup);
+        self::assertLessThan($company_lookup, $signature);
+        self::assertLessThan($category_lookup, $signature);
+        self::assertStringContainsString("'exact_match_count_capped'", $this->controller);
+        self::assertStringContainsString("'candidates' => \$category_candidates", $this->controller);
+        self::assertStringContainsString("'parent_name'", $this->controller);
+        self::assertStringContainsString('LIMIT 10', $this->controller);
+    }
+
     public function testSignedPartnerApplyDispatchesBeforeBearerAuthentication(): void
     {
         $signed_dispatch = strpos($this->controller, "if (\$mode === 'partner_apply') {");
