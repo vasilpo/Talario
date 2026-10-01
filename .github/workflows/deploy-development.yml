@@ -99,7 +99,7 @@ jobs:
 
       # PART-SYNC Step 7 acceptance trigger v4
       - name: PART-SYNC Step 7 filter acceptance
-        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: step7 filter acceptance runner') }}"
+        if: "${{ github.event_name == 'push' && github.actor == github.repository_owner && github.ref == 'refs/heads/development' && contains(github.event.head_commit.message, 'PART-SYNC: step7 filter acceptance runner') }}"
         shell: bash
         run: |
           set -euo pipefail
@@ -140,13 +140,14 @@ jobs:
               "approved_company_id": 39,
               "product": {
                   "company_id": 39,
-                  "name": "PART-SYNC Step 7 Filter Acceptance 2026-09-30",
+                  "name": "PART-SYNC Map Acceptance 2026-10-01",
                   "price": 1000.0,
                   "category_ids": [270],
                   "status": "H",
+                  "address": "г. Красногорск, ул. Вилора Трифонова дом 1",
                   "short_description": "с 3 лет",
                   "full_description": "<p>Техническая Hidden-карточка dev_copy для acceptance Step 7.</p>",
-                  "meta_keywords": "PART-SYNC Step 7 acceptance",
+                  "meta_keywords": "PART-SYNC map E2E acceptance 2026-10-01",
               },
               "booking": {
                   "from": "2026-09-30",
@@ -199,7 +200,7 @@ jobs:
               --write-out '%{http_code}'
           }
 
-          dry_code="$(call_signed_apply 'part-sync-apply-step7-filter-dry-20260930-v2' "$tmpdir/dry.json" "$tmpdir/dry.out")"
+          dry_code="$(call_signed_apply 'part-sync-apply-map-e2e-dry-20261001-v3' "$tmpdir/dry.json" "$tmpdir/dry.out")"
           echo "DRY_HTTP=$dry_code"
           test "$dry_code" = "200"
 
@@ -216,6 +217,8 @@ jobs:
               raise SystemExit("dry-run age filter mismatch")
           if ff.get("category") != "Ранее развитие":
               raise SystemExit("dry-run category filter mismatch")
+          if (plan.get("product") or {}).get("address") != "г. Красногорск, ул. Вилора Трифонова дом 1":
+              raise SystemExit("dry-run address mismatch")
           if variations.get("resolved") is not True or int(variations.get("count") or 0) != 4:
               raise SystemExit("dry-run variation resolution mismatch")
           print("DRY_RUN=PASS")
@@ -228,12 +231,12 @@ jobs:
           import json, sys
           p=json.load(open(sys.argv[1],encoding="utf-8"))
           p["dry_run"]=False
-          p["approval_id"]="part-sync-step7-filter-accept-20260930-v2"
+          p["approval_id"]="part-sync-map-e2e-accept-20261001-v3"
           with open(sys.argv[2],"w",encoding="utf-8") as fh:
               json.dump(p,fh,ensure_ascii=False,separators=(",",":"))
           PY
 
-          create_code="$(call_signed_apply 'part-sync-apply-step7-filter-create-20260930-v2' "$tmpdir/create.json" "$tmpdir/create.out")"
+          create_code="$(call_signed_apply 'part-sync-apply-map-e2e-create-20261001-v3' "$tmpdir/create.json" "$tmpdir/create.out")"
           echo "CREATE_HTTP=$create_code"
           test "$create_code" = "201"
 
@@ -248,6 +251,8 @@ jobs:
               raise SystemExit("create schema mismatch")
           if rb.get("status") != "H":
               raise SystemExit("created product is not Hidden")
+          if rb.get("address") != "г. Красногорск, ул. Вилора Трифонова дом 1":
+              raise SystemExit("create address readback mismatch")
           if ff.get("ages") != expected_ages:
               raise SystemExit("create age filter readback mismatch")
           if ff.get("category") != "Ранее развитие":
@@ -260,22 +265,13 @@ jobs:
           print("CREATE=PASS")
           print("PRODUCT_ID="+str(product_id))
           print("STATUS=H")
+          print("READBACK_ADDRESS="+str(rb.get("address","")))
+          print("PART_SYNC_ADDRESS_E2E_WRITE=PASS")
           print("FILTER_AGES=3,4,5,6,7,8,9")
           print("FILTER_CATEGORY=Ранее развитие")
           print("VARIATIONS=4")
           print("VARIATION_FILTER_COPY=PASS")
           PY
-
-      - name: Checkout PART-SYNC map E2E acceptance script
-        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: map e2e acceptance runner') }}"
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: PART-SYNC map E2E acceptance
-        if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: map e2e acceptance runner') }}"
-        shell: bash
-        run: bash .github/part-sync/map-e2e-acceptance.sh
 
       - name: Checkout Step 8 acceptance script
         if: "${{ contains(github.event.head_commit.message, 'PART-SYNC: step8 booking-window acceptance runner') }}"
