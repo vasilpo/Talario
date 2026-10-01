@@ -1258,6 +1258,18 @@ final class PartnerSyncReadApiContractTest extends TestCase
     }
 
 
+    public function testPartnerSyncSignedWriterUsesCurrentRotatedPublicKey(): void
+    {
+        self::assertStringContainsString(
+            'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK',
+            $this->controller
+        );
+        self::assertStringNotContainsString(
+            'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP',
+            $this->controller
+        );
+    }
+
     public function testSignedPartnerApplyDispatchesBeforeBearerAuthentication(): void
     {
         $signed_dispatch = strpos($this->controller, "if (\$mode === 'partner_apply') {");
