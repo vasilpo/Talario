@@ -9,10 +9,13 @@ if (!is_array($preview)) {
     return;
 }
 
+$preview_product_id = (int) ($preview['product_id'] ?? 0);
+$preview_company_id = (int) ($preview['company_id'] ?? 0);
 $is_exact_preview = isset($_REQUEST['product_id'])
-    && (int) ($preview['product_id'] ?? 0) === 1158
+    && $preview_product_id > 0
+    && in_array($preview_company_id, [12, 39], true)
     && (string) ($preview['purpose'] ?? '') === 'visual_acceptance'
-    && (int) $_REQUEST['product_id'] === 1158;
+    && (int) $_REQUEST['product_id'] === $preview_product_id;
 
 // The maintenance bypass is required only while products.view resolves the exact
 // hidden acceptance card. Remove it before the session is persisted so subsequent
