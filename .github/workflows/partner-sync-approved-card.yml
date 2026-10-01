@@ -1,0 +1,105 @@
+name: PART-SYNC Approved Card
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - '.github/part-sync/requests/*.json'
+  workflow_dispatch:
+    inputs:
+      request_file:
+        description: Approved request file under .github/part-sync/requests/
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: partner-sync-approved-card-dev-copy
+  cancel-in-progress: false
+
+jobs:
+  approved-card:
+    if: github.repository == 'vasilpo/Talario' && github.ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout approved request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Resolve exactly one approved request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            request="${{ inputs.request_file }}"
+          else
+            before="${{ github.event.before }}"
+            mapfile -t changed < <(git diff --name-only "$before" "${GITHUB_SHA}" -- '.github/part-sync/requests/*.json')
+            [ "${#changed[@]}" -eq 1 ] || {
+              echo "expected exactly one Partner Sync request change, got ${#changed[@]}" >&2
+              printf '%s\n' "${changed[@]}" >&2
+              exit 64
+            }
+            request="${changed[0]}"
+          fi
+          [[ "$request" =~ ^\.github/part-sync/requests/[A-Za-z0-9._-]+\.json$ ]]
+          test -f "$request"
+          echo "request_file=$request" >> "$GITHUB_OUTPUT"
+          echo "REQUEST_FILE=$request"
+
+      - name: Configure pinned SSH trust
+        shell: bash
+        env:
+          BEGET_SSH_KEY: ${{ secrets.BEGET_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "${BEGET_SSH_KEY:-}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$BEGET_SSH_KEY" | base64 --decode > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          printf '%s\n' 'salvage.beget.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIs+AhzkOHDQ3wgwojXvZgnfyrnRuRgf83iUmCZJtKhY' > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keygen -lf ~/.ssh/id_ed25519 -E sha256 | awk '{print "SIGNER_FINGERPRINT="$2}'
+
+      - name: Preflight server trust and dev_copy state
+        shell: bash
+        env:
+          BEGET_USER: ${{ secrets.BEGET_USER }}
+        run: |
+          set -euo pipefail
+          test -n "${BEGET_USER:-}"
+          output="$(ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$BEGET_USER@salvage.beget.com" "talario-dev-ops status")"
+          printf '%s\n' "$output" | grep -F -x 'DISPATCHER=talario-dev-github-v1'
+          printf '%s\n' "$output" | grep -F -x 'OPERATION=status'
+          printf '%s\n' "$output" | grep -F -x 'BRANCH=development'
+          printf '%s\n' "$output" | grep -F -x 'WORKTREE=CLEAN'
+          printf '%s\n' "$output" | grep -F -x 'DEV_COPY_FLAG=PRESENT'
+          echo 'SSH_TRUST_PREFLIGHT=PASS'
+          echo 'DEV_COPY_PREFLIGHT=PASS'
+
+      - name: Signed dry-run, approved create, readback and storefront QA
+        shell: bash
+        env:
+          PARTNER_SYNC_KEY_FILE: /home/runner/.ssh/id_ed25519
+        run: |
+          bash .github/part-sync/run-approved-card.sh "${{ steps.request.outputs.request_file }}" "${GITHUB_RUN_ATTEMPT}"
+
+      - name: Upload bounded storefront evidence
+        if: always() && github.run_attempt == 2
+        uses: actions/upload-artifact@v4
+        with:
+          name: partner-sync-card-evidence-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/partner-sync-approved-card-evidence/screenshot.png
+            ${{ runner.temp }}/partner-sync-approved-card-evidence/summary.txt
+          retention-days: 2
+          if-no-files-found: ignore
