@@ -1302,6 +1302,10 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'.github/part-sync/requests/*.json'", $this->approved_card_workflow);
         self::assertStringContainsString('GITHUB_RUN_ATTEMPT', $this->approved_card_workflow);
         self::assertStringContainsString('SSH_TRUST_PREFLIGHT=PASS', $this->approved_card_workflow);
+        self::assertStringContainsString('DEV_COPY_HEAD_MATCH=PASS', $this->approved_card_workflow);
+        self::assertStringContainsString('remote_head', $this->approved_card_workflow);
+        self::assertStringContainsString('GITHUB_SHA', $this->approved_card_workflow);
+        self::assertStringContainsString('SIGNED_DRY_RUN_ERROR=', $this->approved_card_runner);
         self::assertStringContainsString('.dry_run=false', $this->approved_card_runner);
         self::assertStringContainsString('.dry_run=true | del(.approval_id)', $this->approved_card_runner);
         self::assertStringContainsString('SIGNED_DRY_RUN=PASS', $this->approved_card_runner);
