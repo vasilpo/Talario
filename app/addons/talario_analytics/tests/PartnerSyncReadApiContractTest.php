@@ -1306,6 +1306,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('remote_head', $this->approved_card_workflow);
         self::assertStringContainsString('GITHUB_SHA', $this->approved_card_workflow);
         self::assertStringContainsString('SIGNED_DRY_RUN_ERROR=', $this->approved_card_runner);
+        self::assertStringContainsString('PARTNER_SYNC_STATE=NEEDS_INPUT', $this->approved_card_runner);
+        self::assertStringContainsString('talario.part-sync.needs-input.v1', $this->approved_card_runner);
+        self::assertStringContainsString('human_decisions.category.category_id', $this->approved_card_runner);
+        self::assertStringContainsString('PARTNER_SYNC_STATE=READY_FOR_CREATE', $this->approved_card_runner);
+        self::assertStringContainsString('needs-input.json', $this->approved_card_workflow);
+        self::assertStringContainsString('retention-days: 14', $this->approved_card_workflow);
         self::assertStringContainsString('.dry_run=false', $this->approved_card_runner);
         self::assertStringContainsString('.dry_run=true | del(.approval_id)', $this->approved_card_runner);
         self::assertStringContainsString('SIGNED_DRY_RUN=PASS', $this->approved_card_runner);
@@ -1336,10 +1342,15 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertNotFalse($category_lookup);
         self::assertLessThan($company_lookup, $signature);
         self::assertLessThan($category_lookup, $signature);
+        self::assertStringContainsString("'category_resolution_required'", $this->controller);
+        self::assertStringContainsString("'category_selection_invalid'", $this->controller);
         self::assertStringContainsString("'exact_match_count_capped'", $this->controller);
-        self::assertStringContainsString("'candidates' => \$category_candidates", $this->controller);
-        self::assertStringContainsString("'parent_name'", $this->controller);
-        self::assertStringContainsString('LIMIT 10', $this->controller);
+        self::assertStringContainsString("'candidates' => \$candidates", $this->controller);
+        self::assertStringContainsString("'decision_contract'", $this->controller);
+        self::assertStringContainsString("'human_decisions.category.category_id'", $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_category_normalize', $this->controller);
+        self::assertStringContainsString('fn_talario_analytics_partner_sync_category_distance', $this->controller);
+        self::assertStringContainsString('LIMIT 100', $this->controller);
     }
 
     public function testSignedPartnerApplyDispatchesBeforeBearerAuthentication(): void
