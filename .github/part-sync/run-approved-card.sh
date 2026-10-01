@@ -279,7 +279,7 @@ PY
       echo "## Partner Sync: NEEDS_INPUT"
       echo
       cat "$evidence/summary.txt"
-    } >> "\${GITHUB_STEP_SUMMARY:-/dev/null}"
+    } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
     exit 0
   fi
 
