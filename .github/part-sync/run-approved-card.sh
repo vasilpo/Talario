@@ -395,49 +395,207 @@ print("RESOLVED_CATEGORY_IDS="+",".join(map(str,product.get("category_ids") or [
 print("RESOLVED_VARIATIONS="+str(len(vp or [])))
 PY
 
+company_id_dry="$(jq -er '.plan.product.company_id | select(type=="number" and .>0)' "$work/dry.out")"
+product_name="$(jq -er '.product.name | select(type=="string" and length>0)' "$work/request.json")"
+jq -n \
+  --argjson approved_company_id "$company_id_dry" \
+  --arg product_name "$product_name" \
+  '{approved_company_id:$approved_company_id,product_name:$product_name,status:"H"}' > "$work/lookup.json"
+
+lookup_req="part-sync-lookup-\${GITHUB_RUN_ID}-\${ATTEMPT}"
+lookup_code="$(post_signed 'talario-part-sync' 'lookup' "$work/lookup.json" "$lookup_req" "$work/lookup.out")"
+echo "SIGNED_LOOKUP_HTTP=$lookup_code"
+if [ "$lookup_code" != "200" ]; then
+  jq -c '{error:(.error//null)}' "$work/lookup.out" 2>/dev/null || true
+  exit 62
+fi
+
+set +e
+python3 - "$work/request.json" "$work/dry.out" "$work/lookup.out" "$work/recovery.env" "$evidence/recovery.json" "$evidence/summary.txt" <<'PY'
+import hashlib,json,sys
+request=json.load(open(sys.argv[1],encoding="utf-8"))
+dry=json.load(open(sys.argv[2],encoding="utf-8"))
+lookup=json.load(open(sys.argv[3],encoding="utf-8"))
+env_path,evidence_path,summary_path=sys.argv[4:7]
+
+if lookup.get("schema_version")!="partner-sync.lookup.v1":
+    raise SystemExit("lookup schema mismatch")
+plan=dry.get("plan") or {}
+product=plan.get("product") or {}
+company_id=int(product.get("company_id") or 0)
+name=str(product.get("product") or request.get("product",{}).get("name") or "")
+status=str(product.get("status") or "")
+category_ids=sorted(int(x) for x in (product.get("category_ids") or []))
+vp=request.get("variation_plan") or []
+manifest=request.get("image_drive_files") or []
+
+def h(value):
+    return hashlib.sha256(str(value or "").encode("utf-8")).hexdigest()
+
+expected_variation_prices=sorted(float(x.get("price") or 0) for x in vp)
+matches=[]
+for candidate in lookup.get("candidates") or []:
+    if not isinstance(candidate,dict):
+        continue
+    if int(candidate.get("company_id") or 0)!=company_id:
+        continue
+    if str(candidate.get("status") or "")!=status:
+        continue
+    if str(candidate.get("name") or "")!=name:
+        continue
+    if sorted(int(x) for x in (candidate.get("category_ids") or []))!=category_ids:
+        continue
+    if str(candidate.get("address_sha256") or "")!=h(product.get("address")):
+        continue
+    if str(candidate.get("short_description_sha256") or "")!=h(product.get("short_description")):
+        continue
+    if str(candidate.get("full_description_sha256") or "")!=h(product.get("full_description")):
+        continue
+    if int(candidate.get("image_count") or 0)!=len(manifest):
+        continue
+    if vp:
+        if int(candidate.get("variation_count") or 0)!=len(vp):
+            continue
+        actual_prices=sorted(float(x) for x in (candidate.get("variation_prices") or []))
+        if actual_prices!=expected_variation_prices:
+            continue
+    else:
+        if int(candidate.get("variation_count") or 0)!=0:
+            continue
+        if float(candidate.get("base_price") or 0)!=float(product.get("price") or 0):
+            continue
+    matches.append(candidate)
+
+safe={
+    "schema_version":"talario.part-sync.recovery.v1",
+    "company_id":company_id,
+    "name":name,
+    "expected_category_ids":category_ids,
+    "expected_variation_count":len(vp),
+    "match_count":len(matches),
+    "matches":[
+        {
+            "product_id":int(x.get("product_id") or 0),
+            "company_id":int(x.get("company_id") or 0),
+            "status":str(x.get("status") or ""),
+            "base_price":float(x.get("base_price") or 0),
+            "category_ids":[int(v) for v in (x.get("category_ids") or [])],
+            "variation_count":int(x.get("variation_count") or 0),
+            "image_count":int(x.get("image_count") or 0),
+            "updated_timestamp":int(x.get("updated_timestamp") or 0),
+        }
+        for x in matches
+    ],
+}
+with open(evidence_path,"w",encoding="utf-8") as fh:
+    json.dump(safe,fh,ensure_ascii=False,indent=2)
+
+if len(matches)>1:
+    question="Найдено несколько полностью совпадающих скрытых карточек после предыдущего CREATE. Нужно выбрать, какую сохранить для продолжения."
+    with open(summary_path,"w",encoding="utf-8") as fh:
+        fh.write("PARTNER_SYNC_STATE=NEEDS_INPUT\n")
+        fh.write("SESSION_TERMINAL=YES\n")
+        fh.write("ASSISTANT_ACTION=ASK_USER\n")
+        fh.write("STAGE=create_recovery\n")
+        fh.write("ERROR=existing_card_ambiguous\n")
+        fh.write("QUESTION="+question+"\n")
+        for index,item in enumerate(matches,1):
+            fh.write(f"OPTION_{index}={int(item.get('product_id') or 0)}|product_id {int(item.get('product_id') or 0)}\n")
+    print("PARTNER_SYNC_STATE=NEEDS_INPUT")
+    print("SESSION_TERMINAL=YES")
+    print("ASSISTANT_ACTION=ASK_USER")
+    print("NEEDS_INPUT_STAGE=create_recovery")
+    print("NEEDS_INPUT_ERROR=existing_card_ambiguous")
+    print("NEEDS_INPUT_QUESTION="+question)
+    for index,item in enumerate(matches,1):
+        print(f"NEEDS_INPUT_OPTION_{index}={int(item.get('product_id') or 0)}|product_id {int(item.get('product_id') or 0)}")
+    raise SystemExit(42)
+
+match=matches[0] if matches else None
+with open(env_path,"w",encoding="utf-8") as fh:
+    fh.write("EXISTING_PRODUCT_ID="+str(int(match.get("product_id") or 0) if match else 0)+"\n")
+    fh.write("EXISTING_COMPANY_ID="+str(company_id if match else 0)+"\n")
+print("RECOVERY_MATCH_COUNT="+str(len(matches)))
+if match:
+    print("RECOVERY_PRODUCT_ID="+str(int(match.get("product_id") or 0)))
+PY
+recovery_rc=$?
+set -e
+if [ "$recovery_rc" -eq 42 ]; then
+  {
+    echo "## Partner Sync: NEEDS_INPUT"
+    echo
+    cat "$evidence/summary.txt"
+    echo
+    echo "Current agent session must stop here and ask the operator for a decision."
+  } >> "\${GITHUB_STEP_SUMMARY:-/dev/null}"
+  echo "::notice title=Partner Sync waits for user input::Current session is complete. Ask the operator the NEEDS_INPUT question and do not continue any tools until an answer is received."
+  exit 0
+fi
+test "$recovery_rc" -eq 0
+
+existing_product_id="$(awk -F= '$1=="EXISTING_PRODUCT_ID"{print $2}' "$work/recovery.env")"
+existing_company_id="$(awk -F= '$1=="EXISTING_COMPANY_ID"{print $2}' "$work/recovery.env")"
+test "$existing_product_id" -ge 0
+test "$existing_company_id" -ge 0
+
 if [ "$ATTEMPT" = "1" ]; then
+  if [ "$existing_product_id" -gt 0 ]; then
+    state="READY_FOR_RECOVERY"
+    next="explicit_authenticated_rerun_recover_existing"
+  else
+    state="READY_FOR_CREATE"
+    next="explicit_authenticated_rerun"
+  fi
   cat > "$evidence/summary.txt" <<EOF
-PARTNER_SYNC_STATE=READY_FOR_CREATE
+PARTNER_SYNC_STATE=$state
 SIGNED_DRY_RUN=PASS
-NEXT=explicit_authenticated_rerun
+EXISTING_PRODUCT_ID=$existing_product_id
+NEXT=$next
 EOF
-  echo "PARTNER_SYNC_STATE=READY_FOR_CREATE"
+  echo "PARTNER_SYNC_STATE=$state"
+  echo "EXISTING_PRODUCT_ID=$existing_product_id"
   echo "RESULT=DRY_RUN_PASS_REQUIRES_EXPLICIT_RERUN"
   exit 78
 fi
 
-apply_req="part-sync-apply-${GITHUB_RUN_ID}-create"
-apply_code="$(post_signed 'talario-part-sync' 'apply' "$work/apply.json" "$apply_req" "$work/apply.out")"
-echo "CREATE_HTTP=$apply_code"
-if [ "$apply_code" != "201" ]; then
-  jq -c '{error:(.error//null),stage:(.stage//null),kind:(.kind//null),detail:(.detail//null)}' "$work/apply.out" 2>/dev/null || true
-  exit 61
-fi
+if [ "$existing_product_id" -gt 0 ]; then
+  product_id="$existing_product_id"
+  company_id="$existing_company_id"
+  echo "RECOVERY_EXISTING_PRODUCT=PASS"
+  echo "PRODUCT_ID=$product_id"
+  echo "COMPANY_ID=$company_id"
+else
+  apply_req="part-sync-apply-\${GITHUB_RUN_ID}-create"
+  apply_code="$(post_signed 'talario-part-sync' 'apply' "$work/apply.json" "$apply_req" "$work/apply.out")"
+  echo "CREATE_HTTP=$apply_code"
+  if [ "$apply_code" != "201" ]; then
+    jq -c '{error:(.error//null),stage:(.stage//null),kind:(.kind//null),detail:(.detail//null)}' "$work/apply.out" 2>/dev/null || true
+    exit 61
+  fi
+  cp "$work/apply.out" "$evidence/create-result.json"
+  chmod 600 "$evidence/create-result.json"
 
-python3 - "$work/request.json" "$work/dry.out" "$work/apply.out" "$work/result.env" <<'PY'
+  python3 - "$work/request.json" "$work/dry.out" "$work/apply.out" "$work/result.env" <<'PY'
 import json,sys
 request=json.load(open(sys.argv[1],encoding="utf-8"))
 dry=json.load(open(sys.argv[2],encoding="utf-8"))
 result=json.load(open(sys.argv[3],encoding="utf-8"))
 plan=dry["plan"]
-expected=request["product"]
+planned=plan.get("product") or {}
 rb=result.get("readback") or {}
 if result.get("schema_version")!="partner-sync.write-result.v1" or result.get("dry_run") is not False or result.get("operation")!="create":
     raise SystemExit("create schema mismatch")
 product_id=int(result.get("product_id") or 0)
 if product_id<=0:
     raise SystemExit("missing product id")
-if int(rb.get("company_id") or 0)!=int(plan["product"].get("company_id") or 0):
+if int(rb.get("company_id") or 0)!=int(planned.get("company_id") or 0):
     raise SystemExit("company readback mismatch")
-if rb.get("name")!=expected.get("name") or rb.get("status")!="H":
+if rb.get("name")!=planned.get("product") or rb.get("status")!=planned.get("status"):
     raise SystemExit("name/status readback mismatch")
-if float(rb.get("price") or 0)!=float(expected.get("price") or 0):
-    raise SystemExit("price readback mismatch")
-for key in ("address","full_description"):
-    if key in expected and rb.get(key)!=expected.get(key):
+for key in ("address","full_description","short_description"):
+    if rb.get(key)!=planned.get(key):
         raise SystemExit("readback mismatch: "+key)
-if rb.get("short_description")!=plan.get("product",{}).get("short_description"):
-    raise SystemExit("readback mismatch: short_description")
 if rb.get("filter_features")!=(plan.get("filter_features") or {}):
     raise SystemExit("filter feature readback mismatch")
 manifest=request.get("image_drive_files") or []
@@ -452,14 +610,20 @@ if vp:
     items=vr.get("items") or []
     if len(items)!=len(vp):
         raise SystemExit("variation readback items mismatch")
-    expected_keys={(str(x["age_group"]),str(x["purchase_option"])) for x in vp}
-    actual_keys={(str(x.get("age_group","")),str(x.get("purchase_option",""))) for x in items}
-    if actual_keys!=expected_keys:
+    expected_by_key={(str(x["age_group"]),str(x["purchase_option"])):x for x in vp}
+    actual_by_key={(str(x.get("age_group","")),str(x.get("purchase_option",""))):x for x in items}
+    if set(actual_by_key)!=set(expected_by_key):
         raise SystemExit("variation identity readback mismatch")
-    expected_duration={int(x.get("duration") or (x.get("schedule") or [{}])[0].get("duration") or 0) for x in vp}
-    actual_duration={int(x.get("duration") or 0) for x in items}
-    if actual_duration!=expected_duration:
-        raise SystemExit("variation duration readback mismatch")
+    for key,expected_item in expected_by_key.items():
+        actual_item=actual_by_key[key]
+        if float(actual_item.get("price") or 0)!=float(expected_item.get("price") or 0):
+            raise SystemExit("variation price readback mismatch")
+        expected_duration=int(expected_item.get("duration") or (expected_item.get("schedule") or [{}])[0].get("duration") or 0)
+        if int(actual_item.get("duration") or 0)!=expected_duration:
+            raise SystemExit("variation duration readback mismatch")
+else:
+    if float(rb.get("price") or 0)!=float(planned.get("price") or 0):
+        raise SystemExit("price readback mismatch")
 print("CREATE_READBACK=PASS")
 print("PRODUCT_ID="+str(product_id))
 print("COMPANY_ID="+str(int(rb["company_id"])))
@@ -469,10 +633,11 @@ with open(sys.argv[4],"w",encoding="utf-8") as fh:
     fh.write("COMPANY_ID="+str(int(rb["company_id"]))+"\n")
 PY
 
-product_id="$(awk -F= '$1=="PRODUCT_ID"{print $2}' "$work/result.env")"
-company_id="$(awk -F= '$1=="COMPANY_ID"{print $2}' "$work/result.env")"
-test "$product_id" -gt 0
-test "$company_id" -gt 0
+  product_id="$(awk -F= '$1=="PRODUCT_ID"{print $2}' "$work/result.env")"
+  company_id="$(awk -F= '$1=="COMPANY_ID"{print $2}' "$work/result.env")"
+  test "$product_id" -gt 0
+  test "$company_id" -gt 0
+fi
 
 jq -n --argjson product_id "$product_id" --argjson approved_company_id "$company_id" \
   '{product_id:$product_id,approved_company_id:$approved_company_id}' > "$work/preview.json"
