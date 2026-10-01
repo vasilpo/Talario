@@ -18,6 +18,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
     private string $feature_discovery_runner;
     private string $deploy_workflow;
     private string $preview_post_controller;
+    private string $approved_card_workflow;
+    private string $approved_card_runner;
 
     protected function setUp(): void
     {
@@ -39,6 +41,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         );
         $this->preview_post_controller = (string) file_get_contents(
             dirname(__DIR__) . '/controllers/frontend/products.post.php'
+        );
+        $this->approved_card_workflow = (string) file_get_contents(
+            dirname(__DIR__, 4) . '/.github/workflows/partner-sync-approved-card.yml'
+        );
+        $this->approved_card_runner = (string) file_get_contents(
+            dirname(__DIR__, 4) . '/.github/part-sync/run-approved-card.sh'
         );
     }
 
@@ -182,7 +190,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'penaty_preview' => true", $this->trusted_controllers);
         self::assertStringContainsString("in_array(\$mode, ['catalog_variant_bootstrap', 'penaty_bootstrap', 'partner_apply', 'penaty_preview', 'penaty_preview_state'], true)", $this->controller);
         self::assertStringContainsString("['catalog', 'catalog_variant_bootstrap', 'dispatcher_status', 'penaty_bootstrap', 'partner_apply', 'penaty_preview']", $this->controller);
-        self::assertStringContainsString("'part-sync-penaty-' . \$purpose . '-20260924'", $this->controller);
+        self::assertStringContainsString("'part-sync-penaty-preview-20260924'", $this->controller);
+        self::assertStringContainsString("part-sync-preview-[A-Za-z0-9._:-]{6,96}", $this->controller);
         self::assertStringContainsString("'HTTP_X_TALARIO_SIGNATURE'", $this->controller);
         self::assertStringContainsString("'github-actions-talario'", $this->controller);
         self::assertStringContainsString("'talario-part-sync'", $this->controller);
@@ -208,7 +217,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     {
         self::assertStringContainsString('fn_talario_analytics_partner_sync_penaty_preview', $this->controller);
         self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('preview', \$raw)", $this->controller);
-        self::assertStringContainsString("\$approved_company_id === 12", $this->controller);
+        self::assertStringContainsString("\$approved_company_id > 0", $this->controller);
         self::assertStringContainsString("(int) \$product['company_id'] !== \$approved_company_id", $this->controller);
         self::assertStringContainsString("(string) \$product['status'] !== 'H'", $this->controller);
         self::assertStringNotContainsString('fn_get_company_root_admin_user_id', $this->controller);
@@ -1272,7 +1281,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
 
     public function testPartnerSyncSignedWriterDerivesSignerFromForcedCommandAuthorizedKeys(): void
     {
-        self::assertStringContainsString("'/ .ssh/authorized_keys'", str_replace('/.ssh/authorized_keys', '/ .ssh/authorized_keys', $this->controller));
+        self::assertStringContainsString("/.ssh/authorized_keys", $this->controller);
         self::assertStringContainsString('github-actions-talario-dev-v2', $this->controller);
         self::assertStringContainsString('talario-dev-github-dispatcher', $this->controller);
         self::assertStringContainsString('pilot_signature_signer_unavailable', $this->controller);
@@ -1284,6 +1293,28 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString(
             'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP',
             $this->controller
+        );
+    }
+
+    public function testApprovedCardPipelineIsGenericSerializedAndNeverHardcodesSigner(): void
+    {
+        self::assertStringContainsString('partner-sync-approved-card-dev-copy', $this->approved_card_workflow);
+        self::assertStringContainsString("'.github/part-sync/requests/*.json'", $this->approved_card_workflow);
+        self::assertStringContainsString('GITHUB_RUN_ATTEMPT', $this->approved_card_workflow);
+        self::assertStringContainsString('SSH_TRUST_PREFLIGHT=PASS', $this->approved_card_workflow);
+        self::assertStringContainsString('.dry_run=false', $this->approved_card_runner);
+        self::assertStringContainsString('.dry_run=true | del(.approval_id)', $this->approved_card_runner);
+        self::assertStringContainsString('SIGNED_DRY_RUN=PASS', $this->approved_card_runner);
+        self::assertStringContainsString('CREATE_READBACK=PASS', $this->approved_card_runner);
+        self::assertStringContainsString('STOREFRONT_CARD=PASS', $this->approved_card_runner);
+        self::assertStringContainsString('part-sync-preview-', $this->approved_card_runner);
+        self::assertStringNotContainsString(
+            'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK',
+            $this->approved_card_workflow . $this->approved_card_runner
+        );
+        self::assertStringNotContainsString(
+            'AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP',
+            $this->approved_card_workflow . $this->approved_card_runner
         );
     }
 
