@@ -112,7 +112,7 @@ Trust and key handling:
 
 - the private signing key remains in the GitHub Actions secret store;
 - the request verifier does not hard-code a public key in the repository;
-- the accepted Ed25519 signer is derived at runtime from the server's own `~/.ssh/authorized_keys` entry that is bound to the reviewed `talario-dev-github-dispatcher` forced command;
+- accepted Ed25519 signers are derived at runtime from the server's own `~/.ssh/authorized_keys` entries bound to the exact reviewed `talario-dev-github-dispatcher` forced command; SSH key comments are treated as non-security metadata and are ignored;
 - up to four simultaneously authorized matching keys are accepted so key rotation can overlap safely without downtime;
 - every run performs an SSH trust preflight with the same key before it signs a Partner Sync request;
 - no raw private key or public-key material is written to the repository or response logs.
