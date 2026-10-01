@@ -981,52 +981,82 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     @chmod($allowed_file, 0600);
     @chmod($signature_file, 0600);
 
-    $account_home = dirname(DIR_ROOT, 3);
-    $authorized_keys_path = $account_home . '/.ssh/authorized_keys';
-    $dispatcher_path = $account_home . '/.local/bin/talario-dev-github-dispatcher';
-    $authorized_stat = @lstat($authorized_keys_path);
-    if (!is_array($authorized_stat)
-        || !is_file($authorized_keys_path)
-        || is_link($authorized_keys_path)
-        || (($authorized_stat['mode'] & 0022) !== 0)
-        || !is_readable($authorized_keys_path)
+    $manifest_path = DIR_ROOT . '/app/addons/talario_analytics/config/partner_sync_signers.json';
+    $manifest_stat = @lstat($manifest_path);
+    if (!is_array($manifest_stat)
+        || !is_file($manifest_path)
+        || is_link($manifest_path)
+        || (($manifest_stat['mode'] & 0022) !== 0)
+        || (int) ($manifest_stat['size'] ?? 0) <= 0
+        || (int) ($manifest_stat['size'] ?? 0) > 16384
+        || !is_readable($manifest_path)
     ) {
         fclose($allowed_handle);
         fclose($signature_handle);
         $cleanup();
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_unavailable']);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_manifest_unavailable']);
     }
 
-    $authorized_lines = file($authorized_keys_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    $trusted_signers = [];
-    $expected_command = 'command="' . $dispatcher_path . '"';
-    if (is_array($authorized_lines)) {
-        foreach ($authorized_lines as $line) {
-            if (!is_string($line)
-                || strlen($line) > 16384
-                || strpos($line, $expected_command) === false
-                || !preg_match('/(?:^|\\s)(ssh-ed25519)\\s+([A-Za-z0-9+\\/]+={0,3})(?:\\s|$)/', $line, $key_match)
-            ) {
-                continue;
-            }
-            $decoded_key = base64_decode($key_match[2], true);
-            if (!is_string($decoded_key) || strlen($decoded_key) < 32 || strlen($decoded_key) > 256) {
-                continue;
-            }
-            $trusted_signers[$key_match[1] . ' ' . $key_match[2]] = true;
-            if (count($trusted_signers) > 4) {
-                fclose($allowed_handle);
-                fclose($signature_handle);
-                $cleanup();
-                fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_ambiguous']);
-            }
-        }
-    }
-    if (!$trusted_signers) {
+    $manifest_raw = file_get_contents($manifest_path);
+    $manifest = is_string($manifest_raw) ? json_decode($manifest_raw, true) : null;
+    if (!is_array($manifest)
+        || json_last_error() !== JSON_ERROR_NONE
+        || (string) ($manifest['schema_version'] ?? '') !== 'talario.partner-sync.signers.v1'
+        || !isset($manifest['signers'])
+        || !is_array($manifest['signers'])
+        || !$manifest['signers']
+        || count($manifest['signers']) > 4
+    ) {
         fclose($allowed_handle);
         fclose($signature_handle);
         $cleanup();
-        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_unavailable']);
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_manifest_invalid']);
+    }
+
+    $trusted_signers = [];
+    $signer_ids = [];
+    foreach ($manifest['signers'] as $signer) {
+        if (!is_array($signer)) {
+            fclose($allowed_handle);
+            fclose($signature_handle);
+            $cleanup();
+            fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_manifest_invalid']);
+        }
+
+        $signer_id = trim((string) ($signer['id'] ?? ''));
+        $algorithm = trim((string) ($signer['algorithm'] ?? ''));
+        $public_key = trim((string) ($signer['public_key'] ?? ''));
+        $status = trim((string) ($signer['status'] ?? ''));
+
+        if (!preg_match('/^[A-Za-z0-9._:-]{3,64}$/', $signer_id)
+            || isset($signer_ids[$signer_id])
+            || $algorithm !== 'ssh-ed25519'
+            || !in_array($status, ['active', 'next'], true)
+            || !preg_match('/^[A-Za-z0-9+\/]+={0,3}$/', $public_key)
+        ) {
+            fclose($allowed_handle);
+            fclose($signature_handle);
+            $cleanup();
+            fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_manifest_invalid']);
+        }
+
+        $decoded_key = base64_decode($public_key, true);
+        if (!is_string($decoded_key) || strlen($decoded_key) < 32 || strlen($decoded_key) > 256) {
+            fclose($allowed_handle);
+            fclose($signature_handle);
+            $cleanup();
+            fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_manifest_invalid']);
+        }
+
+        $signer_ids[$signer_id] = true;
+        $trusted_signers[$algorithm . ' ' . $public_key] = true;
+    }
+
+    if (!$trusted_signers || count($trusted_signers) !== count($manifest['signers'])) {
+        fclose($allowed_handle);
+        fclose($signature_handle);
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_manifest_invalid']);
     }
 
     $allowed_signer = '';
