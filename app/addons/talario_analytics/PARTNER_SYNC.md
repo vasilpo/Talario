@@ -206,3 +206,23 @@ This rule exists so the operator can always distinguish three outcomes in chat:
 The approved-card runner distinguishes source drift from deterministic server normalization. In particular, Partner Sync intentionally prefixes the product short description with the minimum age derived from the variation plan (for example, `с 1го года`). Dry-run validation mirrors that deterministic rule instead of comparing the raw source string byte-for-byte. CREATE readback must then match the dry-run normalized value exactly.
 
 This prevents a legitimate normalization from being reported as a technical failure while still making the dry-run plan the write contract.
+
+### Idempotent CREATE recovery
+
+The approved-card flow performs a signed read-only lookup after every successful dry-run and before any CREATE rerun.
+
+The lookup is bounded to `dev_copy`, an approved company, an exact product name, and Hidden status. Candidate matching then requires the same:
+
+- company and status;
+- category IDs from the dry-run plan;
+- address, short-description and full-description SHA-256 values;
+- image count;
+- variation count and the complete variation-price multiset.
+
+If there is exactly one full match, Partner Sync treats it as the result of a previously successful CREATE whose local runner failed afterwards. Attempt 1 reports `READY_FOR_RECOVERY`; the explicit authenticated rerun reuses that product ID and continues directly to signed preview and storefront QA. It never creates a duplicate.
+
+If several full matches exist, the state becomes `NEEDS_INPUT` and the current agent session terminates. The agent may not select or delete a duplicate on its own.
+
+For variation products, the base-product price is not used as the source of truth because CS-Cart may turn the base product into the first variation. Readback verifies the price of every variation against the approved variation plan instead. For products without variations, the base price remains an exact readback requirement.
+
+The workflow also retains bounded recovery evidence and the raw CREATE result for 14 days so a post-write validator failure can be diagnosed without repeating the write.
