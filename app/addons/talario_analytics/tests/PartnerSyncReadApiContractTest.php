@@ -174,7 +174,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'target_matches_source'", $this->controller);
         self::assertStringContainsString("'target_has_dry_run'", $this->controller);
         self::assertStringContainsString("'target_has_enable_penaty'", $this->controller);
-        self::assertStringContainsString("'authorized_v2_expected_command'", $this->controller);
+        self::assertStringContainsString("'authorized_forced_signer_count'", $this->controller);
+        self::assertStringContainsString("'authorized_expected_command'", $this->controller);
         self::assertStringNotContainsString("'authorized_keys' =>", $this->controller);
         self::assertStringNotContainsString("'target_path' =>", $this->controller);
         self::assertStringNotContainsString("'source_path' =>", $this->controller);
