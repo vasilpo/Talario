@@ -1554,6 +1554,148 @@ function fn_talario_analytics_partner_sync_bootstrap_approved_age_variants(array
     ]);
 }
 
+function fn_talario_analytics_partner_sync_category_normalize(string $value): string
+{
+    $value = mb_strtolower(trim($value), 'UTF-8');
+    $value = str_replace('ё', 'е', $value);
+    $value = preg_replace('/[^\p{L}\p{N}]+/u', ' ', $value) ?? $value;
+    $value = preg_replace('/\s+/u', ' ', $value) ?? $value;
+    return trim($value);
+}
+
+function fn_talario_analytics_partner_sync_category_distance(string $left, string $right): int
+{
+    $left_chars = preg_split('//u', $left, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $right_chars = preg_split('//u', $right, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $left_count = count($left_chars);
+    $right_count = count($right_chars);
+
+    if ($left_count === 0) {
+        return $right_count;
+    }
+    if ($right_count === 0) {
+        return $left_count;
+    }
+    if ($left_count > 96 || $right_count > 96) {
+        return max($left_count, $right_count);
+    }
+
+    $previous = range(0, $right_count);
+    for ($i = 1; $i <= $left_count; $i++) {
+        $current = [$i];
+        for ($j = 1; $j <= $right_count; $j++) {
+            $cost = $left_chars[$i - 1] === $right_chars[$j - 1] ? 0 : 1;
+            $current[$j] = min(
+                $current[$j - 1] + 1,
+                $previous[$j] + 1,
+                $previous[$j - 1] + $cost
+            );
+        }
+        $previous = $current;
+    }
+
+    return (int) $previous[$right_count];
+}
+
+function fn_talario_analytics_partner_sync_category_candidates(
+    string $category_name,
+    string $parent_category_name,
+    string $lang_code
+): array {
+    $rows_by_id = [];
+
+    if ($parent_category_name !== '') {
+        foreach (db_get_array(
+            'SELECT cd.category_id, cd.category, c.parent_id, c.status,'
+            . ' COALESCE(pcd.category, ?s) AS parent_category'
+            . ' FROM ?:category_descriptions cd'
+            . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+            . ' LEFT JOIN ?:category_descriptions pcd'
+            . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
+            . ' WHERE cd.lang_code = ?s AND pcd.category = ?s AND c.status IN (?a)'
+            . ' ORDER BY cd.category ASC, cd.category_id ASC LIMIT 100',
+            '',
+            $lang_code,
+            $parent_category_name,
+            ['A', 'H']
+        ) as $row) {
+            $rows_by_id[(int) $row['category_id']] = $row;
+        }
+    }
+
+    $prefix_length = min(3, mb_strlen($category_name, 'UTF-8'));
+    if ($prefix_length > 0) {
+        $prefix = mb_substr($category_name, 0, $prefix_length, 'UTF-8') . '%';
+        foreach (db_get_array(
+            'SELECT cd.category_id, cd.category, c.parent_id, c.status,'
+            . ' COALESCE(pcd.category, ?s) AS parent_category'
+            . ' FROM ?:category_descriptions cd'
+            . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+            . ' LEFT JOIN ?:category_descriptions pcd'
+            . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
+            . ' WHERE cd.lang_code = ?s AND cd.category LIKE ?s AND c.status IN (?a)'
+            . ' ORDER BY cd.category ASC, cd.category_id ASC LIMIT 50',
+            '',
+            $lang_code,
+            $prefix,
+            ['A', 'H']
+        ) as $row) {
+            $rows_by_id[(int) $row['category_id']] = $row;
+        }
+    }
+
+    $requested = fn_talario_analytics_partner_sync_category_normalize($category_name);
+    $requested_parent = fn_talario_analytics_partner_sync_category_normalize($parent_category_name);
+    $candidates = [];
+
+    foreach ($rows_by_id as $row) {
+        $candidate_name = (string) $row['category'];
+        $candidate_parent = (string) ($row['parent_category'] ?? '');
+        $normalized = fn_talario_analytics_partner_sync_category_normalize($candidate_name);
+        $normalized_parent = fn_talario_analytics_partner_sync_category_normalize($candidate_parent);
+
+        $name_left = preg_split('//u', $requested, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $name_right = preg_split('//u', $normalized, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $name_max = max(1, count($name_left), count($name_right));
+        $name_distance = fn_talario_analytics_partner_sync_category_distance($requested, $normalized);
+        $name_score = max(0.0, 1.0 - ($name_distance / $name_max));
+
+        $parent_score = 1.0;
+        if ($requested_parent !== '') {
+            $parent_left = preg_split('//u', $requested_parent, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+            $parent_right = preg_split('//u', $normalized_parent, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+            $parent_max = max(1, count($parent_left), count($parent_right));
+            $parent_distance = fn_talario_analytics_partner_sync_category_distance($requested_parent, $normalized_parent);
+            $parent_score = max(0.0, 1.0 - ($parent_distance / $parent_max));
+        }
+
+        if ($name_score < 0.45 && $parent_score < 0.80) {
+            continue;
+        }
+
+        $candidates[] = [
+            'category_id' => (int) $row['category_id'],
+            'name' => $candidate_name,
+            'parent_id' => (int) $row['parent_id'],
+            'parent_name' => $candidate_parent,
+            'status' => (string) $row['status'],
+            'name_score' => round($name_score, 3),
+            'parent_score' => round($parent_score, 3),
+        ];
+    }
+
+    usort($candidates, static function (array $left, array $right): int {
+        $left_score = ((float) $left['parent_score'] * 2.0) + (float) $left['name_score'];
+        $right_score = ((float) $right['parent_score'] * 2.0) + (float) $right['name_score'];
+        if ($left_score === $right_score) {
+            return (int) $left['category_id'] <=> (int) $right['category_id'];
+        }
+        return $left_score < $right_score ? 1 : -1;
+    });
+
+    return array_slice($candidates, 0, 10);
+}
+
 function fn_talario_analytics_partner_sync_apply(): void
 {
     $max_payload_bytes = 20971520;
@@ -1621,77 +1763,140 @@ function fn_talario_analytics_partner_sync_apply(): void
         fn_talario_analytics_json_response(403, ['error' => 'company_run_approval_required']);
     }
 
-    if ($operation === 'create' && empty($product['category_ids'])) {
+    if ($operation === 'create') {
         $category_name = trim((string) ($payload['category_name'] ?? ''));
-        if ($category_name === '' || mb_strlen($category_name, 'UTF-8') > 255) {
-            fn_talario_analytics_json_response(400, ['error' => 'category_context_required']);
-        }
-        $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
         $parent_category_name = trim((string) ($payload['parent_category_name'] ?? ''));
+        $lang_code = (string) Registry::get('settings.Appearance.default_language') ?: 'ru';
+
+        if ($category_name !== '' && mb_strlen($category_name, 'UTF-8') > 255) {
+            fn_talario_analytics_json_response(400, ['error' => 'category_context_invalid']);
+        }
         if ($parent_category_name !== '' && mb_strlen($parent_category_name, 'UTF-8') > 255) {
             fn_talario_analytics_json_response(400, ['error' => 'parent_category_context_invalid']);
         }
-        if ($parent_category_name !== '') {
-            $category_ids = db_get_fields(
-                'SELECT cd.category_id FROM ?:category_descriptions cd'
-                . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
-                . ' INNER JOIN ?:category_descriptions pcd'
-                . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
-                . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND pcd.category = ?s AND c.status IN (?a)'
-                . ' ORDER BY cd.category_id ASC LIMIT 2',
-                $category_name,
-                $lang_code,
-                $parent_category_name,
-                ['A', 'H']
-            );
-        } else {
-            $category_ids = db_get_fields(
-                'SELECT cd.category_id FROM ?:category_descriptions cd'
-                . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
-                . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND c.status IN (?a)'
-                . ' ORDER BY cd.category_id ASC LIMIT 2',
-                $category_name,
-                $lang_code,
-                ['A', 'H']
-            );
-        }
-        if (count($category_ids) !== 1) {
-            $category_prefix_length = min(5, mb_strlen($category_name, 'UTF-8'));
-            $category_prefix = mb_substr($category_name, 0, $category_prefix_length, 'UTF-8') . '%';
-            $category_candidates = [];
-            foreach (db_get_array(
-                'SELECT cd.category_id, cd.category, c.parent_id, c.status, c.storefront_id,'
-                . ' COALESCE(pcd.category, ?s) AS parent_category'
-                . ' FROM ?:category_descriptions cd'
-                . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
-                . ' LEFT JOIN ?:category_descriptions pcd'
-                . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
-                . ' WHERE cd.lang_code = ?s AND cd.category LIKE ?s AND c.status IN (?a)'
-                . ' ORDER BY cd.category ASC, cd.category_id ASC LIMIT 10',
-                '',
-                $lang_code,
-                $category_prefix,
-                ['A', 'H']
-            ) as $candidate) {
-                $category_candidates[] = [
-                    'category_id' => (int) $candidate['category_id'],
-                    'name' => (string) $candidate['category'],
-                    'parent_id' => (int) $candidate['parent_id'],
-                    'parent_name' => (string) ($candidate['parent_category'] ?? ''),
-                    'status' => (string) $candidate['status'],
-                    'storefront_id' => (int) ($candidate['storefront_id'] ?? 0),
-                ];
+
+        if (!empty($product['category_ids'])) {
+            if (!is_array($product['category_ids'])) {
+                fn_talario_analytics_json_response(400, ['error' => 'category_selection_invalid']);
             }
-            fn_talario_analytics_json_response(409, [
-                'error' => 'category_not_unique',
-                'requested_category' => $category_name,
-                'requested_parent' => $parent_category_name,
-                'exact_match_count_capped' => count($category_ids),
-                'candidates' => $category_candidates,
-            ]);
+            $selected_category_ids = array_values(array_unique(array_filter(array_map('intval', $product['category_ids']))));
+            if (!$selected_category_ids || count($selected_category_ids) > 10) {
+                fn_talario_analytics_json_response(400, ['error' => 'category_selection_invalid']);
+            }
+            $valid_selected_ids = array_map('intval', db_get_fields(
+                'SELECT category_id FROM ?:categories'
+                . ' WHERE category_id IN (?n) AND status IN (?a)'
+                . ' ORDER BY category_id ASC',
+                $selected_category_ids,
+                ['A', 'H']
+            ));
+            sort($selected_category_ids, SORT_NUMERIC);
+            sort($valid_selected_ids, SORT_NUMERIC);
+            if ($selected_category_ids !== $valid_selected_ids) {
+                $candidates = $category_name === ''
+                    ? []
+                    : fn_talario_analytics_partner_sync_category_candidates(
+                        $category_name,
+                        $parent_category_name,
+                        $lang_code
+                    );
+                fn_talario_analytics_json_response(409, [
+                    'error' => 'category_selection_invalid',
+                    'requested_category' => $category_name,
+                    'requested_parent' => $parent_category_name,
+                    'selected_category_ids' => $selected_category_ids,
+                    'candidates' => $candidates,
+                    'decision_contract' => [
+                        'field' => 'human_decisions.category.category_id',
+                        'allowed_category_ids' => array_values(array_map(
+                            static fn(array $candidate): int => (int) $candidate['category_id'],
+                            $candidates
+                        )),
+                    ],
+                ]);
+            }
+            $product['category_ids'] = $selected_category_ids;
+        } else {
+            if ($category_name === '') {
+                fn_talario_analytics_json_response(400, ['error' => 'category_context_required']);
+            }
+
+            if ($parent_category_name !== '') {
+                $category_ids = db_get_fields(
+                    'SELECT cd.category_id FROM ?:category_descriptions cd'
+                    . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+                    . ' INNER JOIN ?:category_descriptions pcd'
+                    . ' ON pcd.category_id = c.parent_id AND pcd.lang_code = cd.lang_code'
+                    . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND pcd.category = ?s AND c.status IN (?a)'
+                    . ' ORDER BY cd.category_id ASC LIMIT 3',
+                    $category_name,
+                    $lang_code,
+                    $parent_category_name,
+                    ['A', 'H']
+                );
+            } else {
+                $category_ids = db_get_fields(
+                    'SELECT cd.category_id FROM ?:category_descriptions cd'
+                    . ' INNER JOIN ?:categories c ON c.category_id = cd.category_id'
+                    . ' WHERE cd.category = ?s AND cd.lang_code = ?s AND c.status IN (?a)'
+                    . ' ORDER BY cd.category_id ASC LIMIT 3',
+                    $category_name,
+                    $lang_code,
+                    ['A', 'H']
+                );
+            }
+
+            if (count($category_ids) === 1) {
+                $product['category_ids'] = [(int) reset($category_ids)];
+            } else {
+                $candidates = fn_talario_analytics_partner_sync_category_candidates(
+                    $category_name,
+                    $parent_category_name,
+                    $lang_code
+                );
+
+                $normalized_requested = fn_talario_analytics_partner_sync_category_normalize($category_name);
+                $normalized_parent = fn_talario_analytics_partner_sync_category_normalize($parent_category_name);
+                $normalized_exact = array_values(array_filter(
+                    $candidates,
+                    static function (array $candidate) use ($normalized_requested, $normalized_parent): bool {
+                        if (fn_talario_analytics_partner_sync_category_normalize((string) $candidate['name'])
+                            !== $normalized_requested
+                        ) {
+                            return false;
+                        }
+                        if ($normalized_parent === '') {
+                            return true;
+                        }
+                        return fn_talario_analytics_partner_sync_category_normalize(
+                            (string) $candidate['parent_name']
+                        ) === $normalized_parent;
+                    }
+                ));
+
+                if (count($category_ids) === 0 && count($normalized_exact) === 1) {
+                    $product['category_ids'] = [(int) $normalized_exact[0]['category_id']];
+                } else {
+                    fn_talario_analytics_json_response(409, [
+                        'error' => 'category_resolution_required',
+                        'reason' => count($category_ids) === 0 ? 'not_found_exact' : 'ambiguous_exact',
+                        'requested_category' => $category_name,
+                        'requested_parent' => $parent_category_name,
+                        'exact_match_count_capped' => count($category_ids),
+                        'candidates' => $candidates,
+                        'decision_contract' => [
+                            'field' => 'human_decisions.category.category_id',
+                            'allowed_category_ids' => array_values(array_map(
+                                static fn(array $candidate): int => (int) $candidate['category_id'],
+                                $candidates
+                            )),
+                        ],
+                    ]);
+                }
+            }
         }
-        $product['category_ids'] = [(int) reset($category_ids)];
     }
+
     $payload['product'] = $product;
 
     $dry_run = !array_key_exists('dry_run', $payload) || (bool) $payload['dry_run'];
