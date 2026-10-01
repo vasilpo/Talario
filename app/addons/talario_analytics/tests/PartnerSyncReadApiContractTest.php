@@ -1339,7 +1339,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
                 (string) ($signer['public_key'] ?? '')
             );
             self::assertArrayNotHasKey('private_key', $signer);
-            self::assertNotContains($signer['id'], $ids, true);
+            self::assertNotContains((string) $signer['id'], $ids);
             $ids[] = $signer['id'];
         }
     }
