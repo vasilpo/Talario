@@ -1383,7 +1383,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringNotContainsString('re.sub(r"\\\\s+"', $this->approved_card_runner);
         self::assertStringNotContainsString('re.search(r"\\\\d+"', $this->approved_card_runner);
         self::assertStringContainsString('dry-run product field mismatch: short_description', $this->approved_card_runner);
-        self::assertStringContainsString('readback mismatch: short_description', $this->approved_card_runner);
+        self::assertStringContainsString('raise SystemExit("readback mismatch: "+key)', $this->approved_card_runner);
         self::assertStringContainsString('STOREFRONT_CARD=PASS', $this->approved_card_runner);
         self::assertStringContainsString('part-sync-preview-', $this->approved_card_runner);
         self::assertStringNotContainsString(
