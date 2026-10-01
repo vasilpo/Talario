@@ -791,7 +791,7 @@ function fn_talario_analytics_partner_sync_penaty_preview_state(): void
     $preview = Tygh::$app['session']['talario_partner_sync_preview'] ?? null;
     $preview_exact = is_array($preview)
         && (int) ($preview['product_id'] ?? 0) > 0
-        && in_array((int) ($preview['company_id'] ?? 0), [12, 39], true)
+        && (int) ($preview['company_id'] ?? 0) > 0
         && (string) ($preview['purpose'] ?? '') === 'visual_acceptance';
 
     /** @var \Tygh\Storefront\Storefront $runtime_storefront */
@@ -887,11 +887,14 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         if (!preg_match('/^part-sync-apply-[A-Za-z0-9._:-]{6,96}$/', $request_id)) {
             fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
         }
-    } else {
-        $expected_request_id = 'part-sync-penaty-' . $purpose . '-20260924';
-        if (!hash_equals($expected_request_id, $request_id)) {
+    } elseif ($purpose === 'preview') {
+        $legacy_request_id = 'part-sync-penaty-preview-20260924';
+        $generic_request = preg_match('/^part-sync-preview-[A-Za-z0-9._:-]{6,96}$/', $request_id) === 1;
+        if (!$generic_request && !hash_equals($legacy_request_id, $request_id)) {
             fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
         }
+    } else {
+        fn_talario_analytics_json_response(403, ['error' => 'pilot_request_not_allowed']);
     }
     if (!preg_match('/^[0-9]{10}$/', $timestamp_raw)) {
         fn_talario_analytics_json_response(400, ['error' => 'pilot_timestamp_invalid']);
@@ -978,9 +981,59 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
     @chmod($allowed_file, 0600);
     @chmod($signature_file, 0600);
 
-    $allowed_signer = 'github-actions-talario ssh-ed25519 '
-        . 'AAAAC3NzaC1lZDI1NTE5AAAAIGidfZj2eTRsCFo/USIeuxVhS5N+s//POpGqn0gSgXqK'
-        . PHP_EOL;
+    $account_home = dirname(DIR_ROOT, 3);
+    $authorized_keys_path = $account_home . '/.ssh/authorized_keys';
+    $dispatcher_path = $account_home . '/.local/bin/talario-dev-github-dispatcher';
+    $authorized_stat = @lstat($authorized_keys_path);
+    if (!is_array($authorized_stat)
+        || !is_file($authorized_keys_path)
+        || is_link($authorized_keys_path)
+        || (($authorized_stat['mode'] & 0022) !== 0)
+        || !is_readable($authorized_keys_path)
+    ) {
+        fclose($allowed_handle);
+        fclose($signature_handle);
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_unavailable']);
+    }
+
+    $authorized_lines = file($authorized_keys_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $trusted_signers = [];
+    $expected_command = 'command="' . $dispatcher_path . '"';
+    if (is_array($authorized_lines)) {
+        foreach ($authorized_lines as $line) {
+            if (!is_string($line)
+                || strlen($line) > 16384
+                || strpos($line, $expected_command) === false
+                || strpos($line, 'github-actions-talario-dev-v2') === false
+                || !preg_match('/(?:^|\\s)(ssh-ed25519)\\s+([A-Za-z0-9+\\/]+={0,3})(?:\\s|$)/', $line, $key_match)
+            ) {
+                continue;
+            }
+            $decoded_key = base64_decode($key_match[2], true);
+            if (!is_string($decoded_key) || strlen($decoded_key) < 32 || strlen($decoded_key) > 256) {
+                continue;
+            }
+            $trusted_signers[$key_match[1] . ' ' . $key_match[2]] = true;
+            if (count($trusted_signers) > 4) {
+                fclose($allowed_handle);
+                fclose($signature_handle);
+                $cleanup();
+                fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_ambiguous']);
+            }
+        }
+    }
+    if (!$trusted_signers) {
+        fclose($allowed_handle);
+        fclose($signature_handle);
+        $cleanup();
+        fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_signer_unavailable']);
+    }
+
+    $allowed_signer = '';
+    foreach (array_keys($trusted_signers) as $trusted_signer) {
+        $allowed_signer .= 'github-actions-talario ' . $trusted_signer . PHP_EOL;
+    }
     $allowed_written = fwrite($allowed_handle, $allowed_signer);
     $signature_written = fwrite($signature_handle, $signature);
     fflush($allowed_handle);
@@ -1647,10 +1700,10 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
     $product_id = (int) ($payload['product_id'] ?? 0);
     $approved_company_id = (int) ($payload['approved_company_id'] ?? 0);
     $legacy_penaty_target = $payload_keys === ['product_id'] && $product_id === 1158;
-    $glinyanye_visual_target = $payload_keys === ['approved_company_id', 'product_id']
-        && $approved_company_id === 12
+    $generic_visual_target = $payload_keys === ['approved_company_id', 'product_id']
+        && $approved_company_id > 0
         && $product_id > 0;
-    if (!$legacy_penaty_target && !$glinyanye_visual_target) {
+    if (!$legacy_penaty_target && !$generic_visual_target) {
         fn_talario_analytics_json_response(403, ['error' => 'pilot_preview_target_not_allowed']);
     }
     if ($legacy_penaty_target) {
@@ -1725,6 +1778,9 @@ function fn_talario_analytics_partner_sync_penaty_preview(): void
         'SELECT status FROM ?:companies WHERE company_id = ?i',
         $approved_company_id
     );
+    if ($company_status !== 'A') {
+        fn_talario_analytics_json_response(409, ['error' => 'pilot_preview_company_not_active']);
+    }
     $main_category = db_get_row(
         'SELECT c.category_id, c.status, c.storefront_id'
         . ' FROM ?:products_categories pc'
