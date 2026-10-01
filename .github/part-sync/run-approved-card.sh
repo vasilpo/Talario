@@ -6,6 +6,7 @@ ATTEMPT="${2:?run attempt required}"
 KEY_FILE="${PARTNER_SYNC_KEY_FILE:-$HOME/.ssh/id_ed25519}"
 ENDPOINT='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
 PREVIEW_ENDPOINT='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.penaty_preview'
+LOOKUP_ENDPOINT='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_lookup'
 
 test "${GITHUB_REPOSITORY:-}" = "vasilpo/Talario"
 test "${GITHUB_REF:-}" = "refs/heads/development"
@@ -167,8 +168,14 @@ post_signed() {
   rm -f "$signature"
   ssh-keygen -Y sign -q -f "$KEY_FILE" -n talario-part-sync "$message"
   sig="$(base64 < "$signature" | tr -d '\n')"
+  case "$purpose" in
+    preview) endpoint="$PREVIEW_ENDPOINT" ;;
+    lookup) endpoint="$LOOKUP_ENDPOINT" ;;
+    apply) endpoint="$ENDPOINT" ;;
+    *) echo "unsupported signed purpose" >&2; return 64 ;;
+  esac
   curl --silent --show-error --output "$output" --write-out '%{http_code}' --max-time 180 \
-    -X POST "$([[ "$purpose" = "preview" ]] && printf '%s' "$PREVIEW_ENDPOINT" || printf '%s' "$ENDPOINT")" \
+    -X POST "$endpoint" \
     -H 'Content-Type: application/json' \
     -H "X-Talario-Request-Id: $request_id" \
     -H "X-Talario-Timestamp: $ts" \
