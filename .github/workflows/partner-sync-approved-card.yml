@@ -135,6 +135,8 @@ jobs:
           name: partner-sync-card-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/partner-sync-approved-card-evidence/needs-input.json
+            ${{ runner.temp }}/partner-sync-approved-card-evidence/recovery.json
+            ${{ runner.temp }}/partner-sync-approved-card-evidence/create-result.json
             ${{ runner.temp }}/partner-sync-approved-card-evidence/summary.txt
             ${{ runner.temp }}/partner-sync-approved-card-evidence/screenshot.png
           retention-days: 14
