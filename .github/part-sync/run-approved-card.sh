@@ -326,9 +326,48 @@ if int(product.get("company_id") or 0)<=0:
     raise SystemExit("dry-run company unresolved")
 if product.get("product")!=expected.get("name"):
     raise SystemExit("dry-run name mismatch")
-for key in ("status","address","short_description","full_description","meta_keywords"):
+for key in ("status","address","full_description","meta_keywords"):
     if key in expected and product.get(key)!=expected.get(key):
         raise SystemExit("dry-run product field mismatch: "+key)
+
+def expected_short_description(current, variation_plan):
+    import re
+    minimum=None
+    for item in variation_plan or []:
+        group=str((item or {}).get("age_group") or "").strip().lower().replace("–","-").replace("—","-")
+        group=re.sub(r"\\s+"," ",group)
+        m=re.match(r"^до\\s+(\\d+)\\s*(?:х\\s*)?(?:год|года|лет)$",group)
+        if m:
+            upper=int(m.group(1))
+            age=1 if upper>1 else 0
+        else:
+            m=re.search(r"\\d+",group)
+            if not m:
+                continue
+            age=int(m.group(0))
+        if age<=0:
+            continue
+        minimum=age if minimum is None else min(minimum,age)
+    if minimum is None:
+        return current
+    if minimum==1:
+        label="с 1го года"
+    elif 2<=minimum<=4:
+        label=f"с {minimum}х лет"
+    else:
+        label=f"с {minimum} лет"
+    remainder=re.sub(
+        r"^\\s*с\\s+\\d+\\s*(?:(?:го\\s*)?года|(?:х\\s*)?лет)(?![\\w])[\\s.,;:—–-]*",
+        "",
+        current,
+        flags=re.IGNORECASE,
+    ).strip()
+    return label if not remainder else label+". "+remainder
+
+if "short_description" in expected:
+    expected_short=expected_short_description(str(expected.get("short_description") or ""), request.get("variation_plan"))
+    if product.get("short_description")!=expected_short:
+        raise SystemExit("dry-run product field mismatch: short_description")
 if float(product.get("price") or 0)!=float(expected.get("price") or 0):
     raise SystemExit("dry-run price mismatch")
 manifest=request.get("image_drive_files") or []
@@ -390,6 +429,8 @@ if float(rb.get("price") or 0)!=float(expected.get("price") or 0):
 for key in ("address","full_description"):
     if key in expected and rb.get(key)!=expected.get(key):
         raise SystemExit("readback mismatch: "+key)
+if rb.get("short_description")!=plan.get("product",{}).get("short_description"):
+    raise SystemExit("readback mismatch: short_description")
 if rb.get("filter_features")!=(plan.get("filter_features") or {}):
     raise SystemExit("filter feature readback mismatch")
 manifest=request.get("image_drive_files") or []
