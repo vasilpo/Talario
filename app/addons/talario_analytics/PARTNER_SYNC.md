@@ -199,3 +199,10 @@ This rule exists so the operator can always distinguish three outcomes in chat:
 1. `DONE` — card created and verified;
 2. `NEEDS_INPUT` — current session ended and a concrete decision is required;
 3. `FAIL` — technical failure requiring investigation.
+
+
+### Intentional writer normalization
+
+The approved-card runner distinguishes source drift from deterministic server normalization. In particular, Partner Sync intentionally prefixes the product short description with the minimum age derived from the variation plan (for example, `с 1го года`). Dry-run validation mirrors that deterministic rule instead of comparing the raw source string byte-for-byte. CREATE readback must then match the dry-run normalized value exactly.
+
+This prevents a legitimate normalization from being reported as a technical failure while still making the dry-run plan the write contract.
