@@ -178,9 +178,18 @@ while IFS= read -r entry; do
     exit 12
   fi
   bytes="$(wc -c < "$image_file" | tr -d '[:space:]')"
-  test "$bytes" -eq "$expected_bytes"
+  if [ "$bytes" -ne "$expected_bytes" ]; then
+    mime="$(file --brief --mime-type "$image_file" 2>/dev/null || true)"
+    echo "IMAGE_SOURCE_SIZE_MISMATCH index=$index expected=$expected_bytes actual=$bytes mime=$mime" >&2
+    rm -f "$image_file"
+    exit 12
+  fi
   actual_sha="$(sha256sum "$image_file" | awk '{print $1}')"
-  test "$actual_sha" = "$expected_sha"
+  if [ "$actual_sha" != "$expected_sha" ]; then
+    echo "IMAGE_SOURCE_SHA_MISMATCH index=$index" >&2
+    rm -f "$image_file"
+    exit 12
+  fi
   mime="$(file --brief --mime-type "$image_file")"
   case "$mime" in image/jpeg|image/png|image/webp) ;; *) echo "unsupported image mime: $mime" >&2; exit 12;; esac
   alt="$(jq -r '.product.name' "$work/request.json")"
