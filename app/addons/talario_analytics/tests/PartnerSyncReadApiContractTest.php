@@ -1365,6 +1365,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('human_decisions.category.category_id', $this->approved_card_runner);
         self::assertStringContainsString('state="READY_FOR_CREATE"', $this->approved_card_runner);
         self::assertStringContainsString('LOOKUP_ENDPOINT=', $this->approved_card_runner);
+        self::assertStringContainsString('lookup_req="part-sync-lookup-${GITHUB_RUN_ID}-${ATTEMPT}"', $this->approved_card_runner);
+        self::assertStringNotContainsString('lookup_req="part-sync-lookup-\\${GITHUB_RUN_ID}-\\${ATTEMPT}"', $this->approved_card_runner);
         self::assertStringContainsString('RECOVERY_EXISTING_PRODUCT=PASS', $this->approved_card_runner);
         self::assertStringContainsString('READY_FOR_RECOVERY', $this->approved_card_runner);
         self::assertStringContainsString('variation price readback mismatch', $this->approved_card_runner);
