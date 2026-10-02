@@ -1426,6 +1426,7 @@ final class PartnerSyncReadApiContractTest extends TestCase
     public function testSignedPartnerLookupIsDevCopyOnlyAndAuthenticatedBeforeRead(): void
     {
         self::assertStringContainsString("fn_talario_analytics_partner_sync_verify_penaty_signature('lookup',", $this->controller);
+        self::assertStringContainsString("\$purpose === 'preview' ? 'talario-part-sync-penaty' : 'talario-part-sync'", $this->controller);
         self::assertStringContainsString('partner-sync.lookup.v1', $this->controller);
         self::assertStringContainsString('part-sync-lookup-[A-Za-z0-9._:-]{6,96}', $this->controller);
         self::assertStringContainsString("'partner_lookup'", $this->controller);
