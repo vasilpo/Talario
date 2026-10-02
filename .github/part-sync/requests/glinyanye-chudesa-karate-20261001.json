@@ -1,5 +1,5 @@
 {
-  "request_id": "part-sync-glinyanye-chudesa-karate-20261002-v14-preview-proof-recovery",
+  "request_id": "part-sync-glinyanye-chudesa-karate-title-update-20261002-v1",
   "approved_company_name": "Глиняные Чудеса",
   "category_name": "Спорт",
   "parent_category_name": "",
@@ -10,7 +10,7 @@
   "source_image_folder": "Фото/Спорт",
   "source_image_count": 0,
   "ignore_row": "ОБРАЗЕЦ",
-  "operation": "create",
+  "operation": "update",
   "dry_run": false,
   "bootstrap_missing_age_variants": true,
   "product": {
@@ -415,5 +415,7 @@
   ],
   "image_drive_files": [],
   "target": "dev_copy",
-  "approval_id": "part-sync-glinyanye-chudesa-karate-20261001"
+  "approval_id": "part-sync-glinyanye-chudesa-karate-title-update-20261002",
+  "approved_company_id": 12,
+  "product_id": 1238
 }
