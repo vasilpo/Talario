@@ -169,9 +169,14 @@ while IFS= read -r entry; do
   expected_sha="$(jq -r '.sha256' <<<"$entry" | tr '[:upper:]' '[:lower:]')"
   expected_bytes="$(jq -r '.bytes' <<<"$entry")"
   image_file="$image_tmpdir/image-$index"
-  curl --fail --location --silent --show-error --tlsv1.2 --max-time 60 --max-filesize 5242880 \
-    "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t" \
-    --output "$image_file"
+  image_code="$(curl --location --silent --show-error --tlsv1.2 --max-time 60 --max-filesize 5242880 \
+    --output "$image_file" --write-out '%{http_code}' \
+    "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t" || true)"
+  if [ "$image_code" != "200" ]; then
+    rm -f "$image_file"
+    echo "IMAGE_SOURCE_DOWNLOAD_FAILED index=$index http=$image_code" >&2
+    exit 12
+  fi
   bytes="$(wc -c < "$image_file" | tr -d '[:space:]')"
   test "$bytes" -eq "$expected_bytes"
   actual_sha="$(sha256sum "$image_file" | awk '{print $1}')"
