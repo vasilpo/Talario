@@ -1373,6 +1373,8 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('state="READY_FOR_UPDATE"', $this->approved_card_runner);
         self::assertStringContainsString('operation not in {"create","update"}', $this->approved_card_runner);
         self::assertStringContainsString('update product_id required', $this->approved_card_runner);
+        self::assertStringContainsString('source image folder declared but no images resolved', $this->approved_card_runner);
+        self::assertStringContainsString('source image count does not match manifest', $this->approved_card_runner);
         self::assertStringContainsString('NORMALIZED_PRODUCT_NAME=', $this->approved_card_runner);
         self::assertStringContainsString('product["name"]=f"{source_type} «{name}»"', $this->approved_card_runner);
         self::assertStringContainsString('WRITE_READBACK=PASS', $this->approved_card_runner);
