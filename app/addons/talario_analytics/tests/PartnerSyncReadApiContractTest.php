@@ -281,6 +281,12 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString("'main_category_storefront_id'", $this->controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['store_access_key'])", $this->preview_post_controller);
         self::assertStringContainsString("unset(Tygh::\$app['session']['talario_partner_sync_preview'])", $this->preview_post_controller);
+        self::assertStringContainsString("['talario_partner_sync_preview_consumed']", $this->preview_post_controller);
+        self::assertStringContainsString("'store_access_key_present' => \$session_store_key !== ''", $this->preview_post_controller);
+        self::assertStringContainsString("'store_access_key_matches_runtime' => \$session_store_key !== ''", $this->preview_post_controller);
+        self::assertStringContainsString("['talario_partner_sync_preview_consumed'] ?? null", $this->controller);
+        self::assertStringContainsString("\$consumed_at >= \$issued_at", $this->controller);
+        self::assertStringContainsString("['talario_partner_sync_preview_consumed']", $this->controller);
         self::assertStringContainsString("(int) \$_REQUEST['product_id'] === \$preview_product_id", $this->preview_post_controller);
         self::assertStringContainsString("'visual_acceptance'", $this->preview_post_controller);
         self::assertStringContainsString('$preview_company_id > 0', $this->preview_post_controller);
