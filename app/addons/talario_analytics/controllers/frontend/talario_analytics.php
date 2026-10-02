@@ -782,31 +782,37 @@ function fn_talario_analytics_partner_sync_penaty_preview_state(): void
         ]);
     }
 
-    // Successful inspection consumes the random nonce: single-use by construction.
+    $consumed = Tygh::$app['session']['talario_partner_sync_preview_consumed'] ?? null;
+    $consumed_at = is_array($consumed) ? (int) ($consumed['consumed_at'] ?? 0) : 0;
+    $preview_exact = is_array($consumed)
+        && (int) ($consumed['product_id'] ?? 0) > 0
+        && (int) ($consumed['company_id'] ?? 0) > 0
+        && (string) ($consumed['purpose'] ?? '') === 'visual_acceptance'
+        && $consumed_at >= $issued_at
+        && $now >= $consumed_at
+        && ($now - $consumed_at) <= 300;
+    $store_access_key_present = $preview_exact
+        && ($consumed['store_access_key_present'] ?? false) === true;
+    $store_access_key_matches_runtime = $preview_exact
+        && ($consumed['store_access_key_matches_runtime'] ?? false) === true;
+
+    // Successful inspection consumes both the random nonce and the bounded
+    // proof captured when products.view removed the one-use storefront key.
     unset(
         Tygh::$app['session']['talario_partner_sync_preview_state_token'],
-        Tygh::$app['session']['talario_partner_sync_preview_state_issued_at']
+        Tygh::$app['session']['talario_partner_sync_preview_state_issued_at'],
+        Tygh::$app['session']['talario_partner_sync_preview_consumed']
     );
-
-    $preview = Tygh::$app['session']['talario_partner_sync_preview'] ?? null;
-    $preview_exact = is_array($preview)
-        && (int) ($preview['product_id'] ?? 0) > 0
-        && (int) ($preview['company_id'] ?? 0) > 0
-        && (string) ($preview['purpose'] ?? '') === 'visual_acceptance';
 
     /** @var \Tygh\Storefront\Storefront $runtime_storefront */
     $runtime_storefront = Tygh::$app['storefront'];
-    $session_store_key = (string) (Tygh::$app['session']['store_access_key'] ?? '');
-    $runtime_store_key = trim((string) $runtime_storefront->access_key);
 
     fn_talario_analytics_json_response(200, [
         'schema_version' => 'partner-sync.preview-state.v1',
         'session_handoff_token_valid' => true,
         'preview_marker_exact' => $preview_exact,
-        'store_access_key_present' => $session_store_key !== '',
-        'store_access_key_matches_runtime' => $session_store_key !== ''
-            && $runtime_store_key !== ''
-            && hash_equals($runtime_store_key, $session_store_key),
+        'store_access_key_present' => $store_access_key_present,
+        'store_access_key_matches_runtime' => $store_access_key_matches_runtime,
         'runtime_storefront_id' => (int) $runtime_storefront->storefront_id,
         'runtime_storefront_status' => (string) $runtime_storefront->status,
     ]);
