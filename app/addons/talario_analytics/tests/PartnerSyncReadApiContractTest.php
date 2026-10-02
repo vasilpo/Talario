@@ -1370,6 +1370,13 @@ final class PartnerSyncReadApiContractTest extends TestCase
         self::assertStringContainsString('talario.part-sync.needs-input.v1', $this->approved_card_runner);
         self::assertStringContainsString('human_decisions.category.category_id', $this->approved_card_runner);
         self::assertStringContainsString('state="READY_FOR_CREATE"', $this->approved_card_runner);
+        self::assertStringContainsString('state="READY_FOR_UPDATE"', $this->approved_card_runner);
+        self::assertStringContainsString('operation not in {"create","update"}', $this->approved_card_runner);
+        self::assertStringContainsString('update product_id required', $this->approved_card_runner);
+        self::assertStringContainsString('NORMALIZED_PRODUCT_NAME=', $this->approved_card_runner);
+        self::assertStringContainsString('product["name"]=f"{source_type} «{name}»"', $this->approved_card_runner);
+        self::assertStringContainsString('WRITE_READBACK=PASS', $this->approved_card_runner);
+        self::assertStringContainsString('operation.upper()+"_READBACK=PASS"', $this->approved_card_runner);
         self::assertStringContainsString('LOOKUP_ENDPOINT=', $this->approved_card_runner);
         self::assertStringContainsString('lookup_req="part-sync-lookup-${GITHUB_RUN_ID}-${ATTEMPT}"', $this->approved_card_runner);
         self::assertStringNotContainsString('lookup_req="part-sync-lookup-\\${GITHUB_RUN_ID}-\\${ATTEMPT}"', $this->approved_card_runner);
