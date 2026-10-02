@@ -62,6 +62,13 @@ if not (product.get("category_ids") or str(p.get("category_name") or "").strip()
 images=p.get("image_drive_files",[])
 if not isinstance(images,list) or len(images)>12:
     raise SystemExit("image manifest invalid")
+source_folder=str(p.get("source_image_folder") or "").strip()
+source_count=int(p.get("source_image_count") or 0)
+if source_folder:
+    if source_count <= 0:
+        raise SystemExit("source image folder declared but no images resolved")
+    if source_count != len(images):
+        raise SystemExit("source image count does not match manifest")
 total=0
 for item in images:
     if not isinstance(item,dict):

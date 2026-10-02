@@ -1,5 +1,5 @@
 {
-  "request_id": "part-sync-glinyanye-chudesa-karate-title-update-20261002-v2",
+  "request_id": "part-sync-glinyanye-chudesa-karate-images-20261002-v1",
   "approved_company_name": "Глиняные Чудеса",
   "category_name": "Спорт",
   "parent_category_name": "",
@@ -8,7 +8,7 @@
   "source_sheet_name": "Лист1",
   "source_sheet_row": 4,
   "source_image_folder": "Фото/Спорт",
-  "source_image_count": 0,
+  "source_image_count": 3,
   "ignore_row": "ОБРАЗЕЦ",
   "operation": "update",
   "dry_run": false,
@@ -413,9 +413,25 @@
       "capacity": 5
     }
   ],
-  "image_drive_files": [],
+  "image_drive_files": [
+    {
+      "id": "1iEQ2m7gwhZtxArF9JQ6GLlV1B4EKCFW1",
+      "sha256": "c3ea05ff3a8320387b57cee8101a354d6bb7dc4989df17a08279eaa6bc9e2f3a",
+      "bytes": 4584
+    },
+    {
+      "id": "1uECR1SRExy-1J8cg1Px4RpQk3-DVoUj_",
+      "sha256": "164570c7fa062958e4e9aafb88a48011402c1787bc9090a90e3e9431ccf13547",
+      "bytes": 11622
+    },
+    {
+      "id": "1EAFzIXMwIZRG3dj4dt6I-KXiIpGbTH9j",
+      "sha256": "e6d72c6b35d4d0759934ab2f871b09dc6b2a2a22954838431f7eb590ee68ce87",
+      "bytes": 8914
+    }
+  ],
   "target": "dev_copy",
-  "approval_id": "part-sync-glinyanye-chudesa-karate-title-update-20261002",
+  "approval_id": "part-sync-glinyanye-chudesa-karate-images-20261002",
   "approved_company_id": 12,
   "product_id": 1238
 }
