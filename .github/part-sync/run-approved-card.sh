@@ -33,8 +33,11 @@ with open(path,encoding="utf-8") as fh:
     p=json.load(fh)
 if p.get("target")!="dev_copy":
     raise SystemExit("target must be dev_copy")
-if p.get("operation")!="create":
-    raise SystemExit("only create is allowed in approved-card pipeline")
+operation=str(p.get("operation") or "")
+if operation not in {"create","update"}:
+    raise SystemExit("approved-card operation must be create or update")
+if operation=="update" and int(p.get("product_id") or 0)<=0:
+    raise SystemExit("update product_id required")
 if p.get("dry_run") is not False:
     raise SystemExit("approved request must carry dry_run=false")
 if not re.fullmatch(r"part-sync-[A-Za-z0-9._:-]{6,112}",str(p.get("approval_id") or "")):
@@ -52,6 +55,8 @@ if float(product.get("price") or 0)<0:
     raise SystemExit("price must be non-negative")
 if not (int(p.get("approved_company_id") or 0)>0 or str(p.get("approved_company_name") or "").strip()):
     raise SystemExit("approved company context required")
+if operation=="update" and int(p.get("approved_company_id") or 0)<=0:
+    raise SystemExit("update approved_company_id required")
 if not (product.get("category_ids") or str(p.get("category_name") or "").strip()):
     raise SystemExit("category context required")
 images=p.get("image_drive_files",[])
@@ -93,12 +98,37 @@ if human is not None:
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z",str(category.get("selected_at") or "")):
             raise SystemExit("human category selected_at invalid")
 print("REQUEST_SCHEMA=PASS")
+print("REQUEST_OPERATION="+operation)
 print("REQUEST_STATUS=H")
 print("REQUEST_IMAGES="+str(len(images)))
 print("REQUEST_VARIATIONS="+str(len(vp or [])))
 PY
 
 cp "$REQUEST_FILE" "$work/request.json"
+python3 - "$work/request.json" <<'PY'
+import json,re,sys
+path=sys.argv[1]
+with open(path,encoding="utf-8") as fh:
+    request=json.load(fh)
+product=request.get("product") or {}
+name=str(product.get("name") or "").strip()
+source_type=str(request.get("source_type") or "").strip()
+ignored={"","другое","другой","прочее"}
+if name and source_type and source_type.casefold() not in ignored:
+    def norm(value):
+        return " ".join(re.findall(r"[\w]+",value.casefold(),flags=re.UNICODE))
+    normalized_name=norm(name)
+    normalized_type=norm(source_type)
+    type_tokens=normalized_type.split()
+    name_tokens=normalized_name.split()
+    contains_type=bool(type_tokens) and all(token in name_tokens for token in type_tokens)
+    if not contains_type:
+        product["name"]=f"{source_type} «{name}»"
+        request["product"]=product
+with open(path,"w",encoding="utf-8") as fh:
+    json.dump(request,fh,ensure_ascii=False,indent=2)
+print("NORMALIZED_PRODUCT_NAME="+str((request.get("product") or {}).get("name") or ""))
+PY
 human_category_id="$(jq -r '.human_decisions.category.category_id // empty' "$work/request.json")"
 if [ -n "$human_category_id" ]; then
   echo "HUMAN_DECISION_CATEGORY_ID=$human_category_id"
@@ -327,10 +357,13 @@ if dry.get("schema_version")!="partner-sync.write-plan.v1" or dry.get("dry_run")
 plan=dry.get("plan") or {}
 product=plan.get("product") or {}
 expected=request["product"]
-if plan.get("operation")!="create":
+operation=str(request.get("operation") or "")
+if plan.get("operation")!=operation:
     raise SystemExit("dry-run operation mismatch")
-if int(product.get("company_id") or 0)<=0:
+if operation=="create" and int(product.get("company_id") or 0)<=0:
     raise SystemExit("dry-run company unresolved")
+if operation=="update" and int(plan.get("product_id") or 0)!=int(request.get("product_id") or 0):
+    raise SystemExit("dry-run product_id mismatch")
 if product.get("product")!=expected.get("name"):
     raise SystemExit("dry-run name mismatch")
 for key in ("status","address","full_description","meta_keywords"):
@@ -372,7 +405,9 @@ def expected_short_description(current, variation_plan):
     return label if not remainder else label+". "+remainder
 
 if "short_description" in expected:
-    expected_short=expected_short_description(str(expected.get("short_description") or ""), request.get("variation_plan"))
+    expected_short=str(expected.get("short_description") or "")
+    if operation=="create":
+        expected_short=expected_short_description(expected_short, request.get("variation_plan"))
     if product.get("short_description")!=expected_short:
         raise SystemExit("dry-run product field mismatch: short_description")
 if float(product.get("price") or 0)!=float(expected.get("price") or 0):
@@ -395,7 +430,12 @@ print("RESOLVED_CATEGORY_IDS="+",".join(map(str,product.get("category_ids") or [
 print("RESOLVED_VARIATIONS="+str(len(vp or [])))
 PY
 
-company_id_dry="$(jq -er '.plan.product.company_id | select(type=="number" and .>0)' "$work/dry.out")"
+operation="$(jq -er '.operation | select(.=="create" or .=="update")' "$work/request.json")"
+if [ "$operation" = "create" ]; then
+  company_id_dry="$(jq -er '.plan.product.company_id | select(type=="number" and .>0)' "$work/dry.out")"
+else
+  company_id_dry="$(jq -er '.approved_company_id | select(type=="number" and .>0)' "$work/request.json")"
+fi
 product_name="$(jq -er '.product.name | select(type=="string" and length>0)' "$work/request.json")"
 jq -n \
   --argjson approved_company_id "$company_id_dry" \
@@ -540,7 +580,10 @@ test "$existing_product_id" -ge 0
 test "$existing_company_id" -ge 0
 
 if [ "$ATTEMPT" = "1" ]; then
-  if [ "$existing_product_id" -gt 0 ]; then
+  if [ "$operation" = "update" ]; then
+    state="READY_FOR_UPDATE"
+    next="explicit_authenticated_rerun_update"
+  elif [ "$operation" = "create" ] && [ "$existing_product_id" -gt 0 ]; then
     state="READY_FOR_RECOVERY"
     next="explicit_authenticated_rerun_recover_existing"
   else
@@ -566,10 +609,14 @@ if [ "$existing_product_id" -gt 0 ]; then
   echo "PRODUCT_ID=$product_id"
   echo "COMPANY_ID=$company_id"
 else
-  apply_req="part-sync-apply-\${GITHUB_RUN_ID}-create"
+  apply_req="part-sync-apply-${GITHUB_RUN_ID}-${operation}"
   apply_code="$(post_signed 'talario-part-sync' 'apply' "$work/apply.json" "$apply_req" "$work/apply.out")"
-  echo "CREATE_HTTP=$apply_code"
-  if [ "$apply_code" != "201" ]; then
+  expected_apply_code="201"
+  if [ "$operation" = "update" ]; then
+    expected_apply_code="200"
+  fi
+  echo "WRITE_HTTP=$apply_code"
+  if [ "$apply_code" != "$expected_apply_code" ]; then
     jq -c '{error:(.error//null),stage:(.stage//null),kind:(.kind//null),detail:(.detail//null)}' "$work/apply.out" 2>/dev/null || true
     exit 61
   fi
@@ -584,24 +631,29 @@ result=json.load(open(sys.argv[3],encoding="utf-8"))
 plan=dry["plan"]
 planned=plan.get("product") or {}
 rb=result.get("readback") or {}
-if result.get("schema_version")!="partner-sync.write-result.v1" or result.get("dry_run") is not False or result.get("operation")!="create":
-    raise SystemExit("create schema mismatch")
+operation=str(request.get("operation") or "")
+if result.get("schema_version")!="partner-sync.write-result.v1" or result.get("dry_run") is not False or result.get("operation")!=operation:
+    raise SystemExit("write schema mismatch")
 product_id=int(result.get("product_id") or 0)
 if product_id<=0:
     raise SystemExit("missing product id")
-if int(rb.get("company_id") or 0)!=int(planned.get("company_id") or 0):
+if operation=="update" and product_id!=int(request.get("product_id") or 0):
+    raise SystemExit("update product id changed")
+expected_company=int(planned.get("company_id") or request.get("approved_company_id") or 0)
+if int(rb.get("company_id") or 0)!=expected_company:
     raise SystemExit("company readback mismatch")
-if rb.get("name")!=planned.get("product") or rb.get("status")!=planned.get("status"):
-    raise SystemExit("name/status readback mismatch")
-for key in ("address","full_description","short_description"):
-    if rb.get(key)!=planned.get(key):
+if "product" in planned and rb.get("name")!=planned.get("product"):
+    raise SystemExit("name readback mismatch")
+for key in ("status","address","full_description","short_description"):
+    if key in planned and rb.get(key)!=planned.get(key):
         raise SystemExit("readback mismatch: "+key)
-if rb.get("filter_features")!=(plan.get("filter_features") or {}):
+if plan.get("filter_features") is not None and rb.get("filter_features")!=(plan.get("filter_features") or {}):
     raise SystemExit("filter feature readback mismatch")
 manifest=request.get("image_drive_files") or []
-image_rb=rb.get("images") or {}
-if int(image_rb.get("main") or 0)+int(image_rb.get("additional") or 0)!=len(manifest):
-    raise SystemExit("image readback mismatch")
+if plan.get("images") is not None:
+    image_rb=rb.get("images") or {}
+    if int(image_rb.get("main") or 0)+int(image_rb.get("additional") or 0)!=len(manifest):
+        raise SystemExit("image readback mismatch")
 vp=request.get("variation_plan") or []
 vr=result.get("variations")
 if vp:
@@ -622,9 +674,10 @@ if vp:
         if int(actual_item.get("duration") or 0)!=expected_duration:
             raise SystemExit("variation duration readback mismatch")
 else:
-    if float(rb.get("price") or 0)!=float(planned.get("price") or 0):
+    if "price" in planned and float(rb.get("price") or 0)!=float(planned.get("price") or 0):
         raise SystemExit("price readback mismatch")
-print("CREATE_READBACK=PASS")
+print(operation.upper()+"_READBACK=PASS")
+print("WRITE_READBACK=PASS")
 print("PRODUCT_ID="+str(product_id))
 print("COMPANY_ID="+str(int(rb["company_id"])))
 print("NAME="+str(rb["name"]))
@@ -675,7 +728,7 @@ PY
 command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null || command -v chromium >/dev/null
 python3 -m pip install --quiet selenium
 
-python3 - "$work/preview_url" "$work/state_url" "$REQUEST_FILE" "$evidence/screenshot.png" "$evidence/summary.txt" "$product_id" "$company_id" <<'PY'
+python3 - "$work/preview_url" "$work/state_url" "$work/request.json" "$evidence/screenshot.png" "$evidence/summary.txt" "$product_id" "$company_id" <<'PY'
 import json,os,sys,time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
