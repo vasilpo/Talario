@@ -424,8 +424,11 @@ if vp:
         raise SystemExit("dry-run variation resolution mismatch")
     if not isinstance(windows,list) or len(windows)!=len(vp):
         raise SystemExit("dry-run variation booking mismatch")
+resolved_company_id=int(product.get("company_id") or request.get("approved_company_id") or 0)
+if resolved_company_id<=0:
+    raise SystemExit("dry-run company unresolved")
 print("SIGNED_DRY_RUN=PASS")
-print("RESOLVED_COMPANY_ID="+str(int(product["company_id"])))
+print("RESOLVED_COMPANY_ID="+str(resolved_company_id))
 print("RESOLVED_CATEGORY_IDS="+",".join(map(str,product.get("category_ids") or [])))
 print("RESOLVED_VARIATIONS="+str(len(vp or [])))
 PY
