@@ -402,7 +402,7 @@ jq -n \
   --arg product_name "$product_name" \
   '{approved_company_id:$approved_company_id,product_name:$product_name,status:"H"}' > "$work/lookup.json"
 
-lookup_req="part-sync-lookup-\${GITHUB_RUN_ID}-\${ATTEMPT}"
+lookup_req="part-sync-lookup-${GITHUB_RUN_ID}-${ATTEMPT}"
 lookup_code="$(post_signed 'talario-part-sync' 'lookup' "$work/lookup.json" "$lookup_req" "$work/lookup.out")"
 echo "SIGNED_LOOKUP_HTTP=$lookup_code"
 if [ "$lookup_code" != "200" ]; then
