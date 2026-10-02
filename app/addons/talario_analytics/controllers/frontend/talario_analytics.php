@@ -1089,7 +1089,7 @@ function fn_talario_analytics_partner_sync_verify_penaty_signature(
         fn_talario_analytics_json_response(503, ['error' => 'pilot_signature_temp_write_failed']);
     }
 
-    $signature_scope = $purpose === 'apply' ? 'talario-part-sync' : 'talario-part-sync-penaty';
+    $signature_scope = $purpose === 'preview' ? 'talario-part-sync-penaty' : 'talario-part-sync';
     $message = $signature_scope . "\n"
         . $purpose . "\n"
         . $request_id . "\n"
