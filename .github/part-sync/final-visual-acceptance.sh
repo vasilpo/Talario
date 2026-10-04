@@ -16,7 +16,7 @@ chmod 700 "$tmp" "$evidence"
 trap 'rm -rf "$tmp"' EXIT
 
 printf '%s' '{"approved_company_id":12,"product_id":1238}' > "$tmp/body.json"
-request_id="part-sync-address-diagnostic-1238-${GITHUB_RUN_ID}"
+request_id="part-sync-preview-address-1238-${GITHUB_RUN_ID}"
 ts="$(date +%s)"
 body_hash="$(sha256sum "$tmp/body.json" | awk '{print $1}')"
 printf 'talario-part-sync-penaty\npreview\n%s\n%s\n%s\n' "$request_id" "$ts" "$body_hash" > "$tmp/message"
