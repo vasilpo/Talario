@@ -1,0 +1,6 @@
+{
+  "schema_version": "talario.partner-sync.prod-policy.v1",
+  "enabled": true,
+  "create_only": true,
+  "forced_status": "H"
+}
