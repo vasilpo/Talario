@@ -6,14 +6,14 @@ ATTEMPT="${2:?run attempt required}"
 KEY_FILE="${PARTNER_SYNC_KEY_FILE:-$HOME/.ssh/id_ed25519}"
 ENDPOINT='https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.partner_apply'
 
-# This helper is intentionally bounded to the current dev_copy image-only repair.
+# Intentionally bounded to the current dev_copy image-only repair.
 test "${GITHUB_REPOSITORY:-}" = "vasilpo/Talario"
 test "${GITHUB_REF:-}" = "refs/heads/development"
-test "$REQUEST_FILE" = '.github/part-sync/requests/glinyanye-chudesa-karate-20261001.json'
+test "$REQUEST_FILE" = '.github/part-sync/requests/karate-images-transfer-20261004.json'
 test "$ATTEMPT" = '1' -o "$ATTEMPT" = '2'
 test -s "$KEY_FILE"
 
-for tool in jq curl sha256sum file base64 ssh-keygen awk tr wc mktemp date; do
+for tool in jq curl sha256sum file base64 ssh-keygen awk tr wc mktemp date python3; do
   command -v "$tool" >/dev/null 2>&1
 done
 
@@ -23,14 +23,23 @@ install -d -m 700 "$work/images"
 trap 'rm -rf "$work"' EXIT
 
 python3 - "$REQUEST_FILE" <<'PY'
-import json,re,sys,urllib.parse
+import json,sys,urllib.parse
 p=json.load(open(sys.argv[1],encoding='utf-8'))
-if p.get('target')!='dev_copy' or p.get('operation')!='update':
+expected_keys={'request_id','target','operation','dry_run','approved_company_id','product_id','product','image_update_transport','image_drive_files','approval_id'}
+if set(p)!=expected_keys:
+    raise SystemExit('unexpected request keys')
+if p.get('request_id')!='part-sync-karate-images-transfer-20261004-v1':
+    raise SystemExit('wrong request id')
+if p.get('target')!='dev_copy' or p.get('operation')!='update' or p.get('dry_run') is not False:
     raise SystemExit('wrong target or operation')
+if p.get('image_update_transport')!='ephemeral_oai':
+    raise SystemExit('wrong transport')
 if int(p.get('product_id') or 0)!=1238 or int(p.get('approved_company_id') or 0)!=12:
     raise SystemExit('wrong bounded target')
-if (p.get('product') or {}).get('name')!='Первый удар':
-    raise SystemExit('unexpected source product name')
+if p.get('approval_id')!='part-sync-karate-images-20261004':
+    raise SystemExit('wrong approval id')
+if (p.get('product') or {})!={'name':'Каратэ «Первый удар»'}:
+    raise SystemExit('unexpected product contract')
 items=p.get('image_drive_files')
 if not isinstance(items,list) or len(items)!=3:
     raise SystemExit('exactly three images required')
@@ -40,11 +49,14 @@ expected=[
  ('1EAFzIXMwIZRG3dj4dt6I-KXiIpGbTH9j',8914,'e6d72c6b35d4d0759934ab2f871b09dc6b2a2a22954838431f7eb590ee68ce87'),
 ]
 for i,(item,want) in enumerate(zip(items,expected)):
+    if set(item)!={'id','bytes','sha256','transfer_url'}:
+        raise SystemExit(f'unexpected image keys {i}')
     if (str(item.get('id') or ''),int(item.get('bytes') or 0),str(item.get('sha256') or '').lower())!=want:
         raise SystemExit(f'image manifest mismatch {i}')
     url=str(item.get('transfer_url') or '')
     u=urllib.parse.urlparse(url)
-    if u.scheme!='https' or not (u.hostname or '').endswith('.oaiusercontent.com') or not u.path.startswith('/files/') or not u.path.endswith('/raw'):
+    host=(u.hostname or '').lower()
+    if u.scheme!='https' or not host.endswith('.oaiusercontent.com') or not u.path.startswith('/files/') or not u.path.endswith('/raw'):
         raise SystemExit(f'invalid ephemeral transfer url {i}')
 print('IMAGE_UPDATE_REQUEST=PASS')
 PY
@@ -103,7 +115,7 @@ post_signed() {
 dry_req="part-sync-apply-${GITHUB_RUN_ID}-image-dry"
 dry_code="$(post_signed "$work/dry.json" "$dry_req" "$work/dry.out")"
 test "$dry_code" = '200'
-jq -e '.schema_version=="partner-sync.write-plan.v1" and .dry_run==true and .plan.operation=="update" and .plan.product_id==1238 and .plan.images.count==3 and .plan.images.replace==true' "$work/dry.out" >/dev/null
+jq -e '.schema_version=="partner-sync.write-plan.v1" and .dry_run==true and .plan.operation=="update" and .plan.product_id==1238 and .plan.images.count==3 and .plan.images.replace==true and (.plan.product|keys)==["product"] and .plan.product.product=="Каратэ «Первый удар»" and .plan.booking==null and .plan.variations==null and .plan.filter_features==null' "$work/dry.out" >/dev/null
 echo 'SIGNED_DRY_RUN=PASS'
 
 if [ "$ATTEMPT" = '1' ]; then
