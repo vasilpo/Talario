@@ -38,7 +38,9 @@
     </script>
 
     <section class="talario-lesson-map" aria-label="{__("address")}">
-        <div class="talario-lesson-map__address">{$product.address|escape}</div>
+        {if $product.product_id|intval != 1238}
+            <div class="talario-lesson-map__address">{$product.address|escape}</div>
+        {/if}
         <div
             class="cm-geo-map-container cm-aom-map-container talario-lesson-map__canvas"
             data-ca-geo-map-language="{$smarty.const.CART_LANGUAGE}"
