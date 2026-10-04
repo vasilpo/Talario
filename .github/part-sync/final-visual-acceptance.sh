@@ -16,14 +16,14 @@ chmod 700 "$tmp" "$evidence"
 trap 'rm -rf "$tmp"' EXIT
 
 printf '%s' '{"approved_company_id":12,"product_id":1238}' > "$tmp/body.json"
-request_id="part-sync-preview-address-1238-${GITHUB_RUN_ID}"
+request_id="part-sync-preview-final-address-1238-${GITHUB_RUN_ID}"
 ts="$(date +%s)"
 body_hash="$(sha256sum "$tmp/body.json" | awk '{print $1}')"
 printf 'talario-part-sync-penaty\npreview\n%s\n%s\n%s\n' "$request_id" "$ts" "$body_hash" > "$tmp/message"
 ssh-keygen -Y sign -q -f ~/.ssh/id_ed25519 -n talario-part-sync "$tmp/message"
 sig_b64="$(base64 -w0 "$tmp/message.sig")"
 
-code="$(curl --silent --show-error --request POST \
+code="$(curl --silent --show-error --connect-timeout 10 --max-time 20 --request POST \
   'https://talario.ru/dev_copy/index.php?dispatch=talario_analytics.penaty_preview' \
   -H 'Content-Type: application/json' \
   -H "X-Talario-Request-Id: $request_id" \
@@ -56,89 +56,70 @@ print('PREVIEW_1238=PASS')
 PY
 chmod 600 "$tmp/preview_url"
 
-command -v google-chrome >/dev/null || command -v chromium-browser >/dev/null || command -v chromium >/dev/null
-python3 -m pip install --quiet selenium
+browser="$(command -v google-chrome || command -v chromium-browser || command -v chromium)"
+test -n "$browser"
+url="$(cat "$tmp/preview_url")"
+timeout 45s "$browser" \
+  --headless=new \
+  --no-sandbox \
+  --disable-dev-shm-usage \
+  --disable-gpu \
+  --window-size=1440,3000 \
+  --screenshot="$evidence/screenshot.png" \
+  --dump-dom \
+  "$url" > "$tmp/page.html"
 
-python3 - "$tmp/preview_url" "$evidence/screenshot.png" "$evidence/visual-summary.txt" <<'PY'
-import json, os, sys, time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+test -s "$tmp/page.html"
+test -s "$evidence/screenshot.png"
+chmod 600 "$evidence/screenshot.png"
 
-url_file, screenshot, summary_file = sys.argv[1:4]
-url = open(url_file, encoding='utf-8').read().strip()
-opts = Options()
-opts.add_argument('--headless=new')
-opts.add_argument('--no-sandbox')
-opts.add_argument('--disable-dev-shm-usage')
-opts.add_argument('--disable-gpu')
-opts.add_argument('--window-size=1440,3000')
-driver = webdriver.Chrome(options=opts)
-try:
-    driver.get(url)
-    deadline = time.time() + 30
-    while time.time() < deadline:
-        if driver.execute_script('return document.readyState') == 'complete':
-            break
-        time.sleep(0.25)
-    time.sleep(3)
-    body = driver.find_element(By.TAG_NAME, 'body').text
-    if 'Каратэ' not in body and 'Первый удар' not in body:
-        raise SystemExit('product marker missing')
-    matches = driver.execute_script(r'''
-const norm = (s) => (s || '').toLowerCase().replace(/[\s.,«»"'()\-–—:;]/g, '');
-const hit = (s) => {
-  const n = norm(s);
-  return n.includes('красногорск') && n.includes('ленина') && n.includes('1стр1');
-};
-return Array.from(document.querySelectorAll('body *')).filter((el) => {
-  if (!hit(el.innerText)) return false;
-  return !Array.from(el.children).some((child) => hit(child.innerText));
-}).map((el) => {
-  const chain = [];
-  let cur = el;
-  for (let i = 0; cur && i < 8; i++, cur = cur.parentElement) {
-    chain.push({tag: cur.tagName, id: cur.id || '', cls: String(cur.className || '')});
-  }
-  const rect = el.getBoundingClientRect();
-  return {
-    tag: el.tagName,
-    id: el.id || '',
-    cls: String(el.className || ''),
-    text: (el.innerText || '').trim().replace(/\s+/g, ' '),
-    y: Math.round(rect.top + window.scrollY),
-    chain
-  };
-});
-''')
-    height = int(driver.execute_script("return Math.min(Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 3000), 12000)"))
-    driver.set_window_size(1440, height)
-    time.sleep(1)
-    if not driver.save_screenshot(screenshot):
-        raise SystemExit('screenshot failed')
-    os.chmod(screenshot, 0o600)
-    with open(summary_file, 'w', encoding='utf-8') as fh:
-        fh.write('PRODUCT_ID=1238\n')
-        fh.write(f'ADDRESS_MATCH_COUNT={len(matches)}\n')
-        for i, item in enumerate(matches, 1):
-            fh.write(f'MATCH_{i}_TAG={item["tag"]}\n')
-            fh.write(f'MATCH_{i}_ID={item["id"]}\n')
-            fh.write(f'MATCH_{i}_CLASS={item["cls"]}\n')
-            fh.write(f'MATCH_{i}_TEXT={item["text"]}\n')
-            fh.write(f'MATCH_{i}_Y={item["y"]}\n')
-            fh.write(f'MATCH_{i}_CHAIN={json.dumps(item["chain"], ensure_ascii=False)}\n')
-    os.chmod(summary_file, 0o600)
-    print(f'ADDRESS_MATCH_COUNT={len(matches)}')
-    for i, item in enumerate(matches, 1):
-        print(f'MATCH_{i}_TAG={item["tag"]}')
-        print(f'MATCH_{i}_ID={item["id"]}')
-        print(f'MATCH_{i}_CLASS={item["cls"]}')
-        print(f'MATCH_{i}_TEXT={item["text"]}')
-        print(f'MATCH_{i}_Y={item["y"]}')
-        print('MATCH_%d_CHAIN=%s' % (i, json.dumps(item['chain'], ensure_ascii=False)))
-    if len(matches) < 1:
-        raise SystemExit('address marker unexpectedly absent')
-    print('ADDRESS_DIAGNOSTIC=PASS')
-finally:
-    driver.quit()
+python3 - "$tmp/page.html" "$evidence/visual-summary.txt" <<'PY'
+import sys
+from html.parser import HTMLParser
+
+html_file, summary_file = sys.argv[1:3]
+html = open(html_file, encoding='utf-8', errors='replace').read()
+
+class Probe(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.map_address = 0
+        self.map_canvas = 0
+        self.content_description = 0
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        classes = set((attrs.get('class') or '').split())
+        if 'talario-lesson-map__address' in classes:
+            self.map_address += 1
+        if 'talario-lesson-map__canvas' in classes:
+            self.map_canvas += 1
+        if attrs.get('id') == 'content_description':
+            self.content_description += 1
+
+probe = Probe()
+probe.feed(html)
+product_marker = ('Каратэ' in html) or ('Первый удар' in html)
+
+with open(summary_file, 'w', encoding='utf-8') as fh:
+    fh.write('PRODUCT_ID=1238\n')
+    fh.write(f'PRODUCT_MARKER={"PASS" if product_marker else "FAIL"}\n')
+    fh.write(f'CONTENT_DESCRIPTION_COUNT={probe.content_description}\n')
+    fh.write(f'MAP_ADDRESS_COUNT={probe.map_address}\n')
+    fh.write(f'MAP_CANVAS_COUNT={probe.map_canvas}\n')
+
+if not product_marker:
+    raise SystemExit('product marker missing')
+if probe.content_description != 1:
+    raise SystemExit('description block changed or missing')
+if probe.map_address != 0:
+    raise SystemExit('duplicate map address still rendered')
+if probe.map_canvas != 1:
+    raise SystemExit('map canvas changed or missing')
+
+print('PRODUCT_1238=PASS')
+print('CONTENT_DESCRIPTION=PASS')
+print('MAP_ADDRESS_REMOVED=PASS')
+print('MAP_CANVAS_PRESERVED=PASS')
 PY
+chmod 600 "$evidence/visual-summary.txt"
+echo 'FINAL_VISUAL_ACCEPTANCE=PASS'
