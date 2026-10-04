@@ -126,7 +126,13 @@ jobs:
         env:
           PARTNER_SYNC_KEY_FILE: /home/runner/.ssh/id_ed25519
         run: |
-          bash .github/part-sync/run-approved-card.sh "${{ steps.request.outputs.request_file }}" "${GITHUB_RUN_ATTEMPT}"
+          set -euo pipefail
+          request="${{ steps.request.outputs.request_file }}"
+          if jq -e '.image_update_transport == "ephemeral_oai"' "$request" >/dev/null; then
+            bash .github/part-sync/run-approved-image-update.sh "$request" "${GITHUB_RUN_ATTEMPT}"
+          else
+            bash .github/part-sync/run-approved-card.sh "$request" "${GITHUB_RUN_ATTEMPT}"
+          fi
 
       - name: Upload Partner Sync checkpoint and bounded evidence
         if: always()
