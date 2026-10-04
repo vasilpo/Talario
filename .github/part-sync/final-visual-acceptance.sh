@@ -8,6 +8,21 @@ test "${GITHUB_ACTOR:-}" = "vasilpo"
 test -s ~/.ssh/id_ed25519
 ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
 
+echo 'SOURCE_SCAN_BEGIN'
+set +e
+grep -RIn --exclude-dir=.git -E 'talario-lesson-map(__address)?' . 2>/dev/null | head -100
+scan_rc=${PIPESTATUS[0]}
+set -e
+if [ "$scan_rc" -eq 0 ]; then
+  echo 'SOURCE_SCAN_MATCH=YES'
+elif [ "$scan_rc" -eq 1 ]; then
+  echo 'SOURCE_SCAN_MATCH=NO'
+else
+  echo "SOURCE_SCAN_ERROR=$scan_rc"
+  exit "$scan_rc"
+fi
+echo 'SOURCE_SCAN_END'
+
 tmp="${RUNNER_TEMP}/part-sync-final-visual"
 evidence="${RUNNER_TEMP}/part-sync-final-visual-evidence"
 rm -rf "$tmp" "$evidence"
