@@ -1,0 +1,11 @@
+{
+  "schema_version": "talario.partner-sync.signers.v1",
+  "signers": [
+    {
+      "id": "beget-github-actions-v2",
+      "algorithm": "ssh-ed25519",
+      "public_key": "AAAAC3NzaC1lZDI1NTE5AAAAIA/89+6Q50ah8vHptYSd4T6GsrhW+mYwf/xpNyZyAdDP",
+      "status": "active"
+    }
+  ]
+}
