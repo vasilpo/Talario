@@ -1,0 +1,33 @@
+{
+  "request_id": "part-sync-karate-images-transfer-20261004-v1",
+  "target": "dev_copy",
+  "operation": "update",
+  "dry_run": false,
+  "approved_company_id": 12,
+  "product_id": 1238,
+  "product": {
+    "name": "Каратэ «Первый удар»"
+  },
+  "image_update_transport": "ephemeral_oai",
+  "image_drive_files": [
+    {
+      "id": "1iEQ2m7gwhZtxArF9JQ6GLlV1B4EKCFW1",
+      "bytes": 4584,
+      "sha256": "c3ea05ff3a8320387b57cee8101a354d6bb7dc4989df17a08279eaa6bc9e2f3a",
+      "transfer_url": "https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-5028-820a-b39c-59853e1804ed/raw?se=2026-10-04T14%3A27%3A54Z&sp=r&sv=2026-02-06&sr=b&scid=c83319a6-ff0b-54ee-bc8d-1c9a3a596299&skoid=061609b8-1cdb-4a5b-9e68-c7ab9a523a8f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T18%3A55%3A04Z&ske=2026-10-04T18%3A55%3A04Z&sks=b&skv=2026-02-06&sig=yjrmKsfzTvb0/JZNtSsqDvgZcIpG1M1maSX6tY0JoQE%3D"
+    },
+    {
+      "id": "1uECR1SRExy-1J8cg1Px4RpQk3-DVoUj_",
+      "bytes": 11622,
+      "sha256": "164570c7fa062958e4e9aafb88a48011402c1787bc9090a90e3e9431ccf13547",
+      "transfer_url": "https://sdmntprukwest.oaiusercontent.com/files/00000000-2950-8243-b399-aba7d0130224/raw?se=2026-10-04T14%3A27%3A58Z&sp=r&sv=2026-02-06&sr=b&scid=a42f5a93-828e-5409-b69e-750b925d23d0&skoid=061609b8-1cdb-4a5b-9e68-c7ab9a523a8f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-04T08%3A56%3A03Z&ske=2026-10-05T08%3A56%3A03Z&sks=b&skv=2026-02-06&sig=fAdNUfdfH3pWfgAjN%2BouqLI5GttuOwdAElJtSvb0gfE%3D"
+    },
+    {
+      "id": "1EAFzIXMwIZRG3dj4dt6I-KXiIpGbTH9j",
+      "bytes": 8914,
+      "sha256": "e6d72c6b35d4d0759934ab2f871b09dc6b2a2a22954838431f7eb590ee68ce87",
+      "transfer_url": "https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-df6c-820a-8c83-d07de98cc9d9/raw?se=2026-10-04T14%3A28%3A03Z&sp=r&sv=2026-02-06&sr=b&scid=9ffdc3c9-9ff2-55e4-8639-7388f4fbf258&skoid=061609b8-1cdb-4a5b-9e68-c7ab9a523a8f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-04T05%3A57%3A45Z&ske=2026-10-05T05%3A57%3A45Z&sks=b&skv=2026-02-06&sig=p3SYSHkr6NAZyRAl4NkCy5JReyIX4awBlye9OXZoslA%3D"
+    }
+  ],
+  "approval_id": "part-sync-karate-images-20261004"
+}
