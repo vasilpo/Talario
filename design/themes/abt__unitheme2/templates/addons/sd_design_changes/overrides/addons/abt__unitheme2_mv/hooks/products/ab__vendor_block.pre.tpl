@@ -17,7 +17,7 @@
 				{if $settings.abt__ut2.products.vendor.show_name_as_link[$settings.abt__device] == "Y"}<a href="{"companies.products?company_id=`$company_id`"|fn_url}">{/if}{if $company_name}{$company_name}{else}{$company_id|fn_get_company_name}{/if}{if $settings.abt__ut2.products.vendor.show_name_as_link[$settings.abt__device] == "Y"}</a>{/if}
 			</div>
 
-            {if $product.address}
+            {if $product.address && $product.product_id|intval != 1238}
                 <div class="sd-company-info">
                     <div class="sd-company-info__subtitle">{__("sd_design_changes.product_address")}</div>
                     <div class="sd-company-info__row">{$product.address}</div>
