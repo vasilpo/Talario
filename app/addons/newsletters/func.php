@@ -160,7 +160,7 @@ function fn_register_link($url, $newsletter_id, $campaign_id)
     }
 }
 
-function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '')
+function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $lang_code = CART_LANGUAGE, $reply_to = '', $is_test = false, $newsletter_id = 0)
 {
     $reply_to = !empty($reply_to) ? $reply_to : 'default_company_newsletter_email';
     $_from = array(
@@ -171,7 +171,7 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
     /** @var \Tygh\Mailer\Mailer $mailer */
     $mailer = Tygh::$app['mailer'];
 
-    return $mailer->send(array(
+    $message = array(
         'to' => $to,
         'from' => $_from,
         'reply_to' => $reply_to,
@@ -182,7 +182,34 @@ function fn_send_newsletter($to, $from, $subj, $body, $attachments = array(), $l
         'attachments' => $attachments,
         'template_code' => 'newsletters_newsletter',
         'tpl' => 'addons/newsletters/newsletter.tpl', // this parameter is obsolete and is used for back compatibility
-    ), 'C', $lang_code, fn_get_newsletters_mailer_settings());
+    );
+
+    if ((int) $newsletter_id === 5 && Registry::get('settings.Appearance.email_templates') === 'new') {
+        $template = Tygh::$app['template.mail.repository']->findActiveByCodeAndArea('newsletters_newsletter', 'C');
+
+        if ($template) {
+            $template = clone $template;
+            $template->setTemplate(
+                '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;background:#ffffff;">'
+                . '<tr><td align="center" style="padding:0;">'
+                . '<table role="presentation" width="640" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:640px;border-collapse:collapse;margin:0 auto;">'
+                . '<tr><td align="left" style="padding:16px 20px 10px;">'
+                . '<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse:separate;">'
+                . '<tr><td bgcolor="#ffffff" style="background:#ffffff;border-radius:12px;padding:8px 10px;">'
+                . '<a href="https://talario.ru/" style="display:block;text-decoration:none;">'
+                . '<img src="https://talario.ru/images/talario/Talario_Logo_WL.png" alt="Таларио" width="196" '
+                . 'style="display:block;width:196px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;">'
+                . '</a></td></tr></table>'
+                . '</td></tr>'
+                . '<tr><td style="padding:0;">{{ body }}</td></tr>'
+                . '<tr><td style="padding:0 20px 18px;">{{ snippet("footer") }}</td></tr>'
+                . '</table></td></tr></table>'
+            );
+            $message['template'] = $template;
+        }
+    }
+
+    return $mailer->send($message, 'C', $lang_code, fn_get_newsletters_mailer_settings());
 }
 
 /**
@@ -319,12 +346,25 @@ function fn_newsletters_get_recipients(array $params)
     if (!empty($params['users'])) {
         $users = fn_explode(',', $params['users']);
         $user_recipients = db_get_array(
-            'SELECT users.user_id, users.email, users.lang_code, NULL as list_id, NULL as subscriber_id, users.firstname, user_points.data AS points_data'
+            'SELECT users.user_id, users.email, users.lang_code, MIN(mailing_lists.list_id) as list_id, subscribers.subscriber_id, users.firstname, user_points.data AS points_data'
             . ' FROM ?:users AS users'
             . ' LEFT JOIN ?:user_data AS user_points'
                 . ' ON users.user_id = user_points.user_id AND user_points.type = ?s'
-            . ' WHERE users.user_id IN (?n)',
+            . ' LEFT JOIN ?:user_data AS crm_optout'
+                . ' ON users.user_id = crm_optout.user_id AND crm_optout.type = ?s AND crm_optout.data = ?s'
+            . ' LEFT JOIN ?:subscribers AS subscribers'
+                . ' ON LOWER(TRIM(subscribers.email)) = LOWER(TRIM(users.email))'
+            . ' LEFT JOIN ?:user_mailing_lists AS user_mailing_lists'
+                . ' ON subscribers.subscriber_id = user_mailing_lists.subscriber_id AND user_mailing_lists.confirmed = ?i'
+            . ' LEFT JOIN ?:mailing_lists AS mailing_lists'
+                . ' ON user_mailing_lists.list_id = mailing_lists.list_id AND mailing_lists.status IN (?a)'
+            . ' WHERE crm_optout.user_id IS NULL AND users.user_id IN (?n)'
+            . ' GROUP BY users.user_id, subscribers.subscriber_id',
             POINTS,
+            'Z',
+            'crm01_optout',
+            1,
+            [ObjectStatuses::ACTIVE, ObjectStatuses::HIDDEN],
             $users
         );
     }
@@ -591,14 +631,40 @@ function fn_send_confirmation_email($subscriber_id, $list_id, $email, $lang_code
     }
 }
 
+function fn_talario_crm_generate_unsubscribe_token($user_id, $email)
+{
+    return hash_hmac(
+        'sha256',
+        (int) $user_id . '|' . strtolower(trim((string) $email)),
+        (string) Registry::get('config.crypt_key')
+    );
+}
+
+function fn_talario_crm_generate_unsubscribe_link($user_id, $email)
+{
+    $token = fn_talario_crm_generate_unsubscribe_token($user_id, $email);
+
+    return fn_url(
+        'newsletters.crm_unsubscribe?user_id=' . (int) $user_id . '&token=' . rawurlencode($token),
+        'C',
+        'https'
+    );
+}
+
 function fn_render_newsletter($body, $subscriber)
 {
     // prepare placeholder values
     if (!empty($subscriber['list_id']) && !empty($subscriber['subscriber_id'])) {
         $values['%UNSUBSCRIBE_LINK'] = fn_generate_unsubscribe_link($subscriber['list_id'], $subscriber['subscriber_id']);
         $values['%ACTIVATION_LINK'] = fn_generate_activation_link($subscriber['list_id'], $subscriber['subscriber_id']);
+    } elseif (!empty($subscriber['user_id']) && !empty($subscriber['email'])) {
+        $values['%UNSUBSCRIBE_LINK'] = fn_talario_crm_generate_unsubscribe_link(
+            (int) $subscriber['user_id'],
+            (string) $subscriber['email']
+        );
+        $values['%ACTIVATION_LINK'] = '';
     } else {
-        $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = empty($subscriber['user_id']) ? ('[' . __('link_message_for_test_letter') . ']') : '';
+        $values['%UNSUBSCRIBE_LINK'] = $values['%ACTIVATION_LINK'] = '[' . __('link_message_for_test_letter') . ']';
     }
     $values['%SUBSCRIBER_EMAIL'] = $subscriber['email'];
     $firstname = trim((string) ($subscriber['firstname'] ?? ''));
@@ -613,6 +679,19 @@ function fn_render_newsletter($body, $subscriber)
         $points_balance = max(0, (int) $matches[1]);
     }
     $values['%POINTS_BALANCE%'] = (string) $points_balance;
+
+    $points_mod_100 = $points_balance % 100;
+    $points_mod_10 = $points_balance % 10;
+    if ($points_mod_100 >= 11 && $points_mod_100 <= 14) {
+        $points_word = 'баллов';
+    } elseif ($points_mod_10 === 1) {
+        $points_word = 'балл';
+    } elseif ($points_mod_10 >= 2 && $points_mod_10 <= 4) {
+        $points_word = 'балла';
+    } else {
+        $points_word = 'баллов';
+    }
+    $values['%POINTS_WORD%'] = $points_word;
 
     $values['%COMPANY_NAME'] = Registry::get('settings.Company.company_name');
     $values['%COMPANY_ADDRESS'] = Registry::get('settings.Company.company_address');

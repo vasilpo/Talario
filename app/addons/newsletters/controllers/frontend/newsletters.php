@@ -47,6 +47,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     return array(CONTROLLER_STATUS_REDIRECT);
 }
 
+if ($mode == 'crm_unsubscribe') {
+    $user_id = isset($_REQUEST['user_id']) ? (int) $_REQUEST['user_id'] : 0;
+    $token = isset($_REQUEST['token']) ? (string) $_REQUEST['token'] : '';
+
+    if ($user_id && $token !== '') {
+        $email = (string) db_get_field('SELECT email FROM ?:users WHERE user_id = ?i', $user_id);
+        $expected_token = $email !== ''
+            ? fn_talario_crm_generate_unsubscribe_token($user_id, $email)
+            : '';
+
+        if ($expected_token !== '' && hash_equals($expected_token, $token)) {
+            db_replace_into('user_data', [
+                'user_id' => $user_id,
+                'type' => 'Z',
+                'data' => 'crm01_optout',
+            ]);
+
+            fn_set_notification('N', __('notice'), 'Вы отписались от рассылки Таларио.');
+        }
+    }
+
+    return [CONTROLLER_STATUS_REDIRECT, fn_url()];
+}
+
 if ($mode == 'unsubscribe') {
     if (!empty($_REQUEST['key']) && !empty($_REQUEST['list_id']) && !empty($_REQUEST['s_id'])) {
         if (!empty($_REQUEST['list_id'])) {
