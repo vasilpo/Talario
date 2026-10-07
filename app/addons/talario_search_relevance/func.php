@@ -121,30 +121,27 @@ function fn_talario_search_relevance_build_queries(array $params): array
 {
     $query = trim((string) ($params['q'] ?? ''));
     $normalized_query = fn_talario_search_relevance_normalize_query($query);
-    $queries = fn_talario_search_relevance_expand_terms($normalized_query);
-    $pieces = preg_split('/\s+/u', mb_strtolower($query, 'UTF-8'), -1, PREG_SPLIT_NO_EMPTY);
+    $candidates = array_merge(fn_talario_search_relevance_expand_terms($normalized_query), [$normalized_query]);
+    $queries = [];
     $stop_words = [
         'а', 'в', 'во', 'для', 'и', 'из', 'к', 'на', 'по', 'с', 'у',
         'занятие', 'занятия', 'занятий', 'кружок', 'кружки', 'лет',
         'года', 'год', 'дошкольник', 'дошкольники', 'дошкольников',
     ];
-    $meaningful = [];
-
-    foreach ($pieces as $piece) {
-        $piece = trim($piece, " \t\n\r\0\x0B.,!?;:()[]{}\"");
-
-        if ($piece === '' || in_array($piece, $stop_words, true) || ctype_digit($piece)) {
-            continue;
+    foreach ($candidates as $candidate) {
+        $pieces = preg_split('/\s+/u', $candidate, -1, PREG_SPLIT_NO_EMPTY);
+        $meaningful = [];
+        foreach ($pieces as $piece) {
+            if (!in_array($piece, $stop_words, true) && !ctype_digit($piece)) {
+                $meaningful[] = $piece;
+            }
         }
-
-        $meaningful[] = $piece;
+        if ($meaningful !== []) {
+            $queries[] = implode(' ', array_values(array_unique($meaningful)));
+        }
     }
 
-    if (count($meaningful) >= 1) {
-        $queries[] = implode(' ', array_values(array_unique($meaningful)));
-    }
-
-    return array_values(array_unique(array_filter(array_slice($queries, 0, 6))));
+    return array_slice(array_values(array_unique(array_filter($queries))), 0, 6);
 }
 
 /**
@@ -167,8 +164,10 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
     $fallback_params['page'] = 1;
     $fallback_params['search_performed'] = 'Y';
     $fallback_params['pname'] = 'Y';
-    $fallback_params['pshort'] = 'Y';
-    $fallback_params['pfull'] = 'Y';
+    // A studio description can mention many unrelated activities. Expand only
+    // against the lesson title and explicit search keywords.
+    $fallback_params['pshort'] = 'N';
+    $fallback_params['pfull'] = 'N';
     $fallback_params['pkeywords'] = 'Y';
     $fallback_params['talario_search_relevance_fallback_attempted'] = true;
     $fallback_params['disable_searchanise'] = true;
@@ -263,6 +262,8 @@ function fn_talario_search_relevance_expand_terms(string $query): array
         'гончарку',
         'гончарке',
         'гончарки',
+        'гонарка',
+        'гочарка',
         'гончарная мастерская',
         'гончарную мастерскую',
         'гончарной мастерской',
@@ -285,6 +286,27 @@ function fn_talario_search_relevance_expand_terms(string $query): array
         'гармония kids' => ['гармония кидс', 'гармония'],
         'гармония кидсс' => ['гармония кидс', 'гармония kids'],
         'англиский' => ['английский', 'английский язык'],
+        'исайт' => ['инсайт'],
+        'инсйат' => ['инсайт'],
+        'танцыы' => ['танцы', 'хореография'],
+        'дзу' => ['дзюдо'],
+        'биолабораториум' => ['биолаб', 'биолаборатория'],
+        'биолабвраториум' => ['биолаб', 'биолаборатория'],
+        'биолаборатриум' => ['биолаб', 'биолаборатория'],
+        'biolaboratorium' => ['биолаб', 'биолаборатория'],
+        'армянские тарцы' => ['армянские танцы'],
+        'балеь' => ['балет'],
+        'гонарка' => ['гончарка', 'керамика'],
+        'гочарка' => ['гончарка', 'керамика'],
+        'гарже' => ['гарде'],
+        'генезим' => ['генезис'],
+        'каратж' => ['каратэ', 'карате'],
+        'клиграфия' => ['каллиграфия', 'калиграфия'],
+        'кречкет' => ['кречет'],
+        'шахмаы' => ['шахматы'],
+        'юокс' => ['бокс'],
+        'занятия красногрск' => ['занятия красногорск'],
+        '4науки' => ['четыре науки', '4 науки'],
         'программирование' => ['кодинг', 'программирование для детей'],
         'рисование' => ['живопись', 'изобразительное искусство'],
         'танцы' => ['хореография'],
@@ -294,7 +316,15 @@ function fn_talario_search_relevance_expand_terms(string $query): array
         if ($query === $alias
             || preg_match('/(?:^|\s)' . preg_quote($alias, '/') . '(?:$|\s)/u', $query) === 1
         ) {
-            return array_values(array_diff($pottery_terms, [$alias]));
+            $variants = [];
+            foreach ($pottery_terms as $term) {
+                // Keep location and other qualifiers surrounding the alias.
+                $variant = preg_replace('/(?<!\S)' . preg_quote($alias, '/') . '(?!\S)/u', $term, $query);
+                if ($variant !== null && $variant !== $query) {
+                    $variants[] = $variant;
+                }
+            }
+            return array_values(array_unique($variants));
         }
     }
 
