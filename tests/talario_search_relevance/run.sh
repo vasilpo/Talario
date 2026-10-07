@@ -7,7 +7,11 @@ require "app/addons/talario_search_relevance/func.php";
 
 $cases = [
     ["КЕРАМИКА", ["глина", "гончарное искусство"]],
+    ["керамику", ["керамика", "гончарная мастерская"]],
+    ["гончарка", ["керамика", "гончарное искусство"]],
     ["гончарная мастерская", ["глина", "керамика"]],
+    ["гончарному искусству", ["керамика", "гончарная мастерская"]],
+    ["гончарное искусство", ["глина", "керамика"]],
     ["гармония кидсс", ["гармония кидс"]],
     ["скорочтение", ["быстрое чтение"]],
 ];
@@ -25,6 +29,15 @@ foreach ($cases as [$query, $expected]) {
     }
 }
 
+foreach (["гончарка", "гончарная мастерская", "гончарное искусство", "гончарному искусству", "керамику", "занятия по керамике"] as $query) {
+    $variants = fn_talario_search_relevance_build_queries(["q" => $query]);
+
+    if (!in_array("керамика", $variants, true)) {
+        fwrite(STDERR, "Missing ceramic result path for query: {$query}\n");
+        exit(1);
+    }
+}
+
 if (fn_talario_search_relevance_normalize_query("Ёлки!!!  6 ЛЕТ") !== "елки 6 лет") {
     fwrite(STDERR, "Normalization failed\n");
     exit(1);
@@ -33,15 +46,36 @@ if (fn_talario_search_relevance_normalize_query("Ёлки!!!  6 ЛЕТ") !== "е
 $specific_results = [
     ["product_id" => 10, "product" => "Лепка из глины"],
 ];
-$unrelated_results = [
-    ["product_id" => 20, "product" => "Плавание"],
-    ["product_id" => 30, "product" => "Танцы"],
+$ceramic_results = [
+    ["product_id" => 20, "product" => "Керамика"],
+    ["product_id" => 10, "product" => "Лепка из глины"],
 ];
 
-if (!fn_talario_search_relevance_should_select_variant([], $specific_results)
-    || fn_talario_search_relevance_should_select_variant($specific_results, $unrelated_results)
+$merged_results = fn_talario_search_relevance_merge_variant_products(
+    $specific_results,
+    $ceramic_results,
+    20
+);
+
+if (count($merged_results) !== 2
+    || $merged_results[0]["product"] !== "Лепка из глины"
+    || $merged_results[1]["product"] !== "Керамика"
 ) {
-    fwrite(STDERR, "Lower-priority variants must not be merged into a successful specific result\n");
+    fwrite(STDERR, "Related pottery and ceramic results must be combined without duplicates\n");
+    exit(1);
+}
+
+$single_word_search = fn_talario_search_relevance_is_candidate([
+    "dispatch" => "products.search",
+    "q" => "гончарка",
+]);
+$ordinary_single_word_search = fn_talario_search_relevance_is_candidate([
+    "dispatch" => "products.search",
+    "q" => "плавание",
+]);
+
+if (!$single_word_search || $ordinary_single_word_search) {
+    fwrite(STDERR, "Fallback must include known one-word aliases only\n");
     exit(1);
 }
 
@@ -50,6 +84,11 @@ $phrase_params = fn_talario_search_relevance_build_params([], "лепка из �
 
 if ($single_word_params["match"] !== "any" || $phrase_params["match"] !== "all") {
     fwrite(STDERR, "Semantic fallback must require all words in a multi-word variant\n");
+    exit(1);
+}
+
+if (isset($phrase_params["dispatch"]) || empty($phrase_params["disable_searchanise"])) {
+    fwrite(STDERR, "Internal synonym queries must bypass external search and user-search analytics hooks\n");
     exit(1);
 }
 
