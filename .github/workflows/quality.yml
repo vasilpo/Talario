@@ -156,6 +156,23 @@ jobs:
       - name: Test company boundaries and shared capacity
         run: bash tests/talario_schedule_resources/run.sh
 
+  talario-search-relevance:
+    name: Talario search relevance tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: Test normalization and controlled term expansion
+        run: bash tests/talario_search_relevance/run.sh
+
 
   # Required branch-protection gate: security invariants plus all prerequisite checks.
   talario-review-agent:
@@ -168,6 +185,7 @@ jobs:
       - secret-scan
       - partner-sync-tests
       - talario-schedule-resources
+      - talario-search-relevance
     steps:
       - name: Checkout
         uses: actions/checkout@v4
