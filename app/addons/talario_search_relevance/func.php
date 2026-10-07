@@ -10,8 +10,9 @@ defined('BOOTSTRAP') or die('Access denied');
  * Re-runs a failed storefront text search with meaningful terms only.
  *
  * The first CS-Cart search remains authoritative. This fallback is used only
- * for products.search requests with several words and no products, so exact
- * successful searches and filtered searches keep their standard behaviour.
+ * for no-result products.search requests with several words or a known
+ * semantic alias, so successful exact searches and filtered searches keep
+ * their standard behaviour.
  *
  * @param array<int, array<string, mixed>> $products
  * @param array<string, mixed>             $params
@@ -51,11 +52,21 @@ function fn_talario_search_relevance_get_products_post(
 
         [$query_products, $query_search] = fn_get_products($fallback_params, $page_size, $lang_code);
 
-        if (fn_talario_search_relevance_should_select_variant($fallback_products, $query_products)) {
-            // Keep the first successful, highest-priority semantic variant.
-            // Combining lower-priority variants can flood results with unrelated products.
-            $fallback_products = $query_products;
+        if (empty($query_products)) {
+            continue;
+        }
+
+        if (empty($fallback_search)) {
             $fallback_search = $query_search;
+        }
+
+        $fallback_products = fn_talario_search_relevance_merge_variant_products(
+            $fallback_products,
+            $query_products,
+            $page_size
+        );
+
+        if (count($fallback_products) >= $page_size) {
             break;
         }
     }
@@ -93,7 +104,10 @@ function fn_talario_search_relevance_is_candidate(array $params): bool
         return false;
     }
 
-    return preg_match('/\s/u', trim((string) $params['q'])) === 1;
+    $query = fn_talario_search_relevance_normalize_query((string) $params['q']);
+
+    return preg_match('/\s/u', $query) === 1
+        || fn_talario_search_relevance_expand_terms($query) !== [];
 }
 
 /**
@@ -107,30 +121,27 @@ function fn_talario_search_relevance_build_queries(array $params): array
 {
     $query = trim((string) ($params['q'] ?? ''));
     $normalized_query = fn_talario_search_relevance_normalize_query($query);
-    $queries = fn_talario_search_relevance_expand_terms($normalized_query);
-    $pieces = preg_split('/\s+/u', mb_strtolower($query, 'UTF-8'), -1, PREG_SPLIT_NO_EMPTY);
+    $candidates = array_merge(fn_talario_search_relevance_expand_terms($normalized_query), [$normalized_query]);
+    $queries = [];
     $stop_words = [
         'а', 'в', 'во', 'для', 'и', 'из', 'к', 'на', 'по', 'с', 'у',
         'занятие', 'занятия', 'занятий', 'кружок', 'кружки', 'лет',
         'года', 'год', 'дошкольник', 'дошкольники', 'дошкольников',
     ];
-    $meaningful = [];
-
-    foreach ($pieces as $piece) {
-        $piece = trim($piece, " \t\n\r\0\x0B.,!?;:()[]{}\"");
-
-        if ($piece === '' || in_array($piece, $stop_words, true) || ctype_digit($piece)) {
-            continue;
+    foreach ($candidates as $candidate) {
+        $pieces = preg_split('/\s+/u', $candidate, -1, PREG_SPLIT_NO_EMPTY);
+        $meaningful = [];
+        foreach ($pieces as $piece) {
+            if (!in_array($piece, $stop_words, true) && !ctype_digit($piece)) {
+                $meaningful[] = $piece;
+            }
         }
-
-        $meaningful[] = $piece;
+        if ($meaningful !== []) {
+            $queries[] = implode(' ', array_values(array_unique($meaningful)));
+        }
     }
 
-    if (count($meaningful) >= 1) {
-        $queries[] = implode(' ', array_values(array_unique($meaningful)));
-    }
-
-    return array_values(array_unique(array_filter(array_slice($queries, 0, 6))));
+    return array_slice(array_values(array_unique(array_filter($queries))), 0, 6);
 }
 
 /**
@@ -153,27 +164,51 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
     $fallback_params['page'] = 1;
     $fallback_params['search_performed'] = 'Y';
     $fallback_params['pname'] = 'Y';
-    $fallback_params['pshort'] = 'Y';
-    $fallback_params['pfull'] = 'Y';
+    // A studio description can mention many unrelated activities. Expand only
+    // against the lesson title and explicit search keywords.
+    $fallback_params['pshort'] = 'N';
+    $fallback_params['pfull'] = 'N';
     $fallback_params['pkeywords'] = 'Y';
     $fallback_params['talario_search_relevance_fallback_attempted'] = true;
+    $fallback_params['disable_searchanise'] = true;
+    unset($fallback_params['dispatch']);
 
     return $fallback_params;
 }
 
 /**
- * Selects only the first successful semantic variant, preserving specificity.
+ * Combines products from related variants without duplicate product IDs.
  *
  * @param array<int, array<string, mixed>> $selected_products
  * @param array<int, array<string, mixed>> $candidate_products
+ * @param int                              $page_size Maximum number of results
  *
- * @return bool
+ * @return array<int, array<string, mixed>>
  */
-function fn_talario_search_relevance_should_select_variant(
+function fn_talario_search_relevance_merge_variant_products(
     array $selected_products,
-    array $candidate_products
-): bool {
-    return empty($selected_products) && !empty($candidate_products);
+    array $candidate_products,
+    int $page_size
+): array {
+    $merged_products = [];
+    $seen_product_ids = [];
+
+    foreach (array_merge($selected_products, $candidate_products) as $product) {
+        $product_id = (int) ($product['product_id'] ?? 0);
+
+        if ($product_id === 0 || isset($seen_product_ids[$product_id])) {
+            continue;
+        }
+
+        $seen_product_ids[$product_id] = true;
+        $merged_products[] = $product;
+
+        if (count($merged_products) >= max(1, $page_size)) {
+            break;
+        }
+    }
+
+    return $merged_products;
 }
 
 /**
@@ -203,27 +238,97 @@ function fn_talario_search_relevance_normalize_query(string $query): string
  */
 function fn_talario_search_relevance_expand_terms(string $query): array
 {
+    $pottery_terms = [
+        'глина',
+        'лепка из глины',
+        'гончар',
+        'керамика',
+        'гончарка',
+        'гончарная мастерская',
+        'гончарное искусство',
+        'гончарное мастерство',
+        'гончарное дело',
+    ];
+    $pottery_aliases = [
+        'глина',
+        'лепка из глины',
+        'гончар',
+        'керамика',
+        'керамику',
+        'керамике',
+        'керамики',
+        'керамикой',
+        'гончарка',
+        'гончарку',
+        'гончарке',
+        'гончарки',
+        'гонарка',
+        'гочарка',
+        'гончарная мастерская',
+        'гончарную мастерскую',
+        'гончарной мастерской',
+        'гончарные мастерские',
+        'гончарных мастерских',
+        'гончарное искусство',
+        'гончарного искусства',
+        'гончарному искусству',
+        'гончарным искусством',
+        'гончарное мастерство',
+        'гончарного мастерства',
+        'гончарному мастерству',
+        'гончарным мастерством',
+        'гончарное дело',
+        'гончарному делу',
+    ];
     $dictionary = [
-        'керамика' => ['глина', 'лепка из глины', 'гончар', 'гончарное искусство', 'гончарное дело'],
-        'гончарное искусство' => ['глина', 'лепка из глины', 'гончар', 'гончарное мастерство', 'гончарная мастерская', 'керамика'],
-        'гончарная мастерская' => ['глина', 'лепка из глины', 'гончар', 'гончарное искусство', 'гончарное дело', 'керамика'],
         'скорочтение' => ['скорочтение', 'быстрое чтение'],
         'гармония кидс' => ['гармония kids', 'гармония'],
         'гармония kids' => ['гармония кидс', 'гармония'],
         'гармония кидсс' => ['гармония кидс', 'гармония kids'],
         'англиский' => ['английский', 'английский язык'],
+        'исайт' => ['инсайт'],
+        'инсйат' => ['инсайт'],
+        'танцыы' => ['танцы', 'хореография'],
+        'дзу' => ['дзюдо'],
+        'биолабораториум' => ['биолаб', 'биолаборатория'],
+        'биолабвраториум' => ['биолаб', 'биолаборатория'],
+        'биолаборатриум' => ['биолаб', 'биолаборатория'],
+        'biolaboratorium' => ['биолаб', 'биолаборатория'],
+        'армянские тарцы' => ['армянские танцы'],
+        'балеь' => ['балет'],
+        'гонарка' => ['гончарка', 'керамика'],
+        'гочарка' => ['гончарка', 'керамика'],
+        'гарже' => ['гарде'],
+        'генезим' => ['генезис'],
+        'каратж' => ['каратэ', 'карате'],
+        'клиграфия' => ['каллиграфия', 'калиграфия'],
+        'кречкет' => ['кречет'],
+        'шахмаы' => ['шахматы'],
+        'юокс' => ['бокс'],
+        'занятия красногрск' => ['занятия красногорск'],
+        '4науки' => ['четыре науки', '4 науки'],
         'программирование' => ['кодинг', 'программирование для детей'],
         'рисование' => ['живопись', 'изобразительное искусство'],
         'танцы' => ['хореография'],
     ];
 
-    $variants = [];
-
-    foreach ($dictionary as $term => $related_terms) {
-        if ($query === $term) {
-            $variants = array_merge($variants, $related_terms);
+    foreach ($pottery_aliases as $alias) {
+        if ($query === $alias
+            || preg_match('/(?:^|\s)' . preg_quote($alias, '/') . '(?:$|\s)/u', $query) === 1
+        ) {
+            $variants = [];
+            foreach ($pottery_terms as $term) {
+                // Keep location and other qualifiers surrounding the alias.
+                $variant = preg_replace('/(?<!\S)' . preg_quote($alias, '/') . '(?!\S)/u', $term, $query);
+                if ($variant !== null && $variant !== $query) {
+                    $variants[] = $variant;
+                }
+            }
+            return array_values(array_unique($variants));
         }
     }
+
+    $variants = $dictionary[$query] ?? [];
 
     return array_values(array_unique(array_filter($variants)));
 }
