@@ -1,0 +1,3 @@
+msgctxt "Languages::talario_search_relevance.fallback_notice"
+msgid "Показаны подходящие занятия по вашему запросу."
+msgstr "Показаны подходящие занятия по вашему запросу."
