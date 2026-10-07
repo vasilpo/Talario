@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<addon scheme="4.0">
+    <id>talario_search_relevance</id>
+    <version>1.0</version>
+    <priority>1000</priority>
+    <position>0</position>
+    <status>active</status>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <default_language>ru</default_language>
+    <has_icon>N</has_icon>
+    <supplier>Talario</supplier>
+    <supplier_link>https://talario.ru</supplier_link>
+    <email>support@talario.ru</email>
+</addon>
