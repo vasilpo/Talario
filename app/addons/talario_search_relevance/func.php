@@ -40,7 +40,6 @@ function fn_talario_search_relevance_get_products_post(
     $fallback_running = true;
     $fallback_products = [];
     $fallback_search = [];
-    $seen_product_ids = [];
     $page_size = max(1, (int) Registry::get('settings.Appearance.products_per_page'));
 
     foreach ($fallback_queries as $search_query) {
@@ -52,23 +51,12 @@ function fn_talario_search_relevance_get_products_post(
 
         [$query_products, $query_search] = fn_get_products($fallback_params, $page_size, $lang_code);
 
-        if (empty($fallback_search)) {
+        if (fn_talario_search_relevance_should_select_variant($fallback_products, $query_products)) {
+            // Keep the first successful, highest-priority semantic variant.
+            // Combining lower-priority variants can flood results with unrelated products.
+            $fallback_products = $query_products;
             $fallback_search = $query_search;
-        }
-
-        foreach ($query_products as $product) {
-            $product_id = (int) ($product['product_id'] ?? 0);
-
-            if ($product_id === 0 || isset($seen_product_ids[$product_id])) {
-                continue;
-            }
-
-            $seen_product_ids[$product_id] = true;
-            $fallback_products[] = $product;
-
-            if (count($fallback_products) >= $page_size) {
-                break 2;
-            }
+            break;
         }
     }
 
@@ -161,7 +149,7 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
 
     $fallback_params = $params;
     $fallback_params['q'] = $query;
-    $fallback_params['match'] = 'any';
+    $fallback_params['match'] = preg_match('/\s/u', $query) === 1 ? 'all' : 'any';
     $fallback_params['page'] = 1;
     $fallback_params['search_performed'] = 'Y';
     $fallback_params['pname'] = 'Y';
@@ -171,6 +159,21 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
     $fallback_params['talario_search_relevance_fallback_attempted'] = true;
 
     return $fallback_params;
+}
+
+/**
+ * Selects only the first successful semantic variant, preserving specificity.
+ *
+ * @param array<int, array<string, mixed>> $selected_products
+ * @param array<int, array<string, mixed>> $candidate_products
+ *
+ * @return bool
+ */
+function fn_talario_search_relevance_should_select_variant(
+    array $selected_products,
+    array $candidate_products
+): bool {
+    return empty($selected_products) && !empty($candidate_products);
 }
 
 /**
