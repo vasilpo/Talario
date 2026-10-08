@@ -132,5 +132,30 @@ namespace {
     fn_talario_search_relevance_get_products_post($products, $params, 'ru');
     check($params['total_items'] === 51, 'Client page size must not change fallback total');
     check(count($products) === 20, 'Server page size must control fallback work');
+    require __DIR__ . '/../../app/addons/talario_search_relevance/related.php';
+    $catalog[] = ['product_id' => 200, 'product' => 'Кикбоксинг. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 201, 'product' => 'Плавание. Школа Самбо', 'search_words' => 'самбо', 'full_description' => ''];
+    $catalog[] = ['product_id' => 202, 'product' => 'Танцы. Клуб Кикбоксинг', 'full_description' => ''];
+    $catalog[] = ['product_id' => 203, 'product' => 'Самбо / Дзюдо. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 204, 'product' => 'Самбо. Нахабино', 'full_description' => ''];
+    $primary = [$catalog[5]];
+    $calls = [];
+    $params = ['q' => 'дзюда красногорск', 'company_id' => 10];
+    $related = fn_talario_search_relevance_related_products($params, $primary, 'ru');
+    check(array_column($related, 'product_id') === [7, 200], 'Related must exclude swimming, dances, exact lessons and other locations');
+    check($primary === [$catalog[5]] && $params['q'] === 'дзюда красногорск', 'Primary results and original query must stay unchanged');
+    check(count($calls) === 3, 'Related query budget must be bounded');
+    foreach ($calls as $call) {
+        check(!isset($call['dispatch']) && $call['pkeywords'] === 'N', 'Related lookup must not log searches or use broad keywords');
+        check($call['company_id'] === 10 && $call['items_per_page'] === 6, 'Scope and query bounds must be preserved');
+    }
+    foreach (['дзюдо 6 лет', 'дзюдо по субботам', 'дзюдо кречет', 'плавание', 'танцы', 'несуществующий запрос'] as $q) {
+        check(fn_talario_search_relevance_related_plan(['q' => $q]) === [], 'Unknown or constrained intent must not be broadened');
+    }
+    foreach (['features_hash', 'filter_variants', 'pid', 'cid', 'price_from', 'price_to'] as $filter) {
+        check(fn_talario_search_relevance_related_plan(['q' => 'дзюдо', $filter => 1]) === [], 'Filtered results must not be broadened');
+    }
+    check(fn_talario_search_relevance_related_plan(['q' => 'дзюдо', 'page' => 2]) === [], 'Related block belongs to first page only');
+    check(fn_talario_search_relevance_related_products(['q' => 'дзюдо'], [], 'ru') === [], 'Empty native search must keep existing no-results flow');
     echo "TALARIO_SEARCH_BEHAVIOR=PASS\n";
 }
