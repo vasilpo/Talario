@@ -42,7 +42,10 @@ function fn_talario_search_relevance_get_products_post(
     $fallback_products = [];
     $fallback_search = [];
     $fallback_total = null;
-    $page_size = max(1, (int) ($params['items_per_page'] ?? Registry::get('settings.Appearance.products_per_page')));
+    // Use the server-side page size. Client-supplied items_per_page must not
+    // control fallback branching or cause oversized backend work.
+    $configured_page_size = (int) Registry::get('settings.Appearance.products_per_page');
+    $page_size = max(1, $configured_page_size);
 
     foreach ($fallback_queries as $search_query) {
         $fallback_params = fn_talario_search_relevance_build_params($params, $search_query);
@@ -171,7 +174,9 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
     $fallback_params = $params;
     $fallback_params['q'] = $query;
     $fallback_params['match'] = preg_match('/\s/u', $query) === 1 ? 'all' : 'any';
-    $fallback_params['page'] = max(1, (int) ($params['page'] ?? 1));
+    // Keep pagination useful for normal navigation, but cap fallback work for
+    // arbitrary deep pages supplied by a client.
+    $fallback_params['page'] = min(10, max(1, (int) ($params['page'] ?? 1)));
     $fallback_params['search_performed'] = 'Y';
     $fallback_params['pname'] = 'Y';
     // A studio description can mention many unrelated activities. Expand only

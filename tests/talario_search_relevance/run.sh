@@ -120,6 +120,13 @@ if ($single_word_params["match"] !== "any" || $phrase_params["match"] !== "all")
     exit(1);
 }
 
+$deep_page_params = fn_talario_search_relevance_build_params([], "глина");
+$deep_page_params = fn_talario_search_relevance_build_params(["page" => 99], "глина");
+if ($deep_page_params["page"] !== 10) {
+    fwrite(STDERR, "Fallback page depth must be capped\n");
+    exit(1);
+}
+
 if (isset($phrase_params["dispatch"]) || empty($phrase_params["disable_searchanise"])) {
     fwrite(STDERR, "Internal synonym queries must bypass external search and user-search analytics hooks\n");
     exit(1);
