@@ -22,6 +22,10 @@ namespace {
         ['product_id' => 3, 'product' => 'Танцы. Красногорск', 'full_description' => 'У нас также керамика, глина и гончарное искусство'],
         ['product_id' => 4, 'product' => 'Программирование. Инсайт', 'full_description' => ''],
         ['product_id' => 5, 'product' => 'Артистическое синхронное плавание', 'search_words' => 'хореография', 'full_description' => ''],
+        ['product_id' => 6, 'product' => 'Дзюдо. Красногорск', 'full_description' => ''],
+        ['product_id' => 7, 'product' => 'Самбо. Красногорск', 'full_description' => ''],
+        ['product_id' => 8, 'product' => 'Плавание. Красногорск', 'full_description' => ''],
+        ['product_id' => 9, 'product' => 'Танцы. Красногорск', 'full_description' => ''],
     ];
     $calls = [];
 
@@ -64,6 +68,8 @@ namespace {
         'исайт' => [4],
         'инсйат' => [4],
         'танцыы' => [3],
+        'дзюда' => [6],
+        'дзу' => [6],
         'гончарная мастерская' => [1, 2],
         'гонарка' => [1, 2],
         'занятия по керамике' => [1, 2],
