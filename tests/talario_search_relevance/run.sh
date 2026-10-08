@@ -18,6 +18,18 @@ $cases = [
     ["инсйат", ["инсайт"]],
     ["танцыы", ["танцы"]],
     ["дзу", ["дзюдо"]],
+    ["дзюда", ["дзюдо"]],
+    ["плавние", ["плавание"]],
+    ["басейн", ["бассейн"]],
+    ["кикбокисинг", ["кикбоксинг"]],
+    ["тхеквондо", ["тхэквондо"]],
+    ["хореогрфия", ["хореография"]],
+    ["керамитка", ["керамика"]],
+    ["програмирование", ["программирование"]],
+    ["робототехнка", ["робототехника"]],
+    ["шахмоты", ["шахматы"]],
+    ["англицский", ["английский"]],
+    ["психолг", ["психолог"]],
     ["биолабораториум", ["биолаб"]],
     ["биолабвраториум", ["биолаб"]],
     ["биолаборатриум", ["биолаб"]],
@@ -105,6 +117,13 @@ $phrase_params = fn_talario_search_relevance_build_params([], "лепка из �
 
 if ($single_word_params["match"] !== "any" || $phrase_params["match"] !== "all") {
     fwrite(STDERR, "Semantic fallback must require all words in a multi-word variant\n");
+    exit(1);
+}
+
+$deep_page_params = fn_talario_search_relevance_build_params([], "глина");
+$deep_page_params = fn_talario_search_relevance_build_params(["page" => 99], "глина");
+if ($deep_page_params["page"] !== 10) {
+    fwrite(STDERR, "Fallback page depth must be capped\n");
     exit(1);
 }
 

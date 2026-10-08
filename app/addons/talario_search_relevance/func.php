@@ -42,7 +42,10 @@ function fn_talario_search_relevance_get_products_post(
     $fallback_products = [];
     $fallback_search = [];
     $fallback_total = null;
-    $page_size = max(1, (int) ($params['items_per_page'] ?? Registry::get('settings.Appearance.products_per_page')));
+    // Use the server-side page size. Client-supplied items_per_page must not
+    // control fallback branching or cause oversized backend work.
+    $configured_page_size = (int) Registry::get('settings.Appearance.products_per_page');
+    $page_size = max(1, $configured_page_size);
 
     foreach ($fallback_queries as $search_query) {
         $fallback_params = fn_talario_search_relevance_build_params($params, $search_query);
@@ -171,7 +174,9 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
     $fallback_params = $params;
     $fallback_params['q'] = $query;
     $fallback_params['match'] = preg_match('/\s/u', $query) === 1 ? 'all' : 'any';
-    $fallback_params['page'] = max(1, (int) ($params['page'] ?? 1));
+    // Keep pagination useful for normal navigation, but cap fallback work for
+    // arbitrary deep pages supplied by a client.
+    $fallback_params['page'] = min(10, max(1, (int) ($params['page'] ?? 1)));
     $fallback_params['search_performed'] = 'Y';
     $fallback_params['pname'] = 'Y';
     // A studio description can mention many unrelated activities. Expand only
@@ -300,6 +305,55 @@ function fn_talario_search_relevance_expand_terms(string $query): array
         'инсйат' => ['инсайт'],
         'танцыы' => ['танцы'],
         'дзу' => ['дзюдо'],
+        'дзюда' => ['дзюдо'],
+        'дзюдоо' => ['дзюдо'],
+        'дзудо' => ['дзюдо'],
+        'плаванье' => ['плавание'],
+        'плавние' => ['плавание'],
+        'плование' => ['плавание'],
+        'басейн' => ['бассейн'],
+        'бассеин' => ['бассейн'],
+        'кикбокисинг' => ['кикбоксинг'],
+        'кик бокинг' => ['кикбоксинг'],
+        'кик-боксинг' => ['кикбоксинг'],
+        'тайский боксс' => ['тайский бокс'],
+        'каратте' => ['карате'],
+        'тхеквондо' => ['тхэквондо'],
+        'теквондо' => ['тхэквондо'],
+        'таэквондо' => ['тхэквондо'],
+        'волная борьба' => ['вольная борьба'],
+        'борба' => ['борьба'],
+        'бадминтонн' => ['бадминтон'],
+        'бадментон' => ['бадминтон'],
+        'футболл' => ['футбол'],
+        'фудбол' => ['футбол'],
+        'хореогрфия' => ['хореография'],
+        'хореограыия' => ['хореография'],
+        'баллет' => ['балет'],
+        'керамитка' => ['керамика'],
+        'рисавание' => ['рисование'],
+        'рисоване' => ['рисование'],
+        'програмирование' => ['программирование'],
+        'программиравание' => ['программирование'],
+        'роботатехника' => ['робототехника'],
+        'робототехнка' => ['робототехника'],
+        'калиграфия' => ['каллиграфия'],
+        'шахмоты' => ['шахматы'],
+        'англицский' => ['английский'],
+        'испанскй' => ['испанский'],
+        'матиматика' => ['математика'],
+        'математиа' => ['математика'],
+        'лагопед' => ['логопед'],
+        'логопет' => ['логопед'],
+        'психолг' => ['психолог'],
+        'псехолог' => ['психолог'],
+        'вакал' => ['вокал'],
+        'вокалл' => ['вокал'],
+        'биэмикс' => ['bmx'],
+        'бмкс' => ['bmx'],
+        'бмх' => ['bmx'],
+        'биговел' => ['беговел'],
+        'бегавел' => ['беговел'],
         'биолабораториум' => ['биолаб', 'биолаборатория'],
         'биолабвраториум' => ['биолаб', 'биолаборатория'],
         'биолаборатриум' => ['биолаб', 'биолаборатория'],

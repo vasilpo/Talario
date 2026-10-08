@@ -22,6 +22,9 @@ namespace {
         ['product_id' => 3, 'product' => 'Танцы. Красногорск', 'full_description' => 'У нас также керамика, глина и гончарное искусство'],
         ['product_id' => 4, 'product' => 'Программирование. Инсайт', 'full_description' => ''],
         ['product_id' => 5, 'product' => 'Артистическое синхронное плавание', 'search_words' => 'хореография', 'full_description' => ''],
+        ['product_id' => 6, 'product' => 'Дзюдо. Красногорск', 'full_description' => ''],
+        ['product_id' => 7, 'product' => 'Самбо. Красногорск', 'full_description' => ''],
+        ['product_id' => 8, 'product' => 'Плавание. Красногорск', 'full_description' => ''],
     ];
     $calls = [];
 
@@ -64,6 +67,8 @@ namespace {
         'исайт' => [4],
         'инсйат' => [4],
         'танцыы' => [3],
+        'дзюда' => [6],
+        'дзу' => [6],
         'гончарная мастерская' => [1, 2],
         'гонарка' => [1, 2],
         'занятия по керамике' => [1, 2],
@@ -107,14 +112,25 @@ namespace {
         $products = [];
         $params = ['dispatch' => 'products.search', 'q' => 'занятия красногрск', 'page' => $page];
         fn_talario_search_relevance_get_products_post($products, $params, 'ru');
-        check($params['total_items'] === 48, 'Corrected search must preserve the full native count');
+        check($params['total_items'] === 51, 'Corrected search must preserve the full native count');
         check($params['page'] === $page, 'Requested page must not reset to page one');
-        check(count($products) === ($page === 3 ? 8 : 20), 'Unexpected page size');
+        check(count($products) === ($page === 3 ? 11 : 20), 'Unexpected page size');
         foreach (array_column($products, 'product_id') as $id) {
             check(!isset($seen[$id]), 'Pages must not repeat the same products');
             $seen[$id] = true;
         }
     }
-    check(count($seen) === 48, 'All native results must remain reachable');
+    check(count($seen) === 51, 'All native results must remain reachable');
+
+    // Client-controlled page size must not change the server-side fallback branch.
+    $products = [];
+    $params = [
+        'dispatch' => 'products.search',
+        'q' => 'занятия красногрск',
+        'items_per_page' => 1,
+    ];
+    fn_talario_search_relevance_get_products_post($products, $params, 'ru');
+    check($params['total_items'] === 51, 'Client page size must not change fallback total');
+    check(count($products) === 20, 'Server page size must control fallback work');
     echo "TALARIO_SEARCH_BEHAVIOR=PASS\n";
 }
