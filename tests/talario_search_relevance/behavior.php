@@ -49,7 +49,8 @@ namespace {
                 $found[] = $product;
             }
         }
-        return [array_slice($found, 0, $limit), ['total_items' => count($found)]];
+        $page = max(1, (int) ($params['page'] ?? 1));
+        return [array_slice($found, ($page - 1) * $limit, $limit), ['total_items' => count($found), 'page' => $page]];
     }
 
     function check($condition, $message)
@@ -96,5 +97,24 @@ namespace {
         fn_talario_search_relevance_get_products_post($products, $params, 'ru');
         check($calls === [], 'Explicit filter must not trigger fallback');
     }
+    // A corrected broad query must preserve both the count and navigation,
+    // rather than reporting the first twenty products as the entire result.
+    for ($id = 100; $id < 145; $id++) {
+        $catalog[] = ['product_id' => $id, 'product' => 'Занятие Красногорск ' . $id, 'full_description' => ''];
+    }
+    $seen = [];
+    foreach ([1, 2, 3] as $page) {
+        $products = [];
+        $params = ['dispatch' => 'products.search', 'q' => 'занятия красногрск', 'page' => $page];
+        fn_talario_search_relevance_get_products_post($products, $params, 'ru');
+        check($params['total_items'] === 48, 'Corrected search must preserve the full native count');
+        check($params['page'] === $page, 'Requested page must not reset to page one');
+        check(count($products) === ($page === 3 ? 8 : 20), 'Unexpected page size');
+        foreach (array_column($products, 'product_id') as $id) {
+            check(!isset($seen[$id]), 'Pages must not repeat the same products');
+            $seen[$id] = true;
+        }
+    }
+    check(count($seen) === 48, 'All native results must remain reachable');
     echo "TALARIO_SEARCH_BEHAVIOR=PASS\n";
 }

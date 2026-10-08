@@ -41,7 +41,8 @@ function fn_talario_search_relevance_get_products_post(
     $fallback_running = true;
     $fallback_products = [];
     $fallback_search = [];
-    $page_size = max(1, (int) Registry::get('settings.Appearance.products_per_page'));
+    $fallback_total = null;
+    $page_size = max(1, (int) ($params['items_per_page'] ?? Registry::get('settings.Appearance.products_per_page')));
 
     foreach ($fallback_queries as $search_query) {
         $fallback_params = fn_talario_search_relevance_build_params($params, $search_query);
@@ -54,6 +55,15 @@ function fn_talario_search_relevance_get_products_post(
 
         if (empty($query_products)) {
             continue;
+        }
+
+        // A multi-page native result must keep its own total and page. A
+        // bounded synonym union cannot represent the full native result set.
+        if ((int) ($query_search['total_items'] ?? 0) > $page_size) {
+            $fallback_products = $query_products;
+            $fallback_search = $query_search;
+            $fallback_total = (int) $query_search['total_items'];
+            break;
         }
 
         if (empty($fallback_search)) {
@@ -82,7 +92,7 @@ function fn_talario_search_relevance_get_products_post(
         'q' => $original_query,
         'talario_search_relevance_fallback' => true,
         'talario_search_relevance_original_query' => $original_query,
-        'total_items' => count($fallback_products),
+        'total_items' => $fallback_total ?? count($fallback_products),
     ]);
 }
 
@@ -161,7 +171,7 @@ function fn_talario_search_relevance_build_params(array $params, string $query):
     $fallback_params = $params;
     $fallback_params['q'] = $query;
     $fallback_params['match'] = preg_match('/\s/u', $query) === 1 ? 'all' : 'any';
-    $fallback_params['page'] = 1;
+    $fallback_params['page'] = max(1, (int) ($params['page'] ?? 1));
     $fallback_params['search_performed'] = 'Y';
     $fallback_params['pname'] = 'Y';
     // A studio description can mention many unrelated activities. Expand only
