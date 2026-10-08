@@ -25,7 +25,6 @@ namespace {
         ['product_id' => 6, 'product' => 'Дзюдо. Красногорск', 'full_description' => ''],
         ['product_id' => 7, 'product' => 'Самбо. Красногорск', 'full_description' => ''],
         ['product_id' => 8, 'product' => 'Плавание. Красногорск', 'full_description' => ''],
-        ['product_id' => 9, 'product' => 'Танцы. Красногорск', 'full_description' => ''],
     ];
     $calls = [];
 
