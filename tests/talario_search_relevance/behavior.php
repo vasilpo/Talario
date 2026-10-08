@@ -21,6 +21,7 @@ namespace {
         ['product_id' => 2, 'product' => 'Керамика. Красногорск', 'full_description' => ''],
         ['product_id' => 3, 'product' => 'Танцы. Красногорск', 'full_description' => 'У нас также керамика, глина и гончарное искусство'],
         ['product_id' => 4, 'product' => 'Программирование. Инсайт', 'full_description' => ''],
+        ['product_id' => 5, 'product' => 'Артистическое синхронное плавание', 'search_words' => 'хореография', 'full_description' => ''],
     ];
     $calls = [];
 
@@ -31,6 +32,9 @@ namespace {
         $found = [];
         foreach ($catalog as $product) {
             $text = $product['product'];
+            if (($params['pkeywords'] ?? 'N') === 'Y') {
+                $text .= ' ' . ($product['search_words'] ?? '');
+            }
             if (($params['pfull'] ?? 'N') === 'Y') {
                 $text .= ' ' . $product['full_description'];
             }
