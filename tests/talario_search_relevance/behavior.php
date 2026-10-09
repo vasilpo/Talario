@@ -122,6 +122,19 @@ namespace {
     }
     check(count($seen) === 51, 'All native results must remain reachable');
 
+    // The explicit exploratory form must search the city catalog instead of
+    // returning an arbitrary lesson whose text happens to contain "занятия".
+    $products = [$catalog[7]];
+    $params = ['dispatch' => 'products.search', 'q' => 'занятия красногорск'];
+    $calls = [];
+    fn_talario_search_relevance_get_products_post($products, $params, 'ru');
+    $broad_ids = array_column($products, 'product_id');
+    check($broad_ids === array_merge([1, 2, 3, 6, 7, 8], range(100, 113)), 'Broad city search must return the city catalog');
+    check($params['q'] === 'занятия красногорск', 'Broad query must remain visible and analytics-safe');
+    check($params['total_items'] === 6, 'Broad city search must preserve its catalog total');
+    check(count($calls) === 1 && !isset($calls[0]['dispatch']), 'Broad city lookup must be internal and bounded');
+    check(fn_talario_search_relevance_is_broad_city_query(['dispatch' => 'products.search', 'q' => 'занятия для дошкольников 6 лет']) === false, 'Long constrained query must not be silently reduced');
+
     // Client-controlled page size must not change the server-side fallback branch.
     $products = [];
     $params = [
