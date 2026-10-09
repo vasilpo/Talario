@@ -27,7 +27,30 @@ function fn_talario_search_relevance_get_products_post(
 ): void {
     static $fallback_running = false;
 
-    if ($fallback_running || !empty($products) || !fn_talario_search_relevance_is_candidate($params)) {
+    $normalized_query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
+    $is_broad_city_query = fn_talario_search_relevance_is_broad_city_query($params);
+
+    if ($fallback_running || (!$is_broad_city_query && !empty($products)) || (!$is_broad_city_query && !fn_talario_search_relevance_is_candidate($params))) {
+        return;
+    }
+
+    if ($is_broad_city_query) {
+        $location = preg_replace('/^занятия\s+/u', '', $normalized_query) ?? '';
+        $broad_params = fn_talario_search_relevance_build_params($params, $location);
+        $page_size = max(1, (int) Registry::get('settings.Appearance.products_per_page'));
+
+        if ($broad_params !== []) {
+            [$broad_products, $broad_search] = fn_get_products($broad_params, $page_size, $lang_code);
+            if (!empty($broad_products)) {
+                $products = $broad_products;
+                $params = array_merge($params, $broad_search, [
+                    'q' => (string) ($params['q'] ?? ''),
+                    'talario_search_relevance_broad_query' => true,
+                    'total_items' => (int) ($broad_search['total_items'] ?? count($broad_products)),
+                ]);
+            }
+        }
+
         return;
     }
 
@@ -121,6 +144,31 @@ function fn_talario_search_relevance_is_candidate(array $params): bool
 
     return preg_match('/\s/u', $query) === 1
         || fn_talario_search_relevance_expand_terms($query) !== [];
+}
+
+/**
+ * Treat only the explicit exploratory form "занятия + city" as a catalog
+ * discovery request. Longer queries retain their constraints and are not
+ * silently reduced to a city-only search.
+ *
+ * @param array<string, mixed> $params
+ *
+ * @return bool
+ */
+function fn_talario_search_relevance_is_broad_city_query(array $params): bool
+{
+    if (($params['dispatch'] ?? '') !== 'products.search'
+        || empty($params['q'])
+        || !empty($params['features_hash'])
+        || !empty($params['filter_variants'])
+        || !empty($params['pid'])
+    ) {
+        return false;
+    }
+
+    $query = fn_talario_search_relevance_normalize_query((string) $params['q']);
+
+    return preg_match('/^занятия (красногорск|нахабино|митино)$/u', $query) === 1;
 }
 
 /**
