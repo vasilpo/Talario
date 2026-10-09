@@ -30,7 +30,22 @@ function fn_talario_search_relevance_get_products_post(
     $normalized_query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
     $is_broad_city_query = fn_talario_search_relevance_is_broad_city_query($params);
 
-    if ($fallback_running || (!$is_broad_city_query && !empty($products)) || (!$is_broad_city_query && !fn_talario_search_relevance_is_candidate($params))) {
+    if (!$is_broad_city_query && !empty($products)) {
+        $filtered_products = fn_talario_search_relevance_filter_dance_products($products, $normalized_query);
+        if (count($filtered_products) !== count($products)) {
+            $params['total_items'] = isset($params['total_items'])
+                ? count($filtered_products)
+                : ($params['total_items'] ?? count($filtered_products));
+            $params['talario_search_relevance_filtered'] = true;
+            $products = $filtered_products;
+        }
+    }
+
+    if ($fallback_running
+        || !empty($params['talario_search_relevance_filtered'])
+        || (!$is_broad_city_query && !empty($products))
+        || (!$is_broad_city_query && !fn_talario_search_relevance_is_candidate($params))
+    ) {
         return;
     }
 
@@ -120,6 +135,50 @@ function fn_talario_search_relevance_get_products_post(
         'talario_search_relevance_original_query' => $original_query,
         'total_items' => $fallback_total ?? count($fallback_products),
     ]);
+}
+
+/**
+ * Removes incidental non-dance matches from exact dance-intent searches.
+ * Native CS-Cart search may match "хореография" in a swimming description.
+ *
+ * @param array<int, array<string, mixed>> $products
+ * @param string                           $query
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function fn_talario_search_relevance_filter_dance_products(array $products, string $query): array
+{
+    if (fn_talario_search_relevance_dance_intent($query) === '') {
+        return $products;
+    }
+
+    return array_values(array_filter($products, static function (array $product): bool {
+        $title = fn_talario_search_relevance_normalize_query((string) ($product['product'] ?? ''));
+
+        if (preg_match('/(?:плаван|бассейн|синхрон)/u', $title) === 1) {
+            return false;
+        }
+
+        return preg_match('/(?:танц|хореограф|балет|k[- ]?pop|ритмик|джаз|брейк)/u', $title) === 1;
+    }));
+}
+
+/**
+ * Canonicalizes the explicitly supported dance search forms.
+ *
+ * @param string $query
+ *
+ * @return string Empty string when the query contains unsupported qualifiers.
+ */
+function fn_talario_search_relevance_dance_intent(string $query): string
+{
+    $query = fn_talario_search_relevance_normalize_query($query);
+
+    if (preg_match('/^(танцы|танцыы|хореография|хореогрфия|хореограыия)(?: красногорск| нахабино| митино)?$/u', $query, $match) !== 1) {
+        return '';
+    }
+
+    return 'танцы';
 }
 
 /**
