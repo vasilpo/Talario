@@ -15,7 +15,7 @@ function fn_talario_search_relevance_related_plan(array $params): array
     }
     $query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
     // Unknown qualifiers (age, district, schedule, brand) must not be discarded.
-    if (!preg_match('/^(дзюдо|дзюда|дзюдоо|дзудо|дзу|самбо|кикбоксинг|кикбокисинг|бокс)( красногорск| нахабино| митино)?$/u', $query, $match)) {
+    if (!preg_match('/^(дзюдо|дзюда|дзюдоо|дзудо|дзу|самбо|кикбоксинг|кикбокисинг|бокс|танцы|танцыы|хореография|хореогрфия|хореограыия)( красногорск| нахабино| митино)?$/u', $query, $match)) {
         return [];
     }
     $intent = $match[1];
@@ -23,12 +23,15 @@ function fn_talario_search_relevance_related_plan(array $params): array
         $intent = 'дзюдо';
     } elseif ($intent === 'кикбокисинг') {
         $intent = 'кикбоксинг';
+    } elseif (in_array($intent, ['танцыы', 'хореогрфия', 'хореограыия'], true)) {
+        $intent = 'танцы';
     }
     $map = [
         'дзюдо' => ['самбо', 'бразильское джиу-джитсу', 'кикбоксинг'],
         'самбо' => ['дзюдо', 'бразильское джиу-джитсу', 'вольная борьба'],
         'кикбоксинг' => ['тайский бокс', 'бокс'],
         'бокс' => ['кикбоксинг', 'тайский бокс'],
+        'танцы' => ['хореография', 'k-pop', 'балет'],
     ];
     return ['intent' => $intent, 'terms' => $map[$intent], 'location' => trim($match[2] ?? '')];
 }

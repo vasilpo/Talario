@@ -151,6 +151,11 @@ namespace {
     $catalog[] = ['product_id' => 202, 'product' => 'Танцы. Клуб Кикбоксинг', 'full_description' => ''];
     $catalog[] = ['product_id' => 203, 'product' => 'Самбо / Дзюдо. Красногорск', 'full_description' => ''];
     $catalog[] = ['product_id' => 204, 'product' => 'Самбо. Нахабино', 'full_description' => ''];
+    $catalog[] = ['product_id' => 205, 'product' => 'Хореография. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 206, 'product' => 'K-POP. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 207, 'product' => 'Балет. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 208, 'product' => 'Плавание. Клуб Хореография', 'full_description' => ''];
+    $catalog[] = ['product_id' => 209, 'product' => 'Танцы / Хореография. Красногорск', 'full_description' => ''];
     $primary = [$catalog[5]];
     $calls = [];
     $params = ['q' => 'дзюда красногорск', 'company_id' => 10];
@@ -162,7 +167,13 @@ namespace {
         check(!isset($call['dispatch']) && $call['pkeywords'] === 'N', 'Related lookup must not log searches or use broad keywords');
         check($call['company_id'] === 10 && $call['items_per_page'] === 6, 'Scope and query bounds must be preserved');
     }
-    foreach (['дзюдо 6 лет', 'дзюдо по субботам', 'дзюдо кречет', 'плавание', 'танцы', 'несуществующий запрос'] as $q) {
+    $primary = [$catalog[2]];
+    $calls = [];
+    $related = fn_talario_search_relevance_related_products(['q' => 'танцыы красногорск', 'company_id' => 10], $primary, 'ru');
+    check(array_column($related, 'product_id') === [205, 206, 207], 'Dance related must include choreography, K-POP and ballet only');
+    check(count($calls) === 3, 'Dance related query budget must be bounded');
+    check(fn_talario_search_relevance_related_plan(['q' => 'танцыы красногорск'])['intent'] === 'танцы', 'Dance typo must canonicalize to dance intent');
+    foreach (['дзюдо 6 лет', 'дзюдо по субботам', 'дзюдо кречет', 'плавание', 'танцы 6 лет', 'несуществующий запрос'] as $q) {
         check(fn_talario_search_relevance_related_plan(['q' => $q]) === [], 'Unknown or constrained intent must not be broadened');
     }
     foreach (['features_hash', 'filter_variants', 'pid', 'cid', 'price_from', 'price_to'] as $filter) {
