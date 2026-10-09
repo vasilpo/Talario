@@ -173,7 +173,7 @@ namespace {
     check(array_column($related, 'product_id') === [205, 206, 207], 'Dance related must include choreography, K-POP and ballet only');
     check(count($calls) === 3, 'Dance related query budget must be bounded');
     check(fn_talario_search_relevance_related_plan(['q' => 'танцыы красногорск'])['intent'] === 'танцы', 'Dance typo must canonicalize to dance intent');
-    foreach (['дзюдо 6 лет', 'дзюдо по субботам', 'дзюдо кречет', 'плавание', 'танцы', 'несуществующий запрос'] as $q) {
+    foreach (['дзюдо 6 лет', 'дзюдо по субботам', 'дзюдо кречет', 'плавание', 'танцы 6 лет', 'несуществующий запрос'] as $q) {
         check(fn_talario_search_relevance_related_plan(['q' => $q]) === [], 'Unknown or constrained intent must not be broadened');
     }
     foreach (['features_hash', 'filter_variants', 'pid', 'cid', 'price_from', 'price_to'] as $filter) {
