@@ -30,6 +30,32 @@ function fn_talario_schedule_resources_get_shared_product_ids($product_id)
     ));
 }
 
+/**
+ * Converts Ecarter slot values to the canonical 24-hour start used by Talario occurrences.
+ * Ecarter can emit either 24-hour values (14:30) or 12-hour values (02:30 pm), and cart
+ * booking_slot values contain the whole range (02:30 pm - 03:30 pm).
+ */
+function fn_talario_schedule_resources_normalize_slot_start($value)
+{
+    $value = strtolower(trim((string) $value));
+    if ($value === '') {
+        return '';
+    }
+
+    $parts = preg_split('/\s+-\s+/', $value, 2);
+    $value = trim((string) ($parts[0] ?? ''));
+
+    foreach (['!H:i', '!H:i:s', '!h:i a', '!g:i a'] as $format) {
+        $time = DateTime::createFromFormat($format, $value);
+        $errors = DateTime::getLastErrors();
+        if ($time && ($errors === false || ((int) $errors['warning_count'] === 0 && (int) $errors['error_count'] === 0))) {
+            return $time->format('H:i');
+        }
+    }
+
+    return '';
+}
+
 function fn_talario_schedule_resources_override_single_day_slots(
     $product_id,
     $selected_date,
@@ -63,7 +89,7 @@ function fn_talario_schedule_resources_override_single_day_slots(
         $by_start[substr($occurrence['starts_at'], 11, 5)] = max(0, (int) $occurrence['capacity'] - $holds - $bookings);
     }
     $project = static function (array $slot) use ($by_start) {
-        $start = substr((string) ($slot[0] ?? $slot['start_time'] ?? ''), 0, 5);
+        $start = fn_talario_schedule_resources_normalize_slot_start($slot[0] ?? $slot['start_time'] ?? '');
         // A mapped Talario product is available only when the exact dated
         // occurrence exists; the weekly Ecarter row is merely a UI template.
         $slot['amount'] = $by_start[$start] ?? 0;
@@ -96,12 +122,12 @@ function fn_talario_schedule_resources_post_add_to_cart($product_data, &$cart, $
         if (($booking['booking_type'] ?? '') !== 'T') { continue; }
         $date_value = $booking['original_booking_date'] ?? $booking['booking_date'] ?? '';
         $date = is_numeric($date_value) ? date('Y-m-d', (int) $date_value) : date('Y-m-d', strtotime($date_value));
-        $slot = explode(' - ', (string) ($booking['booking_slot'] ?? ''));
+        $slot_start = fn_talario_schedule_resources_normalize_slot_start($booking['booking_slot'] ?? '');
         try {
             $service->reserveProductSlot(
                 (int) $product_id,
                 $date,
-                substr($slot[0] ?? '', 0, 5),
+                $slot_start,
                 (int) ($booking['booking_slot_amount'] ?? $item['amount'] ?? 1),
                 session_id(),
                 (string) $cart_item_id,
@@ -130,12 +156,12 @@ function fn_talario_schedule_resources_pre_place_order(&$cart, &$allow, $product
         $booking = (array) ($item['extra']['booking_info'] ?? []);
         if (($booking['booking_type'] ?? '') !== 'T') { continue; }
         if (!$service->productUsesScheduleResource((int) $item['product_id'])) { continue; }
-        $slot = explode(' - ', (string) ($booking['booking_slot'] ?? ''));
+        $slot_start = fn_talario_schedule_resources_normalize_slot_start($booking['booking_slot'] ?? '');
         $date_value = $booking['original_booking_date'] ?? $booking['booking_date'] ?? '';
         $date = is_numeric($date_value) ? date('Y-m-d', (int) $date_value) : date('Y-m-d', strtotime($date_value));
         try {
             $service->reserveProductSlot(
-                (int) $item['product_id'], $date, substr($slot[0] ?? '', 0, 5),
+                (int) $item['product_id'], $date, $slot_start,
                 (int) ($booking['booking_slot_amount'] ?? $item['amount'] ?? 1),
                 session_id(), (string) $key, (int) ($cart['user_data']['user_id'] ?? 0)
             );
