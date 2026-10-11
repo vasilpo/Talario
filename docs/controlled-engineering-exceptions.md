@@ -26,9 +26,10 @@ The upstream add-on does not expose hooks at the two required calculation points
 - Resource, location, product, rule, and occurrence ownership is checked before persistence.
 - Shared-product and slot-projection queries require the product and resource to belong to the same company.
 - Reservation capacity is calculated by occurrence, not by product, under `SELECT ... FOR UPDATE`.
-- Automated contract tests cover company isolation, same-resource product expansion, dated capacity projection, and rejection when another product has consumed the shared capacity.
+- Ecarter 12-hour and 24-hour slot strings are normalized inside the Talario-owned resource layer to canonical `H:i` before occurrence matching or hold validation.
+- Automated contract tests cover company isolation, same-resource product expansion, dated capacity projection, 12-hour slot normalization, and rejection when another product has consumed the shared capacity.
 
-PR #160 added the company/resource consistency controls after the review of the earlier documentation-only PR #159.
+PR #160 added the company/resource consistency controls after the review of the earlier documentation-only PR #159. PR #445 added 12/24-hour slot normalization after the A-13 Debug review exposed the mismatch risk.
 
 ### Upgrade and rollback
 
@@ -38,8 +39,9 @@ Before updating `ec_table_booking_system`:
 2. check whether native hooks now exist and migrate to them when possible;
 3. run `tests/talario_schedule_resources/run.sh`;
 4. verify two products of one company sharing one occurrence on `dev_copy`;
-5. verify that a product/resource pair from another company cannot be linked or returned;
-6. deploy through the controlled `development` → `dev_copy` → `prod` process.
+5. verify both configured Ecarter time formats still resolve the same dated occurrence;
+6. verify that a product/resource pair from another company cannot be linked or returned;
+7. deploy through the controlled `development` → `dev_copy` → `prod` process.
 
 Rollback means restoring the reviewed upstream file and disabling `talario_schedule_resources`. This also disables shared physical capacity and must therefore be paired with suspending affected booking products until capacity handling is restored.
 
@@ -72,7 +74,6 @@ Remove the guards only in a dedicated reviewed exception PR when all of the foll
 5. the PR includes an immediate rollback commit or patch.
 
 Until those criteria are met, this entry is a compatibility boundary, not a completed root-cause fix.
-
 
 ## Theme meta templates: PHP 8.1 null compatibility
 
@@ -111,7 +112,6 @@ Remove the patch when any of the following is true:
 3. a smaller supported hook/extension point becomes available that avoids replacing whole vendor templates.
 
 Removal must be verified on `dev_copy` for product, category, page, search/SEO, and pages with an empty meta description before release to PROD.
-
 
 ## VK ID compatibility in `hybrid_auth` / `rus_hybrid_auth`
 
@@ -169,30 +169,33 @@ Before modifying or upgrading newsletters:
 
 Until then this is a temporary controlled exception, not a precedent for more CRM code in the vendor add-on.
 
-## `dev_copy` product 1238 storefront template patches
+## Resolved A-13 cleanup: `dev_copy` product 1238 storefront behavior
 
-### Scope
+### Result
 
-The `development` branch currently contains three product-specific template conditions for the hidden Partner Sync acceptance card `product_id=1238`:
+The product-specific conditions previously carried inside two foreign/theme-owned templates were removed during A-13 and those templates were restored:
 
-- `design/themes/abt__unitheme2/templates/addons/geo_maps/hooks/products/geo_maps.pre.tpl` suppresses the stock geo-maps block for product 1238;
-- `design/themes/abt__unitheme2/templates/addons/sd_design_changes/overrides/addons/abt__unitheme2_mv/hooks/products/ab__vendor_block.pre.tpl` suppresses the standalone vendor-block address for product 1238;
-- the Talario-owned `design/themes/abt__unitheme2/templates/addons/talario_analytics/hooks/products/bottom_product_layer.post.tpl` suppresses only the duplicate address line while preserving the dedicated lesson-map canvas for product 1238.
+- `design/themes/abt__unitheme2/templates/addons/geo_maps/hooks/products/geo_maps.pre.tpl` no longer contains Talario product-ID logic;
+- `design/themes/abt__unitheme2/templates/addons/sd_design_changes/overrides/addons/abt__unitheme2_mv/hooks/products/ab__vendor_block.pre.tpl` no longer contains Talario product-ID logic.
 
-These conditions came from the bounded dev_copy visual acceptance work for the Partner Sync pilot. They are not general product behavior and are not an approved pattern for future product IDs.
+The temporary acceptance behavior now lives only in the owned `talario_analytics` theme layer:
 
-### Current decision
+- `products:view_main_info` pre-hook suppresses the stock geo-maps shipping-estimation block for the hidden acceptance card;
+- `products:ab__vendor_block` post-hook visually suppresses the duplicate vendor address;
+- the Talario lesson-map hook suppresses its duplicate text address while preserving the dedicated map canvas.
 
-Treat the two edits inside foreign/theme-owned files as temporary dev_copy acceptance debt. Do not copy this pattern to any other product. Do not promote these product-ID conditions to PROD as a generic Talario architecture decision.
+### Verification
 
-The Talario-owned lesson-map hook remains the preferred extension boundary. Before removing the two foreign-file conditions, dev_copy acceptance must prove that the card still renders exactly one intended lesson-map experience, without reintroducing duplicate address/map output.
+On 2026-10-11 the signed one-use `dev_copy` visual acceptance passed after the move. The gate confirmed:
+
+- product and description remained present;
+- the Talario lesson-map canvas remained present;
+- the duplicate Talario map address was absent;
+- the stock geo-maps block was absent;
+- the vendor-address suppression was present.
+
+There is therefore no remaining A-13 direct foreign-template exception for product 1238. The product-specific condition itself is still temporary test-card debt and must not be copied to other product IDs or promoted as a general storefront architecture pattern.
 
 ### Removal criteria
 
-Remove the foreign-file product-1238 conditions when one of the following is true:
-
-1. the Partner Sync acceptance card is retired and its special visual behavior is no longer required; or
-2. equivalent suppression is implemented through a Talario-owned supported hook/override without copying a full third-party template; or
-3. the storefront design is changed so the stock and Talario map/address blocks no longer duplicate each other.
-
-Removal must be verified on `dev_copy` for product 1238 and at least one normal product with an address. PROD remains out of scope until a separate release decision.
+Remove the remaining owned product-1238 conditions when the Partner Sync acceptance card is retired or when the storefront map/address composition becomes generic enough that no card-specific suppression is required. Any future equivalent behavior must remain in Talario-owned hooks/add-ons.
