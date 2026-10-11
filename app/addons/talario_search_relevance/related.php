@@ -19,7 +19,7 @@ function fn_talario_search_relevance_related_plan(array $params): array
         return [];
     }
     // Unknown qualifiers (age, district, schedule, brand) must not be discarded.
-    if (!preg_match('/^(дзюдо|дзюда|дзюдоо|дзудо|дзу|самбо|кикбоксинг|кикбокисинг|бокс|танцы|танцыы|хореография|хореогрфия|хореограыия)( красногорск| нахабино| митино)?$/u', $query, $match)) {
+    if (!preg_match('/^(дзюдо|дзюда|дзюдоо|дзудо|дзу|самбо|кикбоксинг|кикбокисинг|бокс|танцы|танцыы|керамика|керамику|керамитка)( красногорск| нахабино| митино)?$/u', $query, $match)) {
         return [];
     }
     $intent = $match[1];
@@ -27,8 +27,10 @@ function fn_talario_search_relevance_related_plan(array $params): array
         $intent = 'дзюдо';
     } elseif ($intent === 'кикбокисинг') {
         $intent = 'кикбоксинг';
-    } elseif (in_array($intent, ['танцыы', 'хореогрфия', 'хореограыия'], true)) {
+    } elseif ($intent === 'танцыы') {
         $intent = 'танцы';
+    } elseif (in_array($intent, ['керамику', 'керамитка'], true)) {
+        $intent = 'керамика';
     }
     $map = [
         'дзюдо' => ['самбо', 'бразильское джиу-джитсу', 'кикбоксинг'],
@@ -36,6 +38,8 @@ function fn_talario_search_relevance_related_plan(array $params): array
         'кикбоксинг' => ['тайский бокс', 'бокс'],
         'бокс' => ['кикбоксинг', 'тайский бокс'],
         'танцы' => ['хореография', 'k-pop', 'балет'],
+        // Explicit catalog-backed clay activities, not arbitrary crafts.
+        'керамика' => ['лепка из глины', 'лепим сказку', 'гончарное искусство'],
     ];
     return ['intent' => $intent, 'terms' => $map[$intent], 'location' => trim($match[2] ?? '')];
 }
