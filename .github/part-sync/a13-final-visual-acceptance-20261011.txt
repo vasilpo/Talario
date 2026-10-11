@@ -1,0 +1,1 @@
+A-13 acceptance trigger for product 1238 after moving display exceptions out of foreign templates.
