@@ -86,6 +86,8 @@ class Probe(HTMLParser):
         self.map_address = 0
         self.map_canvas = 0
         self.content_description = 0
+        self.vendor_address = 0
+        self.stock_geo = 0
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         classes = set((attrs.get('class') or '').split())
@@ -93,8 +95,12 @@ class Probe(HTMLParser):
             self.map_address += 1
         if 'talario-lesson-map__canvas' in classes:
             self.map_canvas += 1
+        if 'sd-company-info' in classes:
+            self.vendor_address += 1
         if attrs.get('id') == 'content_description':
             self.content_description += 1
+        if attrs.get('id') == 'geo_maps_shipping_estimation_1238':
+            self.stock_geo += 1
 
 probe = Probe()
 probe.feed(html)
@@ -106,6 +112,8 @@ with open(summary_file, 'w', encoding='utf-8') as fh:
     fh.write(f'CONTENT_DESCRIPTION_COUNT={probe.content_description}\n')
     fh.write(f'MAP_ADDRESS_COUNT={probe.map_address}\n')
     fh.write(f'MAP_CANVAS_COUNT={probe.map_canvas}\n')
+    fh.write(f'VENDOR_ADDRESS_COUNT={probe.vendor_address}\n')
+    fh.write(f'STOCK_GEO_MAPS_COUNT={probe.stock_geo}\n')
 
 if not product_marker:
     raise SystemExit('product marker missing')
@@ -115,11 +123,17 @@ if probe.map_address != 0:
     raise SystemExit('duplicate map address still rendered')
 if probe.map_canvas != 1:
     raise SystemExit('map canvas changed or missing')
+if probe.vendor_address != 0:
+    raise SystemExit('duplicate vendor address still rendered')
+if probe.stock_geo != 0:
+    raise SystemExit('stock geo_maps shipping estimation still rendered')
 
 print('PRODUCT_1238=PASS')
 print('CONTENT_DESCRIPTION=PASS')
 print('MAP_ADDRESS_REMOVED=PASS')
 print('MAP_CANVAS_PRESERVED=PASS')
+print('VENDOR_ADDRESS_REMOVED=PASS')
+print('STOCK_GEO_MAPS_REMOVED=PASS')
 PY
 chmod 600 "$evidence/visual-summary.txt"
 echo 'FINAL_VISUAL_ACCEPTANCE=PASS'
