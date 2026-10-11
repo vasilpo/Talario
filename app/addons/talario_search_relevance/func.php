@@ -137,14 +137,24 @@ function fn_talario_search_relevance_additional_fields_in_search(
     &$tmp, $piece, $having, $lang_code
 ): void {
     $plan = fn_talario_search_relevance_choreography_search($params);
+    $karate_plan = fn_talario_search_relevance_karate_search($params);
+    if ($plan === []) {
+        $plan = $karate_plan;
+    }
     if ($plan === []) {
         return;
     }
 
-    // Match the activity at the start, not a school name or description.
-    // Keep the finite vocabulary explicit: e.g. logopedic rhythm is not dance.
-    $dance = '^[[:space:]]*((современн[а-я]*|армянск[а-я]*|бальн[а-я]*|спортивн[а-я]*|народн[а-я]*|классическ[а-я]*|эстрадн[а-я]*|восточн[а-я]*|детск[а-я]*)[[:space:]]+)*(танц[а-я]*|хореограф[а-я]*|балет[а-я]*|k[- ]?pop|к[- ]?поп|брейк[- ]?данс[а-я]*|хип[- ]?хоп|hip[- ]?hop|джаз[- ]?фанк)([[:space:].,/:;!()«»—–-]|$)';
-    $tmp = db_quote('LOWER(descr1.product) REGEXP ?s', $dance);
+    if (($plan['type'] ?? '') === 'karate') {
+        // Accept common title wrappers (e.g. "Школа карате"), but never a
+        // later mention such as "Плавание. Клуб Каратэ".
+        $activity = '^[[:space:]]*((школ[а-я]*|клуб|секция|занятия)[[:space:]]+)?карат(э|е|те)([[:space:].,/:;!()«»—–-]|$)';
+    } else {
+        // Match the activity at the start, not a school name or description.
+        // Keep the finite vocabulary explicit: e.g. logopedic rhythm is not dance.
+        $activity = '^[[:space:]]*((современн[а-я]*|армянск[а-я]*|бальн[а-я]*|спортивн[а-я]*|народн[а-я]*|классическ[а-я]*|эстрадн[а-я]*|восточн[а-я]*|детск[а-я]*)[[:space:]]+)*(танц[а-я]*|хореограф[а-я]*|балет[а-я]*|k[- ]?pop|к[- ]?поп|брейк[- ]?данс[а-я]*|хип[- ]?хоп|hip[- ]?hop|джаз[- ]?фанк)([[:space:].,/:;!()«»—–-]|$)';
+    }
+    $tmp = db_quote('LOWER(descr1.product) REGEXP ?s', $activity);
     if ($plan['location'] !== '') {
         $tmp .= db_quote(' AND LOWER(descr1.product) REGEXP ?s',
             '(^|[^а-яa-z])' . $plan['location'] . '([^а-яa-z]|$)');
@@ -165,6 +175,22 @@ function fn_talario_search_relevance_choreography_search(array $params): array
     }
 
     return ['location' => $match[2] ?? ''];
+}
+
+/** Only the unqualified karate spelling family is unified in native SQL. */
+function fn_talario_search_relevance_karate_search(array $params): array
+{
+    if (($params['dispatch'] ?? '') !== 'products.search'
+        || ($params['area'] ?? (defined('AREA') ? AREA : '')) !== 'C'
+    ) {
+        return [];
+    }
+    $query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
+    if (preg_match('/^(каратэ|карате|каратте|каратж)(?: (красногорск|нахабино|митино))?$/u', $query, $match) !== 1) {
+        return [];
+    }
+
+    return ['type' => 'karate', 'location' => $match[2] ?? ''];
 }
 
 /**
