@@ -182,5 +182,23 @@ namespace {
     }
     check(fn_talario_search_relevance_related_plan(['q' => 'дзюдо', 'page' => 2]) === [], 'Related block belongs to first page only');
     check(fn_talario_search_relevance_related_products(['q' => 'дзюдо'], [], 'ru') === [], 'Empty native search must keep existing no-results flow');
+    $catalog[] = ['product_id' => 210, 'product' => 'Лепим сказку. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 211, 'product' => 'Плавание. Клуб Лепка из глины', 'search_words' => 'лепка из глины', 'full_description' => ''];
+    $catalog[] = ['product_id' => 212, 'product' => 'Лепка из глины. Нахабино', 'full_description' => ''];
+    foreach (['керамика', 'керамитка', 'керамику'] as $query) {
+        $primary = [$catalog[1]];
+        $calls = [];
+        $related = fn_talario_search_relevance_related_products(['q' => $query . ' красногорск', 'company_id' => 10], $primary, 'ru');
+        check(array_column($related, 'product_id') === [1, 210], 'Ceramics must suggest clay lessons, excluding swimming and other cities');
+        check($primary === [$catalog[1]], 'Ceramics exact result must stay separate');
+        check(count($calls) === 3, 'Ceramics related query budget must stay bounded');
+        foreach ($calls as $call) {
+            check(!isset($call['dispatch']) && $call['company_id'] === 10, 'Ceramics must preserve vendor and analytics boundaries');
+        }
+    }
+    check(fn_talario_search_relevance_related_plan(['q' => 'керамика 6 лет']) === [], 'Ceramics qualifiers must not be silently removed');
+    check(fn_talario_search_relevance_related_products(['q' => 'керамика', 'features_hash' => 'age-7'], [$catalog[1]], 'ru') === [], 'Ceramics related must disappear under filters');
+    $related = fn_talario_search_relevance_related_products(['q' => 'керамика красногорск'], [$catalog[0], $catalog[1]], 'ru');
+    check(array_column($related, 'product_id') === [210], 'Existing clay results must not be duplicated in the second wave');
     echo "TALARIO_SEARCH_BEHAVIOR=PASS\n";
 }
