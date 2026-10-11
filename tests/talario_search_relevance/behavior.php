@@ -182,6 +182,18 @@ namespace {
     }
     check(fn_talario_search_relevance_related_plan(['q' => 'дзюдо', 'page' => 2]) === [], 'Related block belongs to first page only');
     check(fn_talario_search_relevance_related_products(['q' => 'дзюдо'], [], 'ru') === [], 'Empty native search must keep existing no-results flow');
+    $catalog[] = ['product_id' => 220, 'product' => 'Каратэ. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 221, 'product' => 'Карате. Красногорск', 'full_description' => ''];
+    $catalog[] = ['product_id' => 222, 'product' => 'Плавание. Клуб Каратэ', 'full_description' => ''];
+    foreach (['каратэ', 'карате', 'каратте'] as $query) {
+        $primary_id = $query === 'каратэ' ? 220 : ($query === 'карате' ? 221 : 220);
+        $primary = [array_values(array_filter($catalog, static function (array $product) use ($primary_id): bool {
+            return $product['product_id'] === $primary_id;
+        }))[0]];
+        $related = fn_talario_search_relevance_related_products(['q' => $query . ' красногорск', 'company_id' => 10], $primary, 'ru');
+        $expected = $primary_id === 220 ? [221] : [220];
+        check(array_column($related, 'product_id') === $expected, 'Karate spellings must share relevant alternatives without swimming');
+    }
     $catalog[] = ['product_id' => 210, 'product' => 'Лепим сказку. Красногорск', 'full_description' => ''];
     $catalog[] = ['product_id' => 211, 'product' => 'Плавание. Клуб Лепка из глины', 'search_words' => 'лепка из глины', 'full_description' => ''];
     $catalog[] = ['product_id' => 212, 'product' => 'Лепка из глины. Нахабино', 'full_description' => ''];
