@@ -14,8 +14,8 @@ function fn_talario_search_relevance_related_plan(array $params): array
         return [];
     }
     $query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
-    // Choreography already includes the full dance family in primary results.
-    if (preg_match('/^(хореография|хореогрфия|хореограыия)( красногорск| нахабино| митино)?$/u', $query)) {
+    // Dance and choreography already include the full dance family in primary results.
+    if (preg_match('/^(хореография|хореогрфия|хореограыия|танцы|танцыы)( красногорск| нахабино| митино)?$/u', $query)) {
         return [];
     }
     // Unknown qualifiers (age, district, schedule, brand) must not be discarded.
