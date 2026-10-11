@@ -47,7 +47,7 @@ foreach (['каратэ', 'карате', 'каратте', 'каратж'] as $
     fn_talario_search_relevance_additional_fields_in_search(
         $params, [], [], '', '', '', '', $tmp, $query, [], 'ru'
     );
-    $ids = array_map('intval', $db->query('SELECT id FROM products WHERE company_id=10 AND status=\'A\' AND age=7 AND (' . $tmp . ') ORDER BY id')->fetchAll(PDO::FETCH_COLUMN));
+    $ids = array_map('intval', $db->query('SELECT descr1.id FROM products AS descr1 WHERE company_id=10 AND status=\'A\' AND age=7 AND (' . $tmp . ') ORDER BY descr1.id')->fetchAll(PDO::FETCH_COLUMN));
     expect_karate($ids === [1, 2, 3, 5], 'All karate spellings must share the complete relevant result: ' . $query);
 }
 
