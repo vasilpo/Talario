@@ -9,6 +9,7 @@ $fixture = [
     'mappings' => [101 => 7, 102 => 7, 201 => 7],
     'occurrences' => [
         70 => ['occurrence_id' => 70, 'resource_id' => 7, 'starts_at' => '2026-09-12 09:00:00', 'ends_at' => '2026-09-12 10:00:00', 'capacity' => 5, 'status' => 'A'],
+        71 => ['occurrence_id' => 71, 'resource_id' => 7, 'starts_at' => '2026-09-12 14:30:00', 'ends_at' => '2026-09-12 15:30:00', 'capacity' => 4, 'status' => 'A'],
     ],
     'holds' => [
         ['occurrence_id' => 70, 'cart_id' => 'other-cart', 'cart_item_id' => 'other-item', 'quantity' => 1, 'status' => 'A', 'expires_at' => TIME + 600],
@@ -164,6 +165,12 @@ require_once $base . '/Repository/ResourceProductRepository.php';
 require_once $base . '/Service/ScheduleResourceService.php';
 require_once $root . '/app/addons/talario_schedule_resources/func.php';
 
+assert_same('09:00', fn_talario_schedule_resources_normalize_slot_start('09:00'), '24-hour slot must stay canonical');
+assert_same('09:00', fn_talario_schedule_resources_normalize_slot_start('09:00:00'), '24-hour slot with seconds must normalize');
+assert_same('14:30', fn_talario_schedule_resources_normalize_slot_start('02:30 pm'), '12-hour slot must normalize to 24-hour time');
+assert_same('14:30', fn_talario_schedule_resources_normalize_slot_start('02:30 pm - 03:30 pm'), '12-hour booking range must normalize its start');
+assert_same('', fn_talario_schedule_resources_normalize_slot_start('not-a-time'), 'Invalid slot must fail closed');
+
 assert_same([101, 102], fn_talario_schedule_resources_get_shared_product_ids(101), 'Only same-company products may share a resource');
 assert_same([201], fn_talario_schedule_resources_get_shared_product_ids(201), 'Invalid cross-company mapping must not be expanded');
 
@@ -174,6 +181,11 @@ foreach ([101, 102] as $product_id) {
     assert_same(3, $available[0]['amount'], 'Products on one resource must see the same remaining capacity');
     assert_same(0, $unavailable[0]['amount'], 'A missing dated occurrence must be unavailable');
 }
+
+$available = [['02:30 pm', '03:30 pm', 'amount' => 99]];
+$unavailable = [];
+fn_talario_schedule_resources_override_single_day_slots(101, '2026-09-12', $available, $unavailable);
+assert_same(4, $available[0]['amount'], '12-hour Ecarter slot must match the 14:30 resource occurrence');
 
 $available = [['09:00', '10:00', 'amount' => 99]];
 $unavailable = [];
