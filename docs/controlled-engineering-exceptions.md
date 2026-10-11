@@ -142,3 +142,57 @@ Before updating CS-Cart, `hybrid_auth`, or `rus_hybrid_auth`:
 Remove this exception only when upstream provides equivalent VK ID behaviour or when a future product/security requirement justifies a reviewed migration to a Talario-owned extension.
 
 PROD must not receive the abandoned `talario_vk_auth` experiment.
+
+## `newsletters`: CRM-01 recipient personalization
+
+### Scope
+
+`app/addons/newsletters/func.php` contains Talario changes introduced for CRM-01 recipient personalization. The change carries sanitized customer `firstname` and reward-point payload into the existing newsletter rendering path, merges explicitly selected user and mailing-list recipient metadata by email, and keeps the existing mailing-list consent/unsubscribe path intact.
+
+The behavior is covered by `app/addons/newsletters/tests/NewsletterFirstnameContractTest.php`.
+
+### Current decision
+
+Keep this customization temporarily, but do not treat the `newsletters` add-on as an approved home for further Talario CRM logic. The current implementation is a known direct third-party/add-on modification and must be reconsidered before the next material CRM/newsletter change or before upgrading the newsletters add-on.
+
+No additional personalization, segmentation, points logic, or Talario business rules may be added to `app/addons/newsletters/func.php` without first checking for a supported hook or a Talario-owned extension boundary.
+
+### Safety and removal criteria
+
+Before modifying or upgrading newsletters:
+
+1. run `NewsletterFirstnameContractTest`;
+2. verify direct-user personalization, mailing-list consent filtering, deduplication by email and `%UNSUBSCRIBE_LINK` behavior;
+3. confirm first name output remains control-character stripped and HTML-escaped;
+4. inspect upstream hooks around recipient preparation and rendering;
+5. move the customization into a Talario-owned add-on when an equivalent supported extension point can preserve these invariants without copying a larger upstream function.
+
+Until then this is a temporary controlled exception, not a precedent for more CRM code in the vendor add-on.
+
+## `dev_copy` product 1238 storefront template patches
+
+### Scope
+
+The `development` branch currently contains three product-specific template conditions for the hidden Partner Sync acceptance card `product_id=1238`:
+
+- `design/themes/abt__unitheme2/templates/addons/geo_maps/hooks/products/geo_maps.pre.tpl` suppresses the stock geo-maps block for product 1238;
+- `design/themes/abt__unitheme2/templates/addons/sd_design_changes/overrides/addons/abt__unitheme2_mv/hooks/products/ab__vendor_block.pre.tpl` suppresses the standalone vendor-block address for product 1238;
+- the Talario-owned `design/themes/abt__unitheme2/templates/addons/talario_analytics/hooks/products/bottom_product_layer.post.tpl` suppresses only the duplicate address line while preserving the dedicated lesson-map canvas for product 1238.
+
+These conditions came from the bounded dev_copy visual acceptance work for the Partner Sync pilot. They are not general product behavior and are not an approved pattern for future product IDs.
+
+### Current decision
+
+Treat the two edits inside foreign/theme-owned files as temporary dev_copy acceptance debt. Do not copy this pattern to any other product. Do not promote these product-ID conditions to PROD as a generic Talario architecture decision.
+
+The Talario-owned lesson-map hook remains the preferred extension boundary. Before removing the two foreign-file conditions, dev_copy acceptance must prove that the card still renders exactly one intended lesson-map experience, without reintroducing duplicate address/map output.
+
+### Removal criteria
+
+Remove the foreign-file product-1238 conditions when one of the following is true:
+
+1. the Partner Sync acceptance card is retired and its special visual behavior is no longer required; or
+2. equivalent suppression is implemented through a Talario-owned supported hook/override without copying a full third-party template; or
+3. the storefront design is changed so the stock and Talario map/address blocks no longer duplicate each other.
+
+Removal must be verified on `dev_copy` for product 1238 and at least one normal product with an address. PROD remains out of scope until a separate release decision.
