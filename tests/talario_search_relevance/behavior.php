@@ -161,6 +161,10 @@ namespace {
     fn_talario_search_relevance_get_products_post($dance_results, $dance_params, 'ru');
     check(array_column($dance_results, 'product_id') === [205, 206, 207, 209], 'Choreography search must keep dance titles and exclude swimming');
     check($dance_params['total_items'] === 4, 'Filtered choreography count must match visible dance results');
+    $dance_typo_results = [$catalog[4], $catalog[13], $catalog[14], $catalog[15], $catalog[16], $catalog[17]];
+    $dance_typo_params = ['dispatch' => 'products.search', 'q' => 'хореогрфия', 'total_items' => count($dance_typo_results)];
+    fn_talario_search_relevance_get_products_post($dance_typo_results, $dance_typo_params, 'ru');
+    check(array_column($dance_typo_results, 'product_id') === [205, 206, 207, 209], 'Choreography typo must keep dance titles and exclude swimming');
     $primary = [$catalog[5]];
     $calls = [];
     $params = ['q' => 'дзюда красногорск', 'company_id' => 10];
