@@ -30,7 +30,11 @@ function fn_talario_search_relevance_get_products_post(
     $normalized_query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
     $is_broad_city_query = fn_talario_search_relevance_is_broad_city_query($params);
 
-    if ($fallback_running || (!$is_broad_city_query && !empty($products)) || (!$is_broad_city_query && !fn_talario_search_relevance_is_candidate($params))) {
+    if ($fallback_running
+        || fn_talario_search_relevance_choreography_search($params) !== []
+        || (!$is_broad_city_query && !empty($products))
+        || (!$is_broad_city_query && !fn_talario_search_relevance_is_candidate($params))
+    ) {
         return;
     }
 
@@ -120,6 +124,47 @@ function fn_talario_search_relevance_get_products_post(
         'talario_search_relevance_original_query' => $original_query,
         'total_items' => $fallback_total ?? count($fallback_products),
     ]);
+}
+
+/**
+ * Expand the explicitly requested choreography intent inside native SQL,
+ * before COUNT/LIMIT. Do not touch visibility, vendor, category, price or
+ * feature conditions. Every query piece gets the same complete predicate,
+ * so both native match=all and match=any preserve the city restriction.
+ */
+function fn_talario_search_relevance_additional_fields_in_search(
+    $params, $fields, $sortings, $condition, $join, $sorting, $group_by,
+    &$tmp, $piece, $having, $lang_code
+): void {
+    $plan = fn_talario_search_relevance_choreography_search($params);
+    if ($plan === []) {
+        return;
+    }
+
+    // Match the activity at the start, not a school name or description.
+    // Keep the finite vocabulary explicit: e.g. logopedic rhythm is not dance.
+    $dance = '^[[:space:]]*((современн[а-я]*|армянск[а-я]*|бальн[а-я]*|спортивн[а-я]*|народн[а-я]*|классическ[а-я]*|эстрадн[а-я]*|восточн[а-я]*|детск[а-я]*)[[:space:]]+)*(танц[а-я]*|хореограф[а-я]*|балет[а-я]*|k[- ]?pop|к[- ]?поп|брейк[- ]?данс[а-я]*|хип[- ]?хоп|hip[- ]?hop|джаз[- ]?фанк)([[:space:].,/:;!()«»—–-]|$)';
+    $tmp = db_quote('LOWER(descr1.product) REGEXP ?s', $dance);
+    if ($plan['location'] !== '') {
+        $tmp .= db_quote(' AND LOWER(descr1.product) REGEXP ?s',
+            '(^|[^а-яa-z])' . $plan['location'] . '([^а-яa-z]|$)');
+    }
+}
+
+/** Only the approved choreography family; never drop unknown qualifiers. */
+function fn_talario_search_relevance_choreography_search(array $params): array
+{
+    if (($params['dispatch'] ?? '') !== 'products.search'
+        || ($params['area'] ?? (defined('AREA') ? AREA : '')) !== 'C'
+    ) {
+        return [];
+    }
+    $query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
+    if (preg_match('/^(хореография|хореогрфия|хореограыия)(?: (красногорск|нахабино|митино))?$/u', $query, $match) !== 1) {
+        return [];
+    }
+
+    return ['location' => $match[2] ?? ''];
 }
 
 /**

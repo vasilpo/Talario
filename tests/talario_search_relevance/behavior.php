@@ -156,6 +156,7 @@ namespace {
     $catalog[] = ['product_id' => 207, 'product' => 'Балет. Красногорск', 'full_description' => ''];
     $catalog[] = ['product_id' => 208, 'product' => 'Плавание. Клуб Хореография', 'full_description' => ''];
     $catalog[] = ['product_id' => 209, 'product' => 'Танцы / Хореография. Красногорск', 'full_description' => ''];
+    check(fn_talario_search_relevance_related_plan(['q' => 'хореография']) === [], 'Full choreography results need no duplicate related block');
     $primary = [$catalog[5]];
     $calls = [];
     $params = ['q' => 'дзюда красногорск', 'company_id' => 10];
