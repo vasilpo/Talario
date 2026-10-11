@@ -87,6 +87,7 @@ class Probe(HTMLParser):
         self.map_canvas = 0
         self.content_description = 0
         self.vendor_address = 0
+        self.vendor_hide_marker = 0
         self.stock_geo = 0
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -97,6 +98,8 @@ class Probe(HTMLParser):
             self.map_canvas += 1
         if 'sd-company-info' in classes:
             self.vendor_address += 1
+        if attrs.get('id') == 'talario-hide-vendor-address-1238':
+            self.vendor_hide_marker += 1
         if attrs.get('id') == 'content_description':
             self.content_description += 1
         if attrs.get('id') == 'geo_maps_shipping_estimation_1238':
@@ -112,7 +115,8 @@ with open(summary_file, 'w', encoding='utf-8') as fh:
     fh.write(f'CONTENT_DESCRIPTION_COUNT={probe.content_description}\n')
     fh.write(f'MAP_ADDRESS_COUNT={probe.map_address}\n')
     fh.write(f'MAP_CANVAS_COUNT={probe.map_canvas}\n')
-    fh.write(f'VENDOR_ADDRESS_COUNT={probe.vendor_address}\n')
+    fh.write(f'VENDOR_ADDRESS_DOM_COUNT={probe.vendor_address}\n')
+    fh.write(f'VENDOR_HIDE_MARKER_COUNT={probe.vendor_hide_marker}\n')
     fh.write(f'STOCK_GEO_MAPS_COUNT={probe.stock_geo}\n')
 
 if not product_marker:
@@ -123,8 +127,10 @@ if probe.map_address != 0:
     raise SystemExit('duplicate map address still rendered')
 if probe.map_canvas != 1:
     raise SystemExit('map canvas changed or missing')
-if probe.vendor_address != 0:
-    raise SystemExit('duplicate vendor address still rendered')
+# The foreign vendor template is restored, so its address node may remain in DOM.
+# The owned Talario post-hook must provide the scoped visual suppression marker.
+if probe.vendor_address != 1 or probe.vendor_hide_marker != 1:
+    raise SystemExit('owned vendor-address suppression missing or unexpected DOM shape')
 if probe.stock_geo != 0:
     raise SystemExit('stock geo_maps shipping estimation still rendered')
 
@@ -132,7 +138,7 @@ print('PRODUCT_1238=PASS')
 print('CONTENT_DESCRIPTION=PASS')
 print('MAP_ADDRESS_REMOVED=PASS')
 print('MAP_CANVAS_PRESERVED=PASS')
-print('VENDOR_ADDRESS_REMOVED=PASS')
+print('VENDOR_ADDRESS_SUPPRESSION=PASS')
 print('STOCK_GEO_MAPS_REMOVED=PASS')
 PY
 chmod 600 "$evidence/visual-summary.txt"
