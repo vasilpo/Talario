@@ -170,10 +170,8 @@ namespace {
     }
     $primary = [$catalog[2]];
     $calls = [];
-    $related = fn_talario_search_relevance_related_products(['q' => 'танцыы красногорск', 'company_id' => 10], $primary, 'ru');
-    check(array_column($related, 'product_id') === [205, 206, 207], 'Dance related must include choreography, K-POP and ballet only');
-    check(count($calls) === 3, 'Dance related query budget must be bounded');
-    check(fn_talario_search_relevance_related_plan(['q' => 'танцыы красногорск'])['intent'] === 'танцы', 'Dance typo must canonicalize to dance intent');
+    check(fn_talario_search_relevance_related_plan(['q' => 'танцы красногорск']) === [], 'Dance full results must not use a duplicate related block');
+    check(fn_talario_search_relevance_related_plan(['q' => 'танцыы красногорск']) === [], 'Dance typo full results must not use a duplicate related block');
     foreach (['дзюдо 6 лет', 'дзюдо по субботам', 'дзюдо кречет', 'плавание', 'танцы 6 лет', 'несуществующий запрос'] as $q) {
         check(fn_talario_search_relevance_related_plan(['q' => $q]) === [], 'Unknown or constrained intent must not be broadened');
     }

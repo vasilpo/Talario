@@ -64,7 +64,7 @@ foreach ([
     $insert->execute([20 + $index, $title, 10, 'A', 7]);
 }
 $params = ['dispatch' => 'products.search', 'q' => 'хореография'];
-foreach (['хореография', 'ХОРЕОГРАФИЯ', 'хореогрфия', 'хореограыия'] as $query) {
+foreach (['хореография', 'ХОРЕОГРАФИЯ', 'хореогрфия', 'хореограыия', 'танцы', 'танцыы'] as $query) {
     $sql = predicate(array_merge($params, ['q' => $query]), $query);
     $ids = $db->query('SELECT id FROM products descr1 WHERE (' . $sql . ') ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
     expect(array_map('intval', $ids) === range(1, 9), 'Every catalog dance, and no incidental mention, must match: ' . $query);
@@ -72,11 +72,13 @@ foreach (['хореография', 'ХОРЕОГРАФИЯ', 'хореогрф�
 
 // Exercise both native word-combination modes. A city must never turn into
 // an OR escape that admits swimming or unrelated activities in that city.
-$city = array_merge($params, ['q' => 'хореография красногорск']);
-foreach ([' AND ', ' OR '] as $operator) {
-    $sql = '(' . predicate($city, 'хореография') . ')' . $operator . '(' . predicate($city, 'красногорск') . ')';
-    $ids = array_map('intval', $db->query('SELECT id FROM products descr1 WHERE ' . $sql . ' ORDER BY id')->fetchAll(PDO::FETCH_COLUMN));
-    expect($ids === [1, 2, 4, 5, 6, 7, 8, 9], 'City restriction must survive native match mode');
+foreach (['хореография', 'танцы'] as $dance_query) {
+    $city = array_merge($params, ['q' => $dance_query . ' красногорск']);
+    foreach ([' AND ', ' OR '] as $operator) {
+        $sql = '(' . predicate($city, $dance_query) . ')' . $operator . '(' . predicate($city, 'красногорск') . ')';
+        $ids = array_map('intval', $db->query('SELECT id FROM products descr1 WHERE ' . $sql . ' ORDER BY id')->fetchAll(PDO::FETCH_COLUMN));
+        expect($ids === [1, 2, 4, 5, 6, 7, 8, 9], 'City restriction must survive native match mode: ' . $dance_query);
+    }
 }
 
 // More than one page, and native vendor/status/feature restrictions.
@@ -86,7 +88,7 @@ for ($id = 100; $id < 145; $id++) {
 $insert->execute([300, 'Танцы. Красногорск', 11, 'A', 7]);
 $insert->execute([301, 'Танцы. Красногорск', 10, 'D', 7]);
 $insert->execute([302, 'Танцы. Красногорск', 10, 'A', 8]);
-$sql = predicate($city, 'хореография');
+$sql = predicate(['dispatch' => 'products.search', 'q' => 'хореография красногорск'], 'хореография');
 $where = ' FROM products descr1 WHERE company_id=10 AND status=\'A\' AND age=7 AND (' . $sql . ')';
 $total = (int) $db->query('SELECT COUNT(*)' . $where)->fetchColumn();
 expect($total === 53, 'Count must include all matching pages but respect native scopes');
@@ -112,9 +114,9 @@ foreach ([
     ['q' => 'хореография'],
     ['dispatch' => 'products.search', 'q' => 'хореография 6 лет'],
     ['dispatch' => 'products.search', 'q' => 'хореография москва'],
-    ['dispatch' => 'products.search', 'q' => 'танцы'],
     ['dispatch' => 'products.search', 'q' => 'гончарная мастерская'],
 ] as $unchanged) {
     expect(predicate($unchanged, 'хореография') === 'native_search_condition', 'Unrelated scope must retain native conditions');
 }
+expect(predicate(['dispatch' => 'products.search', 'q' => 'танцы'], 'танцы') !== 'native_search_condition', 'Dance query must use the full primary dance predicate');
 echo "TALARIO_CHOREOGRAPHY_SQL_CONTRACT=PASS\n";

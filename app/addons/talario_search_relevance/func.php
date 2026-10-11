@@ -170,7 +170,7 @@ function fn_talario_search_relevance_choreography_search(array $params): array
         return [];
     }
     $query = fn_talario_search_relevance_normalize_query((string) ($params['q'] ?? ''));
-    if (preg_match('/^(хореография|хореогрфия|хореограыия)(?: (красногорск|нахабино|митино))?$/u', $query, $match) !== 1) {
+    if (preg_match('/^(хореография|хореогрфия|хореограыия|танцы|танцыы)(?: (красногорск|нахабино|митино))?$/u', $query, $match) !== 1) {
         return [];
     }
 
