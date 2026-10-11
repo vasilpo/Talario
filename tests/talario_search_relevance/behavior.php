@@ -156,18 +156,7 @@ namespace {
     $catalog[] = ['product_id' => 207, 'product' => 'Балет. Красногорск', 'full_description' => ''];
     $catalog[] = ['product_id' => 208, 'product' => 'Плавание. Клуб Хореография', 'full_description' => ''];
     $catalog[] = ['product_id' => 209, 'product' => 'Танцы / Хореография. Красногорск', 'full_description' => ''];
-    $dance_fixture = array_values(array_filter($catalog, static function (array $product): bool {
-        return in_array($product['product_id'], [5, 205, 206, 207, 208, 209], true);
-    }));
-    $dance_results = $dance_fixture;
-    $dance_params = ['dispatch' => 'products.search', 'q' => 'хореография', 'total_items' => count($dance_results)];
-    fn_talario_search_relevance_get_products_post($dance_results, $dance_params, 'ru');
-    check(array_column($dance_results, 'product_id') === [205, 206, 207, 209], 'Choreography search must keep dance titles and exclude swimming');
-    check($dance_params['total_items'] === 4, 'Filtered choreography count must match visible dance results');
-    $dance_typo_results = $dance_fixture;
-    $dance_typo_params = ['dispatch' => 'products.search', 'q' => 'хореогрфия', 'total_items' => count($dance_typo_results)];
-    fn_talario_search_relevance_get_products_post($dance_typo_results, $dance_typo_params, 'ru');
-    check(array_column($dance_typo_results, 'product_id') === [205, 206, 207, 209], 'Choreography typo must keep dance titles and exclude swimming');
+    check(fn_talario_search_relevance_related_plan(['q' => 'хореография']) === [], 'Full choreography results need no duplicate related block');
     $primary = [$catalog[5]];
     $calls = [];
     $params = ['q' => 'дзюда красногорск', 'company_id' => 10];
