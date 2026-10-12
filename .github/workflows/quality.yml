@@ -12,6 +12,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  statuses: write
 
 concurrency:
   group: quality-${{ github.workflow }}-${{ github.ref }}
@@ -122,3 +123,50 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Required branch-protection gate: security invariants plus prerequisite checks.
+  talario-review-agent:
+    name: Talario Review Agent
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - php-syntax
+      - repository-guard
+      - secret-scan
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enforce reviewed Partner Sync security invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          controller="app/addons/talario_analytics/controllers/frontend/talario_analytics.php"
+          writer="app/addons/talario_analytics/partner_sync_write.php"
+
+          grep -Fq "fn_talario_analytics_partner_sync_verify_penaty_signature('apply', \$raw);" "$controller"
+          grep -Fq "fn_talario_analytics_partner_sync_run_penaty_cli(\$raw, \$approved_company_id);" "$controller"
+          grep -Fq "'TALARIO_PARTNER_SYNC_APPROVED_COMPANY_ID' => (string) \$approved_company_id" "$controller"
+          grep -Fq "['error' => 'company_run_approval_required']" "$writer"
+          grep -Fq "['error' => 'company_not_active']" "$writer"
+          grep -Fq "['error' => 'partner_sync_write_disabled']" "$writer"
+          grep -Fq "['error' => 'approval_id_required']" "$writer"
+
+          echo "Talario Review Agent: PASS"
+
+      - name: Publish required Talario Review Agent status
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = context.payload.pull_request.head.sha;
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: 'success',
+              context: 'Talario Review Agent',
+              description: 'Talario Quality & Review gate passed',
+            });
+            core.info(`Published required status for ${sha}`);
