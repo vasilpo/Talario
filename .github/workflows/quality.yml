@@ -34,6 +34,7 @@ jobs:
         with:
           php-version: '8.1'
           coverage: none
+          tools: phpunit:9.6.31
 
       - name: Lint changed PHP files
         shell: bash
@@ -58,6 +59,10 @@ jobs:
           for file in "${files[@]}"; do
             php -l "$file"
           done
+
+      - name: Verify preserved CRM-01 newsletter contracts
+        shell: bash
+        run: phpunit --do-not-cache-result app/addons/newsletters/tests
 
   repository-guard:
     name: Repository safety guard
