@@ -19,7 +19,7 @@ final class NewsletterFirstnameContractTest extends TestCase
     public function testDirectUserRecipientQueriesCarryFirstname(): void
     {
         self::assertStringContainsString(
-            'NULL as list_id, NULL as subscriber_id, users.firstname',
+            'subscribers.subscriber_id, users.firstname',
             $this->func
         );
     }
@@ -39,8 +39,8 @@ final class NewsletterFirstnameContractTest extends TestCase
     public function testRecipientMergeCombinesSelectedUserAndMailingListMetadataByEmail(): void
     {
         self::assertStringContainsString('$email_key = strtolower(trim((string) $recipient[\'email\']))', $this->func);
-        self::assertStringContainsString("($field === 'firstname' && $value !== '')", $this->func);
-        self::assertStringContainsString("($field === 'subscriber_id' && !empty($value))", $this->func);
+        self::assertStringContainsString("(\$field === 'firstname' && \$value !== '')", $this->func);
+        self::assertStringContainsString("(\$field === 'subscriber_id' && !empty(\$value))", $this->func);
     }
 
     public function testRendererEscapesFirstnameWithoutDatabaseLookup(): void
@@ -58,7 +58,7 @@ final class NewsletterFirstnameContractTest extends TestCase
     public function testEmptyFirstnameGreetingFallsBackCleanly(): void
     {
         self::assertStringContainsString(
-            "$firstname !== '' ? $firstname . ', здравствуйте!' : 'Здравствуйте!'",
+            "\$firstname !== '' ? \$firstname . ', здравствуйте!' : 'Здравствуйте!'",
             $this->func
         );
     }
@@ -68,7 +68,7 @@ final class NewsletterFirstnameContractTest extends TestCase
         self::assertStringContainsString('user_points.data AS points_data', $this->func);
         self::assertStringContainsString('LEFT JOIN ?:user_data AS user_points', $this->func);
         self::assertStringContainsString('user_points.type = ?s', $this->func);
-        self::assertStringContainsString("($field === 'points_data' && $value !== null && $value !== '')", $this->func);
+        self::assertStringContainsString("(\$field === 'points_data' && \$value !== null && \$value !== '')", $this->func);
         self::assertStringContainsString("['%POINTS_BALANCE%']", $this->func);
         self::assertStringContainsString("preg_match('/^i:(-?\\\\d+);$/D'", $this->func);
         self::assertStringNotContainsString('fn_get_user_additional_data(POINTS', $this->func);
