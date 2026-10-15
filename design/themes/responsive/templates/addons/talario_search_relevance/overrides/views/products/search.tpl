@@ -29,12 +29,25 @@
 {if $talario_related_lessons}
     <section class="ty-search-related" aria-label="Похожие направления">
         <h2 class="ty-subheader">Похожие направления</h2>
-        <p>Близкие по направлению занятия, которые могут вам подойти. Это отдельные предложения, не результаты точного запроса.</p>
-        <ul class="ty-simple-list">
-            {foreach $talario_related_lessons as $lesson}
-                <li><a href="{"products.view?product_id=`$lesson.product_id`"|fn_url}">{$lesson.product|escape}</a></li>
-            {/foreach}
-        </ul>
+        <p>Близкие по направлению занятия, которые могут вам подойти.</p>
+        {include file="blocks/list_templates/grid_list.tpl"
+            products=$talario_related_lessons
+            columns=4
+            no_sorting="Y"
+            no_pagination="Y"
+            no_ids="Y"
+            obj_prefix="talario_related_"
+            show_name=true
+            show_old_price=true
+            show_price=true
+            show_clean_price=true
+            show_product_labels=true
+            show_discount_label=true
+            show_shipping_label=true
+            show_list_buttons=false
+            show_add_to_cart=false
+            show_quick_view_for_options=false
+            show_features=false}
     </section>
 {/if}
 
