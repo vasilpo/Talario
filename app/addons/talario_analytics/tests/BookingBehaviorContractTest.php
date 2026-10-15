@@ -66,4 +66,12 @@ final class BookingBehaviorContractTest extends TestCase
         );
         self::assertStringContainsString("data-ca-variant-id", $this->behavior);
     }
+
+    public function testScheduleOpenUsesCaptureFallbackForDatePickerClicks(): void
+    {
+        self::assertStringContainsString('function trackScheduleOpen()', $this->behavior);
+        self::assertStringContainsString("document.addEventListener('click'", $this->behavior);
+        self::assertStringContainsString('}, true);', $this->behavior);
+        self::assertStringContainsString("trackScheduleOpen();", $this->behavior);
+    }
 }
