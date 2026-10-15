@@ -30,33 +30,15 @@
     <section class="ty-search-related" aria-label="Похожие направления">
         <h2 class="ty-subheader">Похожие направления</h2>
         <p>Близкие по направлению занятия, которые могут вам подойти.</p>
-        {* Use the same renderer and display contract as the standard catalog. *}
-        {include file="blocks/list_templates/grid_list.tpl"
+        {* Render related products through the exact layout selected for the catalog. *}
+        {include file="`$layouts.$selected_layout.template`"
             products=$talario_related_lessons
             columns=4
             no_sorting="Y"
             no_pagination="Y"
             no_ids="Y"
             obj_prefix="talario_related_"
-            show_name=true
-            show_old_price=true
-            show_price=true
-            show_rating=true
-            show_rating_num=true
-            show_clean_price=true
-            show_list_discount=true
-            show_product_amount=true
-            show_amount_label=false
-            show_sku=false
-            show_qty=false
-            show_features=true
-            show_descr=false
-            show_list_buttons=false
-            show_add_to_cart=true
-            but_role="action"
-            show_product_labels=true
-            show_discount_label=true
-            show_shipping_label=true}
+            show_qty=true}
     </section>
 {/if}
 
