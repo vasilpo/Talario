@@ -347,15 +347,26 @@
         }));
     });
 
-    $(document).on('click focus', '#date-range22, .date-picker-wrapper, .ec_select_slots_list, [id^="ec_timeslots"], [data-talario-schedule]', function () {
+    function trackScheduleOpen() {
         if (scheduleSeen) {
             return;
         }
 
         scheduleSeen = true;
         emit('talario_schedule_open', pagePayload());
+    }
+
+    $(document).on('click focus', '#date-range22, .date-picker-wrapper, .ec_select_slots_list, [id^="ec_timeslots"], [data-talario-schedule]', function () {
+        trackScheduleOpen();
     });
 
+    document.addEventListener('click', function (event) {
+        var target = event.target;
+
+        if (target && $(target).closest('#date-range22, .date-picker-wrapper, .ec_select_slots_list, [id^="ec_timeslots"], [data-talario-schedule]').length) {
+            trackScheduleOpen();
+        }
+    }, true);
     $(document).on('change', '.ec_select_slots_list, select[name*="[booking_slot]"], input[name*="[booking_slot]"]', function () {
         var value = String($(this).val() || '');
 
