@@ -56,6 +56,24 @@ namespace {
         return [array_slice($found, ($page - 1) * $limit, $limit), ['total_items' => count($found), 'page' => $page]];
     }
 
+    // Isolate related-card enrichment from the full CS-Cart runtime. The
+    // production functions are exercised by their dedicated fixture test;
+    // this behavior suite only needs deterministic product results here.
+    function fn_gather_additional_products_data(&$products, $params, $lang_code = 'ru')
+    {
+        foreach ($products as &$product) {
+            $product['main_pair'] = ['image_id' => $product['product_id']];
+            $product['address'] = 'Красногорск, тестовый адрес';
+        }
+    }
+
+    function fn_abt__ut2_add_products_features_list(&$products, $feature_id = 0, $return = false)
+    {
+        foreach ($products as &$product) {
+            $product['abt__ut2_features'] = ['age' => ['variant' => 'с 3х лет']];
+        }
+    }
+
     function check($condition, $message)
     {
         if (!$condition) {
