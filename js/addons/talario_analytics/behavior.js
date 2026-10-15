@@ -154,14 +154,26 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit('talario_variant_select');
     });
 
-    $(document).on('click focus', '#date-range22, .date-picker-wrapper, .ec_select_slots_list, [id^="ec_timeslots"]', function () {
+    function trackScheduleOpen() {
         if (scheduleSeen) {
             return;
         }
 
         scheduleSeen = true;
         emit('talario_schedule_open');
+    }
+
+    $(document).on('click focus', '#date-range22, .date-picker-wrapper, .ec_select_slots_list, [id^="ec_timeslots"]', function () {
+        trackScheduleOpen();
     });
+
+    document.addEventListener('click', function (event) {
+        var target = event.target;
+
+        if (target && $(target).closest('#date-range22, .date-picker-wrapper, .ec_select_slots_list, [id^="ec_timeslots"]').length) {
+            trackScheduleOpen();
+        }
+    }, true);
 
     $(document).on('change', '.ec_select_slots_list, select[name*="[booking_slot]"]', function () {
         if (!String($(this).val() || '')) {
