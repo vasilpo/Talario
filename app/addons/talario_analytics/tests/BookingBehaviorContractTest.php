@@ -57,4 +57,13 @@ final class BookingBehaviorContractTest extends TestCase
         self::assertStringNotContainsString("email:", $this->behavior);
         self::assertStringNotContainsString("phone:", $this->behavior);
     }
+
+    public function testCatalogVariationFeatureInputsAreTracked(): void
+    {
+        self::assertStringContainsString(
+            '.cm-picker-product-variation-features input[type="radio"][name^="feature_"]',
+            $this->behavior
+        );
+        self::assertStringContainsString("data-ca-variant-id", $this->behavior);
+    }
 }

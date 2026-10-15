@@ -338,12 +338,12 @@
         });
     });
 
-    $(document).on('change', 'select[name*="[product_options]"], input[name*="[product_options]"], [data-ca-variation-code]', function () {
+    $(document).on('change', 'select[name*="[product_options]"], input[name*="[product_options]"], .cm-picker-product-variation-features input[type="radio"][name^="feature_"], [data-ca-variation-code]', function () {
         var $field = $(this);
 
         emit('talario_variant_select', pagePayload({
             option: $field.attr('name') || $field.attr('data-ca-variation-code') || $field.attr('id') || '',
-            variation_id: $field.val() || $field.attr('data-ca-variation-code') || ''
+            variation_id: $field.val() || $field.attr('data-ca-variation-code') || $field.attr('data-ca-variant-id') || ''
         }));
     });
 
