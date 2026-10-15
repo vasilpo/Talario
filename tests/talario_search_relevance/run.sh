@@ -141,3 +141,5 @@ echo "TALARIO_SEARCH_RELEVANCE_TESTS=PASS\n";
 php tests/talario_search_relevance/behavior.php
 php tests/talario_search_relevance/choreography.php
 php tests/talario_search_relevance/karate.php
+php tests/talario_search_relevance/related_card.php
+php tests/talario_search_relevance/related_template.php

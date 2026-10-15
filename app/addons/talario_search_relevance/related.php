@@ -61,6 +61,35 @@ function fn_talario_search_relevance_related_matches(array $product, string $ter
     return $plan['location'] === '' || preg_match('/(?<!\p{L})' . preg_quote($plan['location'], '/') . '(?!\p{L})/u', $title) === 1;
 }
 
+/**
+ * Prepare related products with the same data enrichment as the catalog.
+ *
+ * The renderer is shared with the normal product grid, so related products
+ * must receive its image, price, address and theme feature data as well.
+ */
+function fn_talario_search_relevance_prepare_related_products(array $products, string $lang_code): array
+{
+    if (!$products) {
+        return [];
+    }
+
+    fn_gather_additional_products_data($products, [
+        'get_icon'        => true,
+        'get_detailed'    => true,
+        'get_additional'  => true,
+        'get_options'     => true,
+        'get_discounts'   => true,
+        'get_features'    => false,
+    ], $lang_code);
+
+    // The active theme uses this bulk modifier to expose catalog age/features.
+    if (function_exists('fn_abt__ut2_add_products_features_list')) {
+        fn_abt__ut2_add_products_features_list($products);
+    }
+
+    return $products;
+}
+
 /** At most three bounded native queries, no visitor-search analytics dispatch. */
 function fn_talario_search_relevance_related_products(array $params, array $primary, string $lang_code): array
 {
@@ -75,8 +104,12 @@ function fn_talario_search_relevance_related_products(array $params, array $prim
         $internal['pkeywords'] = 'N';
         $internal['page'] = 1;
         $internal['items_per_page'] = 6;
-        // The related block uses the standard CS-Cart product card template,
-        // so request the image pair and the normal display fields here.
+        // Keep the same product fields as the normal catalog card. The theme's
+        // sd_design_changes hook supplies address when description is extended.
+        $internal['extend'] = array_values(array_unique(array_merge(
+            is_array($internal['extend'] ?? null) ? $internal['extend'] : [],
+            ['category_ids', 'description', 'product_name']
+        )));
         $internal['get_images'] = true;
         [$candidates] = fn_get_products($internal, 6, $lang_code);
         $added = 0;
@@ -92,5 +125,6 @@ function fn_talario_search_relevance_related_products(array $params, array $prim
             }
         }
     }
-    return $result;
+
+    return fn_talario_search_relevance_prepare_related_products($result, $lang_code);
 }
