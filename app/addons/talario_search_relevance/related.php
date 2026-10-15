@@ -75,6 +75,9 @@ function fn_talario_search_relevance_related_products(array $params, array $prim
         $internal['pkeywords'] = 'N';
         $internal['page'] = 1;
         $internal['items_per_page'] = 6;
+        // The related block uses the standard CS-Cart product card template,
+        // so request the image pair and the normal display fields here.
+        $internal['get_images'] = true;
         [$candidates] = fn_get_products($internal, 6, $lang_code);
         $added = 0;
         foreach ($candidates as $product) {
@@ -83,7 +86,7 @@ function fn_talario_search_relevance_related_products(array $params, array $prim
                 continue;
             }
             $seen[$id] = true;
-            $result[] = ['product_id' => $id, 'product' => $product['product']];
+            $result[] = $product;
             if (++$added === 2) {
                 break;
             }
