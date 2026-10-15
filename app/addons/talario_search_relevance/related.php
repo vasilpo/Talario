@@ -108,7 +108,7 @@ function fn_talario_search_relevance_related_products(array $params, array $prim
         // sd_design_changes hook supplies address when description is extended.
         $internal['extend'] = array_values(array_unique(array_merge(
             is_array($internal['extend'] ?? null) ? $internal['extend'] : [],
-            ['description', 'product_name']
+            ['category_ids', 'description', 'product_name']
         )));
         $internal['get_images'] = true;
         [$candidates] = fn_get_products($internal, 6, $lang_code);
