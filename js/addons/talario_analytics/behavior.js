@@ -9,6 +9,7 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     var QUEUE_LIMIT = 20;
     var QUEUE_TTL_MS = 2000;
     var RETRY_MS = 250;
+    var productViewSeen = false;
 
     var allowedEvents = {
         talario_search_submit: true,
@@ -50,14 +51,15 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         );
     }
 
-    function shouldSend(name) {
+    function shouldSend(name, dedupeName) {
         var now = Date.now();
+        var key = dedupeName || name;
 
-        if (recent[name] && now - recent[name] < 600) {
+        if (recent[key] && now - recent[key] < 600) {
             return false;
         }
 
-        recent[name] = now;
+        recent[key] = now;
         return true;
     }
 
@@ -110,8 +112,8 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         }
     }
 
-    function emit(name) {
-        if (!allowedEvents[name] || !shouldSend(name)) {
+    function emit(name, dedupeName) {
+        if (!allowedEvents[name] || !shouldSend(name, dedupeName)) {
             return;
         }
 
@@ -146,12 +148,25 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
         emit('talario_filter_apply');
     });
 
-    $(document).on('click', 'a[href*="products.view"][href*="product_id="]', function () {
+    function detectProductView() {
+        if (productViewSeen || !$('#product_detail_page').length || !$('form[name^="product_form_"]').length) {
+            return;
+        }
+
+        productViewSeen = true;
         emit('talario_product_open');
+    }
+
+    $(function () {
+        detectProductView();
     });
 
-    $(document).on('change', 'select[name*="[product_options]"], input[name*="[product_options]"], [data-ca-variation-code]', function () {
-        emit('talario_variant_select');
+    $(document).on('change', 'select[name*="[product_options]"], input[name*="[product_options]"], input[name^="feature_"], [data-ca-variation-code]', function () {
+        var $field = $(this);
+        var fieldName = $field.attr('name') || '';
+        var fieldValue = $field.val() || '';
+
+        emit('talario_variant_select', 'talario_variant_select:' + fieldName + '=' + fieldValue);
     });
 
     function trackScheduleOpen() {
@@ -186,12 +201,34 @@ if (typeof Tygh !== 'undefined' && Tygh.$) {
     $(document).on('click', 'button[name^="dispatch[checkout.add"], input[name^="dispatch[checkout.add"], [id^="button_cart_"]', function () {
         var isBooking = $(this).closest('form').find('[name*="[booking_info]"]').length > 0;
 
-        emit(isBooking ? 'talario_booking_cta' : 'talario_add_to_cart');
+        if (isBooking) {
+            emit('talario_booking_cta');
+        }
     });
 
-    $(document).on('click', 'a[href*="checkout.checkout"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout"]', function () {
+    $(document).on('click', 'a[href*="checkout.checkout"], a[href*="checkout.login_form"], button[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.checkout"]', function () {
         emit('talario_checkout_start');
     });
+
+    if ($.ceEvent) {
+        $.ceEvent('on', 'ce.ajaxdone', function (elms, inline_scripts, params, data) {
+            var added;
+            var i;
+
+            if (!params || !params.url || params.url.indexOf('checkout.add') === -1) {
+                return;
+            }
+
+            added = data && data.yandex_metrika && data.yandex_metrika.added;
+            if (!added || !added.length) {
+                return;
+            }
+
+            for (i = 0; i < added.length; i++) {
+                emit('talario_add_to_cart');
+            }
+        });
+    }
 
     window.addEventListener('popstate', function () {
         emit('talario_back');
