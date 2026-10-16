@@ -61,10 +61,35 @@ final class BookingBehaviorContractTest extends TestCase
     public function testCatalogVariationFeatureInputsAreTracked(): void
     {
         self::assertStringContainsString(
-            '.cm-picker-product-variation-features input[type="radio"][name^="feature_"]',
+            'input[name^="feature_"]',
             $this->behavior
         );
+        self::assertStringContainsString("option: $field.attr('name')", $this->behavior);
+        self::assertStringContainsString("variation_id: $field.val()", $this->behavior);
         self::assertStringContainsString("data-ca-variant-id", $this->behavior);
+    }
+
+    public function testProductOpenUsesCanonicalProductPageDetection(): void
+    {
+        self::assertStringContainsString("var isProductController = ctx.controller === 'products'", $this->behavior);
+        self::assertStringContainsString("ctx.mode === 'view' || ctx.mode === 'options'", $this->behavior);
+        self::assertStringContainsString("if (productId && (isProductController || hasProductForm))", $this->behavior);
+        self::assertSame(1, substr_count($this->behavior, "emit('talario_product_open'"));
+        self::assertStringNotContainsString("a[href*='products.view'][href*='product_id=']", $this->behavior);
+    }
+
+    public function testGuestCheckoutStartCoversLoginGate(): void
+    {
+        self::assertStringContainsString('a[href*="checkout.login_form"]', $this->behavior);
+        self::assertStringContainsString('button[name^="dispatch[checkout.login_form"]', $this->behavior);
+        self::assertStringContainsString('a[href*="checkout.checkout"]', $this->behavior);
+    }
+
+    public function testAddToCartRequiresSuccessfulCheckoutAddResponse(): void
+    {
+        self::assertStringContainsString("params.url.indexOf('checkout.add') === -1", $this->behavior);
+        self::assertStringContainsString('data.yandex_metrika', $this->behavior);
+        self::assertStringContainsString("emit('talario_add_to_cart'", $this->behavior);
     }
 
     public function testScheduleOpenUsesCaptureFallbackForDatePickerClicks(): void
