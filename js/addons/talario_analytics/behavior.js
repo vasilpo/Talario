@@ -245,15 +245,12 @@
 
     function detectProductView() {
         var ctx = analyticsContext();
+        var isProductController = ctx.controller === 'products'
+            && (ctx.mode === 'view' || ctx.mode === 'options');
         var hasProductForm = $('form[name^="product_form_"], form[id^="product_form_"]').length > 0;
         var productId = currentProductId();
 
-        if (ctx.controller === 'products' && ctx.mode === 'view' && productId) {
-            emit('talario_product_open', pagePayload());
-            return;
-        }
-
-        if (hasProductForm && productId) {
+        if (productId && (isProductController || hasProductForm)) {
             emit('talario_product_open', pagePayload());
         }
     }
@@ -338,7 +335,7 @@
         });
     });
 
-    $(document).on('change', 'select[name*="[product_options]"], input[name*="[product_options]"], .cm-picker-product-variation-features input[type="radio"][name^="feature_"], [data-ca-variation-code]', function () {
+    $(document).on('change', 'select[name*="[product_options]"], input[name*="[product_options]"], input[name^="feature_"], [data-ca-variation-code]', function () {
         var $field = $(this);
 
         emit('talario_variant_select', pagePayload({
@@ -392,6 +389,10 @@
         }
     });
 
+    $(document).on('click', 'a[href*="checkout.checkout"], a[href*="checkout.login_form"], button[name^="dispatch[checkout.checkout"], button[name^="dispatch[checkout.login_form"], input[name^="dispatch[checkout.checkout"], input[name^="dispatch[checkout.login_form"]', function () {
+        emit('talario_checkout_start', pagePayload());
+    });
+
     if ($.ceEvent) {
         $.ceEvent('on', 'ce.notificationshow', function (context) {
             detectBookingError(context);
@@ -401,6 +402,10 @@
             var metrika = data && data.yandex_metrika ? data.yandex_metrika : {};
             var added = metrika.added || [];
             var i;
+
+            if (!params || !params.url || params.url.indexOf('checkout.add') === -1) {
+                return;
+            }
 
             for (i = 0; i < added.length; i += 1) {
                 emit('talario_add_to_cart', {
