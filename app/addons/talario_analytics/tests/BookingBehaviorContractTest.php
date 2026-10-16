@@ -64,8 +64,8 @@ final class BookingBehaviorContractTest extends TestCase
             'input[name^="feature_"]',
             $this->behavior
         );
-        self::assertStringContainsString("option: $field.attr('name')", $this->behavior);
-        self::assertStringContainsString("variation_id: $field.val()", $this->behavior);
+        self::assertStringContainsString("option: \$field.attr('name')", $this->behavior);
+        self::assertStringContainsString("variation_id: \$field.val()", $this->behavior);
         self::assertStringContainsString("data-ca-variant-id", $this->behavior);
     }
 
