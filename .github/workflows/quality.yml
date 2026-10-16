@@ -139,6 +139,9 @@ jobs:
       - name: Run Partner Sync contract tests
         run: phpunit --no-coverage app/addons/talario_analytics/tests/PartnerSyncReadApiContractTest.php
 
+      - name: Run Talario booking behavior contract tests
+        run: phpunit --no-coverage app/addons/talario_analytics/tests/BookingBehaviorContractTest.php
+
   talario-schedule-resources:
     name: Talario schedule resource tests
     runs-on: ubuntu-latest
