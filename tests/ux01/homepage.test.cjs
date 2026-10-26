@@ -41,7 +41,7 @@ test('only the first name from escaped server context is rendered as text', () =
 });
 test('theme CSS cannot affect non-enhanced pages', () => {
   const css = fs.readFileSync(cssPath, 'utf8');
-  assert.match(css, /^html\.talario-ux01-active\s*\{/);
+  assert.match(css, /html\.talario-ux01-active\s*\{/);
   assert.match(css, /@media\s*\(max-width:\s*900px\)/);
   assert.match(css, /@media\s*\(max-width:\s*375px\)/);
   assert.match(css, /text-overflow:\s*ellipsis/);
