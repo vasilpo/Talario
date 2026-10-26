@@ -134,6 +134,16 @@
                     image.querySelector('a.product_icon_lnk').addEventListener('click', function (e) { if (didSwipe) { e.preventDefault(); didSwipe = false; } });
                 }
             }
+            if (photo) {
+                var candidates = sources || [photo.getAttribute('src')]; var nextImage = 1;
+                var recoverPhoto = function () {
+                    if (nextImage < candidates.length) { photo.src = candidates[nextImage++]; return; }
+                    photo.hidden = true; if (gallery) { gallery.hidden = true; }
+                    if (!image.querySelector('.ux01-no-image')) { image.querySelector('a.product_icon_lnk').appendChild(make('span', 'ux01-no-image', 'Фото отсутствует')); }
+                };
+                photo.addEventListener('error', recoverPhoto);
+                if (photo.complete && photo.naturalWidth === 0) { recoverPhoto(); }
+            }
         });
         if (feed && cards.length > 1 && !feed.querySelector('.mobile-bonus')) {
             var bonus = make('aside', 'mobile-bonus'); bonus.appendChild(icon('gift'));
