@@ -34,7 +34,7 @@ try {
         check(strpos($scripts, 'ux01_homepage.js') !== false, 'UX-01 JS missing for dev_copy runtime ' . $controller);
         check(strpos($styles, 'ux01_homepage.less') !== false, 'UX-01 CSS missing for dev_copy runtime ' . $controller);
         check(strpos($scripts, '<img') === false, 'First name must be HTML escaped');
-        check(strpos($scripts, '&lt;img') !== false, 'Escaped first name context missing');
+        check(strpos($scripts, '\\u003Cimg') !== false, 'Script-safe first name context missing');
         echo 'PASS dev_copy assets + escaped context: ' . ($controller ?: '(empty)') . PHP_EOL;
     }
     foreach (['', '/shop', '/dev_copy_other'] as $path) {

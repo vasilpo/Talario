@@ -1,163 +1,449 @@
-/* UX-01 · scoped only to /dev_copy/ after JS has confirmed native catalog controls. */
-html.talario-ux01-active {
-  body { background: #fcf8ee; color: #30291f; }
-  .tygh-top-panel, .tygh-header { display: none !important; }
-  .tygh-content .content-grid > .container-fluid-row { display: none !important; }
-  .talario-ux01 {
-    display: block;
-    width: 100%;
-    max-width: 1440px;
-    margin: 0 auto;
-    background: #fcf8ee;
-    font-family: "Golos Text", Arial, sans-serif;
-    color: #30291f;
-  }
-  .talario-ux01 * { box-sizing: border-box; }
-  .talario-ux01__header {
-    background: #fff;
-    border-bottom: 1px solid #e9e4d9;
-    width: 100%;
-  }
-  .talario-ux01__header-inner {
-    max-width: 1248px;
-    min-height: 78px;
-    margin: 0 auto;
-    padding: 12px 16px;
-    display: flex; align-items: center; gap: 18px;
-  }
-  .talario-ux01__brand { display: flex; flex: 0 0 auto; align-items: center; width: 141px; }
-  .talario-ux01__logo { display: block; width: 141px; height: auto; object-fit: contain; }
-  .talario-ux01__city { font-size: 13px; color: #746d60; white-space: nowrap; }
-  .talario-ux01__header-links { margin-left: auto; display: flex; align-items: center; gap: 28px; }
-  .talario-ux01__header-links a { font-size: 13px; color: #30291f; text-decoration: none; }
-  .talario-ux01__actions { display: flex; align-items: center; gap: 8px; margin-left: 18px; min-width: 0; }
-  .talario-ux01__profile, .talario-ux01__cart {
-    display: flex; align-items: center; justify-content: center;
-    min-width: 44px; min-height: 44px; gap: 7px;
-    color: #30291f; text-decoration: none; padding: 0 4px; flex-shrink: 0;
-  }
-  .talario-ux01__profile { min-width: 0; }
-  .talario-ux01__first-name {
-    display: block; max-width: 170px; overflow: hidden;
-    white-space: nowrap; text-overflow: ellipsis; font-weight: 600;
-  }
-  .talario-ux01__user-icon, .talario-ux01__cart { font-size: 23px; }
-  .talario-ux01__menu { position: relative; display: none; }
-  .talario-ux01__hamburger {
-    list-style: none; cursor: pointer; font-size: 27px;
-    display: flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px;
-  }
-  .talario-ux01__hamburger::-webkit-details-marker { display: none; }
-  .talario-ux01__menu-panel {
-    position: absolute; top: 48px; left: 0; z-index: 100;
-    width: 240px; max-width: calc(100vw - 32px);
-    padding: 8px; border-radius: 12px; border: 1px solid #e9e4d9;
-    background: #fff; box-shadow: 0 10px 32px #3b362119;
-  }
-  .talario-ux01__menu-panel a {
-    display: flex; align-items: center; min-height: 44px;
-    color: #30291f; text-decoration: none; padding: 8px 12px; border-radius: 8px;
-  }
-  .talario-ux01__menu-panel a:focus-visible, .talario-ux01__menu-panel a:hover { background: #fff0bc; }
-  .talario-ux01__main { max-width: 1248px; margin: 0 auto; padding: 30px 16px 56px; }
-  .talario-ux01__intro {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    gap: 24px; margin: 0 0 26px;
-  }
-  .talario-ux01__title {
-    margin: 0 0 8px; font-size: clamp(27px, 3vw, 40px); line-height: 1.15;
-    font-weight: 800; letter-spacing: -0.03em; color: #30291f;
-  }
-  .talario-ux01__city-accent {
-    display: inline; background: linear-gradient(transparent 83%, #f7c948 83%, #f7c948 94%, transparent 94%);
-    box-decoration-break: clone; -webkit-box-decoration-break: clone;
-  }
-  .talario-ux01__subtitle { color: #746d60; font-size: 14px; margin: 0; }
-  .talario-ux01__bonus {
-    display: flex; flex-direction: column; gap: 3px; padding: 12px 18px;
-    text-decoration: none; border-left: 3px solid #f7c948;
-    color: #30291f; min-width: 255px; font-size: 13px;
-  }
-  .talario-ux01__bonus span { color: #746d60; font-size: 12px; }
-  .talario-ux01__controls { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; align-items: center; margin: 0 0 22px; }
-  .talario-ux01__search, .talario-ux01__filters { min-width: 0; }
-  .talario-ux01__search .ty-search-block, .talario-ux01__search form[name="search_form"] { display: block; position: relative; width: 100%; }
-  .talario-ux01__search .ty-search-block__input {
-    box-sizing: border-box; width: 100%; height: 52px;
-    border: 1px solid #b9ad97; border-radius: 27px; padding: 0 108px 0 42px;
-    background: #fff; font-size: 14px; box-shadow: none;
-  }
-  .talario-ux01__search .ty-search-magnifier {
-    position: absolute; right: 5px; top: 5px;
-    height: 42px; width: 90px; border-radius: 24px; background: #f7c948;
-    color: #30291f; border: 0; box-shadow: none;
-  }
-  .talario-ux01__search .ty-search-magnifier::after { content: "Найти"; font-family: "Golos Text", Arial, sans-serif; font-weight: 700; }
-  .talario-ux01__search .ty-search-magnifier i { display: none; }
-  .talario-ux01__filters .cm-lr-homepage-search-filters {
-    display: block; margin: 0; padding: 0; background: transparent;
-    border: 0; min-height: 48px; overflow: visible;
-  }
-  .talario-ux01__filters .ut2-scroll-content {
-    display: flex !important; flex-wrap: nowrap; align-items: center;
-    overflow: visible !important; width: 100%; border: 1px solid #d8cebc;
-    border-radius: 10px; background: #f5f0e5;
-  }
-  .talario-ux01__filters .ut2__horizontal-product-filters-dropdown {
-    min-width: 0; flex: 1 1 33%; padding: 0; border-right: 1px solid #d8cebc;
-  }
-  .talario-ux01__filters .ty-horizontal-product-filters-dropdown__wrapper {
-    display: flex; justify-content: space-between; align-items: center;
-    box-sizing: border-box; width: 100%; min-height: 46px;
-    padding: 0 10px; border: none; background: none; font-size: 13px;
-  }
-  .talario-ux01__filters .ut2-scroll-left,
-  .talario-ux01__filters .ut2-scroll-right { display: none !important; }
-  .talario-ux01__catalog .lr-homepage-catalog-layout { display: block; margin: 0; }
-  .talario-ux01__catalog .lr-homepage-catalog-layout__sidebar { display: none !important; }
-  .talario-ux01__catalog .lr-homepage-catalog-layout__content { min-width: 0; width: 100%; }
-  .talario-ux01__catalog .lr-homepage-catalog-layout__section-title { font-size: 21px; font-weight: 800; margin: 6px 0 16px; }
-  .talario-ux01__catalog .lr-homepage-catalog-layout__section-title::first-letter { text-transform: uppercase; }
-  .talario-ux01__catalog .lr-homepage-catalog-layout__section-separator { display: none; }
-  .talario-ux01__catalog .ty-sort-container { margin-bottom: 12px; }
-  .talario-ux01__catalog .ut2-gl__item { border: 1px solid #e9e1d3; border-radius: 15px; background: #fff; overflow: hidden; }
-  .talario-ux01__catalog .ty-column4 { width: 49% !important; margin: 0 .5% 12px !important; box-sizing: border-box; }
-  .talario-ux01__catalog .ut2-gl__body { border-radius: 15px; }
-  .talario-ux01__catalog .ut2-load-more { background: #fff; border: 1px solid #d8cebc; border-radius: 22px; }
-  .tygh-footer { background: #333832; border-top: 2px solid #f7c948; }
-  .tygh-footer .ty-footer-menu { background: #333832; }
-  .tygh-footer .ty-footer, .tygh-footer .ty-footer a, .tygh-footer .ty-footer-general__header,
-  .tygh-footer .ty-footer-menu__item a { color: #f7f6ef !important; }
-  .tygh-footer .ty-footer-menu__item a:hover { color: #f7c948 !important; }
-  .tygh-footer .ty-footer-menu .row-fluid { max-width: 1248px; margin: 0 auto; }
+/* Approved Golos Restored 26.10 source, scoped to the dev-only native shell. */
+@font-face{font-family:"Golos Text";src:url("/dev_copy/design/themes/abt__unitheme2/media/fonts/talario-ux01-golos.ttf") format("truetype");font-weight:100 900;font-display:swap}
+.talario-ux01{font-size:100%;color-scheme:light;--canvas:#FFFBF1;--paper:#fff;--ink:#30291F;--muted:#686157;--gold:#F5C83E;--soft:#FFF0B5;--line:#E6DFD0;--control:#8C806D;--focus:#795700;--selected:#FFF1BD}
+.talario-ux01 *{box-sizing:border-box}
+.talario-ux01{margin:0;background:var(--canvas);color:var(--ink);font:.875rem/1.45 "Golos Text",sans-serif;-webkit-font-smoothing:antialiased}
+.talario-ux01 button,.talario-ux01 input,.talario-ux01 select{font:inherit;color:inherit}
+.talario-ux01 button,.talario-ux01 a,.talario-ux01 input,.talario-ux01 select{-webkit-tap-highlight-color:transparent}
+.talario-ux01 button{cursor:pointer}
+.talario-ux01 button,.talario-ux01 a{touch-action:manipulation}
+.talario-ux01 button{border:0}
+.talario-ux01 a{color:inherit;text-decoration:none}
+.talario-ux01 button:disabled{cursor:default;opacity:1}
+.talario-ux01 svg{width:20px;height:20px;flex-shrink:0;stroke-width:1.8}
+.talario-ux01 button:focus-visible,.talario-ux01 a:focus-visible,.talario-ux01 input:focus-visible,.talario-ux01 select:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.talario-ux01 button:active:not(:disabled),.talario-ux01 a.more:active{filter:brightness(.93)}
+.talario-ux01 [hidden]{display:none!important}
+.talario-ux01 .wrap{max-width:1248px;margin:0 auto}
+.talario-ux01 .header-inner{min-height:64px;display:flex;align-items:center;gap:12px;padding:8px 16px}
+.talario-ux01 .brand{display:flex;align-items:center;min-height:44px;flex-shrink:0}
+.talario-ux01 .logo{width:140px;height:auto;display:block}
+.talario-ux01 .header-city,.talario-ux01 .header-links{display:none}
+.talario-ux01 .header-actions{display:flex;margin-left:auto}
+.talario-ux01 .iconbutton{width:44px;min-height:44px;display:grid;place-items:center;border-radius:50%;background:transparent;flex-shrink:0}
+.talario-ux01 .iconbutton:hover{background:#F0EBDD}
+.talario-ux01 .header-actions .menu{display:grid}
+.talario-ux01 .intro{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 12px;gap:24px}
+.talario-ux01 .intro-copy{min-width:0}
+.talario-ux01 h1{margin:0;font-size:1.75rem;line-height:1.11;letter-spacing:-.0625rem;font-weight:750;max-width:700px}
+.talario-ux01 h1 .city-accent{position:relative;display:inline-block;white-space:nowrap;padding-right:3px;box-shadow:none;isolation:isolate}
+.talario-ux01 h1 .city-accent-rule{display:block;position:absolute;left:0;right:3px;bottom:1px;height:4px;background:var(--gold);border:0;border-radius:0;z-index:0;pointer-events:none}
+.talario-ux01 h1 .city-accent-text{display:inline;position:relative;z-index:1;box-shadow:none;background:transparent;padding:0}
+@media(min-width:768px){.talario-ux01 h1 .city-accent-rule{bottom:2px;height:5px}}
+.talario-ux01 .subtitle{margin:7px 0 0;font-size:.875rem;line-height:1.43;color:var(--muted)}
+.talario-ux01 .desktop-bonus{display:none}
+.talario-ux01 .query-inner{padding:0 16px}
+.talario-ux01 .search{display:flex;align-items:center;gap:9px;min-height:52px;border:1.5px solid #463B29;border-radius:28px;background:white;padding:3px 4px 3px 14px}
+.talario-ux01 .search:focus-within{box-shadow:0 0 0 3px #F5C83E66}
+.talario-ux01 .search>svg{width:18px;height:18px}
+.talario-ux01 .search input{display:block;width:100%;min-width:0;flex:1;border:0;background:transparent;outline-offset:2px;padding:7px 0;font-size:.9375rem;line-height:1.4}
+.talario-ux01 .search input::placeholder{color:#70675A;opacity:1}
+.talario-ux01 .search input:focus-visible{outline:0}
+.talario-ux01 .search-submit{min-height:44px;flex-shrink:0;padding:0 .875rem;border-radius:24px;background:var(--gold);font-size:.875rem;font-weight:700;line-height:1.35}
+.talario-ux01 .search-submit:hover{background:#EFBD2D}
+.talario-ux01 .search-submit:focus-visible{outline-offset:2px}
+.talario-ux01 .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.talario-ux01 .quick-button{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 10px;border:1px solid var(--control);border-radius:24px;background:transparent;flex:1 1 auto;font-size:.875rem;line-height:1.25;font-weight:550;min-width:max-content}
+.talario-ux01 .quick-button>svg{width:14px;height:14px}
+.talario-ux01 .quick-button:hover:not(:disabled),.talario-ux01 .allfilters:hover{background:#F3EEDf}
+.talario-ux01 .quick-button.selected{background:var(--selected);border-color:#957014;font-weight:650}
+.talario-ux01 .quick-button:disabled{border-color:#C8BEAB;color:#6B6356;background:transparent}
+.talario-ux01 .allfilters{min-height:46px;min-width:0;display:flex;align-items:center;justify-content:center;gap:7px;flex:1;border:1px solid var(--control);border-radius:25px;background:transparent;font-size:.875rem;line-height:1.3;font-weight:600;padding:5px 12px}
+.talario-ux01 .allfilters svg{width:18px;height:18px}
+.talario-ux01 .filter-count{display:none;min-width:22px;min-height:22px;align-items:center;justify-content:center;border-radius:12px;background:var(--ink);color:white;font-size:.75rem;padding:1px 5px}
+.talario-ux01 .allfilters.has-filters{background:var(--selected);border-color:#957014}
+.talario-ux01 .allfilters.has-filters .filter-count{display:flex}
+.talario-ux01 .resultbar{min-height:51px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px 7px;gap:8px}
+.talario-ux01 .resultbar h2{margin:0;font-size:1.0625rem;line-height:1.4;font-weight:750;letter-spacing:-.01875rem}
+.talario-ux01 .sort{display:flex;align-items:center;position:relative;flex-shrink:0}
+.talario-ux01 .sort select{appearance:none;border:0;background:transparent;min-height:44px;font-size:.875rem;padding:4px 23px 4px 4px;max-width:100%;cursor:pointer}
+.talario-ux01 .sort svg{position:absolute;right:2px;width:14px;height:14px;pointer-events:none}
+.talario-ux01 .feed{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:0 16px}
+.talario-ux01 .activity{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 3px 12px #8E712008;min-width:0;display:flex;flex-direction:column}
+.talario-ux01 .card-top{display:grid;grid-template-columns:108px minmax(0,1fr);min-height:110px;flex:1}
+.talario-ux01 .photo-block{min-width:0;position:relative;overflow:hidden;background:#F4F0E7;align-self:stretch}
+.talario-ux01 .photo{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--position,center);max-height:240px}
+.talario-ux01 .activity-info{padding:10px 12px;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.talario-ux01 .activity h3{font-size:1.0625rem;line-height:1.18;letter-spacing:-.016rem;font-weight:650;margin:0;overflow-wrap:anywhere}
+.talario-ux01 .card-meta{display:flex;align-items:center;flex-wrap:wrap;gap:4px 7px;max-width:100%}
+.talario-ux01 .age{display:inline-flex;align-items:center;background:#F3EFE5;border-radius:5px;padding:2px 6px;font-size:.8125rem;line-height:1.3;font-weight:650;color:#51483A;white-space:nowrap}
+.talario-ux01 .rating{display:inline-flex;align-items:center;gap:3px;font-size:.8125rem;line-height:1.4;color:var(--muted);flex-wrap:wrap}
+.talario-ux01 .rating svg{width:14px;height:14px;color:#5A4A2C}
+.talario-ux01 .rating b{font-weight:650;color:var(--ink)}
+.talario-ux01 .rating .review-count{white-space:nowrap}
+.talario-ux01 .no-reviews{font-size:.75rem;line-height:1.5;color:var(--muted)}
+.talario-ux01 .address{margin:0;color:var(--muted);font-size:.8125rem;line-height:1.35;overflow-wrap:anywhere}
+.talario-ux01 .card-foot{display:flex;align-items:stretch;justify-content:space-between;gap:8px;min-height:44px;border-top:1px solid #EAE3D4;flex-wrap:wrap}
+.talario-ux01 .price-stack{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;align-self:center;padding:6px 0 6px 13px;min-width:0;flex:1}
+.talario-ux01 .price{font-size:1.375rem;line-height:1.2;font-weight:800;letter-spacing:-.0375rem;white-space:nowrap}
+.talario-ux01 .purchase{font-size:.8125rem;color:var(--muted);line-height:1.4}
+.talario-ux01 .more{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--soft);border-left:1px solid #EAE3D4;min-width:134px;min-height:44px;padding:8px 12px;font-size:.875rem;font-weight:650;line-height:1.35;text-align:center}
+.talario-ux01 .more svg{width:17px;height:17px}
+.talario-ux01 .more:hover{background:#FFE58B}
+.talario-ux01 .more:focus-visible{outline-offset:-4px}
+.talario-ux01 .mobile-bonus{grid-row:3;display:flex;align-items:center;gap:12px;padding:14px 2px;border-top:2px solid var(--gold);border-bottom:1px solid #DDD2B9;min-height:76px}
+.talario-ux01 .mobile-bonus svg{width:26px;height:26px;flex-shrink:0}
+.talario-ux01 .mobile-bonus strong{display:block;font-size:1rem;line-height:1.3;letter-spacing:-.01875rem;font-weight:750}
+.talario-ux01 .mobile-bonus p{margin:2px 0 0;color:var(--muted);font-size:.875rem;line-height:1.4}
+.talario-ux01 .below{padding:24px 16px 36px;display:grid;gap:24px}
+.talario-ux01 .help{display:grid;gap:16px}
+.talario-ux01 .help>div{background:white;border:1px solid var(--line);border-radius:18px;padding:20px}
+.talario-ux01 .help h3{font-size:1.0625rem;line-height:1.4;margin:0 0 8px;letter-spacing:-.01875rem}
+.talario-ux01 .help p{font-size:.875rem;color:var(--muted);margin:0 0 12px;line-height:1.5}
+.talario-ux01 .help a{font-weight:650;text-decoration:underline;text-underline-offset:4px;min-height:44px;display:inline-flex;align-items:center;gap:8px}
+.talario-ux01 .help svg{width:17px;height:17px}
+.talario-ux01 .footer{border-top:2px solid var(--gold)}
+.talario-ux01 .footer .logo{width:130px}
+.talario-ux01 .footer nav{display:flex;flex-wrap:wrap;gap:4px 16px;max-width:610px}
+.talario-ux01 .footer nav a{font-size:.875rem;line-height:1.4;color:var(--muted);min-height:44px;display:inline-flex;align-items:center}
+.talario-ux01 .footer p{margin:0;font-size:.8125rem;color:var(--muted)}
+@media(min-width:900px){.talario-ux01 .header-inner{padding:16px 0;min-height:88px;gap:32px}
+.talario-ux01 .logo{width:176px}
+.talario-ux01 .header-city{display:flex;align-items:center;gap:6px;font-size:.875rem;margin-left:28px}
+.talario-ux01 .header-city svg{width:16px;height:16px}
+.talario-ux01 .header-links{display:flex;align-items:center;gap:24px;margin-left:auto;flex-wrap:wrap}
+.talario-ux01 .header-links a{display:inline-flex;min-height:44px;align-items:center;font-size:.875rem}
+.talario-ux01 .header-actions{margin-left:32px;gap:8px}
+.talario-ux01 .header-actions .menu{display:none}
+.talario-ux01 .intro{padding:30px 0 24px;min-height:154px}
+.talario-ux01 .intro-copy{max-width:850px}
+.talario-ux01 h1{font-size:2.5rem;line-height:1.125;letter-spacing:-.09375rem;font-weight:700;max-width:800px}
+.talario-ux01 .mobile-break{display:none}
+.talario-ux01 .subtitle{font-size:1rem;line-height:1.5;margin-top:12px}
+.talario-ux01 .desktop-bonus{display:flex;gap:12px;align-items:center;padding:16px 20px;border-left:3px solid var(--gold);min-width:300px;margin-left:16px;flex-shrink:0}
+.talario-ux01 .desktop-bonus svg{width:26px;height:26px}
+.talario-ux01 .desktop-bonus strong{display:block;font-size:1rem;line-height:1.375;font-weight:750;letter-spacing:-.02rem}
+.talario-ux01 .desktop-bonus p{margin:3px 0 0;font-size:.875rem;color:var(--muted)}
+.talario-ux01 .query-inner{padding:0;display:grid;grid-template-columns:minmax(0,1fr) 604px;gap:12px;align-items:start}
+.talario-ux01 .search{min-height:54px}
+.talario-ux01 .search input{font-size:1rem}
+.talario-ux01 .search-submit{min-height:44px;padding:0 1.125rem}
+.talario-ux01 .quick{margin:0;gap:12px}
+.talario-ux01 .quick-button{min-height:54px;padding:7px 16px;font-size:.9375rem}
+.talario-ux01 .quick-button:nth-child(1){flex:1 1 140px}
+.talario-ux01 .quick-button:nth-child(2){flex:1.5 1 210px}
+.talario-ux01 .quick-button:nth-child(3){flex:1.5 1 210px}
+.talario-ux01 .quick-button>svg{width:18px;height:18px}
+.talario-ux01 .allfilters{flex:0 0 152px}
+.talario-ux01 .resultbar{padding:0;min-height:46px;margin-top:-46px;margin-bottom:24px;width:calc(100% - 430px);margin-left:max(0px,calc((100% - 1248px)/2));justify-content:flex-start;gap:24px;position:relative}
+.talario-ux01 .resultbar h2{font-size:1.5625rem;line-height:1.28;letter-spacing:-.046875rem}
+.talario-ux01 .sort{max-width:260px}
+.talario-ux01 .feed{padding:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 20px}
+.talario-ux01 .activity{border-radius:20px}
+.talario-ux01 .card-top{grid-template-columns:148px minmax(0,1fr);min-height:130px}
+.talario-ux01 .activity-info{padding:12px 18px;gap:5px}
+.talario-ux01 .activity h3{font-size:1.3125rem;line-height:1.2;letter-spacing:-.034375rem}
+.talario-ux01 .age,.talario-ux01 .rating{font-size:.875rem}
+.talario-ux01 .no-reviews{font-size:.8125rem}
+.talario-ux01 .rating svg{width:15px;height:15px}
+.talario-ux01 .card-meta{gap:4px 10px}
+.talario-ux01 .address{font-size:.875rem;line-height:1.4}
+.talario-ux01 .price-stack{padding:6px 0 6px 17px}
+.talario-ux01 .price{font-size:1.5625rem;line-height:1.2}
+.talario-ux01 .purchase{font-size:.875rem}
+.talario-ux01 .more{min-width:168px;min-height:44px;font-size:.9375rem;padding:7px 20px;gap:12px}
+.talario-ux01 .more svg{width:17px;height:17px}
+.talario-ux01 .mobile-bonus{display:none}
+.talario-ux01 .below{padding:24px 0 36px}
+.talario-ux01 .help{grid-template-columns:1fr 1fr;gap:20px}
+.talario-ux01 .help>div{padding:22px 24px;border-radius:20px}
+.talario-ux01 .help h3{font-size:1.125rem}
+.talario-ux01 .help p{font-size:.9375rem}
+.talario-ux01 .footer nav{gap:6px 24px}
+.talario-ux01 .footer p{margin:0 0 0 auto;white-space:nowrap}}
+@media(min-width:900px) and (max-width:1312px){.talario-ux01 .wrap{margin-left:32px;margin-right:32px}
+.talario-ux01 .resultbar{margin-left:32px}
+.talario-ux01 .query-inner{grid-template-columns:minmax(0,1fr) minmax(0,48%)}
+.talario-ux01 .header-city{margin-left:0}
+.talario-ux01 .header-links{gap:16px}
+.talario-ux01 .header-actions{margin-left:8px}
+.talario-ux01 .desktop-bonus{min-width:270px;margin-left:0}
+.talario-ux01 .footer p{white-space:normal}}
+@media(max-width:359px){.talario-ux01 .header-inner{gap:4px}
+.talario-ux01 .logo{width:124px}
+.talario-ux01 .header-actions .basket{display:none}
+.talario-ux01 .allfilters{padding:4px 8px;gap:4px}
+.talario-ux01 .card-top{grid-template-columns:92px minmax(0,1fr)}
+.talario-ux01 .activity-info{padding:10px}
+.talario-ux01 .rating{flex-wrap:wrap}
+.talario-ux01 .more{min-width:124px}
+.talario-ux01 .price-stack{padding-left:10px}
+.talario-ux01 .intro{padding-top:12px}}
+@media(prefers-reduced-motion:reduce){.talario-ux01 *,.talario-ux01 *::before,.talario-ux01 *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+.talario-ux01 .allfilters{flex:1 1 130px;min-width:max-content}
+.talario-ux01 .allfilters.has-filters{gap:5px;padding-inline:8px}
+.talario-ux01 .resultbar h2{min-width:0}
+.talario-ux01 .catalog-toolbar{margin:0 auto}
+.talario-ux01 .catalog-toolbar .resultbar{width:auto}
+.talario-ux01 .header-inner{flex-wrap:wrap}
+@media(min-width:900px){.talario-ux01 .catalog-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;margin-top:24px;margin-bottom:24px}
+.talario-ux01 .catalog-toolbar .resultbar{grid-column:1;grid-row:1;padding:0;margin:0;min-width:0;max-width:100%;min-height:46px;justify-content:flex-start}
+.talario-ux01 .allfilters{flex:0 1 152px;min-width:max-content}
+.talario-ux01 .sort{min-width:0;max-width:260px}
+.talario-ux01 .resultbar h2{overflow-wrap:anywhere}
+.talario-ux01 .header-inner{column-gap:24px}}
+@media(min-width:900px) and (max-width:1312px){.talario-ux01 .catalog-toolbar{margin-left:32px;margin-right:32px}}
+.talario-ux01 .no-reviews{font-size:.8125rem}
+.talario-ux01 .search input{min-height:44px}
+@media(min-width:900px){.talario-ux01 .catalog-toolbar .allfilters{width:max-content;min-width:152px;flex:0 0 auto}}
+.talario-ux01 h1{overflow-wrap:anywhere}
+.talario-ux01 .header-links a,.talario-ux01 .footer nav a{min-width:44px;justify-content:center}
+.talario-ux01 .photo{object-fit:var(--fit,cover)}
+.talario-ux01 .age{font-size:.875rem}
+.talario-ux01 #mobile-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px}
+.talario-ux01 .price-stack{flex:1 1 min-content;min-width:min-content;max-width:100%}
+.talario-ux01 .more{margin-left:auto;max-width:100%}
+.talario-ux01 .activity .photo-block{position:relative;overflow:hidden;isolation:isolate}
+.talario-ux01 .activity .favorite-toggle{position:absolute;z-index:5;left:auto;right:0;top:0;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;border:0;border-radius:0;background:transparent;color:rgba(48,41,31,.76);box-shadow:none;cursor:pointer;touch-action:manipulation;padding:0}
+.talario-ux01 .activity .favorite-toggle svg{width:17px;height:17px;padding:0;box-sizing:border-box;stroke-width:1.5;fill:white;border-radius:0;background:transparent}
+.talario-ux01 .activity .favorite-toggle[aria-pressed=true]{background:transparent;color:#8E6500;box-shadow:none}
+.talario-ux01 .activity .favorite-toggle[aria-pressed=true] svg{fill:white;stroke-width:2}
+.talario-ux01 .activity .favorite-toggle:hover:not([aria-pressed=true]){color:#30291F}
+.talario-ux01 .activity .favorite-toggle:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+.talario-ux01 .activity .photo-block[data-gallery]{touch-action:pan-y;cursor:grab}
+.talario-ux01 .activity .photo-block[data-gallery]:active{cursor:grabbing}
+.talario-ux01 .activity .photo-block[data-gallery]:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+.talario-ux01 .activity .photo-block .gallery-controls{pointer-events:none;position:absolute;inset:0;z-index:4}
+.talario-ux01 .activity .gallery-dots{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:rgba(34,29,23,.42);padding:4px 5px;border-radius:12px}
+.talario-ux01 .activity .gallery-dot{height:4px;width:4px;border-radius:50%;background:rgba(255,255,255,.45)}
+.talario-ux01 .activity .gallery-dot.current{background:white;width:5px;height:5px}
+.talario-ux01 .activity .coming-soon-copy{color:var(--muted);font-size:.875rem;font-weight:600;line-height:1.35;white-space:normal}
+.talario-ux01 .activity[data-bookable=false] .price-stack{display:flex;align-items:center;min-height:44px}
+.talario-ux01 .allfilters{flex:0 0 auto;min-width:134px}
+.talario-ux01 .activity .rating svg{fill:var(--gold);color:#9C7200;stroke-width:1.5}
+.talario-ux01 .activity .rating b{color:#8E6500}
+@media(min-width:900px){.talario-ux01 .catalog-toolbar .allfilters{min-width:152px}}
+.talario-ux01 .query-inner{padding-bottom:0}
+.talario-ux01 .quick{display:block;min-width:0;margin-top:10px;container-type:inline-size}
+.talario-ux01 .filter-strip{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) 48px;align-items:stretch;min-width:0;min-height:46px;background:#F4F0E6;border:1px solid #C4B8A0;border-radius:14px}
+.talario-ux01 .filter-strip .quick-button,.talario-ux01 .filter-strip .allfilters{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;min-height:44px;margin:0;border:0;border-radius:0;background:transparent;padding:7px 10px;font-size:.875rem;line-height:1.35;font-weight:550;position:relative}
+.talario-ux01 .filter-strip .quick-button:first-child{border-radius:13px 0 0 13px}
+.talario-ux01 .filter-strip .quick-button+.quick-button,.talario-ux01 .filter-strip .allfilters{border-left:1px solid #D7CCB7}
+.talario-ux01 .filter-strip .quick-button>.button-label{overflow-wrap:anywhere;min-width:0}
+.talario-ux01 .filter-strip .quick-button>svg{width:14px;height:14px;flex-shrink:0;color:#5E5547}
+.talario-ux01 .filter-strip .allfilters{justify-content:center;border-radius:0 13px 13px 0;padding:0;min-width:0}
+.talario-ux01 .filter-strip .allfilters>svg{width:18px;height:18px;flex-shrink:0}
+.talario-ux01 .filter-strip .allfilters-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.talario-ux01 .filter-strip .quick-button:hover,.talario-ux01 .filter-strip .allfilters:hover{background:#EAE2D2}
+.talario-ux01 .filter-strip .quick-button:active,.talario-ux01 .filter-strip .allfilters:active{background:#E1D6BE}
+.talario-ux01 .filter-strip .quick-button.selected{background:#FFF0B5;color:#30291F;font-weight:650;box-shadow:inset 0 -2px #9C7200}
+.talario-ux01 .filter-strip .allfilters.has-filters{background:#FFF0B5}
+.talario-ux01 .filter-strip .filter-count{position:absolute;right:3px;top:2px;min-width:17px;min-height:17px;height:17px;border-radius:9px;padding:0 3px;font-size:.625rem;line-height:1;background:#30291F;color:white}
+.talario-ux01 .filter-strip :focus-visible{outline:2px solid #705514;outline-offset:-4px;z-index:1}
+.talario-ux01 .catalog-toolbar{display:block;margin-top:4px}
+.talario-ux01 .catalog-toolbar .resultbar{min-height:51px;margin:0;padding:6px 16px 7px;width:auto;max-width:100%;gap:8px;justify-content:space-between}
+.talario-ux01 .catalog-toolbar .resultbar h2{overflow-wrap:anywhere}
+@media(min-width:900px){.talario-ux01 .query-inner{grid-template-columns:minmax(0,1fr) 410px;gap:16px;align-items:center}
+.talario-ux01 .quick{margin:0;width:410px}
+.talario-ux01 .filter-strip{grid-template-columns:110px minmax(0,1fr) 118px}
+.talario-ux01 .filter-strip .quick-button,.talario-ux01 .filter-strip .allfilters{font-size:.875rem;padding:7px 12px;min-height:44px}
+.talario-ux01 .filter-strip .allfilters{gap:7px;justify-content:center}
+.talario-ux01 .filter-strip .allfilters-label{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal}
+.talario-ux01 .filter-strip .allfilters.has-filters{padding-right:25px}
+.talario-ux01 .filter-strip .allfilters.has-filters .filter-count{right:4px;top:5px}
+.talario-ux01 .catalog-toolbar{margin-top:18px;margin-bottom:16px}
+.talario-ux01 .catalog-toolbar .resultbar{min-height:44px;margin:0;padding:0;gap:24px;justify-content:flex-start}}
+@container(max-width:20rem){.talario-ux01 .filter-strip{grid-template-columns:minmax(0,1fr)}
+.talario-ux01 .filter-strip .quick-button,.talario-ux01 .filter-strip .allfilters{padding:9px 12px;min-height:44px;border:0;border-radius:0;justify-content:space-between}
+.talario-ux01 .filter-strip .quick-button:first-child{border-radius:13px 13px 0 0}
+.talario-ux01 .filter-strip .quick-button+.quick-button,.talario-ux01 .filter-strip .allfilters{border-top:1px solid #D7CCB7}
+.talario-ux01 .filter-strip .allfilters{border-radius:0 0 13px 13px;justify-content:flex-start;gap:8px}
+.talario-ux01 .filter-strip .allfilters-label{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal}
+.talario-ux01 .filter-strip .filter-count{position:static;min-width:22px;min-height:22px;height:22px;font-size:.75rem;margin-left:auto}
+.talario-ux01 .filter-strip .allfilters.has-filters{padding:9px 12px}}
+.talario-ux01 .header{background:#fff;border-bottom:1px solid #E9E4D9}
+.talario-ux01 .header-inner>.menu{display:grid;order:0}
+.talario-ux01 .header-inner>.brand{order:1}
+.talario-ux01 .header-inner>.header-city{order:2}
+.talario-ux01 .header-inner>.header-links{order:3}
+.talario-ux01 .header-inner>.header-actions{order:4}
+.talario-ux01 .header-actions{gap:0;align-items:center;min-width:0}
+.talario-ux01 .header-actions .user-link{width:auto;min-width:44px;max-width:170px;border-radius:12px;display:inline-flex;align-items:center;gap:5px;padding:0 1px;overflow:hidden}
+.talario-ux01 .user-link .header-user-name{font-size:.875rem;font-weight:600;min-width:0;max-width:112px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none}
+.talario-ux01 .header-actions .user-link svg{flex:0 0 20px}
+.talario-ux01 .help{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.talario-ux01 .help>div{width:100%;margin:0}
+@media(min-width:900px){.talario-ux01 .header-inner>.menu{display:none}
+.talario-ux01 .header-actions .user-link{max-width:180px}
+.talario-ux01 .help>div{padding:20px 24px}}
+@media(max-width:899px){.talario-ux01 .header-inner{padding:8px 12px;gap:6px}
+.talario-ux01 .header-inner>.menu{margin:0;flex:0 0 44px}
+.talario-ux01 .header-inner>.brand{min-width:0;flex:0 0 auto}
+.talario-ux01 .header-inner>.brand .logo{width:132px}
+.talario-ux01 .header-actions{margin-left:auto;flex:0 1 auto;gap:0}
+.talario-ux01 .header-actions .user-link{flex:0 1 auto;min-width:44px;max-width:115px;gap:4px}
+.talario-ux01 .user-link .header-user-name{max-width:67px}
+.talario-ux01 .header-actions .basket{display:grid;flex:0 0 44px}
+.talario-ux01 .help>div{padding:18px 20px}}
+@media(max-width:379px){.talario-ux01 .header-inner{padding:8px;gap:2px}
+.talario-ux01 .header-inner>.brand .logo{width:105px}
+.talario-ux01 .header-actions .user-link{max-width:86px}
+.talario-ux01 .user-link .header-user-name{max-width:40px}
+.talario-ux01 .header-actions .basket{display:grid}}
+.talario-ux01 .footer{--footer:#333832; --footer-ink:#F8F6EE; --muted:#CFD3CB; --brand:#F7C948; --line:#60675E; background:var(--footer); color:var(--footer-ink); border-top: 3px solid var(--brand);}
+.talario-ux01 .footer__inner{max-width:1200px; padding:52px 28px 28px; margin:0 auto;}
+.talario-ux01 .footer__head{display:flex; gap:24px; align-items:flex-end; justify-content:space-between; padding-bottom:30px; border-bottom: 1px solid var(--line);}
+.talario-ux01 .logotype{display:inline-flex;gap:10px;align-items:center; font-size:27px; font-weight:500; letter-spacing:-0.05em; line-height:1.2;}
+.talario-ux01 .footer__head p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.55;max-width:440px;}
+.talario-ux01 .footer__note{color:var(--muted); font-size:13px; line-height:1.55;max-width:325px; text-align:right;}
+.talario-ux01 .footer__grid{display:grid;grid-template-columns:1fr 1fr 1fr 1.25fr;gap:40px;padding:36px 0 40px;}
+.talario-ux01 .footer__column h2{font-size:15px;line-height:1.4;color:var(--footer-ink);font-weight:700;margin:0 0 20px;}
+.talario-ux01 .footer__column nav{display:flex;flex-direction:column;align-items:flex-start;gap:15px;}
+.talario-ux01 .footer__column nav a{font-size:14px;line-height:1.45;color:var(--muted);}
+.talario-ux01 .footer__column nav a:hover{color:var(--brand);}
+.talario-ux01 .footer__contacts{font-size:14px;line-height:1.6;}
+.talario-ux01 .footer__contacts .email{display:inline-block;color:var(--footer-ink);margin:0 0 20px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.4);text-underline-offset:4px;}
+.talario-ux01 .footer__contacts .office{color:var(--muted);font-size:12px;line-height:1.5;margin:25px 0 0;max-width:248px;}
+.talario-ux01 .socials__title{color:var(--muted);font-size:12px;font-weight:600;line-height:1.5;margin:0 0 10px;}
+.talario-ux01 .socials{display:flex;flex-direction:column;gap:8px;align-items:stretch;}
+.talario-ux01 .social-link{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 10px 4px 4px;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:var(--footer-ink);font-weight:600;font-size:13px;line-height:1.35;transition:border-color .2s ease,background-color .2s ease;max-width:248px;}
+.talario-ux01 .social-link:hover{background-color:rgba(255,255,255,.08);border-color:rgba(247,201,72,.6);color:var(--footer-ink);}
+.talario-ux01 .social-link__icon{display:block;width:36px;height:36px;flex:0 0 36px;overflow:hidden;border-radius:9px;}
+.talario-ux01 .social-link__subtitle{font-size:11px;display:block;font-weight:400;color:var(--muted);margin-top:1px;}
+.talario-ux01 .footer__bottom{border-top:1px solid var(--line);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px; font-size:12px;color:var(--muted);}
+.talario-ux01 .footer__legal{display:flex;flex-wrap:wrap;align-items:center;gap:20px;}
+.talario-ux01 .footer__legal a{color:var(--muted)}
+.talario-ux01 .footer__legal a:hover{color:var(--brand)}
+@media (max-width:720px){.talario-ux01 .footer__inner{padding:34px 20px 24px;}
+.talario-ux01 .footer__head{display:block;padding-bottom:26px;}
+.talario-ux01 .logotype{font-size:25px}
+.talario-ux01 .footer__head p{max-width:290px;font-size:13px;margin-top:9px;}
+.talario-ux01 .footer__note{display:none}
+.talario-ux01 .footer__grid{grid-template-columns:1fr 1fr;column-gap:20px;row-gap:33px;padding:30px 0 32px;}
+.talario-ux01 .footer__column h2{margin-bottom:15px;font-size:14px;}
+.talario-ux01 .footer__column nav{gap:14px;}
+.talario-ux01 .footer__column nav a{font-size:13px;line-height:1.55;}
+.talario-ux01 .footer__contacts{font-size:13px;}
+.talario-ux01 .footer__contacts .office{font-size:12px;}
+.talario-ux01 .footer__bottom{display:block;padding-top:18px;line-height:1.5;font-size:12px;}
+.talario-ux01 .footer__legal{margin-top:12px;gap:9px 16px;}}
+.talario-ux01 .footer{background:#333832;color:#F8F6EE;border-top:3px solid #F7C948}
+.talario-ux01 .footer .footer__inner{max-width:1200px;padding:52px 28px 28px;margin:0 auto;display:block}
+.talario-ux01 .footer .footer__grid{display:grid;gap:40px}
+.talario-ux01 .footer .footer__column nav{display:flex;flex-direction:column;flex-wrap:nowrap;gap:15px;align-items:flex-start;max-width:none}
+.talario-ux01 .footer .footer__column nav a{min-height:0;display:block;font-size:14px;color:#CFD3CB}
+.talario-ux01 .footer .footer__column nav.socials{gap:8px}
+.talario-ux01 .footer .footer__column nav.socials .social-link{display:flex;min-height:44px;color:#F8F6EE}
+.talario-ux01 .footer .footer__column p{white-space:normal;max-width:440px}
+.talario-ux01 .footer .footer__legal{display:flex;gap:20px;flex-wrap:wrap;max-width:none}
+.talario-ux01 .footer .footer__legal a{color:#CFD3CB;min-height:0;display:block;font-size:12px}
+.talario-ux01 .footer a:hover{color:#F7C948}
+@media(max-width:720px){.talario-ux01 .footer .footer__inner{padding:34px 20px 24px}
+.talario-ux01 .footer .footer__grid{grid-template-columns:1fr 1fr;column-gap:20px;row-gap:33px;padding:30px 0 32px}
+.talario-ux01 .footer .footer__column nav{gap:14px}
+.talario-ux01 .footer .footer__column nav a{font-size:13px}
+.talario-ux01 .footer .footer__column nav.socials{gap:8px}
+.talario-ux01 .footer .footer__legal{margin-top:12px;gap:9px 16px}}
+.talario-ux01 .footer a.logotype{display:inline-flex;align-items:center;line-height:1;max-width:100%;font-size:0;letter-spacing:normal}
+.talario-ux01 .footer a.logotype img.talario-original-logo{width:178px;max-width:100%;height:auto;object-fit:contain;display:block}
+.talario-ux01 .header-inner .brand .logo{object-fit:contain}
+.talario-ux01 .header-actions .user-link{display:inline-flex;align-items:center;gap:4px;max-width:174px;min-width:44px;min-height:44px;overflow:hidden}
+.talario-ux01 .header-actions .user-link .header-user-name{display:none;min-width:0;max-width:120px;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;font-weight:600;line-height:1.35}
+.talario-ux01 .header-actions .user-link svg{width:20px;height:20px;flex:0 0 20px}
+@media(max-width:899px){.talario-ux01 .header-inner{display:grid;grid-template-columns:44px minmax(0,1fr) auto;column-gap:4px;row-gap:0;align-items:center;padding:8px 12px;min-height:64px;height:auto}
+.talario-ux01 .header-inner>.menu{grid-column:1;grid-row:1;min-width:44px;width:44px;height:44px;display:grid;justify-self:start;margin:0}
+.talario-ux01 .header-inner>.brand{grid-column:2;grid-row:1;display:flex;align-items:center;min-width:0;max-width:100%}
+.talario-ux01 .header-inner>.brand .logo{width:127px;max-width:100%;height:auto;display:block}
+.talario-ux01 .header-inner>.header-city,.talario-ux01 .header-inner>.header-links{display:none}
+.talario-ux01 .header-inner>.header-actions{grid-column:3;grid-row:1;display:flex;align-items:center;justify-self:end;justify-content:flex-end;min-width:0;max-width:100%;gap:0;margin-left:0}
+.talario-ux01 .header-actions .user-link{min-width:44px;max-width:126px;min-height:44px;flex:0 1 auto;overflow:hidden;padding:0 2px}
+.talario-ux01 .header-actions .user-link .header-user-name{max-width:90px;min-width:0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:1.35}
+.talario-ux01 .header-inner>.header-actions .basket{display:grid;min-width:44px;min-height:44px;flex:0 0 44px}}
+@media(max-width:359px){.talario-ux01 .header-inner{padding-left:8px;padding-right:8px;column-gap:2px}
+.talario-ux01 .header-inner>.brand .logo{width:108px}
+.talario-ux01 .header-actions .user-link{max-width:104px;gap:3px}
+.talario-ux01 .header-actions .user-link .header-user-name{max-width:71px}}
+@media(max-width:720px){.talario-ux01 .footer a.logotype img.talario-original-logo{width:167px}}
+/* Native CS-Cart bridge. Original form nodes, IDs and AJAX wrappers remain intact. */
+html.talario-ux01-active body{background:#FFFBF1}
+html.talario-ux01-active .tygh-top-panel,html.talario-ux01-active .tygh-header,html.talario-ux01-active .tygh-footer{display:none!important}
+html.talario-ux01-active .tygh-content .content-grid>.container-fluid-row{display:none!important}
+html.talario-ux01-active .tygh-content,html.talario-ux01-active .content-grid{padding:0!important;background:#FFFBF1;max-width:none!important;width:100%!important}
+.talario-ux01{width:100%;margin:0;overflow-wrap:break-word}
+.talario-ux01 .talario-ux01__main{padding:0;margin:0}
+.talario-ux01 .talario-ux01__menu{position:relative;width:44px;height:44px}
+.talario-ux01 .talario-ux01__menu summary{list-style:none;cursor:pointer}
+.talario-ux01 .talario-ux01__menu summary::-webkit-details-marker{display:none}
+.talario-ux01 .talario-ux01__menu-panel{position:absolute;z-index:1000;top:48px;left:0;width:230px;padding:10px;border:1px solid #E6DFD0;border-radius:14px;background:#fff;box-shadow:0 8px 30px #30291f22}
+.talario-ux01 .talario-ux01__menu-panel a{display:flex;min-height:44px;align-items:center;padding:8px}
+.talario-ux01 .talario-ux01__search,.talario-ux01 .ty-search-block{min-width:0;width:100%;margin:0}
+.talario-ux01 form.search{margin:0;position:relative;box-sizing:border-box;width:100%}
+.talario-ux01 .search input.ty-search-block__input{margin:0!important;height:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:7px 0!important;width:100%!important;background:transparent!important;font-family:inherit!important;font-size:.9375rem;min-height:44px}
+.talario-ux01 .search button.search-submit{position:static!important;inset:auto!important;margin:0!important;width:auto!important;height:auto!important;min-width:78px;min-height:44px;color:#30291F!important;font-family:inherit;border:0!important;box-shadow:none!important;background:#F5C83E!important;line-height:1.35}
+.talario-ux01 .cm-lr-homepage-search-filters{padding:0!important;margin:0!important;border:0!important;min-height:0!important;background:transparent!important;overflow:visible!important}
+.talario-ux01 .cm-lr-homepage-search-filters .ut2-scroll-content.filter-strip{display:grid!important;overflow:visible!important;width:100%!important;padding:0!important;gap:0!important}
+.talario-ux01 .filter-strip>.ux01-quick-control{margin:0!important;padding:0!important;width:auto!important;min-width:0!important;border:0;position:relative}
+.talario-ux01 .filter-strip .quick-button{border-radius:0!important;margin:0!important;width:100%;background:transparent!important;box-sizing:border-box;font-family:inherit;white-space:normal}
+.talario-ux01 .filter-strip>.ux01-quick-control+.ux01-quick-control{border-left:1px solid #D7CCB7}
+.talario-ux01 .filter-strip>.ux01-quick-control:first-of-type .quick-button{border-radius:13px 0 0 13px}
+.talario-ux01 .cm-lr-homepage-search-filters .ut2-scroll-left,.talario-ux01 .cm-lr-homepage-search-filters .ut2-scroll-right,.talario-ux01 .ux01-extra-quick,.talario-ux01 [data-ca-lr-homepage-search-filters-products-dropdown],.talario-ux01 .lr-homepage-search-filters__apply{display:none!important}
+.talario-ux01 .ux01-popup-apply{display:block;min-height:44px;margin:12px;width:calc(100% - 24px);border-radius:24px;background:#F5C83E;color:#30291F}
+.talario-ux01 .ty-horizontal-product-filters-dropdown__content{border-radius:16px;border:1px solid #C4B8A0;background:#fff;max-width:calc(100vw - 32px);min-width:250px;z-index:2000}
+.talario-ux01 .lr-homepage-catalog-layout{display:block;margin:0;padding:0}
+.talario-ux01 .lr-homepage-catalog-layout__content{width:100%!important;min-width:0;margin:0;padding:0}
+.talario-ux01 .lr-homepage-catalog-layout__section-heading,.talario-ux01 .top-sticky-panel__filters{display:none!important}
+.talario-ux01 .lr-homepage-catalog-layout__sidebar{display:none!important}
+.talario-ux01 .ty-sort-container.resultbar{display:flex!important;min-height:44px;width:auto!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.talario-ux01 .resultbar .ut2-sorting-wrap{display:contents}
+.talario-ux01 .resultbar .ut2-sort-label,.talario-ux01 .resultbar .ty-sort-container__views-icons,.talario-ux01 .resultbar .ty-sort-dropdown:not(.ux01-sort-dropdown){display:none}
+.talario-ux01 .resultbar .ty-sort-dropdown{margin:0;min-width:0}
+.talario-ux01 .resultbar .ty-sort-dropdown__wrapper{font-family:inherit;font-size:.875rem;min-height:44px;display:flex;align-items:center;gap:6px;color:#30291F}
+.talario-ux01 .resultbar h2{font-family:inherit;line-height:1.4}
+.talario-ux01 .grid-list.feed{display:grid!important;width:auto!important;float:none!important;margin:0 auto!important}
+.talario-ux01 .grid-list.feed:before,.talario-ux01 .grid-list.feed:after{display:none!important}
+.talario-ux01 .feed>[class*=ty-column]{float:none!important;width:auto!important;max-width:none!important;min-width:0;margin:0!important;padding:0!important;height:auto!important}
+.talario-ux01 .ut2-gl__item.activity{width:100%!important;margin:0!important;padding:0!important;min-height:0!important;height:auto!important;box-shadow:0 3px 12px #8E712008!important}
+.talario-ux01 .activity form,.talario-ux01 .activity .ut2-gl__body{margin:0;padding:0!important;border:0!important;min-height:0!important;height:auto!important;background:transparent!important;box-shadow:none!important}
+.talario-ux01 .activity .card-top{width:100%;align-items:stretch}
+.talario-ux01 .activity .ut2-gl__image.photo-block{width:auto!important;height:auto!important;min-height:110px;margin:0!important;padding:0!important;border-radius:0!important;aspect-ratio:auto!important}
+.talario-ux01 .photo-block>a.product_icon_lnk{position:absolute;inset:0;display:block;width:100%;height:100%}
+.talario-ux01 .photo-block img.photo{position:absolute!important;inset:0;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover;aspect-ratio:auto!important}
+.talario-ux01 .photo-block .ty-no-image{width:100%!important;height:100%!important;display:block}
+.talario-ux01 .activity-info.ut2-gl__content{width:auto!important;min-width:0!important;height:auto!important;min-height:110px;padding:10px 12px!important;gap:5px;position:static!important}
+.talario-ux01 .activity .ut2-gl__name{margin:0!important;padding:0!important;height:auto!important;min-height:0!important;max-height:none!important;width:100%;overflow:visible!important}
+.talario-ux01 .activity .product-title,.talario-ux01 .activity .product-title span{font-family:inherit!important;font-size:1.0625rem!important;line-height:1.18!important;letter-spacing:-.016rem;font-weight:650!important;color:#30291F!important;display:inline!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;-webkit-line-clamp:unset!important}
+.talario-ux01 .card-meta .age{margin:0!important;padding:2px 6px!important;display:inline-flex!important;width:auto!important;min-height:0!important}
+.talario-ux01 .age .product-description{font-size:.875rem!important;line-height:1.3!important;color:#51483A!important;white-space:nowrap}
+.talario-ux01 .activity .rating{margin:0!important;width:auto!important;display:inline-flex!important}
+.talario-ux01 .rating a{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap;color:#686157!important;font-size:.8125rem!important}
+.talario-ux01 .rating .ty-product-review-reviews-stars{color:#F5C83E!important;font-size:14px!important}
+.talario-ux01 .rating .ut2-rating-stars-num{font-size:.8125rem!important;color:#8E6500!important}
+.talario-ux01 .rating .cn-reviews{font-size:.75rem!important;color:#686157!important;white-space:nowrap}
+.talario-ux01 .address.sd-product-info,.talario-ux01 .address .ut2-gl__bottom{margin:0!important;padding:0!important;min-height:0!important;height:auto!important;font-size:.8125rem!important;color:#686157!important}
+.talario-ux01 .address .product-description{font-size:.8125rem!important;line-height:1.35!important;color:#686157!important;display:block!important}
+.talario-ux01 .activity .ut2-gl__price-wrap.card-foot{position:static!important;display:flex!important;width:100%!important;height:auto!important;min-height:45px;margin:0!important;padding:0!important;gap:0!important}
+.talario-ux01 .card-foot .price-stack{width:auto!important;min-height:44px;max-width:100%;height:auto!important;display:flex!important;align-items:center;padding:5px 8px 5px 13px!important;margin:0!important}
+.talario-ux01 .card-foot .ty-price,.talario-ux01 .card-foot .ty-price-num{font-family:inherit!important;font-size:1.375rem!important;line-height:1.2!important;font-weight:800!important;color:#30291F!important;white-space:nowrap}
+.talario-ux01 .card-foot .ut2-gl__control,.talario-ux01 .card-foot .ut2-gl__control>div{display:contents!important}
+.talario-ux01 .card-foot a.more{border:0!important;border-left:1px solid #EAE3D4!important;border-radius:0!important;background:#FFF0B5!important;color:#30291F!important;font-family:inherit!important;box-shadow:none!important;height:auto!important;min-height:44px;margin:0!important;padding:8px 12px!important;font-size:.875rem!important;font-weight:650!important}
+.talario-ux01 .photo-block .ab-stickers-container,.talario-ux01 .photo-block .ut2-add-to-compare{display:none!important}
+.talario-ux01 .photo-block .ut2-w-c-q__buttons{opacity:1!important;visibility:visible!important;display:block!important;position:absolute!important;inset:0!important;padding:0!important;margin:0!important;pointer-events:none!important;background:transparent!important;z-index:5}
+.talario-ux01 .photo-block .favorite-toggle{left:auto!important;right:0!important;top:0!important;pointer-events:auto!important;opacity:1!important;visibility:visible!important;transform:none!important;background:transparent!important;border:0!important;box-shadow:none!important;min-height:44px!important;min-width:44px!important;width:44px!important;height:44px!important;z-index:10!important}
+.talario-ux01 .photo-block .favorite-toggle svg{fill:#fff;stroke:#51483A;stroke-width:1.5;width:17px;height:17px}
+.talario-ux01 .cm-ab-hover-gallery{border-radius:0!important}
+.talario-ux01 .gallery-dots{width:max-content!important;right:auto!important;top:auto!important;height:auto!important;z-index:4}
+.talario-ux01 .gallery-dots .gallery-dot{flex:none!important;max-width:none!important;min-width:4px!important;margin:0!important;border:0!important;width:4px!important;height:4px!important;background:#ffffff73!important}
+.talario-ux01 .gallery-dots .gallery-dot.active{background:#fff!important;width:5px!important;height:5px!important}
+.talario-ux01 .ut2-load-more{margin:24px auto!important;max-width:1248px!important;background:white!important;border:1px solid #8C806D!important;border-radius:25px!important;min-height:48px!important;float:none!important}
+.talario-ux01 .ux01-filter-backdrop{display:none}
+html.talario-ux01-active.talario-ux01-filters-open .talario-ux01 .lr-homepage-catalog-layout__sidebar{display:block!important;position:fixed;z-index:3100;right:0;top:0;width:380px!important;max-width:100vw;height:100dvh;padding:20px;background:white;overflow:auto;box-shadow:-10px 0 40px #30291F22}
+html.talario-ux01-filters-open .talario-ux01 .lr-homepage-catalog-layout__sidebar .ut2-filters{display:block!important}
+html.talario-ux01-filters-open .talario-ux01 .ux01-filter-backdrop{display:block;position:fixed;inset:0;width:100%;height:100%;z-index:3000;background:#30291F66}
+.talario-ux01 .ux01-drawer-head{display:flex;justify-content:space-between;align-items:center;gap:16px;position:sticky;top:-20px;background:white;z-index:2;padding:10px 0}
+.talario-ux01 .ux01-drawer-head h2{font:700 24px/1.3 'Golos Text',sans-serif;margin:0}
+.talario-ux01 .ux01-drawer-close{min-width:44px;min-height:44px;border:0;background:#F4F0E6;border-radius:12px;padding:8px 12px}
+@media(min-width:900px){
+ .talario-ux01 .activity .ut2-gl__image.photo-block{min-height:130px}
+ .talario-ux01 .activity-info.ut2-gl__content{padding:12px 18px!important}
+ .talario-ux01 .activity .product-title,.talario-ux01 .activity .product-title span{font-size:1.3125rem!important;line-height:1.2!important;letter-spacing:-.034375rem}
+ .talario-ux01 .card-foot .ty-price,.talario-ux01 .card-foot .ty-price-num{font-size:1.5625rem!important}
+ .talario-ux01 .card-foot a.more{min-width:168px;font-size:.9375rem!important}
+ .talario-ux01 .query-inner{align-items:start}
 }
-@media (max-width: 900px) {
-  html.talario-ux01-active {
-    .talario-ux01__header-inner { min-height: 64px; padding: 8px 12px; gap: 3px; }
-    .talario-ux01__menu { display: block; }
-    .talario-ux01__brand { width: 126px; }
-    .talario-ux01__logo { width: 126px; height: auto; }
-    .talario-ux01__city, .talario-ux01__header-links { display: none; }
-    .talario-ux01__actions { margin-left: auto; gap: 0; }
-    .talario-ux01__first-name { max-width: min(25vw, 112px); font-size: 12px; }
-    .talario-ux01__main { padding: 18px 16px 40px; }
-    .talario-ux01__title { font-size: 27px; line-height: 1.13; }
-    .talario-ux01__intro { margin-bottom: 16px; }
-    .talario-ux01__bonus { display: none; }
-    .talario-ux01__controls { display: block; margin-bottom: 16px; }
-    .talario-ux01__search { margin-bottom: 9px; }
-    .talario-ux01__filters .ut2-scroll-content { border-radius: 9px; }
-    .talario-ux01__catalog .ty-column4 { float: none !important; width: 100% !important; margin: 0 0 12px !important; }
-    .talario-ux01__catalog .lr-homepage-catalog-layout__section-title { font-size: 18px; }
-  }
-}
-@media (max-width: 375px) {
-  html.talario-ux01-active {
-    .talario-ux01__header-inner { padding: 8px 6px; }
-    .talario-ux01__brand, .talario-ux01__logo { width: 112px; }
-    .talario-ux01__first-name { max-width: 67px; }
-    .talario-ux01__profile, .talario-ux01__cart { min-width: 37px; padding: 0 2px; }
-    .talario-ux01__main { padding-inline: 12px; }
-  }
+@media(max-width:899px){
+ .talario-ux01 .header-inner>.menu{display:block;grid-column:1;grid-row:1}
+ .talario-ux01 .catalog-toolbar .resultbar{padding:6px 16px 7px}
+ .talario-ux01 .ty-horizontal-product-filters-dropdown__content{position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%!important;max-width:100vw!important;max-height:80dvh!important;overflow:auto;border-radius:24px 24px 0 0!important;z-index:2900!important}
+ .talario-ux01 .activity .product-title{max-width:100%}
+ html.talario-ux01-active.talario-ux01-filters-open .talario-ux01 .lr-homepage-catalog-layout__sidebar{top:auto;bottom:0;height:85dvh;width:100%!important;border-radius:24px 24px 0 0}
 }
