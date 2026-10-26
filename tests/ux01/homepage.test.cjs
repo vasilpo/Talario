@@ -151,3 +151,31 @@ test('UX-01 load-more exposes label while hiding idle broken spinner', () => {
   assert.match(qa, /\.ut2-load-more \.loader-text[^{}]*\{[^}]*display:inline!important/);
   assert.match(qa, /\.ut2-load-more[^{}]*\{[^}]*display:flex!important/);
 });
+
+
+test('UX-01 runtime hover stabilization uses inline important rules on native nodes', () => {
+  const js = fs.readFileSync(jsPath, 'utf8');
+  assert.match(js, /function stabilizeCard\(card\)/);
+  assert.match(js, /setProperty\('position', 'static', 'important'\)/);
+  assert.match(js, /setProperty\('height', '100%', 'important'\)/);
+  assert.match(js, /setProperty\('transition', 'none', 'important'\)/);
+  assert.match(js, /stabilizeCard\(card\)/);
+});
+test('UX-01 catalog enhancement targets nearest native grid and survives AJAX refresh', () => {
+  const js = fs.readFileSync(jsPath, 'utf8');
+  assert.match(js, /cards\[0\]\.closest\('\.grid-list'\)/);
+  assert.doesNotMatch(js, /cards\[0\]\.parentElement\.parentElement/);
+  assert.match(js, /if \(card\.getAttribute\('data-ux01-ready'\) === '1'\)/);
+  assert.match(js, /stabilizeCard\(card\)/);
+});
+test('UX-01 desktop product rows are compact without changing load-more controls', () => {
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const qa = css.split('/* UX01-COMPACT-HOVER-2026-10-26 BEGIN */')[1] || '';
+  assert.match(qa, /\.activity \.card-top/);
+  assert.match(qa, /grid-template-columns:100px minmax\(0,1fr\)!important/);
+  assert.match(qa, /\.activity \.product-title/);
+  assert.match(qa, /font-size:\.9375rem!important/);
+  assert.match(qa, /\.activity \.address/);
+  assert.match(qa, /-webkit-line-clamp:2!important/);
+  assert.match(qa, /@media\(min-width:900px\)/);
+});
