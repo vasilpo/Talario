@@ -2,6 +2,7 @@
 (function (_, $) {
     'use strict';
     if (!/\/dev_copy(?:\/|$)/.test(window.location.pathname)) { return; }
+    var userContext = null;
     // Exact vector paths from the approved Golos Restored source, not replacement icons.
     var icons = {"menu": [["path", {"d": "M4 5h16"}], ["path", {"d": "M4 12h16"}], ["path", {"d": "M4 19h16"}]], "user": [["circle", {"cx": "12", "cy": "8", "r": "5"}], ["path", {"d": "M20 21a8 8 0 0 0-16 0"}]], "cart": [["path", {"d": "m15 11-1 9"}], ["path", {"d": "m19 11-4-7"}], ["path", {"d": "M2 11h20"}], ["path", {"d": "m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"}], ["path", {"d": "M4.5 15.5h15"}], ["path", {"d": "m5 11 4-7"}], ["path", {"d": "m9 11 1 9"}]], "filter": [["path", {"d": "M10 5H3"}], ["path", {"d": "M12 19H3"}], ["path", {"d": "M14 3v4"}], ["path", {"d": "M16 17v4"}], ["path", {"d": "M21 12h-9"}], ["path", {"d": "M21 19h-5"}], ["path", {"d": "M21 5h-7"}], ["path", {"d": "M8 10v4"}], ["path", {"d": "M8 12H3"}]], "heart": [["path", {"d": "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"}]], "gift": [["path", {"d": "M12 7v14"}], ["path", {"d": "M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"}], ["path", {"d": "M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"}], ["rect", {"height": "4", "rx": "1", "width": "18", "x": "3", "y": "7"}]], "search": [["path", {"d": "m21 21-4.34-4.34"}], ["circle", {"cx": "11", "cy": "11", "r": "8"}]]};
     function make(tag, cls, text) {
@@ -195,7 +196,8 @@
         var logo = make('img', 'logo'); logo.src = href('design/themes/abt__unitheme2/media/images/talario-ux01-logo.png'); logo.alt = 'Таларио'; logo.width = 140; logo.height = 32; brand.appendChild(logo); inner.appendChild(brand);
         inner.appendChild(make('span', 'header-city', 'Красногорск'));
         var links = mobileNav.cloneNode(true); links.className = 'header-links'; inner.appendChild(links);
-        var actions = make('div', 'header-actions'); var ctx = _.talarioUx01Context || {}; var isAuth = ctx.authenticated === true;
+        var actions = make('div', 'header-actions'); var ctx = userContext || _.talarioUx01Context || {}; var isAuth = ctx.authenticated === true;
+        userContext = ctx; delete _.talarioUx01Context;
         var firstName = isAuth && typeof ctx.firstName === 'string' ? ctx.firstName.trim() : '';
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');

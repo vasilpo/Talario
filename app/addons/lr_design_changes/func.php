@@ -491,7 +491,7 @@ function fn_lr_design_changes_image_to_display_post(&$image_data, $images, $imag
     ) {
         return;
     }
-    $url = 'https://talario.ru/images/' . implode('/', array_map('rawurlencode', explode('/', $relative)));
+    $url = '/images/' . implode('/', array_map('rawurlencode', explode('/', $relative)));
     $image_data = [
         'image_path' => $url,
         'detailed_image_path' => $url,
