@@ -31,3 +31,11 @@ jobs:
           node-version: '22'
       - name: Validate JavaScript syntax, safe native DOM reuse and first-name context
         run: node --test tests/ux01/homepage.test.cjs
+      - name: Set up PHP for real Smarty hook regression
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring
+          coverage: none
+      - name: Render hooks with mutable homepage runtime and verify PROD exclusion
+        run: php tests/ux01/hooks-render.test.php

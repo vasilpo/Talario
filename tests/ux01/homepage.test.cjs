@@ -56,12 +56,12 @@ test('hook preserves previously connected native scripts and styles', () => {
   assert.match(style, /ux01_homepage\.less/);
 });
 
-test('homepage hooks must not depend on an optional index mode or print literal backslash-newline text', () => {
+test('homepage hooks use the exact dev_copy path instead of mutable route context', () => {
   const script = fs.readFileSync(scriptsPath, 'utf8');
   const style = fs.readFileSync(stylesPath, 'utf8');
   for (const hook of [script, style]) {
-    assert.ok(hook.includes('$runtime.controller|default:"" == "index"'));
-    assert.doesNotMatch(hook, /\$runtime\.mode/);
+    assert.ok(hook.includes('$config.current_path|default:"" == "/dev_copy"'));
+    assert.doesNotMatch(hook, /\{if[^}]*\$runtime\.(controller|mode)/);
     assert.doesNotMatch(hook, /\\n\{if/);
   }
 });
