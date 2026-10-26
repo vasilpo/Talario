@@ -161,7 +161,8 @@
         Array.prototype.forEach.call(filters.querySelectorAll('[data-ca-lr-homepage-search-filters-switch]'), function (control) {
             var text = control.textContent.trim(); var wrap = control.parentElement;
             if (/Возраст/.test(text) || /Категор/.test(text)) {
-                wrap.classList.add('ux01-quick-control');
+                // UniTheme's narrow-desktop outside-click handler requires this ancestor.
+                wrap.classList.add('ux01-quick-control', 'ut2-horizontal-product-filters-dropdown');
                 wrap.style.order = /Возраст/.test(text) ? '1' : '2';
                 control.classList.add('quick-button'); control.setAttribute('role', 'button'); control.tabIndex = 0; control.setAttribute('aria-haspopup', 'dialog');
                 if (/Категор/.test(text) && control.firstChild.nodeType === 3) { control.firstChild.nodeValue = 'Направление'; }
