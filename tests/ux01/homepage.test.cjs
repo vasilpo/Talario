@@ -113,3 +113,41 @@ test('real UniTheme outside-click handler recognizes clicks inside UX-01 quick f
   handler({ target: element() });
   assert.equal(forwarded, 1, 'native outside-click closing remains enabled');
 });
+
+
+/* Regressions reported in owner screenshots on 2026-10-26. */
+test('UX-01 desktop catalog uses a centered full-width responsive two-column grid', () => {
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const qa = css.split('/* UX01-VISUAL-QA-2026-10-26 BEGIN */')[1] || '';
+  assert.match(qa, /grid-list\.feed[^{}]*\{[^}]*width:calc\(100% - 32px\)!important/);
+  assert.match(qa, /grid-list\.feed[^{}]*\{[^}]*align-items:stretch!important/);
+  assert.match(qa, /@media\(min-width:900px\)/);
+  assert.match(qa, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);
+  assert.match(qa, /feed>\[class\*="ty-column"\][^{]*\{[^}]*align-self:stretch!important/);
+});
+
+test('UX-01 neutralizes native UniTheme hover absolute positioning and keeps rows aligned', () => {
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const qa = css.split('/* UX01-VISUAL-QA-2026-10-26 BEGIN */')[1] || '';
+  assert.match(qa, /activity:hover \.ut2-gl__body/);
+  assert.match(qa, /position:static!important/);
+  assert.match(qa, /\.ut2-gl__item\.activity[^{}]*\{[^}]*height:100%!important/);
+  assert.match(qa, /\.card-top[^{}]*\{[^}]*flex:1/);
+});
+
+test('UX-01 filters match search height without boxed segmented grid', () => {
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const qa = css.split('/* UX01-VISUAL-QA-2026-10-26 BEGIN */')[1] || '';
+  assert.match(qa, /\.filter-strip[^{}]*\{[^}]*background:transparent!important/);
+  assert.match(qa, /\.filter-strip[^{}]*\{[^}]*border:0!important/);
+  assert.match(qa, /\.filter-strip[^{}]*\{[^}]*min-height:54px!important/);
+  assert.match(qa, /\.search[^{}]*\{[^}]*min-height:54px!important/);
+});
+
+test('UX-01 load-more exposes label while hiding idle broken spinner', () => {
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const qa = css.split('/* UX01-VISUAL-QA-2026-10-26 BEGIN */')[1] || '';
+  assert.match(qa, /\.ut2-load-more \.loader-wrapper[^{}]*\{[^}]*display:none!important/);
+  assert.match(qa, /\.ut2-load-more \.loader-text[^{}]*\{[^}]*display:inline!important/);
+  assert.match(qa, /\.ut2-load-more[^{}]*\{[^}]*display:flex!important/);
+});
