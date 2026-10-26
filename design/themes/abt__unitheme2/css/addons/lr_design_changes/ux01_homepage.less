@@ -389,8 +389,8 @@ html.talario-ux01-active .tygh-content,html.talario-ux01-active .content-grid{pa
 .talario-ux01 .resultbar .ty-sort-dropdown{margin:0;min-width:0}
 .talario-ux01 .resultbar .ty-sort-dropdown__wrapper{font-family:inherit;font-size:.875rem;min-height:44px;display:flex;align-items:center;gap:6px;color:#30291F}
 .talario-ux01 .resultbar h2{font-family:inherit;line-height:1.4}
-.talario-ux01 .grid-list.feed{display:grid!important;width:auto!important;float:none!important;margin:0 auto!important}
-.talario-ux01 .grid-list.feed:before,.talario-ux01 .grid-list.feed:after{display:none!important}
+.talario-ux01 .feed{display:grid!important;width:auto!important;float:none!important;margin:0 auto!important}
+.talario-ux01 .feed:before,.talario-ux01 .feed:after{display:none!important}
 .talario-ux01 .feed>[class*=ty-column]{float:none!important;width:auto!important;max-width:none!important;min-width:0;margin:0!important;padding:0!important;height:auto!important}
 .talario-ux01 .ut2-gl__item.activity{width:100%!important;margin:0!important;padding:0!important;min-height:0!important;height:auto!important;box-shadow:0 3px 12px #8E712008!important}
 .talario-ux01 .activity form,.talario-ux01 .activity .ut2-gl__body{margin:0;padding:0!important;border:0!important;min-height:0!important;height:auto!important;background:transparent!important;box-shadow:none!important}
@@ -473,7 +473,7 @@ html.talario-ux01-active .talario-ux01 .lr-homepage-catalog-layout__content {
     margin-left:0!important;
     margin-right:0!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed {
+html.talario-ux01-active .talario-ux01 .feed {
     display:grid!important;
     width:calc(100% - 32px)!important;
     max-width:1248px!important;
@@ -496,7 +496,7 @@ html.talario-ux01-active .talario-ux01 .feed>[class*="ty-column"] {
     height:100%!important;
     align-self:stretch!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity {
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity {
     display:flex!important;
     flex-direction:column!important;
     width:100%!important;
@@ -506,16 +506,16 @@ html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity {
     border-radius:16px!important;
     overflow:hidden!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:hover {
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity:hover {
     transform:none!important;
     z-index:auto!important;
 }
 /* UniTheme2 turns the original body absolute on hover, which makes the card jump
    out of CSS Grid and repeatedly enter/leave hover (reported flicker). */
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity .ut2-gl__body,
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:hover .ut2-gl__body,
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity>form,
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:hover>form {
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity .ut2-gl__body,
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity:hover .ut2-gl__body,
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity>form,
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity:hover>form {
     position:static!important;
     inset:auto!important;
     transform:none!important;
@@ -530,33 +530,33 @@ html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:ho
     visibility:visible!important;
     transition:none!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .card-top {
+html.talario-ux01-active .talario-ux01 .feed .activity .card-top {
     flex:1 1 auto!important;
     min-width:0!important;
     grid-template-columns:112px minmax(0,1fr)!important;
     min-height:112px!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .activity-info {
+html.talario-ux01-active .talario-ux01 .feed .activity .activity-info {
     min-height:112px!important;
     padding:11px 12px!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .product-title,
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .product-title span {
+html.talario-ux01-active .talario-ux01 .feed .activity .product-title,
+html.talario-ux01-active .talario-ux01 .feed .activity .product-title span {
     font-size:1.0625rem!important;
     line-height:1.23!important;
     font-weight:650!important;
     letter-spacing:-.0125rem!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .card-foot {
+html.talario-ux01-active .talario-ux01 .feed .activity .card-foot {
     flex:0 0 auto!important;
     margin-top:auto!important;
     min-height:44px!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .card-foot .ty-price,
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .card-foot .ty-price-num {
+html.talario-ux01-active .talario-ux01 .feed .activity .card-foot .ty-price,
+html.talario-ux01-active .talario-ux01 .feed .activity .card-foot .ty-price-num {
     font-size:1.25rem!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .more {
+html.talario-ux01-active .talario-ux01 .feed .activity .more {
     min-width:134px!important;
     font-size:.875rem!important;
 }
@@ -660,7 +660,7 @@ html.talario-ux01-active .talario-ux01 .ut2-load-more.ut2-load-more-loading .loa
     display:none!important;
 }
 @media(min-width:900px){
-    html.talario-ux01-active .talario-ux01 .grid-list.feed {
+    html.talario-ux01-active .talario-ux01 .feed {
         grid-template-columns:repeat(2,minmax(0,1fr))!important;
         width:calc(100% - 48px)!important;
     }
@@ -685,13 +685,13 @@ html.talario-ux01-active .talario-ux01 .ut2-load-more.ut2-load-more-loading .loa
 /* UX01-COMPACT-HOVER-2026-10-26 BEGIN */
 /* Real UniTheme2 has absolute hover body, image-hover scripts and legacy columns.
    Prevent layout mutations without touching the native product/booking handlers. */
-html.talario-ux01-active .talario-ux01 .grid-list.feed {
+html.talario-ux01-active .talario-ux01 .feed {
     grid-auto-flow:row!important;
     grid-auto-rows:auto!important;
     align-items:stretch!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed>.ty-column3,
-html.talario-ux01-active .talario-ux01 .grid-list.feed>[class*="ty-column"] {
+html.talario-ux01-active .talario-ux01 .feed>.ty-column3,
+html.talario-ux01-active .talario-ux01 .feed>[class*="ty-column"] {
     position:relative!important;
     width:100%!important;
     height:100%!important;
@@ -705,7 +705,7 @@ html.talario-ux01-active .talario-ux01 .grid-list.feed>[class*="ty-column"] {
     min-width:0!important;
     transform:none!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity {
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity {
     display:flex!important;
     flex:1 1 auto!important;
     height:100%!important;
@@ -715,8 +715,8 @@ html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity {
     transform:none!important;
     transition:none!important;
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:hover,
-html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:focus-within {
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity:hover,
+html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity:focus-within {
     position:relative!important;
     transform:none!important;
     transition:none!important;
@@ -795,7 +795,7 @@ html.talario-ux01-active .talario-ux01 .activity .card-foot .ty-price-num {
         -webkit-line-clamp:3!important;
     }
 }
-html.talario-ux01-active .talario-ux01 .grid-list.feed .activity .ut2-gl__image.photo-block {
+html.talario-ux01-active .talario-ux01 .feed .activity .ut2-gl__image.photo-block {
     min-height:108px!important;
     height:auto!important;
     max-height:none!important;
