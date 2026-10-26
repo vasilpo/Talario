@@ -60,7 +60,7 @@ test('homepage hooks must not depend on an optional index mode or print literal 
   const script = fs.readFileSync(scriptsPath, 'utf8');
   const style = fs.readFileSync(stylesPath, 'utf8');
   for (const hook of [script, style]) {
-    assert.match(hook, /\$runtime\.controller\s*==\s*"index"/);
+    assert.ok(hook.includes('$runtime.controller|default:"" == "index"'));
     assert.doesNotMatch(hook, /\$runtime\.mode/);
     assert.doesNotMatch(hook, /\\n\{if/);
   }
