@@ -30,6 +30,29 @@
         var trigger = document.getElementById('talario-ux01-all-filters');
         if (trigger) { trigger.setAttribute('aria-expanded', 'false'); if (restoreFocus) { trigger.focus(); } }
     }
+    // Defensive runtime boundary: UniTheme2 native hover uses absolute positioning
+    // and dynamic card sizing. CSS-only overrides can lose to per-item inline styles.
+    function stabilizeCard(card) {
+        if (!card || !card.classList.contains('activity')) { return; }
+        var column = card.parentElement;
+        var form = card.querySelector('form');
+        var body = card.querySelector('.ut2-gl__body');
+        [form, body].forEach(function (el) {
+            if (!el) { return; }
+            el.style.setProperty('position', 'static', 'important');
+            el.style.setProperty('inset', 'auto', 'important');
+            el.style.setProperty('width', '100%', 'important');
+            el.style.setProperty('height', '100%', 'important');
+            el.style.setProperty('min-height', '0', 'important');
+            el.style.setProperty('transition', 'none', 'important');
+            el.style.setProperty('transform', 'none', 'important');
+        });
+        card.style.setProperty('height', '100%', 'important');
+        if (column) {
+            column.style.setProperty('min-width', '0', 'important');
+            column.style.setProperty('height', '100%', 'important');
+        }
+    }
     function refreshCatalog() {
         var catalog = document.querySelector('#talario-ux01 #homepage_catalog');
         if (!catalog) { return; }
@@ -55,10 +78,10 @@
             if (currentSort && /Популярн/.test(currentSort.textContent)) { currentSort.textContent = 'Популярные'; }
         }
         var cards = catalog.querySelectorAll('.ut2-gl__item');
-        var feed = cards.length ? cards[0].parentElement.parentElement : null;
+        var feed = cards.length ? cards[0].closest('.grid-list') : null;
         if (feed) { feed.classList.add('feed', 'wrap'); }
         Array.prototype.forEach.call(cards, function (card) {
-            if (card.getAttribute('data-ux01-ready') === '1') { return; }
+            if (card.getAttribute('data-ux01-ready') === '1') { stabilizeCard(card); return; }
             var body = card.querySelector('.ut2-gl__body');
             var image = card.querySelector('.ut2-gl__image');
             var info = card.querySelector('.ut2-gl__content');
@@ -134,6 +157,7 @@
                     image.querySelector('a.product_icon_lnk').addEventListener('click', function (e) { if (didSwipe) { e.preventDefault(); didSwipe = false; } });
                 }
             }
+            stabilizeCard(card);
             if (photo) {
                 var candidates = sources || [photo.getAttribute('src')]; var nextImage = 1;
                 var recoverPhoto = function () {
