@@ -1,0 +1,163 @@
+/* UX-01 · scoped only to /dev_copy/ after JS has confirmed native catalog controls. */
+html.talario-ux01-active {
+  body { background: #fcf8ee; color: #30291f; }
+  .tygh-top-panel, .tygh-header { display: none !important; }
+  .tygh-content .content-grid > .container-fluid-row { display: none !important; }
+  .talario-ux01 {
+    display: block;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    background: #fcf8ee;
+    font-family: "Golos Text", Arial, sans-serif;
+    color: #30291f;
+  }
+  .talario-ux01 * { box-sizing: border-box; }
+  .talario-ux01__header {
+    background: #fff;
+    border-bottom: 1px solid #e9e4d9;
+    width: 100%;
+  }
+  .talario-ux01__header-inner {
+    max-width: 1248px;
+    min-height: 78px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .talario-ux01__brand { display: flex; flex: 0 0 auto; align-items: center; width: 141px; }
+  .talario-ux01__logo { display: block; width: 141px; height: auto; object-fit: contain; }
+  .talario-ux01__city { font-size: 13px; color: #746d60; white-space: nowrap; }
+  .talario-ux01__header-links { margin-left: auto; display: flex; align-items: center; gap: 28px; }
+  .talario-ux01__header-links a { font-size: 13px; color: #30291f; text-decoration: none; }
+  .talario-ux01__actions { display: flex; align-items: center; gap: 8px; margin-left: 18px; min-width: 0; }
+  .talario-ux01__profile, .talario-ux01__cart {
+    display: flex; align-items: center; justify-content: center;
+    min-width: 44px; min-height: 44px; gap: 7px;
+    color: #30291f; text-decoration: none; padding: 0 4px; flex-shrink: 0;
+  }
+  .talario-ux01__profile { min-width: 0; }
+  .talario-ux01__first-name {
+    display: block; max-width: 170px; overflow: hidden;
+    white-space: nowrap; text-overflow: ellipsis; font-weight: 600;
+  }
+  .talario-ux01__user-icon, .talario-ux01__cart { font-size: 23px; }
+  .talario-ux01__menu { position: relative; display: none; }
+  .talario-ux01__hamburger {
+    list-style: none; cursor: pointer; font-size: 27px;
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+  }
+  .talario-ux01__hamburger::-webkit-details-marker { display: none; }
+  .talario-ux01__menu-panel {
+    position: absolute; top: 48px; left: 0; z-index: 100;
+    width: 240px; max-width: calc(100vw - 32px);
+    padding: 8px; border-radius: 12px; border: 1px solid #e9e4d9;
+    background: #fff; box-shadow: 0 10px 32px #3b362119;
+  }
+  .talario-ux01__menu-panel a {
+    display: flex; align-items: center; min-height: 44px;
+    color: #30291f; text-decoration: none; padding: 8px 12px; border-radius: 8px;
+  }
+  .talario-ux01__menu-panel a:focus-visible, .talario-ux01__menu-panel a:hover { background: #fff0bc; }
+  .talario-ux01__main { max-width: 1248px; margin: 0 auto; padding: 30px 16px 56px; }
+  .talario-ux01__intro {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 24px; margin: 0 0 26px;
+  }
+  .talario-ux01__title {
+    margin: 0 0 8px; font-size: clamp(27px, 3vw, 40px); line-height: 1.15;
+    font-weight: 800; letter-spacing: -0.03em; color: #30291f;
+  }
+  .talario-ux01__city-accent {
+    display: inline; background: linear-gradient(transparent 83%, #f7c948 83%, #f7c948 94%, transparent 94%);
+    box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  }
+  .talario-ux01__subtitle { color: #746d60; font-size: 14px; margin: 0; }
+  .talario-ux01__bonus {
+    display: flex; flex-direction: column; gap: 3px; padding: 12px 18px;
+    text-decoration: none; border-left: 3px solid #f7c948;
+    color: #30291f; min-width: 255px; font-size: 13px;
+  }
+  .talario-ux01__bonus span { color: #746d60; font-size: 12px; }
+  .talario-ux01__controls { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; align-items: center; margin: 0 0 22px; }
+  .talario-ux01__search, .talario-ux01__filters { min-width: 0; }
+  .talario-ux01__search .ty-search-block, .talario-ux01__search form[name="search_form"] { display: block; position: relative; width: 100%; }
+  .talario-ux01__search .ty-search-block__input {
+    box-sizing: border-box; width: 100%; height: 52px;
+    border: 1px solid #b9ad97; border-radius: 27px; padding: 0 108px 0 42px;
+    background: #fff; font-size: 14px; box-shadow: none;
+  }
+  .talario-ux01__search .ty-search-magnifier {
+    position: absolute; right: 5px; top: 5px;
+    height: 42px; width: 90px; border-radius: 24px; background: #f7c948;
+    color: #30291f; border: 0; box-shadow: none;
+  }
+  .talario-ux01__search .ty-search-magnifier::after { content: "Найти"; font-family: "Golos Text", Arial, sans-serif; font-weight: 700; }
+  .talario-ux01__search .ty-search-magnifier i { display: none; }
+  .talario-ux01__filters .cm-lr-homepage-search-filters {
+    display: block; margin: 0; padding: 0; background: transparent;
+    border: 0; min-height: 48px; overflow: visible;
+  }
+  .talario-ux01__filters .ut2-scroll-content {
+    display: flex !important; flex-wrap: nowrap; align-items: center;
+    overflow: visible !important; width: 100%; border: 1px solid #d8cebc;
+    border-radius: 10px; background: #f5f0e5;
+  }
+  .talario-ux01__filters .ut2__horizontal-product-filters-dropdown {
+    min-width: 0; flex: 1 1 33%; padding: 0; border-right: 1px solid #d8cebc;
+  }
+  .talario-ux01__filters .ty-horizontal-product-filters-dropdown__wrapper {
+    display: flex; justify-content: space-between; align-items: center;
+    box-sizing: border-box; width: 100%; min-height: 46px;
+    padding: 0 10px; border: none; background: none; font-size: 13px;
+  }
+  .talario-ux01__filters .ut2-scroll-left,
+  .talario-ux01__filters .ut2-scroll-right { display: none !important; }
+  .talario-ux01__catalog .lr-homepage-catalog-layout { display: block; margin: 0; }
+  .talario-ux01__catalog .lr-homepage-catalog-layout__sidebar { display: none !important; }
+  .talario-ux01__catalog .lr-homepage-catalog-layout__content { min-width: 0; width: 100%; }
+  .talario-ux01__catalog .lr-homepage-catalog-layout__section-title { font-size: 21px; font-weight: 800; margin: 6px 0 16px; }
+  .talario-ux01__catalog .lr-homepage-catalog-layout__section-title::first-letter { text-transform: uppercase; }
+  .talario-ux01__catalog .lr-homepage-catalog-layout__section-separator { display: none; }
+  .talario-ux01__catalog .ty-sort-container { margin-bottom: 12px; }
+  .talario-ux01__catalog .ut2-gl__item { border: 1px solid #e9e1d3; border-radius: 15px; background: #fff; overflow: hidden; }
+  .talario-ux01__catalog .ty-column4 { width: 49% !important; margin: 0 .5% 12px !important; box-sizing: border-box; }
+  .talario-ux01__catalog .ut2-gl__body { border-radius: 15px; }
+  .talario-ux01__catalog .ut2-load-more { background: #fff; border: 1px solid #d8cebc; border-radius: 22px; }
+  .tygh-footer { background: #333832; border-top: 2px solid #f7c948; }
+  .tygh-footer .ty-footer-menu { background: #333832; }
+  .tygh-footer .ty-footer, .tygh-footer .ty-footer a, .tygh-footer .ty-footer-general__header,
+  .tygh-footer .ty-footer-menu__item a { color: #f7f6ef !important; }
+  .tygh-footer .ty-footer-menu__item a:hover { color: #f7c948 !important; }
+  .tygh-footer .ty-footer-menu .row-fluid { max-width: 1248px; margin: 0 auto; }
+}
+@media (max-width: 900px) {
+  html.talario-ux01-active {
+    .talario-ux01__header-inner { min-height: 64px; padding: 8px 12px; gap: 3px; }
+    .talario-ux01__menu { display: block; }
+    .talario-ux01__brand { width: 126px; }
+    .talario-ux01__logo { width: 126px; height: auto; }
+    .talario-ux01__city, .talario-ux01__header-links { display: none; }
+    .talario-ux01__actions { margin-left: auto; gap: 0; }
+    .talario-ux01__first-name { max-width: min(25vw, 112px); font-size: 12px; }
+    .talario-ux01__main { padding: 18px 16px 40px; }
+    .talario-ux01__title { font-size: 27px; line-height: 1.13; }
+    .talario-ux01__intro { margin-bottom: 16px; }
+    .talario-ux01__bonus { display: none; }
+    .talario-ux01__controls { display: block; margin-bottom: 16px; }
+    .talario-ux01__search { margin-bottom: 9px; }
+    .talario-ux01__filters .ut2-scroll-content { border-radius: 9px; }
+    .talario-ux01__catalog .ty-column4 { float: none !important; width: 100% !important; margin: 0 0 12px !important; }
+    .talario-ux01__catalog .lr-homepage-catalog-layout__section-title { font-size: 18px; }
+  }
+}
+@media (max-width: 375px) {
+  html.talario-ux01-active {
+    .talario-ux01__header-inner { padding: 8px 6px; }
+    .talario-ux01__brand, .talario-ux01__logo { width: 112px; }
+    .talario-ux01__first-name { max-width: 67px; }
+    .talario-ux01__profile, .talario-ux01__cart { min-width: 37px; padding: 0 2px; }
+    .talario-ux01__main { padding-inline: 12px; }
+  }
+}
