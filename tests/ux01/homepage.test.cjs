@@ -55,3 +55,13 @@ test('hook preserves previously connected native scripts and styles', () => {
   assert.match(style, /addons\/lr_design_changes\/styles\.less/);
   assert.match(style, /ux01_homepage\.less/);
 });
+
+test('homepage hooks must not depend on an optional index mode or print literal backslash-newline text', () => {
+  const script = fs.readFileSync(scriptsPath, 'utf8');
+  const style = fs.readFileSync(stylesPath, 'utf8');
+  for (const hook of [script, style]) {
+    assert.ok(hook.includes('$runtime.controller|default:"" == "index"'));
+    assert.doesNotMatch(hook, /\$runtime\.mode/);
+    assert.doesNotMatch(hook, /\\n\{if/);
+  }
+});
