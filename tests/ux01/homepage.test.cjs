@@ -179,3 +179,9 @@ test('UX-01 desktop product rows are compact without changing load-more controls
   assert.match(qa, /-webkit-line-clamp:2!important/);
   assert.match(qa, /@media\(min-width:900px\)/);
 });
+
+test('UX-01 card photo min-height follows compact body and cannot force old 130px height', () => {
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const qa = css.split('/* UX01-COMPACT-HOVER-2026-10-26 BEGIN */')[1] || '';
+  assert.match(qa, /\.ut2-gl__image\.photo-block[^{}]*\{[^}]*min-height:108px!important/);
+});
