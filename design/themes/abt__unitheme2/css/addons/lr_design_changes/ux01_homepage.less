@@ -681,3 +681,118 @@ html.talario-ux01-active .talario-ux01 .ut2-load-more.ut2-load-more-loading .loa
     }
 }
 /* UX01-VISUAL-QA-2026-10-26 END */
+
+/* UX01-COMPACT-HOVER-2026-10-26 BEGIN */
+/* Real UniTheme2 has absolute hover body, image-hover scripts and legacy columns.
+   Prevent layout mutations without touching the native product/booking handlers. */
+html.talario-ux01-active .talario-ux01 .grid-list.feed {
+    grid-auto-flow:row!important;
+    grid-auto-rows:auto!important;
+    align-items:stretch!important;
+}
+html.talario-ux01-active .talario-ux01 .grid-list.feed>.ty-column3,
+html.talario-ux01-active .talario-ux01 .grid-list.feed>[class*="ty-column"] {
+    position:relative!important;
+    width:100%!important;
+    height:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-self:stretch!important;
+    float:none!important;
+    margin:0!important;
+    padding:0!important;
+    max-width:none!important;
+    min-width:0!important;
+    transform:none!important;
+}
+html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity {
+    display:flex!important;
+    flex:1 1 auto!important;
+    height:100%!important;
+    min-height:0!important;
+    align-self:stretch!important;
+    position:relative!important;
+    transform:none!important;
+    transition:none!important;
+}
+html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:hover,
+html.talario-ux01-active .talario-ux01 .grid-list.feed .ut2-gl__item.activity:focus-within {
+    position:relative!important;
+    transform:none!important;
+    transition:none!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .cm-ab-hover-gallery {
+    pointer-events:none!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .card-top {
+    min-height:108px!important;
+    grid-template-columns:100px minmax(0,1fr)!important;
+    flex:1 1 auto!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .activity-info {
+    min-height:108px!important;
+    padding:9px 11px!important;
+    gap:4px!important;
+    overflow:hidden!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .product-title,
+html.talario-ux01-active .talario-ux01 .activity .product-title span {
+    font-size:.9375rem!important;
+    line-height:1.24!important;
+    letter-spacing:-.008rem!important;
+    font-weight:650!important;
+    display:-webkit-box!important;
+    -webkit-line-clamp:2!important;
+    -webkit-box-orient:vertical!important;
+    overflow:hidden!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .address,
+html.talario-ux01-active .talario-ux01 .activity .address .product-description {
+    display:-webkit-box!important;
+    -webkit-line-clamp:2!important;
+    -webkit-box-orient:vertical!important;
+    overflow:hidden!important;
+    line-height:1.3!important;
+    font-size:.75rem!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .card-foot {
+    min-height:42px!important;
+    height:auto!important;
+}
+html.talario-ux01-active .talario-ux01 .activity .card-foot .ty-price,
+html.talario-ux01-active .talario-ux01 .activity .card-foot .ty-price-num {
+    font-size:1.25rem!important;
+    line-height:1.2!important;
+}
+@media(min-width:900px){
+    html.talario-ux01-active .talario-ux01 .activity .card-top{
+        min-height:108px!important;
+        grid-template-columns:100px minmax(0,1fr)!important;
+    }
+    html.talario-ux01-active .talario-ux01 .activity .activity-info{
+        min-height:108px!important;
+    }
+}
+@media(min-width:900px) and (max-width:1050px){
+    html.talario-ux01-active .talario-ux01 .query-inner {
+        grid-template-columns:minmax(0,1fr) minmax(0,410px)!important;
+    }
+    html.talario-ux01-active .talario-ux01 .quick {
+        width:100%!important;
+    }
+}
+@media(max-width:899px){
+    html.talario-ux01-active .talario-ux01 .activity .card-top {
+        grid-template-columns:100px minmax(0,1fr)!important;
+    }
+    html.talario-ux01-active .talario-ux01 .activity .activity-info {
+        overflow:visible!important;
+    }
+    html.talario-ux01-active .talario-ux01 .activity .product-title,
+    html.talario-ux01-active .talario-ux01 .activity .product-title span {
+        -webkit-line-clamp:3!important;
+    }
+}
+/* UX01-COMPACT-HOVER-2026-10-26 END */
