@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>UX-01 · dev_copy · проверка ширины</title>
+<style>
+body{margin:0;font:14px system-ui;background:#ddd;color:#222;width:max-content;min-width:100vw}
+nav{height:56px;display:flex;align-items:center;gap:8px;padding:0 12px;box-sizing:border-box;background:#fff}
+button{min-height:40px;padding:0 12px;font:inherit;cursor:pointer;border:1px solid #bbb;border-radius:8px;background:#fafafa}
+button[aria-pressed=true]{background:#fff0b5;border-color:#8e6500}
+iframe{display:block;border:0;width:390px;height:844px;background:white}
+</style>
+<nav aria-label="Ширина тестовой витрины">
+  <strong>UX-01 · dev_copy</strong>
+  <button data-width="320" data-height="812">320</button>
+  <button data-width="375" data-height="812">375</button>
+  <button data-width="390" data-height="844" aria-pressed="true">390</button>
+  <button data-width="430" data-height="932">430</button>
+  <button data-width="1440" data-height="1050">1440</button>
+</nav>
+<iframe title="Настоящая тестовая витрина Таларио" id="storefront"></iframe>
+<script>
+if(location.pathname === '/dev_copy/tests/ux01/viewport.html') {
+  var frame=document.getElementById('storefront');
+  frame.src='/dev_copy/';
+  document.querySelectorAll('[data-width]').forEach(function(button){
+    button.addEventListener('click',function(){
+      frame.style.width=button.dataset.width+'px';frame.style.height=button.dataset.height+'px';
+      document.querySelectorAll('[data-width]').forEach(function(other){other.setAttribute('aria-pressed',String(other===button));});
+    });
+  });
+} else {
+  document.body.textContent='Этот стенд доступен только на dev_copy.';
+}
+</script>
+</html>

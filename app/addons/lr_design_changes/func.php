@@ -31,6 +31,12 @@ function fn_lr_design_changes_get_homepage_catalog_data($value, array $block, ar
 {
     $params = $_REQUEST;
 
+    // Use the existing native popularity sort for the approved dev_copy default.
+    if (AREA === 'C' && Registry::get('config.current_path') === '/dev_copy' && empty($params['sort_by'])) {
+        $params['sort_by'] = 'popularity';
+        $params['sort_order'] = 'desc';
+    }
+
     $selected_layout = fn_get_products_layout($params);
     $categories_tree = fn_get_categories_tree(0, false);
 
@@ -464,4 +470,36 @@ function fn_lr_design_changes_normalize_homepage_search_filter_variants(array $v
     }
 
     return $normalized_variants;
+}
+
+/**
+ * The test copy has image metadata but may lack original files for thumbnail generation.
+ * Reuse the same public original read-only; never fetch, copy or write into PROD.
+ * Existing local thumbnails and every non-dev storefront retain native behavior.
+ */
+function fn_lr_design_changes_image_to_display_post(&$image_data, $images, $image_width, $image_height)
+{
+    if (AREA !== 'C' || Registry::get('config.current_path') !== '/dev_copy' || !empty($image_data['image_path'])) {
+        return;
+    }
+    $source = $images['detailed'] ?? $images['icon'] ?? $images;
+    $relative = $source['relative_path'] ?? '';
+    if (!is_string($relative)
+        || !preg_match('~^(?:detailed|product|logos|category)/[0-9]+/[^/\\\\]+\.(?:jpe?g|png|gif|webp|avif)$~iD', $relative)
+        || strpos($relative, '..') !== false
+        || preg_match('/[\x00-\x1f]/', $relative)
+    ) {
+        return;
+    }
+    $url = '/images/' . implode('/', array_map('rawurlencode', explode('/', $relative)));
+    $image_data = [
+        'image_path' => $url,
+        'detailed_image_path' => $url,
+        'alt' => $source['alt'] ?? '',
+        'width' => (int) ($image_width ?: ($source['image_x'] ?? 0)),
+        'height' => (int) ($image_height ?: ($source['image_y'] ?? 0)),
+        'absolute_path' => '',
+        'generate_image' => false,
+        'is_thumbnail' => false,
+    ];
 }

@@ -8,6 +8,7 @@ on:
       - 'design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less'
       - 'design/themes/abt__unitheme2/templates/addons/lr_design_changes/hooks/index/**'
       - 'tests/ux01/**'
+      - 'app/addons/lr_design_changes/**'
       - '.github/workflows/ux01-safety.yml'
   push:
     branches: [development]
@@ -16,6 +17,7 @@ on:
       - 'design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less'
       - 'design/themes/abt__unitheme2/templates/addons/lr_design_changes/hooks/index/**'
       - 'tests/ux01/**'
+      - 'app/addons/lr_design_changes/**'
 
 permissions:
   contents: read
@@ -38,4 +40,5 @@ jobs:
           extensions: mbstring
           coverage: none
       - name: Render hooks with mutable homepage runtime and verify PROD exclusion
-        run: php tests/ux01/hooks-render.test.php
+        run: |
+          for test in tests/ux01/*.test.php; do php "$test"; done

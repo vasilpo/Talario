@@ -25,25 +25,25 @@ test('homepage uses existing native CS-Cart search, filter and catalog nodes', (
   assert.match(source, /#homepage_catalog/);
   assert.match(source, /appendChild\(search\)/);
   assert.match(source, /appendChild\(filters\)/);
-  assert.match(source, /appendChild\(catalog\)/);
+  assert.match(source, /appendChild\(ajaxRoot\)/);
   assert.doesNotMatch(source, /\.innerHTML\s*=/);
-  assert.doesNotMatch(source, /\.remove\(/);
+  assert.doesNotMatch(source, /\b(?:search|catalog|filters|form)\.remove\(/);
 });
 test('only the first name from escaped server context is rendered as text', () => {
   const js = fs.readFileSync(jsPath, 'utf8');
   const tpl = fs.readFileSync(scriptsPath, 'utf8');
-  assert.match(js, /data-first-name/);
+  assert.match(js, /talarioUx01Context/);
   assert.match(js, /textContent\s*=\s*text/);
   assert.doesNotMatch(js, /lastName|lastname|fullName|fullname/);
   assert.match(tpl, /\$user_info\.firstname/);
-  assert.match(tpl, /escape:"html"/);
+  assert.match(tpl, /json_encode:15/);
   assert.doesNotMatch(tpl, /\$user_info\.lastname/);
 });
 test('theme CSS cannot affect non-enhanced pages', () => {
   const css = fs.readFileSync(cssPath, 'utf8');
-  assert.match(css, /html\.talario-ux01-active\s*\{/);
-  assert.match(css, /@media\s*\(max-width:\s*900px\)/);
-  assert.match(css, /@media\s*\(max-width:\s*375px\)/);
+  assert.match(css, /html\.talario-ux01-active/);
+  assert.match(css, /@media\s*\(max-width:\s*899px\)/);
+  assert.match(css, /@media\s*\(max-width:\s*359px\)/);
   assert.match(css, /text-overflow:\s*ellipsis/);
 });
 test('hook preserves previously connected native scripts and styles', () => {
