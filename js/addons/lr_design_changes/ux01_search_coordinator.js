@@ -226,6 +226,12 @@
         var note = elem(doc, 'div', 'ux01-filter-pending');
         note.setAttribute('role', 'status'); note.setAttribute('aria-live', 'polite');
         if (controlsWrap) { controlsWrap.insertAdjacentElement('afterend', note); }
+        function permitted() {
+            return /^\/dev_copy(?:\/|$)/.test(root.location.pathname) &&
+                !!root.Tygh && root.Tygh.talarioUx01FilterGate === true &&
+                doc.documentElement.classList.contains('talario-ux01-active') &&
+                !!doc.querySelector('#talario-ux01');
+        }
         function query() { return input ? String(input.value || '').trim() : ''; }
         function applyAll() {
             var target = buildUrl(root.location.origin, query(), selectedGroups(filters));
@@ -241,10 +247,11 @@
         // Capture phase prevents older CS-Cart / lr_design_changes delegated handlers
         // from navigating through a different products.search flow.
         form.addEventListener('submit', function (event) {
+            if (!permitted()) { return; }
             event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); applyAll();
         }, true);
         filters.addEventListener('click', function (event) {
-            if (!event.target.closest('[data-ca-lr-homepage-search-filters-apply]')) { return; }
+            if (!permitted() || !event.target.closest('[data-ca-lr-homepage-search-filters-apply]')) { return; }
             event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); applyAll();
         }, true);
         if (input) { input.addEventListener('input', updatePending); }
