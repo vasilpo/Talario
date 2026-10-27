@@ -90,6 +90,35 @@
         var label = li && li.querySelector('label');
         return label ? label.textContent.replace(/\s+/g, ' ').trim() : input.value;
     }
+    function ageSuffix(age) {
+        var lastTwo = age % 100;
+        if (lastTwo >= 11 && lastTwo <= 14) { return 'лет'; }
+        var last = age % 10;
+        return last === 1 ? 'год' : (last >= 2 && last <= 4 ? 'года' : 'лет');
+    }
+    // The native filter addon already renders a checkbox count. UX-01 shows the
+    // human-readable selection instead; never append the native count to the label.
+    function formatQuickLabel(base, selected) {
+        var chosen = selected || [];
+        if (!chosen.length) { return {short:base, full:base}; }
+        if (base === 'Возраст') {
+            var ages = chosen.map(ageNumber).filter(function (n) { return n !== null; })
+                .sort(function (a, b) { return a - b; });
+            if (ages.length) {
+                var lower = ages[0], upper = ages[ages.length - 1];
+                var value = String(lower) + (upper !== lower ? '–' + upper : '') + ' ' + ageSuffix(upper);
+                return {short:value, full:'Возраст: ' + value};
+            }
+            return {short:'Возраст выбран', full:'Возраст выбран'};
+        }
+        if (base === 'Направление') {
+            return chosen.length === 1
+                ? {short:chosen[0], full:'Направление: ' + chosen[0]}
+                : {short:chosen.length + ' направлений', full:'Направления: выбрано ' + chosen.length};
+        }
+        return {short:chosen.length === 1 ? chosen[0] : base + ': ' + chosen.length,
+            full:base + ': ' + chosen.join(', ')};
+    }
     function controls(filters) {
         return Array.prototype.slice.call(filters.querySelectorAll('[data-ca-lr-homepage-search-filters-switch]'));
     }
@@ -104,17 +133,18 @@
             var base = control.getAttribute('data-ux01-base-label') ||
                 (/Возраст/i.test(control.textContent) ? 'Возраст' : 'Направление');
             var chosen = checked.map(labelFor);
-            var title;
-            if (base === 'Возраст' && chosen.length) {
-                var ages = chosen.map(ageNumber).filter(function (n) { return n !== null; }).sort(function (a, b) { return a - b; });
-                title = ages.length ? 'Возраст: ' + ages[0] + (ages.length > 1 ? '–' + ages[ages.length - 1] : '') : 'Возраст: ' + chosen.length;
-            } else {
-                title = chosen.length ? base + ': ' + (chosen.length === 1 ? chosen[0] : chosen.length) : base;
+            var display = formatQuickLabel(base, chosen);
+            var label = control.querySelector('.ux01-quick-label');
+            if (!label) {
+                label = elem(filters.ownerDocument, 'span', 'button-label ux01-quick-label');
+                var textNode = Array.prototype.find.call(control.childNodes, function (n) { return n.nodeType === 3; });
+                if (textNode) { control.replaceChild(label, textNode); }
+                else { control.insertBefore(label, control.firstChild); }
             }
-            var textNode = Array.prototype.find.call(control.childNodes, function (n) { return n.nodeType === 3; });
-            if (textNode) { textNode.nodeValue = title; }
+            label.textContent = display.short;
+            control.title = display.full;
             control.classList.toggle('selected', chosen.length > 0);
-            control.setAttribute('aria-label', title + (chosen.length ? ', выбрано' : ''));
+            control.setAttribute('aria-label', display.full + (chosen.length ? ', выбрано' : ''));
             control.setAttribute('data-ux01-selected-count', String(chosen.length));
         });
     }
@@ -277,10 +307,7 @@
             filters.querySelectorAll('.cm-lr-homepage-search-filter[data-ca-filter-id="' + id + '"]').forEach(function (box) {
                 if (values.indexOf(box.value) !== -1) { nativeLabels.push(labelFor(box)); }
             });
-            var ages = nativeLabels.map(ageNumber).filter(function (n) { return n !== null; }).sort(function (a,b) { return a-b; });
-            var display = base === 'Возраст' && ages.length
-                ? 'Возраст: ' + ages[0] + (ages.length > 1 ? '–' + ages[ages.length-1] : '') + ' лет'
-                : base + ': ' + (nativeLabels.length === 1 ? nativeLabels[0] : nativeLabels.length + ' выбрано');
+            var display = formatQuickLabel(base, nativeLabels).full;
             makeChip(display, function () {
                 var next = Object.assign({}, applied); delete next[id];
                 root.location.assign(buildUrl(root.location.origin, appliedQ, next));
@@ -295,5 +322,5 @@
         } else { chips.hidden = true; }
         updatePending();
     }
-    return {buildUrl:buildUrl, parseHash:parseHash, toHash:toHash, ageValues:ageValues, init:init};
+    return {buildUrl:buildUrl, parseHash:parseHash, toHash:toHash, ageValues:ageValues, formatQuickLabel:formatQuickLabel, init:init};
 }));
