@@ -23,6 +23,36 @@ function auditCatalogGeometry(doc) {
     var more = feed.parentElement.querySelector('.ut2-load-more-container');
     var pagination = more && more.getBoundingClientRect().height > 0 ? rect(more) : null;
     var errors = [];
+    var details = Array.from(feed.querySelectorAll('.ut2-gl__item.activity')).map(function(card, index) {
+        var foot = card.querySelector('.card-foot');
+        var moreLink = foot && foot.querySelector('.more');
+        var block = card.querySelector('.photo-block');
+        var visiblePhoto = block && Array.from(block.querySelectorAll('img')).find(function(img) {
+            return !img.hidden && img.getBoundingClientRect().width > 0 && img.getBoundingClientRect().height > 0;
+        });
+        if (!foot || !moreLink) { errors.push('Missing Details footer at card ' + index); }
+        if (foot && moreLink && Math.abs(moreLink.getBoundingClientRect().right - foot.getBoundingClientRect().right) > 1) {
+            errors.push('Details is not anchored right at card ' + index);
+        }
+        if (block && visiblePhoto && (Math.abs(visiblePhoto.getBoundingClientRect().height - block.getBoundingClientRect().height) > 1 || doc.defaultView.getComputedStyle(visiblePhoto).objectFit !== 'cover')) {
+            errors.push('Photo does not fill its region at card ' + index);
+        }
+        return {footer: foot ? rect(foot) : null, more: moreLink ? rect(moreLink) : null, photo: visiblePhoto ? rect(visiblePhoto) : null};
+    });
+    var filterStrip = doc.querySelector('.filter-strip');
+    if (filterStrip) {
+        Array.from(filterStrip.querySelectorAll('.quick-button,.allfilters')).forEach(function(control) {
+            if (control.getBoundingClientRect().width === 0) { return; }
+            var box = control.getBoundingClientRect();
+            var stripBox = filterStrip.getBoundingClientRect();
+            if (box.left < stripBox.left - 1 || box.right > stripBox.right + 1 || box.width < 44 || box.height < 44) { errors.push('Quick filter outside strip or too small'); }
+            Array.from(control.querySelectorAll('svg,.allfilters-label')).forEach(function(child) {
+                if (doc.defaultView.getComputedStyle(child).display === 'none') { return; }
+                var childBox = child.getBoundingClientRect();
+                if (childBox.left < box.left - 1 || childBox.right > box.right + 1) { errors.push('Quick filter label/icon overflows its button'); }
+            });
+        });
+    }
     if (Array.from(doc.querySelectorAll('.ut2-load-more.hidden')).some(function(loader) { return loader.getBoundingClientRect().height > 0; })) {
         errors.push('Native hidden AJAX loader is visible');
     }
@@ -62,5 +92,5 @@ function auditCatalogGeometry(doc) {
         if (rows.length && first.y < rows[rows.length - 1].bottom - 1) { errors.push('Rows overlap at card ' + i); }
         rows.push({start: i, x: first.x, end: row[row.length - 1].x + row[row.length - 1].width, y: first.y, bottom: first.bottom, height: first.height});
     }
-    return {pass: errors.length === 0, compact: compact, viewport: viewport, scrollWidth: doc.documentElement.scrollWidth, count: cards.length, columns: columns, grid: grid, pagination: pagination, cards: cards, rows: rows, errors: errors};
+    return {pass: errors.length === 0, compact: compact, viewport: viewport, scrollWidth: doc.documentElement.scrollWidth, count: cards.length, columns: columns, grid: grid, pagination: pagination, cards: cards, details: details, rows: rows, errors: errors};
 }

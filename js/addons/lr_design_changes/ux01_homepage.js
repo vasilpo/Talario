@@ -95,11 +95,13 @@
             body.insertBefore(top, body.firstChild);
             image.classList.add('photo-block'); info.classList.add('activity-info');
             top.appendChild(image); top.appendChild(info);
-            var photo = image.querySelector('img');
-            if (photo) {
-                photo.classList.add('photo');
-                photo.addEventListener('load', function () { if (photo.naturalWidth / photo.naturalHeight > 2.3) { photo.style.objectFit = 'contain'; } });
-            }
+            var photos = image.querySelectorAll('img');
+            var photo = photos[0];
+            Array.prototype.forEach.call(photos, function (img) {
+                img.classList.add('photo');
+                var link = img.closest('a');
+                if (link) { link.classList.add('ux01-photo-link'); }
+            });
             var title = info.querySelector('.ut2-gl__name');
             var meta = make('div', 'card-meta');
             var age = info.querySelector('.sd-product-info .ut2-gl__bottom');
@@ -112,22 +114,31 @@
             }
             if (title) { title.insertAdjacentElement('afterend', meta); }
             var address = info.querySelector('.sd-product-info');
-            if (address) { address.classList.add('address'); }
+            if (address) {
+                address.classList.add('address');
+                Array.prototype.forEach.call(address.querySelectorAll('.product-description'), function (description) {
+                    Array.prototype.forEach.call(description.childNodes, function (node) {
+                        if (node.nodeType === 3) { node.textContent = node.textContent.replace(/(дом|д\.|стр\.)\s+(\d)/gi, '$1\u00a0$2'); }
+                    });
+                });
+            }
             var price = info.querySelector('.ut2-gl__price-wrap');
-            if (price) {
+            var soon = Array.prototype.find.call(info.querySelectorAll('*'), function (el) { return el.children.length === 0 && /Скоро можно будет забронировать/.test(el.textContent); });
+            if (price || soon) {
+                price = price || make('div');
                 price.classList.add('card-foot'); body.appendChild(price);
                 var amount = price.querySelector('.ut2-gl__price');
-                if (amount) { amount.classList.add('price-stack'); }
-                var more = price.querySelector('.ut2-gl__control a');
-                if (more) { more.classList.add('more'); }
-            } else {
-                var soon = Array.prototype.find.call(info.querySelectorAll('*'), function (el) { return el.children.length === 0 && /Скоро можно будет забронировать/.test(el.textContent); });
-                if (soon) {
+                if (amount) { amount.classList.add('price-stack'); price.appendChild(amount); }
+                else if (soon) {
+                    var stack = make('div', 'price-stack');
                     soon.textContent = 'Скоро на Таларио'; soon.classList.add('coming-soon-copy');
-                    var foot = make('div', 'card-foot'); var stack = make('div', 'price-stack'); stack.appendChild(soon); foot.appendChild(stack);
+                    stack.appendChild(soon); price.appendChild(stack);
+                }
+                var more = price.querySelector('.ut2-gl__control a');
+                if (more) { more.classList.add('more'); price.appendChild(more); }
+                else {
                     var productLink = info.querySelector('.product-title');
-                    if (productLink) { var moreLink = make('a', 'more', 'Подробнее'); moreLink.href = productLink.href; foot.appendChild(moreLink); }
-                    body.appendChild(foot);
+                    if (productLink) { var moreLink = make('a', 'more', 'Подробнее'); moreLink.href = productLink.href; price.appendChild(moreLink); }
                 }
             }
             var favorite = image.querySelector('.ut2-add-to-wish');
@@ -155,23 +166,32 @@
                         var dx = e.changedTouches[0].clientX - startX; var dy = e.changedTouches[0].clientY - startY;
                         if (Math.abs(dx) < 35 || Math.abs(dx) <= Math.abs(dy)) { return; }
                         current = (current + (dx < 0 ? 1 : -1) + sources.length) % sources.length;
-                        photo.src = sources[current]; didSwipe = true;
+                        photo.setAttribute('srcset', ''); photo.src = sources[current]; didSwipe = true;
                         if (dots) { Array.prototype.forEach.call(dots.children, function (dot, i) { dot.classList.toggle('active', i === current); }); }
                     }, {passive: true});
                     image.querySelector('a.product_icon_lnk').addEventListener('click', function (e) { if (didSwipe) { e.preventDefault(); didSwipe = false; } });
                 }
             }
             stabilizeCard(card);
-            if (photo) {
-                var candidates = sources || [photo.getAttribute('src')]; var nextImage = 1;
+            Array.prototype.forEach.call(photos, function (img) {
+                var candidates = img === photo && sources ? sources : [img.getAttribute('src')];
+                var nextImage = 1;
                 var recoverPhoto = function () {
-                    if (nextImage < candidates.length) { photo.src = candidates[nextImage++]; return; }
-                    photo.hidden = true; if (gallery) { gallery.hidden = true; }
-                    if (!image.querySelector('.ux01-no-image')) { image.querySelector('a.product_icon_lnk').appendChild(make('span', 'ux01-no-image', 'Фото отсутствует')); }
+                    if (nextImage < candidates.length) { img.setAttribute('srcset', ''); img.src = candidates[nextImage++]; return; }
+                    img.hidden = true; if (gallery) { gallery.hidden = true; }
+                    var link = img.closest('a');
+                    if (link && !link.querySelector('.ux01-no-image')) { link.appendChild(make('span', 'ux01-no-image', 'Фото отсутствует')); }
                 };
-                photo.addEventListener('error', recoverPhoto);
-                if (photo.complete && photo.naturalWidth === 0) { recoverPhoto(); }
+                img.addEventListener('error', recoverPhoto);
+                if (img.complete && img.naturalWidth === 0) { recoverPhoto(); }
+            });
+            // Native Owl caches slide widths before the adapter changes the photo region.
+            var carousel = image.querySelector('.owl-carousel');
+            if (carousel && $.fn && $.fn.owlCarousel) {
+                var carouselApi = $(carousel).data('owlCarousel');
+                if (carouselApi && typeof carouselApi.updateVars === 'function') { carouselApi.updateVars(); }
             }
+
         });
         if (feed && cards.length > 1 && !feed.querySelector('.mobile-bonus')) {
             var bonus = make('aside', 'mobile-bonus'); bonus.appendChild(icon('gift'));
@@ -218,7 +238,10 @@
     }
     function init() {
         var existing = document.getElementById('talario-ux01');
-        if (existing) { refreshCatalog(); return; }
+        if (existing && existing.getAttribute('data-ux01-server-shell') !== 'pending') {
+            setupFilters(document.querySelector('#talario-ux01 .cm-lr-homepage-search-filters'));
+            refreshCatalog(); return;
+        }
         var content = document.querySelector('.tygh-content .content-grid');
         var catalog = document.querySelector('#homepage_catalog');
         var search = content && content.querySelector('.ty-search-block');
@@ -226,7 +249,12 @@
         if (!content || !catalog || !search || !filters) { return; }
         var form = search.querySelector('form[name="search_form"]'); if (!form) { return; }
         var root = '/dev_copy/'; function href(slug) { return root + slug; }
-        var shell = make('section', 'talario-ux01'); shell.id = 'talario-ux01';
+        var shell = existing || make('section', 'talario-ux01'); shell.id = 'talario-ux01';
+        var main = shell.querySelector('.talario-ux01__main');
+        var ctx = userContext || _.talarioUx01Context || {};
+        document.documentElement.classList.toggle('is-auth', ctx.authenticated === true);
+        userContext = ctx; delete _.talarioUx01Context;
+        if (!main) {
         var header = make('header', 'header'); var inner = make('div', 'header-inner wrap');
         var menu = make('details', 'talario-ux01__menu menu'); var summary = make('summary', 'iconbutton'); summary.setAttribute('aria-label', 'Меню'); summary.appendChild(icon('menu')); menu.appendChild(summary);
         var mobileNav = make('nav', 'talario-ux01__menu-panel'); mobileNav.setAttribute('aria-label', 'Меню Таларио');
@@ -249,20 +277,29 @@
         var accent = make('span', 'city-accent'); var rule = make('span', 'city-accent-rule'); rule.setAttribute('aria-hidden', 'true'); accent.appendChild(rule); accent.appendChild(make('span', 'city-accent-text', 'в Красногорске')); title.appendChild(accent);
         headline.appendChild(title); headline.appendChild(make('p', 'subtitle', 'Найди своё — рядом с домом.')); intro.appendChild(headline);
         var bonus = make('aside', 'desktop-bonus'); bonus.appendChild(icon('gift')); var bonusCopy = make('div'); bonusCopy.appendChild(make('strong', '', '500 баллов за регистрацию')); bonusCopy.appendChild(make('p', '', '1 балл = 1 ₽')); bonus.appendChild(bonusCopy); intro.appendChild(bonus); main.appendChild(intro);
+        }
+        if (!main.parentElement) { shell.appendChild(main); }
+        // Attach empty destinations before moving live controls. A partial failure
+        // must leave transferred nodes connected and visible after guard release.
+        shell.setAttribute('data-ux01-server-shell', 'ready');
+        content.insertBefore(shell, content.firstChild);
+        var loading = main.querySelector('.ux01-loading');
+        if (loading) { loading.parentElement.removeChild(loading); }
         var controls = make('div', 'query-inner wrap'); var searchWrap = make('div', 'talario-ux01__search'); form.classList.add('search');
+        main.appendChild(controls); controls.appendChild(searchWrap);
         var input = form.querySelector('input[type="text"], input[type="search"]'); if (input) { input.placeholder = 'Занятие или центр'; input.setAttribute('aria-label', 'Название занятия или центра'); }
         form.insertBefore(icon('search'), form.firstChild); var submit = form.querySelector('button[type="submit"]'); if (submit) { submit.textContent = 'Найти'; submit.classList.add('search-submit'); submit.setAttribute('aria-label', 'Найти'); }
-        searchWrap.appendChild(search); controls.appendChild(searchWrap);
-        var filterWrap = make('div', 'quick'); filterWrap.appendChild(filters); controls.appendChild(filterWrap); main.appendChild(controls);
-        var catalogWrap = make('div', 'talario-ux01__catalog');
+        searchWrap.appendChild(search);
+        var filterWrap = make('div', 'quick'); controls.appendChild(filterWrap); filterWrap.appendChild(filters);
+        var catalogWrap = make('div', 'talario-ux01__catalog'); main.appendChild(catalogWrap);
         // Keep the native AJAX root, not only its inner catalog; filters/load-more target it.
         var ajaxRoot = catalog.parentElement;
         if (ajaxRoot && /^lr_homepage_catalog_\d+$/.test(ajaxRoot.id)) { catalogWrap.appendChild(ajaxRoot); }
         else { catalogWrap.appendChild(catalog); }
-        main.appendChild(catalogWrap); shell.appendChild(main);
         var tail = document.getElementById('talario-ux01-approved-tail'); if (tail && tail.content) { shell.appendChild(tail.content.cloneNode(true)); }
         var backdrop = button('', 'ux01-filter-backdrop'); backdrop.setAttribute('aria-label', 'Закрыть фильтры'); backdrop.addEventListener('click', function () { closeFilters(true); }); shell.appendChild(backdrop);
-        content.insertBefore(shell, content.firstChild); document.documentElement.classList.add('talario-ux01-active');
+        document.documentElement.classList.add('talario-ux01-active');
+        document.documentElement.classList.remove('talario-ux01-boot');
         setupFilters(filters); refreshCatalog();
     }
     document.addEventListener('keydown', function (e) {
