@@ -10,4 +10,5 @@ Tygh.talarioUx01Context = {
 };
 </script>
 {script src="js/addons/lr_design_changes/ux01_homepage.js"}
+{script src="js/addons/lr_design_changes/ux01_search_coordinator.js"}
 {/if}
