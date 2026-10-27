@@ -3,6 +3,9 @@
 // Run against the authorized dev_copy document, never a mock catalog.
 // Coordinates and IDs only: no account, title, cookie or storage data.
 function auditCatalogGeometry(doc) {
+    if (!doc || !doc.location || doc.location.origin !== 'https://talario.ru' || !/^\/dev_copy\/(?:index\.php)?$/.test(doc.location.pathname)) {
+        return {pass: false, errors: ['Geometry QA refuses documents outside the dev_copy catalog']};
+    }
     var feed = doc.querySelector('.talario-ux01 .feed');
     if (!feed) { return {pass: false, errors: ['UX-01 catalog is not ready']}; }
     function rect(element) {
