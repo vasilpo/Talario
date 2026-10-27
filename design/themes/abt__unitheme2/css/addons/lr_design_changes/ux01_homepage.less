@@ -908,3 +908,21 @@ html.talario-ux01-active .talario-ux01 .ux01-age-field select:focus-visible{outl
  html.talario-ux01-active .talario-ux01 .ty-horizontal-product-filters-dropdown__content.js_open{display:flex!important;flex-direction:column;overscroll-behavior:contain;overflow-y:auto!important}
  html.talario-ux01-active .talario-ux01 .ty-horizontal-product-filters-dropdown__content.hidden:not(.js_open){display:none!important}
 }
+
+/* UX01-FILTER-LABEL-QA-2026-10-27: one readable label instead of raw text plus native count */
+html.talario-ux01-active .talario-ux01 .filter-strip .quick-button>[data-ca-lr-homepage-search-filters-count] {
+    display:none!important;
+}
+html.talario-ux01-active .talario-ux01 .filter-strip .quick-button>.ux01-quick-label {
+    display:block!important;
+    flex:1 1 0!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    text-align:left!important;
+}
+html.talario-ux01-active .talario-ux01 .filter-strip .quick-button>.ty-horizontal-product-filters-dropdown__icon {
+    flex:0 0 auto!important;
+    margin:0!important;
+}
