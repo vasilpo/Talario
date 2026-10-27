@@ -91,3 +91,22 @@ test('native filter-count span is visually suppressed while JS keeps native stat
   assert.match(css, /ux01-quick-label/);
   assert.match(css, /text-overflow:ellipsis/);
 });
+
+
+test('mobile consent banner reserves space for bottom-sheet apply without dismissing consent', () => {
+  assert.equal(api.cookieReserve({top: 738, bottom: 832, height: 94}, 844, true), 114);
+  assert.equal(api.cookieReserve({top: 738, bottom: 832, height: 94}, 844, false), 0);
+  assert.equal(api.cookieReserve({top: 900, bottom: 970, height: 70}, 844, true), 0);
+  assert.equal(api.cookieReserve({top: 0, bottom: 0, height: 0}, 844, true), 0);
+  assert.equal(api.cookieReserve({top: 520, bottom: 640, height: 120}, 844, true), 0);
+});
+
+test('mobile consent layout makes bottom sheet stop above Klaro notice, keeps popup action available', () => {
+  const js=fs.readFileSync(require.resolve(file),'utf8');
+  const css=fs.readFileSync('design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less','utf8');
+  assert.match(js,/querySelector\('#klaro \.cookie-notice/);
+  assert.match(js,/MutationObserver/);
+  assert.match(js,/--ux01-consent-inset/);
+  assert.match(css,/--ux01-consent-inset/);
+  assert.match(css,/max-height:~?"min\(80dvh, calc\(100dvh/);
+});

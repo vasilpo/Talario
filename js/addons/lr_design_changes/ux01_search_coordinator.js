@@ -59,6 +59,52 @@
         if (hash) { url.searchParams.set('features_hash', hash); }
         return url.toString();
     }
+    // Return the minimum bottom inset required to keep our mobile filter sheet above
+    // a *visible* Klaro consent notice. No programmatic dismissal or consent changes.
+    function cookieReserve(rect, viewportHeight, visible) {
+        if (!visible || !rect || !viewportHeight || rect.height <= 0 ||
+            rect.top >= viewportHeight || rect.bottom < viewportHeight * 0.8) { return 0; }
+        return Math.min(Math.ceil(viewportHeight - Math.max(0, rect.top) + 8),
+            Math.floor(viewportHeight * 0.5));
+    }
+    function installConsentObserver(root, doc) {
+        if (root.innerWidth >= 900) { return; }
+        var observer, hostWatcher, observedHost;
+        function sync() {
+            var notice = doc.querySelector('#klaro .cookie-notice, #klaro .cookie-modal');
+            var visible = !!notice && root.getComputedStyle(notice).display !== 'none' &&
+                root.getComputedStyle(notice).visibility !== 'hidden' &&
+                root.getComputedStyle(notice).pointerEvents !== 'none';
+            var rect = visible ? notice.getBoundingClientRect() : null;
+            var bottom = cookieReserve(rect, root.innerHeight, visible);
+            doc.documentElement.style.setProperty('--ux01-consent-inset', bottom + 'px');
+        }
+        function observeHost() {
+            var host = doc.getElementById('klaro');
+            if (!host || host === observedHost || !root.MutationObserver) { return; }
+            if (observer) { observer.disconnect(); }
+            observedHost = host;
+            observer = new root.MutationObserver(sync);
+            observer.observe(host, {subtree:true, childList:true, attributes:true,
+                attributeFilter:['class', 'style', 'hidden']});
+            sync();
+        }
+        // Klaro can be inserted asynchronously after the storefront is ready.
+        if (root.MutationObserver && doc.body) {
+            hostWatcher = new root.MutationObserver(function () { observeHost(); });
+            hostWatcher.observe(doc.body, {childList:true});
+        }
+        observeHost();
+        root.addEventListener('resize', sync);
+        // Each native quick-control popup opens after the click handler runs.
+        doc.addEventListener('click', function (event) {
+            if (event.target.closest && event.target.closest('[data-ca-lr-homepage-search-filters-switch]')) {
+                root.setTimeout(sync, 50);
+            }
+        });
+        sync();
+        root.setTimeout(sync, 250);
+    }
     function ageNumber(label) {
         var match = String(label || '').match(/(?:^|\s)(\d{1,2})(?:\s|$)/);
         return match ? Number(match[1]) : null;
@@ -220,6 +266,7 @@
         var form = shell.querySelector('form[name="search_form"]');
         if (!filters || !form || filters.getAttribute('data-ux01-unified') === '1') { return; }
         filters.setAttribute('data-ux01-unified', '1');
+        installConsentObserver(root, doc);
         var input = form.querySelector('input[name="q"]') || form.querySelector('input[type="text"]');
         var appliedParams = new URLSearchParams(root.location.search);
         var appliedQ = (appliedParams.get('q') || '').trim();
@@ -322,5 +369,5 @@
         } else { chips.hidden = true; }
         updatePending();
     }
-    return {buildUrl:buildUrl, parseHash:parseHash, toHash:toHash, ageValues:ageValues, formatQuickLabel:formatQuickLabel, init:init};
+    return {buildUrl:buildUrl, parseHash:parseHash, toHash:toHash, ageValues:ageValues, formatQuickLabel:formatQuickLabel, cookieReserve:cookieReserve, init:init};
 }));
