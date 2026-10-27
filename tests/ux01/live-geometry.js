@@ -56,6 +56,14 @@ function auditCatalogGeometry(doc) {
             });
         });
     }
+    Array.from(doc.querySelectorAll('.ux01-popup-apply')).forEach(function(button) {
+        var box = button.getBoundingClientRect();
+        var x = box.x + box.width / 2, y = box.y + box.height / 2;
+        if (box.width > 0 && box.height > 0 && y >= 0 && y < doc.defaultView.innerHeight) {
+            var hit = doc.elementFromPoint(x, y);
+            if (!hit || !button.contains(hit)) { errors.push('Filter Apply is covered by another element'); }
+        }
+    });
     if (Array.from(doc.querySelectorAll('.ut2-load-more.hidden')).some(function(loader) { return loader.getBoundingClientRect().height > 0; })) {
         errors.push('Native hidden AJAX loader is visible');
     }
