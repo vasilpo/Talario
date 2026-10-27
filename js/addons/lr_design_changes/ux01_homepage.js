@@ -251,9 +251,9 @@
         var root = '/dev_copy/'; function href(slug) { return root + slug; }
         var shell = existing || make('section', 'talario-ux01'); shell.id = 'talario-ux01';
         var main = shell.querySelector('.talario-ux01__main');
-        var ctx = userContext || _.talarioUx01Context || {};
+        var ctx = userContext || (_ && _.talarioUx01Context) || {};
         document.documentElement.classList.toggle('is-auth', ctx.authenticated === true);
-        userContext = ctx; delete _.talarioUx01Context;
+        userContext = ctx; if (_) { delete _.talarioUx01Context; }
         if (!main) {
         var header = make('header', 'header'); var inner = make('div', 'header-inner wrap');
         var menu = make('details', 'talario-ux01__menu menu'); var summary = make('summary', 'iconbutton'); summary.setAttribute('aria-label', 'Меню'); summary.appendChild(icon('menu')); menu.appendChild(summary);
@@ -264,8 +264,7 @@
         var logo = make('img', 'logo'); logo.src = href('design/themes/abt__unitheme2/media/images/talario-ux01-logo.png'); logo.alt = 'Таларио'; logo.width = 140; logo.height = 32; brand.appendChild(logo); inner.appendChild(brand);
         inner.appendChild(make('span', 'header-city', 'Красногорск'));
         var links = mobileNav.cloneNode(true); links.className = 'header-links'; inner.appendChild(links);
-        var actions = make('div', 'header-actions'); var ctx = userContext || _.talarioUx01Context || {}; var isAuth = ctx.authenticated === true;
-        userContext = ctx; delete _.talarioUx01Context;
+        var actions = make('div', 'header-actions'); var isAuth = ctx.authenticated === true;
         var firstName = isAuth && typeof ctx.firstName === 'string' ? ctx.firstName.trim() : '';
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');
