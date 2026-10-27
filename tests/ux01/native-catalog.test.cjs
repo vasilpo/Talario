@@ -368,6 +368,43 @@ test('native nested mobile pricing gives price and Details independent footer po
   assert.ok(card.querySelector('a.more') === nativeDetails);
 });
 
+test('native quantity controls are not mistaken for the Details product link', () => {
+  const page = nativeHomepage('ut2-gl__wrap');
+  const card = page.products[0].querySelector('.ut2-gl__item');
+  const info = card.querySelector('.ut2-gl__content');
+  const title = info.querySelector('.product-title');
+  const price = element('div', 'ut2-gl__price-wrap');
+  const amount = element('div', 'ut2-gl__price', '0 ₽');
+  const control = element('div', 'ut2-gl__control');
+  const cart = element('button', 'ty-btn__add-to-cart', 'В корзину');
+  cart.setAttribute('type', 'submit'); cart.setAttribute('name', 'dispatch[checkout.add..1]');
+  const qty = element('div', 'ty-value-changer');
+  const increase = element('a', 'cm-increase ty-value-changer__increase', '+');
+  const decrease = element('a', 'cm-decrease ty-value-changer__decrease', '−');
+  const otherAction = element('a', 'native-other-action', 'Другое действие');
+  otherAction.href = '/dev_copy/cart/';
+  qty.appendChild(increase); qty.appendChild(decrease);
+  control.appendChild(cart); control.appendChild(qty); control.appendChild(otherAction);
+  price.appendChild(control); price.appendChild(amount); info.appendChild(price);
+  let quantityClicks = 0;
+  increase.addEventListener('click', () => { quantityClicks++; });
+
+  page.startup();
+
+  const details = card.querySelector('a.more');
+  assert.equal(details.textContent, 'Подробнее', 'Details remains a real product navigation action');
+  assert.equal(details.href, title.href);
+  assert.ok(increase.parentElement === qty, 'native quantity structure stays intact');
+  assert.ok(decrease.parentElement === qty);
+  assert.ok(otherAction.parentElement === control, 'unrelated native links are not promoted to Details');
+  assert.ok(cart.parentElement === control, 'native submit action is retained');
+  increase.dispatchEvent({ type: 'click' });
+  assert.equal(quantityClicks, 1, 'native quantity event listeners survive enhancement');
+  page.commoninit();
+  assert.equal(card.querySelectorAll('a.more').length, 1);
+  assert.ok(increase.parentElement === qty);
+});
+
 test('an unbookable card with an empty native price wrapper displays availability and Details in its footer', () => {
   const page = nativeHomepage('ut2-gl__wrap');
   const card = page.products[0].querySelector('.ut2-gl__item');
