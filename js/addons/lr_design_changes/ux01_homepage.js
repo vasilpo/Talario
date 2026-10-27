@@ -78,7 +78,11 @@
             if (currentSort && /Популярн/.test(currentSort.textContent)) { currentSort.textContent = 'Популярные'; }
         }
         var cards = catalog.querySelectorAll('.ut2-gl__item');
-        var feed = cards.length ? cards[0].closest('.grid-list') : null;
+        var grid = cards.length ? cards[0].closest('.grid-list') : null;
+        var firstColumn = cards.length ? cards[0].closest('[class*="ty-column"]') : null;
+        // UniTheme puts the columns inside ut2-gl__wrap/grid-list__load-more.
+        // Keep those native AJAX wrappers and apply grid layout to their direct children.
+        var feed = grid && firstColumn && firstColumn.closest('.grid-list') === grid ? firstColumn.parentElement : null;
         if (feed) { feed.classList.add('feed', 'wrap'); }
         Array.prototype.forEach.call(cards, function (card) {
             if (card.getAttribute('data-ux01-ready') === '1') { stabilizeCard(card); return; }
@@ -172,7 +176,8 @@
         if (feed && cards.length > 1 && !feed.querySelector('.mobile-bonus')) {
             var bonus = make('aside', 'mobile-bonus'); bonus.appendChild(icon('gift'));
             var copy = make('div'); copy.appendChild(make('strong', '', '500 баллов за регистрацию')); copy.appendChild(make('p', '', '1 балл = 1 ₽')); bonus.appendChild(copy);
-            feed.insertBefore(bonus, cards[1].parentElement.nextSibling);
+            var secondColumn = cards[1].closest('[class*="ty-column"]');
+            if (secondColumn && secondColumn.parentElement === feed) { feed.insertBefore(bonus, secondColumn.nextSibling); }
         }
     }
     function setupFilters(filters) {
