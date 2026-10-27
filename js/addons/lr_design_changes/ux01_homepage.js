@@ -74,6 +74,8 @@
         // Server-side UX01 script inclusion and the JS path guard already limit this to dev_copy.
         if (_) { _.talarioUx01FilterGate = true; }
         if (document.querySelector('script[data-ux01-filter-coordinator]')) { return; }
+        // Existing native DOM regression fixtures intentionally omit document.head.
+        if (!document.head || typeof document.head.appendChild !== 'function') { return; }
         var script = document.createElement('script');
         script.setAttribute('data-ux01-filter-coordinator', 'true');
         script.src = '/dev_copy/js/addons/lr_design_changes/ux01_search_coordinator.js?v=20261027';
