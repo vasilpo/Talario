@@ -243,11 +243,12 @@ function nativeHomepage(wrapperClass, serverChrome = false) {
   jquery.ceEvent = (action, name, callback) => {
     assert.equal(action, 'on'); events.set(name, callback);
   };
+  const location = {origin:'https://talario.ru', pathname:'/dev_copy/', search:''};
   vm.runInNewContext(source, {
-    document, window: { location: { pathname: '/dev_copy/', search: '' } }, Tygh: { $: jquery }, URLSearchParams
+    document, window: { location }, Tygh: { $: jquery }, URLSearchParams
   }, { filename: 'ux01_homepage.js' });
   return {
-    document, ajaxRoot, catalog, grid, columns, products, searchForm, filters, serverShell, serverHeader, jquery,
+    document, ajaxRoot, catalog, grid, columns, products, searchForm, filters, serverShell, serverHeader, jquery, location,
     startup: () => ready.forEach(callback => callback()),
     commoninit: () => { assert.ok(events.has('ce.commoninit')); events.get('ce.commoninit')(); }
   };
@@ -507,4 +508,31 @@ test('AJAX-replaced native quick filters are enhanced once on commoninit', () =>
   assert.equal(replacement.querySelectorAll('#talario-ux01-all-filters').length, 1);
   assert.ok(replacement.querySelector('#talario-ux01-all-filters') === allFilters);
   assert.equal(replacement.querySelectorAll('.ux01-popup-apply').length, 2);
+});
+
+test('native next-page URLs remain usable after an AJAX response loses its pagination base URL', () => {
+  const page = nativeHomepage('ut2-gl__wrap');
+  const button = element('span', 'ut2-load-more');
+  const valid = 'https://talario.ru/dev_copy/index.php?dispatch=index.index&page=2&full_render=Y';
+  button.setAttribute('data-ut2-load-more-url', valid); page.grid.appendChild(button);
+  page.startup();
+  assert.equal(button.getAttribute('data-ut2-load-more-url'), valid, 'a correct native URL is unchanged');
+  // Exact malformed URL observed after 20 -> 40: the native pagination
+  // template concatenates &page=3 to an empty c_url, which fn_url encodes as a path.
+  page.location.search = '?dispatch=index.index&page=2&sort_by=price&sort_order=asc&features_hash=322-1336';
+  button.setAttribute('data-ut2-load-more-url', 'https://talario.ru/dev_copy/%26page%3D3%26full_render%3DY');
+  page.commoninit();
+  const repaired = new URL(button.getAttribute('data-ut2-load-more-url'));
+  assert.equal(repaired.origin, 'https://talario.ru');
+  assert.equal(repaired.pathname, '/dev_copy/index.php');
+  assert.equal(repaired.searchParams.get('dispatch'), 'index.index');
+  assert.equal(repaired.searchParams.get('page'), '3');
+  assert.equal(repaired.searchParams.get('full_render'), 'Y');
+  assert.equal(repaired.searchParams.get('sort_by'), 'price');
+  assert.equal(repaired.searchParams.get('features_hash'), '322-1336');
+  page.commoninit();
+  assert.equal(button.getAttribute('data-ut2-load-more-url'), repaired.href, 'reinit is idempotent');
+  const other = 'https://example.invalid/dev_copy/%26page%3D3%26full_render%3DY';
+  button.setAttribute('data-ut2-load-more-url', other); page.commoninit();
+  assert.equal(button.getAttribute('data-ut2-load-more-url'), other, 'adapter does not rewrite links from another origin');
 });

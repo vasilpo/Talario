@@ -53,6 +53,22 @@
             column.style.setProperty('height', '100%', 'important');
         }
     }
+    function repairPaginationLinks(catalog) {
+        if (window.location.origin !== 'https://talario.ru') { return; }
+        Array.prototype.forEach.call(catalog.querySelectorAll('.ut2-load-more[data-ut2-load-more-url]'), function (button) {
+            var url = button.getAttribute('data-ut2-load-more-url') || '';
+            // On homepage AJAX, native pagination can receive an empty c_url and
+            // fn_url encodes "&page=3&full_render=Y" as a nonexistent path.
+            var broken = url.match(/^https:\/\/talario\.ru\/dev_copy\/%26page%3D([1-9]\d*)%26full_render%3DY$/i);
+            if (!broken) { return; }
+            var params = new URLSearchParams(window.location.search);
+            params.set('dispatch', 'index.index'); params.set('page', broken[1]); params.set('full_render', 'Y');
+            var fixed = 'https://talario.ru/dev_copy/index.php?' + params.toString();
+            button.setAttribute('data-ut2-load-more-url', fixed);
+            // Keep the native handler's jQuery data cache consistent with the DOM.
+            if ($.fn && $.fn.jquery) { $(button).data('ut2-load-more-url', fixed); }
+        });
+    }
     function refreshCatalog() {
         var catalog = document.querySelector('#talario-ux01 #homepage_catalog');
         if (!catalog) { return; }
@@ -199,6 +215,7 @@
             var secondColumn = cards[1].closest('[class*="ty-column"]');
             if (secondColumn && secondColumn.parentElement === feed) { feed.insertBefore(bonus, secondColumn.nextSibling); }
         }
+        repairPaginationLinks(catalog);
     }
     function setupFilters(filters) {
         if (!filters || filters.getAttribute('data-ux01-ready') === '1') { return; }
