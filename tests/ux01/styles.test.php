@@ -15,6 +15,13 @@ namespace {
     $less = new \lessc();
     $css = $less->compileFile($root . '/design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less');
     if ($css === '' || strpos($css, 'talario-ux01') === false) { throw new \RuntimeException('UX-01 stylesheet did not compile'); }
+    // Legacy lessphp evaluates mixed-unit arithmetic inside unescaped calc():
+    // 100% - 48px becomes 52%, squeezing the real catalog at every viewport.
+    foreach ([32, 48] as $gutter) {
+        if (!preg_match('~width:\s*calc\(\s*100%\s*-\s*' . $gutter . 'px\s*\)\s*!important~', $css)) {
+            throw new \RuntimeException('Native LESS lost pixel gutter in catalog calc(100% - ' . $gutter . 'px)');
+        }
+    }
     $cacheDir = $root . '/var/cache/misc/assets/design/themes/abt__unitheme2/css';
     $css = \Tygh\Less::parseUrls($css, $cacheDir, $root . '/design/themes/abt__unitheme2/media');
     if (!preg_match("~url\\('([^']*talario-ux01-golos\\.ttf[^']*)'\\)~", $css, $match)) { throw new \RuntimeException('Golos font URL missing'); }
