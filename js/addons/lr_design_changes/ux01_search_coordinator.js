@@ -5,7 +5,7 @@
     if (typeof module === 'object' && module.exports) { module.exports = api; }
     if (!root || !root.document) { return; }
     // Never register event capture outside the explicitly enabled dev_copy homepage.
-    if (!/^\\/dev_copy(?:\\/|$)/.test(root.location.pathname) ||
+    if (!/^\/dev_copy(?:\/|$)/.test(root.location.pathname) ||
         !root.Tygh || root.Tygh.talarioUx01FilterGate !== true) { return; }
     var boot = function () { api.init(root); };
     if (root.Tygh && root.Tygh.$ && root.Tygh.$.ceEvent) {
