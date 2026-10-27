@@ -60,7 +60,9 @@ test('production cannot install capture listeners without server-rendered dev_co
   const js=fs.readFileSync(require.resolve(file),'utf8');
   const hook=fs.readFileSync('design/themes/abt__unitheme2/templates/addons/lr_design_changes/hooks/index/scripts.post.tpl','utf8');
   assert.match(hook,/\$config\.current_path\|default:"" == "\/dev_copy"/);
-  assert.match(hook,/Tygh\.talarioUx01FilterGate = true/);
+  const homepage=fs.readFileSync('js/addons/lr_design_changes/ux01_homepage.js','utf8');
+  assert.match(homepage,/talarioUx01FilterGate = true/);
+  assert.match(homepage,/ux01_search_coordinator\\.js/);
   assert.match(js,/talarioUx01FilterGate !== true/);
   assert.match(js,/root\.location\.pathname/);
   // JS is loaded from dev_copy only. Even accidental global inclusion has no capture handlers.
