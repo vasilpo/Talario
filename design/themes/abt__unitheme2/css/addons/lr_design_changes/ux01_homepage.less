@@ -820,3 +820,8 @@ html.talario-ux01-active .talario-ux01 .feed .activity .address .ut2-gl__bottom 
     padding:0!important;
 }
 /* UX01-COMPACT-HOVER-2026-10-26 END */
+/* Native AJAX keeps the previous loader briefly, marking it hidden. Do not
+   let the UX-01 visible-button override revive this retired control. */
+html.talario-ux01-active .talario-ux01 .ut2-load-more.hidden {
+    display:none!important;
+}
