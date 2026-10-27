@@ -1,0 +1,57 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const file = '../../js/addons/lr_design_changes/ux01_search_coordinator.js';
+const api = require(file);
+
+test('query and selected native feature values combine in one homepage URL', () => {
+  const url = new URL(api.buildUrl('https://talario.ru', '  танцы  ', {'239':['1','2','3'], '322':['77']}));
+  assert.equal(url.pathname, '/dev_copy/index.php');
+  assert.equal(url.searchParams.get('dispatch'), 'index.index');
+  assert.equal(url.searchParams.get('q'), 'танцы');
+  assert.equal(url.searchParams.get('search_performed'), 'Y');
+  assert.equal(url.searchParams.get('features_hash'), '239-1-2-3_322-77');
+});
+
+test('age first then search and search first then age have identical request', () => {
+  const first = api.buildUrl('https://talario.ru', 'танцы', {'322':['45'], '239':['3','2']});
+  const second = api.buildUrl('https://talario.ru', 'танцы', {'239':['2','3'], '322':['45']});
+  assert.equal(first, second);
+});
+
+test('empty state returns unfiltered homepage and keeps safe first-party dev_copy scope', () => {
+  const url = api.buildUrl('https://talario.ru', '', {});
+  assert.equal(url, 'https://talario.ru/dev_copy/index.php?dispatch=index.index');
+  assert.doesNotMatch(url, /products\.search/);
+});
+
+test('native feature hash restores age/direction selection on refresh and back', () => {
+  assert.deepEqual(api.parseHash('322-5-8_239-0-3-7'), {'239':['0','3','7'], '322':['5','8']});
+  assert.deepEqual(api.parseHash('malformed_input_32-bad'), {});
+});
+
+test('inclusive age range generates native variants in correct order', () => {
+  const ages = [{value:'10',label:'0 лет'},{value:'11',label:'1 год'},{value:'12',label:'2 года'},{value:'13',label:'3 года'},{value:'14',label:'4 года'}];
+  assert.deepEqual(api.ageValues(ages, 2, 4), ['12','13','14']);
+  assert.deepEqual(api.ageValues(ages, 4, 2), []);
+  assert.deepEqual(api.ageValues(ages, 0, 0), ['10']);
+});
+
+test('removing one applied chip preserves q and other filter groups', () => {
+  const groups = api.parseHash('239-1-2_322-19');
+  delete groups['239'];
+  const u = new URL(api.buildUrl('https://talario.ru','танцы',groups));
+  assert.equal(u.searchParams.get('q'),'танцы');
+  assert.equal(u.searchParams.get('features_hash'),'322-19');
+});
+
+test('only dev_copy homepage loads coordinator; other pages keep native CS-Cart handlers', () => {
+  const source=fs.readFileSync(require.resolve(file),'utf8');
+  assert.match(source,/\/dev_copy/);
+  assert.match(source,/#talario-ux01/);
+  assert.match(source,/addEventListener\('submit'/);
+  assert.match(source,/stopImmediatePropagation/);
+  assert.match(source,/\.cm-lr-homepage-search-filter:checked/);
+  assert.doesNotMatch(source,/\.innerHTML\s*=/);
+});
