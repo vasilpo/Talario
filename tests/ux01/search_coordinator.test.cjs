@@ -108,5 +108,5 @@ test('mobile consent layout makes bottom sheet stop above Klaro notice, keeps po
   assert.match(js,/MutationObserver/);
   assert.match(js,/--ux01-consent-inset/);
   assert.match(css,/--ux01-consent-inset/);
-  assert.match(css,/max-height:~?"calc\(100dvh/);
+  assert.match(css,/max-height:~?"min\(80dvh, calc\(100dvh/);
 });
