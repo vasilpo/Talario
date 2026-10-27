@@ -69,6 +69,17 @@
             if ($.fn && $.fn.jquery) { $(button).data('ut2-load-more-url', fixed); }
         });
     }
+    function installSearchCoordinator() {
+        if (!document.documentElement.classList.contains('talario-ux01-active')) { return; }
+        // Server-side UX01 script inclusion and the JS path guard already limit this to dev_copy.
+        if (_) { _.talarioUx01FilterGate = true; }
+        if (document.querySelector('script[data-ux01-filter-coordinator]')) { return; }
+        var script = document.createElement('script');
+        script.setAttribute('data-ux01-filter-coordinator', 'true');
+        script.src = '/dev_copy/js/addons/lr_design_changes/ux01_search_coordinator.js?v=20261027';
+        script.async = true;
+        document.head.appendChild(script);
+    }
     function refreshCatalog() {
         var catalog = document.querySelector('#talario-ux01 #homepage_catalog');
         if (!catalog) { return; }
@@ -268,7 +279,7 @@
         var existing = document.getElementById('talario-ux01');
         if (existing && existing.getAttribute('data-ux01-server-shell') !== 'pending') {
             setupFilters(document.querySelector('#talario-ux01 .cm-lr-homepage-search-filters'));
-            refreshCatalog(); return;
+            refreshCatalog(); installSearchCoordinator(); return;
         }
         var content = document.querySelector('.tygh-content .content-grid');
         var catalog = document.querySelector('#homepage_catalog');
@@ -327,7 +338,7 @@
         var backdrop = button('', 'ux01-filter-backdrop'); backdrop.setAttribute('aria-label', 'Закрыть фильтры'); backdrop.addEventListener('click', function () { closeFilters(true); }); shell.appendChild(backdrop);
         document.documentElement.classList.add('talario-ux01-active');
         document.documentElement.classList.remove('talario-ux01-boot');
-        setupFilters(filters); refreshCatalog();
+        setupFilters(filters); refreshCatalog(); installSearchCoordinator();
     }
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') { closeFilters(true); }
