@@ -150,10 +150,12 @@
                     soon.textContent = 'Скоро на Таларио'; soon.classList.add('coming-soon-copy');
                     stack.appendChild(soon); price.appendChild(stack);
                 }
-                var more = price.querySelector('.ut2-gl__control a');
+                var productLink = info.querySelector('.product-title');
+                var more = productLink && Array.prototype.find.call(price.querySelectorAll('.ut2-gl__control a[href]'), function (link) {
+                    return link.href === productLink.href;
+                });
                 if (more) { more.classList.add('more'); price.appendChild(more); }
                 else {
-                    var productLink = info.querySelector('.product-title');
                     if (productLink) { var moreLink = make('a', 'more', 'Подробнее'); moreLink.href = productLink.href; price.appendChild(moreLink); }
                 }
             }
