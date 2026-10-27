@@ -119,7 +119,7 @@ test('real UniTheme outside-click handler recognizes clicks inside UX-01 quick f
 test('UX-01 desktop catalog uses a centered full-width responsive two-column grid', () => {
   const css = fs.readFileSync(cssPath, 'utf8');
   const qa = css.split('/* UX01-VISUAL-QA-2026-10-26 BEGIN */')[1] || '';
-  assert.match(qa, /\.feed[^{}]*\{[^}]*width:calc\(100% - 32px\)!important/);
+  assert.match(qa, /\.feed[^{}]*\{[^}]*width:(?:~")?calc\(100% - 32px\)"?!important/);
   assert.match(qa, /\.feed[^{}]*\{[^}]*align-items:stretch!important/);
   assert.match(qa, /@media\(min-width:900px\)/);
   assert.match(qa, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);
