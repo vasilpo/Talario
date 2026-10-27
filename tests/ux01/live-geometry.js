@@ -20,6 +20,14 @@ function auditCatalogGeometry(doc) {
     var more = feed.parentElement.querySelector('.ut2-load-more-container');
     var pagination = more && more.getBoundingClientRect().height > 0 ? rect(more) : null;
     var errors = [];
+    var firstCard = feed.querySelector('.ut2-gl__item.activity');
+    var compact = firstCard ? {
+        font: doc.defaultView.getComputedStyle(firstCard.querySelector('.product-title')).fontSize,
+        photo: firstCard.querySelector('.photo-block').getBoundingClientRect().width,
+        infoMargin: doc.defaultView.getComputedStyle(firstCard.querySelector('.activity-info')).marginTop
+    } : null;
+    if (compact && (compact.font !== '15px' || compact.photo > 100.5 || compact.infoMargin !== '0px')) { errors.push('Compact card styles overridden by native cascade'); }
+
     if (!cards.length) { errors.push('No visible real cards'); }
     if (doc.documentElement.scrollWidth > viewport + 1) { errors.push('Horizontal document overflow'); }
     if (feed.scrollWidth > feed.clientWidth + 1) { errors.push('Horizontal catalog overflow'); }
@@ -39,5 +47,5 @@ function auditCatalogGeometry(doc) {
         if (rows.length && first.y < rows[rows.length - 1].bottom - 1) { errors.push('Rows overlap at card ' + i); }
         rows.push({start: i, x: first.x, end: row[row.length - 1].x + row[row.length - 1].width, y: first.y, bottom: first.bottom, height: first.height});
     }
-    return {pass: errors.length === 0, viewport: viewport, scrollWidth: doc.documentElement.scrollWidth, count: cards.length, columns: columns, grid: grid, pagination: pagination, cards: cards, rows: rows, errors: errors};
+    return {pass: errors.length === 0, compact: compact, viewport: viewport, scrollWidth: doc.documentElement.scrollWidth, count: cards.length, columns: columns, grid: grid, pagination: pagination, cards: cards, rows: rows, errors: errors};
 }

@@ -726,22 +726,23 @@ html.talario-ux01-active .talario-ux01 .feed .ut2-gl__item.activity:focus-within
     transform:none!important;
     transition:none!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .cm-ab-hover-gallery {
+html.talario-ux01-active .talario-ux01 .feed .activity .cm-ab-hover-gallery {
     pointer-events:none!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .card-top {
+html.talario-ux01-active .talario-ux01 .feed .activity .card-top {
     min-height:108px!important;
     grid-template-columns:100px minmax(0,1fr)!important;
     flex:1 1 auto!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .activity-info {
+html.talario-ux01-active .talario-ux01 .feed .activity .activity-info {
     min-height:108px!important;
+    margin:0!important;
     padding:9px 11px!important;
     gap:4px!important;
     overflow:hidden!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .product-title,
-html.talario-ux01-active .talario-ux01 .activity .product-title span {
+html.talario-ux01-active .talario-ux01 .feed .activity .product-title,
+html.talario-ux01-active .talario-ux01 .feed .activity .product-title span {
     font-size:.9375rem!important;
     line-height:1.24!important;
     letter-spacing:-.008rem!important;
@@ -753,8 +754,8 @@ html.talario-ux01-active .talario-ux01 .activity .product-title span {
     white-space:normal!important;
     overflow-wrap:anywhere!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .address,
-html.talario-ux01-active .talario-ux01 .activity .address .product-description {
+html.talario-ux01-active .talario-ux01 .feed .activity .address,
+html.talario-ux01-active .talario-ux01 .feed .activity .address .product-description {
     display:-webkit-box!important;
     -webkit-line-clamp:2!important;
     -webkit-box-orient:vertical!important;
@@ -762,21 +763,21 @@ html.talario-ux01-active .talario-ux01 .activity .address .product-description {
     line-height:1.3!important;
     font-size:.75rem!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .card-foot {
+html.talario-ux01-active .talario-ux01 .feed .activity .card-foot {
     min-height:42px!important;
     height:auto!important;
 }
-html.talario-ux01-active .talario-ux01 .activity .card-foot .ty-price,
-html.talario-ux01-active .talario-ux01 .activity .card-foot .ty-price-num {
+html.talario-ux01-active .talario-ux01 .feed .activity .card-foot .ty-price,
+html.talario-ux01-active .talario-ux01 .feed .activity .card-foot .ty-price-num {
     font-size:1.25rem!important;
     line-height:1.2!important;
 }
 @media(min-width:900px){
-    html.talario-ux01-active .talario-ux01 .activity .card-top{
+    html.talario-ux01-active .talario-ux01 .feed .activity .card-top{
         min-height:108px!important;
         grid-template-columns:100px minmax(0,1fr)!important;
     }
-    html.talario-ux01-active .talario-ux01 .activity .activity-info{
+    html.talario-ux01-active .talario-ux01 .feed .activity .activity-info{
         min-height:108px!important;
     }
 }
@@ -789,14 +790,14 @@ html.talario-ux01-active .talario-ux01 .activity .card-foot .ty-price-num {
     }
 }
 @media(max-width:899px){
-    html.talario-ux01-active .talario-ux01 .activity .card-top {
+    html.talario-ux01-active .talario-ux01 .feed .activity .card-top {
         grid-template-columns:100px minmax(0,1fr)!important;
     }
-    html.talario-ux01-active .talario-ux01 .activity .activity-info {
+    html.talario-ux01-active .talario-ux01 .feed .activity .activity-info {
         overflow:visible!important;
     }
-    html.talario-ux01-active .talario-ux01 .activity .product-title,
-    html.talario-ux01-active .talario-ux01 .activity .product-title span {
+    html.talario-ux01-active .talario-ux01 .feed .activity .product-title,
+    html.talario-ux01-active .talario-ux01 .feed .activity .product-title span {
         -webkit-line-clamp:3!important;
     }
 }
@@ -804,5 +805,18 @@ html.talario-ux01-active .talario-ux01 .feed .activity .ut2-gl__image.photo-bloc
     min-height:108px!important;
     height:auto!important;
     max-height:none!important;
+}
+/* Preserve the native trial label once in the price footer, not as a
+   separate content row that stretches the mobile photo. */
+html.talario-ux01-active .talario-ux01 .feed .activity .activity-info>.sd-price-trial-label {
+    display:none!important;
+}
+html.talario-ux01-active .talario-ux01 .feed .activity .price-stack .sd-price-trial-label {
+    display:inline-flex!important;
+    margin:0!important;
+}
+html.talario-ux01-active .talario-ux01 .feed .activity .address .ut2-gl__bottom {
+    margin:0!important;
+    padding:0!important;
 }
 /* UX01-COMPACT-HOVER-2026-10-26 END */
