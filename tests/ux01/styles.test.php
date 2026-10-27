@@ -15,6 +15,9 @@ namespace {
     $less = new \lessc();
     $css = $less->compileFile($root . '/design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less');
     if ($css === '' || strpos($css, 'talario-ux01') === false) { throw new \RuntimeException('UX-01 stylesheet did not compile'); }
+    if (!preg_match('~max-width:\s*calc\(\s*100vw\s*-\s*32px\s*\)\s*!important~', $css)) {
+        throw new \RuntimeException('Native sorting menu has no compiled mobile viewport bound');
+    }
     if (!preg_match('~bottom:\s*var\(--bp-bottom-panel-height,\s*0px\)\s*!important~', $css)) {
         throw new \RuntimeException('Mobile filter popup ignores the native admin preview toolbar inset');
     }

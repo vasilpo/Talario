@@ -398,6 +398,9 @@ test('native quantity controls are not mistaken for the Details product link', (
   assert.ok(decrease.parentElement === qty);
   assert.ok(otherAction.parentElement === control, 'unrelated native links are not promoted to Details');
   assert.ok(cart.parentElement === control, 'native submit action is retained');
+  assert.ok(!control.closest('.card-foot'), 'native cart and quantity cannot become extra flex items in the price/Details row');
+  assert.ok(control.parentElement === card.querySelector('.ut2-gl__body'), 'native actions have their own connected card row');
+  assert.ok(control.classList.contains('ux01-native-actions'));
   increase.dispatchEvent({ type: 'click' });
   assert.equal(quantityClicks, 1, 'native quantity event listeners survive enhancement');
   page.commoninit();

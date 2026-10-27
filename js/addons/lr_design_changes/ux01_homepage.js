@@ -158,6 +158,13 @@
                 else {
                     if (productLink) { var moreLink = make('a', 'more', 'Подробнее'); moreLink.href = productLink.href; price.appendChild(moreLink); }
                 }
+                // Some native cards retain cart/quantity controls. Keep them
+                // connected in a separate row, outside the two-item footer.
+                Array.prototype.forEach.call(price.querySelectorAll('.ut2-gl__control'), function (control) {
+                    if (control.querySelector('button, .ty-value-changer, a[href]')) {
+                        control.classList.add('ux01-native-actions'); body.insertBefore(control, price);
+                    }
+                });
             }
             var favorite = image.querySelector('.ut2-add-to-wish');
             if (favorite) {
