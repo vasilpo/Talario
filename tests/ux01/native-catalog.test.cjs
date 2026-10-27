@@ -397,6 +397,26 @@ test('an unbookable card with an empty native price wrapper displays availabilit
   assert.equal(card.querySelectorAll('a.more').length, 1);
 });
 
+test('a native price node containing only reload inputs does not suppress availability in the footer', () => {
+  const page = nativeHomepage('ut2-gl__wrap');
+  const card = page.products[0].querySelector('.ut2-gl__item');
+  const info = card.querySelector('.ut2-gl__content');
+  const availability = element('span', '', 'Скоро можно будет забронировать через Таларио');
+  const priceWrap = element('div', 'ut2-gl__price-wrap');
+  const amount = element('div', 'ut2-gl__price ut2-gl__no-price');
+  const reload = element('span', 'cm-reload-668 ty-price-update'); reload.id = 'price_update_668';
+  const input = element('input'); input.setAttribute('type', 'hidden');
+  reload.appendChild(input); amount.appendChild(reload); priceWrap.appendChild(amount);
+  info.appendChild(availability); info.appendChild(priceWrap);
+  page.startup();
+  assert.ok(availability.closest('.card-foot'), 'real unavailable copy is moved into the footer even though the empty amount node exists');
+  assert.match(card.querySelector('.price-stack').textContent, /Скоро/);
+  assert.ok(card.querySelector('#price_update_668') === reload, 'native reload target is preserved');
+  assert.ok(card.querySelector('a.more'));
+  page.commoninit();
+  assert.equal(card.querySelectorAll('.coming-soon-copy').length, 1);
+});
+
 function nativeCarousel(column) {
   // views/products/components/product_icon.tpl at a1e525d5: owl-carousel >
   // cm-gallery-item > anchor > img. Only the main anchor originally carries

@@ -15,7 +15,8 @@ function auditCatalogGeometry(doc) {
     var viewport = doc.documentElement.clientWidth;
     var outer = rect(feed.parentElement);
     var grid = rect(feed);
-    var columns = viewport >= 900 ? 2 : 1;
+    var layoutViewport = doc.defaultView.innerWidth;
+    var columns = layoutViewport >= 900 ? 2 : 1;
     var expectedWidth = Math.min(1248, outer.width - (columns === 2 ? 48 : 32));
     var cards = Array.from(feed.querySelectorAll('.ut2-gl__item.activity')).map(function(card) {
         return rect(card);
@@ -31,6 +32,8 @@ function auditCatalogGeometry(doc) {
             return !img.hidden && img.getBoundingClientRect().width > 0 && img.getBoundingClientRect().height > 0;
         });
         if (!foot || !moreLink) { errors.push('Missing Details footer at card ' + index); }
+        var stack = foot && foot.querySelector('.price-stack');
+        if (!stack || !stack.innerText.trim()) { errors.push('Empty price/availability footer at card ' + index); }
         if (foot && moreLink && Math.abs(moreLink.getBoundingClientRect().right - foot.getBoundingClientRect().right) > 1) {
             errors.push('Details is not anchored right at card ' + index);
         }
@@ -92,5 +95,5 @@ function auditCatalogGeometry(doc) {
         if (rows.length && first.y < rows[rows.length - 1].bottom - 1) { errors.push('Rows overlap at card ' + i); }
         rows.push({start: i, x: first.x, end: row[row.length - 1].x + row[row.length - 1].width, y: first.y, bottom: first.bottom, height: first.height});
     }
-    return {pass: errors.length === 0, compact: compact, viewport: viewport, scrollWidth: doc.documentElement.scrollWidth, count: cards.length, columns: columns, grid: grid, pagination: pagination, cards: cards, details: details, rows: rows, errors: errors};
+    return {pass: errors.length === 0, compact: compact, viewport: viewport, layoutViewport: layoutViewport, scrollWidth: doc.documentElement.scrollWidth, count: cards.length, columns: columns, grid: grid, pagination: pagination, cards: cards, details: details, rows: rows, errors: errors};
 }

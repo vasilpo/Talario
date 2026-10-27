@@ -129,8 +129,8 @@
                 price.classList.add('card-foot'); body.appendChild(price);
                 var amount = price.querySelector('.ut2-gl__price');
                 if (amount) { amount.classList.add('price-stack'); price.appendChild(amount); }
-                else if (soon) {
-                    var stack = make('div', 'price-stack');
+                if (soon) {
+                    var stack = amount || make('div', 'price-stack');
                     soon.textContent = 'Скоро на Таларио'; soon.classList.add('coming-soon-copy');
                     stack.appendChild(soon); price.appendChild(stack);
                 }
