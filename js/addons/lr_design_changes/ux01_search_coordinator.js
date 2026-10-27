@@ -4,7 +4,9 @@
     var api = factory();
     if (typeof module === 'object' && module.exports) { module.exports = api; }
     if (!root || !root.document) { return; }
-    root.TalarioUX01Filters = api;
+    // Never register event capture outside the explicitly enabled dev_copy homepage.
+    if (!/^\\/dev_copy(?:\\/|$)/.test(root.location.pathname) ||
+        !root.Tygh || root.Tygh.talarioUx01FilterGate !== true) { return; }
     var boot = function () { api.init(root); };
     if (root.Tygh && root.Tygh.$ && root.Tygh.$.ceEvent) {
         root.Tygh.$.ceEvent('on', 'ce.commoninit', boot);
@@ -47,7 +49,8 @@
     function buildUrl(origin, query, groups) {
         // Server's existing homepage block reads request q/features_hash via fn_get_products.
         // Stay in the reviewed dev_copy storefront rather than creating a second search engine.
-        var url = new URL('/dev_copy/index.php', origin);
+        var safeOrigin = typeof window !== 'undefined' && window.location ? window.location.origin : origin;
+        var url = new URL('/dev_copy/index.php', safeOrigin);
         url.searchParams.set('dispatch', 'index.index');
         var q = String(query || '').trim();
         var hash = toHash(groups);
