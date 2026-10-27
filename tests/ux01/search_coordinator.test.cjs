@@ -68,3 +68,26 @@ test('production cannot install capture listeners without server-rendered dev_co
   // JS is loaded from dev_copy only. Even accidental global inclusion has no capture handlers.
   assert.doesNotMatch(js,/root\.TalarioUX01Filters\s*=/);
 });
+
+test('quick filters show one human-readable selection, not native checkbox counts', () => {
+  assert.deepEqual(api.formatQuickLabel('Возраст', ['2 года', '3 года', '4 года', '5 лет', '6 лет']),
+    {short: '2–6 лет', full: 'Возраст: 2–6 лет'});
+  assert.deepEqual(api.formatQuickLabel('Возраст', ['2 года', '3 года', '4 года']),
+    {short: '2–4 года', full: 'Возраст: 2–4 года'});
+  assert.deepEqual(api.formatQuickLabel('Направление', ['Детские лагеря']),
+    {short: 'Детские лагеря', full: 'Направление: Детские лагеря'});
+  assert.deepEqual(api.formatQuickLabel('Направление', ['Спорт', 'Танцы', 'Творчество', 'Музыка', 'Языки']),
+    {short: '5 направлений', full: 'Направления: выбрано 5'});
+  assert.deepEqual(api.formatQuickLabel('Направление', []),
+    {short: 'Направление', full: 'Направление'});
+});
+
+test('native filter-count span is visually suppressed while JS keeps native state', () => {
+  const js = fs.readFileSync(require.resolve(file), 'utf8');
+  const css = fs.readFileSync('design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less', 'utf8');
+  assert.match(js, /ux01-quick-label/);
+  assert.match(js, /formatQuickLabel\(base, chosen\)/);
+  assert.match(css, /data-ca-lr-homepage-search-filters-count/);
+  assert.match(css, /ux01-quick-label/);
+  assert.match(css, /text-overflow:ellipsis/);
+});
