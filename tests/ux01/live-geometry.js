@@ -21,13 +21,22 @@ function auditCatalogGeometry(doc) {
     var pagination = more && more.getBoundingClientRect().height > 0 ? rect(more) : null;
     var errors = [];
     var firstCard = feed.querySelector('.ut2-gl__item.activity');
-    var compact = firstCard ? {
-        font: doc.defaultView.getComputedStyle(firstCard.querySelector('.product-title')).fontSize,
-        photo: firstCard.querySelector('.photo-block').getBoundingClientRect().width,
-        infoMargin: doc.defaultView.getComputedStyle(firstCard.querySelector('.activity-info')).marginTop
-    } : null;
-    if (compact && (compact.font !== '15px' || compact.photo > 100.5 || compact.infoMargin !== '0px')) { errors.push('Compact card styles overridden by native cascade'); }
-
+    var title = firstCard && firstCard.querySelector('.product-title');
+    var photo = firstCard && firstCard.querySelector('.photo-block');
+    var info = firstCard && firstCard.querySelector('.activity-info');
+    var compact = null;
+    if (firstCard && (!title || !photo || !info)) {
+        errors.push('Card presentation nodes are missing');
+    } else if (firstCard) {
+        compact = {
+            font: parseFloat(doc.defaultView.getComputedStyle(title).fontSize),
+            photo: photo.getBoundingClientRect().width,
+            infoMargin: parseFloat(doc.defaultView.getComputedStyle(info).marginTop)
+        };
+        if (!Number.isFinite(compact.font) || !Number.isFinite(compact.infoMargin) || Math.abs(compact.font - 15) > 0.1 || compact.photo > 100.5 || Math.abs(compact.infoMargin) > 0.5) {
+            errors.push('Compact card styles overridden by native cascade');
+        }
+    }
     if (!cards.length) { errors.push('No visible real cards'); }
     if (doc.documentElement.scrollWidth > viewport + 1) { errors.push('Horizontal document overflow'); }
     if (feed.scrollWidth > feed.clientWidth + 1) { errors.push('Horizontal catalog overflow'); }
