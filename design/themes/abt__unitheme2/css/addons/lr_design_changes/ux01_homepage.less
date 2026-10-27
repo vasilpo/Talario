@@ -926,3 +926,16 @@ html.talario-ux01-active .talario-ux01 .filter-strip .quick-button>.ty-horizonta
     flex:0 0 auto!important;
     margin:0!important;
 }
+
+/* UX01-COOKIE-SAFE-SHEET-2026-10-28: keep mobile apply visible when Klaro is present.
+   Preserve native consent and preview toolbar. The computed inset is 0 without a notice. */
+@media (max-width:899px) {
+  html.talario-ux01-active .talario-ux01 .ty-horizontal-product-filters-dropdown__content {
+    bottom:max(var(--bp-bottom-panel-height,0px),var(--ux01-consent-inset,0px))!important;
+    max-height:~"min(80dvh, calc(100dvh - max(var(--bp-bottom-panel-height,0px),var(--ux01-consent-inset,0px)) - 16px))"!important;
+  }
+  html.talario-ux01-active .talario-ux01 .ux01-panel-actions {
+    flex-shrink:0!important;
+    bottom:0!important;
+  }
+}
