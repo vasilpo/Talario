@@ -374,6 +374,12 @@ test('native quantity controls are not mistaken for the Details product link', (
   const info = card.querySelector('.ut2-gl__content');
   const title = info.querySelector('.product-title');
   const price = element('div', 'ut2-gl__price-wrap');
+  const originalForm = card.querySelector('form');
+  const productId = element('input'); productId.setAttribute('type', 'hidden');
+  productId.setAttribute('name', 'product_data[1][product_id]'); productId.setAttribute('value', '1');
+  const csrf = element('input'); csrf.setAttribute('type', 'hidden');
+  csrf.setAttribute('name', 'security_hash'); csrf.setAttribute('value', 'synthetic-fixture-value');
+  originalForm.appendChild(productId); originalForm.appendChild(csrf);
   const amount = element('div', 'ut2-gl__price', '0 ₽');
   const control = element('div', 'ut2-gl__control');
   const cart = element('button', 'ty-btn__add-to-cart', 'В корзину');
@@ -401,6 +407,11 @@ test('native quantity controls are not mistaken for the Details product link', (
   assert.ok(!control.closest('.card-foot'), 'native cart and quantity cannot become extra flex items in the price/Details row');
   assert.ok(control.parentElement === card.querySelector('.ut2-gl__body'), 'native actions have their own connected card row');
   assert.ok(control.classList.contains('ux01-native-actions'));
+  assert.ok(control.closest('form') === originalForm, 'native control keeps its original submission form');
+  assert.ok(cart.closest('form') === originalForm, 'submit button keeps product and CSRF fields in its form');
+  assert.ok(productId.closest('form') === originalForm && csrf.closest('form') === originalForm);
+  assert.equal(originalForm.querySelector('[name="product_data[1][product_id]"]').getAttribute('value'), '1');
+  assert.equal(originalForm.querySelector('[name="security_hash"]').getAttribute('value'), 'synthetic-fixture-value');
   increase.dispatchEvent({ type: 'click' });
   assert.equal(quantityClicks, 1, 'native quantity event listeners survive enhancement');
   page.commoninit();
