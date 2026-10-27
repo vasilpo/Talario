@@ -134,6 +134,8 @@
         if (variants.length < 2) { return; }
         variants.sort(function (a, b) { return ageNumber(a.label) - ageNumber(b.label); });
         nativeList.classList.add('ux01-age-native');
+        nativeList.setAttribute('aria-hidden', 'true');
+        inputs.forEach(function (box) { box.tabIndex = -1; });
         var range = elem(doc, 'div', 'ux01-age-range');
         var title = elem(doc, 'p', 'ux01-age-tip', 'Выбери возрастной диапазон');
         range.appendChild(title);
@@ -163,6 +165,8 @@
             to.value = String(Math.max.apply(null, initially));
         }
         function changed(side) {
+            if (!from.value && to.value && side === 'from') { to.value = ''; }
+            if (!to.value && from.value && side === 'to') { from.value = ''; }
             if (side === 'from' && from.value && !to.value) { to.value = from.value; }
             if (side === 'to' && to.value && !from.value) { from.value = to.value; }
             if (from.value && to.value && Number(from.value) > Number(to.value)) {
