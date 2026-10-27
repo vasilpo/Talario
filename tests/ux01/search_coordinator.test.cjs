@@ -86,7 +86,7 @@ test('native filter-count span is visually suppressed while JS keeps native stat
   const js = fs.readFileSync(require.resolve(file), 'utf8');
   const css = fs.readFileSync('design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less', 'utf8');
   assert.match(js, /ux01-quick-label/);
-  assert.match(js, /formatQuickLabel\('Возраст'/);
+  assert.match(js, /formatQuickLabel\(base, chosen\)/);
   assert.match(css, /data-ca-lr-homepage-search-filters-count/);
   assert.match(css, /ux01-quick-label/);
   assert.match(css, /text-overflow:ellipsis/);
