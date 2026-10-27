@@ -473,6 +473,11 @@ html.talario-ux01-active .talario-ux01 .lr-homepage-catalog-layout__content {
     margin-left:0!important;
     margin-right:0!important;
 }
+/* Native UniTheme2 flex treats the inner feed and load-more wrapper as peers.
+   Keep their native AJAX hierarchy but stack them instead of squeezing cards. */
+html.talario-ux01-active .talario-ux01 #homepage_catalog .grid-list {
+    display:block!important;
+}
 html.talario-ux01-active .talario-ux01 .feed {
     display:grid!important;
     width:calc(100% - 32px)!important;
