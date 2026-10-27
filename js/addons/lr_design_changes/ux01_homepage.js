@@ -72,7 +72,9 @@
     function installSearchCoordinator() {
         if (!document.documentElement.classList.contains('talario-ux01-active')) { return; }
         // Server-side UX01 script inclusion and the JS path guard already limit this to dev_copy.
-        if (_) { _.talarioUx01FilterGate = true; }
+        if (window.Tygh && /^\/dev_copy(?:\/|$)/.test(window.location.pathname)) {
+            window.Tygh.talarioUx01FilterGate = true;
+        }
         if (document.querySelector('script[data-ux01-filter-coordinator]')) { return; }
         // Existing native DOM regression fixtures intentionally omit document.head.
         if (!document.head || typeof document.head.appendChild !== 'function') { return; }
