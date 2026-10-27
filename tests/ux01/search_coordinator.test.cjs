@@ -62,7 +62,7 @@ test('production cannot install capture listeners without server-rendered dev_co
   assert.match(hook,/\$config\.current_path\|default:"" == "\/dev_copy"/);
   const homepage=fs.readFileSync('js/addons/lr_design_changes/ux01_homepage.js','utf8');
   assert.match(homepage,/talarioUx01FilterGate = true/);
-  assert.match(homepage,/ux01_search_coordinator\\.js/);
+  assert.match(homepage,/ux01_search_coordinator\.js/);
   assert.match(js,/talarioUx01FilterGate !== true/);
   assert.match(js,/root\.location\.pathname/);
   // JS is loaded from dev_copy only. Even accidental global inclusion has no capture handlers.
