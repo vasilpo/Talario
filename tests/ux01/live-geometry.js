@@ -23,6 +23,9 @@ function auditCatalogGeometry(doc) {
     var more = feed.parentElement.querySelector('.ut2-load-more-container');
     var pagination = more && more.getBoundingClientRect().height > 0 ? rect(more) : null;
     var errors = [];
+    if (Array.from(doc.querySelectorAll('.ut2-load-more.hidden')).some(function(loader) { return loader.getBoundingClientRect().height > 0; })) {
+        errors.push('Native hidden AJAX loader is visible');
+    }
     var firstCard = feed.querySelector('.ut2-gl__item.activity');
     var title = firstCard && firstCard.querySelector('.product-title');
     var photo = firstCard && firstCard.querySelector('.photo-block');
