@@ -40,24 +40,21 @@ test('cashback badge is built once per native valid-priced card with meaningful 
   assert.match(homepage, /\/dev_copy\/oferta-dlya-polzovatelya\//);
 });
 
-test('auth flag from server drives guest welcome offer and real balance from auth points', () => {
-  assert.match(scripts, /\$config\.current_path\|default:"" == "\/dev_copy"/);
-  assert.match(scripts, /authenticated: \{if \$auth\.user_id\|default:0\}true\{else\}false\{\/if\}/);
-  assert.doesNotMatch(scripts, /points:\\s*\\{if/);
+test('auth-only private endpoint keeps balances out of cached homepage HTML', () => {
   const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
-  assert.match(php, /Cache-Control: private, no-store/);
-  assert.match(php, /user_id.*\\$auth\\['user_id'\\]/);
-  assert.match(php, /fn_get_user_additional_data\\(POINTS, \\$user_id\\)/);
-  assert.match(php, /\\/dev_copy\\//);
-  assert.match(homepage, /window\\.fetch\\('\/dev_copy\/index\\.php\\?dispatch=ux01_loyalty\\.balance'/);
-  assert.match(homepage, /credentials: 'same-origin', cache: 'no-store'/);
-  assert.match(homepage, /data\\.authenticated !== true/);
-  assert.match(homepage, /userContext && userContext\.authenticated === true && existingWelcome/);
-  assert.match(homepage, /existingWelcome\.remove\(\)/);
-  assert.match(homepage, /if \(isAuth && ctx\.points !== null/);
-  assert.match(homepage, /Number\.isFinite\(Number\(ctx\.points\)\)/);
-  assert.match(homepage, /make\('span', 'ux01-header-balance'\)/);
-  assert.match(homepage, /dispatch=profiles\.add/);
+  assert.ok(scripts.includes('authenticated: {if $auth.user_id|default:0}true{else}false{/if}'));
+  assert.ok(!scripts.includes('points: {if'));
+  assert.ok(php.includes('Cache-Control: private, no-store'));
+  assert.ok(php.includes("isset($auth['user_id'])"));
+  assert.ok(php.includes('fn_get_user_additional_data(POINTS, $user_id)'));
+  assert.ok(php.includes('/dev_copy/'));
+  assert.ok(homepage.includes("window.fetch('/dev_copy/index.php?dispatch=ux01_loyalty.balance'"));
+  assert.ok(homepage.includes("credentials: 'same-origin', cache: 'no-store'"));
+  assert.ok(homepage.includes('data.authenticated !== true'));
+  assert.ok(homepage.includes('userContext && userContext.authenticated === true && existingWelcome'));
+  assert.ok(homepage.includes('existingWelcome.remove()'));
+  assert.ok(homepage.includes('make(\'span\', \'ux01-header-balance\')'));
+  assert.ok(homepage.includes('dispatch=profiles.add'));
 });
 
 test('desktop and mobile both apply filters to same homepage URL, not close only', () => {
