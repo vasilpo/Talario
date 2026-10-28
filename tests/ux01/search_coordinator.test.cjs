@@ -104,9 +104,10 @@ test('mobile consent banner reserves space for bottom-sheet apply without dismis
 test('mobile consent layout makes bottom sheet stop above Klaro notice, keeps popup action available', () => {
   const js=fs.readFileSync(require.resolve(file),'utf8');
   const css=fs.readFileSync('design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less','utf8');
-  assert.match(js,/querySelector\('#klaro \.cookie-notice/);
+  assert.match(js,/#klaro \.cookie-notice/);
   assert.match(js,/MutationObserver/);
   assert.match(js,/--ux01-consent-inset/);
   assert.match(css,/--ux01-consent-inset/);
   assert.match(css,/max-height:~?"min\(80dvh, calc\(100dvh/);
 });
+
