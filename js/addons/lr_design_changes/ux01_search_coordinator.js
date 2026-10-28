@@ -301,8 +301,8 @@
             });
             if (title === 'Возраст') { addAgeRange(doc, popup); }
             var actions = elem(doc, 'div', 'ux01-panel-actions');
-            var done = elem(doc, 'button', 'ux01-action-done', 'Готово'); done.type = 'button';
-            done.addEventListener('click', function () { closePopup(popup); updateHeader(filters); updatePending(); });
+            var done = elem(doc, 'button', 'ux01-action-done', 'Показать занятия'); done.type = 'button';
+            done.addEventListener('click', function () { applyAll(); });
             var mobileApply = elem(doc, 'button', 'ux01-action-mobile', 'Показать занятия'); mobileApply.type = 'button';
             mobileApply.addEventListener('click', function () { applyAll(); });
             actions.appendChild(done); actions.appendChild(mobileApply);
@@ -326,7 +326,7 @@
         function updatePending() {
             updateHeader(filters);
             var isDirty = query() !== appliedQ || toHash(selectedGroups(filters)) !== toHash(applied);
-            note.textContent = isDirty ? 'Изменения не применены. Нажми «Найти», чтобы обновить занятия.' : '';
+            note.textContent = isDirty ? 'Изменения не применены. Нажми «Показать занятия» в фильтре или «Найти» в строке поиска.' : '';
             note.hidden = !isDirty;
             shell.classList.toggle('ux01-has-draft', isDirty);
         }
