@@ -59,47 +59,56 @@
         if (hash) { url.searchParams.set('features_hash', hash); }
         return url.toString();
     }
-    // Return the minimum bottom inset required to keep our mobile filter sheet above
-    // a *visible* Klaro consent notice. No programmatic dismissal or consent changes.
+    // Return the bottom inset for visible bottom chrome (Klaro or native navigation).
+    // No programmatic dismissal, consent changes or native-panel removal.
     function cookieReserve(rect, viewportHeight, visible) {
         if (!visible || !rect || !viewportHeight || rect.height <= 0 ||
             rect.top >= viewportHeight || rect.bottom < viewportHeight * 0.8) { return 0; }
         return Math.min(Math.ceil(viewportHeight - Math.max(0, rect.top) + 8),
             Math.floor(viewportHeight * 0.5));
     }
-    function installConsentObserver(root, doc) {
-        if (root.innerWidth >= 900) { return; }
-        var observer, hostWatcher, observedHost;
+    function installBottomInsetObserver(root, doc) {
+        var observer, hostWatcher, observedHosts = [];
         function sync() {
-            var notice = doc.querySelector('#klaro .cookie-notice, #klaro .cookie-modal');
-            var visible = !!notice && root.getComputedStyle(notice).display !== 'none' &&
-                root.getComputedStyle(notice).visibility !== 'hidden' &&
-                root.getComputedStyle(notice).pointerEvents !== 'none';
-            var rect = visible ? notice.getBoundingClientRect() : null;
-            var bottom = cookieReserve(rect, root.innerHeight, visible);
+            var bottom = 0;
+            if (root.innerWidth < 900) {
+                // Native navigation is above the preview toolbar, so its actual
+                // top edge already includes both occupied areas. Klaro may overlap.
+                Array.prototype.forEach.call(doc.querySelectorAll('#klaro .cookie-notice, #klaro .cookie-modal, .ut2-sticky-panel__wrap'), function (panel) {
+                    var style = root.getComputedStyle(panel);
+                    var visible = style.display !== 'none' && style.visibility !== 'hidden' &&
+                        style.pointerEvents !== 'none';
+                    var rect = visible ? panel.getBoundingClientRect() : null;
+                    bottom = Math.max(bottom, cookieReserve(rect, root.innerHeight, visible));
+                });
+            }
+            // This existing sheet inset now includes native bottom navigation.
             doc.documentElement.style.setProperty('--ux01-consent-inset', bottom + 'px');
         }
-        function observeHost() {
-            var host = doc.getElementById('klaro');
-            if (!host || host === observedHost || !root.MutationObserver) { return; }
+        function observeHosts() {
+            var hosts = Array.prototype.slice.call(doc.querySelectorAll('#klaro, .ut2-sticky-panel__wrap'));
+            if (!root.MutationObserver || (hosts.length === observedHosts.length &&
+                hosts.every(function (host, i) { return host === observedHosts[i]; }))) { return; }
             if (observer) { observer.disconnect(); }
-            observedHost = host;
+            observedHosts = hosts;
             observer = new root.MutationObserver(sync);
-            observer.observe(host, {subtree:true, childList:true, attributes:true,
-                attributeFilter:['class', 'style', 'hidden']});
+            hosts.forEach(function (host) {
+                observer.observe(host, {subtree:true, childList:true, attributes:true,
+                    attributeFilter:['class', 'style', 'hidden']});
+            });
             sync();
         }
-        // Klaro can be inserted asynchronously after the storefront is ready.
+        // Bottom chrome can be inserted asynchronously after the storefront.
         if (root.MutationObserver && doc.body) {
-            hostWatcher = new root.MutationObserver(function () { observeHost(); });
-            hostWatcher.observe(doc.body, {childList:true});
+            hostWatcher = new root.MutationObserver(function () { observeHosts(); });
+            hostWatcher.observe(doc.body, {childList:true, subtree:true});
         }
-        observeHost();
+        observeHosts();
         root.addEventListener('resize', sync);
         // Each native quick-control popup opens after the click handler runs.
         doc.addEventListener('click', function (event) {
             if (event.target.closest && event.target.closest('[data-ca-lr-homepage-search-filters-switch]')) {
-                root.setTimeout(sync, 50);
+                root.setTimeout(function () { observeHosts(); sync(); }, 50);
             }
         });
         sync();
@@ -266,7 +275,7 @@
         var form = shell.querySelector('form[name="search_form"]');
         if (!filters || !form || filters.getAttribute('data-ux01-unified') === '1') { return; }
         filters.setAttribute('data-ux01-unified', '1');
-        installConsentObserver(root, doc);
+        installBottomInsetObserver(root, doc);
         var input = form.querySelector('input[name="q"]') || form.querySelector('input[type="text"]');
         var appliedParams = new URLSearchParams(root.location.search);
         var appliedQ = (appliedParams.get('q') || '').trim();
@@ -369,5 +378,6 @@
         } else { chips.hidden = true; }
         updatePending();
     }
-    return {buildUrl:buildUrl, parseHash:parseHash, toHash:toHash, ageValues:ageValues, formatQuickLabel:formatQuickLabel, cookieReserve:cookieReserve, init:init};
+    return {buildUrl:buildUrl, parseHash:parseHash, toHash:toHash, ageValues:ageValues, formatQuickLabel:formatQuickLabel, cookieReserve:cookieReserve, installBottomInsetObserver:installBottomInsetObserver, init:init};
 }));
+

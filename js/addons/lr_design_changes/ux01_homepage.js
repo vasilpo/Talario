@@ -80,7 +80,7 @@
         if (!document.head || typeof document.head.appendChild !== 'function') { return; }
         var script = document.createElement('script');
         script.setAttribute('data-ux01-filter-coordinator', 'true');
-        script.src = '/dev_copy/js/addons/lr_design_changes/ux01_search_coordinator.js?v=20261027';
+        script.src = '/dev_copy/js/addons/lr_design_changes/ux01_search_coordinator.js?v=20261028-native-bottom';
         script.async = true;
         document.head.appendChild(script);
     }
@@ -356,3 +356,4 @@
     });
     $.ceEvent('on', 'ce.commoninit', function () { init(); }); $(init);
 }(Tygh, Tygh.$));
+
