@@ -102,3 +102,8 @@ test('cashback cannot shadow the footer DOM element with a numeric price', () =>
   assert.match(homepage, /var rubles = nativePrice && parseCardPrice/);
   assert.match(homepage, /var points = cashbackPoints\(rubles\)/);
 });
+
+test('cashback enhancement exception must not abort rendering of remaining activity cards', () => {
+  assert.match(homepage, /if \(amount && !soon\) \{\s*try\s*\{\s*addCardCashback\(price, amount\);\s*\}\s*catch \(error\)/);
+  assert.match(homepage, /console\.warn\('UX-01 cashback render failed'/);
+});
