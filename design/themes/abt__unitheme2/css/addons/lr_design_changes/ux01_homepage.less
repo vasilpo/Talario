@@ -939,3 +939,107 @@ html.talario-ux01-active .talario-ux01 .filter-strip .quick-button>.ty-horizonta
     bottom:0!important;
   }
 }
+
+/* UX01-LOYALTY-2026-10-28. Scoped to dev_copy homepage; native price stays unchanged. */
+html.talario-ux01-active .talario-ux01 .card-foot .price-stack {
+  flex-wrap:wrap!important;
+  column-gap:10px!important;
+  row-gap:4px!important;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  max-width:100%;
+  min-width:0;
+  border-radius:10px;
+  background:#FFF2CC;
+  border:1px solid #E6CE86;
+  color:#493916;
+  padding:4px 7px;
+  line-height:1.24;
+  font-size:11px;
+  white-space:normal;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback>svg {
+  width:19px;
+  height:19px;
+  flex-shrink:0;
+  color:#A67C18;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-lines {
+  display:flex;flex-direction:column;gap:1px;min-width:0;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-lines strong {
+  font-weight:750;color:#493916;font-size:12px;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-lines>span {
+  font-size:11px;color:#66532C;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip {
+  position:relative;flex:none;font-size:12px;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip>summary {
+  display:grid;place-items:center;width:19px;height:19px;cursor:pointer;
+  border-radius:50%;border:1px solid #A88C50;color:#695326;font-weight:700;
+  list-style:none;outline-offset:3px;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip>summary::-webkit-details-marker{display:none}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-help {
+  display:none;
+  position:absolute;
+  z-index:30;
+  right:-6px;
+  bottom:calc(100% + 8px);
+  width:250px;
+  max-width:70vw;
+  padding:10px;
+  background:#FFFDF7;
+  border:1px solid #D8C99F;
+  border-radius:12px;
+  box-shadow:0 6px 22px #30291F30;
+  color:#30291F;
+  line-height:1.45;
+  font-size:12px;
+  white-space:normal;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip:hover>.ux01-cashback-help,
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip[open]>.ux01-cashback-help,
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip:focus-within>.ux01-cashback-help{display:block}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-help a{color:#795700;text-decoration:underline}
+html.talario-ux01-active .talario-ux01 .user-link:has(.ux01-header-balance) {
+  max-width:225px;
+  overflow:visible;
+}
+html.talario-ux01-active .talario-ux01 .ux01-header-balance {
+  display:inline-flex;align-items:center;gap:3px;
+  padding:4px 7px;
+  background:#FFF2CC;color:#594315;
+  border-radius:999px;font-size:12px;font-weight:750;
+  line-height:1.1;white-space:nowrap;
+}
+html.talario-ux01-active .talario-ux01 .ux01-header-balance svg {
+  width:17px;height:17px;color:#9C781C;flex:none;
+}
+html.talario-ux01-active .talario-ux01 .mobile-bonus {
+  grid-column:1/-1;gap:12px;padding:14px 16px;
+  background:#FFF5D8;border:1px solid #DCC68D;
+  border-left:4px solid #B99027;border-radius:14px;
+}
+html.talario-ux01-active .talario-ux01 .mobile-bonus .ux01-welcome-cta {
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:22px;background:#F7C948;color:#30291F;
+  border:1px solid #BA912B;
+  padding:9px 12px;
+  font-size:13px;font-weight:700;
+  text-decoration:none;white-space:normal;text-align:center;
+}
+html.talario-ux01-active.is-auth .talario-ux01 .mobile-bonus {display:none!important}
+@media(max-width:899px){
+ html.talario-ux01-active .talario-ux01 .mobile-bonus{flex-wrap:wrap}
+ html.talario-ux01-active .talario-ux01 .mobile-bonus .ux01-welcome-cta {width:100%}
+ html.talario-ux01-active .talario-ux01 .user-link:has(.ux01-header-balance){max-width:132px}
+ html.talario-ux01-active .talario-ux01 .user-link .header-user-name{max-width:60px}
+ html.talario-ux01-active .talario-ux01 .ux01-header-balance {padding:3px 5px;font-size:11px}
+ html.talario-ux01-active .talario-ux01 .ux01-cashback-help{width:225px}
+}
