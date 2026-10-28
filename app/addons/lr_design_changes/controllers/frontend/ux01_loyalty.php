@@ -15,9 +15,11 @@ if ($mode !== 'balance') {
 // than SCRIPT_NAME on installations with a front-controller rewrite.
 $script_path = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
 $current_path = (string) (\Tygh\Registry::get('config.current_path') ?: '');
+$request_path = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?: '');
+$is_dev_request = (bool) preg_match('~^/dev_copy/(?:index\\\\.php)?$~', $request_path);
 $is_dev_script = (bool) preg_match('~^/dev_copy/(?:index\\.php)?$~', $script_path);
 $is_dev_storefront = rtrim($current_path, '/') === '/dev_copy';
-if (AREA !== 'C' || (!$is_dev_script && !$is_dev_storefront)) {
+if (AREA !== 'C' || !$is_dev_request || (!$is_dev_script && !$is_dev_storefront)) {
     return [CONTROLLER_STATUS_NO_PAGE];
 }
 
