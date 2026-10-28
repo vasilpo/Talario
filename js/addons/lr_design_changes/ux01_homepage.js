@@ -30,8 +30,8 @@
         return Number.isFinite(rubles) && rubles > 0 ? Math.round(rubles * 0.03) : 0;
     }
     function parseCardPrice(text) {
-        var compact = String(text || '').replace(/[\\s\\u00a0\\u202f]/g, '').replace(',', '.');
-        if (!/^\\d+(?:\\.\\d{1,2})?$/.test(compact)) { return null; }
+        var compact = String(text || '').replace(/[\s\u00a0\u202f]/g, '').replace(',', '.');
+        if (!/^\d+(?:\.\d{1,2})?$/.test(compact)) { return null; }
         var value = Number(compact);
         return Number.isFinite(value) && value > 0 ? value : null;
     }
