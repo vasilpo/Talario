@@ -26,7 +26,16 @@ function auditCashbackSurface(doc) {
         if (!borders.every(function (value) { return parseFloat(value) === 0; })) errors.push('Cashback has a capsule border/divider at ' + index);
         if (!radii.every(function (value) { return value.split(/\s+/).every(function (part) { return parseFloat(part) === 0; }); })) errors.push('Cashback has rounded capsule corners at ' + index);
         if (style.boxShadow !== 'none') errors.push('Cashback has a capsule shadow at ' + index);
-        surfaces.push({index: index, background: background, image: style.backgroundImage, borders: borders, radii: radii, shadow: style.boxShadow});
+        var footerBox = foot.getBoundingClientRect(), more = foot.querySelector('.more');
+        var moreBox = more && more.getBoundingClientRect();
+        if (!moreBox || moreBox.width < 100 || moreBox.height < 44) errors.push('Details tap target is too small at ' + index);
+        if (moreBox && (moreBox.right > footerBox.right + 1 || moreBox.left < footerBox.left - 1)) errors.push('Details is clipped outside its grid track at ' + index);
+        if (moreBox && box.right > moreBox.left + 1) errors.push('Cashback overlaps Details at ' + index);
+        var headline = badge.querySelector('strong');
+        if (!headline || parseFloat(win.getComputedStyle(headline).fontSize) < 14) errors.push('Cashback headline is too small at ' + index);
+        surfaces.push({index: index, background: background, image: style.backgroundImage, borders: borders, radii: radii, shadow: style.boxShadow,
+            more: moreBox && {x:moreBox.x,right:moreBox.right,width:moreBox.width,height:moreBox.height},footerRight:footerBox.right});
     });
+    if (doc.documentElement.scrollWidth > doc.documentElement.clientWidth) errors.push('Horizontal page overflow');
     return {pass: errors.length === 0, viewport: win.innerWidth, count: surfaces.length, surfaces: surfaces, errors: errors};
 }
