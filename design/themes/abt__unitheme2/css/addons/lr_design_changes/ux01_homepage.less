@@ -1043,3 +1043,84 @@ html.talario-ux01-active.is-auth .talario-ux01 .mobile-bonus {display:none!impor
  html.talario-ux01-active .talario-ux01 .ux01-header-balance {padding:3px 5px;font-size:11px}
  html.talario-ux01-active .talario-ux01 .ux01-cashback-help{width:225px}
 }
+
+/* UX01-LOYALTY-VISUAL-FIX-2026-10-28: match approved price + cashback composition.
+   No global UniTheme2 styles, and never show the welcome offer to signed-in users. */
+html.talario-ux01-active.is-auth .talario-ux01 .desktop-bonus{display:none!important}
+html.talario-ux01-active .talario-ux01 .activity .ut2-gl__price-wrap.card-foot.ux01-has-cashback{
+  display:grid!important;
+  grid-template-columns:minmax(76px,auto) minmax(0,1fr) minmax(112px,130px);
+  align-items:stretch;
+  gap:0!important;
+  min-height:66px;
+}
+html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .price-stack{
+  grid-column:1;
+  min-width:0;
+  flex:none!important;
+  width:auto!important;
+  padding:9px 8px 9px 12px!important;
+  align-self:center;
+}
+html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .ux01-cashback{
+  grid-column:2;
+  justify-self:start;
+  align-self:center;
+  display:inline-flex;
+  flex:none;
+  width:auto;
+  min-height:48px;
+  margin:5px 7px;
+  padding:8px 10px;
+  gap:7px;
+  border-radius:12px;
+  background:#FFF4D4;
+  border:1px solid #DFC68B;
+  color:#493916;
+  font-size:13px;
+  line-height:1.3;
+  box-shadow:none;
+}
+html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .ux01-cashback>svg{
+  width:22px;height:22px;flex:none;color:#A67C18;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-lines strong{
+  font-size:14px;font-weight:750;line-height:1.25;white-space:normal;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-lines>span{
+  font-size:12px;line-height:1.2;
+}
+html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .more{
+  grid-column:3;
+  align-self:stretch;
+  margin:0;
+  min-height:66px;
+  min-width:0;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip>summary{
+  width:21px;height:21px;font-size:12px;flex:none;
+}
+@media(max-width:899px){
+  html.talario-ux01-active .talario-ux01 .activity .ut2-gl__price-wrap.card-foot.ux01-has-cashback{
+    grid-template-columns:minmax(0,1fr) minmax(104px,120px);
+    grid-template-rows:auto auto;
+    min-height:79px;
+  }
+  html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .price-stack{
+    grid-column:1;grid-row:1;align-self:end;
+    padding:5px 9px 1px 12px!important;min-height:34px;
+  }
+  html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .ux01-cashback{
+    grid-column:1;grid-row:2;justify-self:start;
+    margin:2px 6px 7px 11px;padding:5px 8px;min-height:34px;gap:5px;
+  }
+  html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .ux01-cashback>svg{
+    width:18px;height:18px;
+  }
+  html.talario-ux01-active .talario-ux01 .ux01-cashback-lines strong{font-size:12px}
+  html.talario-ux01-active .talario-ux01 .ux01-cashback-lines>span{font-size:11px}
+  html.talario-ux01-active .talario-ux01 .card-foot.ux01-has-cashback .more{
+    grid-column:2;grid-row:1/span 2;
+    min-height:79px;
+  }
+}
