@@ -46,7 +46,7 @@ async function setup(){
   // No local file reads or credential/session access. Source is an already
   // authorized storefront on the same dev_copy origin; PROD never loads it.
   if(!/^\/dev_copy\/tests\/ux01\//.test(location.pathname))throw Error('dev_copy test route required');
-  const source=document.createElement('iframe');source.hidden=true;source.title='Source storefront styles';
+  const source=document.createElement('iframe');source.title='Source storefront styles';source.setAttribute('aria-hidden','true');source.style.cssText='position:absolute;left:-10000px;top:0;width:1440px;height:900px;visibility:hidden;pointer-events:none';
   const loaded=new Promise(resolve=>source.addEventListener('load',resolve,{once:true}));
   source.src='/dev_copy/';document.body.append(source);await loaded;
   const doc=source.contentDocument;
@@ -54,6 +54,14 @@ async function setup(){
   const styles=[...doc.querySelectorAll('link[rel="stylesheet"][href]')].map(link=>new URL(link.href)).filter(url=>url.origin===location.origin&&url.pathname.startsWith('/dev_copy/')).map(url=>url.href);
   if(!styles.some(url=>url.includes('/standalone.')))throw Error('Compiled storefront CSS unavailable');
   const inline=[...doc.querySelectorAll('style')].map(style=>style.textContent).filter(css=>css.includes('bp-panel')).join('\n');
+  // The shell may precede the asynchronous loader. Observe one bounded wait,
+  // without treating a missing intermediate tag as a storefront defect.
+  if(!doc.querySelector('script[data-ux01-filter-coordinator]'))await new Promise((resolve,reject)=>{
+    const watcher=new MutationObserver(()=>{if(doc.querySelector('script[data-ux01-filter-coordinator]')){watcher.disconnect();clearTimeout(timer);resolve();}});
+    const timer=setTimeout(()=>{watcher.disconnect();reject(Error('Coordinator loader did not become ready within 12s'));},12000);
+    watcher.observe(doc.head,{childList:true,subtree:true});
+    if(doc.querySelector('script[data-ux01-filter-coordinator]')){watcher.disconnect();clearTimeout(timer);resolve();}
+  });
   const coordinator=new URL(doc.querySelector('script[data-ux01-filter-coordinator]')?.src||'',location.href);
   if(coordinator.origin!==location.origin||coordinator.pathname!=='/dev_copy/js/addons/lr_design_changes/ux01_search_coordinator.js'||coordinator.searchParams.get('v')!==VERSION)throw Error('Storefront coordinator cache version not upgraded');
   sourceInfo={styles,coordinator:coordinator.href};
