@@ -33,6 +33,15 @@ function auditCashbackSurface(doc) {
         if (moreBox && box.right > moreBox.left + 1) errors.push('Cashback overlaps Details at ' + index);
         var headline = badge.querySelector('strong');
         if (!headline || parseFloat(win.getComputedStyle(headline).fontSize) < 14) errors.push('Cashback headline is too small at ' + index);
+        var help = badge.querySelector('.ux01-cashback-help');
+        if (help && win.getComputedStyle(help).display !== 'none') {
+            var helpBox = help.getBoundingClientRect();
+            if (helpBox.width > 0 && helpBox.height > 0) {
+                [[12,10], [helpBox.width-12,10], [12,helpBox.height-10], [helpBox.width-12,helpBox.height-10]].forEach(function (point) {
+                    if (!help.contains(doc.elementFromPoint(helpBox.x+point[0],helpBox.y+point[1]))) errors.push('Active cashback tooltip is clipped or covered at ' + index);
+                });
+            }
+        }
         surfaces.push({index: index, background: background, image: style.backgroundImage, borders: borders, radii: radii, shadow: style.boxShadow,
             more: moreBox && {x:moreBox.x,right:moreBox.right,width:moreBox.width,height:moreBox.height},footerRight:footerBox.right});
     });

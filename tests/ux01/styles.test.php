@@ -35,6 +35,9 @@ namespace {
     if (!preg_match('~card-foot\\.ux01-has-cashback\\s+\\.more\\s*\\{[^}]*min-width:\\s*0(?:px)?\\s*!important~s', $css)) {
         throw new \RuntimeException('Cashback Details must override the native important minimum width');
     }
+    if (!preg_match('~activity:has\(\.ux01-cashback-tip\[open\]\)[^}]*overflow:\s*visible\s*!important~s', $css)) {
+        throw new RuntimeException('Active cashback help remains clipped by its native card');
+    }
     $cacheDir = $root . '/var/cache/misc/assets/design/themes/abt__unitheme2/css';
     $css = \Tygh\Less::parseUrls($css, $cacheDir, $root . '/design/themes/abt__unitheme2/media');
     if (!preg_match("~url\\('([^']*talario-ux01-golos\\.ttf[^']*)'\\)~", $css, $match)) { throw new \RuntimeException('Golos font URL missing'); }
