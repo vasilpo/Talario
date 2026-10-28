@@ -43,8 +43,15 @@ test('cashback badge is built once per native valid-priced card with meaningful 
 test('auth flag from server drives guest welcome offer and real balance from auth points', () => {
   assert.match(scripts, /\$config\.current_path\|default:"" == "\/dev_copy"/);
   assert.match(scripts, /authenticated: \{if \$auth\.user_id\|default:0\}true\{else\}false\{\/if\}/);
-  assert.match(scripts, /points: \{if \$auth\.user_id\|default:0\}/);
-  assert.match(scripts, /\$auth\.points\|default:0\|intval/);
+  assert.doesNotMatch(scripts, /points:\\s*\\{if/);
+  const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
+  assert.match(php, /Cache-Control: private, no-store/);
+  assert.match(php, /user_id.*\\$auth\\['user_id'\\]/);
+  assert.match(php, /fn_get_user_additional_data\\(POINTS, \\$user_id\\)/);
+  assert.match(php, /\\/dev_copy\\//);
+  assert.match(homepage, /window\\.fetch\\('\/dev_copy\/index\\.php\\?dispatch=ux01_loyalty\\.balance'/);
+  assert.match(homepage, /credentials: 'same-origin', cache: 'no-store'/);
+  assert.match(homepage, /data\\.authenticated !== true/);
   assert.match(homepage, /userContext && userContext\.authenticated === true && existingWelcome/);
   assert.match(homepage, /existingWelcome\.remove\(\)/);
   assert.match(homepage, /if \(isAuth && ctx\.points !== null/);
