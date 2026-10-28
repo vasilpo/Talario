@@ -353,14 +353,24 @@
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');
         if (firstName) { var name = make('span', 'header-user-name', firstName); name.title = firstName; profile.appendChild(name); }
-        // Auth-only value from reward_points_user_init; no guessed or cached balance.
-        if (isAuth && ctx.points !== null && ctx.points !== undefined && ctx.points !== '' &&
-            Number.isFinite(Number(ctx.points)) && Number(ctx.points) >= 0) {
-            var balance = make('span', 'ux01-header-balance');
-            balance.appendChild(icon('coins'));
-            balance.appendChild(make('span', '', Number(ctx.points).toLocaleString('ru-RU')));
-            balance.title = 'Бонусный баланс: ' + Number(ctx.points).toLocaleString('ru-RU') + ' баллов';
-            profile.appendChild(balance);
+        // Session-bound data must not be embedded in potentially shared cached HTML.
+        // Fetch only the signed-in account's balance from our no-store dev-only route.
+        if (isAuth && typeof window.fetch === 'function') {
+            window.fetch('/dev_copy/index.php?dispatch=ux01_loyalty.balance', {
+                credentials: 'same-origin', cache: 'no-store', headers: {'Accept':'application/json'}
+            }).then(function (response) {
+                return response.ok ? response.json() : null;
+            }).then(function (data) {
+                if (!data || data.authenticated !== true || data.points === null ||
+                    !Number.isInteger(data.points) || data.points < 0 || !document.contains(profile)) { return; }
+                var balance = make('span', 'ux01-header-balance');
+                balance.appendChild(icon('coins'));
+                balance.appendChild(make('span', '', data.points.toLocaleString('ru-RU')));
+                balance.title = 'Бонусный баланс: ' + data.points.toLocaleString('ru-RU') + ' баллов';
+                profile.appendChild(balance);
+            }).catch(function () {
+                // Fail closed: do not show guessed points or guest-visible account data.
+            });
         }
         profile.appendChild(icon('user')); actions.appendChild(profile);
         var cart = make('a', 'iconbutton basket'); cart.href = href('cart/'); cart.setAttribute('aria-label', 'Корзина'); cart.appendChild(icon('cart')); actions.appendChild(cart); inner.appendChild(actions); header.appendChild(inner); shell.appendChild(header);
