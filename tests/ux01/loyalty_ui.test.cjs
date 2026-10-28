@@ -31,9 +31,9 @@ test('cashback is 3% of the actual native displayed price, rounded as reward_poi
 });
 
 test('cashback badge is built once per native valid-priced card with meaningful text', () => {
-  assert.match(homepage, /if \(!amount \|\| amount\.querySelector\('\.ux01-cashback'\)\)/);
+  assert.match(homepage, /if \(!price \|\| !amount \|\| price\.querySelector\('\.ux01-cashback'\)\)/);
   assert.match(homepage, /amount\.querySelector\('\.ty-price-num'\)/);
-  assert.match(homepage, /if \(!soon\) \{ addCardCashback\(amount\); \}/);
+  assert.match(homepage, /if \(amount && !soon\) \{ addCardCashback\(price, amount\); \}/);
   assert.match(homepage, /Вернём /);
   assert.match(homepage, /Кешбэк · 3%/);
   assert.match(homepage, /make\('details', 'ux01-cashback-tip'\)/);
