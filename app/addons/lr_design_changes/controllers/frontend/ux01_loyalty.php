@@ -11,8 +11,13 @@ if ($mode !== 'balance') {
     return [CONTROLLER_STATUS_NO_PAGE];
 }
 
+// Require the dev storefront. The configured public path is more reliable
+// than SCRIPT_NAME on installations with a front-controller rewrite.
 $script_path = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
-if (AREA !== 'C' || !preg_match('~^/dev_copy/(?:index\\.php)?$~', $script_path)) {
+$current_path = (string) (\Tygh\Registry::get('config.current_path') ?: '');
+$is_dev_script = (bool) preg_match('~^/dev_copy/(?:index\\.php)?$~', $script_path);
+$is_dev_storefront = rtrim($current_path, '/') === '/dev_copy';
+if (AREA !== 'C' || (!$is_dev_script && !$is_dev_storefront)) {
     return [CONTROLLER_STATUS_NO_PAGE];
 }
 
