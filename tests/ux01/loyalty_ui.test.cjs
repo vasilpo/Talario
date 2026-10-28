@@ -33,7 +33,7 @@ test('cashback is 3% of the actual native displayed price, rounded as reward_poi
 test('cashback badge is built once per native valid-priced card with meaningful text', () => {
   assert.match(homepage, /if \(!price \|\| !amount \|\| price\.querySelector\('\.ux01-cashback'\)\)/);
   assert.match(homepage, /amount\.querySelector\('\.ty-price-num'\)/);
-  assert.match(homepage, /if \(amount && !soon\) \{ addCardCashback\(price, amount\); \}/);
+  assert.match(homepage, /if \(amount && !soon\) \{[\s\S]*?addCardCashback\(price, amount\);/);
   assert.match(homepage, /Вернём /);
   assert.match(homepage, /Кешбэк · 3%/);
   assert.match(homepage, /make\('details', 'ux01-cashback-tip'\)/);
@@ -101,4 +101,9 @@ test('cashback cannot shadow the footer DOM element with a numeric price', () =>
   assert.doesNotMatch(homepage, /var price = nativePrice && parseCardPrice/);
   assert.match(homepage, /var rubles = nativePrice && parseCardPrice/);
   assert.match(homepage, /var points = cashbackPoints\(rubles\)/);
+});
+
+test('cashback enhancement exception must not abort rendering of remaining activity cards', () => {
+  assert.match(homepage, /if \(amount && !soon\) \{\s*try\s*\{\s*addCardCashback\(price, amount\);\s*\}\s*catch \(error\)/);
+  assert.match(homepage, /console\.warn\('UX-01 cashback render failed'/);
 });
