@@ -357,23 +357,34 @@
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');
         if (firstName) { var name = make('span', 'header-user-name', firstName); name.title = firstName; profile.appendChild(name); }
-        // Session-bound data must not be embedded in potentially shared cached HTML.
-        // Fetch only the signed-in account's balance from our no-store dev-only route.
+        // Only a signed-in session may request its own points. The server response
+        // is private/no-store; never embed personal balances in cached storefront HTML.
         if (isAuth && typeof window.fetch === 'function') {
+            profile.setAttribute('data-ux01-balance-status', 'loading');
             window.fetch('/dev_copy/index.php?dispatch=ux01_loyalty.balance', {
                 credentials: 'same-origin', cache: 'no-store', headers: {'Accept':'application/json'}
             }).then(function (response) {
-                return response.ok ? response.json() : null;
+                if (!response.ok) { throw new Error('Balance HTTP ' + response.status); }
+                return response.json();
             }).then(function (data) {
-                if (!data || data.authenticated !== true || data.points === null ||
-                    !Number.isInteger(data.points) || data.points < 0 || !document.contains(profile)) { return; }
-                var balance = make('span', 'ux01-header-balance');
-                balance.appendChild(icon('coins'));
-                balance.appendChild(make('span', '', data.points.toLocaleString('ru-RU')));
-                balance.title = 'Бонусный баланс: ' + data.points.toLocaleString('ru-RU') + ' баллов';
-                profile.appendChild(balance);
+                var liveProfile = document.querySelector('#talario-ux01 .header-actions .user-link');
+                if (!liveProfile) { return; }
+                if (!data || data.authenticated !== true || !Number.isInteger(data.points) || data.points < 0) {
+                    liveProfile.setAttribute('data-ux01-balance-status', 'unavailable');
+                    return;
+                }
+                if (!liveProfile.querySelector('.ux01-header-balance')) {
+                    var balance = make('span', 'ux01-header-balance');
+                    balance.appendChild(icon('coins'));
+                    balance.appendChild(make('span', '', data.points.toLocaleString('ru-RU')));
+                    balance.title = 'Бонусный баланс: ' + data.points.toLocaleString('ru-RU') + ' баллов';
+                    liveProfile.appendChild(balance);
+                }
+                liveProfile.setAttribute('data-ux01-balance-status', 'ready');
             }).catch(function () {
-                // Fail closed: do not show guessed points or guest-visible account data.
+                var liveProfile = document.querySelector('#talario-ux01 .header-actions .user-link');
+                if (liveProfile) { liveProfile.setAttribute('data-ux01-balance-status', 'error'); }
+                // Fail closed: no guessed balances or guest-visible user data.
             });
         }
         profile.appendChild(icon('user')); actions.appendChild(profile);
