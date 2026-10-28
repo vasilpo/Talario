@@ -96,3 +96,9 @@ test('account balance endpoint checks dev storefront context and reports failure
   assert.match(homepage, /data-ux01-balance-status/);
   assert.doesNotMatch(homepage, /ctx\.points/);
 });
+
+test('cashback cannot shadow the footer DOM element with a numeric price', () => {
+  assert.doesNotMatch(homepage, /var price = nativePrice && parseCardPrice/);
+  assert.match(homepage, /var rubles = nativePrice && parseCardPrice/);
+  assert.match(homepage, /var points = cashbackPoints\(rubles\)/);
+});
