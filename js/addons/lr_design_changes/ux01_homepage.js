@@ -208,7 +208,17 @@
                 else {
                     if (productLink) { var moreLink = make('a', 'more', 'Подробнее'); moreLink.href = productLink.href; price.appendChild(moreLink); }
                 }
-                if (amount && !soon) { addCardCashback(price, amount); }
+                if (amount && !soon) {
+                    try {
+                        addCardCashback(price, amount);
+                    } catch (error) {
+                        // Loyalty promotion is optional: a broken badge must never
+                        // prevent activity cards and the homepage from rendering.
+                        if (window.console && window.console.warn) {
+                            console.warn('UX-01 cashback render failed', error);
+                        }
+                    }
+                }
                 // Some native cards retain cart/quantity controls. Keep them
                 // connected in a separate row, outside the two-item footer.
                 Array.prototype.forEach.call(price.querySelectorAll('.ut2-gl__control'), function (control) {
