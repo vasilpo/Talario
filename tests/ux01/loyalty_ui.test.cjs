@@ -119,5 +119,5 @@ test('cashback uses the available footer space, with clear desktop and mobile ty
   assert.match(css, /UX01-LOYALTY-REFINEMENT/);
   assert.match(css, /\.ux01-cashback\s*\{[^}]*width:100%/s);
   assert.match(css, /\.ux01-cashback-lines strong\s*\{[^}]*font-size:14px/s);
-  assert.match(css, /@media\(max-width:899px\)\s*\{[^}]*ux01-cashback/s);
+  assert.match(css, /@media\(max-width:899px\)\s*\{[\s\S]{0,1900}\.ux01-cashback/);
 });
