@@ -48,7 +48,10 @@ if(location.origin!=='https://talario.ru'||location.pathname!=='/dev_copy/tests/
         layout:{width:doc.defaultView.innerWidth,client:doc.documentElement.clientWidth,scroll:doc.documentElement.scrollWidth},
         cards:cardCount,welcomeNodes:doc.querySelectorAll('.desktop-bonus,.mobile-bonus').length};
       document.getElementById('result').textContent=JSON.stringify(result,null,2);
-      status.textContent=(surface.pass&&response.ok&&result.http.balanceMatchesHeader?'PASS':'Проверить результат')+' · '+cardCount+' реальных карточек';
+      const statePass=data.authenticated===true
+        ? result.http.balanceMatchesHeader&&result.header.visible&&result.header.status==='ready'&&result.welcomeNodes===0
+        : !balance&&Array.from(doc.querySelectorAll('.desktop-bonus,.mobile-bonus')).some(el=>el.getBoundingClientRect().width>0&&el.getBoundingClientRect().height>0);
+      status.textContent=(surface.pass&&response.ok&&statePass&&result.layout.scroll<=result.layout.client?'PASS':'Проверить результат')+' · '+cardCount+' реальных карточек';
     }catch(error){status.textContent='FAIL';document.getElementById('result').textContent=String(error);}
   });
 }
