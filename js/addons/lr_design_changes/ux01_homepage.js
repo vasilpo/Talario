@@ -4,7 +4,7 @@
     if (!/\/dev_copy(?:\/|$)/.test(window.location.pathname)) { return; }
     var userContext = null;
     // Exact vector paths from the approved Golos Restored source, not replacement icons.
-    var icons = {"menu": [["path", {"d": "M4 5h16"}], ["path", {"d": "M4 12h16"}], ["path", {"d": "M4 19h16"}]], "user": [["circle", {"cx": "12", "cy": "8", "r": "5"}], ["path", {"d": "M20 21a8 8 0 0 0-16 0"}]], "cart": [["path", {"d": "m15 11-1 9"}], ["path", {"d": "m19 11-4-7"}], ["path", {"d": "M2 11h20"}], ["path", {"d": "m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"}], ["path", {"d": "M4.5 15.5h15"}], ["path", {"d": "m5 11 4-7"}], ["path", {"d": "m9 11 1 9"}]], "filter": [["path", {"d": "M10 5H3"}], ["path", {"d": "M12 19H3"}], ["path", {"d": "M14 3v4"}], ["path", {"d": "M16 17v4"}], ["path", {"d": "M21 12h-9"}], ["path", {"d": "M21 19h-5"}], ["path", {"d": "M21 5h-7"}], ["path", {"d": "M8 10v4"}], ["path", {"d": "M8 12H3"}]], "heart": [["path", {"d": "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"}]], "gift": [["path", {"d": "M12 7v14"}], ["path", {"d": "M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"}], ["path", {"d": "M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"}], ["rect", {"height": "4", "rx": "1", "width": "18", "x": "3", "y": "7"}]], "search": [["path", {"d": "m21 21-4.34-4.34"}], ["circle", {"cx": "11", "cy": "11", "r": "8"}]]};
+    var icons = {"coins": [["ellipse", {"cx":"12","cy":"5.5","rx":"8","ry":"3"}],["path",{"d":"M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"}],["path",{"d":"M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"}]], "menu": [["path", {"d": "M4 5h16"}], ["path", {"d": "M4 12h16"}], ["path", {"d": "M4 19h16"}]], "user": [["circle", {"cx": "12", "cy": "8", "r": "5"}], ["path", {"d": "M20 21a8 8 0 0 0-16 0"}]], "cart": [["path", {"d": "m15 11-1 9"}], ["path", {"d": "m19 11-4-7"}], ["path", {"d": "M2 11h20"}], ["path", {"d": "m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"}], ["path", {"d": "M4.5 15.5h15"}], ["path", {"d": "m5 11 4-7"}], ["path", {"d": "m9 11 1 9"}]], "filter": [["path", {"d": "M10 5H3"}], ["path", {"d": "M12 19H3"}], ["path", {"d": "M14 3v4"}], ["path", {"d": "M16 17v4"}], ["path", {"d": "M21 12h-9"}], ["path", {"d": "M21 19h-5"}], ["path", {"d": "M21 5h-7"}], ["path", {"d": "M8 10v4"}], ["path", {"d": "M8 12H3"}]], "heart": [["path", {"d": "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"}]], "gift": [["path", {"d": "M12 7v14"}], ["path", {"d": "M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"}], ["path", {"d": "M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"}], ["rect", {"height": "4", "rx": "1", "width": "18", "x": "3", "y": "7"}]], "search": [["path", {"d": "m21 21-4.34-4.34"}], ["circle", {"cx": "11", "cy": "11", "r": "8"}]]};
     function make(tag, cls, text) {
         var el = document.createElement(tag);
         if (cls) { el.className = cls; }
@@ -24,6 +24,38 @@
     }
     function button(text, cls) {
         var el = make('button', cls, text); el.type = 'button'; return el;
+    }
+    // Price is taken from the rendered native CS-Cart card, not from marketing copy.
+    function cashbackPoints(rubles) {
+        return Number.isFinite(rubles) && rubles > 0 ? Math.round(rubles * 0.03) : 0;
+    }
+    function parseCardPrice(text) {
+        var compact = String(text || '').replace(/[\\s\\u00a0\\u202f]/g, '').replace(',', '.');
+        if (!/^\\d+(?:\\.\\d{1,2})?$/.test(compact)) { return null; }
+        var value = Number(compact);
+        return Number.isFinite(value) && value > 0 ? value : null;
+    }
+    function addCardCashback(amount) {
+        if (!amount || amount.querySelector('.ux01-cashback')) { return; }
+        var nativePrice = amount.querySelector('.ty-price-num');
+        var price = nativePrice && parseCardPrice(nativePrice.textContent);
+        var points = cashbackPoints(price);
+        if (!points) { return; }
+        var badge = make('span', 'ux01-cashback');
+        badge.appendChild(icon('coins'));
+        var lines = make('span', 'ux01-cashback-lines');
+        lines.appendChild(make('strong', '', 'Вернём ' + points.toLocaleString('ru-RU') + ' баллов'));
+        lines.appendChild(make('span', '', 'Кешбэк · 3%')); badge.appendChild(lines);
+        var details = make('details', 'ux01-cashback-tip');
+        var summary = make('summary', '', 'i');
+        summary.setAttribute('aria-label', 'Как начисляется кешбэк');
+        details.appendChild(summary);
+        var help = make('span', 'ux01-cashback-help');
+        help.appendChild(make('span', '', '3% от оплаченной суммы вернём баллами в личный кабинет в течение 3 дней после посещения занятия. '));
+        var terms = make('a', '', 'Условия в оферте');
+        terms.href = '/dev_copy/oferta-dlya-polzovatelya/';
+        help.appendChild(terms); details.appendChild(help); badge.appendChild(details);
+        amount.appendChild(badge);
     }
     function closeFilters(restoreFocus) {
         document.documentElement.classList.remove('talario-ux01-filters-open');
@@ -159,7 +191,7 @@
                 price = price || make('div');
                 price.classList.add('card-foot'); body.appendChild(price);
                 var amount = price.querySelector('.ut2-gl__price');
-                if (amount) { amount.classList.add('price-stack'); price.appendChild(amount); }
+                if (amount) { amount.classList.add('price-stack'); price.appendChild(amount); if (!soon) { addCardCashback(amount); } }
                 if (soon) {
                     var stack = amount || make('div', 'price-stack');
                     soon.textContent = 'Скоро на Таларио'; soon.classList.add('coming-soon-copy');
@@ -235,9 +267,18 @@
             }
 
         });
-        if (feed && cards.length > 1 && !feed.querySelector('.mobile-bonus')) {
+        // Welcome points are a guest-only acquisition offer, never a signed-in promo.
+        var existingWelcome = feed && feed.querySelector('.mobile-bonus');
+        if (userContext && userContext.authenticated === true && existingWelcome) {
+            existingWelcome.remove();
+        } else if (feed && cards.length > 1 && !existingWelcome && (!userContext || userContext.authenticated !== true)) {
             var bonus = make('aside', 'mobile-bonus'); bonus.appendChild(icon('gift'));
-            var copy = make('div'); copy.appendChild(make('strong', '', '500 баллов за регистрацию')); copy.appendChild(make('p', '', '1 балл = 1 ₽')); bonus.appendChild(copy);
+            var copy = make('div'); copy.appendChild(make('strong', '', '500 баллов за регистрацию'));
+            copy.appendChild(make('p', '', 'Зарегистрируйся и используй бонусы для оплаты занятий · 1 балл = 1 ₽'));
+            bonus.appendChild(copy);
+            var signUp = make('a', 'ux01-welcome-cta', 'Получить 500 баллов');
+            signUp.href = '/dev_copy/index.php?dispatch=profiles.add';
+            bonus.appendChild(signUp);
             var secondColumn = cards[1].closest('[class*="ty-column"]');
             if (secondColumn && secondColumn.parentElement === feed) { feed.insertBefore(bonus, secondColumn.nextSibling); }
         }
@@ -312,6 +353,15 @@
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');
         if (firstName) { var name = make('span', 'header-user-name', firstName); name.title = firstName; profile.appendChild(name); }
+        // Auth-only value from reward_points_user_init; no guessed or cached balance.
+        if (isAuth && ctx.points !== null && ctx.points !== undefined && ctx.points !== '' &&
+            Number.isFinite(Number(ctx.points)) && Number(ctx.points) >= 0) {
+            var balance = make('span', 'ux01-header-balance');
+            balance.appendChild(icon('coins'));
+            balance.appendChild(make('span', '', Number(ctx.points).toLocaleString('ru-RU')));
+            balance.title = 'Бонусный баланс: ' + Number(ctx.points).toLocaleString('ru-RU') + ' баллов';
+            profile.appendChild(balance);
+        }
         profile.appendChild(icon('user')); actions.appendChild(profile);
         var cart = make('a', 'iconbutton basket'); cart.href = href('cart/'); cart.setAttribute('aria-label', 'Корзина'); cart.appendChild(icon('cart')); actions.appendChild(cart); inner.appendChild(actions); header.appendChild(inner); shell.appendChild(header);
         var main = make('main', 'talario-ux01__main'); var intro = make('div', 'intro wrap'); var headline = make('div', 'intro-copy');
