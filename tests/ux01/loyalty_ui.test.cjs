@@ -31,9 +31,9 @@ test('cashback is 3% of the actual native displayed price, rounded as reward_poi
 });
 
 test('cashback badge is built once per native valid-priced card with meaningful text', () => {
-  assert.match(homepage, /if \(!amount \|\| amount\.querySelector\('\.ux01-cashback'\)\)/);
+  assert.match(homepage, /if \(!price \|\| !amount \|\| price\.querySelector\('\.ux01-cashback'\)\)/);
   assert.match(homepage, /amount\.querySelector\('\.ty-price-num'\)/);
-  assert.match(homepage, /if \(!soon\) \{ addCardCashback\(amount\); \}/);
+  assert.match(homepage, /if \(amount && !soon\) \{ addCardCashback\(price, amount\); \}/);
   assert.match(homepage, /Вернём /);
   assert.match(homepage, /Кешбэк · 3%/);
   assert.match(homepage, /make\('details', 'ux01-cashback-tip'\)/);
@@ -73,4 +73,26 @@ test('all CSS remains scoped to enabled UX01, includes keyboard and mobile toolt
   assert.match(css, /\.ux01-cashback-tip\[open\]>/);
   assert.match(css, /html\.talario-ux01-active\.is-auth \.talario-ux01 \.mobile-bonus/);
   assert.match(css, /@media\(max-width:899px\)/);
+});
+
+test('signed-in visitors never receive the desktop welcome offer or guest CTA', () => {
+  assert.match(homepage, /if \(!isAuth\) \{[\s\S]*?make\('aside', 'desktop-bonus'\)/);
+  assert.match(css, /html\.talario-ux01-active\.is-auth \.talario-ux01 \.desktop-bonus/);
+  assert.match(homepage, /userContext && userContext\.authenticated === true && existingWelcome/);
+});
+
+test('card cashback is a full-size footer peer beside price, never crammed inside native price span', () => {
+  assert.match(homepage, /price\.insertBefore\(badge, more\)/);
+  assert.doesNotMatch(homepage, /amount\.appendChild\(badge\)/);
+  assert.match(css, /\.ux01-cashback-lines strong\s*\{[^}]*font-size:14px/s);
+});
+
+test('account balance endpoint checks dev storefront context and reports failure without inventing points', () => {
+  const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
+  assert.match(php, /config\.current_path/);
+  assert.match(php, /\$_SERVER\['REQUEST_URI'\]/);
+  assert.match(php, /!\$is_dev_request/);
+  assert.match(php, /auth\['user_id'\]/);
+  assert.match(homepage, /data-ux01-balance-status/);
+  assert.doesNotMatch(homepage, /ctx\.points/);
 });
