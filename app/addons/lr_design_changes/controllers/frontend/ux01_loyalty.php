@@ -34,6 +34,12 @@ $response = ['authenticated' => $user_id > 0, 'points' => null];
 
 if ($user_id > 0 && defined('POINTS') && function_exists('fn_get_user_additional_data')) {
     $raw_points = fn_get_user_additional_data(POINTS, $user_id);
+    // CS-Cart's reward_points_user_init treats an absent user_data row as zero.
+    // Match that behavior: a signed-in customer with no points must see 0,
+    // not a silently missing account-balance widget.
+    if (empty($raw_points)) {
+        $raw_points = 0;
+    }
     if (is_numeric($raw_points) && (float) $raw_points >= 0) {
         $response['points'] = (int) $raw_points;
     }
