@@ -40,6 +40,8 @@ class Element {
   set href(value) { this.setAttribute('href', value); }
   get src() { return this.getAttribute('src') || ''; }
   set src(value) { this.setAttribute('src', value); }
+  get open() { return this.getAttribute('open') !== null; }
+  set open(value) { if (value) this.setAttribute('open', ''); else this.removeAttribute('open'); }
   get children() { return this.childNodes.filter(node => node.nodeType === 1); }
   get parentElement() { return this.parentNode; }
   get firstChild() { return this.childNodes[0] || null; }
@@ -87,8 +89,17 @@ class Element {
   }
   dispatchEvent(event) {
     event.target = this;
-    event.currentTarget = this;
-    for (const callback of this.listeners.get(event.type) || []) callback.call(this, event);
+    event.defaultPrevented = false;
+    event.preventDefault = () => { event.defaultPrevented = true; };
+    // Native click bubbles; pointerenter/leave do not. Summary's uncancelled
+    // click toggles its owning details after the application handlers run.
+    for (let node = this; node; node = event.type === 'click' && event.bubbles !== false ? node.parentElement : null) {
+      event.currentTarget = node;
+      for (const callback of node.listeners.get(event.type) || []) callback.call(node, event);
+    }
+    if (event.type === 'click' && this.tagName === 'SUMMARY' && this.parentElement?.tagName === 'DETAILS' && !event.defaultPrevented) {
+      this.parentElement.open = !this.parentElement.open;
+    }
     return !event.defaultPrevented;
   }
   cloneNode(deep = false) {
@@ -200,7 +211,7 @@ function nativeQuickFilters() {
   return filters;
 }
 
-function nativeHomepage(wrapperClass, serverChrome = false) {
+function nativeHomepage(wrapperClass, serverChrome = false, viewportWidth = 1440) {
   const html = element('html'), body = element('body'); html.appendChild(body);
   let serverShell, serverHeader;
   if (serverChrome) {
@@ -245,8 +256,15 @@ function nativeHomepage(wrapperClass, serverChrome = false) {
     assert.equal(action, 'on'); events.set(name, callback);
   };
   const location = {origin:'https://talario.ru', pathname:'/dev_copy/', search:''};
+  const window = {
+    location, innerWidth: viewportWidth,
+    matchMedia(query) {
+      const min = query.match(/min-width:\s*(\d+)px/), max = query.match(/max-width:\s*(\d+)px/);
+      return {matches: (!min || viewportWidth >= Number(min[1])) && (!max || viewportWidth <= Number(max[1])) && !/hover:\s*none|pointer:\s*coarse/.test(query)};
+    }
+  };
   vm.runInNewContext(source, {
-    document, window: { location }, Tygh: { $: jquery }, URLSearchParams
+    document, window, Tygh: { $: jquery }, URLSearchParams
   }, { filename: 'ux01_homepage.js' });
   return {
     document, ajaxRoot, catalog, grid, columns, products, searchForm, filters, serverShell, serverHeader, jquery, location,
@@ -588,4 +606,58 @@ test('native next-page URLs remain usable after an AJAX response loses its pagin
   button.setAttribute('data-ut2-load-more-url', other); page.commoninit();
   assert.equal(button.getAttribute('data-ut2-load-more-url'), other, 'adapter does not rewrite links from another origin');
 });
+
+function renderedCashbackTooltip(viewportWidth) {
+  const page = nativeHomepage('ut2-gl__wrap', false, viewportWidth);
+  const card = page.products[0].querySelector('.ut2-gl__item');
+  const price = element('div', 'ut2-gl__price-wrap');
+  const amount = element('div', 'ut2-gl__price');
+  amount.appendChild(element('span', 'ty-price-num', '1 500'));
+  price.appendChild(amount); card.querySelector('.ut2-gl__content').appendChild(price);
+  page.startup(); page.commoninit();
+  assert.equal(card.querySelectorAll('.ux01-cashback').length, 1, 'guest cashback survives reinit without duplication');
+  assert.equal(card.querySelector('.ux01-cashback-lines strong').textContent, 'Вернём 45 баллов', '3% still uses the native 1500 price');
+  const details = card.querySelector('details.ux01-cashback-tip');
+  assert.ok(details, 'real startup builds the native details tooltip');
+  return {details, summary: details.querySelector('summary')};
+}
+
+test('desktop mouse hover opens native cashback details and leaving closes only its automatic opening', () => {
+  const {details} = renderedCashbackTooltip(1440);
+  assert.equal(details.open, false);
+  details.dispatchEvent({type:'pointerenter', pointerType:'mouse'});
+  assert.equal(details.open, true, 'hover must open native details content, beyond CSS display:block');
+  details.dispatchEvent({type:'pointerleave', pointerType:'mouse'});
+  assert.equal(details.open, false, 'leaving dismisses an automatically opened tooltip');
+});
+
+test('clicking a hovered cashback summary pins the native tooltip instead of immediately toggling it closed', () => {
+  const {details, summary} = renderedCashbackTooltip(1440);
+  details.dispatchEvent({type:'pointerenter', pointerType:'mouse'});
+  assert.equal(details.open, true);
+  const click = {type:'click'};
+  summary.dispatchEvent(click);
+  assert.equal(click.defaultPrevented, true, 'the pinning click prevents native immediate-close default');
+  assert.equal(details.open, true);
+  details.dispatchEvent({type:'pointerleave', pointerType:'mouse'});
+  assert.equal(details.open, true, 'a pinned tooltip stays open after the pointer leaves');
+  summary.dispatchEvent({type:'click'});
+  assert.equal(details.open, false, 'a subsequent native summary click can close the pinned tooltip');
+});
+
+for (const [viewportWidth, pointerType] of [[390, 'touch'], [390, 'mouse'], [1440, 'touch']]) {
+  test(`cashback ${pointerType} input at ${viewportWidth}px preserves native summary click without automatic opening`, () => {
+    const {details, summary} = renderedCashbackTooltip(viewportWidth);
+    details.dispatchEvent({type:'pointerenter', pointerType});
+    assert.equal(details.open, false, 'touch and narrow viewports do not auto-open');
+    const click = {type:'click'};
+    summary.dispatchEvent(click);
+    assert.equal(click.defaultPrevented, false, 'native summary activation remains available');
+    assert.equal(details.open, true);
+    details.dispatchEvent({type:'pointerleave', pointerType});
+    assert.equal(details.open, true, 'pointerleave cannot close a tooltip opened by native activation');
+    summary.dispatchEvent({type:'click'});
+    assert.equal(details.open, false);
+  });
+}
 
