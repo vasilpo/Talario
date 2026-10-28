@@ -112,11 +112,12 @@ test('signed in user without a reward points record still sees zero balance', ()
   const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
   assert.match(php, /if \(empty\(\$raw_points\)\) \{\s*\$raw_points = 0;/);
   assert.match(php, /\$response\['points'\] = \(int\) \$raw_points;/);
-  assert.match(homepage, /data\.points < 0/);
+  assert.match(homepage, /Number\.isInteger\(data\.points\)/);
+  assert.doesNotMatch(homepage, /data\.points < 0/);
 });
 
 test('cashback uses the available footer space, with clear desktop and mobile type', () => {
-  assert.match(css, /UX01-LOYALTY-REFINEMENT/);
+  assert.match(css, /UX01-LOYALTY-PLAIN/);
   assert.match(css, /\.ux01-cashback\s*\{[^}]*width:100%/s);
   assert.match(css, /\.ux01-cashback-lines strong\s*\{[^}]*font-size:14px/s);
   assert.match(css, /@media\(max-width:899px\)\s*\{[\s\S]{0,1900}\.ux01-cashback/);
