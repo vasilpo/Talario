@@ -35,8 +35,8 @@
         var value = Number(compact);
         return Number.isFinite(value) && value > 0 ? value : null;
     }
-    function addCardCashback(amount) {
-        if (!amount || amount.querySelector('.ux01-cashback')) { return; }
+    function addCardCashback(price, amount) {
+        if (!price || !amount || price.querySelector('.ux01-cashback')) { return; }
         var nativePrice = amount.querySelector('.ty-price-num');
         var price = nativePrice && parseCardPrice(nativePrice.textContent);
         var points = cashbackPoints(price);
@@ -55,7 +55,10 @@
         var terms = make('a', '', 'Условия в оферте');
         terms.href = '/dev_copy/oferta-dlya-polzovatelya/';
         help.appendChild(terms); details.appendChild(help); badge.appendChild(details);
-        amount.appendChild(badge);
+        var more = price.querySelector('.more');
+        if (more) { price.insertBefore(badge, more); }
+        else { price.appendChild(badge); }
+        price.classList.add('ux01-has-cashback');
     }
     function closeFilters(restoreFocus) {
         document.documentElement.classList.remove('talario-ux01-filters-open');
@@ -191,7 +194,7 @@
                 price = price || make('div');
                 price.classList.add('card-foot'); body.appendChild(price);
                 var amount = price.querySelector('.ut2-gl__price');
-                if (amount) { amount.classList.add('price-stack'); price.appendChild(amount); if (!soon) { addCardCashback(amount); } }
+                if (amount) { amount.classList.add('price-stack'); price.appendChild(amount); }
                 if (soon) {
                     var stack = amount || make('div', 'price-stack');
                     soon.textContent = 'Скоро на Таларио'; soon.classList.add('coming-soon-copy');
@@ -205,6 +208,7 @@
                 else {
                     if (productLink) { var moreLink = make('a', 'more', 'Подробнее'); moreLink.href = productLink.href; price.appendChild(moreLink); }
                 }
+                if (amount && !soon) { addCardCashback(price, amount); }
                 // Some native cards retain cart/quantity controls. Keep them
                 // connected in a separate row, outside the two-item footer.
                 Array.prototype.forEach.call(price.querySelectorAll('.ut2-gl__control'), function (control) {
@@ -378,9 +382,13 @@
         var title = make('h1', '', 'Занятия для детей'); title.appendChild(make('br', 'mobile-break')); title.appendChild(document.createTextNode(' '));
         var accent = make('span', 'city-accent'); var rule = make('span', 'city-accent-rule'); rule.setAttribute('aria-hidden', 'true'); accent.appendChild(rule); accent.appendChild(make('span', 'city-accent-text', 'в Красногорске')); title.appendChild(accent);
         headline.appendChild(title); headline.appendChild(make('p', 'subtitle', 'Найди своё — рядом с домом.')); intro.appendChild(headline);
-        var bonus = make('aside', 'desktop-bonus'); bonus.appendChild(icon('gift')); var bonusCopy = make('div'); bonusCopy.appendChild(make('strong', '', '500 баллов за регистрацию')); bonusCopy.appendChild(make('p', '', '1 балл = 1 ₽')); bonus.appendChild(bonusCopy); intro.appendChild(bonus); main.appendChild(intro);
+        if (!isAuth) { var bonus = make('aside', 'desktop-bonus'); bonus.appendChild(icon('gift')); var bonusCopy = make('div'); bonusCopy.appendChild(make('strong', '', '500 баллов за регистрацию')); bonusCopy.appendChild(make('p', '', '1 балл = 1 ₽')); bonus.appendChild(bonusCopy); intro.appendChild(bonus); } main.appendChild(intro);
         }
         if (!main.parentElement) { shell.appendChild(main); }
+        if (ctx.authenticated === true) {
+            var priorDesktopGift = shell.querySelector('.desktop-bonus');
+            if (priorDesktopGift) { priorDesktopGift.remove(); }
+        }
         // Attach empty destinations before moving live controls. A partial failure
         // must leave transferred nodes connected and visible after guard release.
         shell.setAttribute('data-ux01-server-shell', 'ready');
