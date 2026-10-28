@@ -40,7 +40,9 @@ if ($user_id > 0 && defined('POINTS') && function_exists('fn_get_user_additional
     if (empty($raw_points)) {
         $raw_points = 0;
     }
-    if (is_numeric($raw_points) && (float) $raw_points >= 0) {
+    // Reward Points permits signed balances (for example after an adjustment).
+    // Return the real amount; a negative balance is not an unavailable balance.
+    if (is_numeric($raw_points)) {
         $response['points'] = (int) $raw_points;
     }
 }

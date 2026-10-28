@@ -29,6 +29,12 @@ namespace {
             throw new \RuntimeException('Native LESS lost pixel gutter in catalog calc(100% - ' . $gutter . 'px)');
         }
     }
+    if (!preg_match('~max-width:\\s*calc\\(\\s*100vw\\s*-\\s*64px\\s*\\)~', $css)) {
+        throw new \RuntimeException('Native LESS lost the cashback tooltip pixel viewport bound');
+    }
+    if (!preg_match('~card-foot\\.ux01-has-cashback\\s+\\.more\\s*\\{[^}]*min-width:\\s*0(?:px)?\\s*!important~s', $css)) {
+        throw new \RuntimeException('Cashback Details must override the native important minimum width');
+    }
     $cacheDir = $root . '/var/cache/misc/assets/design/themes/abt__unitheme2/css';
     $css = \Tygh\Less::parseUrls($css, $cacheDir, $root . '/design/themes/abt__unitheme2/media');
     if (!preg_match("~url\\('([^']*talario-ux01-golos\\.ttf[^']*)'\\)~", $css, $match)) { throw new \RuntimeException('Golos font URL missing'); }

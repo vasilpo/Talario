@@ -45,16 +45,17 @@
         badge.appendChild(icon('coins'));
         var lines = make('span', 'ux01-cashback-lines');
         lines.appendChild(make('strong', '', 'Вернём ' + points.toLocaleString('ru-RU') + ' баллов'));
-        lines.appendChild(make('span', '', 'Кешбэк · 3%')); badge.appendChild(lines);
+        var meta = make('span', 'ux01-cashback-meta', 'Кешбэк · 3%');
         var details = make('details', 'ux01-cashback-tip');
         var summary = make('summary', '', 'i');
         summary.setAttribute('aria-label', 'Как начисляется кешбэк');
         details.appendChild(summary);
         var help = make('span', 'ux01-cashback-help');
-        help.appendChild(make('span', '', '3% от оплаченной суммы вернём баллами в личный кабинет в течение 3 дней после посещения занятия. '));
+        help.appendChild(make('span', '', 'Вернём 3% от оплаченной суммы баллами на счёт в течение 3 дней после успешного посещения занятия. За отменённые занятия кешбэк не начисляется; остальные ограничения — в оферте. '));
         var terms = make('a', '', 'Условия в оферте');
         terms.href = '/dev_copy/oferta-dlya-polzovatelya/';
-        help.appendChild(terms); details.appendChild(help); badge.appendChild(details);
+        help.appendChild(terms); details.appendChild(help); meta.appendChild(details);
+        lines.appendChild(meta); badge.appendChild(lines);
         var more = price.querySelector('.more');
         if (more) { price.insertBefore(badge, more); }
         else { price.appendChild(badge); }
@@ -334,9 +335,56 @@
         });
         strip.appendChild(more);
     }
+    function loadHeaderBalance(shell, ctx) {
+        var profile = shell && shell.querySelector('.header-actions .user-link');
+        if (!profile) { return; }
+        if (ctx.authenticated !== true) {
+            var prior = profile.querySelector('.ux01-header-balance');
+            if (prior) { prior.remove(); }
+            profile.removeAttribute('data-ux01-balance-status');
+            return;
+        }
+        // commoninit may run repeatedly; each live header needs one private read.
+        if (profile.getAttribute('data-ux01-balance-status')) { return; }
+        // Only a signed-in session may request its own points. The server response
+        // is private/no-store; never embed personal balances in cached storefront HTML.
+        if (typeof window.fetch === 'function') {
+            profile.setAttribute('data-ux01-balance-status', 'loading');
+            window.fetch('/dev_copy/index.php?dispatch=ux01_loyalty.balance', {
+                credentials: 'same-origin', cache: 'no-store', headers: {'Accept':'application/json'}
+            }).then(function (response) {
+                if (!response.ok) { throw new Error('Balance HTTP ' + response.status); }
+                return response.json();
+            }).then(function (data) {
+                var liveProfile = document.querySelector('#talario-ux01 .header-actions .user-link');
+                if (!liveProfile) { return; }
+                if (!data || data.authenticated !== true || !Number.isInteger(data.points)) {
+                    liveProfile.setAttribute('data-ux01-balance-status', 'unavailable');
+                    return;
+                }
+                if (!liveProfile.querySelector('.ux01-header-balance')) {
+                    var balance = make('span', 'ux01-header-balance');
+                    balance.appendChild(icon('coins'));
+                    balance.appendChild(make('span', '', data.points.toLocaleString('ru-RU')));
+                    balance.title = 'Бонусный баланс: ' + data.points.toLocaleString('ru-RU') + ' баллов';
+                    liveProfile.appendChild(balance);
+                }
+                liveProfile.setAttribute('data-ux01-balance-status', 'ready');
+                liveProfile.setAttribute('aria-label', 'Личный кабинет, бонусный баланс: ' + data.points.toLocaleString('ru-RU') + ' баллов');
+            }).catch(function () {
+                var liveProfile = document.querySelector('#talario-ux01 .header-actions .user-link');
+                if (liveProfile) { liveProfile.setAttribute('data-ux01-balance-status', 'error'); }
+                // Fail closed: no guessed balances or guest-visible user data.
+            });
+        }
+    }
     function init() {
+        var ctx = userContext || (_ && _.talarioUx01Context) || {};
+        document.documentElement.classList.toggle('is-auth', ctx.authenticated === true);
+        userContext = ctx; if (_) { delete _.talarioUx01Context; }
         var existing = document.getElementById('talario-ux01');
         if (existing && existing.getAttribute('data-ux01-server-shell') !== 'pending') {
+            loadHeaderBalance(existing, ctx);
             setupFilters(document.querySelector('#talario-ux01 .cm-lr-homepage-search-filters'));
             refreshCatalog(); installSearchCoordinator(); return;
         }
@@ -349,9 +397,6 @@
         var root = '/dev_copy/'; function href(slug) { return root + slug; }
         var shell = existing || make('section', 'talario-ux01'); shell.id = 'talario-ux01';
         var main = shell.querySelector('.talario-ux01__main');
-        var ctx = userContext || (_ && _.talarioUx01Context) || {};
-        document.documentElement.classList.toggle('is-auth', ctx.authenticated === true);
-        userContext = ctx; if (_) { delete _.talarioUx01Context; }
         if (!main) {
         var header = make('header', 'header'); var inner = make('div', 'header-inner wrap');
         var menu = make('details', 'talario-ux01__menu menu'); var summary = make('summary', 'iconbutton'); summary.setAttribute('aria-label', 'Меню'); summary.appendChild(icon('menu')); menu.appendChild(summary);
@@ -367,36 +412,6 @@
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');
         if (firstName) { var name = make('span', 'header-user-name', firstName); name.title = firstName; profile.appendChild(name); }
-        // Only a signed-in session may request its own points. The server response
-        // is private/no-store; never embed personal balances in cached storefront HTML.
-        if (isAuth && typeof window.fetch === 'function') {
-            profile.setAttribute('data-ux01-balance-status', 'loading');
-            window.fetch('/dev_copy/index.php?dispatch=ux01_loyalty.balance', {
-                credentials: 'same-origin', cache: 'no-store', headers: {'Accept':'application/json'}
-            }).then(function (response) {
-                if (!response.ok) { throw new Error('Balance HTTP ' + response.status); }
-                return response.json();
-            }).then(function (data) {
-                var liveProfile = document.querySelector('#talario-ux01 .header-actions .user-link');
-                if (!liveProfile) { return; }
-                if (!data || data.authenticated !== true || !Number.isInteger(data.points) || data.points < 0) {
-                    liveProfile.setAttribute('data-ux01-balance-status', 'unavailable');
-                    return;
-                }
-                if (!liveProfile.querySelector('.ux01-header-balance')) {
-                    var balance = make('span', 'ux01-header-balance');
-                    balance.appendChild(icon('coins'));
-                    balance.appendChild(make('span', '', data.points.toLocaleString('ru-RU')));
-                    balance.title = 'Бонусный баланс: ' + data.points.toLocaleString('ru-RU') + ' баллов';
-                    liveProfile.appendChild(balance);
-                }
-                liveProfile.setAttribute('data-ux01-balance-status', 'ready');
-            }).catch(function () {
-                var liveProfile = document.querySelector('#talario-ux01 .header-actions .user-link');
-                if (liveProfile) { liveProfile.setAttribute('data-ux01-balance-status', 'error'); }
-                // Fail closed: no guessed balances or guest-visible user data.
-            });
-        }
         profile.appendChild(icon('user')); actions.appendChild(profile);
         var cart = make('a', 'iconbutton basket'); cart.href = href('cart/'); cart.setAttribute('aria-label', 'Корзина'); cart.appendChild(icon('cart')); actions.appendChild(cart); inner.appendChild(actions); header.appendChild(inner); shell.appendChild(header);
         var main = make('main', 'talario-ux01__main'); var intro = make('div', 'intro wrap'); var headline = make('div', 'intro-copy');
@@ -405,6 +420,7 @@
         headline.appendChild(title); headline.appendChild(make('p', 'subtitle', 'Найди своё — рядом с домом.')); intro.appendChild(headline);
         if (!isAuth) { var bonus = make('aside', 'desktop-bonus'); bonus.appendChild(icon('gift')); var bonusCopy = make('div'); bonusCopy.appendChild(make('strong', '', '500 баллов за регистрацию')); bonusCopy.appendChild(make('p', '', '1 балл = 1 ₽')); bonus.appendChild(bonusCopy); intro.appendChild(bonus); } main.appendChild(intro);
         }
+        loadHeaderBalance(shell, ctx);
         if (!main.parentElement) { shell.appendChild(main); }
         if (ctx.authenticated === true) {
             var priorDesktopGift = shell.querySelector('.desktop-bonus');

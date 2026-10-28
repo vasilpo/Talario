@@ -57,6 +57,7 @@ class Element {
   }
   getAttribute(name) { return this.attributes[name] ?? null; }
   setAttribute(name, value) { this.attributes[name] = String(value); }
+  removeAttribute(name) { delete this.attributes[name]; }
   appendChild(node) { return this.insertBefore(node, null); }
   insertBefore(node, reference) {
     if (reference !== null && reference.parentNode !== this) {
@@ -587,3 +588,4 @@ test('native next-page URLs remain usable after an AJAX response loses its pagin
   button.setAttribute('data-ut2-load-more-url', other); page.commoninit();
   assert.equal(button.getAttribute('data-ut2-load-more-url'), other, 'adapter does not rewrite links from another origin');
 });
+
