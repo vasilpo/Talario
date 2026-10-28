@@ -38,8 +38,8 @@
     function addCardCashback(price, amount) {
         if (!price || !amount || price.querySelector('.ux01-cashback')) { return; }
         var nativePrice = amount.querySelector('.ty-price-num');
-        var price = nativePrice && parseCardPrice(nativePrice.textContent);
-        var points = cashbackPoints(price);
+        var rubles = nativePrice && parseCardPrice(nativePrice.textContent);
+        var points = cashbackPoints(rubles);
         if (!points) { return; }
         var badge = make('span', 'ux01-cashback');
         badge.appendChild(icon('coins'));
