@@ -74,3 +74,23 @@ test('all CSS remains scoped to enabled UX01, includes keyboard and mobile toolt
   assert.match(css, /html\.talario-ux01-active\.is-auth \.talario-ux01 \.mobile-bonus/);
   assert.match(css, /@media\(max-width:899px\)/);
 });
+
+test('signed-in visitors never receive the desktop welcome offer or guest CTA', () => {
+  assert.match(homepage, /if \(!isAuth\) \{[\s\S]*?make\('aside', 'desktop-bonus'\)/);
+  assert.match(css, /html\.talario-ux01-active\.is-auth \.talario-ux01 \.desktop-bonus/);
+  assert.match(homepage, /userContext && userContext\.authenticated === true && existingWelcome/);
+});
+
+test('card cashback is a full-size footer peer beside price, never crammed inside native price span', () => {
+  assert.match(homepage, /price\.insertBefore\(badge, more\)/);
+  assert.doesNotMatch(homepage, /amount\.appendChild\(badge\)/);
+  assert.match(css, /\.ux01-cashback-lines strong\s*\{[^}]*font-size:14px/s);
+});
+
+test('account balance endpoint checks dev storefront context and reports failure without inventing points', () => {
+  const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
+  assert.match(php, /config\.current_path/);
+  assert.match(php, /auth\['user_id'\]/);
+  assert.match(homepage, /data-ux01-balance-status/);
+  assert.doesNotMatch(homepage, /ctx\.points/);
+});
