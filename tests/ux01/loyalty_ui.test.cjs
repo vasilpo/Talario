@@ -107,3 +107,17 @@ test('cashback enhancement exception must not abort rendering of remaining activ
   assert.match(homepage, /if \(amount && !soon\) \{\s*try\s*\{\s*addCardCashback\(price, amount\);\s*\}\s*catch \(error\)/);
   assert.match(homepage, /console\.warn\('UX-01 cashback render failed'/);
 });
+
+test('signed in user without a reward points record still sees zero balance', () => {
+  const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
+  assert.match(php, /if \(empty\(\$raw_points\)\) \{\s*\$raw_points = 0;/);
+  assert.match(php, /\$response\['points'\] = \(int\) \$raw_points;/);
+  assert.match(homepage, /data\.points < 0/);
+});
+
+test('cashback uses the available footer space, with clear desktop and mobile type', () => {
+  assert.match(css, /UX01-LOYALTY-REFINEMENT/);
+  assert.match(css, /\.ux01-cashback\s*\{[^}]*width:100%/s);
+  assert.match(css, /\.ux01-cashback-lines strong\s*\{[^}]*font-size:14px/s);
+  assert.match(css, /@media\(max-width:899px\)\s*\{[^}]*ux01-cashback/s);
+});
