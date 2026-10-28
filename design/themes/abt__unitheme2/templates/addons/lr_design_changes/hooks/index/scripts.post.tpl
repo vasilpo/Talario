@@ -6,7 +6,8 @@
 <script>
 Tygh.talarioUx01Context = {
     authenticated: {if $auth.user_id|default:0}true{else}false{/if},
-    firstName: {$user_info.firstname|default:""|json_encode:15 nofilter}
+    firstName: {$user_info.firstname|default:""|json_encode:15 nofilter},
+    points: {if $auth.user_id|default:0}{$auth.points|default:0|intval}{else}null{/if}
 };
 </script>
 {script src="js/addons/lr_design_changes/ux01_homepage.js"}
