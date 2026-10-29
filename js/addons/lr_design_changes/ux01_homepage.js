@@ -68,6 +68,11 @@
         }
         window.addEventListener('scroll', refitOpenHelp, true);
         window.addEventListener('resize', refitOpenHelp);
+        if (typeof window.MutationObserver === 'function') {
+            new window.MutationObserver(refitOpenHelp).observe(document.documentElement, {
+                attributes: true, attributeFilter: ['style']
+            });
+        }
     }
     function addCardCashback(price, amount) {
         if (!price || !amount || price.querySelector('.ux01-cashback')) { return; }

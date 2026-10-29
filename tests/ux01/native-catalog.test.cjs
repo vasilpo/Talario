@@ -265,9 +265,13 @@ function nativeHomepage(wrapperClass, serverChrome = false, viewportWidth = 1440
     assert.equal(action, 'on'); events.set(name, callback);
   };
   const location = {origin:'https://talario.ru', pathname:'/dev_copy/', search:''};
-  const browserEvents = new Map();
+  const browserEvents = new Map(), attributeObservers = [];
   const window = {
     location, innerWidth: viewportWidth,
+    MutationObserver: class {
+      constructor(callback) { this.callback = callback; }
+      observe(target, options) { attributeObservers.push({observer:this, target, options}); }
+    },
     addEventListener(name, callback) {
       if (!browserEvents.has(name)) browserEvents.set(name, []);
       browserEvents.get(name).push(callback);
@@ -283,6 +287,13 @@ function nativeHomepage(wrapperClass, serverChrome = false, viewportWidth = 1440
   }, { filename: 'ux01_homepage.js' });
   return {
     document, window, ajaxRoot, catalog, grid, columns, products, searchForm, filters, serverShell, serverHeader, jquery, location,
+    rootStyleChanged() {
+      for (const {observer, target, options} of attributeObservers) {
+        if (target === html && options.attributes && (!options.attributeFilter || options.attributeFilter.includes('style'))) {
+          observer.callback([{type:'attributes', attributeName:'style', target:html}], observer);
+        }
+      }
+    },
     startup: () => ready.forEach(callback => callback()),
     commoninit: () => { assert.ok(events.has('ce.commoninit')); events.get('ce.commoninit')(); }
   };
@@ -636,7 +647,7 @@ function renderedCashbackTooltip(viewportWidth) {
   const details = card.querySelector('details.ux01-cashback-tip');
   assert.ok(details, 'real startup builds the native details tooltip');
   assert.match(details.querySelector('.ux01-cashback-help').textContent, /3%/, 'tooltip explains the percentage');
-  return {details, summary: details.querySelector('summary'), document: page.document, window: page.window};
+  return {details, summary: details.querySelector('summary'), document: page.document, window: page.window, rootStyleChanged:page.rootStyleChanged};
 }
 
 test('desktop mouse hover opens native cashback details and leaving closes only its automatic opening', () => {
@@ -742,6 +753,18 @@ test('mobile tooltip cannot stay open underneath the larger consent or preview b
   page.summary.dispatchEvent({type:'click'});
   if (page.details.open) assertHelpWithinViewport(page);
   else assert.equal(page.details.open, false, 'an occluded anchor may dismiss its tooltip');
+});
+
+test('an asynchronously appearing bottom bar cannot cover an already open tooltip without a scroll or resize', () => {
+  const page = viewportCashbackTooltip({left:260, top:556});
+  page.summary.dispatchEvent({type:'click'});
+  assert.equal(page.details.open, true, 'the anchor starts visible before the native bar appears');
+  assertHelpWithinViewport(page);
+  page.document.documentElement.style.setProperty('--ux01-consent-inset', '74px');
+  page.bottomInset = 74;
+  page.rootStyleChanged(); // Browser delivery of the coordinator's root style mutation.
+  if (page.details.open) assertHelpWithinViewport(page);
+  else assert.equal(page.details.open, false, 'an anchor hidden by the new bar may dismiss its tooltip');
 });
 
 test('scroll and resize refit an open native tooltip or dismiss it when its anchor leaves the viewport', () => {
