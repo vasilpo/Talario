@@ -122,3 +122,15 @@ test('cashback uses the available footer space, with clear desktop and mobile ty
   assert.match(css, /\.ux01-cashback-lines strong\s*\{[^}]*font-size:14px/s);
   assert.match(css, /@media\(max-width:899px\)\s*\{[\s\S]{0,1900}\.ux01-cashback/);
 });
+
+test('cashback sits close to Details on the right without returning to a pill', () => {
+  const anchor = css.indexOf('UX01-CASHBACK-RIGHT-20261029');
+  assert.ok(anchor >= 0, 'right aligned cashback rule must be present');
+  const fix = css.slice(anchor);
+  assert.match(fix, /\.card-foot\.ux01-has-cashback \.ux01-cashback\s*\{[\s\S]*?justify-self:end!important/);
+  assert.match(fix, /width:max-content!important/);
+  assert.match(fix, /max-width:100%/);
+  assert.match(fix, /background:transparent!important/);
+  assert.match(fix, /border:0!important/);
+  assert.match(fix, /@media\s*\(max-width:899px\)/);
+});
