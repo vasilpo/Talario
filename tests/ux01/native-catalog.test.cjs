@@ -45,6 +45,10 @@ class Element {
   get children() { return this.childNodes.filter(node => node.nodeType === 1); }
   get parentElement() { return this.parentNode; }
   get firstChild() { return this.childNodes[0] || null; }
+  contains(target) {
+    for (let node = target; node; node = node.parentElement) if (node === this) return true;
+    return false;
+  }
   get nextSibling() {
     return this.parentNode ? this.parentNode.childNodes[this.parentNode.childNodes.indexOf(this) + 1] || null : null;
   }
@@ -619,7 +623,7 @@ function renderedCashbackTooltip(viewportWidth) {
   assert.equal(card.querySelector('.ux01-cashback-lines strong').textContent, 'Вернём 45 баллов', '3% still uses the native 1500 price');
   const details = card.querySelector('details.ux01-cashback-tip');
   assert.ok(details, 'real startup builds the native details tooltip');
-  return {details, summary: details.querySelector('summary')};
+  return {details, summary: details.querySelector('summary'), document: page.document};
 }
 
 test('desktop mouse hover opens native cashback details and leaving closes only its automatic opening', () => {
@@ -643,6 +647,20 @@ test('clicking a hovered cashback summary pins the native tooltip instead of imm
   assert.equal(details.open, true, 'a pinned tooltip stays open after the pointer leaves');
   summary.dispatchEvent({type:'click'});
   assert.equal(details.open, false, 'a subsequent native summary click can close the pinned tooltip');
+});
+
+test('mouse departure preserves a focused offer link and relinquishes automatic tooltip ownership', () => {
+  const {details, summary, document} = renderedCashbackTooltip(1440);
+  details.dispatchEvent({type:'pointerenter', pointerType:'mouse'});
+  const offer = details.querySelector('.ux01-cashback-help a');
+  assert.ok(offer, 'the native tooltip contains the offer link');
+  document.activeElement = offer;
+  details.dispatchEvent({type:'pointerleave', pointerType:'mouse'});
+  assert.equal(details.open, true, 'mouse departure must not hide the link with keyboard focus');
+  const activation = {type:'click', detail:0};
+  summary.dispatchEvent(activation);
+  assert.equal(activation.defaultPrevented, false, 'keyboard retains native summary activation');
+  assert.equal(details.open, false, 'native activation can close the tooltip after focus takes ownership');
 });
 
 for (const [viewportWidth, pointerType] of [[390, 'touch'], [390, 'mouse'], [1440, 'touch']]) {

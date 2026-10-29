@@ -60,8 +60,8 @@
         });
         details.addEventListener('pointerleave', function (event) {
             if (event.pointerType === 'mouse' && hoverOpened) {
-                details.open = false;
                 hoverOpened = false;
+                if (!details.contains(document.activeElement)) details.open = false;
             }
         });
         summary.addEventListener('click', function (event) {
