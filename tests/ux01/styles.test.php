@@ -15,6 +15,11 @@ namespace {
     $less = new \lessc();
     $css = $less->compileFile($root . '/design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less');
     if ($css === '' || strpos($css, 'talario-ux01') === false) { throw new \RuntimeException('UX-01 stylesheet did not compile'); }
+    // lessphp treats an unescaped grid-column:1/-1 as division and emits -1.
+    // A guest welcome tile then creates an implicit mobile column and collapses cards.
+    if (!preg_match('~html\.talario-ux01-active\s+\.talario-ux01\s+\.mobile-bonus\s*\{[^}]*grid-column:\s*1\s*/\s*-1\s*;~s', $css)) {
+        throw new \RuntimeException('Guest welcome must span the existing grid, without creating an implicit mobile column');
+    }
     // The bundled legacy compiler must retain vw/px; whitespace is flexible.
     if (!preg_match('~max-width:\s*calc\(\s*100vw\s*-\s*32px\s*\)\s*!important~', $css)) {
         throw new \RuntimeException('Native sorting menu has no compiled mobile viewport bound');

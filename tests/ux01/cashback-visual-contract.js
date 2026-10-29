@@ -11,6 +11,12 @@ function auditCashbackSurface(doc) {
         return foot.getBoundingClientRect().width > 0 && foot.getBoundingClientRect().height > 0;
     });
     var errors = [], surfaces = [];
+    var cards = Array.from(doc.querySelectorAll('#talario-ux01 .activity'));
+    var cardGeometry = cards.map(function (card, index) {
+        var box = card.getBoundingClientRect();
+        if (box.width < 100 || box.height < 44) errors.push('Catalog card is collapsed at ' + index);
+        return {index:index, x:box.x, y:box.y, width:box.width, height:box.height};
+    });
     if (!footers.length) errors.push('No visible priced cashback footer: visual contract is unverified');
     footers.forEach(function (foot, index) {
         var badges = foot.querySelectorAll('.ux01-cashback');
@@ -46,5 +52,5 @@ function auditCashbackSurface(doc) {
             more: moreBox && {x:moreBox.x,right:moreBox.right,width:moreBox.width,height:moreBox.height},footerRight:footerBox.right});
     });
     if (doc.documentElement.scrollWidth > doc.documentElement.clientWidth) errors.push('Horizontal page overflow');
-    return {pass: errors.length === 0, viewport: win.innerWidth, count: surfaces.length, surfaces: surfaces, errors: errors};
+    return {pass: errors.length === 0, viewport: win.innerWidth, count: surfaces.length, surfaces: surfaces, cards:cardGeometry, errors: errors};
 }
