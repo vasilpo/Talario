@@ -70,6 +70,8 @@ function auditVariant3(root) {
         var within=r.x>=12&&r.right<=root.clientWidth-12&&r.y>=0&&r.bottom<=win.innerHeight-inset-12;
         if(!visible||!within||!hits.every(Boolean))errors.push('Active cashback help is clipped, covered or outside viewport');
         var summary=box(tip.querySelector('summary')),corridor=null;
+        var summaryHit=tip.querySelector('summary').contains(doc.elementFromPoint(summary.x+summary.width/2,summary.y+summary.height/2));
+        if(!summaryHit)errors.push('Active cashback summary is covered and cannot receive its native click');
         var above=r.bottom<summary.y,below=r.y>summary.bottom;
         if(above||below){
             var start=above?summary.y+1:summary.bottom-1,end=above?r.bottom-1:r.y+1;
@@ -81,7 +83,7 @@ function auditVariant3(root) {
             corridor={pass:failed.length===0,samples:steps+1,failed:failed};
             if(!mobile&&!corridor.pass)errors.push('Desktop pointer loses the tooltip between its summary and offer link');
         }
-        active.push({box:r,hits:hits,within:within,visible:visible,hoverCorridor:corridor,text:help.innerText});
+        active.push({box:r,hits:hits,within:within,visible:visible,summaryHit:summaryHit,hoverCorridor:corridor,text:help.innerText});
     });
     if(root.scrollWidth>root.clientWidth)errors.push('Horizontal storefront overflow');
     return {pass:errors.length===0,scope:'actual CS-Cart storefront; responsive desktop UA',viewport:win.innerWidth,client:root.clientWidth,scroll:root.scrollWidth,mandatory:mandatory,header:header,cards:cards,activeTooltips:active,errors:errors};

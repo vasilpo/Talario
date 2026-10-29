@@ -21,6 +21,9 @@ namespace {
     if (!preg_match('~\.ux01-cashback-tip\[open\]::before\s*\{[^}]*left:\s*0(?:px)?\s*;[^}]*right:\s*0(?:px)?\s*;[^}]*top:\s*-8px\s*;[^}]*bottom:\s*-8px\s*;~s', $css)) {
         throw new \RuntimeException('Cashback help has no compiled pointer corridor above and below its native summary');
     }
+    if (!preg_match('~\.ux01-cashback-tip>summary\s*\{[^}]*position:\s*relative\s*;[^}]*z-index:\s*30\s*;~s', $css)) {
+        throw new \RuntimeException('Native cashback summary must remain clickable above its pointer corridor');
+    }
     // lessphp treats an unescaped grid-column:1/-1 as division and emits -1.
     // A guest welcome tile then creates an implicit mobile column and collapses cards.
     if (!preg_match('~html\.talario-ux01-active\s+\.talario-ux01\s+\.mobile-bonus\s*\{[^}]*grid-column:\s*1\s*/\s*-1\s*;~s', $css)) {
