@@ -10,8 +10,9 @@
         <nav class="header-links" aria-label="Меню Таларио"><a href="/dev_copy/o-nas/">О нас</a><a href="/dev_copy/blog/">Блог</a><a href="/dev_copy/stat-partnerom/">Стать партнёром</a></nav>
         <div class="header-actions">
             <a class="iconbutton user-link" href="/dev_copy/{if $auth.user_id}profiles-update/{else}login/{/if}" aria-label="{if $auth.user_id}Личный кабинет{else}Войти{/if}">
-                {if $auth.user_id && $user_info.firstname|default:""}<span class="header-user-name">{$user_info.firstname|escape}</span>{/if}
+                {if $auth.user_id}<span class="header-user-name">{$user_info.firstname|default:"Аккаунт"|escape}</span>{else}
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+                {/if}
             </a>
             <a class="iconbutton basket" href="/dev_copy/cart/" aria-label="Корзина"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 11-1 9m5-9-4-7M2 11h20m-18.5 0 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4M4.5 15.5h15M5 11l4-7m0 7 1 9"/></svg></a>
         </div>

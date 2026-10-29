@@ -88,6 +88,9 @@ function serverHomepage({authenticated = true, phase = 'pending'} = {}) {
   const profile = new Element('a', 'iconbutton user-link');
   profile.href = '/dev_copy/' + (authenticated ? 'profiles-update/' : 'login/');
   if (authenticated) profile.appendChild(new Element('span', 'header-user-name', 'Василий'));
+  // Observed server-rendered header on 2926894a: auth and guest both receive
+  // the direct profile SVG, before balance hydration appends its nested coins.
+  profile.appendChild(new Element('svg'));
   actions.appendChild(profile); header.appendChild(actions); shell.appendChild(header);
   const main = new Element('main', 'talario-ux01__main'); main.appendChild(new Element('h1', '', 'Занятия для детей'));
   shell.appendChild(main); body.appendChild(shell);
@@ -124,11 +127,34 @@ function serverHomepage({authenticated = true, phase = 'pending'} = {}) {
 }
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
+const directProfileIcons = profile => profile.children.filter(node => node.tagName.toLowerCase() === 'svg');
 function expectPrivateRequest(page) {
   assert.equal(page.requests.length, 1, 'the existing server header requests its own balance exactly once');
   assert.equal(page.requests[0].url, '/dev_copy/index.php?dispatch=ux01_loyalty.balance');
   assert.equal(page.requests[0].options.credentials, 'same-origin');
   assert.equal(page.requests[0].options.cache, 'no-store');
+}
+
+for (const phase of ['pending', 'ready']) {
+  test(`authenticated SSR ${phase} removes the redundant profile avatar while preserving balance coins`, async () => {
+    const page = serverHomepage({phase});
+    assert.equal(directProfileIcons(page.profile).length, 1, 'fixture reproduces the actual server avatar');
+    page.startup(); page.commoninit();
+    assert.equal(directProfileIcons(page.profile).length, 0, 'the authenticated header must be name, coins balance and basket, without a profile avatar');
+    expectPrivateRequest(page);
+    page.requests[0].resolve({ok:true, json:async () => ({authenticated:true, points:-100})});
+    await settle();
+    const balance = page.profile.querySelector('.ux01-header-balance');
+    assert.ok(balance, 'native balance still hydrates into the retained server header');
+    assert.equal(balance.textContent, '-100');
+    assert.equal(balance.querySelectorAll('svg').length, 1, 'the gold coins inside balance are preserved');
+    assert.equal(page.profile.querySelector('.header-user-name').textContent, 'Василий');
+    page.commoninit(); await settle();
+    assert.equal(directProfileIcons(page.profile).length, 0, 'AJAX commoninit cannot restore the redundant avatar');
+    assert.equal(balance.querySelectorAll('svg').length, 1, 'reinit cannot remove nested balance coins');
+    assert.equal(page.profile.querySelectorAll('.ux01-header-balance').length, 1);
+    expectPrivateRequest(page);
+  });
 }
 
 for (const phase of ['pending', 'ready']) for (const points of [-100, 0, 1500]) {
@@ -157,6 +183,8 @@ test('guest SSR startup and repeated commoninit never request or display a perso
   page.startup(); page.commoninit(); await settle();
   assert.equal(page.requests.length, 0);
   assert.equal(page.shell.querySelectorAll('.ux01-header-balance').length, 0);
+  assert.equal(directProfileIcons(page.profile).length, 1, 'guest retains the native login icon');
+  assert.equal(page.profile.href, '/dev_copy/login/');
 });
 
 for (const failure of ['http', 'network', 'unavailable']) {

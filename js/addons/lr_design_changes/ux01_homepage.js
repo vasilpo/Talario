@@ -3,6 +3,7 @@
     'use strict';
     if (!/\/dev_copy(?:\/|$)/.test(window.location.pathname)) { return; }
     var userContext = null;
+    var cashbackViewportInstalled = false;
     // Exact vector paths from the approved Golos Restored source, not replacement icons.
     var icons = {"coins": [["ellipse", {"cx":"12","cy":"5.5","rx":"8","ry":"3"}],["path",{"d":"M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"}],["path",{"d":"M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"}]], "menu": [["path", {"d": "M4 5h16"}], ["path", {"d": "M4 12h16"}], ["path", {"d": "M4 19h16"}]], "user": [["circle", {"cx": "12", "cy": "8", "r": "5"}], ["path", {"d": "M20 21a8 8 0 0 0-16 0"}]], "cart": [["path", {"d": "m15 11-1 9"}], ["path", {"d": "m19 11-4-7"}], ["path", {"d": "M2 11h20"}], ["path", {"d": "m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"}], ["path", {"d": "M4.5 15.5h15"}], ["path", {"d": "m5 11 4-7"}], ["path", {"d": "m9 11 1 9"}]], "filter": [["path", {"d": "M10 5H3"}], ["path", {"d": "M12 19H3"}], ["path", {"d": "M14 3v4"}], ["path", {"d": "M16 17v4"}], ["path", {"d": "M21 12h-9"}], ["path", {"d": "M21 19h-5"}], ["path", {"d": "M21 5h-7"}], ["path", {"d": "M8 10v4"}], ["path", {"d": "M8 12H3"}]], "heart": [["path", {"d": "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"}]], "gift": [["path", {"d": "M12 7v14"}], ["path", {"d": "M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"}], ["path", {"d": "M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"}], ["rect", {"height": "4", "rx": "1", "width": "18", "x": "3", "y": "7"}]], "search": [["path", {"d": "m21 21-4.34-4.34"}], ["circle", {"cx": "11", "cy": "11", "r": "8"}]]};
     function make(tag, cls, text) {
@@ -34,6 +35,44 @@
         if (!/^\d+(?:\.\d{1,2})?$/.test(compact)) { return null; }
         var value = Number(compact);
         return Number.isFinite(value) && value > 0 ? value : null;
+    }
+    function fitCashbackHelp(tip) {
+        if (!tip.open || !window.innerHeight) { return; }
+        var help = tip.querySelector('.ux01-cashback-help'), badge = tip.parentElement;
+        if (!help || !badge || typeof badge.getBoundingClientRect !== 'function') { return; }
+        var root = document.documentElement, gutter = 12, inset = 0;
+        if (typeof window.getComputedStyle === 'function') {
+            var style = window.getComputedStyle(root);
+            inset = Math.max(parseFloat(style.getPropertyValue('--ux01-consent-inset')) || 0,
+                parseFloat(style.getPropertyValue('--bp-bottom-panel-height')) || 0);
+        }
+        var bottom = window.innerHeight - inset - gutter, anchor = badge.getBoundingClientRect();
+        if (anchor.bottom < gutter || anchor.top > bottom || bottom - gutter < 44) { tip.open = false; return; }
+        help.style.maxHeight = (bottom - gutter) + 'px';
+        help.style.overflowY = 'auto';
+        var rect = help.getBoundingClientRect(), width = root.clientWidth || window.innerWidth;
+        var left = Math.max(gutter, Math.min(anchor.right - rect.width, width - gutter - rect.width));
+        var top = anchor.top - rect.height - 6;
+        if (top < gutter) { top = anchor.bottom + 6; }
+        top = Math.max(gutter, Math.min(top, bottom - rect.height));
+        help.style.left = (left - anchor.left) + 'px';
+        help.style.right = 'auto';
+        help.style.top = (top - anchor.top) + 'px';
+        help.style.bottom = 'auto';
+    }
+    function installCashbackViewport() {
+        if (cashbackViewportInstalled || typeof window.addEventListener !== 'function') { return; }
+        cashbackViewportInstalled = true;
+        function refitOpenHelp() {
+            document.querySelectorAll('#talario-ux01 .ux01-cashback-tip[open]').forEach(fitCashbackHelp);
+        }
+        window.addEventListener('scroll', refitOpenHelp, true);
+        window.addEventListener('resize', refitOpenHelp);
+        if (typeof window.MutationObserver === 'function') {
+            new window.MutationObserver(refitOpenHelp).observe(document.documentElement, {
+                attributes: true, attributeFilter: ['style']
+            });
+        }
     }
     function addCardCashback(price, amount) {
         if (!price || !amount || price.querySelector('.ux01-cashback')) { return; }
@@ -77,10 +116,12 @@
         var terms = make('a', '', 'Условия в оферте');
         terms.href = '/dev_copy/oferta-dlya-polzovatelya/';
         help.appendChild(terms); details.appendChild(help); badge.appendChild(details);
+        details.addEventListener('toggle', function () { fitCashbackHelp(details); });
         var more = price.querySelector('.more');
         if (more) { price.insertBefore(badge, more); }
         else { price.appendChild(badge); }
         price.classList.add('ux01-has-cashback');
+        installCashbackViewport();
     }
     function closeFilters(restoreFocus) {
         document.documentElement.classList.remove('talario-ux01-filters-open');
@@ -365,6 +406,11 @@
             profile.removeAttribute('data-ux01-balance-status');
             return;
         }
+        // SSR and previously cached shells must use the same name-only account
+        // link as the fallback header. Coins are nested inside their balance span.
+        Array.prototype.slice.call(profile.children).forEach(function (child) {
+            if (child.tagName && child.tagName.toLowerCase() === 'svg') { profile.removeChild(child); }
+        });
         // commoninit may run repeatedly; each live header needs one private read.
         if (profile.getAttribute('data-ux01-balance-status')) { return; }
         // Only a signed-in session may request its own points. The server response
