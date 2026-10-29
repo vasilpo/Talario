@@ -620,9 +620,11 @@ function renderedCashbackTooltip(viewportWidth) {
   price.appendChild(amount); card.querySelector('.ut2-gl__content').appendChild(price);
   page.startup(); page.commoninit();
   assert.equal(card.querySelectorAll('.ux01-cashback').length, 1, 'guest cashback survives reinit without duplication');
-  assert.equal(card.querySelector('.ux01-cashback-lines strong').textContent, 'Вернём 45 баллов', '3% still uses the native 1500 price');
+  assert.equal(card.querySelector('.ux01-cashback-value').textContent, '+45', 'compact points still use 3% of the native 1500 price');
+  assert.equal(card.querySelector('.ux01-cashback-meta'), null, '3% must appear only in the help tooltip');
   const details = card.querySelector('details.ux01-cashback-tip');
   assert.ok(details, 'real startup builds the native details tooltip');
+  assert.match(details.querySelector('.ux01-cashback-help').textContent, /3%/, 'tooltip explains the percentage');
   return {details, summary: details.querySelector('summary'), document: page.document};
 }
 
