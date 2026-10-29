@@ -70,10 +70,16 @@ function auditVariant3(root) {
         var within=r.x>=12&&r.right<=root.clientWidth-12&&r.y>=0&&r.bottom<=win.innerHeight-inset-12;
         if(!visible||!within||!hits.every(Boolean))errors.push('Active cashback help is clipped, covered or outside viewport');
         var summary=box(tip.querySelector('summary')),corridor=null;
-        var gapY=r.bottom<summary.y?(r.bottom+summary.y)/2:r.y>summary.bottom?(r.y+summary.bottom)/2:null;
-        if(gapY!==null){
-            corridor=tip.contains(doc.elementFromPoint(summary.x+summary.width/2,gapY));
-            if(!mobile&&!corridor)errors.push('Desktop pointer loses the tooltip between its summary and offer link');
+        var above=r.bottom<summary.y,below=r.y>summary.bottom;
+        if(above||below){
+            var start=above?summary.y+1:summary.bottom-1,end=above?r.bottom-1:r.y+1;
+            var steps=Math.ceil(Math.abs(end-start)*2),failed=[];
+            for(var step=0;step<=steps;step++){
+                var y=start+(end-start)*step/steps,x=summary.x+summary.width/2;
+                if(!tip.contains(doc.elementFromPoint(x,y)))failed.push({x:x,y:y});
+            }
+            corridor={pass:failed.length===0,samples:steps+1,failed:failed};
+            if(!mobile&&!corridor.pass)errors.push('Desktop pointer loses the tooltip between its summary and offer link');
         }
         active.push({box:r,hits:hits,within:within,visible:visible,hoverCorridor:corridor,text:help.innerText});
     });

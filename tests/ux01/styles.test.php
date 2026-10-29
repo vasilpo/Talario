@@ -18,9 +18,7 @@ namespace {
     if (!preg_match('~\.ux01-cashback-help\s*\{[^}]*left:\s*auto\s*;[^}]*right:\s*0(?:px)?\s*;~s', $css)) {
         throw new \RuntimeException('Right-aligned variant3 reward help must anchor its right edge instead of leaving the mobile screen');
     }
-    if (!preg_match('~\.ux01-cashback-tip\[open\]::before\s*,[^}]*::after\s*\{[^}]*height:\s*12px\s*;~s', $css)
-        || !preg_match('~\.ux01-cashback-tip\[open\]::before\s*\{[^}]*bottom:\s*100%\s*;[^}]*margin-bottom:\s*-6px~s', $css)
-        || !preg_match('~\.ux01-cashback-tip\[open\]::after\s*\{[^}]*top:\s*100%\s*;[^}]*margin-top:\s*-6px~s', $css)) {
+    if (!preg_match('~\.ux01-cashback-tip\[open\]::before\s*\{[^}]*left:\s*0(?:px)?\s*;[^}]*right:\s*0(?:px)?\s*;[^}]*top:\s*-8px\s*;[^}]*bottom:\s*-8px\s*;~s', $css)) {
         throw new \RuntimeException('Cashback help has no compiled pointer corridor above and below its native summary');
     }
     // lessphp treats an unescaped grid-column:1/-1 as division and emits -1.
