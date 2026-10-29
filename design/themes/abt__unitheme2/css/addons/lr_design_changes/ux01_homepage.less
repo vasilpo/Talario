@@ -978,6 +978,14 @@ html.talario-ux01-active .talario-ux01 .ux01-cashback-meta{
   display:flex;align-items:center;gap:5px;flex-wrap:wrap;
 }
 html.talario-ux01-active .talario-ux01 .ux01-cashback-tip{position:static;flex:none}
+/* Keep native hover ownership while crossing the 6px help gap. The bridge
+   belongs to details, outside the scrollable help surface, on either edge. */
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip[open]::before,
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip[open]::after{
+  content:"";position:absolute;left:0;right:0;height:12px;z-index:29;
+}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip[open]::before{bottom:100%;margin-bottom:-6px}
+html.talario-ux01-active .talario-ux01 .ux01-cashback-tip[open]::after{top:100%;margin-top:-6px}
 html.talario-ux01-active .talario-ux01 .ux01-cashback-tip>summary{
   display:grid;place-items:center;width:24px;height:24px;cursor:pointer;
   border-radius:50%;border:1px solid #A88C50;color:#695326;font-size:13px;font-weight:700;
