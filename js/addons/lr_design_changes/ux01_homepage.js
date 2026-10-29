@@ -43,9 +43,8 @@
         if (!points) { return; }
         var badge = make('span', 'ux01-cashback');
         badge.appendChild(icon('coins'));
-        var lines = make('span', 'ux01-cashback-lines');
-        lines.appendChild(make('strong', '', 'Вернём ' + points.toLocaleString('ru-RU') + ' баллов'));
-        var meta = make('span', 'ux01-cashback-meta', 'Кешбэк · 3%');
+        // Variant 3: concise reward next to price; terms and percentage only in help.
+        badge.appendChild(make('strong', 'ux01-cashback-value', '+' + points.toLocaleString('ru-RU')));
         var details = make('details', 'ux01-cashback-tip');
         var summary = make('summary', '', 'i');
         summary.setAttribute('aria-label', 'Как начисляется кешбэк');
@@ -77,8 +76,7 @@
         help.appendChild(make('span', '', 'Вернём 3% от оплаченной суммы баллами на счёт в течение 3 дней после успешного посещения занятия. За отменённые занятия кешбэк не начисляется; остальные ограничения — в оферте. '));
         var terms = make('a', '', 'Условия в оферте');
         terms.href = '/dev_copy/oferta-dlya-polzovatelya/';
-        help.appendChild(terms); details.appendChild(help); meta.appendChild(details);
-        lines.appendChild(meta); badge.appendChild(lines);
+        help.appendChild(terms); details.appendChild(help); badge.appendChild(details);
         var more = price.querySelector('.more');
         if (more) { price.insertBefore(badge, more); }
         else { price.appendChild(badge); }
@@ -435,7 +433,10 @@
         document.documentElement.classList.toggle('is-auth', isAuth);
         var profile = make('a', 'iconbutton user-link'); profile.href = isAuth ? href('profiles-update/') : href('login/'); profile.setAttribute('aria-label', isAuth ? 'Личный кабинет' : 'Войти');
         if (firstName) { var name = make('span', 'header-user-name', firstName); name.title = firstName; profile.appendChild(name); }
-        profile.appendChild(icon('user')); actions.appendChild(profile);
+        else if (isAuth) { profile.appendChild(make('span', 'header-user-name', 'Аккаунт')); }
+        // The name itself is the account link when signed in; avoid a redundant avatar.
+        if (!isAuth) { profile.appendChild(icon('user')); }
+        actions.appendChild(profile);
         var cart = make('a', 'iconbutton basket'); cart.href = href('cart/'); cart.setAttribute('aria-label', 'Корзина'); cart.appendChild(icon('cart')); actions.appendChild(cart); inner.appendChild(actions); header.appendChild(inner); shell.appendChild(header);
         var main = make('main', 'talario-ux01__main'); var intro = make('div', 'intro wrap'); var headline = make('div', 'intro-copy');
         var title = make('h1', '', 'Занятия для детей'); title.appendChild(make('br', 'mobile-break')); title.appendChild(document.createTextNode(' '));
