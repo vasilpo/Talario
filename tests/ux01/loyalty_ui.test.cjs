@@ -134,3 +134,35 @@ test('cashback sits close to Details on the right without returning to a pill', 
   assert.match(fix, /border:0!important/);
   assert.match(fix, /@media\s*\(max-width:899px\)/);
 });
+
+test('variant 3: the card displays only coins, +N and a help icon, while 3% lives only inside help', () => {
+  const start = homepage.indexOf('    function addCardCashback(');
+  const end = homepage.indexOf('    function closeFilters(', start);
+  const fragment = homepage.slice(start, end);
+  assert.ok(start >= 0 && end > start);
+  assert.match(fragment, /make\('strong', 'ux01-cashback-value', '\+' \+ points\.toLocaleString\('ru-RU'\)\)/);
+  assert.doesNotMatch(fragment, /make\('span', 'ux01-cashback-meta', 'Кешбэк · 3%'\)/);
+  assert.doesNotMatch(fragment, /Вернём ' \+ points\.toLocaleString/);
+  assert.match(fragment, /make\('details', 'ux01-cashback-tip'\)/);
+  assert.match(fragment, /Вернём 3% от оплаченной суммы/);
+  assert.match(fragment, /badge\.appendChild\(details\)/);
+});
+
+test('variant 3: signed-in header uses name, coins balance and basket without redundant avatar', () => {
+  assert.match(homepage, /if \(!isAuth\) \{ profile\.appendChild\(icon\('user'\)\); \}/);
+  assert.match(homepage, /profile\.appendChild\(name\)/);
+  assert.match(homepage, /make\('span', 'ux01-header-balance'\)/);
+  assert.match(homepage, /actions\.appendChild\(cart\)/);
+});
+
+test('variant 3: all card footers have stable Details layout, mobile CTA is full width below price and points', () => {
+  const anchor = css.indexOf('UX01-VARIANT3-20261029');
+  assert.ok(anchor >= 0);
+  const rules = css.slice(anchor);
+  assert.match(rules, /\.activity \.card-foot\s*\{[\s\S]*?display:grid!important/);
+  assert.match(rules, /\.card-foot\s*>\s*a\.more\s*\{[\s\S]*?grid-column:3/);
+  assert.match(rules, /\.ux01-cashback\s*\{[\s\S]*?background:transparent!important/);
+  assert.match(rules, /@media\s*\(max-width:899px\)/);
+  assert.match(rules, /\.card-foot\s*>\s*a\.more\s*\{[\s\S]*?grid-row:2/);
+  assert.match(rules, /grid-column:~"1 \/ -1"/);
+});
