@@ -41,13 +41,13 @@ function auditVariant3(root) {
             var s=win.getComputedStyle(cash);
             if (!value || !/^\+[\d\s\u00a0\u202f]+$/.test(value.textContent)) local.push('reward is not compact+N');
             if (cash.querySelector('.ux01-cashback-lines,.ux01-cashback-meta')) local.push('legacy cashback wording is still in the card');
-            if (![1000,1500,2500].includes(amount) && amount===0) local.push('zero cashback must not appear');
-            if ([1000,1500,2500].includes(amount) && value && value.textContent.replace(/\s/g,'')!=='+'+Math.round(amount*.03)) local.push('native amount and3% reward disagree');
+            if (amount===0) local.push('zero cashback must not appear');
+            if (amount>0 && value && value.textContent.replace(/\s/g,'')!=='+'+Math.round(amount*.03)) local.push('native amount and3% reward disagree');
             if (s.backgroundColor!=='transparent'&&!/^rgba\([^)]*,\s*0\)$/.test(s.backgroundColor)) local.push('reward has painted background');
             if ([s.borderTopWidth,s.borderRightWidth,s.borderBottomWidth,s.borderLeftWidth].some(function(v){return parseFloat(v)!==0;})) local.push('reward has a border');
             if (s.boxShadow!=='none') local.push('reward has a shadow');
         }
-        if ([1000,1500].includes(amount) && !soon && !cash) local.push('mandatory paid sample has no reward');
+        if (amount>0 && !soon && !cash) local.push('real paid card has no reward');
         local.forEach(function(e){errors.push('card'+index+': '+e);});
         cards.push({index:index,amount:amount,trial:trial,soon:soon,value:value&&value.textContent,card:r,footer:f,price:p,cashback:c,more:a,errors:local});
     });
