@@ -650,6 +650,19 @@ function renderedCashbackTooltip(viewportWidth) {
   return {details, summary: details.querySelector('summary'), document: page.document, window: page.window, rootStyleChanged:page.rootStyleChanged};
 }
 
+for (const [raw, reward] of [['\u200d750\u200d', '+23'], ['\u200d800\u200d', '+24']]) {
+  test('native formatted ' + raw + ' price retains its reward through startup and AJAX reinit', () => {
+    const page = nativeHomepage('ut2-gl__wrap', false, 390);
+    const card = page.products[0].querySelector('.ut2-gl__item');
+    const price = element('div', 'ut2-gl__price-wrap'), amount = element('div', 'ut2-gl__price');
+    amount.appendChild(element('span', 'ty-price-num', raw));
+    price.appendChild(amount); card.querySelector('.ut2-gl__content').appendChild(price);
+    page.startup(); page.commoninit();
+    assert.equal(card.querySelector('.ux01-cashback-value')?.textContent, reward);
+    assert.equal(card.querySelectorAll('.ux01-cashback').length, 1, 'native reinit must not duplicate the reward');
+  });
+}
+
 test('desktop mouse hover opens native cashback details and leaving closes only its automatic opening', () => {
   const {details} = renderedCashbackTooltip(1440);
   assert.equal(details.open, false);

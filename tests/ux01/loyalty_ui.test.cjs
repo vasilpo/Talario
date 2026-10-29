@@ -40,6 +40,16 @@ test('cashback badge is built once per native valid-priced card with meaningful 
   assert.match(homepage, /\/dev_copy\/oferta-dlya-polzovatelya\//);
 });
 
+test('native zero-width joiners around a numeric price do not suppress its real 3% reward', () => {
+  const parseCardPrice = readPureFunction('parseCardPrice');
+  const cashbackPoints = readPureFunction('cashbackPoints');
+  assert.equal(parseCardPrice('\u200d750\u200d'), 750);
+  assert.equal(cashbackPoints(parseCardPrice('\u200d750\u200d')), 23);
+  assert.equal(cashbackPoints(parseCardPrice('\u200d800\u200d')), 24);
+  assert.equal(cashbackPoints(parseCardPrice('\u200d0\u200d')), 0);
+  assert.equal(parseCardPrice('\u200dот 1500\u200d'), null, 'formatting cleanup must not convert a non-exact price to a promise');
+});
+
 test('auth-only private endpoint keeps balances out of cached homepage HTML', () => {
   const php = fs.readFileSync('app/addons/lr_design_changes/controllers/frontend/ux01_loyalty.php', 'utf8');
   assert.ok(scripts.includes('authenticated: {if $auth.user_id|default:0}true{else}false{/if}'));
