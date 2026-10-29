@@ -22,12 +22,24 @@ try {
             requireFirstRender(strpos($body, 'id="talario-ux01"') !== false && strpos($body, 'Занятия для детей') !== false, 'First HTML is missing the approved UX-01 heading');
             requireFirstRender(strpos($body, 'talario-ux01-logo.png') !== false, 'First HTML is missing the existing approved logo');
             requireFirstRender(strpos($body, '<img src=x') === false, 'Server-rendered first name is not escaped');
+            requireFirstRender(preg_match('~<a class="iconbutton user-link"[^>]*>(.*?)</a>~s', $body, $account) === 1, 'SSR account link missing');
+            requireFirstRender(strpos($account[1], '<svg') === false, 'Signed-in SSR account must not contain a redundant avatar');
             requireFirstRender(strpos($head, 'data-no-defer') !== false && strpos($head, 'setTimeout') !== false, 'First-paint guard must run in the head and release native fallback without jQuery');
             requireFirstRender(strpos($body, 'role="status"') !== false, 'Catalog waiting state must be announced');
         } else {
             requireFirstRender(trim($head . $body) === '', 'First-paint presentation leaked outside dev_copy homepage');
         }
     }
+    $smarty->assign('config', ['current_path' => '/dev_copy']);
+    $smarty->assign('runtime', ['controller' => 'index', 'mode' => 'index']);
+    $smarty->assign('auth', ['user_id' => 0]);
+    $guest = $smarty->fetch('addons/lr_design_changes/hooks/index/content.pre.tpl');
+    requireFirstRender(preg_match('~<a class="iconbutton user-link"[^>]*href="/dev_copy/login/"[^>]*>(.*?)</a>~s', $guest, $account) === 1, 'Guest login link missing');
+    requireFirstRender(strpos($account[1], '<svg') !== false && strpos($account[1], 'header-user-name') === false, 'Guest must retain login icon without a personal name');
+    $smarty->assign('auth', ['user_id' => 1]);
+    $smarty->assign('user_info', ['firstname' => '']);
+    $fallback = $smarty->fetch('addons/lr_design_changes/hooks/index/content.pre.tpl');
+    requireFirstRender(strpos($fallback, '>Аккаунт</span>') !== false, 'Signed-in nameless account needs a usable account link');
     echo "PASS server first render, escaped account text, exact dev_copy homepage and bounded fallback\n";
 } finally {
     $smarty->clearCompiledTemplate();

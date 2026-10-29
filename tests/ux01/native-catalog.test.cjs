@@ -41,7 +41,11 @@ class Element {
   get src() { return this.getAttribute('src') || ''; }
   set src(value) { this.setAttribute('src', value); }
   get open() { return this.getAttribute('open') !== null; }
-  set open(value) { if (value) this.setAttribute('open', ''); else this.removeAttribute('open'); }
+  set open(value) {
+    const wasOpen = this.open;
+    if (value) this.setAttribute('open', ''); else this.removeAttribute('open');
+    if (wasOpen !== this.open) this.dispatchEvent({type:'toggle', oldState:wasOpen ? 'open' : 'closed', newState:this.open ? 'open' : 'closed'});
+  }
   get children() { return this.childNodes.filter(node => node.nodeType === 1); }
   get parentElement() { return this.parentNode; }
   get firstChild() { return this.childNodes[0] || null; }
@@ -248,6 +252,7 @@ function nativeHomepage(wrapperClass, serverChrome = false, viewportWidth = 1440
     createElementNS: (_, tag) => element(tag),
     createTextNode: textNode,
     querySelector: selector => html.querySelector(selector),
+    querySelectorAll: selector => html.querySelectorAll(selector),
     getElementById: id => html.querySelector('#' + id),
     addEventListener() {}
   };
@@ -260,8 +265,14 @@ function nativeHomepage(wrapperClass, serverChrome = false, viewportWidth = 1440
     assert.equal(action, 'on'); events.set(name, callback);
   };
   const location = {origin:'https://talario.ru', pathname:'/dev_copy/', search:''};
+  const browserEvents = new Map();
   const window = {
     location, innerWidth: viewportWidth,
+    addEventListener(name, callback) {
+      if (!browserEvents.has(name)) browserEvents.set(name, []);
+      browserEvents.get(name).push(callback);
+    },
+    dispatchEvent(event) { for (const callback of browserEvents.get(event.type) || []) callback(event); },
     matchMedia(query) {
       const min = query.match(/min-width:\s*(\d+)px/), max = query.match(/max-width:\s*(\d+)px/);
       return {matches: (!min || viewportWidth >= Number(min[1])) && (!max || viewportWidth <= Number(max[1])) && !/hover:\s*none|pointer:\s*coarse/.test(query)};
@@ -271,7 +282,7 @@ function nativeHomepage(wrapperClass, serverChrome = false, viewportWidth = 1440
     document, window, Tygh: { $: jquery }, URLSearchParams
   }, { filename: 'ux01_homepage.js' });
   return {
-    document, ajaxRoot, catalog, grid, columns, products, searchForm, filters, serverShell, serverHeader, jquery, location,
+    document, window, ajaxRoot, catalog, grid, columns, products, searchForm, filters, serverShell, serverHeader, jquery, location,
     startup: () => ready.forEach(callback => callback()),
     commoninit: () => { assert.ok(events.has('ce.commoninit')); events.get('ce.commoninit')(); }
   };
@@ -625,7 +636,7 @@ function renderedCashbackTooltip(viewportWidth) {
   const details = card.querySelector('details.ux01-cashback-tip');
   assert.ok(details, 'real startup builds the native details tooltip');
   assert.match(details.querySelector('.ux01-cashback-help').textContent, /3%/, 'tooltip explains the percentage');
-  return {details, summary: details.querySelector('summary'), document: page.document};
+  return {details, summary: details.querySelector('summary'), document: page.document, window: page.window};
 }
 
 test('desktop mouse hover opens native cashback details and leaving closes only its automatic opening', () => {
@@ -680,4 +691,75 @@ for (const [viewportWidth, pointerType] of [[390, 'touch'], [390, 'mouse'], [144
     assert.equal(details.open, false);
   });
 }
+
+// Bounded layout boundary for the actual startup-built tooltip. The badge is
+// the CSS containing block; left/top are ordinary absolute offsets. Intrinsic
+// help dimensions and the default left:0/above placement match live 2926894a.
+// This is a geometry regression, not a claim that the fake renders a browser.
+function viewportCashbackTooltip({left = 260, top = 65, width = 375, height = 600, consentInset = 0, previewInset = 0} = {}) {
+  const rendered = renderedCashbackTooltip(width);
+  const {details, summary, document, window} = rendered;
+  const badge = details.parentElement, help = details.querySelector('.ux01-cashback-help');
+  const anchor = {left, top, width:90, height:30};
+  const rect = (x, y, w, h) => ({x, y, left:x, top:y, right:x+w, bottom:y+h, width:w, height:h});
+  window.innerHeight = height;
+  document.documentElement.clientWidth = width;
+  document.documentElement.clientHeight = height;
+  document.documentElement.style.setProperty('--ux01-consent-inset', consentInset + 'px');
+  document.documentElement.style.setProperty('--bp-bottom-panel-height', previewInset + 'px');
+  window.getComputedStyle = node => ({getPropertyValue:name => node.style[name] || '0px'});
+  badge.getBoundingClientRect = () => rect(anchor.left, anchor.top, anchor.width, anchor.height);
+  summary.getBoundingClientRect = () => rect(anchor.left + anchor.width - 22, anchor.top + 4, 22, 22);
+  help.getBoundingClientRect = () => {
+    const maxHeight = parseFloat(help.style.maxHeight);
+    const helpHeight = Number.isFinite(maxHeight) ? Math.min(136, maxHeight) : 136;
+    const offsetLeft = parseFloat(help.style.left), offsetTop = parseFloat(help.style.top);
+    return rect(anchor.left + (Number.isFinite(offsetLeft) ? offsetLeft : 0),
+      anchor.top + (Number.isFinite(offsetTop) ? offsetTop : -helpHeight - 12), 270, helpHeight);
+  };
+  return {...rendered, help, anchor, bottomInset:Math.max(consentInset, previewInset)};
+}
+
+function assertHelpWithinViewport(page) {
+  const box = page.help.getBoundingClientRect();
+  assert.ok(box.left >= 12, 'help text stays inside the left viewport gutter');
+  assert.ok(box.right <= page.window.innerWidth - 12, 'help text stays inside the right viewport gutter');
+  assert.ok(box.top >= 12, 'help text cannot disappear above the viewport');
+  assert.ok(box.bottom <= page.window.innerHeight - page.bottomInset - 12, 'help text stays above the native bottom overlay');
+}
+
+test('opening the real mobile tooltip near the header and right edge keeps its full rectangle in view', () => {
+  const page = viewportCashbackTooltip();
+  const before = page.help.getBoundingClientRect();
+  assert.ok(before.right > page.window.innerWidth && before.top < 0, 'fixture reproduces the measured right/top clipping');
+  page.summary.dispatchEvent({type:'click'});
+  assert.equal(page.details.open, true);
+  assertHelpWithinViewport(page);
+});
+
+test('mobile tooltip cannot stay open underneath the larger consent or preview bottom inset', () => {
+  const page = viewportCashbackTooltip({left:16, top:560, consentInset:96, previewInset:56});
+  page.summary.dispatchEvent({type:'click'});
+  if (page.details.open) assertHelpWithinViewport(page);
+  else assert.equal(page.details.open, false, 'an occluded anchor may dismiss its tooltip');
+});
+
+test('scroll and resize refit an open native tooltip or dismiss it when its anchor leaves the viewport', () => {
+  const page = viewportCashbackTooltip({left:60, top:300});
+  page.summary.dispatchEvent({type:'click'});
+  assert.equal(page.details.open, true);
+  assertHelpWithinViewport(page);
+  page.anchor.left = 260; page.anchor.top = 65;
+  page.window.dispatchEvent({type:'scroll'});
+  assert.equal(page.details.open, true, 'scroll preserves a tooltip whose anchor remains visible');
+  assertHelpWithinViewport(page);
+  page.window.innerWidth = 320; page.document.documentElement.clientWidth = 320;
+  page.anchor.left = 210;
+  page.window.dispatchEvent({type:'resize'});
+  assert.equal(page.details.open, true, 'resize preserves a tooltip whose anchor remains visible');
+  assertHelpWithinViewport(page);
+  page.anchor.top = -60;
+  page.window.dispatchEvent({type:'scroll'});
+  if (page.details.open) assertHelpWithinViewport(page);
+});
 

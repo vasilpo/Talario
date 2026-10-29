@@ -15,6 +15,9 @@ namespace {
     $less = new \lessc();
     $css = $less->compileFile($root . '/design/themes/abt__unitheme2/css/addons/lr_design_changes/ux01_homepage.less');
     if ($css === '' || strpos($css, 'talario-ux01') === false) { throw new \RuntimeException('UX-01 stylesheet did not compile'); }
+    if (!preg_match('~\.ux01-cashback-help\s*\{[^}]*left:\s*auto\s*;[^}]*right:\s*0(?:px)?\s*;~s', $css)) {
+        throw new \RuntimeException('Right-aligned variant3 reward help must anchor its right edge instead of leaving the mobile screen');
+    }
     // lessphp treats an unescaped grid-column:1/-1 as division and emits -1.
     // A guest welcome tile then creates an implicit mobile column and collapses cards.
     if (!preg_match('~html\.talario-ux01-active\s+\.talario-ux01\s+\.mobile-bonus\s*\{[^}]*grid-column:\s*1\s*/\s*-1\s*;~s', $css)) {

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">
+<title>UX-01 · вариант3 · настоящая dev_copy</title>
+<style>body{margin:0;background:#eee;color:#30291f;font:14px system-ui}header{position:sticky;top:0;z-index:2;background:white;padding:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}button{min-height:40px;padding:6px 12px;cursor:pointer}iframe{display:block;border:0;width:390px;height:900px;background:white}details{background:white;padding:8px}pre{white-space:pre-wrap;max-height:330px;overflow:auto}</style>
+<header><strong>UX-01 · вариант3 · dev_copy</strong><button data-width="375">375</button><button data-width="390">390</button><button data-width="430">430</button><button data-width="1366">1366</button><button data-width="1440">1440</button><button id="audit">Проверить геометрию</button><span id="status" role="status">Не проверено</span></header>
+<details><summary>Фактический протокол</summary><pre id="result">Не проверено</pre></details>
+<iframe id="storefront" title="Реальная витрина dev_copy"></iframe>
+<script src="variant3-visual-contract.js?v=20261029-1"></script>
+<script>
+'use strict';
+if(location.origin!=='https://talario.ru'||location.pathname!=='/dev_copy/tests/ux01/variant3-qa.html'){document.body.textContent='Только dev_copy';}
+else{
+const frame=document.getElementById('storefront');frame.src='/dev_copy/';
+document.querySelectorAll('[data-width]').forEach(b=>b.addEventListener('click',()=>{frame.style.width=b.dataset.width+'px';document.getElementById('status').textContent='Ширина '+b.dataset.width;}));
+document.getElementById('audit').addEventListener('click',()=>{try{const r=auditVariant3(frame.contentDocument.documentElement);document.getElementById('result').textContent=JSON.stringify(r,null,2);document.getElementById('status').textContent=r.pass?'PASS':'FAIL';}catch(e){document.getElementById('status').textContent='FAIL';document.getElementById('result').textContent=String(e);}});
+}
+</script></html>
