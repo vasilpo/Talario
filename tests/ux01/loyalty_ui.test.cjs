@@ -35,7 +35,7 @@ test('cashback badge is built once per native valid-priced card with meaningful 
   assert.match(homepage, /amount\.querySelector\('\.ty-price-num'\)/);
   assert.match(homepage, /if \(amount && !soon\) \{[\s\S]*?addCardCashback\(price, amount\);/);
   assert.match(homepage, /Вернём /);
-  assert.match(homepage, /Кешбэк · 3%/);
+  assert.match(homepage, /Вернём 3% от оплаченной суммы/);
   assert.match(homepage, /make\('details', 'ux01-cashback-tip'\)/);
   assert.match(homepage, /\/dev_copy\/oferta-dlya-polzovatelya\//);
 });
