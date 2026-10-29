@@ -49,6 +49,29 @@
         var details = make('details', 'ux01-cashback-tip');
         var summary = make('summary', '', 'i');
         summary.setAttribute('aria-label', 'Как начисляется кешбэк');
+        // A closed native details hides ::details-content despite display:block.
+        // Open it for desktop mouse hover; touch keeps the native click toggle.
+        var hoverOpened = false;
+        details.addEventListener('pointerenter', function (event) {
+            if (event.pointerType === 'mouse' && window.innerWidth >= 900 && !details.open) {
+                hoverOpened = true;
+                details.open = true;
+            }
+        });
+        details.addEventListener('pointerleave', function (event) {
+            if (event.pointerType === 'mouse' && hoverOpened) {
+                hoverOpened = false;
+                if (!details.contains(document.activeElement)) details.open = false;
+            }
+        });
+        summary.addEventListener('click', function (event) {
+            // Clicking a hover-opened summary pins the text instead of closing it.
+            if (hoverOpened) {
+                event.preventDefault();
+                hoverOpened = false;
+                details.open = true;
+            }
+        });
         details.appendChild(summary);
         var help = make('span', 'ux01-cashback-help');
         help.appendChild(make('span', '', 'Вернём 3% от оплаченной суммы баллами на счёт в течение 3 дней после успешного посещения занятия. За отменённые занятия кешбэк не начисляется; остальные ограничения — в оферте. '));
